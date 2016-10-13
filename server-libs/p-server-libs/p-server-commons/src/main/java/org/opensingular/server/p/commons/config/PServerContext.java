@@ -16,7 +16,7 @@
 
 package org.opensingular.server.p.commons.config;
 
-import org.opensingular.server.commons.config.ConfigProperties;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.server.commons.config.IServerContext;
 
 /**
@@ -34,7 +34,7 @@ public enum PServerContext implements IServerContext {
     PServerContext(String defaultPath, String propertiesBaseKey) {
         this.propertiesBaseKey = propertiesBaseKey;
         String key = propertiesBaseKey + ".context";
-        String path = ConfigProperties.get(key);
+        String path = SingularProperties.get().getProperty(key);
         if (path == null || path.length() <= 0) {
             path = defaultPath;
         }
@@ -54,6 +54,10 @@ public enum PServerContext implements IServerContext {
     @Override
     public String getPropertiesBaseKey() {
         return propertiesBaseKey;
+    }
+
+    public String getServerPropertyKey(String basePropertyKey) {
+        return propertiesBaseKey + "." + basePropertyKey;
     }
 
     @Override

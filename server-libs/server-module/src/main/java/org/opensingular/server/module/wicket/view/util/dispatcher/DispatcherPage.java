@@ -29,6 +29,7 @@ import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.flow.SingularServerTaskPageStrategy;
 import org.opensingular.server.commons.flow.SingularWebRef;
 import org.opensingular.server.commons.form.FormActions;
+import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.SingularUserDetails;
@@ -85,6 +86,9 @@ public abstract class DispatcherPage extends WebPage {
 
     @Inject
     private AuthorizationService authorizationService;
+
+    @Inject
+    private FormPetitionService<?> formPetitionService;
 
     public DispatcherPage() {
         initPage();
@@ -178,7 +182,7 @@ public abstract class DispatcherPage extends WebPage {
 
     private String loadTypeNameFormFormVersionPK(Long formVersionPK) {
         return Optional.of(formVersionPK)
-                .map(petitionService::findFormTypeFromVersion)
+                .map(formPetitionService::findFormTypeFromVersion)
                 .map(FormTypeEntity::getAbbreviation)
                 .orElseThrow(() -> new SingularServerException("Não possivel idenfiticar o tipo"));
     }

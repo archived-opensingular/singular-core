@@ -27,14 +27,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Optional;
 
 @Entity
@@ -53,7 +46,7 @@ public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<F
     @JoinColumn(name = "CO_PETICAO")
     private PetitionEntity petition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "CO_FORMULARIO")
     private FormEntity form;
 
@@ -67,6 +60,10 @@ public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<F
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_TAREFA")
     private TaskDefinitionEntity taskDefinitionEntity;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "CO_RASCUNHO_ATUAL")
+    private DraftEntity currentDraftEntity;
 
     @Override
     public Long getCod() {
@@ -112,5 +109,13 @@ public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<F
     @Override
     public int compareTo(FormPetitionEntity o) {
         return Optional.ofNullable(this.getCod()).orElse(0l).compareTo(Optional.ofNullable(o).map(BaseEntity::getCod).orElse(0l));
+    }
+
+    public DraftEntity getCurrentDraftEntity() {
+        return currentDraftEntity;
+    }
+
+    public void setCurrentDraftEntity(DraftEntity currentDraftEntity) {
+        this.currentDraftEntity = currentDraftEntity;
     }
 }

@@ -16,12 +16,12 @@
 
 package org.opensingular.server.commons.flow;
 
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
-import org.opensingular.server.commons.config.ConfigProperties;
 import org.opensingular.server.commons.config.SingularServerConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -63,7 +63,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
 
     @Transactional
     public void initializeFlowDefinitionsDatabase() {
-        if ("true".equals(ConfigProperties.get(ConfigProperties.SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS))) {
+        if ("true".equals(SingularProperties.get().getProperty(SingularProperties.SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS))) {
             new TransactionTemplate(transactionManager).execute(status -> {
                 getLogger().info("INITIALIZING FLOW DEFINITIONS");
                 getDefinitions().forEach(d -> {

@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.spring;
 
+import org.opensingular.server.commons.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 
@@ -48,10 +49,6 @@ import org.opensingular.server.commons.persistence.dao.form.PetitionDAO;
 import org.opensingular.server.commons.persistence.dao.form.PetitionerDAO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.schedule.TransactionalQuartzScheduledService;
-import org.opensingular.server.commons.service.EmailPersistenceService;
-import org.opensingular.server.commons.service.IEmailService;
-import org.opensingular.server.commons.service.ParameterService;
-import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.DefaultUserDetailService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
@@ -204,5 +201,10 @@ public class SingularDefaultBeanFactory {
     @Bean
     public ParameterService parameterService() {
         return new ParameterService();
+    }
+
+    @Bean
+    public <T extends PetitionEntity> FormPetitionService<T> formPetitionService(){
+        return new FormPetitionService<T>();
     }
 }

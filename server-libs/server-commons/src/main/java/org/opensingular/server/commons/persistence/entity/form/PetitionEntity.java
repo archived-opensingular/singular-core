@@ -16,14 +16,14 @@
 
 package org.opensingular.server.commons.persistence.entity.form;
 
-import org.opensingular.form.persistence.entity.FormEntity;
+import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Optional;
@@ -51,17 +51,13 @@ public class PetitionEntity extends BaseEntity<Long> {
     private ProcessDefinitionEntity processDefinitionEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_RASCUNHO_ATUAL")
-    private DraftEntity currentDraftEntity;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_PETICIONANTE")
     private PetitionerEntity petitioner;
 
     @Column(name = "DS_PETICAO")
     private String description;
 
-    @OneToMany(mappedBy = "petition", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "petition", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy(" CO_FORMULARIO_PETICAO ASC ")
     private SortedSet<FormPetitionEntity> formPetitionEntities;
 
@@ -90,14 +86,6 @@ public class PetitionEntity extends BaseEntity<Long> {
         this.processDefinitionEntity = processDefinitionEntity;
     }
 
-    public DraftEntity getCurrentDraftEntity() {
-        return currentDraftEntity;
-    }
-
-    public void setCurrentDraftEntity(DraftEntity currentDraftEntity) {
-        this.currentDraftEntity = currentDraftEntity;
-    }
-
     public PetitionerEntity getPetitioner() {
         return petitioner;
     }
@@ -115,6 +103,9 @@ public class PetitionEntity extends BaseEntity<Long> {
     }
 
     public SortedSet<FormPetitionEntity> getFormPetitionEntities() {
+        if (formPetitionEntities == null) {
+            formPetitionEntities = new TreeSet<>();
+        }
         return formPetitionEntities;
     }
 
@@ -123,14 +114,35 @@ public class PetitionEntity extends BaseEntity<Long> {
     }
 
     public FormEntity getMainForm() {
+        if (formPetitionEntities == null) {
+            return null;
+        } else {
+            return formPetitionEntities.stream()
+                    .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                    .map(f -> {
+                        if (f.getForm() != null) {
+                            return f.getForm();
+                        }
+                        if (f.getCurrentDraftEntity() != null) {
+                            return f.getCurrentDraftEntity().getForm();
+                        }
+                        return null;
+                    })
+                    .findFirst()
+                    .orElse(null);
+        }
+    }
+
+    public DraftEntity currentEntityDraftByType(String typeName) {
         return Optional
                 .ofNullable(formPetitionEntities)
                 .orElse(new TreeSet<>())
                 .stream()
-                .filter(f -> SimNao.SIM.equals(f.getMainForm()))
-                .map(FormPetitionEntity::getForm)
+                .filter(f -> f.getCurrentDraftEntity() != null && f.getCurrentDraftEntity().getForm().getFormType().getAbbreviation().equals(typeName))
                 .findFirst()
+                .map(FormPetitionEntity::getCurrentDraftEntity)
                 .orElse(null);
+
     }
 
 }

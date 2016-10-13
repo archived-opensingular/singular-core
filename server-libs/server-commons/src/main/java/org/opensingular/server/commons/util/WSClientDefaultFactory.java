@@ -1,6 +1,7 @@
 package org.opensingular.server.commons.util;
 
-import org.opensingular.server.commons.config.ConfigProperties;
+import org.opensingular.form.util.SingularPredicates;
+import org.opensingular.lib.commons.base.SingularProperties;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPBinding;
@@ -35,7 +36,7 @@ public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFa
     }
 
     private void changeTargetEndpointAddress(T servicePortType) {
-        String propertyValue = ConfigProperties.get(property);
+        String propertyValue = SingularProperties.get().getProperty(property);
         if (propertyValue.endsWith("?wsdl")) {
             propertyValue = propertyValue.substring(0, propertyValue.length() - "?wsdl".length());
         }

@@ -16,6 +16,8 @@
 
 package org.opensingular.server.commons.config;
 
+import org.opensingular.lib.commons.base.SingularProperties;
+
 /**
  * Utilitário para prover a configuração de contexto atual e os métodos utilitários
  * relacionados.
@@ -31,7 +33,7 @@ public enum ServerContext implements IServerContext {
     ServerContext(String defaultPath, String propertiesBaseKey) {
         this.propertiesBaseKey = propertiesBaseKey;
         String key = propertiesBaseKey + ".context";
-        String path = ConfigProperties.get(key);
+        String path = SingularProperties.get().getProperty(key);
         if (path == null || path.length() <= 0) {
             path = defaultPath;
         }
