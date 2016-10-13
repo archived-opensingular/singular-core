@@ -16,15 +16,13 @@
 
 package org.opensingular.form.wicket.mapper.attachment.list;
 
-import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
@@ -91,6 +88,20 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private DownloadSupportedBehavior downloader;
     private UUID                      uploadId;
 
+    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
+        super(id, model);
+        this.ctx = ctx;
+        add(buildUploadLabel());
+        add(fileList = buildFileList(model));
+        add(buildButtonContainer(model));
+        add(buildEmptyBox(model, fileField, ctx.getViewMode()));
+        add(adder = new AddFileBehavior());
+        add(remover = new RemoveFileBehavior(model));
+        add(downloader = new DownloadSupportedBehavior(model));
+        add($b.classAppender("FileListUploadPanel"));
+        add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
+    }
+
     private Label buildUploadLabel() {
         return new Label("uploadLabel", Model.of(ObjectUtils.defaultIfNull(ctx.getCurrentInstance().asAtr().getLabel(), StringUtils.EMPTY))) {
             @Override
@@ -136,40 +147,13 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     private WebMarkupContainer buildButtonContainer(IModel<SIList<SIAttachment>> model) {
         final WebMarkupContainer buttonContainer = new WebMarkupContainer("button-container");
-        buttonContainer.add(fileField = new FileUploadField("fileUpload", dummyModel()));
-        buttonContainer.add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())) {
-            @Override
-            public boolean isVisible() {
-                return ctx.getViewMode().isEdition();
-            }
-        });
-        buttonContainer.add(new StyleAttributeModifier() {
-            @Override
-            protected Map<String, String> update(Map<String, String> oldStyles) {
-                final Map<String, String> newStyles = new HashMap<>(oldStyles);
-                if (model.getObject().isEmpty()) {
-                    newStyles.put("display", "none");
-                } else {
-                    newStyles.remove("display");
-                }
-                return newStyles;
-            }
-        });
-        fileField.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
+        fileField = new FileUploadField("fileUpload", dummyModel());
+        buttonContainer
+            .add(fileField
+                .add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS)))
+            .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
+            .add($b.visibleIf(() -> ctx.getViewMode().isEdition()));
         return buttonContainer;
-    }
-
-    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model,
-        WicketBuildContext ctx) {
-        super(id, model);
-        this.ctx = ctx;
-        add(buildUploadLabel());
-        add(fileList = buildFileList(model));
-        add(buildButtonContainer(model));
-        add(buildEmptyBox(model, fileField, ctx.getViewMode()));
-        add(adder = new AddFileBehavior());
-        add(remover = new RemoveFileBehavior(model));
-        add(downloader = new DownloadSupportedBehavior(model));
     }
 
     @Override
@@ -210,7 +194,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(forReference(resourceRef("FileListUploadPanel.js")));
+        response.render(JavaScriptHeaderItem.forReference(resourceRef("FileListUploadPanel.js")));
         response.render(OnDomReadyHeaderItem.forScript(generateInitJS()));
     }
 
@@ -313,7 +297,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         public void onResourceRequested() {
             final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
             final HttpServletResponse httpResp = (HttpServletResponse) getWebResponse().getContainerResponse();
-            
+
             try {
                 final String pFileId = getParamFileId("fileId").toString();
                 final String pName = getParamFileId("name").toString();
