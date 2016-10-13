@@ -38,4 +38,19 @@ public class Scripts {
     public static String slimScrollOverDisabledInputsWorkAround(){ 
         return "$('div').remove('.overalldisabled');$('<div class=\"overalldisabled\"></div>').insertAfter(':disabled:not(button)');";
     }
+
+    public static String multipleModalBackDrop() {
+        String js = "";
+        js += ";(function (zindex){ ";
+        js += "     $('.modal-backdrop').each(function(index) { ";
+        js += "         var zIndex = $(this).css('z-index'); ";
+        js += "         $(this).css('z-index', zindex-1+index); ";
+        js += "     }); ";
+        js += "     $('.modal').each(function(index) { ";
+        js += "         var zIndex = $(this).css('z-index'); ";
+        js += "         $(this).css('z-index', zindex+index); ";
+        js += "     }); ";
+        js += " })(10050); ";
+        return js;
+    }
 }

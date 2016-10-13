@@ -59,10 +59,11 @@ button {
   background-color: transparent; }
 
 .annotation-toggle-container .btn, .annotation-toggle-container .btn:hover, .annotation-toggle-container .btn:focus, .annotation-toggle-container.open .btn, .annotation-toggle-container.open .btn:hover, .annotation-toggle-container.open .btn:focus {
-  background-color: #ffffff !important;
   border-color: #acb1c2;
   color: #acb1c2;
-  position: relative; }
+  position: relative;
+  margin-top: -10px;
+  z-index: 1; }
 
 .annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-danger:focus, .annotation-toggle-container.open .btn-danger, .annotation-toggle-container.open .btn-danger:focus {
   background-image: url("../img/rejected-comment.svg");
