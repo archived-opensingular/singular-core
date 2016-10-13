@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.wicket.view.form;
 
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.MTransition;
 import org.opensingular.form.SIComposite;
@@ -33,7 +34,6 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
-import org.opensingular.server.commons.config.ConfigProperties;
 import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
@@ -148,7 +148,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected Content getContent(String id) {
 
         if (getFormType(config) == null && config.getPetitionId() == null) {
-            String urlServidorSingular = ConfigProperties.get(ConfigProperties.SINGULAR_SERVIDOR_ENDERECO);
+            String urlServidorSingular = SingularProperties.get().getProperty(SingularProperties.SINGULAR_SERVER_ADDR);
             throw new RedirectToUrlException(urlServidorSingular);
         }
 
