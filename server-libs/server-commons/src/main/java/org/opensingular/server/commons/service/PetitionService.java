@@ -224,15 +224,16 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
 
         final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
         final ProcessInstance      processInstance   = processDefinition.newInstance();
-
-        savePetitionHistory(peticao);
-        processInstance.setDescription(peticao.getDescription());
-
         final ProcessInstanceEntity processEntity = processInstance.saveEntity();
 
+        processInstance.setDescription(peticao.getDescription());
         peticao.setProcessInstanceEntity(processEntity);
+
         processInstance.start();
+
         onSend(peticao, instance, processEntity, codResponsavel);
+
+        savePetitionHistory(peticao);
     }
 
     protected void onSend(P peticao, SInstance instance, ProcessInstanceEntity processEntity, String codResponsavel) {
