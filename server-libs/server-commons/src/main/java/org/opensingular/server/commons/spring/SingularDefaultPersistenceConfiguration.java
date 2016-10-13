@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
@@ -153,6 +154,6 @@ public class SingularDefaultPersistenceConfiguration {
     }
 
     protected boolean isDatabaseInitializerEnabled() {
-        return Boolean.valueOf(System.getProperty("singular.enabled.h2.inserts", "true"));
+        return !SingularProperties.get().isFalse("singular.enabled.h2.inserts");
     }
 }
