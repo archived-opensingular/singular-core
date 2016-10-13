@@ -267,18 +267,8 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
                 petition
                         .getFormPetitionEntities()
                         .stream()
-                        .map(FormPetitionEntity::getCod)
-                        .map(formPetitionService::findFormPetitionEntityByCod)
                         .filter(isMainFormOrIsForCurrentTaskDefinition(petition))
-                        .map(f -> {
-                            final FormVersionHistoryEntity formVersionHistoryEntity = new FormVersionHistoryEntity();
-                            formVersionHistoryEntity.setMainForm(f.getMainForm());
-                            formVersionHistoryEntity.setCodFormVersion(f.getForm().getCurrentFormVersionEntity().getCod());
-                            formVersionHistoryEntity.setCodPetitionContentHistory(contentHistoryEntity.getCod());
-                            formVersionHistoryEntity.setFormVersion(f.getForm().getCurrentFormVersionEntity());
-                            formVersionHistoryEntity.setPetitionContentHistory(contentHistoryEntity);
-                            return formVersionHistoryEntity;
-                        })
+                        .map(f -> formPetitionService.createFormVersionHistory(contentHistoryEntity, f))
                         .collect(Collectors.toList())
         );
     }

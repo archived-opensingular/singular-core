@@ -8,6 +8,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
@@ -17,9 +18,7 @@ import org.opensingular.form.util.transformer.Value;
 import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.server.commons.persistence.dao.form.DraftDAO;
 import org.opensingular.server.commons.persistence.dao.form.FormPetitionDAO;
-import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
-import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
-import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.persistence.entity.form.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
@@ -140,10 +139,12 @@ public class FormPetitionService<P extends PetitionEntity> {
         }
 
         copyValuesAndAnnotations(instance, draft);
-        draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insert(draft, actor)));
 
+        draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insert(draft, actor)));
         draftEntity.setEditionDate(new Date());
+
         draftDAO.saveOrUpdate(draftEntity);
+
         return draftEntity;
     }
 
@@ -273,4 +274,23 @@ public class FormPetitionService<P extends PetitionEntity> {
             formPetitionDAO.delete(x);
         });
     }
+
+    public FormVersionHistoryEntity createFormVersionHistory(PetitionContentHistoryEntity contentHistory, FormPetitionEntity formPetition) {
+
+        final FormVersionHistoryEntity formVersionHistoryEntity;
+        final FormEntity               currentFormEntity;
+
+        formVersionHistoryEntity = new FormVersionHistoryEntity();
+        currentFormEntity = formPersistenceService.loadFormEntity(formPersistenceService.keyFromObject(formPetition.getForm().getCod()));
+
+        formVersionHistoryEntity.setMainForm(formPetition.getMainForm());
+        formVersionHistoryEntity.setCodFormVersion(currentFormEntity.getCurrentFormVersionEntity().getCod());
+        formVersionHistoryEntity.setCodPetitionContentHistory(contentHistory.getCod());
+        formVersionHistoryEntity.setFormVersion(currentFormEntity.getCurrentFormVersionEntity());
+        formVersionHistoryEntity.setPetitionContentHistory(contentHistory);
+
+        return formVersionHistoryEntity;
+
+    }
+
 }

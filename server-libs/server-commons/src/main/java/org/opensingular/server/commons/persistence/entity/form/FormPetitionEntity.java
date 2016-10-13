@@ -46,7 +46,7 @@ public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<F
     @JoinColumn(name = "CO_PETICAO")
     private PetitionEntity petition;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "CO_FORMULARIO")
     private FormEntity form;
 
