@@ -88,7 +88,7 @@ public class DefaultServerREST {
         try {
             boolean hasPermission = authorizationService.hasPermission(id, null, actionRequest.getIdUsuario(), ACTION_DELETE.getName());
             if (hasPermission) {
-                petitionService.delete(id);
+                petitionService.deletePetition(id);
                 return new ActionResponse("Registro excluído com sucesso", true);
             } else {
                 return new ActionResponse("Você não tem permissão para executar esta ação.", false);
@@ -104,7 +104,7 @@ public class DefaultServerREST {
     @RequestMapping(value = PATH_BOX_ACTION + EXECUTE, method = RequestMethod.POST)
     public ActionResponse execute(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
-            final PetitionEntity petition = petitionService.find(id);
+            final PetitionEntity petition = petitionService.findPetitionByCod(id);
             final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(petition);
 
             IController controller = getActionController(processDefinition, actionRequest);

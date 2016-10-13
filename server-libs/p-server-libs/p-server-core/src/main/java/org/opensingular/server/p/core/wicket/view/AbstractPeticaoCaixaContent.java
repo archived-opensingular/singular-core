@@ -71,6 +71,6 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
 
     @Override
     protected void onDelete(PeticaoDTO peticao) {
-        petitionService.delete(peticao);
+        petitionService.deletePetition(peticao);
     }
 }
