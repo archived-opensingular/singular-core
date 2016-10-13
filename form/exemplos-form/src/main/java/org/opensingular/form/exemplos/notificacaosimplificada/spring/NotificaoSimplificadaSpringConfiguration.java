@@ -16,6 +16,7 @@
 
 package org.opensingular.form.exemplos.notificacaosimplificada.spring;
 
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,7 +96,7 @@ public class NotificaoSimplificadaSpringConfiguration {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
-        if (Boolean.valueOf(System.getProperty("anvisa.enabled.h2.inserts", "true"))) {
+        if (!SingularProperties.get().isFalse("anvisa.enabled.h2.inserts")) {
             populator.addScript(drops);
             populator.addScript(createTables);
             populator.addScript(inserts);

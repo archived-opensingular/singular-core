@@ -30,7 +30,7 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * a String não for compatível com o tipo de chave da persistência. <p>Esse metodo seria tipicamente usado para
      * converter chave passadas por parâmetro (por exemplo na URL) de volta a FormKey.</p>
      */
-    public FormKey keyFromString(String persistenceString);
+    FormKey keyFromString(String persistenceString);
 
     /**
      * Tenta converter o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
@@ -38,19 +38,19 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      *
      * @return null se o valor for null
      */
-    public FormKey keyFromObject(Object objectValueToBeConverted);
+    FormKey keyFromObject(Object objectValueToBeConverted);
 
     /**
      * Insere uma instância nova e devolve a chave do novo registro.
      *
      * @return Nunca Null
      */
-    public FormKey insert(INSTANCE instance, Integer inclusionActor);
+    FormKey insert(INSTANCE instance, Integer inclusionActor);
 
     /**
      * Apaga a instância correspondente a chave informada.
      */
-    public void delete(FormKey key);
+    void delete(FormKey key);
 
     /**
      * Atualiza a instância na base de dados, com base no atributo FormmKey contido na instância informada.
@@ -58,13 +58,13 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance A mesma deverá conter o atributo FormKey, para tanto deverá ter sido recuperada pela própria
      *                 persitência.
      */
-    public void update(INSTANCE instance, Integer inclusionActor);
+    void update(INSTANCE instance, Integer inclusionActor);
 
     /**
      * Atualiza ou insere a instância de acordo se a mesma ja tiver ou não um FormKey associado (como atributo da instância).
      * @return Chave da instância criada ou atualizada.
      */
-    public FormKey insertOrUpdate(INSTANCE instance, Integer inclusionActor);
+    FormKey insertOrUpdate(INSTANCE instance, Integer inclusionActor);
 
 
     /**
@@ -73,7 +73,7 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance
      * @return
      */
-    public boolean isPersistent(INSTANCE instance);
+    boolean isPersistent(INSTANCE instance);
 
     /**
      * Salva as alterações na versão atual e incrementa versão do formulário
@@ -81,7 +81,7 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance
      * @return
      */
-    public default FormKey newVersion(INSTANCE instance, Integer inclusionActor){
+    default FormKey newVersion(INSTANCE instance, Integer inclusionActor){
         return newVersion(instance, inclusionActor, true);
     }
 
@@ -91,5 +91,5 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance
      * @return
      */
-    public FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
+    FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
 }
