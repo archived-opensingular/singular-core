@@ -155,21 +155,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             }
         }
 
-        if (filtro.hasFilter()) {
-            hql.append(" AND ( upper(p.description) like upper(:filter) ");
-            hql.append(" OR upper(processDefinitionEntity.name) like upper(:filter) ");
-            hql.append(" OR upper(task.name) like upper(:filter) ");
-            if (filtro.isRascunho()) {
-                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("currentFormVersion.inclusionDate", "filter"));
-                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("currentDraftEntity.editionDate", "filter"));
-            } else {
-                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("ta.beginDate", "filter"));
-                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter"));
-            }
-            hql.append(" OR p.id like :filter ) ");
-//            params.put("cleanFilter", "%" + filtro.getFilter().replaceAll("/", "").replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(":", "") + "%");
-            params.put("filter", "%" + filtro.getFilter() + "%");
-        }
+        appendCustomQuickFilter(hql, params, filtro);
 
         if (!CollectionUtils.isEmpty(filtro.getTasks())) {
             hql.append(" AND task.name in (:tasks)");
@@ -200,6 +186,25 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
      * Append Custom Where Clauses
      */
     protected void appendCustomWhereClauses(StringBuilder hql, Map<String, Object> params, QuickFilter filter) {
+    }
+    /**
+     * Append Custom Quick Filter
+     */
+    protected void appendCustomQuickFilter(StringBuilder hql, Map<String, Object> params, QuickFilter filter) {
+        if (filter.hasFilter()) {
+            hql.append(" AND ( upper(p.description) like upper(:filter) ");
+            hql.append(" OR upper(processDefinitionEntity.name) like upper(:filter) ");
+            hql.append(" OR upper(task.name) like upper(:filter) ");
+            if (filter.isRascunho()) {
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("currentFormVersion.inclusionDate", "filter"));
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("currentDraftEntity.editionDate", "filter"));
+            } else {
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("ta.beginDate", "filter"));
+                hql.append(" OR ").append(JPAQueryUtil.formattDateTimeClause("pie.beginDate", "filter"));
+            }
+            hql.append(" OR p.id like :filter ) ");
+            params.put("filter", "%" + filter.getFilter() + "%");
+        }
     }
 
     private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count, List<String> formNames) {
