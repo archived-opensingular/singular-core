@@ -24,6 +24,7 @@ import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.flow.SingularServerTaskPageStrategy;
@@ -134,7 +135,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private WebPage retrieveDestination(FormPageConfig config) {
-        if (config.getViewMode().isVisualization()) {
+        if (config.getViewMode().isVisualization() && AnnotationMode.NONE.equals(config.getAnnotationMode())) {
             return newVisualizationPage(config);
         } else {
             return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
