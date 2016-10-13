@@ -32,12 +32,8 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
         super(PetitionContentHistoryEntity.class);
     }
 
-    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByCodInstancePK(int instancePK) {
-        final Criteria criteria = getSession().createCriteria(PetitionContentHistoryEntity.class);
-        criteria.createAlias("taskInstanceEntity", "taskInstance");
-        criteria.createAlias("taskInstance.processInstance", "processInstance");
-        criteria.add(Restrictions.eq("processInstance.cod", instancePK));
-        return criteria.list();
+    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByPetitionCod(long petitionCod) {
+        return getSession().createCriteria(PetitionContentHistoryEntity.class).add(Restrictions.eq("petitionEntity.cod", petitionCod)).list();
     }
 
     public FormVersionHistoryEntity findLastestByPetitionCodAndType(String typeName, Long cod) {

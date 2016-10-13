@@ -169,6 +169,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BoxItemModel   boxItem        = boxItemModel.getObject();
         PageParameters pageParameters = new PageParameters();
         if (boxItem.getProcessInstanceId() != null) {
+            pageParameters.add(Parameters.PETITION_ID, boxItem.getCod());
             pageParameters.add(Parameters.INSTANCE_ID, boxItem.getProcessInstanceId());
             pageParameters.add(Parameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
         }

@@ -55,6 +55,7 @@ public abstract class AbstractHistoricoContent extends Content {
     private PetitionService<?> petitionService;
 
     private int    instancePK;
+    private long   petitionPK;
     private String processGroupPK;
 
     public AbstractHistoricoContent(String id) {
@@ -74,6 +75,7 @@ public abstract class AbstractHistoricoContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        petitionPK = getPage().getPageParameters().get(Parameters.PETITION_ID).toLong();
         instancePK = getPage().getPageParameters().get(Parameters.INSTANCE_ID).toInt();
         processGroupPK = getPage().getPageParameters().get(Parameters.PROCESS_GROUP_PARAM_NAME).toString();
         queue(setupDataTable(createDataProvider()));
@@ -143,12 +145,12 @@ public abstract class AbstractHistoricoContent extends Content {
         return new BaseDataProvider<PetitionContentHistoryEntity, String>() {
             @Override
             public long size() {
-                return petitionService.listPetitionContentHistoryByCodInstancePK(instancePK).size();
+                return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).size();
             }
 
             @Override
             public Iterator<? extends PetitionContentHistoryEntity> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return petitionService.listPetitionContentHistoryByCodInstancePK(instancePK).iterator();
+                return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).iterator();
             }
         };
     }
