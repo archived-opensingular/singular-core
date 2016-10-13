@@ -503,9 +503,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return formPageConfig.getAnnotationMode();
     }
 
-    protected FormKey loadFormKeyFromTypeAndTask(String typeName) {
+    protected FormKey loadFormKeyFromTypeAndTask(String typeName, boolean mainForm) {
         return Optional
-                .ofNullable(formPetitionService.findFormPetitionEntity(currentModel.getObject(), typeName, isMainForm()))
+                .ofNullable(formPetitionService.findFormPetitionEntity(currentModel.getObject(), typeName, mainForm))
                 .map(x -> {
                     if (x.getCurrentDraftEntity() != null) {
                         return x.getCurrentDraftEntity().getForm();
