@@ -43,7 +43,8 @@ public class CaseFileMultipleAttachmentsPackage extends SPackage {
             .withMiniumSizeOf(1)
             .withMaximumSizeOf(4);
         layoutsRotulagem.asAtr()
-            .label("Layouts Rotulagem")
+            .label("Layouts Rotulagem");
+        layoutsRotulagem.getElementsType().asAtr()
             .allowedFileTypes("image/png", "image/jpeg", "pdf", "zip");
 
         tipoMyForm.asAtr().displayString(cc -> cc.instance()
