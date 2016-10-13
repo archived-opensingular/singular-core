@@ -39,6 +39,7 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 class MasterDetailModal extends BFModalWindow {
 
@@ -184,7 +185,7 @@ class MasterDetailModal extends BFModalWindow {
     @Override
     public void show(AjaxRequestTarget target) {
         super.show(target);
-        target.appendJavaScript(getConfigureBackdropScript());
+        target.appendJavaScript(Scripts.multipleModalBackDrop());
     }
     @Override
     public void hide(AjaxRequestTarget target) {
@@ -193,20 +194,6 @@ class MasterDetailModal extends BFModalWindow {
             onHideCallback.accept(target);
     }
 
-    private String getConfigureBackdropScript() {
-        String js = "";
-        js += " (function (zindex){ ";
-        js += "     $('.modal-backdrop').each(function(index) { ";
-        js += "         var zIndex = $(this).css('z-index'); ";
-        js += "         $(this).css('z-index', zindex-1+index); ";
-        js += "     }); ";
-        js += "     $('.modal').each(function(index) { ";
-        js += "         var zIndex = $(this).css('z-index'); ";
-        js += "         $(this).css('z-index', zindex+index); ";
-        js += "     }); ";
-        js += " })(10050); ";
-        return js;
-    }
 
     @SuppressWarnings("unchecked")
     public IModel<SIList<SInstance>> getModel() {

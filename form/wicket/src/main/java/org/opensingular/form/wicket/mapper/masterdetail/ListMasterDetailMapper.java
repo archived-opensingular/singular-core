@@ -74,6 +74,7 @@ import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel.ActionCon
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -316,8 +317,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     }
                     sb.append("</ul></div>");
 
-                    target.appendJavaScript(""
-                        + ";bootbox.alert('" + JavaScriptUtils.javaScriptEscape(sb.toString()) + "');");
+                    target.appendJavaScript(";bootbox.alert('" + JavaScriptUtils.javaScriptEscape(sb.toString()) + "');");
+                    target.appendJavaScript(Scripts.multipleModalBackDrop());
                 }
             }
 
@@ -391,6 +392,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     final SIList<?> sil = (SIList<?>) si;
                     if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
                         target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                        target.appendJavaScript(Scripts.multipleModalBackDrop());
                     } else {
                         modal.setOnHideCallback(t -> t.focusComponent(this));
                         modal.showNew(target);
