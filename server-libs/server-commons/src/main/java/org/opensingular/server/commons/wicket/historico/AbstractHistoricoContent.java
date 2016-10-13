@@ -76,12 +76,12 @@ public abstract class AbstractHistoricoContent extends Content {
         super.onInitialize();
         instancePK = getPage().getPageParameters().get(Parameters.INSTANCE_ID).toInt();
         processGroupPK = getPage().getPageParameters().get(Parameters.PROCESS_GROUP_PARAM_NAME).toString();
-        queue(setupDataTable());
+        queue(setupDataTable(createDataProvider()));
         queue(getBtnCancelar());
     }
 
     protected AjaxLink<?> getBtnCancelar() {
-        return new AjaxLink<Void>("btnCancelar") {
+        return new AjaxLink<Void>("btnVoltar") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 onCancelar(target);
@@ -91,8 +91,8 @@ public abstract class AbstractHistoricoContent extends Content {
 
     protected abstract void onCancelar(AjaxRequestTarget t);
 
-    private BSDataTable<PetitionContentHistoryEntity, String> setupDataTable() {
-        return new BSDataTableBuilder<>(createDataProvider())
+    protected BSDataTable<PetitionContentHistoryEntity, String> setupDataTable(BaseDataProvider<PetitionContentHistoryEntity, String> dataProvider) {
+        return new BSDataTableBuilder<>(dataProvider)
                 .appendPropertyColumn(
                         getMessage("label.table.column.task.name"),
                         p -> p.getTaskInstanceEntity().getTask().getName()
@@ -139,7 +139,7 @@ public abstract class AbstractHistoricoContent extends Content {
         return params;
     }
 
-    private BaseDataProvider<PetitionContentHistoryEntity, String> createDataProvider() {
+    protected BaseDataProvider<PetitionContentHistoryEntity, String> createDataProvider() {
         return new BaseDataProvider<PetitionContentHistoryEntity, String>() {
             @Override
             public long size() {
