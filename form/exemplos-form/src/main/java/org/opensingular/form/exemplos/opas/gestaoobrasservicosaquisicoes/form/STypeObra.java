@@ -20,6 +20,7 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewListByTable;
@@ -27,6 +28,11 @@ import org.opensingular.form.view.SViewListByTable;
 @SInfoType(spackage = SPackageGestaoObrasServicosAquisicoes.class)
 public class STypeObra extends STypeComposite<SIComposite>{
 
+    public static final String FIELD_VALOR_CONTRATADO = "valorContratado";
+    public static final String FIELD_VALOR_SOLICITADO = "valorSolicitado";
+    public static final String FIELD_DATA_FIM = "dataFim";
+    public static final String FIELD_DATA_INICIO = "dataInicio";
+    public static final String FIELD_DESCRICAO_OBRA = "descricaoObra";
     public static final String FIELD_NUM_CONTRATO = "numContrato";
     public static final String FIELD_VALORES_EMPENHADOS = "valoresEmpenhados";
 
@@ -36,18 +42,23 @@ public class STypeObra extends STypeComposite<SIComposite>{
         
         addFieldString(FIELD_NUM_CONTRATO, true)
             .asAtr().label("Nº Contrato").asAtrBootstrap().colPreference(4);
-        addFieldString("descricaoObra", true)
+        addFieldString(FIELD_DESCRICAO_OBRA, true)
             .asAtr().label("Descrição da Obra").asAtrBootstrap().colPreference(8);
-        addFieldDate("dataInicio", true)
+        addFieldDate(FIELD_DATA_INICIO, true)
             .asAtr().label("Início").asAtrBootstrap().colPreference(3);
-        addFieldDate("dataFim", true)
+        addFieldDate(FIELD_DATA_FIM, true)
             .asAtr().label("Fim").asAtrBootstrap().colPreference(3);
+
+        addFieldMonetary(FIELD_VALOR_SOLICITADO)
+            .asAtr().label("Valor Solicitado").asAtrBootstrap().colPreference(3);
+        addFieldMonetary(FIELD_VALOR_CONTRATADO)
+            .asAtr().label("Valor Contratado").asAtrBootstrap().colPreference(3);
         
         addValoresEmpenhados();
         
         setView(SViewByBlock::new)
-            .newBlock("Dados da Obra").add("numContrato", "descricaoObra", "dataInicio", "dataFim")
-            .newBlock("Valor Empenhado").add(FIELD_VALORES_EMPENHADOS);
+            .newBlock("Dados da Obra").add(FIELD_NUM_CONTRATO, FIELD_DESCRICAO_OBRA, FIELD_DATA_INICIO, FIELD_DATA_FIM)
+            .newBlock("Orçamento").add(FIELD_VALOR_SOLICITADO, FIELD_VALOR_CONTRATADO, FIELD_VALORES_EMPENHADOS);
     }
 
     private void addValoresEmpenhados() {
@@ -62,5 +73,13 @@ public class STypeObra extends STypeComposite<SIComposite>{
     
     public STypeString getFieldNumContrato(){
         return (STypeString) getField(FIELD_NUM_CONTRATO);
+    }
+
+    public STypeMonetary getFieldValorSolicitado(){
+        return (STypeMonetary) getField(FIELD_VALOR_SOLICITADO);
+    }
+    
+    public STypeMonetary getFieldValorContratado(){
+        return (STypeMonetary) getField(FIELD_VALOR_CONTRATADO);
     }
 }
