@@ -32,7 +32,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
 @EnableWebSecurity
-@Configuration
 @ComponentScan(
         basePackages = {"org.opensingular.singular", "org.opensingular.server"},
         excludeFilters = {

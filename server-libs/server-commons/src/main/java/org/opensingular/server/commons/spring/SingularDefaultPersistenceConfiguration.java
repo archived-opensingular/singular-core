@@ -35,7 +35,7 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SingularDefaultPersistenceConfiguration {
+public abstract class SingularDefaultPersistenceConfiguration {
 
     @Value("classpath:db/ddl/create-function.sql")
     private Resource sqlCreateFunction;
@@ -129,7 +129,7 @@ public class SingularDefaultPersistenceConfiguration {
         final LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
-        sessionFactoryBean.setPackagesToScan("org.opensingular.singular");
+        sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
         return sessionFactoryBean;
     }
 
@@ -141,7 +141,11 @@ public class SingularDefaultPersistenceConfiguration {
     }
 
 
-    private Properties hibernateProperties() {
+    protected String[] hibernatePackagesToScan(){
+        return new String[]{"org.opensingular.singular"};
+    }
+
+    protected Properties hibernateProperties() {
         final Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
         hibernateProperties.put("hibernate.connection.isolation", "2");
