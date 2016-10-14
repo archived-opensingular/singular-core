@@ -97,7 +97,12 @@
                     fileList.append(fileElement);
                     //$('#progress_bar_' + fake_id).hide();
                     
-                    if (FileListUploadPanel.validateInputFile(e, data, params.component_id, params.max_file_size, data.files[0].fake_id)) {
+                    if (FileListUploadPanel.validateInputFile(
+                    		e,
+                    		data,
+                    		params.component_id,
+                    		params.max_file_size,
+                    		params.allowed_file_types)) {
                         data.submit();
                     }
                     
@@ -191,12 +196,23 @@
             e.preventDefault();
         };
 
-        window.FileListUploadPanel.validateInputFile = function (e, data, panel_id, maxSize) {
+        window.FileListUploadPanel.validateInputFile = function (e, data, panel_id, maxSize, allowed_file_types) {
             if (maxSize && data.files[0].size > maxSize) {
                 FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Arquivo não pode ser maior que " + FileListUploadPanel.humaneSize(maxSize));
                 //FileListUploadPanel.resetFormElement(e);
                 return false;
             }
+            
+            if (allowed_file_types && allowed_file_types.length > 0) {
+            	var file = data.files[0];
+            	var extension 		 = file.name.substring(file.name.lastIndexOf("/") + 1);
+            	var invalidType 	 = (jQuery.inArray(file.type, allowed_file_types) < 0);
+            	var invalidExtension = (jQuery.inArray(extension, allowed_file_types) < 0);
+	        	if (invalidType && invalidExtension) {
+	        		FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Tipo de arquivo não permitido");
+	        		return false;
+	        	}
+        	}
             return true;
         };
 
