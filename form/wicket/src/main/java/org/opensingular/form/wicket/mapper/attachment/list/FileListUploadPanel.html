@@ -16,6 +16,28 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org">
+<head>
+<wicket:head>
+<style type="text/css">
+.FileListUploadPanel .list-detail-empty     { display: none;  }
+.FileListUploadPanel .upload-list-add       { display: block; }
+.FileListUploadPanel .list-action-uploading { display: none;  }
+.FileListUploadPanel .list-action-remove    { display: inline; }
+
+.FileListUploadPanel.FileListUploadPanel_empty     .list-detail-empty { display: block; }
+.FileListUploadPanel.FileListUploadPanel_empty     .upload-list-add   { display: none; }
+
+.FileListUploadPanel.FileListUploadPanel_uploading .list-action-uploading { display: block;  }
+
+.FileListUploadPanel.FileListUploadPanel_success   .list-action-remove { display: inline; }
+.FileListUploadPanel.FileListUploadPanel_error     .list-action-remove { display: inline; }
+.FileListUploadPanel.FileListUploadPanel_error     .list-item-icon > a > i { color: red; }
+
+.FileListUploadPanel.FileListUploadPanel_disabled  { display: none; }
+
+</style>
+</wicket:head>
+</head>
 <body>
 <wicket:panel>
     <div class="upload-panel">
