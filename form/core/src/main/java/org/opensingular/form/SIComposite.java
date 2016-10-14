@@ -46,9 +46,8 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    //TODO: Won't "isEmpty" is enough? the "ofData" seems kind of redundant.
     public boolean isEmptyOfData() {
-        return fields == null || fields.stream().allMatch(i -> i.isEmptyOfData());
+        return fields == null || fields.stream().allMatch(SInstance::isEmptyOfData);
     }
 
     /**
