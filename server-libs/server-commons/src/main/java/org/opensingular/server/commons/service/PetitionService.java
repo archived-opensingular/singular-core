@@ -86,10 +86,10 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     protected AuthorizationService authorizationService;
 
     @Inject
-    protected  FormPetitionService<P> formPetitionService;
+    protected FormPetitionService<P> formPetitionService;
 
     @Inject
-    private ActorDAO actorDAO;
+    protected ActorDAO actorDAO;
 
     public P findPetitionByCod(Long cod) {
         return petitionDAO.find(cod);

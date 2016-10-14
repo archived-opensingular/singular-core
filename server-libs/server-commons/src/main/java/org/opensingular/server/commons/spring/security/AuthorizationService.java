@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.spring.security;
 
+import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SType;
@@ -33,6 +34,10 @@ import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.service.dto.BoxItemAction;
 import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.service.dto.MenuGroup;
+import org.opensingular.server.commons.spring.security.PermissionResolverService;
+import org.opensingular.server.commons.spring.security.SingularPermission;
+import org.opensingular.server.commons.spring.security.SingularUserDetails;
+import org.opensingular.server.commons.spring.security.SingularUserDetailsService;
 import org.opensingular.server.commons.wicket.SingularSession;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
@@ -69,8 +74,8 @@ public class AuthorizationService implements Loggable {
         List<SingularPermission> permissions = searchPermissions(idUsuario);
 
         for (Iterator<MenuGroup> it = groupDTOs.iterator(); it.hasNext(); ) {
-            MenuGroup menuGroup        = it.next();
-            String    permissionNeeded = menuGroup.getId().toUpperCase();
+            MenuGroup menuGroup = it.next();
+            String permissionNeeded = menuGroup.getId().toUpperCase();
             if (!hasPermission(idUsuario, permissionNeeded, permissions)) {
                 it.remove();
             } else {
@@ -92,9 +97,9 @@ public class AuthorizationService implements Loggable {
             petitionEntity = petitionService.findPetitionByCod(petitionId);
         }
         for (Iterator<BoxItemAction> it = actions.iterator(); it.hasNext(); ) {
-            BoxItemAction action           = it.next();
-            String        permissionsNeeded;
-            String        typeAbbreviation = getFormSimpleName(formType);
+            BoxItemAction action = it.next();
+            String permissionsNeeded;
+            String typeAbbreviation = getFormSimpleName(formType);
             if (action.getFormAction() != null) {
                 permissionsNeeded = buildPermissionKey(petitionEntity, typeAbbreviation, action.getFormAction().name());
             } else {
@@ -105,6 +110,18 @@ public class AuthorizationService implements Loggable {
             }
         }
 
+    }
+
+    public void filterActors(List<Actor> actors, PetitionEntity petitionEntity, String actionName) {
+        if (actors != null && !actors.isEmpty()){
+            Iterator<Actor> it = actors.iterator();
+            while(it.hasNext()){
+                Actor a = it.next();
+                if (!hasPermission(petitionEntity, petitionEntity.getMainForm().getFormType().getAbbreviation(), a.getCodUsuario(), actionName)){
+                    it.remove();
+                }
+            }
+        }
     }
 
     public boolean hasPermission(Long petitionId, String formType, String idUsuario, String action) {
@@ -149,7 +166,13 @@ public class AuthorizationService implements Loggable {
         }
     }
 
-
+    /**
+     * Monta a chave de permissão do singular, não deve ser utilizado diretamente.
+     * @param petitionEntity
+     * @param formSimpleName
+     * @param action
+     * @return
+     */
     protected String buildPermissionKey(PetitionEntity petitionEntity, String formSimpleName, String action) {
         String permission = Joiner.on("_")
                 .skipNulls()
@@ -222,6 +245,5 @@ public class AuthorizationService implements Loggable {
         SType<?> sType = singularFormConfig.get().getTypeLoader().loadType(formTypeName).get();
         return SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.getClass()).toUpperCase();
     }
-
 
 }
