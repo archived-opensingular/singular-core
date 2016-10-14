@@ -40,6 +40,7 @@ import org.apache.wicket.model.Model;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.behavior.FormChoiceAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.FormComponentAjaxUpdateBehavior;
@@ -124,6 +125,16 @@ public interface IBehaviorsMixin extends Serializable {
         };
     }
 
+    default <T> Behavior visibleIfModelObject(IPredicate<T> predicate) {
+        return new Behavior() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onConfigure(Component component) {
+                component.setVisible(predicate.test((T) component.getDefaultModelObject()));
+            }
+        };
+    }
+    
     default Behavior visibleIf(IModel<Boolean> model) {
         return new Behavior() {
             @Override
