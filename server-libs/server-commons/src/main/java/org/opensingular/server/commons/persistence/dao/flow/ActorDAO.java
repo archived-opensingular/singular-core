@@ -17,7 +17,9 @@
 package org.opensingular.server.commons.persistence.dao.flow;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.lib.commons.base.SingularProperties;
