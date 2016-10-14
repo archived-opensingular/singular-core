@@ -124,6 +124,7 @@ public abstract class SingularDefaultPersistenceConfiguration {
         return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1";
     }
 
+    @DependsOn("scriptsInitializer")
     @Bean
     public LocalSessionFactoryBean sessionFactory(final DataSource dataSource) {
         final LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
