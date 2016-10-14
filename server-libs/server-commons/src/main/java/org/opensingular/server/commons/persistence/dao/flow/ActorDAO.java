@@ -111,6 +111,40 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
 
     @SuppressWarnings("unchecked")
     public List<Actor> listAllocableUsers(Integer taskInstanceId) {
-        return getSession().createQuery("select a from " + Actor.class.getName() + " a ").list();
+        StringBuilder sql = new StringBuilder();
+
+        sql.append(" SELECT DISTINCT a.CO_ATOR as \"cod\", ");
+        sql.append("    a.CO_USUARIO as \"codUsuario\", ");
+        sql.append("    UPPER(a.NO_ATOR) as \"nome\",  ");
+        sql.append("    a.DS_EMAIL as \"email\" ");
+        sql.append(" FROM " + Constants.SCHEMA + ".VW_ATOR a ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_USUARIO u ");
+        sql.append("  ON u.CO_USERNAME = a.CO_USUARIO ");
+        sql.append(" INNER JOIN DBSEGURANCA.RL_PERFIL_USUARIO pu ");
+        sql.append("  ON pu.CO_USERNAME = u.CO_USERNAME ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL p ");
+        sql.append("  ON pu.CO_USERNAME = u.CO_USERNAME ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL_DETALHE pd ");
+        sql.append(" INNER JOIN DBSEGURANCA.TB_MODULO m ");
+        sql.append("  ON pd.CO_MODULO = m.CO_MODULO ");
+        sql.append("  AND pd.CO_SISTEMA = m.CO_SISTEMA ");
+        sql.append("  ON p.CO_PERFIL = PD.CO_PERFIL ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".RL_PERMISSAO_TAREFA pt ");
+        sql.append("  ON pt.CO_PERMISSAO = m.CO_SISTEMA || m.CO_MODULO ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_DEFINICAO_TAREFA dt ");
+        sql.append("  ON dt.CO_DEFINICAO_TAREFA = pt.CO_DEFINICAO_TAREFA ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_VERSAO_TAREFA vt ");
+        sql.append("  ON vt.CO_DEFINICAO_TAREFA = pt.CO_DEFINICAO_TAREFA ");
+        sql.append(" INNER JOIN " + Constants.SCHEMA + ".TB_INSTANCIA_TAREFA it ");
+        sql.append("  ON it.CO_VERSAO_TAREFA = vt.CO_VERSAO_TAREFA ");
+        sql.append(" WHERE it.CO_INSTANCIA_TAREFA = :taskInstanceId ");
+        sql.append(" ORDER BY UPPER(a.NO_ATOR) ");
+
+        SQLQuery query = getSession().createSQLQuery(sql.toString());
+        query.setParameter("taskInstanceId", taskInstanceId);
+
+        query.setResultTransformer(Transformers.aliasToBean(Actor.class));
+
+        return query.list();
     }
 }
