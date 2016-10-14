@@ -51,7 +51,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         }
     }
 
-    public T find(Long id) {
+    public T find(ID id) {
         if (id == null) {
             return null;
         } else {
