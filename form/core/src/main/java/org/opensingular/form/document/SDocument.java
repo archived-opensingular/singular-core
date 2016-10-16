@@ -351,7 +351,7 @@ public class SDocument {
     }
 
     public <T extends Enum<T> & AnnotationClassifier> List<SIAnnotation> annotationsAnyClassifier(Integer id) {
-        List<SIAnnotation> siAnnotationList = new ArrayList<SIAnnotation>();
+        List<SIAnnotation> siAnnotationList = new ArrayList<>();
         if (annotations == null)
             return null;
         for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
@@ -360,10 +360,6 @@ public class SDocument {
             }
         }
         return siAnnotationList;
-    }
-
-    private void setAnnotations(SIList<SIAnnotation> annotations) {
-        this.annotations = annotations;
     }
 
     private SDictionary dictionary() {
@@ -383,17 +379,19 @@ public class SDocument {
     }
 
     public SIAnnotation newAnnotation() {
-        createAnnotationsIfNeeded();
+        if (annotations == null) {
+            this.annotations = newAnnotationList();
+        }
         return (SIAnnotation) annotations.addNew();
-    }
-
-    private void createAnnotationsIfNeeded() {
-        if (annotations == null)
-            setAnnotations(newAnnotationList());
     }
 
     public SIList<SIAnnotation> annotations() {
         return annotations;
+    }
+
+    /** Verifica se o documento possui alguma anotação. */
+    public boolean hasAnnotations() {
+        return annotations != null && ! annotations.isEmpty();
     }
 
     public Optional<SInstance> findInstanceById(Integer instanceId) {

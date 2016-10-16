@@ -244,12 +244,17 @@ public class MformPersistenciaXML {
         if (xmlAnnotations == null) {
             return;
         }
-
-        SDocument document      = instance.getDocument();
-        RefType   refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
-        SIList<SIAnnotation> iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
-                document.getDocumentFactoryRef().get());
-
+        SDocument document = instance.getDocument();
+        SIList<SIAnnotation> iAnnotations;
+        if (document.getRootRefType().isPresent()) {
+            RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
+            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
+                    document.getDocumentFactoryRef().get());
+        } else {
+            //Carrega a informações se as referências de persistência
+            STypeAnnotationList typeAnnotation = document.getRoot().getDictionary().getType(STypeAnnotationList.class);
+            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(typeAnnotation, xmlAnnotations);
+        }
         instance.asAtrAnnotation().loadAnnotations(iAnnotations);
     }
 
@@ -266,11 +271,11 @@ public class MformPersistenciaXML {
     /** Gera um XML representando as anotações se existirem. */
     public static Optional<MElement> annotationToXml(SInstance instance, String classifier) {
         AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
-        if (annotatedInstance.hasAnnotation()) {
+        if (instance.getDocument().hasAnnotations()) {
             if (classifier != null) {
-                return Optional.of(MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
+                return Optional.of(toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
             } else {
-                return Optional.of((MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotations())));
+                return Optional.of(toXML(annotatedInstance.persistentAnnotations()));
             }
         }
         return Optional.empty();
