@@ -16,7 +16,7 @@
 
 package org.opensingular.form.view;
 
-public class SViewListByMasterDetail extends AbstractSViewListWithCustomColuns<SViewListByMasterDetail> {
+public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail> {
 
     private boolean editEnabled = true;
     private String newActionLabel = "Adicionar";
