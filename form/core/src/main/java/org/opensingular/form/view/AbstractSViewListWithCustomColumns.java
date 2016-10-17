@@ -81,9 +81,6 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * dinamicamente mediante a função informada.
      */
     public final SELF col(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
-        if((type instanceof STypeComposite || type instanceof STypeList) && displayFunction == null && type.asAtr().getDisplayString() == null){
-            throw new SingularFormException("É necessário informar um template ou uma display function para o tipo composto: "+type);
-        }
         columns.add(new Column(type.getName(), customLabel, displayFunction));
         return (SELF) this;
     }
