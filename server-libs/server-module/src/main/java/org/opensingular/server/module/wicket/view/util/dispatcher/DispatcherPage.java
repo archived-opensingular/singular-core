@@ -135,7 +135,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private WebPage retrieveDestination(FormPageConfig config) {
-        if (config.getViewMode().isVisualization() && AnnotationMode.NONE.equals(config.getAnnotationMode())) {
+        if (config.getViewMode().isVisualization() && !AnnotationMode.EDIT.equals(config.getAnnotationMode())) {
             return newVisualizationPage(config);
         } else {
             return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
@@ -144,7 +144,10 @@ public abstract class DispatcherPage extends WebPage {
 
     private WebPage newVisualizationPage(FormPageConfig config) {
 
-        Long formVersionPK = null;
+        Long    formVersionPK;
+        Boolean showAnnotations;
+
+        showAnnotations = config.getAnnotationMode().equals(AnnotationMode.READ_ONLY);
 
         if (config.getFormVersionPK() != null)
         {
@@ -156,9 +159,13 @@ public abstract class DispatcherPage extends WebPage {
             p = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
             formVersionPK = p.getMainForm().getCurrentFormVersionEntity().getCod();
         }
+        else
+        {
+            formVersionPK = null;
+        }
 
         if (formVersionPK != null) {
-            return new ReadOnlyFormPage($m.ofValue(formVersionPK));
+            return new ReadOnlyFormPage($m.ofValue(formVersionPK), $m.ofValue(showAnnotations));
         }
 
         throw new SingularServerException("Não foi possivel identificar qual é o formulario a ser exibido");
