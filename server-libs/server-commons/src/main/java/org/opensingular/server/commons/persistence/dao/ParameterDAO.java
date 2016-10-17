@@ -34,6 +34,7 @@ public class ParameterDAO extends BaseDAO<ParameterEntity, Long> {
     }
 
     public ParameterEntity findByNameAndProcessGroup(String name, IEntityProcessGroup processGroup) {
+        getSession().refresh(processGroup);
         Criteria c = getSession().createCriteria(tipo);
         c.add(Restrictions.eq("name", name));
         c.add(Restrictions.eq("codProcessGroup", processGroup.getCod()));
