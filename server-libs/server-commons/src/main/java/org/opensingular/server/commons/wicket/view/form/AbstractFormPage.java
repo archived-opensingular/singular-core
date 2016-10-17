@@ -47,6 +47,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.server.commons.exception.SingularServerFormValidationError;
 import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
@@ -400,16 +401,22 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         target.appendJavaScript("; window.close();");
     }
 
-    protected boolean onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
+    protected void onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget,
+                                             Form<?> form,
+                                             String transitionName,
+                                             IModel<? extends SInstance> currentInstance)
+            throws SingularServerFormValidationError {
         saveForm(currentInstance, transitionName);
-        return true;
     }
 
-    protected void executeTransition(AjaxRequestTarget ajaxRequestTarget, Form<?> form, String transitionName, IModel<? extends SInstance> currentInstance) {
-        if (onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance)) {
-            petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition);
-            onTransitionExecuted(ajaxRequestTarget, transitionName);
-        }
+    protected void executeTransition(AjaxRequestTarget ajaxRequestTarget,
+                                     Form<?> form,
+                                     String transitionName,
+                                     IModel<? extends SInstance> currentInstance)
+            throws SingularServerFormValidationError {
+        onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance);
+        petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition);
+        onTransitionExecuted(ajaxRequestTarget, transitionName);
     }
 
     protected void onTransition(PetitionEntity pe, String transitionName) {

@@ -20,6 +20,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.server.commons.exception.PetitionConcurrentModificationException;
+import org.opensingular.server.commons.exception.SingularServerFormValidationError;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -53,6 +54,11 @@ public class FlowConfirmButton<T extends PetitionEntity> extends SingularSaveBut
                 | PetitionConcurrentModificationException e) {
             getLogger().error("Erro ao salvar o XML", e);
             formPage.addToastrErrorMessage("message.save.concurrent_error");
+        } catch (SingularServerFormValidationError ex){
+            //Faz hide para executar o script que limpa o backdrop
+            modal.hide(ajaxRequestTarget);
+            formPage.addToastrErrorMessage("message.send.error");
+            modal.show(ajaxRequestTarget);
         }
     }
 
