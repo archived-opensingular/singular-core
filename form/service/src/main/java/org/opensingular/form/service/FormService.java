@@ -134,45 +134,45 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formVersionDAO.saveOrUpdate(formVersionEntity);
         entity.setCurrentFormVersionEntity(formVersionEntity);
         if (keepAnnotations) {
-            saveOrUpdateFormAnnotation(instance, formVersionEntity);
+            saveOrUpdateFormAnnotation(instance, formVersionEntity, inclusionActor);
         }
         formDAO.saveOrUpdate(entity);
     }
 
-    private void saveOrUpdateFormAnnotation(SInstance instance, FormVersionEntity formVersionEntity) {
+    private void saveOrUpdateFormAnnotation(SInstance instance, FormVersionEntity formVersionEntity, Integer inclusionActor) {
         Map<String, String> classifiedAnnotationsXML = extractAnnotations(instance);
         Map<String, FormAnnotationEntity> classifiedAnnotationsEntities = Optional.ofNullable(formVersionEntity.getFormAnnotations())
                 .orElse(new ArrayList<>(0))
                 .stream()
                 .collect(Collectors.toMap(FormAnnotationEntity::getClassifier, f -> f));
         for (Map.Entry<String, String> entry : classifiedAnnotationsXML.entrySet()) {
-            saveOrUpdateFormAnnotation(entry.getKey(), entry.getValue(), formVersionEntity, classifiedAnnotationsEntities.get(entry.getKey()));
+            saveOrUpdateFormAnnotation(entry.getKey(), entry.getValue(), formVersionEntity, classifiedAnnotationsEntities.get(entry.getKey()), inclusionActor);
         }
         formVersionDAO.saveOrUpdate(formVersionEntity);
     }
 
-    private void saveOrUpdateFormAnnotation(String classifier, String xml, FormVersionEntity formVersionEntity, FormAnnotationEntity formAnnotationEntity) {
+    private void saveOrUpdateFormAnnotation(String classifier, String xml, FormVersionEntity formVersionEntity, FormAnnotationEntity formAnnotationEntity, Integer inclusionActor) {
         if (formAnnotationEntity == null) {
-            saveNewFormAnnotation(classifier, xml, formVersionEntity);
+            saveNewFormAnnotation(classifier, xml, formVersionEntity, inclusionActor);
         } else {
             formAnnotationEntity.getAnnotationCurrentVersion().setXml(xml);
         }
     }
 
-    private void saveNewFormAnnotation(String classifier, String xml, FormVersionEntity formVersionEntity) {
+    private void saveNewFormAnnotation(String classifier, String xml, FormVersionEntity formVersionEntity, Integer inclusionActor) {
         FormAnnotationEntity formAnnotationEntity = new FormAnnotationEntity();
         formAnnotationEntity.setCod(new FormAnnotationPK());
         formAnnotationEntity.getCod().setClassifier(classifier);
         formAnnotationEntity.getCod().setFormVersionEntity(formVersionEntity);
         formAnnotationDAO.save(formAnnotationEntity);
-        saveOrUpdateFormAnnotationVersion(xml, formAnnotationEntity, new FormAnnotationVersionEntity());
+        saveOrUpdateFormAnnotationVersion(xml, formAnnotationEntity, new FormAnnotationVersionEntity(), inclusionActor);
         formVersionEntity.getFormAnnotations().add(formAnnotationEntity);
     }
 
-    private void saveOrUpdateFormAnnotationVersion(String xml, FormAnnotationEntity formAnnotationEntity, FormAnnotationVersionEntity formAnnotationVersionEntity) {
+    private void saveOrUpdateFormAnnotationVersion(String xml, FormAnnotationEntity formAnnotationEntity, FormAnnotationVersionEntity formAnnotationVersionEntity, Integer inclusionActor) {
         formAnnotationVersionEntity.setFormAnnotationEntity(formAnnotationEntity);
         formAnnotationVersionEntity.setInclusionDate(formAnnotationVersionEntity.getInclusionDate() == null ? new Date() : formAnnotationVersionEntity.getInclusionDate());
-        formAnnotationVersionEntity.setInclusionActor(1);
+        formAnnotationVersionEntity.setInclusionActor(inclusionActor);
         formAnnotationVersionEntity.setXml(xml);
         formAnnotationVersionDAO.saveOrUpdate(formAnnotationVersionEntity);
         formAnnotationEntity.setAnnotationCurrentVersion(formAnnotationVersionEntity);
