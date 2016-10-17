@@ -8,6 +8,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.SPackageFormPersistence;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
@@ -63,10 +64,17 @@ public class FormPetitionService<P extends PetitionEntity> {
                                     boolean mainForm,
                                     SFormConfig config) {
 
-        final Integer codActor = userService.getUserCodIfAvailable();
-        final FormKey key      = formPersistenceService.insertOrUpdate(instance, codActor);
+        final Integer      codActor;
+        FormKey            key;
+        FormPetitionEntity formPetitionEntity;
 
-        FormPetitionEntity formPetitionEntity = findFormPetitionEntity(petition, instance.getType().getName(), mainForm);
+        codActor = userService.getUserCodIfAvailable();
+        key = instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
+        formPetitionEntity = findFormPetitionEntity(petition, instance.getType().getName(), mainForm);
+
+        if (key == null) {
+            key = formPersistenceService.insert(instance, codActor);
+        }
 
         if (formPetitionEntity == null) {
             formPetitionEntity = newFormPetitionEntity(petition, mainForm);
@@ -78,7 +86,10 @@ public class FormPetitionService<P extends PetitionEntity> {
         } else if (createNewDraftIfDoesntExists) {
             formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, createNewDraftWithoutSave(), config, codActor));
             formPetitionDAO.saveOrUpdate(formPetitionEntity);
+        } else {
+            formPersistenceService.update(instance, codActor);
         }
+
         return key;
     }
 
