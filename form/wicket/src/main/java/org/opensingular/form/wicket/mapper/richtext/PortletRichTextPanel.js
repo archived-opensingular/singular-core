@@ -73,6 +73,7 @@
                     }
                 }
             });
+            nw.CKEDITOR.config.disableNativeSpellChecker = false;
         };
     }
 })('${label}', '${htmlContainer}', '${hiddenInput}', '${html}');
