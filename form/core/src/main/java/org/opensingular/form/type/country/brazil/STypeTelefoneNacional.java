@@ -22,8 +22,12 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 
+import java.util.regex.Pattern;
+
 @SInfoType(name = "TelefoneNacional", spackage = SPackageCountryBrazil.class)
 public class STypeTelefoneNacional extends STypeString {
+
+    private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -31,4 +35,54 @@ public class STypeTelefoneNacional extends STypeString {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.telefoneNacional());
         asAtr().maxLength(15).label("Telefone");
     }
+
+    @Override
+    public String convert(Object valor) {
+        return format(super.convert(valor));
+    }
+
+    public String format(String value) {
+        if (value == null) {
+            return null;
+        }
+        return "(" + extractDDD(value) + ") " + extractNumber(value);
+    }
+
+    String extractDDD(String number) {
+        String unformated;
+        if (number == null) {
+            return null;
+        }
+        unformated = unformat(number);
+        unformated = removeZeroIfNeeded(unformated);
+        return unformated.substring(0, 2);
+    }
+
+    String extractNumber(String value) {
+        String unformated;
+        String number;
+        if (value == null) {
+            return null;
+        }
+        unformated = unformat(value);
+        unformated = removeZeroIfNeeded(unformated);
+        number = unformated.substring(2, unformated.length());
+        number = number.substring(0, number.length() - 4) + "-" + number.substring(number.length() - 4, number.length());
+        return number;
+    }
+
+    private String removeZeroIfNeeded(String unformated) {
+        if (unformated.startsWith("0")) {
+            unformated = unformated.replaceFirst("0", "");
+        }
+        return unformated;
+    }
+
+    String unformat(String formated) {
+        if (formated == null) {
+            return null;
+        }
+        return NOT_NUMBER_PATTERN.matcher(formated).replaceAll("");
+    }
+
 }
