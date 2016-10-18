@@ -174,6 +174,12 @@ public class AtrBasic extends STranslatorForAttribute {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
 
+    /**
+     * Listener é invocado quando o campo do qual o tipo depende
+     * é atualizado ( a dependencia é expressa via depends on)
+     * @param listener
+     * @return
+     */
     public AtrBasic updateListener(IConsumer<SInstance> listener) {
         setAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER, listener);
         return this;

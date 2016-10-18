@@ -523,7 +523,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     /**
      * Listener é invocado quando o campo do qual o tipo depende
-     * é atualizado, via depends on.
+     * é atualizado ( a dependencia é expressa via depends on)
      * @param consumer
      * @return
      */
