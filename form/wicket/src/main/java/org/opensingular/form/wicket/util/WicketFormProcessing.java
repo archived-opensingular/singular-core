@@ -184,11 +184,11 @@ public class WicketFormProcessing implements Loggable {
         return (x) -> i.getType().getDependentTypes().contains(x.getType());
     }
 
-    private static boolean isOrphan(SInstance i){
+    private static boolean isOrphan(SInstance i) {
         return !(i instanceof SIComposite) && i.getParent() == null;
     }
 
-    private static boolean isNotOrphan(SInstance i){
+    private static boolean isNotOrphan(SInstance i) {
         return !isOrphan(i);
     }
 
@@ -199,35 +199,11 @@ public class WicketFormProcessing implements Loggable {
         }
 
         final SInstance fieldInstance = fieldInstanceModel.getObject();
+        final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
 
         evaluateUpdateListeners(fieldInstance);
-
-        ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
         updateAttributes(fieldInstance, eventCollector);
-
-        if (!isSkipValidationOnRequest()) {
-
-            // Validação do valor do componente
-            final InstanceValidationContext validationContext = new InstanceValidationContext();
-            validationContext.validateSingle(fieldInstance);
-
-            // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
-            for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
-                fieldInstance.findNearest(dependentType)
-                        .ifPresent(it -> it.getDocument().clearValidationErrors(it.getId()));
-            }
-
-            WicketBuildContext
-                    .findNearest(formComponent)
-                    .map(WicketBuildContext::getRootContainer)
-                    .ifPresent(nearestContainer -> {
-                        updateValidationFeedbackOnDescendants(
-                                target,
-                                nearestContainer,
-                                fieldInstanceModel,
-                                validationContext.getErrorsByInstanceId());
-                    });
-        }
+        validate(formComponent, target.orElse(null), fieldInstanceModel, fieldInstance);
 
         if (target.isPresent()) {
 
@@ -293,6 +269,41 @@ public class WicketFormProcessing implements Loggable {
                     .findNearest(formComponent)
                     .ifPresent(refreshComponentsInModalConsumer);
 
+        }
+    }
+
+    private static void validate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel, SInstance fieldInstance) {
+        if (!isSkipValidationOnRequest()) {
+
+            final InstanceValidationContext validationContext;
+
+            // Validação do valor do componente
+            validationContext = new InstanceValidationContext();
+            validationContext.validateSingle(fieldInstance);
+
+            // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
+            for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
+                fieldInstance
+                        .findNearest(dependentType)
+                        .ifPresent(it -> {
+                            it.getDocument().clearValidationErrors(it.getId());
+                            //Executa validações que dependem do valor preenchido
+                            if(!it.isEmptyOfData()) {
+                                validationContext.validateSingle(it);
+                            }
+                        });
+            }
+
+            WicketBuildContext
+                    .findNearest(formComponent)
+                    .map(WicketBuildContext::getRootContainer)
+                    .ifPresent(nearestContainer -> {
+                        updateValidationFeedbackOnDescendants(
+                                Optional.ofNullable(target),
+                                nearestContainer,
+                                fieldInstanceModel,
+                                validationContext.getErrorsByInstanceId());
+                    });
         }
     }
 
