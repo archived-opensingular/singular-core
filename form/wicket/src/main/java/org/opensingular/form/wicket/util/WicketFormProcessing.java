@@ -47,6 +47,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
 /*
@@ -173,11 +174,15 @@ public class WicketFormProcessing implements Loggable {
      * @see <a href="https://www.pivotaltracker.com/story/show/131103577">[#131103577]</a>
      */
     private static void evaluateUpdateListeners(SInstance i) {
-        Optional.ofNullable(i.asAtr().getUpdateListener()).ifPresent(x -> x.accept(i));
-        SInstances.streamDescendants(SInstances.getRootInstance(i), true)
+        SInstances
+                .streamDescendants(SInstances.getRootInstance(i), true)
                 .filter(isDependantOf(i))
                 .filter(WicketFormProcessing::isNotOrphan)
-                .forEach(WicketFormProcessing::evaluateUpdateListeners);
+                .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
+                .forEach(dependant -> {
+                    ofNullable(dependant.asAtr().getUpdateListener()).ifPresent(x -> x.accept(dependant));
+                    WicketFormProcessing.evaluateUpdateListeners(dependant);
+                });
     }
 
     private static Predicate<SInstance> isDependantOf(SInstance i) {
@@ -198,7 +203,7 @@ public class WicketFormProcessing implements Loggable {
             return;
         }
 
-        final SInstance fieldInstance = fieldInstanceModel.getObject();
+        final SInstance                         fieldInstance  = fieldInstanceModel.getObject();
         final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
 
         evaluateUpdateListeners(fieldInstance);
@@ -227,16 +232,8 @@ public class WicketFormProcessing implements Loggable {
 
                 final SType<?> type = childInstance.getType();
 
-                if (isDependent.test(type) || isElementsDependent.test(type)) {
-                    final Function<SInstance, String> pathFull = inst -> SInstances
-                            .findAncestor(inst, STypeList.class)
-                            .map(SInstance::getPathFull)
-                            .orElse(null);
-                    final boolean bothInList = Objects.equals(pathFull.apply(childInstance), pathFull.apply(fieldInstance));
-                    return !bothInList || Objects.equals(getIndexesKey(childInstance.getPathFull()), getIndexesKey(fieldInstance.getPathFull()));
-                }
+                return (isDependent.test(type) || isElementsDependent.test(type)) && isNotInListOrIsBothInSameList(fieldInstance, childInstance);
 
-                return false;
             };
 
             final Predicate<SInstance> shouldntGoDepper = i -> !isParentsVisible(i);
@@ -272,6 +269,23 @@ public class WicketFormProcessing implements Loggable {
         }
     }
 
+    private static boolean isNotInListOrIsBothInSameList(SInstance a, SInstance b) {
+        final String pathA = pathFromList(a);
+        final String pathB = pathFromList(b);
+        if (pathA != null && pathB != null && Objects.equals(pathA, pathB)) {
+            return Objects.equals(getIndexesKey(b.getPathFull()), getIndexesKey(a.getPathFull()));
+        }
+        return true;
+    }
+
+    private static String pathFromList(SInstance i) {
+        return SInstances
+                .findAncestor(i, STypeList.class)
+                .map(SInstance::getPathFull)
+                .orElse(null);
+    }
+
+
     private static void validate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel, SInstance fieldInstance) {
         if (!isSkipValidationOnRequest()) {
 
@@ -288,7 +302,7 @@ public class WicketFormProcessing implements Loggable {
                         .ifPresent(it -> {
                             it.getDocument().clearValidationErrors(it.getId());
                             //Executa validações que dependem do valor preenchido
-                            if(!it.isEmptyOfData()) {
+                            if (!it.isEmptyOfData()) {
                                 validationContext.validateSingle(it);
                             }
                         });
@@ -299,7 +313,7 @@ public class WicketFormProcessing implements Loggable {
                     .map(WicketBuildContext::getRootContainer)
                     .ifPresent(nearestContainer -> {
                         updateValidationFeedbackOnDescendants(
-                                Optional.ofNullable(target),
+                                ofNullable(target),
                                 nearestContainer,
                                 fieldInstanceModel,
                                 validationContext.getErrorsByInstanceId());
