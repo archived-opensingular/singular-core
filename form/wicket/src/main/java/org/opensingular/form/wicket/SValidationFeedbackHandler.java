@@ -88,8 +88,8 @@ public class SValidationFeedbackHandler implements Serializable {
         list.add(component);
         WicketUtils.appendListOfParents(list, component, null);
         return list.stream()
-                .filter(it -> isBound(it))
-                .map(it -> get(it))
+                .filter(SValidationFeedbackHandler::isBound)
+                .map(SValidationFeedbackHandler::get)
                 .findFirst();
     }
 
@@ -234,8 +234,8 @@ public class SValidationFeedbackHandler implements Serializable {
                     v.dontGoDeeper();
                 } else {
                     document.getValidationErrors(i.getId()).stream()
-                            .filter(it -> (filter == null) ? true : filter.test(it))
-                            .forEach(it -> result.add(it));
+                            .filter(it -> (filter == null) || filter.test(it))
+                            .forEach(result::add);
                 }
             });
         }
@@ -254,7 +254,7 @@ public class SValidationFeedbackHandler implements Serializable {
                     v.dontGoDeeper();
                 } else {
                     Optional<IValidationError> found = document.getValidationErrors(i.getId()).stream()
-                            .filter(it -> (filter == null) ? true : filter.test(it))
+                            .filter(it -> (filter == null) || filter.test(it))
                             .findAny();
                     if (found.isPresent())
                         v.stop(found.get());
@@ -278,10 +278,9 @@ public class SValidationFeedbackHandler implements Serializable {
                 }
             });
         }
-        final Set<? extends SInstance> lowerBoundInstances = lowerBoundComponents.stream()
+        return lowerBoundComponents.stream()
                 .flatMap(it -> resolveRootInstances(it).stream())
                 .collect(toSet());
-        return lowerBoundInstances;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
