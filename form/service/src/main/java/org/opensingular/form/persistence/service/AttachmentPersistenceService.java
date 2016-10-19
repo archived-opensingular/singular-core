@@ -16,17 +16,15 @@
 
 package org.opensingular.form.persistence.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Blob;
+import java.io.*;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.io.IOUtils;
 import org.hibernate.Hibernate;
 
 import org.opensingular.form.persistence.dao.AttachmentDao;
@@ -95,12 +93,16 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         return entity;
     }
     
-    public Blob loadAttachmentContent(Long codContent) {
+    public void loadAttachmentContent(Long codContent, OutputStream fos) {
         C content = attachmentContentDao.find(codContent);
         if(content == null){
             throw new SingularException("Attachment Content not found id="+codContent);
         }
-        return content.getContent();
+        try(InputStream in = content.getContent().getBinaryStream()){
+            IOUtils.copy(in, fos);
+        } catch (SQLException | IOException e) {
+            throw new SingularException("couldn't copy content to outputstream", e);
+        }
     }
 
 }

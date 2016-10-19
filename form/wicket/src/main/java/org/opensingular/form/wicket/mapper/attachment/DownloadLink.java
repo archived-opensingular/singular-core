@@ -53,9 +53,13 @@ public class DownloadLink extends Link<Void> {
                 jsStringOrNull(model.getObject().getFileName()) +
                 ");" +
                 "return false;"));
-        this.setBody($m.property(model, "fileName"));
+        configureBody();
         add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
         add($b.attr("target", "_blank"));
+    }
+
+    public void configureBody() {
+        this.setBody($m.property(model, "fileName"));
     }
 
     private static String jsStringOrNull(String s) {

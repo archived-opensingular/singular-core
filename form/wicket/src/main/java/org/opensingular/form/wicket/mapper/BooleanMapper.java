@@ -67,7 +67,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         adjustJSEvents(label);
         formGroup.appendCheckbox(input, label);
         input.add(DisabledClassBehavior.getInstance());
-        formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING), IConsumer.noop());
+        formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
         ctx.configure(this, input);
 
         label.add(new ClassAttributeModifier() {
