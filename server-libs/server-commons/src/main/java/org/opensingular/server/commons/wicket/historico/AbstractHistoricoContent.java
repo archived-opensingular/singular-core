@@ -22,7 +22,7 @@ import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.service.PetitionService;
-import org.opensingular.server.commons.util.Parameters;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
@@ -75,9 +75,9 @@ public abstract class AbstractHistoricoContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        petitionPK = getPage().getPageParameters().get(Parameters.PETITION_ID).toLong();
-        instancePK = getPage().getPageParameters().get(Parameters.INSTANCE_ID).toInt();
-        processGroupPK = getPage().getPageParameters().get(Parameters.PROCESS_GROUP_PARAM_NAME).toString();
+        petitionPK = getPage().getPageParameters().get(DispatcherPageParameters.PETITION_ID).toLong();
+        instancePK = getPage().getPageParameters().get(DispatcherPageParameters.INSTANCE_ID).toInt();
+        processGroupPK = getPage().getPageParameters().get(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME).toString();
         queue(setupDataTable(createDataProvider()));
         queue(getBtnCancelar());
     }
@@ -116,7 +116,7 @@ public abstract class AbstractHistoricoContent extends Content {
                         column -> column.appendStaticAction(Model.of("Visualizar"), Icone.EYE, (id, model) -> {
                             final String url = DispatcherPageUtil.baseURL(getBaseUrl())
                                     .formAction(FormActions.FORM_VIEW.getId())
-                                    .formId(null)
+                                    .petitionId(null)
                                     .params(buildViewFormParameters(model))
                                     .build();
                             final WebMarkupContainer link = new WebMarkupContainer(id);
@@ -129,7 +129,7 @@ public abstract class AbstractHistoricoContent extends Content {
 
     protected Map<String, String> buildViewFormParameters(IModel<PetitionContentHistoryEntity> model) {
         final Map<String, String> params = new HashMap<>();
-        params.put(Parameters.FORM_VERSION_KEY, model
+        params.put(DispatcherPageParameters.FORM_VERSION_KEY, model
                 .getObject()
                 .getFormVersionHistoryEntities()
                 .stream()

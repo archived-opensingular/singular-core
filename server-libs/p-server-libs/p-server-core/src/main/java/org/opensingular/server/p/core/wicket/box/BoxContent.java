@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.SIGLA_FORM_NAME;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -63,7 +63,7 @@ import org.opensingular.server.commons.service.dto.ItemActionConfirmation;
 import org.opensingular.server.commons.service.dto.ItemActionType;
 import org.opensingular.server.commons.service.dto.ItemBox;
 import org.opensingular.server.commons.service.dto.ProcessDTO;
-import org.opensingular.server.commons.util.Parameters;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.core.wicket.ModuleLink;
 import org.opensingular.server.core.wicket.historico.HistoricoPage;
@@ -106,8 +106,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 String url = DispatcherPageUtil
                         .baseURL(getBaseUrl())
                         .formAction(FormActions.FORM_FILL.getId())
-                        .formId(null)
-                        .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                        .petitionId(null)
+                        .param(DispatcherPageParameters.SIGLA_FORM_NAME, form.getName())
                         .params(getLinkParams())
                         .build();
 
@@ -169,9 +169,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BoxItemModel   boxItem        = boxItemModel.getObject();
         PageParameters pageParameters = new PageParameters();
         if (boxItem.getProcessInstanceId() != null) {
-            pageParameters.add(Parameters.PETITION_ID, boxItem.getCod());
-            pageParameters.add(Parameters.INSTANCE_ID, boxItem.getProcessInstanceId());
-            pageParameters.add(Parameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
+            pageParameters.add(DispatcherPageParameters.PETITION_ID, boxItem.getCod());
+            pageParameters.add(DispatcherPageParameters.INSTANCE_ID, boxItem.getProcessInstanceId());
+            pageParameters.add(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
         }
         BookmarkablePageLink<?> historiLink = new BookmarkablePageLink<>(id, getHistoricoPage(), pageParameters);
         historiLink.setVisible(boxItem.getProcessBeginDate() != null);
@@ -449,7 +449,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
-                .formId(item.getCod())
+                .petitionId(item.getCod())
                 .param(SIGLA_FORM_NAME, item.get("type"))
                 .params(getCriarLinkParameters(item))
                 .build();

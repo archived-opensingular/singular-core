@@ -50,7 +50,7 @@ import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.service.dto.ProcessDTO;
-import org.opensingular.server.commons.util.Parameters;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
@@ -197,8 +197,8 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl(peticao.getProcessGroupContext()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
                 .formAction(formActions.getId())
-                .formId(peticao.getCodPeticao())
-                .param(Parameters.SIGLA_FORM_NAME, peticao.getType())
+                .petitionId(peticao.getCodPeticao())
+                .param(DispatcherPageParameters.SIGLA_FORM_NAME, peticao.getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("href", href));
@@ -230,7 +230,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
 
     protected WebMarkupContainer criarLinkHistorico(String id, IModel<T> peticao) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.add(Parameters.INSTANCE_ID, peticao.getObject().getProcessInstanceId());
+        pageParameters.add(DispatcherPageParameters.INSTANCE_ID, peticao.getObject().getProcessInstanceId());
 
         return new BookmarkablePageLink<>(id, getHistoricoPage(), pageParameters);
     }

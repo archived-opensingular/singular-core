@@ -16,16 +16,21 @@
 
 package org.opensingular.server.commons.util;
 
-
-public class Parameters {
+/**
+ * Nomes de parametros default a serem utilizados para montar links para a dispatcher page
+ * Preferencialmente utilizar apenas um (1) caracter para idenficar o parâmetro.
+ */
+public class DispatcherPageParameters {
 
     public static final String ACTION = "a";
 
     public static final String PETITION_ID = "k";
 
+    public static final String PARENT_PETITION_ID = "p";
+
     public static final String SIGLA_FORM_NAME = "f";
 
-    public static final String INSTANCE_ID = "instanceId";
+    public static final String INSTANCE_ID = "i";
 
     public static final String PROCESS_GROUP_PARAM_NAME = "ctx";
 

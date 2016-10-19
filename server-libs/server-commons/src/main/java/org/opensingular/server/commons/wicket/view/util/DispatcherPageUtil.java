@@ -31,9 +31,9 @@ public class DispatcherPageUtil {
 
     public static final String DISPATCHER_PAGE_PATH = "/";
     public static final String ACTION_ID = "a";
-    public static final String FORM_ID = "k";
-    private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherPageUtil.class);
-    private static final String ENCODING = "UTF-8";
+    public static final String  PETITION_ID = "k";
+    private static final Logger LOGGER      = LoggerFactory.getLogger(DispatcherPageUtil.class);
+    private static final String ENCODING    = "UTF-8";
 
     private String url;
 
@@ -67,9 +67,9 @@ public class DispatcherPageUtil {
             this.url = url;
         }
 
-        public DispatcherPageUrlAdditionalParamsBuilder formId(Object formId) {
+        public DispatcherPageUrlAdditionalParamsBuilder petitionId(Object formId) {
             if (!StringUtils.isEmpty(formId)) {
-                return new DispatcherPageUrlAdditionalParamsBuilder(this.url + "&" + FORM_ID + "=" + encodeParameter(formId));
+                return new DispatcherPageUrlAdditionalParamsBuilder(this.url + "&" + PETITION_ID + "=" + encodeParameter(formId));
             }
             return new DispatcherPageUrlAdditionalParamsBuilder(this.url);
         }

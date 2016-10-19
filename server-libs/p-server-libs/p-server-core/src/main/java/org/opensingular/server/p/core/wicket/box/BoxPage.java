@@ -16,7 +16,7 @@
 
 package org.opensingular.server.p.core.wicket.box;
 
-import static org.opensingular.server.commons.util.Parameters.*;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -38,7 +38,7 @@ import org.apache.wicket.model.IModel;
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.SIGLA_FORM_NAME;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -110,7 +110,7 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         String href = DispatcherPageUtil.
                 baseURL(getBaseUrl())
                 .formAction(FormActions.FORM_FILL_WITH_ANALYSIS.getId())
-                .formId(peticaoModel.getObject().getCodPeticao())
+                .petitionId(peticaoModel.getObject().getCodPeticao())
                 .param(SIGLA_FORM_NAME, peticaoModel.getObject().getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);

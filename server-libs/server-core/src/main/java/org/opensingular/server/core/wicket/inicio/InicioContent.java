@@ -36,7 +36,7 @@ import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.service.dto.MenuGroup;
-import org.opensingular.server.commons.util.Parameters;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.core.wicket.ModuleLink;
 import org.opensingular.server.core.wicket.historico.HistoricoPage;
@@ -130,16 +130,16 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
                         String processUrl = DispatcherPageUtil
                             .baseURL(getBaseUrl(moduleContext))
                             .formAction(FormActions.FORM_FILL.getId())
-                            .formId(null)
-                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                            .petitionId(null)
+                            .param(DispatcherPageParameters.SIGLA_FORM_NAME, form.getName())
                             .build();
                         dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(form.getName()), processUrl));
                     } else {
                         String url = DispatcherPageUtil
                             .baseURL(getBaseUrl(moduleContext))
                             .formAction(FormActions.FORM_FILL.getId())
-                            .formId(null)
-                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                            .petitionId(null)
+                            .param(DispatcherPageParameters.SIGLA_FORM_NAME, form.getName())
                             .build();
                         adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                     }

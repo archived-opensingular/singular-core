@@ -17,7 +17,7 @@
 package org.opensingular.server.commons.wicket.view.template;
 
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static org.opensingular.server.commons.util.Parameters.*;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

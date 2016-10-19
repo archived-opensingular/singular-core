@@ -62,7 +62,7 @@ import static org.opensingular.lib.support.persistence.enums.SimNao.SIM;
 import static org.opensingular.server.commons.flow.action.DefaultActions.*;
 import static org.opensingular.server.commons.flow.rest.DefaultServerREST.DELETE;
 import static org.opensingular.server.commons.flow.rest.DefaultServerREST.PATH_BOX_ACTION;
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.SIGLA_FORM_NAME;
 
 @Transactional
 public class PetitionService<P extends PetitionEntity> implements Loggable {
@@ -176,7 +176,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         String endpoint = DispatcherPageUtil
                 .baseURL("")
                 .formAction(formAction.getId())
-                .formId(cod)
+                .petitionId(cod)
                 .param(SIGLA_FORM_NAME, type)
                 .build();
 

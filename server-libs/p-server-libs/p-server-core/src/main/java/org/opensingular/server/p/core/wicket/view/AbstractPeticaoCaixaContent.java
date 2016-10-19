@@ -16,7 +16,7 @@
 
 package org.opensingular.server.p.core.wicket.view;
 
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.SIGLA_FORM_NAME;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
-                .formId(peticao.getCodPeticao())
+                .petitionId(peticao.getCodPeticao())
                 .params(getCriarLinkParameters(peticao))
                 .build();
 

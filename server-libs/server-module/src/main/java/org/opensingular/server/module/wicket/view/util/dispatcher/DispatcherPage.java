@@ -67,7 +67,7 @@ import javax.inject.Named;
 import java.lang.reflect.Constructor;
 import java.util.Optional;
 
-import static org.opensingular.server.commons.util.Parameters.*;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
