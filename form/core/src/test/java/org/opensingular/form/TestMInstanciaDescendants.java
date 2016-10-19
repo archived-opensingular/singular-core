@@ -35,15 +35,18 @@ public class TestMInstanciaDescendants extends TestCaseForm {
         endereco.getDescendant(pacote.enderecoEstado).setValue("DF");
 
         SIList<SIString> telefones = contato.getDescendant(pacote.telefones);
-        telefones.addValue("8888-8888");
-        telefones.addValue("9999-8888");
-        telefones.addValue("9999-9999");
+        telefones.addValue("(61) 8888-8888");
+        telefones.addValue("(61) 9999-8888");
+        telefones.addValue("(61) 9999-9999");
 
         SIList<SIString> emails = contato.getDescendant(pacote.emails);
         emails.addValue("fulano@detal.com");
 
         Assert.assertEquals(
-            Arrays.asList("8888-8888", "9999-8888", "9999-9999"),
+            Arrays.asList(
+                    "(61) 8888-8888",
+                    "(61) 9999-8888",
+                    "(61) 9999-9999"),
             contato.listDescendantValues(pacote.telefones.getElementsType(), String.class));
     }
 

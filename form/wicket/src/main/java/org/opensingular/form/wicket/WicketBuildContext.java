@@ -321,7 +321,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
-        return createFeedbackCompactPanel(id, feedback -> ISValidationFeedbackHandlerListener.refresh(feedback));
+        return createFeedbackCompactPanel(id, ISValidationFeedbackHandlerListener::refresh);
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {

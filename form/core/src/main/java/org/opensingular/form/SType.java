@@ -524,8 +524,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     /**
      * Listener é invocado quando o campo do qual o tipo depende
      * é atualizado ( a dependencia é expressa via depends on)
-     * @param consumer
-     * @return
      */
     public SType<I> withUpdateListener(IConsumer<I> consumer) {
         asAtr().setAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER, consumer);
