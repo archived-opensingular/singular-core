@@ -71,24 +71,20 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
-
-    @Inject
-    protected PetitionService<T> petitionService;
-
-    @Inject
-    protected IFormService formService;
-
-    @Inject
-    protected FormPetitionService<T> formPetitionService;
-
-    @Inject
-    @Named("formConfigWithDatabase")
-    protected SFormConfig<String> singularFormConfig;
-
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
     protected final IModel<T>           currentModel;
     protected final IModel<FormKey>     formModel;
+    protected final IModel<FormKey>     parentPetitionformModel;
+    @Inject
+    protected PetitionService<T> petitionService;
+    @Inject
+    protected IFormService formService;
+    @Inject
+    protected FormPetitionService<T> formPetitionService;
+    @Inject
+    @Named("formConfigWithDatabase")
+    protected SFormConfig<String> singularFormConfig;
     protected       AbstractFormContent content;
 
     public AbstractFormPage(Class<T> petitionClass, FormPageConfig config) {
@@ -99,6 +95,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         this.config = Objects.requireNonNull(config);
         this.currentModel = $m.ofValue();
         this.formModel = $m.ofValue();
+        this.parentPetitionformModel = $m.ofValue();
         Objects.requireNonNull(getFormType(config));
     }
 
@@ -110,19 +107,30 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Override
     protected void onInitialize() {
         final T petition;
-        if (StringUtils.isBlank(config.getPetitionId())) {
-            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
-        } else {
+        if (StringUtils.isNotBlank(config.getPetitionId())) {
             petition = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
+            if (petition != null && petition.getCod() != null) {
+                final FormEntity formEntityDraftOrPetition = getDraftOrFormEntity(petition);
+                if (formEntityDraftOrPetition != null) {
+                    formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
+                }
+            }
+        } else {
+            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
         }
-        if (petition.getCod() != null) {
-            final FormEntity formEntityDraftOrPetition = getDraftOrFormEntity(petition);
-            if (formEntityDraftOrPetition != null) {
-                formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
+        /* carrega a chave do form da petição pai para posterior clonagem */
+        if (StringUtils.isNotBlank(config.getParentPetitionId())) {
+            T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
+            if (parentPetition != null && parentPetition.getMainForm() != null){
+                parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
             }
         }
         currentModel.setObject(petition);
         super.onInitialize();
+    }
+
+    private void loadLastFormKey(T petition, IModel<FormKey> targetModel) {
+
     }
 
     private FormEntity getDraftOrFormEntity(T petition) {
@@ -297,7 +305,12 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected final SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
         if (formModel.getObject() == null) {
-            return documentFactory.createInstance(refType);
+            /* clonagem do ultimo formulário da petição */
+            if (parentPetitionformModel.getObject() != null) {
+                return formService.newTransientSInstance(parentPetitionformModel.getObject(), refType, documentFactory);
+            } else {
+                return documentFactory.createInstance(refType);
+            }
         } else {
             return formService.loadSInstance(formModel.getObject(), refType, documentFactory);
         }
@@ -454,7 +467,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                                  String transitionName,
                                  BSModalBorder confirmarAcaoFlowModal) {
         final TemplatePanel tp = buttonContainer.newTemplateTag(tt ->
-                "<button  type='submit' class='btn' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n"
+                        "<button  type='submit' class='btn' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n"
         );
         final SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
             @Override
@@ -525,6 +538,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 .orElse(null);
     }
 
+    /**
+     * @return
+     * @deprecated prq esse método está na estrutura base? Todas as petições terão listas de acompanhamento?
+     */
+    @Deprecated
     public String getUrlPathAcompanhamento() {
         return URL_PATH_ACOMPANHAMENTO;
     }

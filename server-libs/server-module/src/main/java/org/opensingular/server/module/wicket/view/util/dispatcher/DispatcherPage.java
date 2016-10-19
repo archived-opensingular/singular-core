@@ -34,7 +34,6 @@ import org.opensingular.flow.core.ITaskPageStrategy;
 import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.MTaskUserExecutable;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -153,18 +152,13 @@ public abstract class DispatcherPage extends WebPage {
 
         showAnnotations = config.getAnnotationMode().equals(AnnotationMode.READ_ONLY);
 
-        if (config.getFormVersionPK() != null)
-        {
+        if (config.getFormVersionPK() != null) {
             formVersionPK = config.getFormVersionPK();
-        }
-        else if (config.getPetitionId() != null)
-        {
+        } else if (config.getPetitionId() != null) {
             PetitionEntity p;
             p = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
             formVersionPK = p.getMainForm().getCurrentFormVersionEntity().getCod();
-        }
-        else
-        {
+        } else {
             formVersionPK = null;
         }
 
@@ -208,11 +202,6 @@ public abstract class DispatcherPage extends WebPage {
             petitionId = null;
         }
         return authorizationService.hasPermission(petitionId, config.getFormType(), String.valueOf(userDetails.getUserPermissionKey()), config.getFormAction().name());
-    }
-
-
-    private SType<?> loadType(FormPageConfig cfg) {
-        return singularFormConfig.getTypeLoader().loadTypeOrException(cfg.getFormType());
     }
 
     private String loadTypeNameFormFormVersionPK(Long formVersionPK) {
