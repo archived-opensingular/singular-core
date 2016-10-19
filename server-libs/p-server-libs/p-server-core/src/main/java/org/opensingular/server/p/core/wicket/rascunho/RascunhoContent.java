@@ -101,7 +101,7 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
                             .petitionId(null)
-                            .param(DispatcherPageParameters.SIGLA_FORM_NAME, form.getName())
+                            .param(DispatcherPageParameters.FORM_NAME, form.getName())
                             .build();
                     dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(form.getDescription()), processUrl));
                 } else {
@@ -109,7 +109,7 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
                             .petitionId(null)
-                            .param(DispatcherPageParameters.SIGLA_FORM_NAME, form.getName())
+                            .param(DispatcherPageParameters.FORM_NAME, form.getName())
                             .build();
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                 }

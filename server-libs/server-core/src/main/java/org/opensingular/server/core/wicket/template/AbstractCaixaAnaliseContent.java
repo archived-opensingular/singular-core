@@ -198,7 +198,7 @@ public abstract class AbstractCaixaAnaliseContent<T extends TaskInstanceDTO> ext
                 .baseURL(getBaseUrl(peticao.getProcessGroupContext()) + DispatcherPageUtil.DISPATCHER_PAGE_PATH)
                 .formAction(formActions.getId())
                 .petitionId(peticao.getCodPeticao())
-                .param(DispatcherPageParameters.SIGLA_FORM_NAME, peticao.getType())
+                .param(DispatcherPageParameters.FORM_NAME, peticao.getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("href", href));

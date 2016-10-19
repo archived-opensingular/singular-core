@@ -28,7 +28,7 @@ public class DispatcherPageParameters {
 
     public static final String PARENT_PETITION_ID = "p";
 
-    public static final String SIGLA_FORM_NAME = "f";
+    public static final String FORM_NAME = "f";
 
     public static final String INSTANCE_ID = "i";
 

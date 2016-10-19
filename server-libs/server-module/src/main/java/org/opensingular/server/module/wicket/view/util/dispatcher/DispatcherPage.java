@@ -16,6 +16,19 @@
 
 package org.opensingular.server.module.wicket.view.util.dispatcher;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ITaskPageStrategy;
 import org.opensingular.flow.core.MTask;
@@ -45,19 +58,6 @@ import org.opensingular.server.commons.wicket.view.form.ReadOnlyFormPage;
 import org.opensingular.server.commons.wicket.view.template.Template;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.module.wicket.view.util.form.FormPage;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
@@ -67,9 +67,13 @@ import javax.inject.Named;
 import java.lang.reflect.Constructor;
 import java.util.Optional;
 
-import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.ACTION;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_VERSION_KEY;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.PARENT_PETITION_ID;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.PETITION_ID;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -254,10 +258,11 @@ public abstract class DispatcherPage extends WebPage {
 
     protected FormPageConfig parseParameters(Request r) {
 
-        final StringValue action        = getParam(r, ACTION);
-        final StringValue petitionId    = getParam(r, PETITION_ID);
-        final StringValue formVersionPK = getParam(r, FORM_VERSION_KEY);
-        final StringValue formName      = getParam(r, SIGLA_FORM_NAME);
+        final StringValue action           = getParam(r, ACTION);
+        final StringValue petitionId       = getParam(r, PETITION_ID);
+        final StringValue formVersionPK    = getParam(r, FORM_VERSION_KEY);
+        final StringValue formName         = getParam(r, FORM_NAME);
+        final StringValue parentPetitionId = getParam(r, PARENT_PETITION_ID);
 
         if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
@@ -276,7 +281,7 @@ public abstract class DispatcherPage extends WebPage {
             fn = loadTypeNameFormFormVersionPK(fvk);
         }
 
-        final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk);
+        final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk, parentPetitionId.toOptionalString());
 
         if (cfg != null) {
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
@@ -289,7 +294,7 @@ public abstract class DispatcherPage extends WebPage {
 
     }
 
-    protected abstract FormPageConfig buildConfig(Request r, String petitionId, FormActions formAction, String formType, Long fvk);
+    protected abstract FormPageConfig buildConfig(Request r, String petitionId, FormActions formAction, String formType, Long formVersionKey, String parentPetitionId);
 
     /**
      * Possibilita execução de qualquer ação antes de fazer o dispatch

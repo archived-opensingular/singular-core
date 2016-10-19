@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.SIGLA_FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -107,7 +107,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                         .baseURL(getBaseUrl())
                         .formAction(FormActions.FORM_FILL.getId())
                         .petitionId(null)
-                        .param(DispatcherPageParameters.SIGLA_FORM_NAME, form.getName())
+                        .param(DispatcherPageParameters.FORM_NAME, form.getName())
                         .params(getLinkParams())
                         .build();
 
@@ -450,7 +450,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
                 .petitionId(item.getCod())
-                .param(SIGLA_FORM_NAME, item.get("type"))
+                .param(FORM_NAME, item.get("type"))
                 .params(getCriarLinkParameters(item))
                 .build();
 
