@@ -31,8 +31,48 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 //TODO deveria extender FormPersistence e AnnotationPersistence
 public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnnotationPersistence {
 
+    /**
+     * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco {@param key}.
+     * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
+     * versão.
+     * @param key
+     * @param refType
+     * @param documentFactory
+     * @return
+     */
+    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
+
+    /**
+     * Carrega uma nova SInstance a partir de uma versão {@param versionId} de um formulário salvo em banco {@param key}.
+     * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
+     * versão.
+     * @param key
+     * @param refType
+     * @param documentFactory
+     * @return
+     */
+    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId);
+
+    /**
+     * Carrega uma SInstance a partir da última versão de um formulário salvo em banco.
+     * Essa SInstance é capaz de ser novamente salva em banco pois mantém
+     * a rastreabilidade com seu registro em banco através do Atributo FormKey
+     * @param key
+     * @param refType
+     * @param documentFactory
+     * @return
+     */
     SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
 
+    /**
+     * Carrega uma SInstance a partir de uma  versão {@param versionId} de um formulário salvo em banco {@param key}.
+     * Essa SInstance é capaz de ser novamente salva em banco pois mantém
+     * a rastreabilidade com seu registro em banco através do Atributo FormKey
+     * @param key
+     * @param refType
+     * @param documentFactory
+     * @return
+     */
     SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId);
 
     FormEntity loadFormEntity(FormKey key);
