@@ -44,7 +44,7 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
     public Date fromString(String value) {
         if (Strings.isNullOrEmpty(value)) return null;
         try {
-            return isoFormarter().parseDateTime(value).toDate();
+            return isoFormarter().parseLocalDate(value).toDate();
         } catch (Exception e) {
             try{
                 return latinFormatter().parse(value);
