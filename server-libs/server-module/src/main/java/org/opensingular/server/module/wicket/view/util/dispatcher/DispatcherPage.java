@@ -103,9 +103,9 @@ public abstract class DispatcherPage extends WebPage {
     private void initPage() {
         getApplication().setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
         bodyContainer
-                .add(new HeaderResponseContainer("scripts", "scripts"));
+                .add(new HeaderResponseContainer("scripts", "scripts"))
+                .add(new SingularJSBehavior());
         add(bodyContainer);
-        add(new SingularJSBehavior());
     }
 
     @Override

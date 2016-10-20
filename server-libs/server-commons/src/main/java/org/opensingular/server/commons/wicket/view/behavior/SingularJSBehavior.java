@@ -33,10 +33,9 @@ public class SingularJSBehavior extends AbstractDefaultAjaxBehavior {
                         + "     if (Singular && Singular.atualizarContadores) {"
                         + "           Singular.atualizarContadores(); "
                         + "       }    "
-                        + "     Wicket.Ajax.get({u: '%s' }); "
+                        + getCallbackScript(getComponent())
                         + " }; ";
-
-        response.render(OnDomReadyHeaderItem.forScript(String.format(js, getCallbackUrl())));
+        response.render(OnDomReadyHeaderItem.forScript(js));
     }
 
     @Override
