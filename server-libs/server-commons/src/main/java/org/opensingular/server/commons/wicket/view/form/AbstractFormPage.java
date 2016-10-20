@@ -303,7 +303,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return instance.toStringDisplay();
     }
 
-    protected final SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
+    protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
         if (formModel.getObject() == null) {
             /* clonagem do ultimo formulário da petição */
             if (parentPetitionformModel.getObject() != null) {
@@ -400,11 +400,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected void send(IModel<? extends SInstance> currentInstance, AjaxRequestTarget target, BSModalBorder enviarModal) {
         if (onBeforeSend(currentInstance)) {
             petitionService.send(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), SingularSession.get().getUsername(), singularFormConfig);
-            onSended(target, enviarModal);
+            onAfterSend(target, enviarModal);
         }
     }
 
-    protected void onSended(AjaxRequestTarget target, BSModalBorder enviarModal) {
+    protected void onAfterSend(AjaxRequestTarget target, BSModalBorder enviarModal) {
         atualizarContentWorklist(target);
         if (getIdentifier() == null) {
             addToastrSuccessMessageWorklist("message.send.success", getUrlPathAcompanhamento());
