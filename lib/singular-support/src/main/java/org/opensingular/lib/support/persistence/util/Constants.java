@@ -19,5 +19,5 @@ package org.opensingular.lib.support.persistence.util;
 public interface Constants {
 
     String SCHEMA = "DBSINGULAR";
-    String PPSTOX = "DBPPSTOX";
+
 }

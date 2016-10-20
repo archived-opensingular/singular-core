@@ -73,7 +73,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
         } else if (valueClass.isInstance(value)) {
             return valueClass.cast(value);
         } else if (value instanceof String) {
-            return fromString((String) value);
+             return fromString((String) value);
         }
         return convertNotNativeNotString(value);
     }
