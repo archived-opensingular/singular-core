@@ -31,19 +31,19 @@ import javax.persistence.*;
 import java.util.Optional;
 
 @Entity
-@Table(schema = Constants.SCHEMA, name = "TB_FORMULARIO_PETICAO")
+@Table(schema = Constants.SCHEMA, name = "TB_FORMULARIO_REQUISICAO")
 @GenericGenerator(name = FormPetitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 public class FormPetitionEntity extends BaseEntity<Long> implements Comparable<FormPetitionEntity> {
 
-    public static final String PK_GENERATOR_NAME = "GENERATED_CO_FORMULARIO_PETICAO";
+    public static final String PK_GENERATOR_NAME = "GENERATED_CO_FORMULARIO_REQUISICAO";
 
     @Id
-    @Column(name = "CO_FORMULARIO_PETICAO")
+    @Column(name = "CO_FORMULARIO_REQUISICAO")
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 
     @ManyToOne
-    @JoinColumn(name = "CO_PETICAO")
+    @JoinColumn(name = "CO_REQUISICAO")
     private PetitionEntity petition;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
