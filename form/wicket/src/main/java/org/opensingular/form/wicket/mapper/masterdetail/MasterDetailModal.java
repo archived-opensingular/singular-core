@@ -207,4 +207,10 @@ class MasterDetailModal extends BFModalWindow {
         this.onHideCallback = onHideCallback;
         return this;
     }
+
+    @Override
+    public boolean isWithAutoFocus() {
+        return viewMode == null || viewMode.isEdition();
+    }
+
 }

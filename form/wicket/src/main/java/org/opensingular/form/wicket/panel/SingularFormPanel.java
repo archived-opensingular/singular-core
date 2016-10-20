@@ -150,7 +150,9 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
-        response.render(OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
+        if(viewMode.isEdition()) {
+            response.render(OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
+        }
     }
 
     /**
