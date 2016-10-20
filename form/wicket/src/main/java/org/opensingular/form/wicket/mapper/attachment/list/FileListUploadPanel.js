@@ -205,7 +205,7 @@
             
             if (allowed_file_types && allowed_file_types.length > 0) {
             	var file = data.files[0];
-            	var extension 		 = file.name.substring(file.name.lastIndexOf("/") + 1);
+            	var extension 		 = file.name.substring(file.name.lastIndexOf(".") + 1);
             	var invalidType 	 = (jQuery.inArray(file.type, allowed_file_types) < 0);
             	var invalidExtension = (jQuery.inArray(extension, allowed_file_types) < 0);
 	        	if (invalidType && invalidExtension) {
