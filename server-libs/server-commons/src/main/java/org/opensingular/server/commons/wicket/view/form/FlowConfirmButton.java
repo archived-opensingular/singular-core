@@ -50,16 +50,17 @@ public class FlowConfirmButton<T extends PetitionEntity> extends SingularSaveBut
     protected void onValidationSuccess(AjaxRequestTarget ajaxRequestTarget, Form<?> form, IModel<? extends SInstance> model) {
         try {
             formPage.executeTransition(ajaxRequestTarget, form, transitionName, model);
-        } catch (HibernateOptimisticLockingFailureException
-                | PetitionConcurrentModificationException e) {
-            getLogger().error("Erro ao salvar o XML", e);
-            formPage.addToastrErrorMessage("message.save.concurrent_error");
+        } catch (HibernateOptimisticLockingFailureException | PetitionConcurrentModificationException e) {
+            configureBackDropAndShowError(ajaxRequestTarget, "message.save.concurrent_error");
         } catch (SingularServerFormValidationError ex){
-            //Faz hide para executar o script que limpa o backdrop
-            modal.hide(ajaxRequestTarget);
-            formPage.addToastrErrorMessage("message.send.error");
-            modal.show(ajaxRequestTarget);
+            configureBackDropAndShowError(ajaxRequestTarget, "message.send.error");
         }
+    }
+
+    private void configureBackDropAndShowError(AjaxRequestTarget ajaxRequestTarget, String messageKey) {
+        modal.hide(ajaxRequestTarget);
+        formPage.addToastrErrorMessage(messageKey);
+        modal.show(ajaxRequestTarget);
     }
 
     @Override

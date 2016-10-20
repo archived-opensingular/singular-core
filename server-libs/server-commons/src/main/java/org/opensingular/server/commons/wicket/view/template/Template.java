@@ -51,6 +51,7 @@ public abstract class Template extends SingularTemplate {
         super.onInitialize();
 
         add(new WebMarkupContainer("pageBody")
+                .add(new SingularJSBehavior())
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
 //        queue(new HeaderResponseContainer("css", "css"));
         queue(configureHeader("_Header"));
@@ -62,7 +63,6 @@ public abstract class Template extends SingularTemplate {
         queue(configureContent("_Content"));
         queue(new Footer("_Footer"));
 
-        add(new SingularJSBehavior());
     }
 
     protected WebMarkupContainer configureMenu(String id) {
