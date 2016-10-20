@@ -214,7 +214,7 @@
                 <skipTests>false</skipTests>
             </properties>
         </profile>
-    </profiles>alter
+    </profiles>
 
     <properties>
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
