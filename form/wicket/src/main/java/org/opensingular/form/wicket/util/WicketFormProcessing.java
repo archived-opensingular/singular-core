@@ -46,6 +46,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
@@ -310,13 +311,22 @@ public class WicketFormProcessing implements Loggable {
 
             WicketBuildContext
                     .findNearest(formComponent)
-                    .map(WicketBuildContext::getRootContainer)
-                    .ifPresent(nearestContainer -> {
-                        updateValidationFeedbackOnDescendants(
-                                ofNullable(target),
-                                nearestContainer,
-                                fieldInstanceModel,
-                                validationContext.getErrorsByInstanceId());
+                    .flatMap(ctx -> Optional.of(ctx.streamParentContexts()))
+                    .flatMap(contexts -> {
+                        Stream.Builder<MarkupContainer> b = Stream.builder();
+                        contexts.forEach(ctx -> {
+                            b.add(ctx.getRootContainer()).add(ctx.getExternalContainer());
+                        });
+                        return Optional.of(b.build());
+                    })
+                    .ifPresent(containers -> {
+                        containers.forEach(container -> {
+                            updateValidationFeedbackOnDescendants(
+                                    ofNullable(target),
+                                    container,
+                                    fieldInstanceModel,
+                                    validationContext.getErrorsByInstanceId());
+                        });
                     });
         }
     }
