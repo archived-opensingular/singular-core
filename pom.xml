@@ -217,9 +217,9 @@
     </profiles>
 
     <properties>
-        <project.scm.url>http://10.0.0.22/r/MIRANTE/singular.git</project.scm.url>
-        <project.scm.connection>scm:git:http://10.0.0.22/r/MIRANTE/singular.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:http://10.0.0.22/r/MIRANTE/singular.git</project.scm.developerConnection>
+        <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
+        <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.connection>
+        <project.scm.developerConnection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.exclusions>**/*.js, **/*.css</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
