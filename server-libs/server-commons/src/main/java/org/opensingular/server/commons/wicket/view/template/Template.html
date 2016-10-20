@@ -39,8 +39,6 @@
             var blockImmediately = $('#'+attrs.c).is('button,input[type=button],input[type=submit],a,i');
             var showLoading = enableAJAXPageBlock;
 
-            console.log(blockImmediately);
-
             if(attrs && attrs['ep']){
                 $.each(attrs['ep'], function(i,v){ //console.log("v",v);
                     if(v["name"] == "forceDisableAJAXPageBlock"){
