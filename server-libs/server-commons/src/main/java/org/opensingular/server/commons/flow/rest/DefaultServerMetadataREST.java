@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.opensingular.form.SInfoType;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -113,11 +114,14 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     protected void addForms(MenuGroup menuGroup) {
         for (Class<? extends SType<?>> formClass : singularServerConfiguration.getFormTypes()) {
-            String name = SFormUtil.getTypeName(formClass);
-            SType<?> sType = singularFormConfig.getTypeLoader().loadType(name).get();
-            Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
-            String label = sType.asAtr().getLabel();
-            menuGroup.getForms().add(new FormDTO(name, SFormUtil.getTypeSimpleName(sTypeClass), label));
+            SInfoType                 annotation = formClass.getAnnotation(SInfoType.class);
+            if (annotation.newable()) {
+                String                    name       = SFormUtil.getTypeName(formClass);
+                SType<?>                  sType      = singularFormConfig.getTypeLoader().loadType(name).get();
+                Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
+                String                    label      = sType.asAtr().getLabel();
+                menuGroup.getForms().add(new FormDTO(name, SFormUtil.getTypeSimpleName(sTypeClass), label));
+            }
         }
     }
 
