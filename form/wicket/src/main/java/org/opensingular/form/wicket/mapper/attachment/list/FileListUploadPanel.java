@@ -117,6 +117,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
             .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
             .add($b.visibleIf(() -> ctx.getViewMode().isEdition())));
 
+        add(ctx.createFeedbackCompactPanel("feedback"));
         add(new WebMarkupContainer("empty-box")
             .add(new WebMarkupContainer("select-file-link")
                 .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))

@@ -53,7 +53,11 @@
                     'upload_id' : params.upload_id,
                 },
                 add: function(e,data) {
-                    if (!FileUploadPanel.validateInputFile(e, data, params.max_file_size)) {
+                    if (!FileUploadPanel.validateInputFile(
+                    		e,
+                    		data,
+                    		params.max_file_size,
+                    		params.allowed_file_types)) {
                         return false;
                     }
                     if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
@@ -119,12 +123,30 @@
 
         // Legacy for multple files
 
-        window.FileUploadPanel.validateInputFile = function(e, data, maxSize){
-            if ( maxSize && data.files[0].size  > maxSize) {
-                toastr.error("Arquivo não pode ser maior que "+FileUploadPanel.humaneSize(maxSize));
+        window.FileUploadPanel.validateInputFile = function (e, data, maxSize, allowed_file_types) {
+            if (data.files[0].size == 0) {
+            	toastr.error("Arquivo não pode ser de tamanho 0 (zero)");
                 FileUploadPanel.resetFormElement(e);
                 return false;
             }
+            
+            if (maxSize && data.files[0].size > maxSize) {
+            	toastr.error("Arquivo não pode ser maior que " + FileUploadPanel.humaneSize(maxSize));
+            	FileUploadPanel.resetFormElement(e);
+            	return false;
+            }
+            
+            if (allowed_file_types && allowed_file_types.length > 0) {
+            	var file = data.files[0];
+            	var extension 		 = file.name.substring(file.name.lastIndexOf(".") + 1);
+            	var invalidType 	 = (jQuery.inArray(file.type, allowed_file_types) < 0);
+            	var invalidExtension = (jQuery.inArray(extension, allowed_file_types) < 0);
+	        	if (invalidType && invalidExtension) {
+	        		toastr.error("Tipo de arquivo não permitido");
+	        		FileUploadPanel.resetFormElement(e);
+	        		return false;
+	        	}
+        	}
             return true;
         };
 
