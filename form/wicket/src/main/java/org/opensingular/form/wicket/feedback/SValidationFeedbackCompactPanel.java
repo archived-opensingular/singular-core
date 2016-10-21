@@ -16,37 +16,32 @@
 
 package org.opensingular.form.wicket.feedback;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.StyleAttributeModifier;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.StyleAttributeModifier;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.IFeedback;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.joining;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-import static java.util.stream.Collectors.joining;
 
-public class SValidationFeedbackCompactPanel extends Panel implements IFeedback {
-
-    private final Component fence;
+public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedbackPanel {
 
     public SValidationFeedbackCompactPanel(String id, Component fence) {
-        super(id);
-        this.fence = fence;
+        super(id, fence);
 
         add($b.classAppender("singular-validation-feedback-compact-panel"));
 
@@ -153,7 +148,4 @@ public class SValidationFeedbackCompactPanel extends Panel implements IFeedback 
         return SValidationFeedbackHandler.get(getFence());
     }
 
-    public Component getFence() {
-        return fence;
-    }
 }

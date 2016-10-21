@@ -311,19 +311,13 @@ public class WicketFormProcessing implements Loggable {
 
             WicketBuildContext
                     .findNearest(component)
-                    .flatMap(ctx -> Optional.of(ctx.streamParentContexts()))
-                    .flatMap(contexts -> {
-                        Stream.Builder<MarkupContainer> b = Stream.builder();
-                        contexts.forEach(ctx -> {
-                            b.add(ctx.getRootContainer()).add(ctx.getExternalContainer());
-                        });
-                        return Optional.of(b.build());
-                    })
+                    .flatMap(ctx -> Optional.of(ctx.getRootContext()))
+                    .flatMap(ctx -> Optional.of(Stream.builder().add(ctx.getRootContainer()).add(ctx.getExternalContainer()).build()))
                     .ifPresent(containers -> {
                         containers.forEach(container -> {
                             updateValidationFeedbackOnDescendants(
                                     ofNullable(target),
-                                    container,
+                                    (MarkupContainer) container,
                                     fieldInstanceModel,
                                     validationContext.getErrorsByInstanceId());
                         });
