@@ -16,17 +16,6 @@
 
 package org.opensingular.form.wicket.util;
 
-import org.opensingular.form.*;
-import org.opensingular.form.wicket.SValidationFeedbackHandler;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.event.ISInstanceListener;
-import org.opensingular.form.event.SInstanceEvent;
-import org.opensingular.form.validation.IValidationError;
-import org.opensingular.form.validation.InstanceValidationContext;
-import org.opensingular.form.validation.ValidationErrorLevel;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -39,6 +28,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
+import org.opensingular.form.*;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.InstanceValidationContext;
+import org.opensingular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.wicket.SValidationFeedbackHandler;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.lib.commons.util.Loggable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -198,7 +198,7 @@ public class WicketFormProcessing implements Loggable {
         return !isOrphan(i);
     }
 
-    public static void onFieldProcess(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstanceModel) {
+    public static void onFieldProcess(Component component, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstanceModel) {
 
         if (fieldInstanceModel == null || fieldInstanceModel.getObject() == null) {
             return;
@@ -209,7 +209,7 @@ public class WicketFormProcessing implements Loggable {
 
         evaluateUpdateListeners(fieldInstance);
         updateAttributes(fieldInstance, eventCollector);
-        validate(formComponent, target.orElse(null), fieldInstanceModel, fieldInstance);
+        validate(component, target.orElse(null), fieldInstanceModel, fieldInstance);
 
         if (target.isPresent()) {
 
@@ -254,7 +254,7 @@ public class WicketFormProcessing implements Loggable {
 
             // Componentes no formulario "chapado"
             WicketBuildContext
-                    .findTopLevel(formComponent)
+                    .findTopLevel(component)
                     .map(WicketBuildContext::getContainer)
                     .ifPresent(refreshDependentComponentsConsumer);
 
@@ -264,7 +264,7 @@ public class WicketFormProcessing implements Loggable {
                     .forEach(refreshDependentComponentsConsumer);
 
             WicketBuildContext
-                    .findNearest(formComponent)
+                    .findNearest(component)
                     .ifPresent(refreshComponentsInModalConsumer);
 
         }
@@ -287,7 +287,7 @@ public class WicketFormProcessing implements Loggable {
     }
 
 
-    private static void validate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel, SInstance fieldInstance) {
+    private static void validate(Component component, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel, SInstance fieldInstance) {
         if (!isSkipValidationOnRequest()) {
 
             final InstanceValidationContext validationContext;
@@ -310,7 +310,7 @@ public class WicketFormProcessing implements Loggable {
             }
 
             WicketBuildContext
-                    .findNearest(formComponent)
+                    .findNearest(component)
                     .flatMap(ctx -> Optional.of(ctx.streamParentContexts()))
                     .flatMap(contexts -> {
                         Stream.Builder<MarkupContainer> b = Stream.builder();

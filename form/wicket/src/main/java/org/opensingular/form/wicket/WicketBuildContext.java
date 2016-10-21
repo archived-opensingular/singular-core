@@ -391,7 +391,7 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
-    private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
+    public static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
 
         private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(WicketFormProcessing.class);
 
@@ -403,7 +403,7 @@ public class WicketBuildContext implements Serializable {
         @Override
         public void onProcess(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
             long ms = Calendar.getInstance().getTimeInMillis();
-            WicketFormProcessing.onFieldProcess((FormComponent<?>) s, Optional.of(t), m);
+            WicketFormProcessing.onFieldProcess(s, Optional.of(t), m);
             LOGGER.info("[SINGULAR] Tempo processando (ms): " + (Calendar.getInstance().getTimeInMillis() - ms));
         }
 
