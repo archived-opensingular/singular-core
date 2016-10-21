@@ -16,10 +16,11 @@
 
 package org.opensingular.server.commons.spring.security;
 
-import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.opensingular.form.SFormUtil;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.server.commons.config.SingularServerConfiguration;
 import org.opensingular.server.commons.flow.rest.ActionConfig;
 import org.opensingular.server.commons.flow.rest.ActionDefinition;
@@ -32,6 +33,7 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -44,10 +46,13 @@ public class PermissionResolverService implements Loggable {
 
     @Inject
     @Named("peticionamentoUserDetailService")
-    private   SingularUserDetailsService      peticionamentoUserDetailService;
+    private SingularUserDetailsService peticionamentoUserDetailService;
 
     @Inject
     private SingularServerConfiguration singularServerConfiguration;
+
+    @Inject
+    private Optional<SingularFlowConfigurationBean> singularFlowConfigurationBean;
 
 
     public List<SingularPermission> searchPermissions(String idUsuario) {
@@ -79,8 +84,8 @@ public class PermissionResolverService implements Loggable {
     public List<? extends SingularPermission> listAllProcessesPermissions() {
         List<SingularPermission> permissions = new ArrayList<>();
 
-        for (Class<? extends ProcessDefinition> clazz : singularServerConfiguration.getProcessDefinitionFormNameMap().keySet()) {
-            permissions.addAll(listPermissions(clazz));
+        for (ProcessDefinition pd : singularFlowConfigurationBean.get().getDefinitions()) {
+            permissions.addAll(listPermissions(pd.getClass()));
         }
 
         return permissions;

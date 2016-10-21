@@ -37,7 +37,6 @@ public class SingularServerConfiguration implements ServletContextAware {
     private List<Class<? extends SType<?>>> formTypes;
     private String                          processGroupCod;
     private String[]                        definitionsPackages;
-    private Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap = new HashMap<>(0);
     private String[] defaultPublicUrls;
 
     public String[] getDefaultPublicUrls() {
@@ -72,11 +71,6 @@ public class SingularServerConfiguration implements ServletContextAware {
         return definitionsPackages;
     }
 
-    public Map<Class<? extends
-            ProcessDefinition>, String> getProcessDefinitionFormNameMap() {
-        return Collections.unmodifiableMap(processDefinitionFormNameMap);
-    }
-
     @Override
     public void setServletContext(ServletContext servletContext) {
         WebInitializer             webInitializer             = (WebInitializer) servletContext.getAttribute(SingularInitializer.SERVLET_ATTRIBUTE_WEB_CONFIGURATION);
@@ -90,8 +84,6 @@ public class SingularServerConfiguration implements ServletContextAware {
                 .ifPresent(fi -> this.formTypes = fi.getTypes());
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi -> this.processGroupCod = fi.processGroupCod());
-        Optional.ofNullable(flowInitializer)
-                .ifPresent(fi -> this.processDefinitionFormNameMap = fi.processDefinitionFormNameMap());
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi -> this.definitionsPackages = fi.definitionsBasePackage());
     }

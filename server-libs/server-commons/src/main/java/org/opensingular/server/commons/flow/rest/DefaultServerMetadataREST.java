@@ -99,7 +99,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
                             menuGroup
                                     .getProcesses()
                                     .add(
-                                            new ProcessDTO(d.getKey(), d.getName(), singularServerConfiguration.getProcessDefinitionFormNameMap().get(d.getClass()))
+                                            new ProcessDTO(d.getKey(), d.getName(), null)
                                     )
             );
 
