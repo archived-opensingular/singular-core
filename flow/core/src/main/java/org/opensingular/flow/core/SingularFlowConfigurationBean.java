@@ -123,7 +123,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         return getDefinitionCache().getDefinitionUnchecked(key);
     }
 
-    protected List<ProcessDefinition<?>> getDefinitions() {
+    public List<ProcessDefinition<?>> getDefinitions() {
         return getDefinitionCache().getDefinitions();
     }
 
