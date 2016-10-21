@@ -116,6 +116,15 @@ public interface IBehaviorsMixin extends Serializable {
         };
     }
 
+    default Behavior notVisibleIf(ISupplier<Boolean> model) {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                component.setVisible(!model.get());
+            }
+        };
+    }
+
     default Behavior visibleIf(ISupplier<Boolean> model) {
         return new Behavior() {
             @Override
