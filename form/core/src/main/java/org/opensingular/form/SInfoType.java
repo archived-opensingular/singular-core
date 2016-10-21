@@ -41,4 +41,12 @@ public @interface SInfoType {
      * associado.
      */
     public Class<? extends SPackage> spackage();
+
+    /**
+     * Identifica um tipo como sendo um tipo que pode originar
+     * novos registros no form. Tipos que não sejam newable
+     * serão inseridos por outros tipos até chegar a raiz que
+     * não é inserido por ninguém
+     */
+    public boolean newable() default false;
 }
