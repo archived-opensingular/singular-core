@@ -1,6 +1,7 @@
 package org.opensingular.server.commons.util;
 
 import org.apache.log4j.Logger;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.server.commons.exception.SingularServerIntegrationException;
 
 import java.lang.reflect.InvocationHandler;
@@ -61,10 +62,12 @@ public class WSClientSafeWrapper {
                         return future.get(45, TimeUnit.SECONDS);
                     } catch (TimeoutException ex) {
                         log.fatal("WEB-SERVICE NÃO RESPONDEU A TEMPO (45 segundos)");
-                        return null;
+                        throw new SingularServerIntegrationException("", ex);
                     } finally {
                         future.cancel(true);
                     }
+                } catch (SingularException e) {
+                    throw e;
                 } catch (Exception e) {
                     ref = factory.getReference(enableMTOM);
                     log.fatal(e.getMessage(), e);
