@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = Constants.SCHEMA, name = "TB_FUNCIONALIDADE_PETICAO")
+@Table(schema = Constants.SCHEMA, name = "TB_FUNCIONALIDADE_REQUISICAO")
 public class FeaturePermissionEntity extends BaseEntity<FeaturePermissionEntityPK> {
 
     @EmbeddedId

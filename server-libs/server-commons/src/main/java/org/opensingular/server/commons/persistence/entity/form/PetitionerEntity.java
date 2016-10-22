@@ -29,15 +29,15 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Entity
-@Table(schema = Constants.SCHEMA, name = "TB_PETICIONANTE")
+@Table(schema = Constants.SCHEMA, name = "TB_REQUISITANTE")
 @GenericGenerator(name = PetitionerEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 public class PetitionerEntity extends BaseEntity<Long> {
 
 
-    public static final String PK_GENERATOR_NAME = "GENERATED_CO_PETICIONANTE";
+    public static final String PK_GENERATOR_NAME = "GENERATED_CO_REQUISITANTE";
 
     @Id
-    @Column(name = "CO_PETICIONANTE")
+    @Column(name = "CO_REQUISITANTE")
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 

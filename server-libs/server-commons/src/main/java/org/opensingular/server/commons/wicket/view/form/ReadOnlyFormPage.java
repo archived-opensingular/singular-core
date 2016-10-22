@@ -35,15 +35,17 @@ public class ReadOnlyFormPage extends Template {
     @Inject
     private IFormService formService;
 
-    private final IModel<Long> formVersionEntityPK;
+    private final IModel<Long>    formVersionEntityPK;
+    private final IModel<Boolean> showAnnotations;
 
-    public ReadOnlyFormPage(IModel<Long> formVersionEntityPK) {
+    public ReadOnlyFormPage(IModel<Long> formVersionEntityPK, IModel<Boolean> showAnnotations) {
         this.formVersionEntityPK = formVersionEntityPK;
+        this.showAnnotations = showAnnotations;
     }
 
     @Override
     protected Content getContent(String id) {
-        return new ReadOnlyFormContent(id, formVersionEntityPK, formService, singularFormConfig);
+        return new ReadOnlyFormContent(id, formVersionEntityPK, formService, singularFormConfig, showAnnotations);
     }
 
     @Override

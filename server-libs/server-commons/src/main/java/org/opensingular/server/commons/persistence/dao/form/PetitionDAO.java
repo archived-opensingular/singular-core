@@ -88,7 +88,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             hql.append(" , task.name as situation ");
             hql.append(" , processDefinitionEntity.name as processName ");
             hql.append(" , case when currentFormDraftVersionEntity is null then currentFormVersion.inclusionDate else currentFormDraftVersionEntity.inclusionDate end as creationDate ");
-            hql.append(" , formType.abbreviation as type ");
+            hql.append(" , case when formType.abbreviation is null then formDraftType.abbreviation else formType.abbreviation end as type ");
             hql.append(" , processDefinitionEntity.key as processType ");
             hql.append(" , ta.beginDate as situationBeginDate ");
             hql.append(" , pie.beginDate as processBeginDate ");

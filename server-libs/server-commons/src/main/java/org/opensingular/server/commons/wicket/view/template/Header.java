@@ -31,7 +31,7 @@ public class Header extends Panel {
 
     public Header(String id) {
         super(id);
-        this.withTogglerButton = true;
+        this.withTogglerButton = false;
         this.withSideBar = false;
     }
 

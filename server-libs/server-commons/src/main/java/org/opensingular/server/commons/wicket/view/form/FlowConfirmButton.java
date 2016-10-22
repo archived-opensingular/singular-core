@@ -20,6 +20,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.server.commons.exception.PetitionConcurrentModificationException;
+import org.opensingular.server.commons.exception.SingularServerFormValidationError;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -49,11 +50,17 @@ public class FlowConfirmButton<T extends PetitionEntity> extends SingularSaveBut
     protected void onValidationSuccess(AjaxRequestTarget ajaxRequestTarget, Form<?> form, IModel<? extends SInstance> model) {
         try {
             formPage.executeTransition(ajaxRequestTarget, form, transitionName, model);
-        } catch (HibernateOptimisticLockingFailureException
-                | PetitionConcurrentModificationException e) {
-            getLogger().error("Erro ao salvar o XML", e);
-            formPage.addToastrErrorMessage("message.save.concurrent_error");
+        } catch (HibernateOptimisticLockingFailureException | PetitionConcurrentModificationException e) {
+            configureBackDropAndShowError(ajaxRequestTarget, "message.save.concurrent_error");
+        } catch (SingularServerFormValidationError ex){
+            configureBackDropAndShowError(ajaxRequestTarget, "message.send.error");
         }
+    }
+
+    private void configureBackDropAndShowError(AjaxRequestTarget ajaxRequestTarget, String messageKey) {
+        modal.hide(ajaxRequestTarget);
+        formPage.addToastrErrorMessage(messageKey);
+        modal.show(ajaxRequestTarget);
     }
 
     @Override

@@ -137,9 +137,9 @@
     </profiles>
 
     <properties>
-        <project.scm.url>https://github.com/opensingular/singular-server.git</project.scm.url>
-        <project.scm.connection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.developerConnection>
+        <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.url>
+        <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.connection>
+        <project.scm.developerConnection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.developerConnection>
         <sonar.exclusions>**/recursos/**</sonar.exclusions>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>

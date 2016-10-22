@@ -23,6 +23,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
+import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.server.commons.wicket.view.template.Content;
@@ -36,14 +37,16 @@ public class ReadOnlyFormContent extends Content {
     private final IModel<Long>        formVersionEntityPK;
     private final IFormService        formService;
     private final SFormConfig<String> formConfig;
+    private final IModel<Boolean>     showAnnotations;
 
     private SingularFormPanel<String> singularFormPanel;
 
-    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, IFormService formService, SFormConfig<String> formConfig) {
+    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, IFormService formService, SFormConfig<String> formConfig, IModel<Boolean> showAnnotations) {
         super(id);
         this.formVersionEntityPK = formVersionEntityPK;
         this.formService = formService;
         this.formConfig = formConfig;
+        this.showAnnotations = showAnnotations;
         build();
     }
 
@@ -63,6 +66,15 @@ public class ReadOnlyFormContent extends Content {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 return formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory(), formVersionEntityPK.getObject());
+            }
+
+            @Override
+            public AnnotationMode getAnnotationMode() {
+                if(showAnnotations.getObject()){
+                    return AnnotationMode.READ_ONLY;
+                } else {
+                    return AnnotationMode.NONE;
+                }
             }
         }));
 

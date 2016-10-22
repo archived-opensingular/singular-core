@@ -31,14 +31,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Entity
-@Table(schema = Constants.SCHEMA, name = "TB_PETICAO")
+@Table(schema = Constants.SCHEMA, name = "TB_REQUISICAO")
 @GenericGenerator(name = PetitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 public class PetitionEntity extends BaseEntity<Long> {
 
-    public static final String PK_GENERATOR_NAME = "GENERATED_CO_PETICAO";
+    public static final String PK_GENERATOR_NAME = "GENERATED_CO_REQUISICAO";
 
     @Id
-    @Column(name = "CO_PETICAO")
+    @Column(name = "CO_REQUISICAO")
     @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Long cod;
 
@@ -51,14 +51,14 @@ public class PetitionEntity extends BaseEntity<Long> {
     private ProcessDefinitionEntity processDefinitionEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_PETICIONANTE")
+    @JoinColumn(name = "CO_REQUISITANTE")
     private PetitionerEntity petitioner;
 
-    @Column(name = "DS_PETICAO")
+    @Column(name = "DS_REQUISICAO")
     private String description;
 
     @OneToMany(mappedBy = "petition", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy(" CO_FORMULARIO_PETICAO ASC ")
+    @OrderBy(" CO_FORMULARIO_REQUISICAO ASC ")
     private SortedSet<FormPetitionEntity> formPetitionEntities;
 
     @Override

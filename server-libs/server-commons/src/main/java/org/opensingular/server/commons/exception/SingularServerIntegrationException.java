@@ -19,7 +19,7 @@ package org.opensingular.server.commons.exception;
 public class SingularServerIntegrationException extends SingularServerException {
 
     public SingularServerIntegrationException(String serviceName, Exception e) {
-        super(String.format("O serviço de integração %s não está funcionando corretamente. Não foi possível realizar a operação.", serviceName), e);
+        super(String.format("O %s não está funcionando corretamente. Não foi possível realizar a operação.", serviceName), e);
     }
 
 }

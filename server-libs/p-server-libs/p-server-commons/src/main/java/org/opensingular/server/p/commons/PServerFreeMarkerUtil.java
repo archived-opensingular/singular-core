@@ -31,8 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static freemarker.template.Configuration.VERSION_2_3_22;
 
@@ -68,19 +67,22 @@ public class PServerFreeMarkerUtil {
         return sw.toString();
     }
 
-    private static Map encode(Map dirty) {
+    private static Object encode(Object o) {
         final Map m = new HashMap();
-        dirty.forEach((k, v) -> {
-            if (v instanceof Map) {
-                m.put(k, encode((Map) v));
-            } else if (v instanceof String) {
-                m.put(k, HtmlUtils.htmlEscape((String) v));
-            } else {
-                m.put(k, v);
-            }
-        });
+        if (o instanceof Map) {
+            ((Map) o).forEach((k, v) -> {
+                m.put(k, encode(v));
+            });
+        } else if (o instanceof String) {
+            return HtmlUtils.htmlEscape((String) o);
+        } else if (o instanceof Collection) {
+            List<Object> list = new ArrayList<>();
+            ((Collection) o).forEach(x -> list.add(encode(x)));
+            return list;
+        } else {
+            return o;
+        }
         return m;
     }
-
 
 }
