@@ -211,7 +211,7 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     private void copyValuesAndAnnotations(SInstance source, SInstance target) {
         Value.copyValues(source, target);
-        SIList<SIAnnotation> annotations = source.as(AtrAnnotation::new).persistentAnnotations();
+        SIList<SIAnnotation> annotations = source.asAtrAnnotation().persistentAnnotations();
         if (annotations != null) {
             for (SIAnnotation sourceAnnotation : annotations) {
                 //obtem o caminho completo da instancia anotada no formulario raiz
@@ -223,7 +223,7 @@ public class FormPetitionService<P extends PetitionEntity> {
                     SIAnnotation targetAnnotation = targetInstance.as(AtrAnnotation::new).annotation();
                     Value.copyValues(sourceAnnotation, targetAnnotation);
                     //Corrigindo o ID
-                    targetAnnotation.setTargetId(targetInstance.getId());
+                    targetAnnotation.setTarget(targetInstance);
                 });
 
             }
