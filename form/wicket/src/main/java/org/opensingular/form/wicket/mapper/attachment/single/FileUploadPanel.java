@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -147,17 +148,18 @@ public class FileUploadPanel extends Panel implements Loggable {
             return ""
             //@formatter:off
                 + "\n $(function () { "
-                + "\n   window.FileUploadPanel.setup({ "
-                + "\n     param_name: '"        + PARAM_NAME                    + "',"
-                + "\n     panel_id: '"          + self.getMarkupId()            + "',"
-                + "\n     file_field_id: '"     + fileField.getMarkupId()       + "',"
-                + "\n     files_id: '"          + filesContainer.getMarkupId()  + "',"
-                + "\n     progress_bar_id: '"   + progressBar.getMarkupId()     + "',"
-                + "\n     upload_url: '"        + getUploadUrl()                + "',"
-                + "\n     download_url: '"      + getDownloaderUrl()            + "',"
-                + "\n     add_url: '"           + getAdderUrl()                 + "',"
-                + "\n     max_file_size: "      + getMaxFileSize()              + "  "
-                + "\n   });"
+                + "\n   window.FileUploadPanel.setup(" + new JSONObject()
+                          .put("param_name"        , PARAM_NAME                  )
+                          .put("panel_id"          , self.getMarkupId()          )
+                          .put("file_field_id"     , fileField.getMarkupId()     )
+                          .put("files_id"          , filesContainer.getMarkupId())
+                          .put("progress_bar_id"   , progressBar.getMarkupId()   )
+                          .put("upload_url"        , getUploadUrl()              )
+                          .put("download_url"      , getDownloaderUrl()          )
+                          .put("add_url"           , getAdderUrl()               )
+                          .put("max_file_size"     , getMaxFileSize()            )
+                          .put("allowed_file_types", getAllowedFileTypes()       )
+                          .toString(2) + "); "
                 + "\n });";
             //@formatter:on
         } else {
@@ -187,6 +189,9 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private long getMaxFileSize() {
         return getModelObject().asAtr().getMaxFileSize();
+    }
+    private List<String> getAllowedFileTypes() {
+        return getModelObject().asAtr().getAllowedFileTypes();
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

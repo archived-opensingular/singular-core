@@ -16,7 +16,7 @@
 
 package org.opensingular.form.view;
 
-public class SViewBreadcrumb extends AbstractSViewListWithCustomColuns<SViewBreadcrumb> {
+public class SViewBreadcrumb extends AbstractSViewListWithCustomColumns<SViewBreadcrumb> {
 
     private boolean editEnabled = true;
     private boolean showTable = true;

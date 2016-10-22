@@ -16,6 +16,8 @@
 
 package org.opensingular.form.wicket.mapper.attachment.list;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.opensingular.form.SIList;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -25,14 +27,18 @@ import org.apache.wicket.model.IModel;
 public class AttachmentListMapper extends AbstractListaMapper {
 
     public final static String MULTIPLE_HIDDEN_UPLOAD_FIELD_ID = "uploadField";
-    private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE = "$('#%s').on('click', function(){$('#%s').click();});";
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-        ctx.getContainer().appendTag("div",
-                new FileListUploadPanel("up-list",
-                        (IModel<SIList<SIAttachment>>) ctx.getModel(), ctx));
-
+        final FileListUploadPanel comp = new FileListUploadPanel("up-list", (IModel<SIList<SIAttachment>>) ctx.getModel(), ctx);
+        ctx.getContainer().appendTag("div", comp);
+        final WicketBuildContext.OnFieldUpdatedListener listener = new WicketBuildContext.OnFieldUpdatedListener();
+        comp.add(new AjaxEventBehavior(SINGULAR_PROCESS_EVENT) {
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                listener.onProcess(comp, target, ctx.getModel());
+            }
+        });
     }
 
 }

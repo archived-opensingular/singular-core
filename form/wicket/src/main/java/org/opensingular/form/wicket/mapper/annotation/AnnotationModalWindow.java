@@ -25,14 +25,19 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 
+import org.apache.wicket.validation.validator.StringValidator;
+import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
@@ -51,32 +56,43 @@ class AnnotationModalWindow extends BFModalWindow {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        final SInstanceValueModel<String> textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationComponent.getAnnotationModel(), "text"));
+        final SInstanceValueModel<String>  textModel     = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationComponent.getAnnotationModel(), "text"));
         final SInstanceValueModel<Boolean> approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationComponent.getAnnotationModel(), "isApproved"));
 
         if (editable) {
 
             final TextArea<?> comment = new TextArea<>("comment", textModel);
-            final Label label = new Label("label", $m.ofValue(getString("singular.annotation.approved")));
+            final Label       label   = new Label("label", Model.of("Aprovado "));
             final Component check = new CheckBox("approvalCheck", approvedModel)
-                .add($b.attr("data-on-text", new ResourceModel("singular.annotation.yes")))
-                .add($b.attr("data-off-text", new ResourceModel("singular.annotation.no")));
+                    .add($b.attr("data-on-text", Model.of("Sim")))
+                    .add($b.attr("data-off-text", Model.of("Não")));
 
-            this
-                .setBody(new BSContainer<>("body")
-                    .appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ", comment)
-                    .appendTag("label", true, "class=\"control-label\"", label)
-                    .appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", check))
-                .addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"), new OkButton("btn-ok", annotationComponent))
-                .addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"), new CancelOrCloseButton("btn-cancelar"));
+            final BSContainer container = new BSContainer<>("body");
+            final BSGrid      grid      = container.newGrid();
+
+            BSControls justificativa = grid.newRow().newCol(12).newFormGroup();
+            justificativa.appendLabel(new Label("label", "Justificativa"));
+            justificativa.appendTextarea(comment, 15);
+
+            BSControls formGroupAprove = grid.newRow().newCol(12).newFormGroup();
+            formGroupAprove.appendLabel(label);
+            formGroupAprove.appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", check);
+
+            setBody(container);
+
+            addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new CancelOrCloseButton("btn-cancelar"));
+            addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("Confirmar"), new OkButton("btn-ok", annotationComponent));
+
+            comment.add(StringValidator.maximumLength(4000));
+            comment.add(new CountDownBehaviour());
 
         } else {
 
             this
-                .setBody(new BSContainer<>("body")
-                    .appendTag("div", true, "class='sannotation-text-comment'", new MultiLineLabel("text", textModel))
-                    .appendTag("div", true, "", new ApprovalStatusLabel("approvalLabel", approvedModel)))
-                .addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Fechar"), new CancelOrCloseButton("cancel"));
+                    .setBody(new BSContainer<>("body")
+                            .appendTag("div", true, "class='sannotation-text-comment'", new MultiLineLabel("text", textModel))
+                            .appendTag("div", true, "", new ApprovalStatusLabel("approvalLabel", approvedModel)))
+                    .addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Fechar"), new CancelOrCloseButton("cancel"));
         }
     }
 
@@ -90,25 +106,29 @@ class AnnotationModalWindow extends BFModalWindow {
         private CancelOrCloseButton(String id) {
             super(id);
         }
+
         @Override
         protected void onAction(AjaxRequestTarget target) {
             AnnotationModalWindow.this.hide(target);
             target.appendJavaScript(JQuery.$(annotationComponent)
-                + ".find('a:visible:first').each(function(){this.focus();});");
+                    + ".find('a:visible:first').each(function(){this.focus();});");
         }
     }
+
     class OkButton extends ActionAjaxButton {
         private final AnnotationComponent parentComponent;
+
         private OkButton(String id, AnnotationComponent parentComponent) {
             super(id);
             this.parentComponent = parentComponent;
         }
+
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             target.add(parentComponent);
             AnnotationModalWindow.this.hide(target);
             target.appendJavaScript(JQuery.$(annotationComponent)
-                + ".find('a:visible:first').each(function(){this.focus();});");
+                    + ".find('a:visible:first').each(function(){this.focus();});");
         }
     }
 

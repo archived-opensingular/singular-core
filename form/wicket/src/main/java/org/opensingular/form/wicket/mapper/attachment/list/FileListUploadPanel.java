@@ -18,19 +18,16 @@ package org.opensingular.form.wicket.mapper.attachment.list;
 
 import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -52,6 +49,7 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
 import org.opensingular.form.type.basic.AtrBasic;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
@@ -95,8 +93,20 @@ public class FileListUploadPanel extends Panel implements Loggable {
         remover = new RemoveFileBehavior(model);
         downloader = new DownloadSupportedBehavior(model);
 
-        add(new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()))
-            .add($b.visibleIfModelObject(StringUtils::isNotEmpty)));
+        Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
+        label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
+        label.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                if (model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
+                    oldClasses.add("singular-form-required");
+                } else {
+                    oldClasses.remove("singular-form-required");
+                }
+                return oldClasses;
+            }
+        })));
+        add(label);
 
         add((fileList = new WebMarkupContainer("fileList"))
             .add(new FilesListView("fileItem", model, ctx)));
@@ -107,6 +117,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
             .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
             .add($b.visibleIf(() -> ctx.getViewMode().isEdition())));
 
+        add(ctx.createFeedbackCompactPanel("feedback"));
         add(new WebMarkupContainer("empty-box")
             .add(new WebMarkupContainer("select-file-link")
                 .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))

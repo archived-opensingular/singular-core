@@ -55,21 +55,21 @@ import java.io.Serializable;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BSModalBorder extends Border {
 
     private static final String BUTTON_LABEL = "label";
 
     public enum ButtonStyle {
         //@formatter:off
-        EMPTY   (""), 
-        DEFAULT ("btn-default"), 
-        PRIMARY ("btn-primary"),
-        LINK    ("btn-link"),
-        DANGER  ("btn-danger"),
-        BLUE    ("blue"),
-        CANCEl  ("cancel-btn"),
-        CONFIRM ("confirm-btn");
+        EMPTY(""),
+        DEFAULT("btn-default"),
+        PRIMARY("btn-primary"),
+        LINK("btn-link"),
+        DANGER("btn-danger"),
+        BLUE("blue"),
+        CANCEl("cancel-btn"),
+        CONFIRM("confirm-btn");
         //@formatter:on
 
         private String cssClass;
@@ -95,25 +95,27 @@ public class BSModalBorder extends Border {
     public static enum Size {
         NORMAL("modal-belver"), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full"), FIT("modal-fit");
         protected final String styleClass;
+
         private Size(String styleClass) {
             this.styleClass = styleClass;
         }
     }
 
-    private static final String DIALOG           = "dialog";
-    private static final String CLOSE_ICON       = "closeIcon";
-    private static final String COMPRESS_ICON    = "compressIcon";
-    private static final String EXPAND_ICON      = "expandIcon";
-    private static final String TITLE            = "title";
-    private static final String HEADER           = "header";
-    private static final String BODY             = "body";
-    private static final String FOOTER           = "footer";
+    private static final String DIALOG        = "dialog";
+    private static final String CLOSE_ICON    = "closeIcon";
+    private static final String COMPRESS_ICON = "compressIcon";
+    private static final String EXPAND_ICON   = "expandIcon";
+    private static final String TITLE         = "title";
+    private static final String HEADER        = "header";
+    private static final String BODY          = "body";
+    private static final String FOOTER        = "footer";
 
-    private Size                size             = Size.NORMAL;
-    private boolean             dismissible      = false;
+    private Size    size          = Size.NORMAL;
+    private boolean dismissible   = false;
+    private boolean withAutoFocus = true;
 
-    private final RepeatingView buttonsContainer = new RepeatingView("buttons");
-    protected BSFeedbackPanel feedbackGeral = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
+    private final RepeatingView   buttonsContainer = new RepeatingView("buttons");
+    protected     BSFeedbackPanel feedbackGeral    = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
 
     protected BSFeedbackPanel newFeedbackPanel(String id, BSModalBorder fence, IFeedbackMessageFilter messageFilter) {
         return new BSFeedbackPanel(id, fence, messageFilter);
@@ -158,17 +160,17 @@ public class BSModalBorder extends Border {
         footer.setOutputMarkupId(true);
 
         addToBorder(dialog
-                        .add(header
-                                .add(closeIcon)
-                                .add(compressIcon)
-                                .add(expandIcon)
-                                .add(title))
-                        .add(body)
-                        .add(footer
-                                .add(feedbackGeral)
-                                .add(buttonsFragment
-                                        .add(buttonsContainer)))
-                        .add(new AttributeAppender("class", modalSizeModel, " "))
+                .add(header
+                        .add(closeIcon)
+                        .add(compressIcon)
+                        .add(expandIcon)
+                        .add(title))
+                .add(body)
+                .add(footer
+                        .add(feedbackGeral)
+                        .add(buttonsFragment
+                                .add(buttonsContainer)))
+                .add(new AttributeAppender("class", modalSizeModel, " "))
 
         );
 
@@ -246,8 +248,8 @@ public class BSModalBorder extends Border {
 
     public BSModalBorder addLink(ButtonStyle style, IModel<String> label, AjaxLink<?> button) {
         buttonsContainer.addOrReplace(button
-            .add(newLinkLabel(BUTTON_LABEL, button, label))
-            .add(new AttributeAppender("class", style.cssClassModel(), " ")));
+                .add(newLinkLabel(BUTTON_LABEL, button, label))
+                .add(new AttributeAppender("class", style.cssClassModel(), " ")));
         return this;
     }
 
@@ -311,6 +313,7 @@ public class BSModalBorder extends Border {
         closeIcon.setVisible(visible);
         return this;
     }
+
     public boolean isCloseIconVisible() {
         return closeIcon.isVisible();
     }
@@ -325,10 +328,12 @@ public class BSModalBorder extends Border {
         expandIcon.setVisible(minimizable);
         return this;
     }
+
     public BSModalBorder setDismissible(boolean dismissible) {
         this.dismissible = dismissible;
         return this;
     }
+
     public boolean isDismissible() {
         return dismissible;
     }
@@ -393,18 +398,20 @@ public class BSModalBorder extends Border {
 
     public String getShowJavaScriptCallback() {
         StringBuilder sb = JQuery.$(this)
-            .append(".modal({")
-            .append("keyboard:").append(isDismissible())
-            .append(",backdrop:").append(isDismissible() ? "true" : "'static'")
-            .append("})");
-        sb.append(""
-            + "\n.on('shown.bs.modal',function(evt) {"
-            + "\n $(this).find('.modal-body, .modal-footer')"
-            + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
-            + "\n  .filter(':visible')"
-            + "\n  .first()"
-            + "\n  .each(function(){ this.focus(); });"
-            + "\n})");
+                .append(".modal({")
+                .append("keyboard:").append(isDismissible())
+                .append(",backdrop:").append(isDismissible() ? "true" : "'static'")
+                .append("})");
+        if(withAutoFocus) {
+            sb.append(""
+                    + "\n.on('shown.bs.modal',function(evt) {"
+                    + "\n $(this).find('.modal-body, .modal-footer')"
+                    + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
+                    + "\n  .filter(':visible')"
+                    + "\n  .first()"
+                    + "\n  .each(function(){ this.focus(); });"
+                    + "\n})");
+        }
         return sb.toString();
     }
 
@@ -421,12 +428,15 @@ public class BSModalBorder extends Border {
         return sb.append(".modal('hide')");
 
     }
+
     public final MarkupContainer getModalHeader() {
         return (MarkupContainer) get(DIALOG).get(HEADER);
     }
+
     public final MarkupContainer getModalBody() {
         return (MarkupContainer) get(DIALOG).get(BODY);
     }
+
     public final MarkupContainer getModalFooter() {
         return (MarkupContainer) get(DIALOG).get(FOOTER);
     }
@@ -446,51 +456,51 @@ public class BSModalBorder extends Border {
 
     protected Component newCompressIcon(String id) {
         return new WebMarkupContainer(id)
-            .add($b.onReadyScript(comp -> JQuery.$(comp) + ""
-                + ".on('click', function() {"
-                + JQuery.$(expandIcon) + ".show();"
-                + JQuery.$(compressIcon) + ".hide();"
-                + JQuery.$(getModalBody()) + ".slideUp();"
-                + JQuery.$(getModalFooter()) + ".slideUp();"
-                + " $('.modal-backdrop.fade.in').css('opacity',0.2);"
-                + "})"
-                + ";"))
-            .add(new Behavior() {
-                @Override
-                public void renderHead(Component component, IHeaderResponse response) {
-                    super.renderHead(component, response);
-                    response.render(CssHeaderItem.forCSS(""
-                        + ".modal-header-icon {"
-                        + " background-color: transparent;"
-                        + " float: right;"
-                        + " border: 0;"
-                        + " margin: 0;"
-                        + " padding: 0;"
-                        + " border-image: none;"
-                        + " line-height: 14px;"
-                        + " margin-top: -4px;"
-                        + " margin-right: 8px;"
-                        + " color: #ccc;"
-                        + "}"
-                        + ".modal-header-icon:hover {"
-                        + " color: #888;"
-                        + "}",
-                        "ModalBorder_modal-header-icon"));
-                }
-            });
+                .add($b.onReadyScript(comp -> JQuery.$(comp) + ""
+                        + ".on('click', function() {"
+                        + JQuery.$(expandIcon) + ".show();"
+                        + JQuery.$(compressIcon) + ".hide();"
+                        + JQuery.$(getModalBody()) + ".slideUp();"
+                        + JQuery.$(getModalFooter()) + ".slideUp();"
+                        + " $('.modal-backdrop.fade.in').css('opacity',0.2);"
+                        + "})"
+                        + ";"))
+                .add(new Behavior() {
+                    @Override
+                    public void renderHead(Component component, IHeaderResponse response) {
+                        super.renderHead(component, response);
+                        response.render(CssHeaderItem.forCSS(""
+                                        + ".modal-header-icon {"
+                                        + " background-color: transparent;"
+                                        + " float: right;"
+                                        + " border: 0;"
+                                        + " margin: 0;"
+                                        + " padding: 0;"
+                                        + " border-image: none;"
+                                        + " line-height: 14px;"
+                                        + " margin-top: -4px;"
+                                        + " margin-right: 8px;"
+                                        + " color: #ccc;"
+                                        + "}"
+                                        + ".modal-header-icon:hover {"
+                                        + " color: #888;"
+                                        + "}",
+                                "ModalBorder_modal-header-icon"));
+                    }
+                });
     }
 
     protected Component newExpandIcon(String id) {
         return new WebMarkupContainer(id).add($b.onReadyScript(comp -> JQuery.$(comp) + ""
-            + ".on('click', function() {"
-            + JQuery.$(expandIcon) + ".hide();"
-            + JQuery.$(compressIcon) + ".show();"
-            + JQuery.$(getModalBody()) + ".slideDown();"
-            + JQuery.$(getModalFooter()) + ".slideDown();"
-            + " $('.modal-backdrop.fade.in').css('opacity','');"
-            + "})"
-            + ".css('display','none')"
-            + ";"));
+                + ".on('click', function() {"
+                + JQuery.$(expandIcon) + ".hide();"
+                + JQuery.$(compressIcon) + ".show();"
+                + JQuery.$(getModalBody()) + ".slideDown();"
+                + JQuery.$(getModalFooter()) + ".slideDown();"
+                + " $('.modal-backdrop.fade.in').css('opacity','');"
+                + "})"
+                + ".css('display','none')"
+                + ";"));
     }
 
     protected Component newTitle(String id, IModel<?> titleModel) {
@@ -506,18 +516,30 @@ public class BSModalBorder extends Border {
 
     private static final class LabelModel extends AbstractReadOnlyModel<String> {
         private final LabelModelProvider provider;
+
         public LabelModel(ILabelProvider<String> provider) {
             this.provider = () -> {
                 IModel<String> label = provider.getLabel();
                 return (label != null) ? label.getObject() : null;
             };
         }
+
         @Override
         public String getObject() {
             return String.valueOf(provider.get());
         }
+
         interface LabelModelProvider extends Serializable {
             Object get();
         }
+    }
+
+    public boolean isWithAutoFocus() {
+        return withAutoFocus;
+    }
+
+    public BSModalBorder setWithAutoFocus(boolean withAutoFocus) {
+        this.withAutoFocus = withAutoFocus;
+        return this;
     }
 }

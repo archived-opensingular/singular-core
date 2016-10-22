@@ -146,6 +146,11 @@ public class FileUploadServlet extends HttpServlet {
                 final String contentType = lowerCase(item.getContentType());
                 final String extension = lowerCase(substringAfterLast(originalFilename, "."));
 
+                if (item.getSize() == 0) {
+                    response.add(new UploadResponseInfo(originalFilename, "Arquivo não pode ser de tamanho 0 (zero)"));
+                    return;
+                }
+                
                 if (!(uploadInfo.isFileTypeAllowed(contentType) || uploadInfo.isFileTypeAllowed(extension))) {
                     response.add(new UploadResponseInfo(originalFilename, "Tipo de arquivo não permitido"));
                     return;
