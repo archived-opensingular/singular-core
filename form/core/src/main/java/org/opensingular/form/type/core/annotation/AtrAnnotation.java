@@ -250,7 +250,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
         if (pos <= 0) {
             throw new SingularFormException("Trecho path inválido: '" + path[index] + "'");
         }
-        Integer id = new Integer(path[index].substring(pos+1,path[index].length()-1));
+        Integer id = Integer.valueOf(path[index].substring(pos+1,path[index].length()-1));
         SInstance instance = instancesById.get(id);
         if (instance != null) {
             return instance;
