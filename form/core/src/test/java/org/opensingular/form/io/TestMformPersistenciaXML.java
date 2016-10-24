@@ -61,7 +61,6 @@ public class TestMformPersistenciaXML extends TestCaseForm {
         assertInstance(instance).isValueEquals("[1].a","5");
 
         MElement novo = MformPersistenciaXML.toXML(instance);
-        novo.printTabulado();
 
         assertEquals("itens", novo.getTagName());
         assertEquals("1", novo.getValor("item[1]/a"));

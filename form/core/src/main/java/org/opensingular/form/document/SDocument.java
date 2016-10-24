@@ -262,6 +262,16 @@ public class SDocument {
     }
 
     /**
+     * Tenta encontrar um serviço da classe solicitada registrado <u>diretamente no documento</u> supondo que o nome no
+     * registro é o nome da própria classe.
+     *
+     * @return Null se não encontrado ou se o conteúdo do registro for null.
+     */
+    public <T> T lookupLocalService(Class<T> targetClass) {
+        return registry.lookupLocalService(targetClass);
+    }
+
+    /**
      * Tenta encontrar um serviço registrado <u>diretamente no documento</u> com
      * o nome informado. Se o resultado não for null e não implementar a classe
      * solicitada, dispara exception.

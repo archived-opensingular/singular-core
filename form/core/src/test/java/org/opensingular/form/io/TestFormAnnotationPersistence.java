@@ -54,9 +54,7 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
         item.getField("qtd").asAtrAnnotation().text("qtd[1] is blank");
 
         MElement xmlInstance = MformPersistenciaXML.toXML(instance);
-        xmlInstance.printTabulado();
         MElement xmlAnnotation = MformPersistenciaXML.annotationToXml(instance).get();
-        xmlAnnotation.printTabulado();
 
         //It's expected to be only persisted the field with value
         assertEquals(2,xmlInstance.countFilhos());
