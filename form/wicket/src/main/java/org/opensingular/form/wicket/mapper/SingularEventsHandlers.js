@@ -61,12 +61,6 @@
                     delete contex[SINGULAR_CHANGE_KEY];
                 }, 30);
             });
-            inputJQueryRef.on(SINGULAR_VALIDATE, function () {
-                console.log('validated' + this);
-            });
-            inputJQueryRef.on(SINGULAR_PROCESS, function () {
-                console.log('processed' + this);
-            });
         }
 
         /**

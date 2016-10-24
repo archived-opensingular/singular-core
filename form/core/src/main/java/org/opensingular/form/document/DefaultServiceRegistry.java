@@ -56,15 +56,15 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
         return null;
     }
 
-    private <T> T lookupLocalService(Class<T> targetClass) {
-        List<RefService<?>> result = findAllMathingProviders(targetClass);
+    public <T> T lookupLocalService(Class<T> targetClass) {
+        List<RefService<?>> result = findAllMatchingProviders(targetClass);
         if(result != null && !result.isEmpty()){
             return verifyResultAndReturn(targetClass, result);
         }
         return null;
     }
 
-    private <T> List<RefService<?>> findAllMathingProviders(Class<T> targetClass) {
+    private <T> List<RefService<?>> findAllMatchingProviders(Class<T> targetClass) {
         List<RefService<?>> result = newArrayList();
         for(Map.Entry<Class<?>, List<RefService<?>>> entry : servicesByClass.entrySet()){
             if(targetClass.isAssignableFrom(entry.getKey())){

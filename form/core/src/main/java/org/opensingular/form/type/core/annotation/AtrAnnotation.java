@@ -16,13 +16,8 @@
 
 package org.opensingular.form.type.core.annotation;
 
-import org.opensingular.form.SAttributeEnabled;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.*;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.util.transformer.Value;
@@ -179,7 +174,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
     private <T extends Enum<T> & AnnotationClassifier> SIAnnotation newAnnotation(T classifier) {
         isValidClassifier(classifier);
         SIAnnotation a = target().getDocument().newAnnotation();
-        a.setTargetId(target().getId());
+        a.setTarget(target());
         a.setClassifier(classifier.name());
         return a;
     }
@@ -216,11 +211,67 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @param annotations to be loaded into the instance.
      */
     public void loadAnnotations(SIList<SIAnnotation> annotations) {
-        Iterator<SIAnnotation> it = annotations.iterator();
-        while (it.hasNext()) {
-            SIAnnotation annotation = it.next();
-            Value.copyValues(annotation, target().getDocument().newAnnotation());
+        SDocument document = target().getDocument();
+        Map<Integer,SInstance> instancesById = new HashMap<>();
+        SInstances.streamDescendants(document.getRoot(), true).forEach(i -> instancesById.put(i.getId(),i));
+
+        for(SIAnnotation annotation : annotations) {
+            SIAnnotation newAnnotation = document.newAnnotation();
+            Value.copyValues(annotation, newAnnotation);
+            correctReference(newAnnotation, document, instancesById);
         }
+    }
+
+    /**
+     * Tenta recria a instancia de acordo com o path original caso a anotação aponte para uma instância que não exista.
+     */
+    private void correctReference(SIAnnotation newAnnotation, SDocument document, Map<Integer, SInstance> instancesById) {
+        if(! instancesById.containsKey(newAnnotation.getTargetId()) && newAnnotation.getTargetPath() != null) {
+            try {
+                String[] path = StringUtils.split(newAnnotation.getTargetPath(), '/');
+                SInstance instance = findByXPathAndId(document, instancesById, path, path.length - 1);
+                if (instance != null) {
+                    newAnnotation.setTarget(instance);
+                }
+            } catch (Exception e) {
+                throw new SingularFormException("Erro lendo path da anotação: " + newAnnotation.getTargetPath(), e);
+            }
+        }
+    }
+
+    /**
+     * Tentar localizar ou recriar a instancia com base no path para o qual a instância apontava. Pode ser que a
+     * instância não foi salva pois o conteudo estava vazio, mas a anotação continua sendo valida assim mesmo.
+     * Espera trabalhar em cima de um path no formato "order[@id=1]/address[@id=4]/street[@id=5]".
+     * @return Retorna null senão for possível localizar.
+     */
+    private SInstance findByXPathAndId(SDocument document, Map<Integer, SInstance> instancesById, String[] path, int index) {
+        int pos = path[index].lastIndexOf('=');
+        if (pos <= 0) {
+            throw new SingularFormException("Trecho path inválido: '" + path[index] + "'");
+        }
+        Integer id = new Integer(path[index].substring(pos+1,path[index].length()-1));
+        SInstance instance = instancesById.get(id);
+        if (instance != null) {
+            return instance;
+        }
+        pos = path[index].indexOf('[');
+        if (pos <= 0) {
+            throw new SingularFormException("Trecho path inválido: '" + path[index] + "'");
+        }
+        String name = path[index].substring(0, pos);
+
+        if (index == 0) {
+            if(document.getRoot().getName().equals(name)) {
+                return document.getRoot();
+            }
+        } else {
+            SInstance parent = findByXPathAndId(document, instancesById, path, index-1);
+            if (parent != null && parent instanceof SIComposite) {
+                return ((SIComposite) parent).getField(name);
+            }
+        }
+        return null;
     }
 
     /**
