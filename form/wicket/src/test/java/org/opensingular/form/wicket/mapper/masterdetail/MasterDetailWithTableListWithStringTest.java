@@ -103,7 +103,7 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
     }
 
     private AbstractLink findMasterDetailLink() {
-        return findOnForm(AbstractLink.class, form.getForm(), (b) -> b.getId().equals("_add"))
+        return findOnForm(AbstractLink.class, form.getForm(), (b) -> b.getId().equals("addButton"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar do mestre detalhe"));
     }
