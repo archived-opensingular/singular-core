@@ -26,15 +26,16 @@ import org.opensingular.form.type.core.SPackageCore;
  * For now only composite fields can be anotated but this type does not enforce such rule.
  *
  * @author Fabricio Buzeto
+ * @author Daniel Bordin
  */
 @SInfoType(name = "Annotation", spackage = SPackageCore.class)
 public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
-    public static final String          FIELD_TEXT          = "text",
-                                        FIELD_TARGET_ID     = "targetId",
-                                        FIELD_APPROVED      = "isApproved",
-                                        FIELD_CLASSIFIER     = "classifier"
-                                        ;
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_TARGET_ID = "targetId";
+    public static final String FIELD_TARGET_PATH = "targetPath";
+    public static final String FIELD_APPROVED = "isApproved";
+    public static final String FIELD_CLASSIFIER = "classifier";
 
     public STypeAnnotation() {
         super(SIAnnotation.class);
@@ -48,6 +49,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
         addFieldString(FIELD_CLASSIFIER);
         addFieldBoolean(FIELD_APPROVED);
         addFieldInteger(FIELD_TARGET_ID);
+        addFieldString(FIELD_TARGET_PATH);
     }
 
     @SuppressWarnings("unchecked")

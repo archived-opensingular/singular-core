@@ -107,22 +107,24 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     final SInstance getFieldLocal(PathReader pathReader) {
-        return getFieldByIndexOrCreate(findFieldIndex(pathReader));
+        return getField(findFieldIndex(pathReader));
     }
 
     @Override
     Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
         int fieldIndex = findFieldIndexOpt(pathReader);
         if (fieldIndex != -1) {
-            return Optional.of(getFieldByIndexOrCreate(fieldIndex));
+            return Optional.of(getField(fieldIndex));
         }
         return Optional.empty();
     }
 
     @Override
     final SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        int fieldIndex = findFieldIndex(pathReader);
-        return (fields == null) ? null : fields.getByIndex(fieldIndex);
+        if (fields != null) {
+            return fields.getByIndex(findFieldIndex(pathReader));
+        }
+        return null;
     }
 
     @Override
@@ -168,10 +170,6 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         return getValue(field.getNameSimple());
     }
 
-    private STypeComposite.FieldMapOfRecordType getFieldsDef() {
-        return getType().getFieldsConsolidated();
-    }
-
     @Override
     void setValue(PathReader pathReader, Object value) {
         int fieldIndex = findFieldIndex(pathReader);
@@ -197,24 +195,23 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         }
     }
 
-    private SInstance getFieldByIndexOrCreate(int fieldIndex) {
-        SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
-        if (instancia == null) {
-            instancia = createField(fieldIndex);
-        }
-        return instancia;
+    /**
+     * Retorna o campo da posição indicada. Se o campo ainda não existir, cria-o.
+     */
+    public SInstance getField(int fieldIndex) {
+        SInstance instance = (fields == null) ? null : fields.getByIndex(fieldIndex);
+        return instance != null ? instance : createField(fieldIndex);
     }
 
     private SInstance createField(int fieldIndex) {
-        SInstance instancia;
-        SType<?> tipoCampo = getFieldsDef().getByIndex(fieldIndex);
-        instancia = tipoCampo.newInstance(getDocument());
+        SType<?> fieldType = getType().getField(fieldIndex);
+        SInstance instance = fieldType.newInstance(getDocument());
         if (fields == null) {
-            fields = new FieldMapOfRecordInstance(getFieldsDef());
+            fields = new FieldMapOfRecordInstance(getType().size());
         }
-        fields.set(fieldIndex, instancia);
-        instancia.setParent(this);
-        return instancia;
+        fields.set(fieldIndex, instance);
+        instance.setParent(this);
+        return instance;
     }
 
     /**
@@ -225,7 +222,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         if (pathReader.isIndex()) {
             throw new SingularFormException(pathReader.getErroMsg(this, "Não é uma lista"));
         }
-        return getFieldsDef().findIndex(pathReader.getTrecho());
+        return getType().findIndexOf(pathReader.getTrecho());
     }
 
     /**
@@ -247,11 +244,9 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     final <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
-        if (fields != null) {
-            SInstance instancia = fields.getByIndex(findFieldIndex(pathReader));
-            if (instancia != null) {
-                return instancia.getValueWithDefaultIfNull(pathReader.next(), resultClass);
-            }
+        SInstance instance = getFieldLocalWithoutCreating(pathReader);
+        if (instance != null) {
+            return instance.getValueWithDefaultIfNull(pathReader.next(), resultClass);
         }
         SType<?> tipo = SFormUtil.resolveFieldType(getType(), pathReader);
         return tipo.getAttributeValueOrDefaultValueIfNull(resultClass);
@@ -284,8 +279,8 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
         private final SInstance[] instances;
 
-        public FieldMapOfRecordInstance(STypeComposite.FieldMapOfRecordType fieldsDef) {
-            this.instances = new SInstance[fieldsDef.size()];
+        public FieldMapOfRecordInstance(int size) {
+            this.instances = new SInstance[size];
         }
 
         public SInstance getByIndex(int fieldIndex) {
