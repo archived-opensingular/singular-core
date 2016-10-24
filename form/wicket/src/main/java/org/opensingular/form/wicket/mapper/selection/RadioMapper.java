@@ -84,7 +84,7 @@ public class RadioMapper extends SelectMapper {
 
     @Override
     public void adjustJSEvents(Component comp) {
-        comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS, SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
+        comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS));
     }
 
 }

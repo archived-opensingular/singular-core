@@ -16,17 +16,13 @@
 
 package org.opensingular.singular.form.showcase.component.form.validation;
 
-import java.util.Optional;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.validation.InstanceValidationContext;
-import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 
 public class PartialValidationButton extends AjaxButton {
@@ -40,14 +36,10 @@ public class PartialValidationButton extends AjaxButton {
 
     //@destacar:bloco
     protected void addValidationErrors(AjaxRequestTarget target, Form<?> form, SInstance instance) {
-        final SInstance obrigatorio1 = ((SIComposite) instance).getField("obrigatorio_1");
+        final SInstance           obrigatorio1      = ((SIComposite) instance).getField("obrigatorio_1");
         InstanceValidationContext validationContext = new InstanceValidationContext();
         validationContext.validateSingle(obrigatorio1);
-        WicketFormProcessing.updateValidationFeedbackOnDescendants(
-            Optional.ofNullable(target),
-            form,
-            new SInstanceRootModel<>(obrigatorio1),
-            validationContext.getErrorsByInstanceId());
+        WicketFormProcessing.updateValidationFeedbackOnDescendants(target, form);
     }
     //@destacar:fim
 
@@ -61,6 +53,6 @@ public class PartialValidationButton extends AjaxButton {
     @Override
     protected void onError(AjaxRequestTarget target, Form<?> form) {
         super.onError(target, form);
-        WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance);
+        WicketFormProcessing.onFormError(form, target);
     }
 }

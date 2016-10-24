@@ -116,9 +116,6 @@ public class FileUploadPanel extends Panel implements Loggable {
                 return oldClasses;
             }
         });
-
-        uploadFileButton.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
-        downloadLink.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
     }
 
     @Override
