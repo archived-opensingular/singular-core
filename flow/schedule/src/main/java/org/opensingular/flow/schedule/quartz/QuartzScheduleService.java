@@ -16,18 +16,17 @@
 
 package org.opensingular.flow.schedule.quartz;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
+import org.opensingular.flow.schedule.IScheduleService;
+import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.Loggable;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 
-import com.google.common.base.Throwables;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.opensingular.flow.schedule.IScheduleService;
-import org.opensingular.flow.schedule.IScheduledJob;
-
-public class QuartzScheduleService implements IScheduleService {
+public class QuartzScheduleService implements IScheduleService, Loggable {
 
     private static final String SCHEDULER_NAME = "SingularFlowScheduler";
 
@@ -60,7 +59,7 @@ public class QuartzScheduleService implements IScheduleService {
         init();
     }
 
-    private void init(){
+    private void init() {
         quartzSchedulerFactory.setSchedulerName(SCHEDULER_NAME);
         ResourceBundle quartzBundle = null;
         try {
@@ -69,7 +68,7 @@ public class QuartzScheduleService implements IScheduleService {
             // If this fails, we load the defaul one.
         }
         if (quartzBundle == null) {
-                quartzBundle = ResourceBundle.getBundle(DEFAULT_CONFIG_RESOURCE_NAME);
+            quartzBundle = ResourceBundle.getBundle(DEFAULT_CONFIG_RESOURCE_NAME);
         }
 
         quartzSchedulerFactory.setConfigLocation(quartzBundle);
@@ -77,7 +76,7 @@ public class QuartzScheduleService implements IScheduleService {
             quartzSchedulerFactory.initialize();
             quartzSchedulerFactory.start();
         } catch (Exception e) {
-            throw Throwables.propagate(e);
+            throw new SingularException(e);
         }
     }
 
@@ -90,16 +89,25 @@ public class QuartzScheduleService implements IScheduleService {
                             .forJob(scheduledJob::run)
                             .withScheduleData(scheduledJob.getScheduleData()).build());
         } catch (Exception e) {
-            throw Throwables.propagate(e);
+            throw new SingularException(e);
         }
     }
-    
+
     @Override
     public void trigger(IScheduledJob scheduledJob) {
         try {
             quartzSchedulerFactory.triggerJob(new JobKey(scheduledJob.getId()));
         } catch (SchedulerException e) {
-            throw Throwables.propagate(e);
+            throw new SingularException(e);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        try {
+            quartzSchedulerFactory.destroy();
+        } catch (SchedulerException e) {
+            getLogger().trace(e.getMessage(), e);
         }
     }
 }
