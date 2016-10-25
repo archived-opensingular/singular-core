@@ -38,6 +38,7 @@ import org.opensingular.server.commons.persistence.dao.form.PetitionContentHisto
 import org.opensingular.server.commons.persistence.dao.form.PetitionDAO;
 import org.opensingular.server.commons.persistence.dao.form.PetitionerDAO;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
+import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
@@ -451,7 +452,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
                 .orElseThrow(() -> new SingularFlowException("Não foi possivel recuperar a definição do processo"));
     }
 
-    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByPetitionCod(long petitionCod) {
+    public List<PetitionHistoryDTO> listPetitionContentHistoryByPetitionCod(long petitionCod) {
         return petitionContentHistoryDAO.listPetitionContentHistoryByPetitionCod(petitionCod);
     }
 

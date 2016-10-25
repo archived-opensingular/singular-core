@@ -17,13 +17,15 @@
 package org.opensingular.server.commons.persistence.dao.form;
 
 
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEntity, Long> {
@@ -32,8 +34,47 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
         super(PetitionContentHistoryEntity.class);
     }
 
-    public List<PetitionContentHistoryEntity> listPetitionContentHistoryByPetitionCod(long petitionCod) {
-        return getSession().createCriteria(PetitionContentHistoryEntity.class).add(Restrictions.eq("petitionEntity.cod", petitionCod)).list();
+    public List<PetitionHistoryDTO> listPetitionContentHistoryByPetitionCod(long petitionCod) {
+
+        final List<TaskInstanceEntity>           tasks;
+        final List<PetitionContentHistoryEntity> histories;
+        final List<PetitionHistoryDTO>           petitionHistoryDTOs;
+        final List<Integer>                      petitionHistoryTaskCods;
+
+        tasks = getSession()
+                .createQuery("select task from PetitionEntity p " +
+                        " inner join p.processInstanceEntity.tasks as task where p.cod = :petitionCod")
+                .setParameter("petitionCod", petitionCod).list();
+
+        histories = getSession()
+                .createQuery("select h from PetitionContentHistoryEntity h " +
+                        " where h.petitionEntity.cod = :petitionCod")
+                .setParameter("petitionCod", petitionCod).list();
+
+        petitionHistoryDTOs = new ArrayList<>();
+
+        histories.forEach(history -> {
+            petitionHistoryDTOs.add(new PetitionHistoryDTO().setPetitionContentHistory(history).setTask(history.getTaskInstanceEntity()));
+        });
+
+        petitionHistoryTaskCods = histories
+                .stream()
+                .map(PetitionContentHistoryEntity::getTaskInstanceEntity)
+                .map(TaskInstanceEntity::getCod)
+                .collect(Collectors.toList());
+
+        tasks
+                .stream()
+                .filter(task -> !petitionHistoryTaskCods.contains(task.getCod()))
+                .forEach(task -> {
+                    petitionHistoryDTOs.add(new PetitionHistoryDTO().setTask(task));
+                });
+
+        return petitionHistoryDTOs
+                .stream()
+                .sorted((a,b) -> a.getTask().getBeginDate().compareTo(b.getTask().getBeginDate()))
+                .collect(Collectors.toList());
+
     }
 
     public FormVersionHistoryEntity findLastestByPetitionCodAndType(String typeName, Long cod) {

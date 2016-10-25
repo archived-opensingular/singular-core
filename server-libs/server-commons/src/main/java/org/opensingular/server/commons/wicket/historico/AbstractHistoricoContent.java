@@ -16,9 +16,22 @@
 
 package org.opensingular.server.commons.wicket.historico;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.form.FormActions;
+import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.service.PetitionService;
@@ -26,17 +39,6 @@ import org.opensingular.server.commons.util.Parameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.opensingular.lib.support.persistence.enums.SimNao;
-import org.opensingular.lib.wicket.util.datatable.BSDataTable;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
-import org.opensingular.lib.wicket.util.resource.Icone;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -93,23 +95,23 @@ public abstract class AbstractHistoricoContent extends Content {
 
     protected abstract void onCancelar(AjaxRequestTarget t);
 
-    protected BSDataTable<PetitionContentHistoryEntity, String> setupDataTable(BaseDataProvider<PetitionContentHistoryEntity, String> dataProvider) {
+    protected BSDataTable<PetitionHistoryDTO, String> setupDataTable(BaseDataProvider<PetitionHistoryDTO, String> dataProvider) {
         return new BSDataTableBuilder<>(dataProvider)
                 .appendPropertyColumn(
                         getMessage("label.table.column.task.name"),
-                        p -> p.getTaskInstanceEntity().getTask().getName()
+                        p -> p.getTask().getTask().getName()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.begin.date"),
-                        p -> p.getTaskInstanceEntity().getBeginDate()
+                        p -> p.getTask().getBeginDate()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.end.date"),
-                        p -> p.getTaskInstanceEntity().getEndDate()
+                        p -> p.getTask().getEndDate()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.allocated.user"),
-                        p -> Optional.ofNullable(p.getActor()).map(Actor::getNome).orElse("")
+                        p -> Optional.of(p).map(PetitionHistoryDTO::getTask).map(TaskInstanceEntity::getAllocatedUser).map(Actor::getNome).orElse("")
                 )
                 .appendActionColumn(
                         Model.of(""),
@@ -120,36 +122,41 @@ public abstract class AbstractHistoricoContent extends Content {
                                     .params(buildViewFormParameters(model))
                                     .build();
                             final WebMarkupContainer link = new WebMarkupContainer(id);
-                            link.add($b.attr("target", String.format("_%s", model.getObject().getCod())));
-                            link.add($b.attr("href", url));
+                            if (model.getObject().getPetitionContentHistory() != null) {
+                                link.add($b.attr("target", String.format("_%s", model.getObject().getPetitionContentHistory().getCod())));
+                                link.add($b.attr("href", url));
+                            }
                             return link;
-                        })
+                        }, (model) -> model.getObject().getPetitionContentHistory() != null)
                 ).build("tabela");
     }
 
-    protected Map<String, String> buildViewFormParameters(IModel<PetitionContentHistoryEntity> model) {
+    protected Map<String, String> buildViewFormParameters(IModel<PetitionHistoryDTO> model) {
         final Map<String, String> params = new HashMap<>();
-        params.put(Parameters.FORM_VERSION_KEY, model
-                .getObject()
-                .getFormVersionHistoryEntities()
-                .stream()
-                .filter(f -> SimNao.SIM.equals(f.getMainForm()))
-                .findFirst()
-                .map(FormVersionHistoryEntity::getCodFormVersion)
-                .map(Object::toString)
-                .orElse(null));
+        if (model.getObject().getPetitionContentHistory() != null) {
+            params.put(Parameters.FORM_VERSION_KEY, model
+                    .getObject()
+                    .getPetitionContentHistory()
+                    .getFormVersionHistoryEntities()
+                    .stream()
+                    .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                    .findFirst()
+                    .map(FormVersionHistoryEntity::getCodFormVersion)
+                    .map(Object::toString)
+                    .orElse(null));
+        }
         return params;
     }
 
-    protected BaseDataProvider<PetitionContentHistoryEntity, String> createDataProvider() {
-        return new BaseDataProvider<PetitionContentHistoryEntity, String>() {
+    protected BaseDataProvider<PetitionHistoryDTO, String> createDataProvider() {
+        return new BaseDataProvider<PetitionHistoryDTO, String>() {
             @Override
             public long size() {
                 return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).size();
             }
 
             @Override
-            public Iterator<? extends PetitionContentHistoryEntity> iterator(int first, int count, String sortProperty, boolean ascending) {
+            public Iterator<PetitionHistoryDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
                 return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).iterator();
             }
         };
