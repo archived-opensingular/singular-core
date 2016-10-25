@@ -24,11 +24,11 @@
 
         .has-error.list-detail-input .table thead tr th {
             color: #e82724;
-            border-bottom: 1px solid #e82724;
+            border-bottom: 1px solid #fdd5df;
         }
 
         .has-error .list-detail-body .table tfoot .list-detail-empty td {
-            border: 1px solid #e82724;
+            border: 1px solid #fdd5df;
             color: #e82724;
             background-color: #fdf0f2;
         }
@@ -49,8 +49,15 @@
         }
 
         .has-error.list-detail-input .table tbody tr td {
-            border-bottom: 1px solid #e82724 ;
+            border-bottom: 1px solid #fdd5df ;
         }
+
+        .has-error.list-detail-input .table tbody tr td .list-detail-edit,
+        .has-error.list-detail-input .table tbody tr td .list-detail-remove,
+        .has-error.list-detail-input .table tbody tr td {
+            color: #e82724;
+        }
+
     </style>
     <form wicket:id="form">
         <div class="list-detail-input can-have-error">
