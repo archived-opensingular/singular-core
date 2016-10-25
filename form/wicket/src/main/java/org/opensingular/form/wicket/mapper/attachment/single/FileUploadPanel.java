@@ -31,6 +31,7 @@ import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -105,7 +106,8 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         add((filesContainer = new WebMarkupContainer("files")).add(downloadLink));
         add(uploadFileButton.add(fileField));
-        add(removeFileButton);
+        add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
+
         add(progressBar = new WebMarkupContainer("progress"));
 
         add(new ClassAttributeModifier() {
