@@ -21,11 +21,12 @@ import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
+import org.opensingular.lib.commons.util.Loggable;
 
 import java.util.regex.Pattern;
 
 @SInfoType(name = "TelefoneNacional", spackage = SPackageCountryBrazil.class)
-public class STypeTelefoneNacional extends STypeString {
+public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
 
@@ -38,7 +39,12 @@ public class STypeTelefoneNacional extends STypeString {
 
     @Override
     public String convert(Object valor) {
-        return format(super.convert(valor));
+        try {
+            return format(super.convert(valor));
+        } catch (Exception e){
+            getLogger().trace(e.getMessage(), e);
+            return String.valueOf(valor);
+        }
     }
 
     public String format(String value) {
