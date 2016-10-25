@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -33,7 +25,6 @@ import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -49,6 +40,10 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
+
+import java.util.*;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
@@ -224,12 +219,12 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
         if (currentType instanceof STypeList && list.isEmpty()) {
-            final STypeList<?,?> tl = (STypeList<?,?>) currentType;
+            final STypeList<?, ?> tl = (STypeList<?, ?>) currentType;
             if (tl.getMinimumSize() != null) {
                 for (int i = 0; i < tl.getMinimumSize(); i++) {
                     list.addNew();
                 }
-            } else if(tl.isRequired()){
+            } else if (tl.isRequired()) {
                 list.addNew();
             }
         }
@@ -250,30 +245,17 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         } else {
             footer.setVisible(false);
         }
-
         personalizeCSS(footer);
     }
 
-    protected static boolean canAddItems(WicketBuildContext ctx) {
+    public static boolean canAddItems(WicketBuildContext ctx) {
         return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
                 && ctx.getViewMode().isEdition();
     }
 
-    public static String definirLabel(WicketBuildContext ctx) {
-        SType<?> type = ctx.getCurrentInstance().getType();
-        AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
-        return (String) view.label().orElse(
-                Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(()->type.asAtr().getLabel()))
-                        .map((x) -> {
-                            String[] parts = x.trim().split(" ");
-                            return "Adicionar " + parts[0];
-                        })
-                        .orElse("Adicionar item")
-        );
-    }
 
     protected static String createButtonMarkup(WicketBuildContext ctx) {
-        String label = definirLabel(ctx);
+        String label = defineLabel(ctx);
 
         return String.format("<button wicket:id=\"_add\" class=\"btn btn-add\" type=\"button\" title=\"%s\"><i class=\"fa fa-plus\"></i>%s</button>", label, label);
     }
@@ -285,5 +267,18 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                 return oldClasses;
             }
         });
+    }
+
+    public static String defineLabel(WicketBuildContext ctx) {
+        SType<?>                         type = ctx.getCurrentInstance().getType();
+        AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
+        return view.label().orElse(
+                Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
+                        .map((x) -> {
+                            String[] parts = x.trim().split(" ");
+                            return "Adicionar " + parts[0];
+                        })
+                        .orElse("Adicionar item")
+        );
     }
 }

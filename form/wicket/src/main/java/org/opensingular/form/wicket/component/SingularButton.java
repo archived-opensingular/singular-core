@@ -16,14 +16,12 @@
 
 package org.opensingular.form.wicket.component;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
-import java.util.Optional;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.wicket.util.WicketFormProcessing;
 
 public abstract class SingularButton extends AjaxButton {
 
@@ -40,7 +38,7 @@ public abstract class SingularButton extends AjaxButton {
         
         //HACK: a solução que eu preferia usar faria o onSubmit() final, mas daí quebraria a compatibilidade. Discutir.
         if (isShouldProcessFormSubmitWithoutValidation())
-            WicketFormProcessing.onFormSubmit(form, Optional.of(target), getCurrentInstance(), false);
+            WicketFormProcessing.onFormSubmit(form, target, getCurrentInstance(), false);
     }
     
     protected boolean isShouldProcessFormSubmitWithoutValidation() {
@@ -50,7 +48,7 @@ public abstract class SingularButton extends AjaxButton {
     @Override
     protected void onError(AjaxRequestTarget target, Form<?> form) {
         super.onError(target, form);
-        WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance());
+        WicketFormProcessing.onFormError(form, target);
     }
 
     protected IModel<? extends SInstance> getCurrentInstance() {

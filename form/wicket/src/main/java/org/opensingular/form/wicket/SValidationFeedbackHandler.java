@@ -116,16 +116,16 @@ public class SValidationFeedbackHandler implements Serializable {
     // LIFECYCLE
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void clearValidationMessages(Optional<AjaxRequestTarget> target) {
+    public void clearValidationMessages(AjaxRequestTarget target) {
         updateValidationMessages(target, Collections.emptyList());
     }
 
-    public void updateValidationMessages(Optional<AjaxRequestTarget> target) {
+    public void updateValidationMessages(AjaxRequestTarget target) {
         List<IValidationError> newErrors = collectNestedErrors();
         updateValidationMessages(target, newErrors);
     }
 
-    protected void updateValidationMessages(Optional<AjaxRequestTarget> target, Collection<IValidationError> newErrors) {
+    protected void updateValidationMessages(AjaxRequestTarget target, Collection<IValidationError> newErrors) {
         List<IValidationError> oldErrors = new ArrayList<>(currentErrors);
 
         this.currentErrors.clear();
@@ -141,7 +141,7 @@ public class SValidationFeedbackHandler implements Serializable {
         }
     }
 
-    private void fireFeedbackChanged(Optional<AjaxRequestTarget> target,
+    private void fireFeedbackChanged(AjaxRequestTarget target,
                                      Component container,
                                      Collection<SInstance> baseInstances,
                                      Collection<IValidationError> oldErrors,
@@ -217,7 +217,7 @@ public class SValidationFeedbackHandler implements Serializable {
 
     public Optional<ValidationErrorLevel> findNestedErrorsMaxLevel(Component subContainer, IPredicate<IValidationError> filter) {
         return collectNestedErrors(subContainer, resolveRootInstances(subContainer), filter).stream()
-                .map(it -> it.getErrorLevel())
+                .map(IValidationError::getErrorLevel)
                 .collect(Collectors.maxBy(Comparator.naturalOrder()));
     }
 

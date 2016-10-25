@@ -111,7 +111,7 @@ public class BooleanMapper implements IWicketComponentMapper {
 
     @Override
     public void adjustJSEvents(Component comp) {
-        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS, ADD_MOUSEDOWN_HANDLERS));
+        comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
 
 }

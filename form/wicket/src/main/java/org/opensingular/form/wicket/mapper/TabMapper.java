@@ -76,13 +76,11 @@ public class TabMapper extends DefaultCompositeMapper {
                     .collect(toList());
                 SValidationFeedbackHandler.bindTo(tabComponent)
                     .addInstanceModels(subtreeModels.get())
-                    .addListener(new ISValidationFeedbackHandlerListener() {
-                    @Override
-                    public void onFeedbackChanged(SValidationFeedbackHandler handler, Optional<AjaxRequestTarget> target, Component container, Collection<SInstance> baseInstances, Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors) {
-                        if (target.isPresent())
-                            target.get().add(tabComponent);
-                    }
-                });
+                    .addListener((ISValidationFeedbackHandlerListener) (handler, target, container, baseInstances, oldErrors, newErrors) -> {
+                        if (target != null) {
+                            target.add(tabComponent);
+                        }
+                    });
                 tabComponent.add($b.classAppender("has-errors",
                     $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
                         .map(IModel::getObject)

@@ -18,7 +18,6 @@ package org.opensingular.form.wicket.feedback;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -96,13 +95,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
     }
 
     protected IModel<? extends List<IValidationError>> newValidationErrorsModel() {
-        //        return $m.get(() -> getValidationFeedbackHandler().collectNestedErrors());
-        return new IReadOnlyModel<List<IValidationError>>() {
-            @Override
-            public List<IValidationError> getObject() {
-                return getValidationFeedbackHandler().collectNestedErrors();
-            }
-        };
+        return (IReadOnlyModel<List<IValidationError>>) () -> getValidationFeedbackHandler().collectNestedErrors();
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {
@@ -110,26 +103,24 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
     }
 
     protected Component newMessageDisplayComponent(String id, IModel<IValidationError> error) {
-        final Component component = new Label(id, $m.map(error, it -> it.getMessage()));
+        final Component component = new Label(id, $m.map(error, IValidationError::getMessage));
         component.setEscapeModelStrings(SValidationFeedbackPanel.this.getEscapeModelStrings());
-        component.add($b.classAppender($m.map(error, it -> getCSSClass(it))));
+        component.add($b.classAppender($m.map(error, this::getCSSClass)));
 
-        if (component instanceof Label) {
-            final Label label = (Label) component;
+        final Label label = (Label) component;
 
-            if (error instanceof SFeedbackMessage) {
-                final SFeedbackMessage bfm = (SFeedbackMessage) error;
+        if (error instanceof SFeedbackMessage) {
+            final SFeedbackMessage bfm = (SFeedbackMessage) error;
 
-                final SInstance           instance      = bfm.getInstanceModel().getObject();
-                final SInstance           parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
-                final Optional<Component> reporter      = WicketFormUtils.findChildByInstance((MarkupContainer) getFence(), instance);
+            final SInstance           instance      = bfm.getInstanceModel().getObject();
+            final SInstance           parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
+            final Optional<Component> reporter      = WicketFormUtils.findChildByInstance(getFence(), instance);
 
-                final String labelPath = StringUtils.defaultString(
-                        reporter.map(it -> WicketFormUtils.generateTitlePath(getFence(), parentContext, it, instance)).orElse(null),
-                        SFormUtil.generatePath(instance, it -> Objects.equals(it, parentContext)));
+            final String labelPath = StringUtils.defaultString(
+                    reporter.map(it -> WicketFormUtils.generateTitlePath(getFence(), parentContext, it, instance)).orElse(null),
+                    SFormUtil.generatePath(instance, it -> Objects.equals(it, parentContext)));
 
-                label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
-            }
+            label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
         }
 
         return component;
@@ -139,14 +130,9 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
         if (isShowBox()) {
-            final Optional<ValidationErrorLevel> level = SValidationFeedbackHandler.get(getFence())
-                    .findNestedErrorsMaxLevel();
-            if (level.isPresent()) {
-                final String alertLevel = level.get().isWarning()
-                        ? "alert alert-warning"
-                        : "alert alert-danger";
-                new AttributeAppender("class", alertLevel).onComponentTag(this, tag);
-            }
+            SValidationFeedbackHandler.get(getFence()).findNestedErrorsMaxLevel().ifPresent(level -> {
+                new AttributeAppender("class", level.isWarning() ? "alert alert-warning" : "alert alert-danger").onComponentTag(this, tag);
+            });
         }
     }
 

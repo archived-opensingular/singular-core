@@ -32,7 +32,6 @@ import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEvent;
-import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -40,7 +39,9 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -58,31 +59,32 @@ import static java.util.stream.Collectors.toSet;
  */
 public class WicketFormProcessing implements Loggable {
 
-    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
+    public final static  MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
     };
-    public final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
+    private final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
     };
-    public final static MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
+    public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
 
-    public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
+    public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
-            if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage())
-                target.ifPresent(t -> t.add(c));
-            else if (c.hasFeedbackMessage())
+            if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage()) {
+                Optional.ofNullable(target).ifPresent(t -> t.add(c));
+            } else if (c.hasFeedbackMessage()) {
                 refreshComponentOrCellContainer(target, c);
+            }
         });
     }
 
-    public static boolean onFormSubmit(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance, boolean validate) {
+    public static boolean onFormSubmit(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstance, boolean validate) {
         return processAndPrepareForm(container, target, baseInstance, validate);
     }
 
     public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
-        return processAndPrepareForm(container, Optional.empty(), baseInstance, validate);
+        return processAndPrepareForm(container, null, baseInstance, validate);
     }
 
-    private static boolean processAndPrepareForm(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
+    private static boolean processAndPrepareForm(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
 
         final Function<Boolean, Boolean> setAndReturn = (value) -> {
             RequestCycle.get().setMetaData(MDK_PROCESSED, value);
@@ -107,11 +109,7 @@ public class WicketFormProcessing implements Loggable {
                 }
             }
 
-            updateValidationFeedbackOnDescendants(
-                    target,
-                    container,
-                    baseInstanceModel,
-                    document.getValidationErrorsByInstanceId());
+            updateValidationFeedbackOnDescendants(target, container);
 
             if (hasErrors)
                 return setAndReturn.apply(false);
@@ -131,7 +129,7 @@ public class WicketFormProcessing implements Loggable {
      * @param path da instancia
      * @return chaves concatenadas
      */
-    protected static String getIndexesKey(String path) {
+    private static String getIndexesKey(String path) {
 
         final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
@@ -146,7 +144,7 @@ public class WicketFormProcessing implements Loggable {
         return key.toString();
     }
 
-    public static void onFieldValidate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
+    public static void onFieldValidate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstance) {
 
         if (fieldInstance == null || fieldInstance.getObject() == null)
             return;
@@ -198,7 +196,7 @@ public class WicketFormProcessing implements Loggable {
         return !isOrphan(i);
     }
 
-    public static void onFieldProcess(Component component, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstanceModel) {
+    public static void onFieldProcess(Component component, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel) {
 
         if (fieldInstanceModel == null || fieldInstanceModel.getObject() == null) {
             return;
@@ -209,9 +207,9 @@ public class WicketFormProcessing implements Loggable {
 
         evaluateUpdateListeners(fieldInstance);
         updateAttributes(fieldInstance, eventCollector);
-        validate(component, target.orElse(null), fieldInstanceModel, fieldInstance);
+        validate(component, target, fieldInstance);
 
-        if (target.isPresent()) {
+        if (target != null) {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
                     .map(SInstanceEvent::getSource)
@@ -273,10 +271,7 @@ public class WicketFormProcessing implements Loggable {
     private static boolean isNotInListOrIsBothInSameList(SInstance a, SInstance b) {
         final String pathA = pathFromList(a);
         final String pathB = pathFromList(b);
-        if (pathA != null && pathB != null && Objects.equals(pathA, pathB)) {
-            return Objects.equals(getIndexesKey(b.getPathFull()), getIndexesKey(a.getPathFull()));
-        }
-        return true;
+        return !(pathA != null && pathB != null && Objects.equals(pathA, pathB)) || Objects.equals(getIndexesKey(b.getPathFull()), getIndexesKey(a.getPathFull()));
     }
 
     private static String pathFromList(SInstance i) {
@@ -287,7 +282,7 @@ public class WicketFormProcessing implements Loggable {
     }
 
 
-    private static void validate(Component component, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel, SInstance fieldInstance) {
+    private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
         if (!isSkipValidationOnRequest()) {
 
             final InstanceValidationContext validationContext;
@@ -313,22 +308,16 @@ public class WicketFormProcessing implements Loggable {
                     .findNearest(component)
                     .flatMap(ctx -> Optional.of(ctx.getRootContext()))
                     .flatMap(ctx -> Optional.of(Stream.builder().add(ctx.getRootContainer()).add(ctx.getExternalContainer()).build()))
-                    .ifPresent(containers -> {
-                        containers.forEach(container -> {
-                            updateValidationFeedbackOnDescendants(
-                                    ofNullable(target),
-                                    (MarkupContainer) container,
-                                    fieldInstanceModel,
-                                    validationContext.getErrorsByInstanceId());
-                        });
-                    });
+                    .ifPresent(containers -> containers.forEach(container -> {
+                        updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
+                    }));
         }
     }
 
     /**
      * Verifica se existe na hierarquia, ignora a si proprio.
      */
-    public static boolean isParentsVisible(SInstance si) {
+    private static boolean isParentsVisible(SInstance si) {
         if (si == null) {
             return false;
         }
@@ -343,7 +332,7 @@ public class WicketFormProcessing implements Loggable {
         return true;
     }
 
-    protected static boolean isSkipValidationOnRequest() {
+    private static boolean isSkipValidationOnRequest() {
         return RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) != null && RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST);
     }
 
@@ -352,24 +341,22 @@ public class WicketFormProcessing implements Loggable {
         document.updateAttributes(eventCollector);
     }
 
-    private static void refreshComponentOrCellContainer(Optional<AjaxRequestTarget> target, Component component) {
-        if (target.isPresent() && component != null) {
+    private static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
+        if (target != null && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
-            target.get()
-                    .add(WicketFormUtils.resolveRefreshingComponent(
+            target.add(WicketFormUtils.resolveRefreshingComponent(
                             ObjectUtils.defaultIfNull(
                                     WicketFormUtils.getCellContainer(component), component)));
         }
     }
 
-    public static void updateValidationFeedbackOnDescendants(Optional<AjaxRequestTarget> target,
-                                                             MarkupContainer container,
-                                                             IModel<? extends SInstance> baseInstance,
-                                                             Map<Integer, ? extends Collection<IValidationError>> instanceErrors) {
+    public static void updateValidationFeedbackOnDescendants(AjaxRequestTarget target,
+                                                             MarkupContainer container) {
 
         Visits.visitPostOrder(container, (Component comp, IVisit<Void> visit) -> {
-            if (SValidationFeedbackHandler.isBound(comp))
+            if (SValidationFeedbackHandler.isBound(comp)) {
                 SValidationFeedbackHandler.get(comp).updateValidationMessages(target);
+            }
         });
     }
 }

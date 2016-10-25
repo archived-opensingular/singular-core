@@ -102,7 +102,7 @@ public class PrototypeContent extends Content {
         newItemForm.add(new ActionAjaxButton("preview_btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                if (WicketFormProcessing.onFormSubmit(form, Optional.of(target), singularFormPanel.getRootInstance(), true)) {
+                if (WicketFormProcessing.onFormSubmit(form, target, singularFormPanel.getRootInstance(), true)) {
                     setResponsePage(new PreviewPage(model, PrototypeContent.this.getPage()));
                 } else {
                     addToastrWarningMessage("message.error.form");

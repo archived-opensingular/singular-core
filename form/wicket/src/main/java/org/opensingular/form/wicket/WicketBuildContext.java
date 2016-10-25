@@ -16,23 +16,7 @@
 
 package org.opensingular.form.wicket;
 
-import static com.google.common.collect.Lists.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
@@ -41,13 +25,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
-import org.opensingular.form.wicket.feedback.AbstractSValidationFeedbackPanel;
-import org.opensingular.form.wicket.mapper.TabMapper;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.slf4j.LoggerFactory;
-
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.view.SView;
@@ -56,17 +33,32 @@ import org.opensingular.form.wicket.IWicketComponentMapper.HintKey;
 import org.opensingular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.AbstractSValidationFeedbackPanel;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
+import org.opensingular.form.wicket.mapper.TabMapper;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 
 @SuppressWarnings("serial")
 public class WicketBuildContext implements Serializable {
@@ -319,7 +311,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id) {
-        return createFeedbackPanel(id, feedback -> ISValidationFeedbackHandlerListener.refresh(feedback));
+        return createFeedbackPanel(id, ISValidationFeedbackHandlerListener::refresh);
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
@@ -420,19 +412,19 @@ public class WicketBuildContext implements Serializable {
 
         @Override
         public void onValidate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
-            WicketFormProcessing.onFieldValidate((FormComponent<?>) s, Optional.of(t), m);
+            WicketFormProcessing.onFieldValidate((FormComponent<?>) s, t, m);
         }
 
         @Override
         public void onProcess(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
             long ms = Calendar.getInstance().getTimeInMillis();
-            WicketFormProcessing.onFieldProcess(s, Optional.of(t), m);
+            WicketFormProcessing.onFieldProcess(s, t, m);
             LOGGER.info("[SINGULAR] Tempo processando (ms): " + (Calendar.getInstance().getTimeInMillis() - ms));
         }
 
         @Override
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {
-            WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
+            WicketFormProcessing.onFormError((FormComponent<?>) source, target);
         }
     }
 
