@@ -29,18 +29,6 @@
         <persistence strategy="none"/>
     </cache>
 
-
-    <cache name="oneSecond"
-           timeToIdleSeconds="1"
-           timeToLiveSeconds="1"
-           maxBytesLocalHeap="102400"
-           eternal="false"
-           maxEntriesLocalDisk="10000000"
-           transactionalMode="off"
-           memoryStoreEvictionPolicy="LRU">
-        <persistence strategy="none"/>
-    </cache>
-
     <cache name="forever" eternal="true"
         maxBytesLocalHeap="102400"
         maxEntriesLocalDisk="10000000"
