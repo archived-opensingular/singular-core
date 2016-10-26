@@ -15,8 +15,10 @@
  */
 package org.opensingular.form.service;
 
+import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MElement;
@@ -111,16 +113,17 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     private FormEntity saveNewFormEntity(SInstance instance) {
         final FormEntity entity = new FormEntity();
-        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType().getName()));
+        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType()));
         formDAO.saveOrUpdate(entity);
         return entity;
     }
 
-    private FormTypeEntity getOrCreateNewFormTypeEntity(final String typeAbbreviation) {
-        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(typeAbbreviation);
+    private FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
+        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(type.getName());
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
-            formTypeEntity.setAbbreviation(typeAbbreviation);
+            formTypeEntity.setAbbreviation(type.getName());
+            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass()));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }

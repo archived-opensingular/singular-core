@@ -45,6 +45,9 @@ public class FormTypeEntity extends BaseEntity<Long> {
     @Column(name = "SG_TIPO_FORMULARIO")
     private String abbreviation;
 
+    @Column(name = "NO_LABEL_FORMULARIO")
+    private String label;
+
     @Column(name = "NU_VERSAO_CACHE")
     private Long cacheVersionNumber;
 
@@ -71,5 +74,14 @@ public class FormTypeEntity extends BaseEntity<Long> {
 
     public void setCacheVersionNumber(Long cacheVersionNumber) {
         this.cacheVersionNumber = cacheVersionNumber;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public FormTypeEntity setLabel(String label) {
+        this.label = label;
+        return this;
     }
 }
