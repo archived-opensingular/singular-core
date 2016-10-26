@@ -40,7 +40,7 @@ public class DefaultVarInstance extends AbstractVarInstance {
             }
             return this;
         } catch (RuntimeException e) {
-            throw new SingularException("Erro setando valor '" + valor + "' em " + getRef() + " (" + getNome() + ")", e);
+            throw SingularException.rethrow("Erro setando valor '" + valor + "' em " + getRef() + " (" + getNome() + ")", e);
         }
     }
 

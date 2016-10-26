@@ -76,7 +76,7 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
             quartzSchedulerFactory.initialize();
             quartzSchedulerFactory.start();
         } catch (Exception e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -89,7 +89,7 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
                             .forJob(scheduledJob::run)
                             .withScheduleData(scheduledJob.getScheduleData()).build());
         } catch (Exception e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         try {
             quartzSchedulerFactory.triggerJob(new JobKey(scheduledJob.getId()));
         } catch (SchedulerException e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 

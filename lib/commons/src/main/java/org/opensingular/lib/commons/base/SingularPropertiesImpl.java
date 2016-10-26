@@ -192,14 +192,14 @@ public enum SingularPropertiesImpl implements SingularProperties {
         try (InputStream input = propertiesUrl.openStream()) {
             props = PropertiesUtils.load(propertiesUrl, "utf-8");
         } catch (IOException e) {
-            throw new SingularException("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
+            throw SingularException.rethrow("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
         }
         if (newProperties == null) {
             return props;
         }
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
             if (newProperties.containsKey(entry.getKey())) {
-                throw new SingularException("O arquivo de propriedade '" + propertiesName +
+                throw SingularException.rethrow("O arquivo de propriedade '" + propertiesName +
                         "' no classpath define novamente a propriedade '" + entry.getKey() +
                         "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
                         propertiesUrl);
@@ -214,7 +214,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
         try {
             return SingularPropertiesImpl.class.getClassLoader().getResource(name);
         } catch (Exception e) {
-            throw new SingularException("Erro procurando arquivo de properties '" + name + "' no class path", e);
+            throw SingularException.rethrow("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }
     }
 
@@ -225,7 +225,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
             if (selected == null) {
                 selected = u;
             } else if (!selected.toURI().equals(u.toURI())) {
-                throw new SingularException(
+                throw SingularException.rethrow(
                         "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
                         selected).add("arquivo 2", u);
             }
@@ -241,7 +241,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
             try (FileInputStream in = new FileInputStream(arq)) {
                 loadOverriding(newProperties, in);
             } catch (Exception e) {
-                throw new SingularException("Erro lendo arquivo de propriedades", e).add("arquivo", arq);
+                throw SingularException.rethrow("Erro lendo arquivo de propriedades", e).add("arquivo", arq);
             }
         }
     }
@@ -253,7 +253,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
         try {
             loadOverriding(newProperties, resoruce.openStream());
         } catch (Exception e) {
-            throw new SingularException("Erro lendo arquivo de propriedades", e).add("url", resoruce);
+            throw SingularException.rethrow("Erro lendo arquivo de propriedades", e).add("url", resoruce);
         }
     }
 

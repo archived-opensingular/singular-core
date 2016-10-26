@@ -215,7 +215,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     // estar nesse lugar
     protected MappingId parseId(String instanciaID) {
         if (instanciaID == null || instanciaID.length() < 1) {
-            throw new SingularException("O ID da instância não pode ser nulo ou vazio");
+            throw SingularException.rethrow("O ID da instância não pode ser nulo ou vazio");
         }
         String parts[] = instanciaID.split("\\.");
         String sigla = parts[parts.length - 2];
