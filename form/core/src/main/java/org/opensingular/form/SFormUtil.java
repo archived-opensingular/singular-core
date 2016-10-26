@@ -191,6 +191,15 @@ public final class SFormUtil {
         return infoType.name();
     }
 
+    public static String getTypeLabel(Class<? extends SType> typeClass) {
+        SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
+        if (StringUtils.isBlank(infoType.label())) {
+            throw new SingularFormException("O tipo " + typeClass.getName() + " não define o label do tipo por meio da anotação @"
+                    + SInfoType.class.getSimpleName());
+        }
+        return infoType.label();
+    }
+
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
         SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
         if (mFormTipo == null) {
