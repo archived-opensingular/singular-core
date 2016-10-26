@@ -48,7 +48,6 @@ public interface SingularProperties {
     public static final String USE_INMEMORY_DATABASE     = "singular.use.inmemory.database";
 
     // Identifica o nome do schema que deve ser utilizado
-    // O EntityInterceptor deve ser configurado no datasource
     public static final String CUSTOM_SCHEMA_NAME     = "singular.custom.schema.name";
 
     public static SingularProperties get() {
