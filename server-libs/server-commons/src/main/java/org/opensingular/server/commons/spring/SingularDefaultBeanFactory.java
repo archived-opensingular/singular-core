@@ -16,10 +16,6 @@
 
 package org.opensingular.server.commons.spring;
 
-import org.opensingular.server.commons.service.*;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
-
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.schedule.IScheduleService;
@@ -49,10 +45,23 @@ import org.opensingular.server.commons.persistence.dao.form.PetitionDAO;
 import org.opensingular.server.commons.persistence.dao.form.PetitionerDAO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.schedule.TransactionalQuartzScheduledService;
+import org.opensingular.server.commons.service.EmailPersistenceService;
+import org.opensingular.server.commons.service.FormPetitionService;
+import org.opensingular.server.commons.service.IEmailService;
+import org.opensingular.server.commons.service.ParameterService;
+import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.DefaultUserDetailService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
 import org.opensingular.server.commons.spring.security.SingularUserDetailsService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 @SuppressWarnings("rawtypes")
 public class SingularDefaultBeanFactory {
@@ -168,28 +177,28 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public EmailDao<?> emailDao(){
+    public EmailDao<?> emailDao() {
         return new EmailDao<>();
     }
-    
+
     @Bean
-    public EmailAddresseeDao<?> emailAddresseeDao(){
+    public EmailAddresseeDao<?> emailAddresseeDao() {
         return new EmailAddresseeDao<>();
     }
 
     @Bean
     @DependsOn(SDocument.FILE_PERSISTENCE_SERVICE)
-    public IEmailService<?> emailService(){
+    public IEmailService<?> emailService() {
         return new EmailPersistenceService();
     }
 
     @Bean
-    public IScheduleService scheduleService(){
+    public IScheduleService scheduleService() {
         return new TransactionalQuartzScheduledService();
     }
-    
+
     @Bean
-    public IFlowRenderer flowRenderer(){
+    public IFlowRenderer flowRenderer() {
         return new YFilesFlowRemoteRenderer(null);
     }
 
@@ -204,7 +213,20 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
-    public <T extends PetitionEntity> FormPetitionService<T> formPetitionService(){
+    public <T extends PetitionEntity> FormPetitionService<T> formPetitionService() {
         return new FormPetitionService<T>();
+    }
+
+    @Bean
+    public EhCacheManagerFactoryBean ehCacheCacheManager() {
+        EhCacheManagerFactoryBean cacheManager = new EhCacheManagerFactoryBean();
+        cacheManager.setConfigLocation(new ClassPathResource("default-singular-ehcache.xml"));
+        cacheManager.setShared(true);
+        return cacheManager;
+    }
+
+    @Bean
+    public CacheManager cacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
+        return new EhCacheCacheManager(ehCacheManagerFactoryBean.getObject());
     }
 }
