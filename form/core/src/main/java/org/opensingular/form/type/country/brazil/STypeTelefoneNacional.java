@@ -23,12 +23,14 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 import org.opensingular.lib.commons.util.Loggable;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SInfoType(name = "TelefoneNacional", spackage = SPackageCountryBrazil.class)
 public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
+    private static final Pattern PHONE_PATTERN      = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -41,7 +43,7 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
     public String convert(Object valor) {
         try {
             return format(super.convert(valor));
-        } catch (Exception e){
+        } catch (Exception e) {
             getLogger().trace(e.getMessage(), e);
             return String.valueOf(valor);
         }
@@ -54,27 +56,44 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         return "(" + extractDDD(value) + ") " + extractNumber(value);
     }
 
-    String extractDDD(String number) {
+    private Matcher getPhoneMatcher(String number) {
         String unformated;
+
         if (number == null) {
             return null;
         }
         unformated = unformat(number);
         unformated = removeZeroIfNeeded(unformated);
-        return unformated.substring(0, 2);
+        return PHONE_PATTERN.matcher(unformated);
+    }
+
+    String extractDDD(String value) {
+        final Matcher phoneMatcher = getPhoneMatcher(value);
+        if (phoneMatcher == null) {
+            return null;
+        }
+        if (phoneMatcher.matches()) {
+            return phoneMatcher.group(1);
+        }
+        return value;
     }
 
     String extractNumber(String value) {
-        String unformated;
-        String number;
-        if (value == null) {
+        final Matcher phoneMatcher = getPhoneMatcher(value);
+        if (phoneMatcher == null) {
             return null;
         }
-        unformated = unformat(value);
-        unformated = removeZeroIfNeeded(unformated);
-        number = unformated.substring(2, unformated.length());
-        number = number.substring(0, number.length() - 4) + "-" + number.substring(number.length() - 4, number.length());
-        return number;
+        if (phoneMatcher.matches()) {
+            String number = "";
+            if (phoneMatcher.groupCount() >= 2 && phoneMatcher.group(2) != null) {
+                number = phoneMatcher.group(2);
+            }
+            if (phoneMatcher.groupCount() == 3 && phoneMatcher.group(3) != null) {
+                number = number + "-" + phoneMatcher.group(3);
+            }
+            return number;
+        }
+        return value;
     }
 
     private String removeZeroIfNeeded(String unformated) {
