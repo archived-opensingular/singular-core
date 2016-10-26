@@ -59,7 +59,7 @@ public class STypeCEP extends STypeString implements Loggable {
 
     public String format(String cep) {
         Matcher cepMatcher = getCepMatcher(cep);
-        if (cepMatcher.matches()) {
+        if (cepMatcher != null && cepMatcher.matches()) {
             return cepMatcher.group(1) + "." + cepMatcher.group(2) + "-" + cepMatcher.group(3);
         }
         return cep;
