@@ -323,7 +323,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         } catch (SingularException e) {
             throw e;
         } catch (Exception e) {
-            throw new SingularServerException(e.getMessage(), e);
+            throw SingularServerException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -431,7 +431,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         try {
             petition = petitionClass.newInstance();
         } catch (Exception e) {
-            throw new SingularServerException("Error creating new petition instance", e);
+            throw SingularServerException.rethrow("Error creating new petition instance", e);
         }
 
         if (config.containsProcessDefinition()) {

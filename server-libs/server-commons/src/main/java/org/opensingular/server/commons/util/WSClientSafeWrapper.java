@@ -62,7 +62,7 @@ public class WSClientSafeWrapper {
                         return future.get(45, TimeUnit.SECONDS);
                     } catch (TimeoutException ex) {
                         log.fatal("WEB-SERVICE NÃO RESPONDEU A TEMPO (45 segundos)");
-                        throw new SingularServerIntegrationException("", ex);
+                        throw SingularServerIntegrationException.rethrow("", ex);
                     } finally {
                         future.cancel(true);
                     }
@@ -71,7 +71,7 @@ public class WSClientSafeWrapper {
                 } catch (Exception e) {
                     ref = factory.getReference(enableMTOM);
                     log.fatal(e.getMessage(), e);
-                    throw new SingularServerIntegrationException(humanName, e);
+                    throw SingularServerIntegrationException.rethrow(humanName, e);
                 } finally {
                     log.warn(String.format("RETORNO DE WEB-SERVICE: %s OPERACAO: %s ", wsIface.getName(), method.getName()));
                 }

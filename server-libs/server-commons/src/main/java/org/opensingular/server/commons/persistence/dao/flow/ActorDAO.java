@@ -105,7 +105,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
             result = (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("codUsuario", codUsuario)).uniqueResult();
 
             if (result == null) {
-                throw new SingularServerException("Usuário que deveria ter sido criado não pode ser recuperado.");
+                throw SingularServerException.rethrow("Usuário que deveria ter sido criado não pode ser recuperado.");
             }
         }
         return result;

@@ -23,15 +23,33 @@ import org.opensingular.lib.commons.base.SingularException;
  */
 public class SingularServerException extends SingularException {
 
-    public SingularServerException(String msg) {
+    protected SingularServerException(String msg) {
         super(msg);
     }
 
-    public SingularServerException(Throwable cause) {
+    protected SingularServerException(Throwable cause) {
         super(cause);
     }
 
-    public SingularServerException(String msg, Throwable cause) {
+    protected SingularServerException(String msg, Throwable cause) {
         super(msg, cause);
     }
+
+
+    public static SingularServerException rethrow(Throwable e) {
+        return rethrow(null, e);
+    }
+
+    public static SingularServerException rethrow(String message) {
+        return rethrow(message, null);
+    }
+
+    public static SingularServerException rethrow(String message, Throwable e) {
+        if (e instanceof SingularServerException) {
+            return (SingularServerException) e;
+        } else {
+            return new SingularServerException(message, e);
+        }
+    }
+
 }

@@ -74,7 +74,7 @@ public class TaskInstanceDTO implements Serializable {
             final String path = new URL(processGroupContext).getPath();
             this.processGroupContext  = path.substring(0, path.indexOf("/", 1));
         } catch (Exception e) {
-            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", processGroupContext), e);
+            throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", processGroupContext), e);
         }
     }
 

@@ -328,7 +328,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
             final String path = new URL(groupConnectionURL).getPath();
             return path.substring(0, path.indexOf("/", 1));
         } catch (Exception e) {
-            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
+            throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
         }
     }
 

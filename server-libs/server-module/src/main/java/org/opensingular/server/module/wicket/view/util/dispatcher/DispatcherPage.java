@@ -123,7 +123,7 @@ public abstract class DispatcherPage extends WebPage {
                     logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
                 }
             } else if (!ViewMode.READ_ONLY.equals(cfg.getViewMode())) {
-                throw new SingularServerException("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
+                throw SingularServerException.rethrow("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
             }
         }
         return null;
@@ -168,7 +168,7 @@ public abstract class DispatcherPage extends WebPage {
             return new ReadOnlyFormPage($m.ofValue(formVersionPK), $m.ofValue(showAnnotations));
         }
 
-        throw new SingularServerException("Não foi possivel identificar qual é o formulario a ser exibido");
+        throw SingularServerException.rethrow("Não foi possivel identificar qual é o formulario a ser exibido");
     }
 
     private WebPage retrieveDestinationUsingSingularWebRef(FormPageConfig config, SingularWebRef ref) {
@@ -215,7 +215,7 @@ public abstract class DispatcherPage extends WebPage {
         return Optional.of(formVersionPK)
                 .map(formPetitionService::findFormTypeFromVersion)
                 .map(FormTypeEntity::getAbbreviation)
-                .orElseThrow(() -> new SingularServerException("Não possivel idenfiticar o tipo"));
+                .orElseThrow(() -> SingularServerException.rethrow("Não possivel idenfiticar o tipo"));
     }
 
     protected void redirectForbidden() {
@@ -280,7 +280,7 @@ public abstract class DispatcherPage extends WebPage {
 
         if (cfg != null) {
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
-                throw new SingularServerException("Nenhum fluxo está configurado");
+                throw SingularServerException.rethrow("Nenhum fluxo está configurado");
             }
             return cfg;
         } else {
