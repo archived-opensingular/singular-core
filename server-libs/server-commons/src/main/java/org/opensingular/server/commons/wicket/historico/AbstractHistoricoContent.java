@@ -43,10 +43,7 @@ import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.opensingular.server.commons.util.Parameters.FORM_VERSION_KEY;
 
@@ -175,14 +172,23 @@ public abstract class AbstractHistoricoContent extends Content {
 
     protected BaseDataProvider<PetitionHistoryDTO, String> createDataProvider() {
         return new BaseDataProvider<PetitionHistoryDTO, String>() {
+
+            List<PetitionHistoryDTO> cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+
             @Override
             public long size() {
-                return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).size();
+                if (cache == null) {
+                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+                }
+                return cache.size();
             }
 
             @Override
             public Iterator<PetitionHistoryDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).iterator();
+                if (cache == null) {
+                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+                }
+                return cache.subList(first, first + count).iterator();
             }
         };
     }
