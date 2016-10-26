@@ -52,7 +52,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
             T attachment = attachmentDao.insert(fs, length, name);
             return createRef(attachment);
         } catch (IOException e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -96,12 +96,12 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     public void loadAttachmentContent(Long codContent, OutputStream fos) {
         C content = attachmentContentDao.find(codContent);
         if(content == null){
-            throw new SingularException("Attachment Content not found id="+codContent);
+            throw SingularException.rethrow("Attachment Content not found id="+codContent);
         }
         try(InputStream in = content.getContent().getBinaryStream()){
             IOUtils.copy(in, fos);
         } catch (SQLException | IOException e) {
-            throw new SingularException("couldn't copy content to outputstream", e);
+            throw SingularException.rethrow("couldn't copy content to outputstream", e);
         }
     }
 

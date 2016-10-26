@@ -30,7 +30,7 @@ class ColumnType {
 
     ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
         if (type == null && displayFunction == null) {
-            throw new SingularException("Não foi especificado o valor da coluna.");
+            throw SingularException.rethrow("Não foi especificado o valor da coluna.");
         }
         this.type = type;
         this.customLabel = customLabel;

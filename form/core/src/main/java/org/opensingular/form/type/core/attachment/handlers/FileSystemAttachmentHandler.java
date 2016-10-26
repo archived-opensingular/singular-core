@@ -104,7 +104,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
             IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength), name);
             return newRef(id, sha1, temp.getAbsolutePath(), originLength, name);
         } catch (Exception e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -113,7 +113,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         try (InputStream is = toBeCopied.getInputStream()){
             return addAttachment(is, toBeCopied.getSize(), toBeCopied.getName());
         } catch (Exception e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 

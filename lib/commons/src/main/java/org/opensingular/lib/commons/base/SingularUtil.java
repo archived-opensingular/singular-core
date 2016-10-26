@@ -28,7 +28,7 @@ public final class SingularUtil {
 
     public static RuntimeException propagate(Throwable throwable) {
         Throwables.propagateIfPossible(throwable, SingularException.class);
-        throw new SingularException(throwable);
+        throw SingularException.rethrow(throwable);
     }
     
     public static String toSHA1(Object object) {

@@ -79,7 +79,7 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
             f.deleteOnExit();
             return f;
         } catch (Exception e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 }
