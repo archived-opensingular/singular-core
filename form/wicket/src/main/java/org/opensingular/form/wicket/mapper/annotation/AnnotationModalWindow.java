@@ -62,7 +62,7 @@ class AnnotationModalWindow extends BFModalWindow {
         if (editable) {
 
             final TextArea<?> comment = new TextArea<>("comment", textModel);
-            final Label       label   = new Label("label", Model.of("Aprovado "));
+            final Label       label   = new Label("label", Model.of("Aprovado? "));
             final Component check = new CheckBox("approvalCheck", approvedModel)
                     .add($b.attr("data-on-text", Model.of("Sim")))
                     .add($b.attr("data-off-text", Model.of("Não")));

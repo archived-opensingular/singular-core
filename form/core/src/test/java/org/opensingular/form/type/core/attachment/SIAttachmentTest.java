@@ -1,14 +1,9 @@
 package org.opensingular.form.type.core.attachment;
 
-import org.opensingular.form.SDictionary;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.form.type.core.attachment.STypeAttachment;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.opensingular.form.SDictionary;
 
 public class SIAttachmentTest {
 
@@ -18,14 +13,6 @@ public class SIAttachmentTest {
     @Before
     public void setUp() {
         attachment = SDictionary.create().getType(STypeAttachment.class).newInstance();
-    }
-
-    @Test
-    public void testIsContentTypeBrowserFriendly() throws Exception {
-        assertFalse(attachment.isContentTypeBrowserFriendly("application/json"));
-        assertFalse(attachment.isContentTypeBrowserFriendly("video/3gpp"));
-        assertTrue(attachment.isContentTypeBrowserFriendly("application/pdf"));
-        assertTrue(attachment.isContentTypeBrowserFriendly("image/jpeg"));
     }
 
     @Test

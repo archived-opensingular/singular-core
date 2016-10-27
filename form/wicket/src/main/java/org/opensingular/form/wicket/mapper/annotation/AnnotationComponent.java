@@ -98,12 +98,12 @@ public class AnnotationComponent extends Panel {
                 .add(new WebMarkupContainer(ID_TOGGLE_BUTTON)
                         .add($b.classAppender($m.get(() -> getToggleButtonCSS(getReferencedModel())))))
                 .add(new Label("title", $m.ofValue(getTitle(getReferencedModel()))))
-                .add(new Label(ID_ANNOTATION_TEXT, $m.get(() -> getTrimmedText())))
+                .add(new Label(ID_ANNOTATION_TEXT, $m.get(this::getTrimmedText)))
                 .add(new ApprovalStatusLabel(ID_APPROVAL_LABEL, approvedModel))
                 .add(new EditAnnotationButton(ID_EDIT_BUTTON, editAnnotationModal).setVisible(editable))
                 .add(new ViewAnnotationButton(ID_VIEW_BUTTON, editAnnotationModal).setVisible(!editable))
                 .add(new RemoveAnnotationButton(ID_REMOVE_BUTTON, removeAnnotationModal).setVisible(editable))
-                .add($b.visibleIf(() -> hasAnnotationText())));
+                .add($b.visibleIf(this::hasAnnotationText)));
     }
 
     @Override

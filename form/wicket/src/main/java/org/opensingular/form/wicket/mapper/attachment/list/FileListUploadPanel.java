@@ -83,7 +83,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private final DownloadSupportedBehavior downloader;
     private final WicketBuildContext        ctx;
 
-    private UUID                            uploadId;
+    private UUID uploadId;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
         super(id, model);
@@ -109,26 +109,30 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add(label);
 
         add((fileList = new WebMarkupContainer("fileList"))
-            .add(new FilesListView("fileItem", model, ctx)));
+                .add(new FilesListView("fileItem", model, ctx)));
 
         add(new WebMarkupContainer("button-container")
-            .add((fileField = new WebMarkupContainer("fileUpload")))
-            .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
-            .add($b.visibleIf(() -> ctx.getViewMode().isEdition())));
+                .add((fileField = new WebMarkupContainer("fileUpload")))
+                .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
+                .add($b.visibleIf(() -> ctx.getViewMode().isEdition())));
 
         add(ctx.createFeedbackCompactPanel("feedback"));
         add(new WebMarkupContainer("empty-box")
-            .add(new WebMarkupContainer("select-file-link")
-                .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))
-                .add($b.visibleIf(ctx.getViewMode()::isEdition))
-                .add($b.onReadyScript(c -> JQuery.on(c, "click", JQuery.$(fileField).append(".click();")))))
-            .add(new Label("empty-message", $m.ofValue("Nenhum arquivo adicionado"))
-                .add($b.visibleIf(ctx.getViewMode()::isVisualization)))
-            .add($b.visibleIf(() -> model.getObject().isEmpty())));
+                .add(new WebMarkupContainer("select-file-link")
+                        .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))
+                        .add($b.visibleIf(ctx.getViewMode()::isEdition))
+                        .add($b.onReadyScript(c -> JQuery.on(c, "click", JQuery.$(fileField).append(".click();")))))
+                .add(new Label("empty-message", $m.ofValue("Nenhum arquivo adicionado"))
+                        .add($b.visibleIf(ctx.getViewMode()::isVisualization)))
+                .add($b.visibleIf(() -> model.getObject().isEmpty())));
 
         add(adder, remover, downloader);
         add($b.classAppender("FileListUploadPanel"));
         add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
+
+        if (ctx.getViewMode().isVisualization() && model.getObject().isEmpty()) {
+            add($b.classAppender("FileListUploadPanel_empty"));
+        }
     }
 
     @Override
@@ -140,9 +144,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
         if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
             final AtrBasic atrAttachment = getModelObject().getElementsType().asAtr();
             this.uploadId = fileUploadManager.createUpload(
-                Optional.ofNullable(atrAttachment.getMaxFileSize()),
-                Optional.empty(),
-                Optional.ofNullable(atrAttachment.getAllowedFileTypes()));
+                    Optional.ofNullable(atrAttachment.getMaxFileSize()),
+                    Optional.empty(),
+                    Optional.ofNullable(atrAttachment.getAllowedFileTypes()));
         }
     }
 
@@ -169,21 +173,21 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private String generateInitJS() {
         if (ctx.getViewMode().isEdition()) {
             return ""
-            //@formatter:off
-                + "\n $(function () { "
-                + "\n   window.FileListUploadPanel.setup(" + new JSONObject()
-                          .put("param_name"        , PARAM_NAME             )
-                          .put("component_id"      , this.getMarkupId()     )
-                          .put("file_field_id"     , fileField.getMarkupId())
-                          .put("fileList_id"       , fileList.getMarkupId() )
-                          .put("upload_url"        , uploadUrl()            )
-                          .put("download_url"      , downloader.getUrl()    )
-                          .put("add_url"           , adder.getUrl()         )
-                          .put("remove_url"        , remover.getUrl()       )
-                          .put("max_file_size"     , getMaxFileSize()       )
-                          .put("allowed_file_types", getAllowedTypes()      )
-                          .toString(2) + "); "
-                + "\n });";
+                    //@formatter:off
+                    + "\n $(function () { "
+                    + "\n   window.FileListUploadPanel.setup(" + new JSONObject()
+                    .put("param_name", PARAM_NAME)
+                    .put("component_id", this.getMarkupId())
+                    .put("file_field_id", fileField.getMarkupId())
+                    .put("fileList_id", fileList.getMarkupId())
+                    .put("upload_url", uploadUrl())
+                    .put("download_url", downloader.getUrl())
+                    .put("add_url", adder.getUrl())
+                    .put("remove_url", remover.getUrl())
+                    .put("max_file_size", getMaxFileSize())
+                    .put("allowed_file_types", getAllowedTypes())
+                    .toString(2) + "); "
+                    + "\n });";
             //@formatter:on
         } else {
             return "";
@@ -192,8 +196,8 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     protected List<String> getAllowedTypes() {
         return defaultIfNull(
-            getModelObject().getElementsType().asAtr().getAllowedFileTypes(),
-            Collections.<String> emptyList());
+                getModelObject().getElementsType().asAtr().getAllowedFileTypes(),
+                Collections.<String>emptyList());
     }
 
     private long getMaxFileSize() {
@@ -256,14 +260,15 @@ public class FileListUploadPanel extends Panel implements Loggable {
         public AddFileBehavior() {
             super(FileListUploadPanel.this.getModel());
         }
+
         @Override
         public void onResourceRequested() {
-            final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
+            final HttpServletRequest  httpReq  = (HttpServletRequest) getWebRequest().getContainerRequest();
             final HttpServletResponse httpResp = (HttpServletResponse) getWebResponse().getContainerResponse();
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName = getParamFileId("name").toString();
+                final String pName   = getParamFileId("name").toString();
 
                 getLogger().debug("FileListUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
@@ -274,8 +279,8 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 });
 
                 responseInfo
-                    .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND))
-                    .writeJsonObjectResponseTo(httpResp);
+                        .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND))
+                        .writeJsonObjectResponseTo(httpResp);
 
             } catch (Exception e) {
                 getLogger().error(e.getMessage(), e);
@@ -288,6 +293,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         public RemoveFileBehavior(IModel<SIList<SIAttachment>> listModel) {
             super(listModel);
         }
+
         @Override
         public void onResourceRequested() {
             try {
@@ -302,14 +308,17 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     private class FilesListView extends RefreshingView<SIAttachment> {
         private final WicketBuildContext ctx;
+
         public FilesListView(String id, IModel<SIList<SIAttachment>> listModel, WicketBuildContext ctx) {
             super(id, listModel);
             this.ctx = ctx;
         }
+
         @SuppressWarnings("unchecked")
         public SIList<SIAttachment> getAttackmentList() {
             return (SIList<SIAttachment>) getDefaultModelObject();
         }
+
         @SuppressWarnings("unchecked")
         public IModel<SIList<SIAttachment>> getAttackmentListModel() {
             return (IModel<SIList<SIAttachment>>) getDefaultModel();
@@ -317,7 +326,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         @Override
         protected Iterator<IModel<SIAttachment>> getItemModels() {
-            final SIList<SIAttachment> objList = this.getAttackmentList();
+            final SIList<SIAttachment>       objList   = this.getAttackmentList();
             final List<IModel<SIAttachment>> modelList = new ArrayList<>();
             for (int i = 0; i < objList.size(); i++)
                 modelList.add(new SInstanceListItemModel<>(this.getAttackmentListModel(), i));
@@ -333,10 +342,12 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         private class RemoveButton extends AjaxButton {
             private final IModel<SIAttachment> itemModel;
+
             public RemoveButton(String id, IModel<SIAttachment> itemModel) {
                 super(id);
                 this.itemModel = itemModel;
             }
+
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 SIAttachment file = itemModel.getObject();
@@ -344,6 +355,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 target.add(FileListUploadPanel.this);
                 target.add(fileList);
             }
+
             @Override
             public boolean isVisible() {
                 return ctx.getViewMode().isEdition();
