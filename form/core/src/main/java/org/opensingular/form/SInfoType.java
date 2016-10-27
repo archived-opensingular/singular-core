@@ -34,13 +34,18 @@ public @interface SInfoType {
      * utilizado o nome simples da classe que define o tipo (ver
      * {@link java.lang.Class.getSimpleName()}).
      */
-    public String name() default "";
+    String name() default "";
 
     /**
      * Definie a classe que monta o pacote ao qual o tipo sendo definido está
      * associado.
      */
-    public Class<? extends SPackage> spackage();
+    Class<? extends SPackage> spackage();
+
+    /**
+     * Label para exibição em listagens
+     */
+    String label() default "";
 
     /**
      * Identifica um tipo como sendo um tipo que pode originar
@@ -48,5 +53,5 @@ public @interface SInfoType {
      * serão inseridos por outros tipos até chegar a raiz que
      * não é inserido por ninguém
      */
-    public boolean newable() default false;
+    boolean newable() default false;
 }

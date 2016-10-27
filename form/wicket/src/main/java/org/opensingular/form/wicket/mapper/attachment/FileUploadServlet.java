@@ -134,7 +134,7 @@ public class FileUploadServlet extends HttpServlet {
                 for (FileItem item : params.get(PARAM_NAME))
                     processFileItem(filesJson, item);
             } catch (Exception e) {
-                throw new SingularException(e);
+                throw SingularException.rethrow(e);
             } finally {
                 UploadResponseInfo.writeJsonArrayResponseTo(response, filesJson);
             }

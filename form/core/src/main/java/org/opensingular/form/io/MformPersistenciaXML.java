@@ -16,14 +16,7 @@
 
 package org.opensingular.form.io;
 
-import org.opensingular.form.ICompositeInstance;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SISimple;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MDocument;
@@ -38,6 +31,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -108,7 +102,7 @@ public class MformPersistenciaXML {
         if (id == null) {
             throw new SingularFormException("O ID da instância está null", instancia);
         } else if (ids.contains(id)) {
-            throw new SingularFormException("A instancia tem ID repetido (igual a outra instância) id=" + id, instancia);
+            throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
         }
         if (instancia instanceof ICompositeInstance) {
             int max = id;
@@ -120,33 +114,38 @@ public class MformPersistenciaXML {
         return id;
     }
 
-    private static void fromXML(SInstance instancia, MElement xml) {
+    private static void fromXML(SInstance instance, MElement xml) {
         if (xml == null)
             return; // Não precisa fazer nada
-        instancia.clearInstance();
-        lerAtributos(instancia, xml);
-        if (instancia instanceof SISimple) {
-            SISimple<?>       instanciaS = (SISimple<?>) instancia;
-            STypeSimple<?, ?> tipos      = instanciaS.getType();
-            instancia.setValue(tipos.fromStringPersistence(xml.getTextContent()));
-        } else if (instancia instanceof SIComposite) {
-            SIComposite instc = (SIComposite) instancia;
-            for (SType<?> campo : instc.getType().getFields()) {
-                MElement xmlFilho = xml.getElement(campo.getNameSimple());
-                if (xmlFilho != null) {
-                    fromXML(instc.getField(campo.getNameSimple()), xmlFilho);
+        instance.clearInstance();
+        lerAtributos(instance, xml);
+        if (instance instanceof SISimple) {
+            SISimple<?> instanceSimple = (SISimple<?>) instance;
+            STypeSimple<?, ?> type = instanceSimple.getType();
+            instance.setValue(type.fromStringPersistence(xml.getTextContent()));
+        } else if (instance instanceof SIComposite) {
+            SIComposite instc = (SIComposite) instance;
+            for(MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
+                Optional<SInstance> instcField = instc.getFieldOpt(xmlChild.getTagName());
+                if (instcField.isPresent()) {
+                    fromXML(instcField.get(), xmlChild);
+                } else {
+                    InternalAccess.internal(instance).addUnreadInfo(xmlChild);
                 }
             }
-        } else if (instancia instanceof SIList) {
-            SIList<?> lista = (SIList<?>) instancia;
-            String nomeFilhos = lista.getType().getElementsType().getNameSimple();
-            for (MElement xmlFilho : xml.getElements(nomeFilhos)) {
-                SInstance filho = lista.addNew();
-                fromXML(filho, xmlFilho);
+        } else if (instance instanceof SIList) {
+            SIList<?> list = (SIList<?>) instance;
+            String childrenName = list.getType().getElementsType().getNameSimple();
+            for(MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
+                if(childrenName.equals(xmlChild.getTagName())) {
+                    fromXML(list.addNew(), xmlChild);
+                } else {
+                    InternalAccess.internal(instance).addUnreadInfo(xmlChild);
+                }
             }
         } else {
             throw new SingularFormException(
-                    "Conversão não implementando para a classe " + instancia.getClass().getName(), instancia);
+                    "Conversão não implementando para a classe " + instance.getClass().getName(), instance);
         }
     }
 
@@ -224,7 +223,7 @@ public class MformPersistenciaXML {
     }
 
     /**
-     * Carrega na instancia informada as anotação contidas no xml, fazendo
+     * Carrega na instance informada as anotação contidas no xml, fazendo
      * parser do mesmo antes.
      *
      * @param xmlString
@@ -235,7 +234,7 @@ public class MformPersistenciaXML {
     }
 
     /**
-     * Carrega na instancia informada as anotação contidas no xml, fazendo
+     * Carrega na instance informada as anotação contidas no xml, fazendo
      * parser do mesmo antes.
      *
      * @param xmlAnnotations
@@ -245,12 +244,17 @@ public class MformPersistenciaXML {
         if (xmlAnnotations == null) {
             return;
         }
-
-        SDocument document      = instance.getDocument();
-        RefType   refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
-        SIList<SIAnnotation> iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
-                document.getDocumentFactoryRef().get());
-
+        SDocument document = instance.getDocument();
+        SIList<SIAnnotation> iAnnotations;
+        if (document.getRootRefType().isPresent()) {
+            RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
+            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
+                    document.getDocumentFactoryRef().get());
+        } else {
+            //Carrega a informações se as referências de persistência
+            STypeAnnotationList typeAnnotation = document.getRoot().getDictionary().getType(STypeAnnotationList.class);
+            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(typeAnnotation, xmlAnnotations);
+        }
         instance.asAtrAnnotation().loadAnnotations(iAnnotations);
     }
 
@@ -267,57 +271,62 @@ public class MformPersistenciaXML {
     /** Gera um XML representando as anotações se existirem. */
     public static Optional<MElement> annotationToXml(SInstance instance, String classifier) {
         AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
-        if (annotatedInstance.hasAnnotation()) {
+        if (instance.getDocument().hasAnnotations()) {
             if (classifier != null) {
-                return Optional.of(MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
+                return Optional.of(toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
             } else {
-                return Optional.of((MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotations())));
+                return Optional.of(toXML(annotatedInstance.persistentAnnotations()));
             }
         }
         return Optional.empty();
     }
 
-    private static MElement toXML(ConfXMLGeneration conf, SInstance instancia) {
-        if (instancia instanceof SISimple<?>) {
-            SISimple<?> iSimples = (SISimple<?>) instancia;
-            String sPersistencia = iSimples.toStringPersistence();
-            if (sPersistencia != null) {
-                return conf.createMElementComValor(instancia, sPersistencia);
+    /** Gera o xml para instance e para seus dados interno. */
+    private static MElement toXML(ConfXMLGeneration conf, SInstance instance) {
+        MElement newElement = null;
+        if (instance instanceof SISimple<?>) {
+            SISimple<?> iSimples = (SISimple<?>) instance;
+            String sPersistence = iSimples.toStringPersistence();
+            if (sPersistence != null) {
+                newElement = conf.createMElementComValor(instance, sPersistence);
             } else if (conf.isPersistirNull()) {
-                return conf.createMElement(instancia);
+                newElement = conf.createMElement(instance);
             }
-            return null;
-        } else if (instancia instanceof SIComposite) {
-            MElement registro = null;
-            for (SInstance filho : ((SIComposite) instancia).getFields()) {
-                MElement xmlFilho = toXML(conf, filho);
-                if (xmlFilho != null) {
-                    if (registro == null) {
-                        registro = conf.createMElement(instancia);
+        } else if (instance instanceof SIComposite) {
+            for (SInstance child : ((SIComposite) instance).getFields()) {
+                MElement xmlChild = toXML(conf, child);
+                if (xmlChild != null) {
+                    if (newElement == null) {
+                        newElement = conf.createMElement(instance);
                     }
-                    registro.appendChild(xmlFilho);
+                    newElement.appendChild(xmlChild);
                 }
             }
-            return registro;
-        } else if (instancia instanceof SIList) {
-            SIList<?> lista = (SIList<?>) instancia;
-            if (lista.isEmpty()) {
-                return null;
-            }
-            MElement xmlLista = null;
-            for (SInstance filho : lista) {
-                MElement xmlFilho = toXML(conf, filho);
-                if (xmlFilho != null) {
-                    if (xmlLista == null) {
-                        xmlLista = conf.createMElement(instancia);
+        } else if (instance instanceof SIList) {
+            for (SInstance child : (SIList<?>) instance) {
+                MElement xmlChild = toXML(conf, child);
+                if (xmlChild != null) {
+                    if (newElement == null) {
+                        newElement = conf.createMElement(instance);
                     }
-                    xmlLista.appendChild(xmlFilho);
+                    newElement.appendChild(xmlChild);
                 }
             }
-            return xmlLista;
         } else {
-            throw new SingularFormException("Instancia da classe " + instancia.getClass().getName() + " não suportada", instancia);
+            throw new SingularFormException("Instancia da classe " + instance.getClass().getName() + " não suportada",
+                    instance);
         }
+        //Verifica se há alguma informação lida anteriormente que deva ser grava novamente
+        List<MElement> unreadInfo = InternalAccess.internal(instance).getUnreadInfo();
+        if (! unreadInfo.isEmpty()) {
+            if (newElement == null) {
+                newElement = conf.createMElement(instance);
+            }
+            for(MElement extra : unreadInfo) {
+                newElement.copy(extra, null);
+            }
+        }
+        return newElement;
     }
 
     private static final class ConfXMLGeneration {

@@ -50,6 +50,10 @@ public abstract class SInstance implements SAttributeEnabled {
     /** Mapa de bits de flags. Veja {@link InstanceFlags} */
     private int flags;
 
+    /** Informações encontradas na persitência, mas sem correspondência no tipo na instância atual. */
+    private List<MElement> unreadInfo;
+    //TODO Essa informação poderia ser um atributo da isntancia em vez de um field da classe
+
     public SType<?> getType() {
         return type;
     }
@@ -586,5 +590,32 @@ public abstract class SInstance implements SAttributeEnabled {
             sb.append(getType().getClass().getSimpleName()).append('@').append(getType().getTypeId());
         }
         return sb;
+    }
+
+    //----------------------------------------------------
+    // Métodos de uso interno expostos via InternalAccess
+    //----------------------------------------------------
+
+    /**
+     * Salva uma informação lida da persitência para o qual não foi encontrado estruturada de dados correspondente no
+     * tipo. Essa informações provavelmente será salva quando a instancia for persistida novamente. Ou seja, esse
+     * dado não será perdido no ato de ler e regravar.
+     */
+    final void addUnreadInfo(MElement xmlInfo) {
+        //TODO Está trabalhando com XML. Generalizar para permitir outras estruturas de dados como por exemplo JSON.
+        // (by Daniel Bordin)
+        if (unreadInfo == null) {
+            unreadInfo = new ArrayList<>();
+        }
+        unreadInfo.add(xmlInfo);
+    }
+
+    /**
+     * Retorna uma lista das informações encontrada para essa instância que não foram "consumidas" durante a leitura
+     * a parti da persistência. Ou seja, dados "perdidos".
+     * @return Nunca null
+     */
+    final List<MElement> getUnreadInfo() {
+        return unreadInfo == null ? Collections.emptyList() : unreadInfo;
     }
 }

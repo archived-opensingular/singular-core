@@ -262,6 +262,16 @@ public class SDocument {
     }
 
     /**
+     * Tenta encontrar um serviço da classe solicitada registrado <u>diretamente no documento</u> supondo que o nome no
+     * registro é o nome da própria classe.
+     *
+     * @return Null se não encontrado ou se o conteúdo do registro for null.
+     */
+    public <T> T lookupLocalService(Class<T> targetClass) {
+        return registry.lookupLocalService(targetClass);
+    }
+
+    /**
      * Tenta encontrar um serviço registrado <u>diretamente no documento</u> com
      * o nome informado. Se o resultado não for null e não implementar a classe
      * solicitada, dispara exception.
@@ -351,7 +361,7 @@ public class SDocument {
     }
 
     public <T extends Enum<T> & AnnotationClassifier> List<SIAnnotation> annotationsAnyClassifier(Integer id) {
-        List<SIAnnotation> siAnnotationList = new ArrayList<SIAnnotation>();
+        List<SIAnnotation> siAnnotationList = new ArrayList<>();
         if (annotations == null)
             return null;
         for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
@@ -360,10 +370,6 @@ public class SDocument {
             }
         }
         return siAnnotationList;
-    }
-
-    private void setAnnotations(SIList<SIAnnotation> annotations) {
-        this.annotations = annotations;
     }
 
     private SDictionary dictionary() {
@@ -383,17 +389,19 @@ public class SDocument {
     }
 
     public SIAnnotation newAnnotation() {
-        createAnnotationsIfNeeded();
+        if (annotations == null) {
+            this.annotations = newAnnotationList();
+        }
         return (SIAnnotation) annotations.addNew();
-    }
-
-    private void createAnnotationsIfNeeded() {
-        if (annotations == null)
-            setAnnotations(newAnnotationList());
     }
 
     public SIList<SIAnnotation> annotations() {
         return annotations;
+    }
+
+    /** Verifica se o documento possui alguma anotação. */
+    public boolean hasAnnotations() {
+        return annotations != null && ! annotations.isEmpty();
     }
 
     public Optional<SInstance> findInstanceById(Integer instanceId) {

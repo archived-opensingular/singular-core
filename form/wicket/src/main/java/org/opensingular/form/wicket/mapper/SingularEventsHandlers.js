@@ -28,19 +28,6 @@
 
         var contex = {};
 
-        function addMousedownHandlers(input) {
-            var inputJQueryRef = $('#'+input);
-            inputJQueryRef.on('mousedown', function () {
-                if (contex.hasOwnProperty(SINGULAR_BLUR_KEY)) {
-                    window.clearTimeout(contex[SINGULAR_BLUR_KEY]);
-                    delete contex[SINGULAR_BLUR_KEY];
-                }
-                contex[SINGULAR_CHANGE_KEY] = window.setTimeout(function () {
-                    delete contex[SINGULAR_CHANGE_KEY];
-                }, 30);
-            });
-        }
-
         function addTextFieldHandlers(input) {
             var inputJQueryRef = $('#'+input);
             inputJQueryRef.on('blur', function (event) {
@@ -67,8 +54,7 @@
          * Retorna os métodos publicos da API
          */
         return {
-            "addTextFieldHandlers": addTextFieldHandlers,
-            "addMousedownHandlers": addMousedownHandlers
+            "addTextFieldHandlers": addTextFieldHandlers
         }
     }())
 }(jQuery));

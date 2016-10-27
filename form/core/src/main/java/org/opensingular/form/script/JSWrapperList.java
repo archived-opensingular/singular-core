@@ -14,31 +14,33 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.masterdetail;
+package org.opensingular.form.script;
 
-import org.opensingular.form.wicket.mapper.components.MetronicPanel;
+import org.opensingular.form.SIList;
 
+/**
+ * Wrapper para adaptação de um SIList em um objeto manipulado pela engine de Javascript.
+ *
+ * @author Daniel Bordin
+ */
+public class JSWrapperList  extends JSWrapperInstance<SIList<?>> {
 
-abstract class MasterDetailMetronicPanel extends MetronicPanel {
-
-    MasterDetailMetronicPanel(String id) {
-        super(id);
+    public JSWrapperList(RuntimeDocumentScript runtime, SIList<?> instance) {
+        super(runtime, instance);
     }
 
-    protected String getPanelWrapperClass() {
-        return "list-detail-input";
+    @Override
+    public Object getSlot(int index) {
+        return getRuntime().wrapper(getInstance().get(index));
     }
 
-    protected String getPanelHeadingClass() {
-        return "list-table-heading";
+    @Override
+    public boolean hasSlot(int index) {
+        return getInstance().size() > index;
     }
 
-    protected String getPanelBodyClass() {
-        return "list-detail-body";
+    @Override
+    public boolean isArray() {
+        return true;
     }
-
-    protected String getPanelFooterClass() {
-        return "list-detail-footer";
-    }
-
 }

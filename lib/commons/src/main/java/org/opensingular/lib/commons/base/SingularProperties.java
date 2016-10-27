@@ -25,44 +25,52 @@ package org.opensingular.lib.commons.base;
  * @author Vinicius Nunes
  */
 public interface SingularProperties {
-    public static final String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
-    public static final String HIBERNATE_GENERATOR                  = "flow.persistence.hibernate.generator";
-    public static final String HIBERNATE_SEQUENCE_PROPERTY_PATTERN  = "flow.persistence.%s.sequence";
-    public static final String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
-    public static final String SINGULAR_SEND_EMAIL                  = "singular.send.email";
 
-    public static final String SINGULAR_DEV_MODE                    = "singular.development";
-    public static final String SINGULAR_SERVER_ADDR                 = "singular.server.address";
+    String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
+    String HIBERNATE_GENERATOR                  = "flow.persistence.hibernate.generator";
+    String HIBERNATE_SEQUENCE_PROPERTY_PATTERN  = "flow.persistence.%s.sequence";
+    String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
+    String SINGULAR_SEND_EMAIL                  = "singular.send.email";
+
+    String SINGULAR_DEV_MODE                    = "singular.development";
+    String SINGULAR_SERVER_ADDR                 = "singular.server.address";
 
     // Limites globais são limites máximos, não configuráveis por arquivo.
-    public static final String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE   = "singular.fileupload.global_max_request_size";
-    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE      = "singular.fileupload.global_max_file_size";
-    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_COUNT     = "singular.fileupload.global_max_file_count";
-    public static final String FILEUPLOAD_GLOBAL_MAX_FILE_AGE       = "singular.fileupload.global_max_file_age";
+    String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE   = "singular.fileupload.global_max_request_size";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE      = "singular.fileupload.global_max_file_size";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_COUNT     = "singular.fileupload.global_max_file_count";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_AGE       = "singular.fileupload.global_max_file_age";
 
     // Limites default são limites configuráveis por arquivo. Não podem exceder os limites globais.
-    public static final String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE  = "singular.fileupload.default_max_request_size";
-    public static final String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE     = "singular.fileupload.default_max_file_size";
+    String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE  = "singular.fileupload.default_max_request_size";
+    String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE     = "singular.fileupload.default_max_file_size";
 
-    public static SingularProperties get() {
+    // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
+    String USE_INMEMORY_DATABASE     = "singular.use.inmemory.database";
+
+    // Identifica o nome do schema que deve ser utilizado
+    String CUSTOM_SCHEMA_NAME     = "singular.custom.schema.name";
+
+    static SingularProperties get() {
         return SingularPropertiesImpl.get();
     }
 
     /**
      * Verifica se a propriedade de nome informado existe.
      */
-    public boolean containsKey(String key);
+    boolean containsKey(String key);
 
     /**
      * Retorna o valor da propriedade solicitada. Pode retornar null.
      */
-    public String getProperty(String key);
+    String getProperty(String key);
 
-    public boolean isTrue(String key);
+    boolean isTrue(String key);
 
-    public boolean isFalse(String key);
+    boolean isFalse(String key);
 
     default String getSingularServerHome() {
         return System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
     }
+
 }

@@ -62,7 +62,7 @@ public class LookupOptionsProvider implements Provider {
                         + providerClass + "' nos serviços registrado para o documento");
             }
         } else {
-            throw new SingularException("Não foi configurador a origem do " + Provider.class.getSimpleName());
+            throw SingularException.rethrow("Não foi configurador a origem do " + Provider.class.getSimpleName());
         }
         return p;
     }

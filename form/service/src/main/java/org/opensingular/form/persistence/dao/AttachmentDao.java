@@ -83,7 +83,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         try {
             return tipo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 

@@ -22,12 +22,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @GenericGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_TIPO_FORMULARIO", schema = Constants.SCHEMA)
@@ -44,6 +46,9 @@ public class FormTypeEntity extends BaseEntity<Long> {
 
     @Column(name = "SG_TIPO_FORMULARIO")
     private String abbreviation;
+
+//    @Column(name = "NO_LABEL_FORMULARIO")
+//    private String label;
 
     @Column(name = "NU_VERSAO_CACHE")
     private Long cacheVersionNumber;
@@ -72,4 +77,13 @@ public class FormTypeEntity extends BaseEntity<Long> {
     public void setCacheVersionNumber(Long cacheVersionNumber) {
         this.cacheVersionNumber = cacheVersionNumber;
     }
+
+//    public String getLabel() {
+//        return label;
+//    }
+//
+//    public FormTypeEntity setLabel(String label) {
+//        this.label = label;
+//        return this;
+//    }
 }

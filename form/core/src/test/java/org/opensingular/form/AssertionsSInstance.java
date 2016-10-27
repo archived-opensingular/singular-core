@@ -119,4 +119,27 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         }
         throw new AssertionError(errorMsg("O tipo da instância não aceita leitura de path '" + fieldPath + "'"));
     }
+
+    /** Verifica se a anotação existe e possui o texto experado. */
+    public AssertionsSInstance isAnnotationTextEquals(String expectedText) {
+        return isAnnotationTextEquals((String) null, expectedText);
+    }
+
+    /** Verifica se a anotação existe e possui o texto experado. */
+    public AssertionsSInstance isAnnotationTextEquals(SType<?> field, String expectedText) {
+        return isAnnotationTextEquals(field.getNameSimple(), expectedText);
+    }
+
+    /**
+     * Verifica se a anotação existe e possui o texto experado. Se o caminho for null, então faz o teste para a
+     * instância atual.
+     */
+    public AssertionsSInstance isAnnotationTextEquals(String fieldPath, String expectedText) {
+        AssertionsSInstance field = field(fieldPath);
+        String currentText = field.getTarget().asAtrAnnotation().text();
+        if(! Objects.equals(expectedText, currentText)) {
+            throw new AssertionError(field.errorMsg("Texto da anotação incorreto", expectedText, currentText));
+        }
+        return this;
+    }
 }

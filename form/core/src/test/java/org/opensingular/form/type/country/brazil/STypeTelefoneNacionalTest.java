@@ -53,6 +53,11 @@ public class STypeTelefoneNacionalTest {
         assertEquals("3372-5695", type.extractNumber("(61) 3372-5695"));
         assertEquals("98599-7893", type.extractNumber("061985997893"));
         assertEquals("98599-7893", type.extractNumber("61985997893"));
+        assertEquals("8599", type.extractNumber("618599"));
+        assertEquals("85", type.extractNumber("6185"));
+        assertEquals("9859-9", type.extractNumber("6198599"));
+        assertEquals("8599-789", type.extractNumber("618599789"));
+        assertEquals("8599-7893", type.extractNumber("6185997893"));
     }
 
 

@@ -66,7 +66,7 @@ public class AttachmentContentDao<T extends AttachmentContentEntitty> extends Ba
         try {
             return tipo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 }
