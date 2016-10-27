@@ -89,16 +89,19 @@
 	                                name: resp.name,
 	                                fileId: resp.fileId,
 	                                hashSHA1: resp.hashSHA1,
-	                                size: resp.size,
+	                                size: resp.size
 	                            },
 	                            function (dataSInstance, status, jqXHR) {
-	                                var $link = $('<a target="_blank"></a>').text(dataSInstance.name);
+	                                var $link = $('<a></a>').text(dataSInstance.name);
 	                                DownloadSupportedBehavior.resolveUrl(
 	                            		params.download_url,
 	                            		dataSInstance.fileId,
 	                            		dataSInstance.name,
 	                            		function(url) { $link.attr('href', url); }
 	                        		);
+                                    if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
+                                        $link.attr('target', '_blank');
+                                    }
 	                                $('#' + params.files_id).empty().append($link);
 	                                $('#' + params.progress_bar_id).hide();
 	

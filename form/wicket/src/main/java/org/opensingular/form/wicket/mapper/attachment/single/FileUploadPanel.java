@@ -16,17 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.attachment.single;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
-import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -47,15 +36,18 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
-import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
-import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
-import org.opensingular.form.wicket.mapper.attachment.UploadResponseInfo;
+import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 
 public class FileUploadPanel extends Panel implements Loggable {
 

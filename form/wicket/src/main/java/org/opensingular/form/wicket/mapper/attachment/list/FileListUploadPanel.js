@@ -158,6 +158,9 @@
                                             dataSInstance.name,
                                             function (url) {
                                                 $box.find('.download-link').attr('href', url);
+                                                if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
+                                                    $box.find('.download-link'.attr('target', '_blank'));
+                                                }
                                             }
                                         );
                                         $("#" + params.component_id).trigger("singular:process");
