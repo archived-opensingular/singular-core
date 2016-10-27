@@ -19,6 +19,8 @@ package org.opensingular.flow.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.lib.support.persistence.util.Constants;
@@ -27,6 +29,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 /**
  * The persistent class for the TB_PROCESSO database table.
  */
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @GenericGenerator(name = AbstractProcessVersionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA)
