@@ -17,14 +17,13 @@
 package org.opensingular.form.wicket;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.view.SView;
@@ -311,28 +310,15 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id) {
-        return createFeedbackPanel(id, ISValidationFeedbackHandlerListener::refresh);
+        return createFeedbackPanel(id, ISValidationFeedbackHandlerListener::refresh, getContainer());
     }
 
-    public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
+    public SValidationFeedbackPanel createFeedbackPanel(String id, MarkupContainer container) {
+        return createFeedbackPanel(id, ISValidationFeedbackHandlerListener::refresh, container);
+    }
 
-        Component singularFormPanel;
-        Component fence;
-
-        singularFormPanel = getContainer().visitParents(SingularFormPanel.class, new IVisitor<SingularFormPanel, SingularFormPanel>() {
-            @Override
-            public void component(SingularFormPanel panel, IVisit<SingularFormPanel> visit) {
-                visit.stop(panel);
-            }
-        });
-
-        if (singularFormPanel != null) {
-            fence = singularFormPanel;
-        } else {
-            fence = getContainer();
-        }
-
-        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id, fence), listenerFunc);
+    public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc, MarkupContainer container) {
+        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id,  container), listenerFunc);
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
