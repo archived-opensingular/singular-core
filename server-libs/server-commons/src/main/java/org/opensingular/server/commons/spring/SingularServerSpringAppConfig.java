@@ -23,6 +23,7 @@ import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.flow.persistence.service.ProcessRetrieveService;
 import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+@EnableCaching
 @EnableWebMvc
 @EnableWebSecurity
 @ComponentScan(

@@ -16,9 +16,23 @@
 
 package org.opensingular.server.commons.wicket.historico;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.wicket.util.button.DropDownButtonPanel;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.form.FormActions;
+import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.service.PetitionService;
@@ -26,26 +40,12 @@ import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.opensingular.lib.support.persistence.enums.SimNao;
-import org.opensingular.lib.wicket.util.datatable.BSDataTable;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
-import org.opensingular.lib.wicket.util.resource.Icone;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.server.commons.util.Parameters.FORM_VERSION_KEY;
 
 public abstract class AbstractHistoricoContent extends Content {
 
@@ -93,64 +93,102 @@ public abstract class AbstractHistoricoContent extends Content {
 
     protected abstract void onCancelar(AjaxRequestTarget t);
 
-    protected BSDataTable<PetitionContentHistoryEntity, String> setupDataTable(BaseDataProvider<PetitionContentHistoryEntity, String> dataProvider) {
+    protected BSDataTable<PetitionHistoryDTO, String> setupDataTable(BaseDataProvider<PetitionHistoryDTO, String> dataProvider) {
         return new BSDataTableBuilder<>(dataProvider)
                 .appendPropertyColumn(
                         getMessage("label.table.column.task.name"),
-                        p -> p.getTaskInstanceEntity().getTask().getName()
+                        p -> p.getTask().getTask().getName()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.begin.date"),
-                        p -> p.getTaskInstanceEntity().getBeginDate()
+                        p -> p.getTask().getBeginDate()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.end.date"),
-                        p -> p.getTaskInstanceEntity().getEndDate()
+                        p -> p.getTask().getEndDate()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.allocated.user"),
-                        p -> Optional.ofNullable(p.getActor()).map(Actor::getNome).orElse("")
+                        p -> Optional.of(p).map(PetitionHistoryDTO::getTask).map(TaskInstanceEntity::getAllocatedUser).map(Actor::getNome).orElse("")
                 )
-                .appendActionColumn(
-                        Model.of(""),
-                        column -> column.appendStaticAction(Model.of("Visualizar"), Icone.EYE, (id, model) -> {
-                            final String url = DispatcherPageUtil.baseURL(getBaseUrl())
-                                    .formAction(FormActions.FORM_VIEW.getId())
-                                    .petitionId(null)
-                                    .params(buildViewFormParameters(model))
-                                    .build();
-                            final WebMarkupContainer link = new WebMarkupContainer(id);
-                            link.add($b.attr("target", String.format("_%s", model.getObject().getCod())));
-                            link.add($b.attr("href", url));
-                            return link;
-                        })
-                ).build("tabela");
+//                .appendActionColumn(
+//                        Model.of(""),
+//                        column -> column.appendComponentFactory((id, model) -> {
+//
+//                            final DropDownButtonPanel dropDownButtonPanel;
+//
+//                            dropDownButtonPanel = new DropDownButtonPanel(id)
+//                                    .setDropdownLabel(Model.of("Formularios"))
+//                                    .setInvisibleIfEmpty(Boolean.TRUE)
+//                                    .setPullRight(Boolean.TRUE);
+//
+//                            Optional.of(model.getObject())
+//                                    .map(PetitionHistoryDTO::getPetitionContentHistory)
+//                                    .map(PetitionContentHistoryEntity::getFormVersionHistoryEntities)
+//                                    .ifPresent(list -> {
+//                                        list.forEach(fvh -> {
+//                                            dropDownButtonPanel
+//                                                    .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()));
+//                                        });
+//                                    });
+//
+//                            return dropDownButtonPanel;
+//                        })
+//                )
+                .build("tabela");
     }
 
-    protected Map<String, String> buildViewFormParameters(IModel<PetitionContentHistoryEntity> model) {
+//    private IFunction<String, Button> viewFormButton(final Long versionPK) {
+//        final String url = DispatcherPageUtil
+//                .baseURL(getBaseUrl())
+//                .formAction(FormActions.FORM_ANALYSIS_VIEW.getId())
+//                .formId(null)
+//                .param(FORM_VERSION_KEY, versionPK)
+//                .build();
+//        return id -> new Button(id) {
+//            @Override
+//            protected String getOnClickScript() {
+//                return ";var newtab = window.open('" + url + "'); newtab.opener=null;";
+//            }
+//        };
+//    }
+
+    protected Map<String, String> buildViewFormParameters(IModel<PetitionHistoryDTO> model) {
         final Map<String, String> params = new HashMap<>();
-        params.put(DispatcherPageParameters.FORM_VERSION_KEY, model
-                .getObject()
-                .getFormVersionHistoryEntities()
-                .stream()
-                .filter(f -> SimNao.SIM.equals(f.getMainForm()))
-                .findFirst()
-                .map(FormVersionHistoryEntity::getCodFormVersion)
-                .map(Object::toString)
-                .orElse(null));
+        if (model.getObject().getPetitionContentHistory() != null) {
+            params.put(Parameters.FORM_VERSION_KEY, model
+                    .getObject()
+                    .getPetitionContentHistory()
+                    .getFormVersionHistoryEntities()
+                    .stream()
+                    .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                    .findFirst()
+                    .map(FormVersionHistoryEntity::getCodFormVersion)
+                    .map(Object::toString)
+                    .orElse(null));
+        }
         return params;
     }
 
-    protected BaseDataProvider<PetitionContentHistoryEntity, String> createDataProvider() {
-        return new BaseDataProvider<PetitionContentHistoryEntity, String>() {
+    protected BaseDataProvider<PetitionHistoryDTO, String> createDataProvider() {
+        return new BaseDataProvider<PetitionHistoryDTO, String>() {
+
+            List<PetitionHistoryDTO> cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+
             @Override
             public long size() {
-                return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).size();
+                if (cache == null) {
+                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+                }
+                return cache.size();
             }
 
             @Override
-            public Iterator<? extends PetitionContentHistoryEntity> iterator(int first, int count, String sortProperty, boolean ascending) {
-                return petitionService.listPetitionContentHistoryByPetitionCod(petitionPK).iterator();
+            public Iterator<PetitionHistoryDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
+                if (cache == null) {
+                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+                }
+                return cache.subList(first, first + count).iterator();
             }
         };
     }
@@ -165,7 +203,7 @@ public abstract class AbstractHistoricoContent extends Content {
             final String path = new URL(groupConnectionURL).getPath();
             return path.substring(0, path.indexOf("/", 1));
         } catch (Exception e) {
-            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
+            throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
         }
     }
 

@@ -16,11 +16,13 @@
 
 package org.opensingular.server.commons.wicket.error;
 
-import org.opensingular.server.commons.wicket.view.template.Content;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.joda.time.DateTime;
+import org.opensingular.server.commons.exception.SingularServerIntegrationException;
+import org.opensingular.server.commons.wicket.view.template.Content;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +35,8 @@ public class Page500Content extends Content {
     private final static Logger LOGGER = Logger.getLogger("GENERAL_LOGGER");
 
     private final Exception exception;
+
+    private final WebMarkupContainer detail = new WebMarkupContainer("detail");
 
     public Page500Content(String id, Exception exception) {
         super(id);
@@ -48,6 +52,13 @@ public class Page500Content extends Content {
         }
         queue(new Label("codigo-erro", Model.of(errorCode)));
         pageHead.setVisible(false);
+        this.add(detail);
+        detail.setVisible(false);
+        detail.add(new WebMarkupContainer("message"));
+        if (exception instanceof SingularServerIntegrationException) {
+            detail.setVisible(true);
+            detail.replace(new Label("message", Model.of(exception.getMessage())));
+        }
     }
 
     @Override

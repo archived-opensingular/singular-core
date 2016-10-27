@@ -63,7 +63,7 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
         PreAuthenticatedAuthenticationProvider casAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
         casAuthenticationProvider.setPreAuthenticatedUserDetailsService(
                 new UserDetailsByNameServiceWrapper<>(peticionamentoUserDetailService.orElseThrow(() ->
-                                new SingularServerException(
+                                SingularServerException.rethrow(
                                         String.format("Bean %s do tipo %s não pode ser nulo. Para utilizar a configuração de segurança %s é preciso declarar um bean do tipo %s identificado pelo nome %s .",
                                                 UserDetailsService.class.getName(),
                                                 "peticionamentoUserDetailService",

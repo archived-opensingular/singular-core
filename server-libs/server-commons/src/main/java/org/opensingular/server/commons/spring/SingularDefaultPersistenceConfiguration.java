@@ -18,10 +18,14 @@ package org.opensingular.server.commons.spring;
 
 import java.util.Properties;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
 import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.support.persistence.entity.EntityInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
@@ -30,12 +34,17 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import static org.opensingular.lib.commons.base.SingularProperties.USE_INMEMORY_DATABASE;
+
 @EnableTransactionManagement(proxyTargetClass = true)
 public abstract class SingularDefaultPersistenceConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingularDefaultPersistenceConfiguration.class);
 
     @Value("classpath:db/ddl/create-function.sql")
     private Resource sqlCreateFunction;
@@ -106,18 +115,34 @@ public abstract class SingularDefaultPersistenceConfiguration {
     }
 
     @Bean
-    public DriverManagerDataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(getUrlConnection());
-        dataSource.setUsername("sa");
-        dataSource.setPassword("sa");
-        final Properties connectionProperties = new Properties();
-        connectionProperties.setProperty("removeAbandoned", "true");
-        connectionProperties.setProperty("initialSize", "5");
-        connectionProperties.setProperty("maxActive", "10");
-        connectionProperties.setProperty("minIdle", "1");
-        dataSource.setDriverClassName("org.h2.Driver");
-        return dataSource;
+    public DataSource dataSource() {
+
+        if (SingularProperties.get().isTrue(USE_INMEMORY_DATABASE)) {
+            LOGGER.warn("Usando datasource banco em memória");
+            final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setUrl(getUrlConnection());
+            dataSource.setUsername("sa");
+            dataSource.setPassword("sa");
+            dataSource.setDriverClassName("org.h2.Driver");
+            final Properties connectionProperties = new Properties();
+            connectionProperties.setProperty("removeAbandoned", "true");
+            connectionProperties.setProperty("initialSize", "5");
+            connectionProperties.setProperty("maxActive", "10");
+            connectionProperties.setProperty("minIdle", "1");
+            dataSource.setConnectionProperties(connectionProperties);
+            return dataSource;
+        } else {
+            LOGGER.info("Usando datasource configurado via JNDI");
+            DataSource   dataSource     = null;
+            JndiTemplate jndi           = new JndiTemplate();
+            String       dataSourceName = "java:jboss/datasources/singular";
+            try {
+                dataSource = (DataSource) jndi.lookup(dataSourceName);
+            } catch (NamingException e) {
+                LOGGER.error(String.format("Datasource %s not found.", dataSourceName));
+            }
+            return dataSource;
+        }
     }
 
     protected String getUrlConnection() {
@@ -131,6 +156,7 @@ public abstract class SingularDefaultPersistenceConfiguration {
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
+        sessionFactoryBean.setEntityInterceptor(new EntityInterceptor());
         return sessionFactoryBean;
     }
 
@@ -149,12 +175,17 @@ public abstract class SingularDefaultPersistenceConfiguration {
     protected Properties hibernateProperties() {
         final Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
-        hibernateProperties.put("hibernate.connection.isolation", "2");
-        hibernateProperties.put("hibernate.jdbc.batch_size", "30");
-        hibernateProperties.put("hibernate.show_sql", "false");
-        hibernateProperties.put("hibernate.format_sql", "true");
-        hibernateProperties.put("hibernate.cache.use_second_level_cache", "false");
-        hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", "true");
+        hibernateProperties.put("hibernate.connection.isolation", 2);
+        hibernateProperties.put("hibernate.jdbc.batch_size", 30);
+        hibernateProperties.put("hibernate.show_sql", false);
+        hibernateProperties.put("hibernate.format_sql", true);
+        hibernateProperties.put("hibernate.enable_lazy_load_no_trans", true);
+        hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", true);
+        hibernateProperties.put("hibernate.cache.use_second_level_cache", true);
+        hibernateProperties.put("hibernate.cache.use_query_cache", true);
+        /*não utilizar a singleton region factory para não conflitar com o cache do singular-server */
+        hibernateProperties.put("net.sf.ehcache.configurationResourceName","/default-singular-ehcache.xml");
+        hibernateProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
         return hibernateProperties;
     }
 

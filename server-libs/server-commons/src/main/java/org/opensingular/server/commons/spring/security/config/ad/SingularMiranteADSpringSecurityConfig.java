@@ -69,7 +69,7 @@ public abstract class SingularMiranteADSpringSecurityConfig extends AbstractSing
                 .groupSearchBase("OU=GruposGS,DC=miranteinfo,DC=com")
                 .groupSearchFilter("(member={0})")
                 .userDetailsContextMapper(peticionamentoUserDetailService.orElseThrow(() ->
-                                        new SingularServerException(
+                                        SingularServerException.rethrow(
                                                 String.format("Bean %s do tipo %s não pode ser nulo. Para utilizar a configuração de segurança %s é preciso declarar um bean do tipo %s identificado pelo nome %s .",
                                                         SingularUserDetailsService.class.getName(),
                                                         "SingularUserDetailsService",

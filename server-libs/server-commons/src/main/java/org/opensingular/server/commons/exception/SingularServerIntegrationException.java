@@ -18,8 +18,24 @@ package org.opensingular.server.commons.exception;
 
 public class SingularServerIntegrationException extends SingularServerException {
 
-    public SingularServerIntegrationException(String serviceName, Exception e) {
+    protected SingularServerIntegrationException(String serviceName, Throwable e) {
         super(String.format("O %s não está funcionando corretamente. Não foi possível realizar a operação.", serviceName), e);
+    }
+
+    public static SingularServerIntegrationException rethrow(Throwable e) {
+        return rethrow(null, e);
+    }
+
+    public static SingularServerIntegrationException rethrow(String message) {
+        return rethrow(message, null);
+    }
+
+    public static SingularServerIntegrationException rethrow(String message, Throwable e) {
+        if (e instanceof SingularServerIntegrationException) {
+            return (SingularServerIntegrationException) e;
+        } else {
+            return new SingularServerIntegrationException(message, e);
+        }
     }
 
 }

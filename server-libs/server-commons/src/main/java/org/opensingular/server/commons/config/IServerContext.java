@@ -39,7 +39,7 @@ public interface IServerContext {
                 return ctx;
             }
         }
-        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular");
+        throw SingularServerException.rethrow("Não foi possível determinar o contexto do servidor do singular");
     }
 
     /**
