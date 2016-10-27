@@ -124,6 +124,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             if (parentPetition != null && parentPetition.getMainForm() != null){
                 parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
             }
+            petition.setParentPetition(parentPetition);
+            petition.setRootPetition(parentPetition.getRootPetition());
         }
         currentModel.setObject(petition);
         super.onInitialize();
