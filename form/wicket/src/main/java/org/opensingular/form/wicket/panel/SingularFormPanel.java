@@ -53,7 +53,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     /**
      * Container onde os componentes serão adicionados
      */
-    private BSGrid                              container = new BSGrid("generated");
+    private BSGrid container = new BSGrid("generated");
 
     /**
      * Instancia root do pacote
@@ -70,6 +70,8 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     private transient SFormConfig<FORM_KEY> singularFormConfig;
 
     private final boolean nested;
+
+    private boolean firstRender = true;
 
     private IBSComponentFactory<Component> preFormPanelFactory;
 
@@ -150,8 +152,9 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
-        if(viewMode.isEdition()) {
+        if (firstRender && viewMode.isEdition()) {
             response.render(OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
+            firstRender = false;
         }
     }
 
