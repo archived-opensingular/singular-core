@@ -62,7 +62,7 @@ public class WSClientSafeWrapper {
                         return future.get(45, TimeUnit.SECONDS);
                     } catch (TimeoutException ex) {
                         log.fatal("WEB-SERVICE NÃO RESPONDEU A TEMPO (45 segundos)");
-                        throw SingularServerIntegrationException.rethrow("", ex);
+                        throw SingularServerIntegrationException.rethrow(humanName, ex);
                     } finally {
                         future.cancel(true);
                     }
