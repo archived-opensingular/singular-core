@@ -18,10 +18,12 @@ package org.opensingular.form.wicket.feedback;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -55,8 +57,14 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
         WebMarkupContainer feedbackul = new WebMarkupContainer("feedbackul") {
             protected void onConfigure() {
                 super.onConfigure();
-                boolean visible = anyMessage();
-                setVisible(visible);
+                if (anyMessage()) {
+                    setVisible(true);
+                    Optional.ofNullable(getRequestCycle().find(AjaxRequestTarget.class)).ifPresent(ajx -> {
+                        ajx.appendJavaScript(";if($('.modal-backdrop').length == 0)$('html, body').animate({scrollTop:  '0' }, 'slow');");
+                    });
+                } else {
+                    setVisible(false);
+                }
             }
         };
         add(feedbackul
@@ -73,17 +81,18 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
                 super.renderHead(component, response);
                 SValidationFeedbackPanel fp = (SValidationFeedbackPanel) component;
                 if (fp.anyMessage(ValidationErrorLevel.ERROR)) {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
+                    response.render($canHaveError(fp, ".addClass('has-error');"));
                 } else if (fp.anyMessage(ValidationErrorLevel.WARNING)) {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                            JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
+                    response.render($canHaveError(fp, ".addClass('has-warning');"));
                 } else {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                            JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
+                    response.render($canHaveError(fp, ".removeClass('has-error').removeClass('has-warning');"));
                 }
             }
         });
+    }
+
+    private HeaderItem $canHaveError(Component c, String script) {
+        return OnDomReadyHeaderItem.forScript(JQuery.$(c) + ".closest('.can-have-error')" + script);
     }
 
     public boolean anyMessage() {
@@ -166,4 +175,5 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
         }
         return cssClass;
     }
+
 }

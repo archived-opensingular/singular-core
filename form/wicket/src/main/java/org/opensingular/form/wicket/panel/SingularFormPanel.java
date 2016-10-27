@@ -16,6 +16,14 @@
 
 package org.opensingular.form.wicket.panel;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.resource.JQueryPluginResourceReference;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefSDocumentFactory;
@@ -31,16 +39,6 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.resource.JQueryPluginResourceReference;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -145,7 +143,6 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         SInstance instance = createInstance(singularFormConfig);
         rootInstance.setObject(instance);
         updateContainer();
-        add(buildFeedbackPanel());
     }
 
     @Override
@@ -166,6 +163,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
+        add(ctx.createFeedbackPanel("feedback", this).setShowBox(true));
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
@@ -183,20 +181,6 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
         bodyContainer.setOutputMarkupId(true);
         addOrReplace(bodyContainer);
         return bodyContainer;
-    }
-
-    /**
-     * Constroi o feedback panel
-     *
-     * @return componente criado
-     */
-    private Component buildFeedbackPanel() {
-        return new FencedFeedbackPanel("feedback").add(new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setVisible(((FencedFeedbackPanel) component).anyMessage());
-            }
-        });
     }
 
     /**
