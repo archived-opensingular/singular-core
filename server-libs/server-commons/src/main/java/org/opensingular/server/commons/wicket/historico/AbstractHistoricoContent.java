@@ -16,36 +16,32 @@
 
 package org.opensingular.server.commons.wicket.historico;
 
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.support.persistence.enums.SimNao;
-import org.opensingular.lib.wicket.util.button.DropDownButtonPanel;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.server.commons.exception.SingularServerException;
-import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
-import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
-import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
-
-import javax.inject.Inject;
-import java.net.URL;
-import java.util.*;
-
-import static org.opensingular.server.commons.util.Parameters.FORM_VERSION_KEY;
 
 public abstract class AbstractHistoricoContent extends Content {
 
@@ -156,7 +152,7 @@ public abstract class AbstractHistoricoContent extends Content {
     protected Map<String, String> buildViewFormParameters(IModel<PetitionHistoryDTO> model) {
         final Map<String, String> params = new HashMap<>();
         if (model.getObject().getPetitionContentHistory() != null) {
-            params.put(Parameters.FORM_VERSION_KEY, model
+            params.put(DispatcherPageParameters.FORM_VERSION_KEY, model
                     .getObject()
                     .getPetitionContentHistory()
                     .getFormVersionHistoryEntities()
