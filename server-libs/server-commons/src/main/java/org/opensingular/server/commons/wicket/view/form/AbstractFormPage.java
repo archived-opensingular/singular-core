@@ -16,6 +16,13 @@
 
 package org.opensingular.server.commons.wicket.view.form;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -58,12 +65,6 @@ import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.builder.MarkupCreator;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
@@ -125,7 +126,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
             }
             petition.setParentPetition(parentPetition);
-            petition.setRootPetition(parentPetition.getRootPetition());
+            if (parentPetition.getRootPetition() != null) {
+                petition.setRootPetition(parentPetition.getRootPetition());
+            } else {
+                petition.setRootPetition(parentPetition);
+            }
         }
         currentModel.setObject(petition);
         super.onInitialize();
