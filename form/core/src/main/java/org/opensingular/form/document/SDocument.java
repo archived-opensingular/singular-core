@@ -16,14 +16,8 @@
 
 package org.opensingular.form.document;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 import java.util.function.Supplier;
 
 import org.opensingular.form.SInstance;
@@ -84,6 +78,8 @@ public class SDocument {
     private SIList<SIAnnotation> annotations;
 
     private SetMultimap<Integer, IValidationError> validationErrors;
+
+    private Map<String, Serializable> transienteAttributes = new HashMap<>();
 
     public SDocument() {
     }
@@ -504,4 +500,13 @@ public class SDocument {
             }
         }
     }
+
+    public void addTransientAttribute(String key, Serializable val){
+        transienteAttributes.put(key, val);
+    }
+
+    public Optional<Serializable> getTransientAttribute(String key){
+        return Optional.ofNullable(transienteAttributes.get(key));
+    }
 }
+
