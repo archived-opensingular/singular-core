@@ -61,9 +61,7 @@ import org.opensingular.server.commons.wicket.view.template.Template;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
@@ -430,8 +428,12 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                                      IModel<? extends SInstance> currentInstance)
             throws SingularServerFormValidationError {
         onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance);
-        petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition);
+        petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition, getTransitionParameters(transitionName));
         onTransitionExecuted(ajaxRequestTarget, transitionName);
+    }
+
+    protected Map<String, String> getTransitionParameters(String transition){
+        return null;
     }
 
     protected void onTransition(PetitionEntity pe, String transitionName) {
