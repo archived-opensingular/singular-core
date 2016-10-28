@@ -68,53 +68,44 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     @Override
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context, @RequestParam(USER) String user) {
-
         List<MenuGroup> groups = listMenuGroups();
-
         filterAccessRight(groups, user);
-
         customizeMenu(groups, context, user);
-
         return groups;
     }
 
     protected List<MenuGroup> listMenuGroups() {
-        List<MenuGroup>                      groups        = new ArrayList<>();
-        Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
-
-        Flow.getDefinitions().forEach(d -> {
-            if (!definitionMap.containsKey(d.getCategory())) {
-                definitionMap.put(d.getCategory(), new ArrayList<>());
-            }
-            definitionMap.get(d.getCategory()).add(d);
-
-        });
-
-        definitionMap.forEach((category, definitions) -> {
+        final List<MenuGroup> groups = new ArrayList<>();
+        getDefinitionsMap().forEach((category, definitions) -> {
             MenuGroup menuGroup = new MenuGroup();
             menuGroup.setId("BOX_" + SingularUtil.normalize(category).toUpperCase());
             menuGroup.setLabel(category);
             menuGroup.setProcesses(new ArrayList<>());
             menuGroup.setForms(new ArrayList<>());
-            definitions.forEach(d ->
-                            menuGroup
-                                    .getProcesses()
-                                    .add(
-                                            new ProcessDTO(d.getKey(), d.getName(), null)
-                                    )
+            definitions.forEach(d -> menuGroup
+                    .getProcesses()
+                    .add(new ProcessDTO(d.getKey(), d.getName(), null))
             );
-
             addForms(menuGroup);
-
             groups.add(menuGroup);
         });
-
         return groups;
+    }
+
+    protected Map<String, List<ProcessDefinition>> getDefinitionsMap() {
+        final Map<String, List<ProcessDefinition>> definitionMap = new HashMap<>();
+        Flow.getDefinitions().forEach(d -> {
+            if (!definitionMap.containsKey(d.getCategory())) {
+                definitionMap.put(d.getCategory(), new ArrayList<>());
+            }
+            definitionMap.get(d.getCategory()).add(d);
+        });
+        return definitionMap;
     }
 
     protected void addForms(MenuGroup menuGroup) {
         for (Class<? extends SType<?>> formClass : singularServerConfiguration.getFormTypes()) {
-            SInfoType                 annotation = formClass.getAnnotation(SInfoType.class);
+            SInfoType annotation = formClass.getAnnotation(SInfoType.class);
             if (annotation.newable()) {
                 String                    name       = SFormUtil.getTypeName(formClass);
                 SType<?>                  sType      = singularFormConfig.getTypeLoader().loadType(name).get();
