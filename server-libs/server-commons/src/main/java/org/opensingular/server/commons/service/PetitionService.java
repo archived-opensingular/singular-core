@@ -222,9 +222,9 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
 
         formPetitionService.consolidateDrafts(peticao, config);
 
-        final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(peticao);
-        final ProcessInstance      processInstance   = processDefinition.newInstance();
-        final ProcessInstanceEntity processEntity = processInstance.saveEntity();
+        final ProcessDefinition<?>  processDefinition = PetitionUtil.getProcessDefinition(peticao);
+        final ProcessInstance       processInstance   = processDefinition.newInstance();
+        final ProcessInstanceEntity processEntity     = processInstance.saveEntity();
 
         processInstance.setDescription(peticao.getDescription());
         peticao.setProcessInstanceEntity(processEntity);
@@ -303,23 +303,20 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
      * @param onTransition listener
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void executeTransition(String tn, P petition, SFormConfig cfg, BiConsumer<P, String> onTransition) {
+    public void executeTransition(String tn, P petition, SFormConfig cfg, BiConsumer<P, String> onTransition, Map<String, String> params) {
         try {
-
             if (onTransition != null) {
                 onTransition.accept(petition, tn);
             }
-
             formPetitionService.consolidateDrafts(petition, cfg);
-
             savePetitionHistory(petition);
-
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(petition).getClass();
             final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, petition.getProcessInstanceEntity().getCod());
-
             checkTaskIsEqual(petition.getProcessInstanceEntity(), pi);
+            if (params != null && !params.isEmpty()) {
+                params.forEach(pi.getVariaveis()::setValor);
+            }
             pi.executeTransition(tn);
-
         } catch (SingularException e) {
             throw e;
         } catch (Exception e) {
