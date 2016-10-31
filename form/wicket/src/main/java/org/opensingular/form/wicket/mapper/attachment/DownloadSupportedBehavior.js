@@ -24,16 +24,17 @@
         window.DownloadSupportedBehavior = function () {
         };
         window.DownloadSupportedBehavior.ajaxDownload = function (url, fileId, filename) {
+            var newWindow;
+            if (window.DownloadSupportedBehavior.isContentTypeBrowserFriendly(filename)) {
+                newWindow = window.open();
+            }
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 url: url + '&fileId=' + fileId + '&fileName=' + filename,
                 success: function (response, status, request) {
-                    if (window.DownloadSupportedBehavior.isContentTypeBrowserFriendly(filename)) {
-                        var anchor = $('<a target="_blank" href="' + response.url + '">');
-                        $('body').append(anchor);
-                        anchor.click();
-                        anchor.remove();
+                    if (typeof newWindow != "undefined") {
+                        newWindow.location = location.protocol + "//" + location.host + response.url;
                     } else {
                         var form = $('<form method="GET" action="' + response.url + '">');
                         $('body').append(form);
