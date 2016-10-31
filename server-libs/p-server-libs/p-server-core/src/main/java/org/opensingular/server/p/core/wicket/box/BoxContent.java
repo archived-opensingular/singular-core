@@ -102,7 +102,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     private void showNew() {
         if (isShowNew() && getMenu() != null) {
-            for (FormDTO form : getForms()) {
+            List<FormDTO> forms = getForms().stream().filter(FormDTO::isNewable).collect(Collectors.toList());
+            for (FormDTO form : forms) {
                 String url = DispatcherPageUtil
                         .baseURL(getBaseUrl())
                         .formAction(FormActions.FORM_FILL.getId())
@@ -111,7 +112,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                         .params(getLinkParams())
                         .build();
 
-                if (getForms().size() > 1) {
+                if (forms.size() > 1) {
                     dropdownMenu.adicionarMenu(id -> new ModuleLink(id, $m.ofValue(form.getDescription()), url));
                 } else {
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));

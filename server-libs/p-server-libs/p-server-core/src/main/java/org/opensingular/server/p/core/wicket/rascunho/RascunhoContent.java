@@ -19,6 +19,7 @@ package org.opensingular.server.p.core.wicket.rascunho;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -95,8 +96,9 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         super.onInitialize();
 
         if (getMenu() != null) {
-            for (FormDTO form : getForms()) {
-                if (getForms().size() > 1) {
+            List<FormDTO> forms = getForms().stream().filter(FormDTO::isNewable).collect(Collectors.toList());
+            for (FormDTO form : forms) {
+                if (forms.size() > 1) {
                     String processUrl = DispatcherPageUtil
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
