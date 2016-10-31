@@ -223,6 +223,7 @@ public class Menu extends Panel {
                 .collect(Collectors.toList());
 
         List<String> tipos = menuGroup.getProcesses().stream()
+                .filter(x -> x.getFormName() != null)
                 .map(ProcessDTO::getFormName)
                 .collect(Collectors.toList());
 

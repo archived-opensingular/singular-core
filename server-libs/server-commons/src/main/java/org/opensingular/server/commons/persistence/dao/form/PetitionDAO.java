@@ -146,7 +146,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         if (!filtro.isRascunho() && siglasProcesso != null && !siglasProcesso.isEmpty()) {
             hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
-            params.put("siglasProcesso", siglasProcesso);
+                params.put("siglasProcesso", siglasProcesso);
             if (formNames != null && !formNames.isEmpty()) {
                 hql.append(" OR formType.abbreviation in (:formNames)) ");
                 params.put("formNames", formNames);
