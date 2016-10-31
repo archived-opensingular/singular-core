@@ -30,7 +30,10 @@
                 url: url + '&fileId=' + fileId + '&fileName=' + filename,
                 success: function (response, status, request) {
                     if (window.DownloadSupportedBehavior.isContentTypeBrowserFriendly(filename)) {
-                        window.open(response.url);
+                        var anchor = $('<a target="_blank" href="' + response.url + '">');
+                        $('body').append(anchor);
+                        anchor.click();
+                        anchor.remove();
                     } else {
                         var form = $('<form method="GET" action="' + response.url + '">');
                         $('body').append(form);
