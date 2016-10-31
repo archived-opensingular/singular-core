@@ -53,7 +53,7 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
     @Override
     public void configure(WebSecurity web) throws Exception {
         if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE)){
-            web.debug(true);
+//            web.debug(true);
         }
         super.configure(web);
     }
