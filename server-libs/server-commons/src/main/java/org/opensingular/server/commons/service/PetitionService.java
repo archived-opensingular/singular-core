@@ -16,10 +16,35 @@
 
 package org.opensingular.server.commons.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.opensingular.flow.core.*;
-import org.opensingular.flow.persistence.entity.*;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.TaskType;
+import org.opensingular.flow.core.variable.type.VarTypeString;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.FormKey;
@@ -51,13 +76,6 @@ import org.opensingular.server.commons.util.PetitionUtil;
 import org.opensingular.server.commons.wicket.view.form.FormPageConfig;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.opensingular.lib.support.persistence.enums.SimNao.SIM;
 import static org.opensingular.server.commons.flow.action.DefaultActions.*;
@@ -314,7 +332,9 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
             final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, petition.getProcessInstanceEntity().getCod());
             checkTaskIsEqual(petition.getProcessInstanceEntity(), pi);
             if (params != null && !params.isEmpty()) {
-                params.forEach(pi.getVariaveis()::setValor);
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    pi.getVariaveis().addValor(entry.getKey(), new VarTypeString(), entry.getValue());
+                }
             }
             pi.executeTransition(tn);
         } catch (SingularException e) {
