@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence.dao;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
@@ -51,7 +53,11 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     public T insert(InputStream is, long length, String name){
-        C content = attachmentContentDao.insert(is, length);
+        return insert(is, length, name, null);
+    }
+
+    public T insert(InputStream is, long length, String name, String hashSha1){
+        C content = attachmentContentDao.insert(is, length, hashSha1);
         return insert(createAttachment(content, name));
     }
 

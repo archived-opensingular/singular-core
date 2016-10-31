@@ -60,7 +60,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     @Override
     public AttachmentRef copy(IAttachmentRef toBeCopied) {
         try (InputStream is = toBeCopied.getInputStream()) {
-            T file = attachmentDao.insert(is, toBeCopied.getSize(), toBeCopied.getName());
+            T file = attachmentDao.insert(is, toBeCopied.getSize(), toBeCopied.getName(), toBeCopied.getHashSHA1());
             return createRef(file);
         } catch (IOException e) {
             throw SingularUtil.propagate(e);
