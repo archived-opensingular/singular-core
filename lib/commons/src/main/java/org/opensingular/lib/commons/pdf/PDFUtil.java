@@ -278,8 +278,12 @@ public abstract class PDFUtil implements Loggable {
      * @param commandArgs os argumentos
      */
     private void addSmartBreakScript(List<String> commandArgs) {
+        final String minificado = "\"!function(){function a(a){return'<span style=\\\'page-break-inside: avoid\\\'>'+" +
+                "a+'</span>'}function b(c,d){return c.length>d?a(c.substr(0,d))+b(c.substr(d,c.length),d):c}function " +
+                "c(a,b){if(0==a.children.length)b(a);else for(var d=0;d<a.children.length;d+=1)c(a.children[d],b)}c(d" +
+                "ocument.getElementsByTagName('body')[0],function(a){a.innerHTML=b(a.innerHTML,600)})}();\"";
         commandArgs.add("--run-script");
-        commandArgs.add("\"!function(){function a(a){return'<span style=\\\'page-break-inside: avoid\\\'>'+a+'</span>'}function b(c,d){return c.length>d?a(c.substr(0,d))+b(c.substr(d,c.length),d):c}function c(a,b){if(0==a.children.length)b(a);else for(var d=0;d<a.children.length;d+=1)c(a.children[d],b)}c(document.getElementsByTagName('body')[0],function(a){a.innerHTML=b(a.innerHTML,600)})}();\"");
+        commandArgs.add(minificado);
     }
 
     /**
