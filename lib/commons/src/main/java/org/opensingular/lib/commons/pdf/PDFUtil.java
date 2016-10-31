@@ -242,6 +242,48 @@ public abstract class PDFUtil implements Loggable {
             commandArgs.add("--javascript-delay");
             commandArgs.add(String.valueOf(javascriptDelay));
         }
+
+        addSmartBreakScript(commandArgs);
+
+    }
+
+    /**
+     * adiciona um script minificado de break de texto com mais de 1000 caracteres de forma automatica,
+     * segue em comentario a versão original
+     *
+     * (function () {
+     * 	function preventBreakWrap(value) {
+     * 		return '<span style=\'page-break-inside: avoid\'>' + value + '</span>';
+     * 	}
+     * 	function breakInBlocks(value, size) {
+     * 		if (value.length > size) {
+     * 			return preventBreakWrap(value.substr(0, size)) + breakInBlocks(value.substr(size, value.length), size);
+     * 		}
+     * 		return value;
+     * 	}
+     * 	function visitLeafs(root, visitor) {
+     * 		if (root.children.length == 0) {
+     * 			visitor(root);
+     * 		} else {
+     * 			for (var i = 0; i < root.children.length; i += 1) {
+     * 				visitLeafs(root.children[i], visitor);
+     * 			}
+     * 		}
+     * 	}
+     * 	visitLeafs(document.getElementsByTagName('body')[0], function(e) {
+     * 		e.innerHTML = breakInBlocks(e.innerHTML, 1000);
+     * 	});
+     * })();
+     *
+     * @param commandArgs os argumentos
+     */
+    private void addSmartBreakScript(List<String> commandArgs) {
+        final String minificado = "\"!function(){function a(a){return'<span style=\\\'page-break-inside: avoid\\\'>'+" +
+                "a+'</span>'}function b(c,d){return c.length>d?a(c.substr(0,d))+b(c.substr(d,c.length),d):c}function " +
+                "c(a,b){if(0==a.children.length)b(a);else for(var d=0;d<a.children.length;d+=1)c(a.children[d],b)}c(d" +
+                "ocument.getElementsByTagName('body')[0],function(a){a.innerHTML=b(a.innerHTML,600)})}();\"";
+        commandArgs.add("--run-script");
+        commandArgs.add(minificado);
     }
 
     /**
@@ -279,8 +321,6 @@ public abstract class PDFUtil implements Loggable {
      * @param commandArgs o vetor com os argumentos.
      */
     protected void addDefaultHeaderCommandArgs(List<String> commandArgs) {
-//        commandArgs.add("--margin-top");
-//        commandArgs.add("26mm");
         commandArgs.add("--header-spacing");
         commandArgs.add("5");
     }
@@ -291,8 +331,6 @@ public abstract class PDFUtil implements Loggable {
      * @param commandArgs o vetor com os argumentos.
      */
     protected void addDefaultFooterCommandArgs(List<String> commandArgs) {
-//        commandArgs.add("--margin-bottom");
-//        commandArgs.add("15mm");
         commandArgs.add("--footer-spacing");
         commandArgs.add("5");
     }
