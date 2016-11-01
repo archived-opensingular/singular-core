@@ -18,10 +18,10 @@
     </defaultCache>
 
     <cache name="defaultCache"
-        timeToIdleSeconds="120"
-        timeToLiveSeconds="120"
-        maxBytesLocalHeap="102400"
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="600"
         eternal="false"
+        maxEntriesLocalHeap="10000000"
         maxEntriesLocalDisk="10000000"
         diskExpiryThreadIntervalSeconds="120"
         transactionalMode="off"
@@ -30,7 +30,7 @@
     </cache>
 
     <cache name="forever" eternal="true"
-        maxBytesLocalHeap="102400"
+        maxEntriesLocalHeap="10000000"
         maxEntriesLocalDisk="10000000"
         transactionalMode="off"
         memoryStoreEvictionPolicy="LRU">
