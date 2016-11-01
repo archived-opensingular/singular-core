@@ -252,27 +252,27 @@ public abstract class PDFUtil implements Loggable {
      * segue em comentario a versão original
      *
      * (function () {
-     * 	function preventBreakWrap(value) {
-     * 		return '<span style=\'page-break-inside: avoid\'>' + value + '</span>';
-     * 	}
-     * 	function breakInBlocks(value, size) {
-     * 		if (value.length > size) {
-     * 			return preventBreakWrap(value.substr(0, size)) + breakInBlocks(value.substr(size, value.length), size);
-     * 		}
-     * 		return value;
-     * 	}
-     * 	function visitLeafs(root, visitor) {
-     * 		if (root.children.length == 0) {
-     * 			visitor(root);
-     * 		} else {
-     * 			for (var i = 0; i < root.children.length; i += 1) {
-     * 				visitLeafs(root.children[i], visitor);
-     * 			}
-     * 		}
-     * 	}
-     * 	visitLeafs(document.getElementsByTagName('body')[0], function(e) {
-     * 		e.innerHTML = breakInBlocks(e.innerHTML, 1000);
-     * 	});
+     *     function preventBreakWrap(value) {
+     *         return '<span style=\'page-break-inside: avoid\'>' + value + '</span>';
+     *     }
+     *     function breakInBlocks(value, size) {
+     *         if (value.length > size) {
+     *             return preventBreakWrap(value.substr(0, size)) + breakInBlocks(value.substr(size, value.length), size);
+     *         }
+     *         return value;
+     *     }
+     *     function visitLeafs(root, visitor) {
+     *         if (root.children.length == 0) {
+     *             visitor(root);
+     *         } else {
+     *             for (var i = 0; i < root.children.length; i += 1) {
+     *                 visitLeafs(root.children[i], visitor);
+     *             }
+     *         }
+     *     }
+     *     visitLeafs(document.getElementsByTagName('body')[0], function(e) {
+     *         e.innerHTML = breakInBlocks(e.innerHTML, 1000);
+     *     });
      * })();
      *
      * @param commandArgs os argumentos
