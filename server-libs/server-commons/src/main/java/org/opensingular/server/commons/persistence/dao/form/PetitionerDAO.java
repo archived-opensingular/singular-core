@@ -16,15 +16,22 @@
 
 package org.opensingular.server.commons.persistence.dao.form;
 
-
-import org.opensingular.server.commons.persistence.entity.form.PetitionerEntity;
+import org.hibernate.criterion.Restrictions;
 import org.opensingular.lib.support.persistence.BaseDAO;
-
+import org.opensingular.server.commons.persistence.entity.form.PetitionerEntity;
 
 public class PetitionerDAO<T extends PetitionerEntity> extends BaseDAO<T, Long> {
 
     public PetitionerDAO() {
         super((Class<T>) PetitionerEntity.class);
+    }
+
+    public PetitionerEntity findPetitionerByExternalId(String externalId) {
+        return (PetitionerEntity) getSession()
+                .createCriteria(PetitionerEntity.class)
+                .add(Restrictions.eq("idPessoa", externalId))
+                .setMaxResults(1)
+                .uniqueResult();
     }
 
 }

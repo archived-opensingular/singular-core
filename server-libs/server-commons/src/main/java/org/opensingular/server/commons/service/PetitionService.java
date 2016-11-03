@@ -68,6 +68,7 @@ import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.persistence.entity.form.PetitionerEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.service.dto.BoxItemAction;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
@@ -476,6 +477,10 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     public List<Actor> listAllocableUsers(Map<String, Object> selectedTask) {
         Integer taskInstanceId = (Integer) selectedTask.get("taskInstanceId");
         return actorDAO.listAllocableUsers(taskInstanceId);
+    }
+
+    public PetitionerEntity findPetitionerByExternalId(String externalId) {
+        return petitionerDAO.findPetitionerByExternalId(externalId);
     }
 
 }

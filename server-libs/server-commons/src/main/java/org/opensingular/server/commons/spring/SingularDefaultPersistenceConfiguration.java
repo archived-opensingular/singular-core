@@ -39,6 +39,7 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
 import static org.opensingular.lib.commons.base.SingularProperties.USE_INMEMORY_DATABASE;
 
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -156,7 +157,10 @@ public abstract class SingularDefaultPersistenceConfiguration {
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
-        sessionFactoryBean.setEntityInterceptor(new EntityInterceptor());
+        if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
+            LOGGER.info("Utilizando schema customizado: " + SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME));
+            sessionFactoryBean.setEntityInterceptor(new EntityInterceptor());
+        }
         return sessionFactoryBean;
     }
 
