@@ -16,13 +16,30 @@
 package org.opensingular.form.persistence.dao;
 
 
+import java.util.List;
+
+import org.hibernate.criterion.Restrictions;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 public class FormDAO extends BaseDAO<FormEntity, Long> {
 
     public FormDAO() {
         super(FormEntity.class);
+    }
+
+    public void desassociateFormVersions(FormEntity form) {
+        List<FormVersionEntity> versions = findVersions(form);
+        versions.forEach(getSession()::delete);
+        form.setCurrentFormVersionEntity(null);
+        getSession().flush();
+    }
+
+    private List<FormVersionEntity> findVersions(FormEntity form) {
+        return getSession().createCriteria(FormVersionEntity.class)
+                .add(Restrictions.eq("formEntity", form))
+                .list();
     }
 
 }

@@ -39,15 +39,15 @@ public class FormVersionEntity extends BaseEntity<Long> {
     private Long cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_FORMULARIO")
+    @JoinColumn(name = "CO_FORMULARIO", nullable = false)
     private FormEntity formEntity;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DT_INCLUSAO")
+    @Column(name = "DT_INCLUSAO", nullable = false)
     private Date inclusionDate;
 
     @Lob
-    @Column(name = "XML_CONTEUDO")
+    @Column(name = "XML_CONTEUDO", nullable = false)
     private String xml;
 
     @Column(name = "CO_AUTOR_INCLUSAO")
