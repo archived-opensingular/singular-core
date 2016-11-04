@@ -69,21 +69,27 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
     protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
+
+    @Inject
+    protected PetitionService<T> petitionService;
+
+    @Inject
+    protected IFormService formService;
+
+    @Inject
+    protected FormPetitionService<T> formPetitionService;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    protected SFormConfig<String> singularFormConfig;
+
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
     protected final IModel<T>           currentModel;
     protected final IModel<FormKey>     formModel;
     protected final IModel<FormKey>     parentPetitionformModel;
-    @Inject
-    protected PetitionService<T> petitionService;
-    @Inject
-    protected IFormService formService;
-    @Inject
-    protected FormPetitionService<T> formPetitionService;
-    @Inject
-    @Named("formConfigWithDatabase")
-    protected SFormConfig<String> singularFormConfig;
     protected       AbstractFormContent content;
+
 
     public AbstractFormPage(Class<T> petitionClass, FormPageConfig config) {
         if (config == null) {
@@ -119,7 +125,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         /* carrega a chave do form da petição pai para posterior clonagem */
         if (StringUtils.isNotBlank(config.getParentPetitionId())) {
             T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
-            if (parentPetition != null && parentPetition.getMainForm() != null){
+            if (parentPetition != null && parentPetition.getMainForm() != null) {
                 parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
             }
             petition.setParentPetition(parentPetition);
@@ -133,9 +139,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         super.onInitialize();
     }
 
-    private void loadLastFormKey(T petition, IModel<FormKey> targetModel) {
-
-    }
 
     private FormEntity getDraftOrFormEntity(T petition) {
         return Optional
@@ -148,7 +151,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (isMainForm()) {
             return formPetitionService.findFormPetitionEntityByTypeName(petition.getCod(), getFormType(config));
         } else {
-            return formPetitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config), getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
+            return formPetitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config),
+                    getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
         }
     }
 
@@ -186,12 +190,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             }
 
             @Override
-            protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
-                AbstractFormPage.this.configureCustomButtons(buttonContainer, modalContainer, viewMode, annotationMode, currentInstance);
+            protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer,
+                                                  ViewMode viewMode, AnnotationMode annotationMode,
+                                                  IModel<? extends SInstance> currentInstance) {
+                AbstractFormPage.this.configureCustomButtons(buttonContainer, modalContainer, viewMode,
+                        annotationMode, currentInstance);
             }
 
             @Override
-            protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer, IModel<? extends SInstance> instanceModel) {
+            protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer,
+                                                           IModel<? extends SInstance> instanceModel) {
                 return AbstractFormPage.this.buildConfirmationModal(modalContainer, instanceModel);
             }
 
@@ -199,11 +207,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             protected ProcessInstanceEntity getProcessInstance() {
                 return AbstractFormPage.this.getProcessInstance();
             }
-
-//            @Override
-//            protected void setProcessInstance(ProcessInstanceEntity pie) {
-//                AbstractFormPage.this.setProcessInstance(pie);
-//            }
 
             @Override
             protected void saveForm(IModel<? extends SInstance> currentInstance) {
@@ -436,7 +439,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         onTransitionExecuted(ajaxRequestTarget, transitionName);
     }
 
-    protected Map<String, String> getTransitionParameters(String transition){
+    protected Map<String, String> getTransitionParameters(String transition) {
         return null;
     }
 
@@ -475,7 +478,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                                  String transitionName,
                                  BSModalBorder confirmarAcaoFlowModal) {
         final TemplatePanel tp = buttonContainer.newTemplateTag(tt ->
-                        "<button  type='submit' class='btn' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n"
+                "<button  type='submit' class='btn' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n"
         );
         final SingularButton singularButton = new SingularButton(buttonId, content.getFormInstance()) {
             @Override
