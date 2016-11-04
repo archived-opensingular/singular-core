@@ -160,12 +160,7 @@ public class SDocument {
      */
     @SuppressWarnings("unchecked")
     public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistencePermanentHandler() {
-        IAttachmentPersistenceHandler<? extends IAttachmentRef> h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        //        if (h == null) {
-        //            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
-        //                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
-        //        }
-        return h;
+        return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     /**
