@@ -46,7 +46,7 @@ public class FormEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_COLECAO")
     private CollectionEntity collection;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CO_VERSAO_ATUAL")
     private FormVersionEntity currentFormVersionEntity;
 
