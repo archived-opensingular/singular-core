@@ -49,7 +49,7 @@ public class PetitionContentHistoryEntity extends BaseEntity<Long> {
     private Date historyDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "RL_HIST_CONT_PET_VER_ANOTACAO", schema = Constants.SCHEMA,
+    @JoinTable(name = "RL_HIST_CONT_REQ_VER_ANOTACAO", schema = Constants.SCHEMA,
             joinColumns = @JoinColumn(name = "CO_HISTORICO"),
             inverseJoinColumns = @JoinColumn(name = "CO_VERSAO_ANOTACAO"))
     private List<FormAnnotationVersionEntity> formAnnotationsVersions;
