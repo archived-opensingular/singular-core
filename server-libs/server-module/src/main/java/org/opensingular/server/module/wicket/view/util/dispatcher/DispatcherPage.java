@@ -132,9 +132,13 @@ public abstract class DispatcherPage extends WebPage {
         return null;
     }
 
-    private <T> T createNewInstanceUsingFormPageConfigConstructor(Class<T> clazz, FormPageConfig config) throws Exception {
-        Constructor c = clazz.getConstructor(FormPageConfig.class);
-        return (T) c.newInstance(config);
+    private <T> T createNewInstanceUsingFormPageConfigConstructor(Class<T> clazz, FormPageConfig config) {
+        try {
+            Constructor c = clazz.getConstructor(FormPageConfig.class);
+            return (T) c.newInstance(config);
+        } catch (Exception e) {
+            throw SingularServerException.rethrow(e.getMessage(), e);
+        }
     }
 
     private WebPage retrieveDestination(FormPageConfig config) {

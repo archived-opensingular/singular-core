@@ -20,12 +20,13 @@ import org.opensingular.server.commons.exception.SingularServerException;
 import org.apache.wicket.request.Request;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * Utilitário para prover a configuração de contexto atual e os métodos utilitários
  * relacionados.
  */
-public interface IServerContext {
+public interface IServerContext extends Serializable {
 
     public static IServerContext getContextFromRequest(Request request, IServerContext[] contexts) {
         return getContextFromRequest((HttpServletRequest) request.getContainerRequest(), contexts);

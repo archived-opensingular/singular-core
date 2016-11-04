@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.spring.security.config.cas;
 
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.server.commons.spring.security.config.SingularLogoutHandler;
 
@@ -50,7 +51,7 @@ public class SingularCASLogoutHandler implements SingularLogoutHandler, Loggable
             response.sendRedirect(redirect);
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw SingularException.rethrow(e);
         }
 
     }
