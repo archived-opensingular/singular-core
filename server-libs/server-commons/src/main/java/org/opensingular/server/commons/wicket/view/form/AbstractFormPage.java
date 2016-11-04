@@ -284,7 +284,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
-            for (MTransition t : trans) {
+            trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {
                 if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
                     String btnId = "flow-btn" + index;
                     buildFlowTransitionButton(
@@ -292,10 +292,15 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                             modalContainer, t.getName(),
                             currentInstance, viewMode);
                 }
-            }
+            });
+
         } else {
             buttonContainer.setVisible(false).setEnabled(false);
         }
+    }
+
+    protected Boolean isTransitionButtonVisibible(MTransition transition){
+        return true;
     }
 
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance, boolean mainForm) {
