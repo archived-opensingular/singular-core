@@ -369,7 +369,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         formModel.setObject(petitionService.saveOrUpdate(
                 getUpdatedPetitionFromInstance(currentInstance, isMainForm()),
                 currentInstance.getObject(),
-                true,
                 isMainForm(),
                 singularFormConfig,
                 t -> onSave(t, transitionName)

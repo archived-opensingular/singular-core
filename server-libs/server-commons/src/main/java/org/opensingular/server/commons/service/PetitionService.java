@@ -207,13 +207,12 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         return boxItemAction;
     }
 
-    public FormKey saveOrUpdate(P peticao, SInstance instance, boolean createNewDraftIfDoesntExists, boolean mainForm, SFormConfig config) {
-        return saveOrUpdate(peticao, instance, createNewDraftIfDoesntExists, mainForm, config, null);
+    public FormKey saveOrUpdate(P peticao, SInstance instance, boolean mainForm, SFormConfig config) {
+        return saveOrUpdate(peticao, instance, mainForm, config, null);
     }
 
     public FormKey saveOrUpdate(P petition,
                                 SInstance instance,
-                                boolean createNewDraftIfDoesntExists,
                                 boolean mainForm,
                                 SFormConfig config,
                                 Consumer<P> onSave) {
@@ -228,7 +227,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
             petitionerDAO.saveOrUpdate(petition.getPetitioner());
         }
 
-        final FormKey key = formPetitionService.saveFormPetition(petition, instance, createNewDraftIfDoesntExists, mainForm, config);
+        final FormKey key = formPetitionService.saveFormPetition(petition, instance, mainForm, config);
 
         if (onSave != null) {
             onSave.accept(petition);

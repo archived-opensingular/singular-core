@@ -18,7 +18,9 @@ package org.opensingular.server.commons.persistence.dao.form;
 
 
 import org.opensingular.flow.core.TaskType;
+import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
@@ -242,4 +244,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                 .uniqueResult();
     }
 
+    @Override
+    public void delete(T obj) {
+        FormVersionEntity formVersionEntity = obj.getMainForm().getCurrentFormVersionEntity();
+        getSession().delete(formVersionEntity);
+        obj.getMainForm().setCurrentFormVersionEntity(null);
+        getSession().flush();
+        super.delete(obj);
+    }
 }
