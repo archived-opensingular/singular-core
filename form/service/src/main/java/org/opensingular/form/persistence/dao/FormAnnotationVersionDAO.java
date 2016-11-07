@@ -25,4 +25,9 @@ public class FormAnnotationVersionDAO extends BaseDAO<FormAnnotationVersionEntit
         super(FormAnnotationVersionEntity.class);
     }
 
+    @Override
+    public void delete(FormAnnotationVersionEntity obj) {
+        super.delete(obj);
+        getSession().flush();
+    }
 }
