@@ -41,4 +41,10 @@ public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnno
 
     String extractContent(SInstance instance);
 
+    /**
+     * Deletes all form versions associated with the given @param form.
+     * It also delete all annotations and annotations versions associated with each version.
+     * @param form
+     */
+    void deassociateFormVersions(FormEntity form);
 }
