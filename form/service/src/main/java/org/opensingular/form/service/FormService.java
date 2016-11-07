@@ -15,6 +15,7 @@
  */
 package org.opensingular.form.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.form.SFormUtil;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -250,23 +251,29 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     public void deassociateFormVersions(FormEntity form) {
-        for (FormVersionEntity fve : formVersionDAO.findVersions(form)) {
-            deleteFormVersion(fve);
+        if (form != null) {
+            for (FormVersionEntity fve : formVersionDAO.findVersions(form)) {
+                deleteFormVersion(fve);
+            }
         }
     }
 
     private void deleteFormVersion(FormVersionEntity fve) {
-        for (FormAnnotationEntity fae : fve.getFormAnnotations()) {
-            deleteAnnotation(fae);
+        if (fve != null && CollectionUtils.isEmpty(fve.getFormAnnotations())) {
+            for (FormAnnotationEntity fae : fve.getFormAnnotations()) {
+                deleteAnnotation(fae);
+            }
+            formVersionDAO.delete(fve);
         }
-        formVersionDAO.delete(fve);
     }
 
     private void deleteAnnotation(FormAnnotationEntity fae) {
-        for (FormAnnotationVersionEntity fave : fae.getAnnotationVersions()) {
-            deleteAnnotationVersion(fave);
+        if (fae != null && CollectionUtils.isEmpty(fae.getAnnotationVersions())) {
+            for (FormAnnotationVersionEntity fave : fae.getAnnotationVersions()) {
+                deleteAnnotationVersion(fave);
+            }
+            formAnnotationDAO.delete(fae);
         }
-        formAnnotationDAO.delete(fae);
     }
 
     private void deleteAnnotationVersion(FormAnnotationVersionEntity fave) {
