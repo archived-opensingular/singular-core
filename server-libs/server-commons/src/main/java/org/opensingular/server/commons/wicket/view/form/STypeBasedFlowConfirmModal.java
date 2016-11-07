@@ -16,7 +16,12 @@
 
 package org.opensingular.server.commons.wicket.view.form;
 
-import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
@@ -25,18 +30,13 @@ import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.wicket.builder.HTMLParameters;
 import org.opensingular.server.commons.wicket.builder.MarkupCreator;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 
 public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends AbstractFlowConfirmModal<T> {
 
@@ -45,10 +45,11 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     private final FormKey                          formKey;
     private final IFormService                     formService;
     private final IBiConsumer<SIComposite, String> onCreateInstance;
-    private       SInstanceRootModel<SInstance>    instanceModel;
     private       String                           transitionName;
     private       boolean                          dirty;
     private       boolean                          validatePageForm;
+    private       SingularFormPanel<String>        singularFormPanel;
+    private       IModel<SInstance>                rootInstance;
 
     public STypeBasedFlowConfirmModal(AbstractFormPage<T> formPage,
                                       SFormConfig<String> formConfig,
@@ -102,32 +103,36 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     }
 
     private SingularFormPanel<String> buildSingularFormPanel() {
-        return new SingularFormPanel<String>("singular-form-panel", formConfig, true) {
+        singularFormPanel = new SingularFormPanel<String>("singular-form-panel", formConfig, true) {
             @Override
             protected SInstance createInstance(SFormConfig singularFormConfig) {
-                if (instanceModel == null) {
-                    instanceModel = new SInstanceRootModel<>();
-                    if (formKey != null) {
-                        instanceModel.setObject(formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory()));
-                    } else {
-                        instanceModel.setObject(singularFormConfig.getDocumentFactory().createInstance(refType));
-                    }
+                SInstance instance;
+                if (formKey != null) {
+                    instance = formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory());
+                } else {
+                    instance = singularFormConfig.getDocumentFactory().createInstance(refType);
                 }
-                appendDirtyListener(instanceModel.getObject());
+
+                appendDirtyListener(instance);
                 if (onCreateInstance != null) {
-                    onCreateInstance.accept((SIComposite) instanceModel.getObject(), transitionName);
+                    onCreateInstance.accept((SIComposite) instance, transitionName);
                 }
-                return instanceModel.getObject();
+                return instance;
             }
         };
+        return singularFormPanel;
     }
 
     private void appendDirtyListener(SInstance instance) {
         instance.getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, evt -> dirty = true);
     }
 
-    public SInstanceRootModel<SInstance> getInstanceModel() {
-        return instanceModel;
+    @SuppressWarnings("unchecked")
+    public IModel<SInstance> getInstanceModel() {
+        if (rootInstance == null) {
+            rootInstance = (IReadOnlyModel<SInstance>) () -> (SInstance) singularFormPanel.getRootInstance().getObject();
+        }
+        return rootInstance;
     }
 
     public boolean isDirty() {
