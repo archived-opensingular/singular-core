@@ -257,7 +257,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         builder.setStripedRows(false).setBorderedTable(false);
         tabela = construirTabela(builder);
         tabela.add($b.classAppender("worklist"));
-        
+
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
         add(confirmationForm.add(confirmationModal));
