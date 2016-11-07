@@ -8,7 +8,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.SPackageFormPersistence;
+import org.opensingular.form.persistence.dao.FormDAO;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
@@ -42,6 +42,9 @@ public class FormPetitionService<P extends PetitionEntity> {
     @Inject
     protected DraftDAO draftDAO;
 
+    @Inject
+    protected FormDAO formDAO;
+
     public FormPetitionEntity findFormPetitionEntityByCod(Long cod) {
         return formPetitionDAO.find(cod);
     }
@@ -60,7 +63,6 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     public FormKey saveFormPetition(P petition,
                                     SInstance instance,
-                                    boolean createNewDraftIfDoesntExists,
                                     boolean mainForm,
                                     SFormConfig config) {
 
@@ -69,26 +71,22 @@ public class FormPetitionService<P extends PetitionEntity> {
         FormPetitionEntity formPetitionEntity;
 
         codActor = userService.getUserCodIfAvailable();
-        key = instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
         formPetitionEntity = findFormPetitionEntity(petition, instance.getType().getName(), mainForm);
-
-        if (key == null) {
-            key = formPersistenceService.insert(instance, codActor);
-        }
 
         if (formPetitionEntity == null) {
             formPetitionEntity = newFormPetitionEntity(petition, mainForm);
             petition.getFormPetitionEntities().add(formPetitionEntity);
         }
 
-        if (formPetitionEntity.getCurrentDraftEntity() != null) {
-            formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, formPetitionEntity.getCurrentDraftEntity(), config, codActor));
-        } else if (createNewDraftIfDoesntExists) {
-            formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, createNewDraftWithoutSave(), config, codActor));
-            formPetitionDAO.saveOrUpdate(formPetitionEntity);
-        } else {
-            formPersistenceService.update(instance, codActor);
+        DraftEntity currentDraftEntity = formPetitionEntity.getCurrentDraftEntity();
+        if (currentDraftEntity == null) {
+            currentDraftEntity = createNewDraftWithoutSave();
         }
+
+        saveOrUpdateDraft(instance, currentDraftEntity, config, codActor);
+        formPetitionEntity.setCurrentDraftEntity(currentDraftEntity);
+        formPetitionDAO.saveOrUpdate(formPetitionEntity);
+        key = formPersistenceService.keyFromObject(currentDraftEntity.getForm().getCod());
 
         return key;
     }
@@ -151,7 +149,7 @@ public class FormPetitionService<P extends PetitionEntity> {
 
         copyValuesAndAnnotations(instance, draft);
 
-        draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insert(draft, actor)));
+        draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insertOrUpdate(draft, actor)));
         draftEntity.setEditionDate(new Date());
 
         draftDAO.saveOrUpdate(draftEntity);
@@ -216,6 +214,7 @@ public class FormPetitionService<P extends PetitionEntity> {
         formPetitionEntity.setForm(formPersistenceService.loadFormEntity(key));
         formPetitionEntity.setCurrentDraftEntity(null);
 
+        formDAO.desassociateFormVersions(draft.getForm());
         draftDAO.delete(draft);
         formPetitionDAO.save(formPetitionEntity);
     }

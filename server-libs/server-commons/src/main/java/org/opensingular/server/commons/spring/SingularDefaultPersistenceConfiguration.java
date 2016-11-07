@@ -47,29 +47,29 @@ public abstract class SingularDefaultPersistenceConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingularDefaultPersistenceConfiguration.class);
 
+    @Value("classpath:db/ddl/drops.sql")
+    protected Resource drops;
+
     @Value("classpath:db/ddl/create-function.sql")
     private Resource sqlCreateFunction;
 
-    @Value("classpath:db/ddl/create-constraints.sql")
-    private Resource sqlCreateConstraints;
-
-    @Value("classpath:db/ddl/create-tables-flow.sql")
-    private Resource sqlCreateTablesFlow;
+    @Value("classpath:db/ddl/create-tables-form.sql")
+    protected Resource sqlCreateTablesForm;
 
     @Value("classpath:db/ddl/create-tables.sql")
-    private Resource sqlCreateTables;
-
-    @Value("classpath:db/ddl/create-tables-form.sql")
-    private Resource sqlCreateTablesForm;
-
-    @Value("classpath:db/ddl/create-constraints-form.sql")
-    private Resource sqlCreateConstraintsForm;
+    protected Resource sqlCreateTables;
 
     @Value("classpath:db/ddl/create-tables-actor.sql")
     private Resource sqlCreateTablesActor;
 
-    @Value("classpath:db/ddl/drops.sql")
-    private Resource drops;
+    @Value("classpath:db/ddl/create-tables-flow.sql")
+    private Resource sqlCreateTablesFlow;
+
+    @Value("classpath:db/ddl/create-constraints.sql")
+    protected Resource sqlCreateConstraints;
+
+    @Value("classpath:db/ddl/create-constraints-form.sql")
+    protected Resource sqlCreateConstraintsForm;
 
     @Value("classpath:db/dml/insert-flow-data.sql")
     private Resource insertDadosSingular;
