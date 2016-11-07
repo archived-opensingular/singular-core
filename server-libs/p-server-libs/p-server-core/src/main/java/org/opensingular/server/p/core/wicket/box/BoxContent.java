@@ -77,7 +77,7 @@ import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
     private Pair<String, SortOrder> sortProperty;
     private ItemBox                 itemBoxDTO;
@@ -124,7 +124,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     @Override
     protected void appendPropertyColumns(BSDataTableBuilder<BoxItemModel, String, IColumn<BoxItemModel, String>> builder) {
         for (Map.Entry<String, String> entry : getFieldsDatatable().entrySet()) {
-            builder.appendPropertyColumn($m.ofValue(entry.getKey()), entry.getValue());
+            builder.appendPropertyColumn($m.ofValue(entry.getKey()), entry.getValue(), entry.getValue());
         }
     }
 
@@ -178,7 +178,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return historiLink;
     }
 
-    protected Class<? extends HistoricoPage> getHistoricoPage(){
+    protected Class<? extends HistoricoPage> getHistoricoPage() {
         return HistoricoPage.class;
     }
 
@@ -297,9 +297,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
 
-        Model<Actor> model  = new Model<>();
-        IModel<List<Actor>>  actorsModel = $m.get(() -> buscarUsuarios(currentModel, confirmation));
-        DropDownChoice dropDownChoice = criarDropDown(actorsModel, model);
+        Model<Actor>        model          = new Model<>();
+        IModel<List<Actor>> actorsModel    = $m.get(() -> buscarUsuarios(currentModel, confirmation));
+        DropDownChoice      dropDownChoice = criarDropDown(actorsModel, model);
         dropDownChoice.setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
         confirmationModal.addOrReplace(dropDownChoice);
 
@@ -367,7 +367,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     private IFunction<IModel<BoxItemModel>, Boolean> visibleFunction(ItemAction itemAction) {
         return (model) -> {
             BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
-            boolean visible = boxItemModel.hasAction(itemAction);
+            boolean      visible      = boxItemModel.hasAction(itemAction);
             if (!visible) {
                 getLogger().debug(String.format("Action %s não está disponível para o item (%s: código da petição) da listagem ", itemAction.getName(), boxItemModel.getCod()));
             }
