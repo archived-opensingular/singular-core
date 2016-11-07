@@ -61,7 +61,10 @@ import org.opensingular.server.commons.wicket.view.template.Template;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
@@ -85,7 +88,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
-    protected final IModel<T>           currentModel;
+    protected IModel<T>           currentModel;
     protected final IModel<FormKey>     formModel;
     protected       AbstractFormContent content;
 
@@ -95,7 +98,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
         this.petitionClass = Objects.requireNonNull(petitionClass);
         this.config = Objects.requireNonNull(config);
-        this.currentModel = $m.ofValue();
         this.formModel = $m.ofValue();
         Objects.requireNonNull(getFormType(config));
     }
@@ -119,7 +121,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
             }
         }
+        currentModel = $m.loadable(() -> petition != null && petition.getCod() != null ? petitionService.findPetitionByCod(petition.getCod()) : petition);
         currentModel.setObject(petition);
+
         super.onInitialize();
     }
 
