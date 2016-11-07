@@ -18,6 +18,8 @@ package org.opensingular.form.service;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SFormUtil;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -57,22 +59,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
+    private final Boolean KEEP_ANNOTATIONS = true;
     @Inject
     private FormDAO formDAO;
-
     @Inject
     private FormVersionDAO formVersionDAO;
-
     @Inject
     private FormAnnotationDAO formAnnotationDAO;
-
     @Inject
     private FormAnnotationVersionDAO formAnnotationVersionDAO;
-
     @Inject
     private FormTypeDAO formTypeDAO;
-
-    private final Boolean KEEP_ANNOTATIONS = true;
 
     public FormService() {
         super(FormKeyLong.class);
@@ -267,6 +264,31 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         } else {
             return "";
         }
+    }
+
+    @Override
+    public void deassociateFormVersions(FormEntity form) {
+        for (FormVersionEntity fve : formVersionDAO.findVersions(form)) {
+            deleteFormVersion(fve);
+        }
+    }
+
+    private void deleteFormVersion(FormVersionEntity fve) {
+        for (FormAnnotationEntity fae : fve.getFormAnnotations()) {
+            deleteAnnotation(fae);
+        }
+        formVersionDAO.delete(fve);
+    }
+
+    private void deleteAnnotation(FormAnnotationEntity fae) {
+        for (FormAnnotationVersionEntity fave : fae.getAnnotationVersions()) {
+            deleteAnnotationVersion(fave);
+        }
+        formAnnotationDAO.delete(fae);
+    }
+
+    private void deleteAnnotationVersion(FormAnnotationVersionEntity fave) {
+        formAnnotationVersionDAO.delete(fave);
     }
 
     @Override
