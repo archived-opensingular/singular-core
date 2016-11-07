@@ -18,9 +18,6 @@ package org.opensingular.form.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.SFormUtil;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -28,47 +25,34 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
-import org.opensingular.form.persistence.AbstractBasicFormPersistence;
-import org.opensingular.form.persistence.AnnotationKey;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormKeyLong;
-import org.opensingular.form.persistence.SPackageFormPersistence;
-import org.opensingular.form.persistence.SingularFormPersistenceException;
-import org.opensingular.form.persistence.dao.FormAnnotationDAO;
-import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
-import org.opensingular.form.persistence.dao.FormDAO;
-import org.opensingular.form.persistence.dao.FormTypeDAO;
-import org.opensingular.form.persistence.dao.FormVersionDAO;
-import org.opensingular.form.persistence.entity.FormAnnotationEntity;
-import org.opensingular.form.persistence.entity.FormAnnotationPK;
-import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
-import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormTypeEntity;
-import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.opensingular.form.persistence.*;
+import org.opensingular.form.persistence.dao.*;
+import org.opensingular.form.persistence.entity.*;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
     private final Boolean KEEP_ANNOTATIONS = true;
+
     @Inject
     private FormDAO formDAO;
+
     @Inject
     private FormVersionDAO formVersionDAO;
+
     @Inject
     private FormAnnotationDAO formAnnotationDAO;
+
     @Inject
     private FormAnnotationVersionDAO formAnnotationVersionDAO;
+
     @Inject
     private FormTypeDAO formTypeDAO;
 
