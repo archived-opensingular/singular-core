@@ -9,6 +9,8 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.dao.FormDAO;
+import org.opensingular.form.persistence.entity.FormAnnotationEntity;
+import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
@@ -214,7 +216,7 @@ public class FormPetitionService<P extends PetitionEntity> {
         formPetitionEntity.setForm(formPersistenceService.loadFormEntity(key));
         formPetitionEntity.setCurrentDraftEntity(null);
 
-        formDAO.desassociateFormVersions(draft.getForm());
+        formPersistenceService.deassociateFormVersions(draft.getForm());
         draftDAO.delete(draft);
         formPetitionDAO.save(formPetitionEntity);
     }
