@@ -15,12 +15,15 @@
  */
 package org.opensingular.form.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.BasicAnnotationPersistence;
 import org.opensingular.form.persistence.BasicFormPersistence;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.entity.FormAnnotationEntity;
+import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 
@@ -81,10 +84,4 @@ public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnno
 
     String extractContent(SInstance instance);
 
-    /**
-     * Deletes all form versions associated with the given @param form.
-     * It also delete all annotations and annotations versions associated with each version.
-     * @param form
-     */
-    void deassociateFormVersions(FormEntity form);
 }

@@ -36,4 +36,10 @@ public class FormVersionDAO extends BaseDAO<FormVersionEntity, Long> {
                 .list();
     }
 
+    @Override
+    public void delete(FormVersionEntity obj) {
+        super.delete(obj);
+        getSession().flush();
+
+    }
 }

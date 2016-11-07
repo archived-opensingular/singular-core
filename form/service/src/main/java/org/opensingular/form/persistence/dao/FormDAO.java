@@ -16,11 +16,7 @@
 package org.opensingular.form.persistence.dao;
 
 
-import java.util.List;
-
-import org.hibernate.criterion.Restrictions;
 import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 public class FormDAO extends BaseDAO<FormEntity, Long> {
@@ -29,4 +25,9 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
         super(FormEntity.class);
     }
 
+    @Override
+    public void saveOrUpdate(FormEntity novoObj) {
+        super.saveOrUpdate(novoObj);
+        getSession().flush();
+    }
 }

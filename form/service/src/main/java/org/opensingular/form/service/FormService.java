@@ -268,37 +268,6 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public void deassociateFormVersions(FormEntity form) {
-        if (form != null) {
-            for (FormVersionEntity fve : formVersionDAO.findVersions(form)) {
-                deleteFormVersion(fve);
-            }
-        }
-    }
-
-    private void deleteFormVersion(FormVersionEntity fve) {
-        if (fve != null && CollectionUtils.isEmpty(fve.getFormAnnotations())) {
-            for (FormAnnotationEntity fae : fve.getFormAnnotations()) {
-                deleteAnnotation(fae);
-            }
-            formVersionDAO.delete(fve);
-        }
-    }
-
-    private void deleteAnnotation(FormAnnotationEntity fae) {
-        if (fae != null && CollectionUtils.isEmpty(fae.getAnnotationVersions())) {
-            for (FormAnnotationVersionEntity fave : fae.getAnnotationVersions()) {
-                deleteAnnotationVersion(fave);
-            }
-            formAnnotationDAO.delete(fae);
-        }
-    }
-
-    private void deleteAnnotationVersion(FormAnnotationVersionEntity fave) {
-        formAnnotationVersionDAO.delete(fave);
-    }
-
-    @Override
     public FormKey newVersion(SInstance instance, Integer inclusionActor) {
         return super.newVersion(instance, inclusionActor);
     }
