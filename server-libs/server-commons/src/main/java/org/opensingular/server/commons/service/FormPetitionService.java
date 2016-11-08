@@ -270,8 +270,8 @@ public class FormPetitionService<P extends PetitionEntity> {
                 Iterator<FormAnnotationEntity> it = fve.getFormAnnotations().iterator();
                 for (; it.hasNext(); ) {
                     FormAnnotationEntity fae = it.next();
-                    it.remove();
                     deleteAnnotation(fae);
+                    it.remove();
                 }
             }
             formVersionDAO.delete(fve);
@@ -286,8 +286,8 @@ public class FormPetitionService<P extends PetitionEntity> {
                 Iterator<FormAnnotationVersionEntity> it = fae.getAnnotationVersions().iterator();
                 for (; it.hasNext(); ) {
                     FormAnnotationVersionEntity fave = it.next();
-                    it.remove();
                     deleteAnnotationVersion(fave);
+                    it.remove();
                 }
             }
             formAnnotationDAO.delete(fae);
