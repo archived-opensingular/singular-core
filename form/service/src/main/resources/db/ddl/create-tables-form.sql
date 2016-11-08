@@ -6,7 +6,7 @@ CREATE SCHEMA if not exists DBSINGULAR;
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_FORMULARIO (
    CO_FORMULARIO        INT                  NOT NULL,
-   CO_TIPO_FORMULARIO   INT                  NULL,
+   CO_TIPO_FORMULARIO   INT                  NOT NULL,
    CO_COLECAO           INT                  NULL,
    CO_VERSAO_ATUAL      INT                  NULL,
    CONSTRAINT PK_FORMULARIO PRIMARY KEY (CO_FORMULARIO)
