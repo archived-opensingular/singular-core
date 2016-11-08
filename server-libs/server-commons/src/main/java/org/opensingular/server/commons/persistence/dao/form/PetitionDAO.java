@@ -172,11 +172,6 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             params.put("tipoEnd", TaskType.End);
         }
 
-//        if (filtro.getIdPessoaRepresentada() != null) {
-//            hql.append(" AND p.peticionante = :peticionante ");
-//            params.put("peticionante", filtro.getIdPessoaRepresentada());
-//        }
-
         appendCustomWhereClauses(hql, params, filtro);
 
         if (filtro.getSortProperty() != null) {
