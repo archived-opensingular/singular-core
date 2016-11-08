@@ -56,6 +56,31 @@ public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnno
      */
     SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId);
 
+
+    /**
+     * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco {@param key}.
+     * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
+     * versão.
+     * @param key
+     * @param refType
+     * @param documentFactory
+     * @param keepAnnotations informa se as anotações da versão utilizada como base devem ser mantidas
+     * @return
+     */
+    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations);
+
+    /**
+     * Carrega uma nova SInstance a partir de uma versão {@param versionId} de um formulário salvo em banco {@param key}.
+     * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
+     * versão.
+     * @param key
+     * @param refType
+     * @param documentFactory
+     * @param keepAnnotations informa se as anotações da versão utilizada como base devem ser mantidas
+     * @return
+     */
+    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations);
+
     /**
      * Carrega uma SInstance a partir da última versão de um formulário salvo em banco.
      * Essa SInstance é capaz de ser novamente salva em banco pois mantém
