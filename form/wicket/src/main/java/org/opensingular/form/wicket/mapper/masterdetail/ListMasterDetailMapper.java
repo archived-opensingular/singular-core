@@ -63,7 +63,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view));
 
-        modal.add($b.onEnterDelegate(modal.addButton));
+        modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));
 
     }
 
