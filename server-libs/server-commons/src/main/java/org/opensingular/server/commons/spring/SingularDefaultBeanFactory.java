@@ -16,6 +16,10 @@
 
 package org.opensingular.server.commons.spring;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.schedule.IScheduleService;
@@ -31,6 +35,8 @@ import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.service.FormService;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.opensingular.server.commons.persistence.dao.EmailAddresseeDao;
 import org.opensingular.server.commons.persistence.dao.EmailDao;
@@ -62,6 +68,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import static org.opensingular.form.RefService.of;
+import static org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
 
 @SuppressWarnings("rawtypes")
 public class SingularDefaultBeanFactory {
@@ -114,6 +123,16 @@ public class SingularDefaultBeanFactory {
     @Bean(name = SDocument.FILE_PERSISTENCE_SERVICE)
     public IAttachmentPersistenceHandler attachmentPersistenceService() {
         return new AttachmentPersistenceService();
+    }
+
+    @Bean(name = SDocument.FILE_TEMPORARY_SERVICE)
+    public IAttachmentPersistenceHandler attachmentTemporaryService() {
+        try {
+            return FileSystemAttachmentHandler.newTemporaryHandler();
+        } catch (IOException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING,"Could not create temporary file folder, using memory instead",e);
+            return new InMemoryAttachmentPersitenceHandler();
+        }
     }
 
     @Bean

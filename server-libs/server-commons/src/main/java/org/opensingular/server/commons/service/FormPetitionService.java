@@ -173,6 +173,7 @@ public class FormPetitionService<P extends PetitionEntity> {
             draft = newInstance(config, instance.getType().getName());
         }
 
+        instance.getDocument().persistFiles();
         copyValuesAndAnnotations(instance, draft);
 
         draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insertOrUpdate(draft, actor)));
