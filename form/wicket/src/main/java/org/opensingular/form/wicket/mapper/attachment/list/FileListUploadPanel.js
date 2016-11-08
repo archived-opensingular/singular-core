@@ -47,6 +47,21 @@
                     title: errorMessage
                 });
             }
+
+            if (state == 'success') {
+                $('#progress_bar_' + box_id).hide();
+            }
+
+            if (state == 'empty') {
+                $('#' + panel_id).find('.list-detail-empty').show();
+                $('#' + panel_id).find('.upload-list-add').hide();
+            }
+
+            if (state == 'uploading') {
+                $('#progress_bar_' + box_id).show();
+                $('#' + panel_id).find('.list-detail-empty').hide();
+                $('#' + panel_id).find('.upload-list-add').show();
+            }
         };
         window.FileListUploadPanel.setup = function (params) {
             var self = this;
@@ -96,7 +111,6 @@
                         + '');
                     FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'uploading');
                     fileList.append(fileElement);
-                    //$('#progress_bar_' + fake_id).hide();
 
                     if (FileListUploadPanel.validateInputFile(
                             e,
@@ -129,7 +143,6 @@
                                 function (dataSInstance, status, jqXHR) {
                                     if (status == 'success') {
                                         FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'success');
-                                        //$('#progress_bar_' + fake_id).hide();
                                         var $box = $('#upload-box-' + fake_id);
                                         $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-check');
                                         $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
@@ -145,8 +158,6 @@
                                                             var fileList = $('#' + params.fileList_id).find('li');
                                                             if (fileList.length == 0) {
                                                                 FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'empty');
-                                                                //$('#' + params.component_id).find('.list-detail-empty').show();
-                                                                //$('#' + params.component_id).find('.upload-list-add').hide();
                                                             }
                                                         }
                                                     }
@@ -158,8 +169,8 @@
                                             dataSInstance.name,
                                             function (url) {
                                                 $box.find('.download-link').attr('href', url);
-                                                if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
-                                                    $box.find('.download-link'.attr('target', '_blank'));
+                                                if (DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)) {
+                                                    $box.find('.download-link').attr('target', '_blank');
                                                 }
                                             }
                                         );
@@ -171,21 +182,20 @@
                     });
                 },
                 progress: function (e, data) {
-                    var fake_id = data.files[0].fake_id;
                     var progress = parseInt(data.loaded / data.total * 100, 10);
-                    var $item = $('#upload-box-' + fake_id);
 
-                    if (progress > 50) {
-                        $item.find('.slice ').addClass('slice-50');
-                        $item.find('.slice > .bar ').addClass('bar-50');
-                        $item.find('.slice > .fill').addClass('fill-50');
+                    if(progress > 50) {
+                        $('#progress_bar_' + data.files[0].fake_id + ' > .slice ').addClass('slice-50');
+                        $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .bar ').addClass('bar-50');
+                        $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .fill').addClass('fill-50');
                     } else {
-                        $item.find('.slice').removeClass('slice-50');
-                        $item.find('.slice > .bar ').removeClass('bar-50');
-                        $item.find('.slice > .fill').removeClass('fill-50');
+                        $('#progress_bar_' + data.files[0].fake_id + ' > .slice').removeClass('slice-50');
+                        $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .bar ').removeClass('bar-50');
+                        $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .fill').removeClass('fill-50');
                     }
 
-                    $item.find('.slice > .bar').css('transform', 'rotate(' + (360 / 100 * progress) + 'deg)');
+                    $('#progress_bar_' + data.files[0].fake_id).show();
+                    $('#progress_bar_' + data.files[0].fake_id + ' > .slice > .bar ').css('transform', 'rotate(' + (360 / 100 * progress) + 'deg)')
                 }
             })
                 .prop('disabled', !$.support.fileInput)
