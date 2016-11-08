@@ -17,6 +17,7 @@
 package org.opensingular.ws.wkhtmltopdf.client;
 
 
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.ws.wkhtmltopdf.dto.WKHtmlToPdfDTO;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +55,7 @@ public class WkHtmlToPdfRestClient implements Loggable {
     }
 
     private String retrieveWSBaseURL() {
-        return System.getProperty("singular.ws.wkhtmltopdf.url", "http://10.0.0.142/wkhtmltopdf-ws");
+        return SingularProperties.get().getProperty(WkHtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF);
     }
 
     private RestTemplate createRestTemplate() {
