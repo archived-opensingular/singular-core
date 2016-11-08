@@ -323,7 +323,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (formModel.getObject() == null) {
             /* clonagem do ultimo formulário da petição */
             if (parentPetitionformModel.getObject() != null) {
-                return formService.newTransientSInstance(parentPetitionformModel.getObject(), refType, documentFactory);
+                return formService.newTransientSInstance(parentPetitionformModel.getObject(), refType, documentFactory, false);
             } else {
                 return documentFactory.createInstance(refType);
             }
