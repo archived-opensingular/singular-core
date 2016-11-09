@@ -17,14 +17,19 @@
 package org.opensingular.lib.support.persistence;
 
 
-import java.io.Serializable;
-import java.util.List;
-
+import net.vidageek.mirror.dsl.Mirror;
+import net.vidageek.mirror.list.dsl.MirrorList;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
+
+import javax.persistence.Transient;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 
 public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends SimpleDAO {
@@ -85,6 +90,35 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
 
     public <T> T findByUniqueProperty(String propertyName, Object value) {
         return (T) getSession().createCriteria(tipo).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
+    }
+
+    public <T> List<T> findByExample(T filter) {
+        return findByExample(filter, null);
+    }
+
+
+    public <T> List<T> findByExample(T filter, Integer maxResults) {
+        try {
+            Criteria criteria = getSession().createCriteria(tipo);
+            MirrorList<Field> properties = new Mirror().on(tipo).reflectAll().fields();
+
+            for (Field f : properties) {
+                f.setAccessible(true);
+                if (!(Modifier.isTransient(f.getModifiers()) || Modifier.isStatic(f.getModifiers()) || f.isAnnotationPresent(Transient.class))) {
+                    if (f.get(filter) != null) {
+                        criteria.add(Restrictions.eq(f.getName(), f.get(filter)));
+                    }
+                }
+            }
+            if (maxResults != null) {
+                criteria.setMaxResults(maxResults);
+            }
+
+            return criteria.list();
+
+        } catch (IllegalAccessException e) {
+            throw SingularException.rethrow(e.getMessage(), e);
+        }
     }
 
     @SuppressWarnings("unchecked")

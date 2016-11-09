@@ -55,18 +55,6 @@ public class DownloadLink extends Link<Void> {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        this.add($b.attr("onclick",
-                (IReadOnlyModel<String>) () -> "DownloadSupportedBehavior.ajaxDownload(" +
-                        jsStringOrNull(downloadSupportedBehaviour.getUrl()) + "," +
-                        jsStringOrNull(model.getObject().getFileId()) + "," +
-                        jsStringOrNull(model.getObject().getFileName()) +
-                        ");" +
-                        "return false;"));
-        configureBody();
-        add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
-        if (isContentTypeBrowserFriendly(model.getObject().getFileName())) {
-            add($b.attr("target", "_blank"));
-        }
     }
 
     public void configureBody() {
@@ -80,6 +68,18 @@ public class DownloadLink extends Link<Void> {
     @Override
     protected void onConfigure() {
         super.onConfigure();
+        this.add($b.attr("onclick",
+                (IReadOnlyModel<String>) () -> "DownloadSupportedBehavior.ajaxDownload(" +
+                        jsStringOrNull(downloadSupportedBehaviour.getUrl()) + "," +
+                        jsStringOrNull(model.getObject().getFileId()) + "," +
+                        jsStringOrNull(model.getObject().getFileName()) +
+                        ");" +
+                        "return false;"));
+        configureBody();
+        add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
+        if (isContentTypeBrowserFriendly(model.getObject().getFileName())) {
+            add($b.attr("target", "_blank"));
+        }
         setEnabled(isFileAssigned());
     }
 
