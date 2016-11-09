@@ -51,7 +51,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
 
     private boolean showBox = false;
 
-    public SValidationFeedbackPanel(String id, Component fence) {
+    public SValidationFeedbackPanel(String id, FeedbackFence fence) {
         super(id, fence);
 
         WebMarkupContainer feedbackul = new WebMarkupContainer("feedbackul") {
@@ -108,7 +108,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {
-        return SValidationFeedbackHandler.get(getFence());
+        return SValidationFeedbackHandler.get(getFence().getMainContainer());
     }
 
     protected Component newMessageDisplayComponent(String id, IModel<IValidationError> error) {
@@ -122,11 +122,11 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
             final SFeedbackMessage bfm = (SFeedbackMessage) error;
 
             final SInstance           instance      = bfm.getInstanceModel().getObject();
-            final SInstance           parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
-            final Optional<Component> reporter      = WicketFormUtils.findChildByInstance(getFence(), instance);
+            final SInstance           parentContext = WicketFormUtils.resolveInstance(getFence().getMainContainer()).orElse(null);
+            final Optional<Component> reporter      = WicketFormUtils.findChildByInstance(getFence().getMainContainer(), instance);
 
             final String labelPath = StringUtils.defaultString(
-                    reporter.map(it -> WicketFormUtils.generateTitlePath(getFence(), parentContext, it, instance)).orElse(null),
+                    reporter.map(it -> WicketFormUtils.generateTitlePath(getFence().getMainContainer(), parentContext, it, instance)).orElse(null),
                     SFormUtil.generatePath(instance, it -> Objects.equals(it, parentContext)));
 
             label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
@@ -139,7 +139,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
         if (isShowBox()) {
-            SValidationFeedbackHandler.get(getFence()).findNestedErrorsMaxLevel().ifPresent(level -> {
+            SValidationFeedbackHandler.get(getFence().getMainContainer()).findNestedErrorsMaxLevel().ifPresent(level -> {
                 new AttributeAppender("class", level.isWarning() ? "alert alert-warning" : "alert alert-danger").onComponentTag(this, tag);
             });
         }

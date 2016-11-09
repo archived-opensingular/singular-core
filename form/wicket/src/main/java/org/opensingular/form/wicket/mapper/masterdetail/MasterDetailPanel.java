@@ -36,6 +36,7 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.mapper.AbstractListaMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
@@ -129,7 +130,7 @@ public class MasterDetailPanel extends Panel {
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
-            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rowItem)
+            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(rowItem))
                     .addInstanceModel(rowItem.getModel())
                     .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
             rowItem.add($b.classAppender("singular-form-table-row can-have-error"));
