@@ -37,6 +37,7 @@ import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.server.commons.cache.SingularKeyGenerator;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.opensingular.server.commons.persistence.dao.EmailAddresseeDao;
 import org.opensingular.server.commons.persistence.dao.EmailDao;
@@ -60,17 +61,14 @@ import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.DefaultUserDetailService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
 import org.opensingular.server.commons.spring.security.SingularUserDetailsService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
-import static org.opensingular.form.RefService.of;
-import static org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
 
 @SuppressWarnings("rawtypes")
 public class SingularDefaultBeanFactory {
@@ -130,7 +128,7 @@ public class SingularDefaultBeanFactory {
         try {
             return FileSystemAttachmentHandler.newTemporaryHandler();
         } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING,"Could not create temporary file folder, using memory instead",e);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
             return new InMemoryAttachmentPersitenceHandler();
         }
     }
@@ -247,5 +245,10 @@ public class SingularDefaultBeanFactory {
     @Bean
     public CacheManager cacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
         return new EhCacheCacheManager(ehCacheManagerFactoryBean.getObject());
+    }
+
+    @Bean(name = "singularKeyGenerator")
+    public KeyGenerator singularKeyGenerator() {
+        return new SingularKeyGenerator();
     }
 }
