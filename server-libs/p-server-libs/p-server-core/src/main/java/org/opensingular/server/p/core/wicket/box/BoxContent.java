@@ -317,6 +317,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     relocate(itemAction, baseUrl, additionalParams, currentModel.getObject(), target, model.getObject());
                     target.add(tabela);
+                    atualizarContadores(target);
                     confirmationModal.hide(target);
                 }
             });
@@ -326,12 +327,17 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject(), target);
                     target.add(tabela);
+                    atualizarContadores(target);
                     confirmationModal.hide(target);
                 }
             });
         }
 
         return confirmationModal;
+    }
+
+    private void atualizarContadores(AjaxRequestTarget target) {
+        target.appendJavaScript("(function(){window.Singular.atualizarContadores();}())");
     }
 
     private DropDownChoice criarDropDown(IModel<List<Actor>> actorsModel, Model<Actor> model) {
