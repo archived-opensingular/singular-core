@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.masterdetail;
+package org.opensingular.form.wicket.mapper.common.util;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -22,19 +22,19 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-class ColumnType {
+public class ColumnType {
 
     private final String                       typeName;
     private final String                       customLabel;
     private final IFunction<SInstance, String> displayFunction;
 
-    ColumnType(String typeName, String customLabel, IFunction<SInstance, String> displayFunction) {
+    public ColumnType(String typeName, String customLabel, IFunction<SInstance, String> displayFunction) {
         this.typeName = typeName;
         this.customLabel = customLabel;
         this.displayFunction = displayFunction != null ? displayFunction : SInstance::toStringDisplay;
     }
 
-    ColumnType(String typeName, String customLabel) {
+    public ColumnType(String typeName, String customLabel) {
         this(typeName, customLabel, null);
     }
 
@@ -46,7 +46,7 @@ class ColumnType {
         return typeName;
     }
 
-    String getCustomLabel(SInstance instance) {
+    public String getCustomLabel(SInstance instance) {
         SType<?> type = getType(instance);
         if (customLabel == null && type != null) {
             return getType(instance).getAttributeValue(SPackageBasic.ATR_LABEL);
@@ -57,7 +57,7 @@ class ColumnType {
         return customLabel;
     }
 
-    IFunction<SInstance, String> getDisplayFunction() {
+    public IFunction<SInstance, String> getDisplayFunction() {
         return displayFunction;
     }
 
