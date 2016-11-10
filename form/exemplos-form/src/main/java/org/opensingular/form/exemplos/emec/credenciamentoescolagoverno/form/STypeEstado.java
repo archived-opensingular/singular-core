@@ -40,7 +40,7 @@ public class STypeEstado extends STypeComposite<SIComposite> {
         
         selection()
             .id(sigla).display(nome)
-            .simpleProvider(builder -> SelectBuilder.buildEstados().stream().forEach(entry -> builder.add().set(sigla, entry.getSigla()).set(nome, entry.getNome())));
+            .simpleProvider(builder -> SelectBuilder.buildEstados().forEach(entry -> builder.add().set(sigla, entry.getSigla()).set(nome, entry.getNome())));
     }
     
     public STypeString getFieldSigla(){

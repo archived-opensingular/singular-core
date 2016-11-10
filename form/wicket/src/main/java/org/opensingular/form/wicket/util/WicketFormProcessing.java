@@ -92,7 +92,7 @@ public class WicketFormProcessing implements Loggable {
         };
 
         if (RequestCycle.get().getMetaData(MDK_PROCESSED) == null) {
-            if (baseInstanceModel == null){
+            if (baseInstanceModel == null) {
                 return setAndReturn.apply(false);
             }
 
@@ -354,10 +354,12 @@ public class WicketFormProcessing implements Loggable {
     public static void updateValidationFeedbackOnDescendants(AjaxRequestTarget target,
                                                              MarkupContainer container) {
 
-        Visits.visitPostOrder(container, (Component comp, IVisit<Void> visit) -> {
-            if (SValidationFeedbackHandler.isBound(comp)) {
-                SValidationFeedbackHandler.get(comp).updateValidationMessages(target);
-            }
-        });
+        if (container != null) {
+            Visits.visitPostOrder(container, (Component comp, IVisit<Void> visit) -> {
+                if (SValidationFeedbackHandler.isBound(comp)) {
+                    SValidationFeedbackHandler.get(comp).updateValidationMessages(target);
+                }
+            });
+        }
     }
 }
