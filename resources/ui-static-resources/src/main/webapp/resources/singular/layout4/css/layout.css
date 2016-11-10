@@ -1759,6 +1759,7 @@ Theme Panel
     width: calc(100% - 83px);
     margin-left: 10px;
     overflow-y: hidden;
+    overflow-x: hidden;
     text-overflow: ellipsis;
     color: #acb1c2; }
     .upload-list-item .list-item-content a {
@@ -1784,7 +1785,7 @@ Theme Panel
       border-radius: 50%;
       float: left;
       right: 15px;
-      background-color: #acb1c2;
+      background-color: #F4FFFD;
       font-size: 30px; }
       .upload-list-item .list-item-action .list-action-uploading::after {
         position: absolute;

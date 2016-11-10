@@ -92,8 +92,9 @@ public class WicketFormProcessing implements Loggable {
         };
 
         if (RequestCycle.get().getMetaData(MDK_PROCESSED) == null) {
-            if (baseInstanceModel == null)
+            if (baseInstanceModel == null){
                 return setAndReturn.apply(false);
+            }
 
             final SInstance baseInstance = baseInstanceModel.getObject();
             final SDocument document     = baseInstance.getDocument();
@@ -345,8 +346,8 @@ public class WicketFormProcessing implements Loggable {
         if (target != null && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
             target.add(WicketFormUtils.resolveRefreshingComponent(
-                            ObjectUtils.defaultIfNull(
-                                    WicketFormUtils.getCellContainer(component), component)));
+                    ObjectUtils.defaultIfNull(
+                            WicketFormUtils.getCellContainer(component), component)));
         }
     }
 

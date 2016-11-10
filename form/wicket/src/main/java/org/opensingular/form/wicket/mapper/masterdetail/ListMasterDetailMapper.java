@@ -16,21 +16,20 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.apache.wicket.model.IModel;
-
-import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.wicket.IWicketComponentMapper;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
@@ -63,13 +62,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view));
 
-        modal.add($b.onEnterDelegate(modal.addButton));
+        modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));
 
     }
 
     private IModel<String> newItemLabelModel(IModel<SIList<SInstance>> listaModel) {
-        AtrBasic iLista = listaModel.getObject().asAtr();
-        return $m.ofValue(trimToEmpty(iLista.getItemLabel() != null ? iLista.getItemLabel() : iLista.asAtr().getLabel()));
+        //Alteração do model para evitar que haja perda de referencias na renderização das tabelas na tela
+        return $m.get(() -> trimToEmpty(listaModel.getObject().asAtr().getItemLabel() != null ? listaModel.getObject().asAtr().getItemLabel() : listaModel.getObject().asAtr().getLabel()));
     }
 
 }

@@ -33,6 +33,7 @@ import org.opensingular.form.wicket.behavior.ConfigureByMInstanciaAttributesBeha
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.AbstractSValidationFeedbackPanel;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
@@ -318,7 +319,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc, MarkupContainer container) {
-        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id,  container), listenerFunc);
+        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id,  new FeedbackFence(container)), listenerFunc);
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
@@ -326,7 +327,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
-        return createFeedbackPanel(() -> new SValidationFeedbackCompactPanel(id, getContainer()), listenerFunc);
+        return createFeedbackPanel(() -> new SValidationFeedbackCompactPanel(id, new FeedbackFence(getContainer(), getExternalContainer())), listenerFunc);
     }
 
     private <C extends AbstractSValidationFeedbackPanel> C createFeedbackPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {

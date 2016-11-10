@@ -16,9 +16,16 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.lib.commons.lambda.IFunction;
+import com.google.common.base.Strings;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -31,10 +38,13 @@ import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewBreadcrumb;
+import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
-import org.opensingular.form.wicket.model.STypeModel;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
@@ -45,25 +55,15 @@ import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
-import com.google.common.base.Strings;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class ListBreadcrumbMapper extends AbstractListaMapper {
 
@@ -109,41 +109,6 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         ctx.configureContainer(labelModel);
         return labelModel;
-    }
-
-    public static class ColumnType {
-
-        private SType<?> type;
-        private String   customLabel;
-        private IFunction<SInstance, String> displayValueFunction = SInstance::toStringDisplay;
-
-        public ColumnType() {
-        }
-
-        public ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
-            this.type = type;
-            this.customLabel = customLabel;
-            if (displayValueFunction != null) {
-                this.displayValueFunction = displayValueFunction;
-            }
-        }
-
-        public ColumnType(SType<?> type, String customLabel) {
-            this.type = type;
-            this.customLabel = customLabel;
-        }
-
-        public SType<?> getType() {
-            return type;
-        }
-
-        public String getCustomLabel() {
-            return customLabel;
-        }
-
-        public IFunction<SInstance, String> getDisplayValueFunction() {
-            return displayValueFunction;
-        }
     }
 
     public static class BreadCrumbPanel extends MetronicPanel {
@@ -345,20 +310,20 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             if (mapColumns.isEmpty()) {
                 SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
                 if (tipo instanceof STypeSimple) {
-                    columnTypes.add(new ColumnType(tipo, null));
+                    columnTypes.add(new ColumnType(tipo.getName(), null));
                 }
                 if (tipo instanceof STypeComposite) {
                     ((STypeComposite<?>) tipo)
                             .getFields()
                             .stream()
                             .filter(mtipo -> mtipo instanceof STypeSimple)
-                            .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo, null)));
+                            .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo.getName(), null)));
 
                 }
             } else {
                 mapColumns.forEach((col) -> {
                     SType<?> type = model.getObject().getDictionary().getType(col.getTypeName());
-                    ColumnType columnType = new ColumnType(type, col.getCustomLabel(), col.getDisplayValueFunction());
+                    ColumnType columnType = new ColumnType(type.getName(), col.getCustomLabel(), col.getDisplayValueFunction());
                     columnTypes.add(columnType);
                 });
             }
@@ -366,15 +331,15 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
             for (ColumnType columnType : columnTypes) {
 
                 IModel<String> labelModel;
-                String label = columnType.getCustomLabel();
+                String label = columnType.getCustomLabel(model.getObject());
 
                 if (label != null) {
                     labelModel = $m.ofValue(label);
                 } else {
-                    labelModel = $m.ofValue((String) columnType.getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
+                    labelModel = $m.ofValue((String) columnType.getType(model.getObject()).getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
                 }
-
-                propertyColumnAppender(builder, labelModel, new STypeModel(columnType.getType()), columnType.getDisplayValueFunction());
+                final String         typeName = columnType.getTypeName();
+                propertyColumnAppender(builder, labelModel, $m.ofValue(typeName), columnType.getDisplayFunction());
             }
 
             actionColumnAppender(builder, model, ctx, viewMode, view);
@@ -450,11 +415,11 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
          * serialização do lambda do appendPropertyColumn
          */
         private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                            IModel<String> labelModel, IModel<SType<?>> mTipoModel,
+                                            IModel<String> labelModel, IModel<String> sTypeNameModel,
                                             IFunction<SInstance, String> displayValueFunction) {
             builder.appendPropertyColumn(labelModel, o -> {
                 SIComposite composto = (SIComposite) o;
-                SType<?> mtipo = mTipoModel.getObject();
+                SType<?> mtipo = composto.getDictionary().getType(sTypeNameModel.getObject());
                 SInstance instancia = composto.findDescendant(mtipo).get();
                 return displayValueFunction.apply(instancia);
             });

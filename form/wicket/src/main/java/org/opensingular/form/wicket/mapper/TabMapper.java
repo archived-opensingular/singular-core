@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -74,7 +75,7 @@ public class TabMapper extends DefaultCompositeMapper {
                 ISupplier<List<IModel<? extends SInstance>>> subtreeModels = () -> tab.getSubtree().stream()
                     .map(it -> new SInstanceFieldModel<>(tab.getModel(), it))
                     .collect(toList());
-                SValidationFeedbackHandler.bindTo(tabComponent)
+                SValidationFeedbackHandler.bindTo(new FeedbackFence(tabComponent))
                     .addInstanceModels(subtreeModels.get())
                     .addListener((ISValidationFeedbackHandlerListener) (handler, target, container, baseInstances, oldErrors, newErrors) -> {
                         if (target != null) {
@@ -84,7 +85,7 @@ public class TabMapper extends DefaultCompositeMapper {
                 tabComponent.add($b.classAppender("has-errors",
                     $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
                         .map(IModel::getObject)
-                        .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(tabComponent).isEmpty())
+                        .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty())
                         .findAny()
                         .isPresent())));
             }

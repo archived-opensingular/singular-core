@@ -146,7 +146,7 @@ class MasterDetailModal extends BFModalWindow {
 
     private void configureNewContent(String prefix, AjaxRequestTarget target) {
 
-        setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
+        setTitleText($m.get(() -> (prefix + " " + listaLabel.getObject()).trim()));
 
         final BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
         ViewMode             viewModeModal = viewMode;
