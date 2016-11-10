@@ -43,7 +43,8 @@ public class AtrBasic extends STranslatorForAttribute {
 
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
-    public AtrBasic() {}
+    public AtrBasic() {
+    }
 
     public AtrBasic(SAttributeEnabled alvo) {
         super(alvo);
@@ -53,6 +54,7 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_LABEL, value);
         return this;
     }
+
     public AtrBasic noLabel() {
         return label("");
     }
@@ -86,11 +88,12 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
         return this;
     }
+
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
-            Stream.of(value)
-                .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-                .collect(joining(",")));
+                Stream.of(value)
+                        .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                        .collect(joining(",")));
         return this;
     }
 
@@ -227,7 +230,7 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public List<String> getAllowedFileTypes() {
         return Arrays.asList(defaultString(
-            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
                 .split(ALLOWED_FILE_TYPES_SPLIT_REGEX));
     }
 
@@ -269,4 +272,14 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_PHRASE_BREAK, phraseBreak);
         return this;
     }
+
+    public AtrBasic upperCaseText() {
+        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, true);
+        return this;
+    }
+
+    public Boolean isUpperCaseText() {
+        return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
+    }
+
 }

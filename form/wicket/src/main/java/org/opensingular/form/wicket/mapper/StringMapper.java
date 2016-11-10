@@ -34,6 +34,8 @@ import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+
 public class StringMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
@@ -43,21 +45,28 @@ public class StringMapper extends AbstractControlsFieldComponentMapper {
         FormComponent<?> comp;
 
         formGroup.appendInputText(comp = new TextField<>(model.getObject().getName(),
-            new SInstanceValueModel<>(model), String.class).setLabel(labelModel));
+                new SInstanceValueModel<>(model), String.class).setLabel(labelModel));
 
         Optional<Integer> maxSize = Optional.ofNullable(
-            model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         if (maxSize.isPresent()) {
             comp.add(StringValidator.maximumLength(maxSize.get()));
             comp.add(new CountDownBehaviour());
         }
 
         Optional<String> basicMask = Optional.ofNullable(
-            model.getObject().getAttributeValue(SPackageBasic.ATR_BASIC_MASK));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_BASIC_MASK));
         if (basicMask.isPresent()) {
             comp.add(new InputMaskBehavior(Masks.valueOf(basicMask.get())));
             comp.setOutputMarkupId(true);
         }
+
+        Optional.ofNullable(model.getObject()
+                .getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT)
+        ).filter(x -> x)
+                .ifPresent(value -> {
+                    comp.add($b.attrAppender("style", "text-transform: uppercase", ";"));
+                });
 
         return comp;
     }
