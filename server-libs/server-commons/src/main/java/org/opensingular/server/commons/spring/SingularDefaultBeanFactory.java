@@ -16,6 +16,10 @@
 
 package org.opensingular.server.commons.spring;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.schedule.IScheduleService;
@@ -31,6 +35,9 @@ import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.service.FormService;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.server.commons.cache.SingularKeyGenerator;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.opensingular.server.commons.persistence.dao.EmailAddresseeDao;
 import org.opensingular.server.commons.persistence.dao.EmailDao;
@@ -54,14 +61,14 @@ import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.DefaultUserDetailService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
 import org.opensingular.server.commons.spring.security.SingularUserDetailsService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+
 
 @SuppressWarnings("rawtypes")
 public class SingularDefaultBeanFactory {
@@ -114,6 +121,16 @@ public class SingularDefaultBeanFactory {
     @Bean(name = SDocument.FILE_PERSISTENCE_SERVICE)
     public IAttachmentPersistenceHandler attachmentPersistenceService() {
         return new AttachmentPersistenceService();
+    }
+
+    @Bean(name = SDocument.FILE_TEMPORARY_SERVICE)
+    public IAttachmentPersistenceHandler attachmentTemporaryService() {
+        try {
+            return FileSystemAttachmentHandler.newTemporaryHandler();
+        } catch (IOException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
+            return new InMemoryAttachmentPersitenceHandler();
+        }
     }
 
     @Bean
@@ -228,5 +245,10 @@ public class SingularDefaultBeanFactory {
     @Bean
     public CacheManager cacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
         return new EhCacheCacheManager(ehCacheManagerFactoryBean.getObject());
+    }
+
+    @Bean(name = "singularKeyGenerator")
+    public KeyGenerator singularKeyGenerator() {
+        return new SingularKeyGenerator();
     }
 }

@@ -173,6 +173,7 @@ public class FormPetitionService<P extends PetitionEntity> {
             draft = newInstance(config, instance.getType().getName());
         }
 
+        instance.getDocument().persistFiles();
         copyValuesAndAnnotations(instance, draft);
 
         draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insertOrUpdate(draft, actor)));
@@ -280,9 +281,11 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     private void deleteAnnotation(FormAnnotationEntity fae) {
         if (fae != null) {
+            FormAnnotationVersionEntity formAnnotationVersionEntity = fae.getAnnotationCurrentVersion();
+            fae.setAnnotationCurrentVersion(null);
+            formAnnotationDAO.saveOrUpdate(fae);
+            deleteAnnotationVersion(formAnnotationVersionEntity);
             if (!CollectionUtils.isEmpty(fae.getAnnotationVersions())) {
-                fae.setAnnotationCurrentVersion(null);
-                formAnnotationDAO.saveOrUpdate(fae);
                 Iterator<FormAnnotationVersionEntity> it = fae.getAnnotationVersions().iterator();
                 for (; it.hasNext(); ) {
                     FormAnnotationVersionEntity fave = it.next();

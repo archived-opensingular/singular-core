@@ -9,7 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Cacheable(cacheNames = "forever", unless="#result == null")
+@Cacheable(cacheNames = "forever", unless="#result == null", keyGenerator = "singularKeyGenerator")
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

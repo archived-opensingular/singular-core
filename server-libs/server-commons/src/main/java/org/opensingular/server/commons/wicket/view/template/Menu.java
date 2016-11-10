@@ -143,8 +143,8 @@ public class Menu extends Panel {
     }
 
     protected MenuSessionConfig getMenuSessionConfig() {
-        final SingularSession session = SingularSession.get();
-        MenuSessionConfig menuSessionConfig = (MenuSessionConfig) session.getAttribute(MENU_CACHE);
+        final SingularSession session           = SingularSession.get();
+        MenuSessionConfig     menuSessionConfig = (MenuSessionConfig) session.getAttribute(MENU_CACHE);
         if (menuSessionConfig == null) {
             menuSessionConfig = new MenuSessionConfig();
             session.setAttribute(MENU_CACHE, menuSessionConfig);
