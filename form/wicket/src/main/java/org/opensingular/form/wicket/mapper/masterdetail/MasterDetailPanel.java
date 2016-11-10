@@ -185,28 +185,28 @@ public class MasterDetailPanel extends Panel {
         if (mapColumns.isEmpty()) {
             final SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
             if (tipo instanceof STypeSimple) {
-                columnTypes.add(new ColumnType(tipo, null));
+                columnTypes.add(new ColumnType(tipo.getName(), null));
             }
             if (tipo instanceof STypeComposite) {
                 ((STypeComposite<?>) tipo)
                         .getFields()
                         .stream()
                         .filter(mtipo -> mtipo instanceof STypeSimple)
-                        .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo, null)));
+                        .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo.getName(), null)));
             }
         } else {
             mapColumns.forEach((col) -> columnTypes.add(
                     new ColumnType(
                             Optional.ofNullable(col.getTypeName())
-                                    .map(typeName -> model.getObject().getDictionary().getType(typeName))
                                     .orElse(null),
                             col.getCustomLabel(), col.getDisplayValueFunction())));
         }
 
         for (ColumnType columnType : columnTypes) {
-            final String         label      = columnType.getCustomLabel();
+            final String         label      = columnType.getCustomLabel(model.getObject());
+            final String         typeName = columnType.getTypeName();
             final IModel<String> labelModel = $m.ofValue(label);
-            propertyColumnAppender(builder, labelModel, new STypeModel(columnType.getType()), columnType.getDisplayFunction());
+            propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnType.getDisplayFunction());
         }
 
         actionColumnAppender(builder, model, modal, ctx, viewMode, view);
@@ -261,8 +261,6 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         Integer count = IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
-        if (count > 0)
-            System.out.println(count);
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
                 .styleClasses(Model.of("red"))
@@ -315,14 +313,15 @@ public class MasterDetailPanel extends Panel {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                        IModel<String> labelModel, IModel<SType<?>> mTipoModel,
+                                        IModel<String> labelModel, IModel<String> sTypeNameModel,
                                         IFunction<SInstance, String> displayValueFunction) {
         IFunction<SIComposite, SInstance> toInstance = composto -> {
-            SType<?> mtipo = mTipoModel.getObject();
-            if (mtipo == null) {
+            String sTypeName = sTypeNameModel.getObject();
+            if (sTypeName == null || composto == null) {
                 return composto;
             }
-            return (SInstance) composto.findDescendant(mtipo).orElse(null);
+            SType<?> sType = composto.getDictionary().getType(sTypeName);
+            return (SInstance) composto.findDescendant(sType).orElse(null);
         };
         IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
         builder.appendColumn(new BSPropertyColumn(labelModel, propertyFunction) {
@@ -346,7 +345,7 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getMInstancia() {
-                        return toInstance.apply((SIComposite) rowModel.getObject());
+                                return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };
             }

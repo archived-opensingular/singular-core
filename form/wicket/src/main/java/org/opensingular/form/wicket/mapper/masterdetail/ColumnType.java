@@ -16,38 +16,43 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 class ColumnType {
 
-    private final SType<?>                     type;
+    private final String                       typeName;
     private final String                       customLabel;
     private final IFunction<SInstance, String> displayFunction;
 
-    ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
-        if (type == null && displayFunction == null) {
-            throw SingularException.rethrow("Não foi especificado o valor da coluna.");
-        }
-        this.type = type;
+    ColumnType(String typeName, String customLabel, IFunction<SInstance, String> displayFunction) {
+        this.typeName = typeName;
         this.customLabel = customLabel;
         this.displayFunction = displayFunction != null ? displayFunction : SInstance::toStringDisplay;
     }
 
-    ColumnType(SType<?> type, String customLabel) {
-        this(type, customLabel, null);
+    ColumnType(String typeName, String customLabel) {
+        this(typeName, customLabel, null);
     }
 
-    public SType<?> getType() {
-        return type;
+    public SType<?> getType(SInstance instance) {
+        return typeName == null ? null : instance.getDictionary().getType(typeName);
     }
 
-    String getCustomLabel() {
+    public String getTypeName() {
+        return typeName;
+    }
+
+    String getCustomLabel(SInstance instance) {
+        SType<?> type = getType(instance);
         if (customLabel == null && type != null) {
-            return type.getAttributeValue(SPackageBasic.ATR_LABEL);
+            return getType(instance).getAttributeValue(SPackageBasic.ATR_LABEL);
+        }
+        if (type == null && displayFunction == null) {
+            throw SingularException.rethrow("Não foi especificado label para coluna nem através do tipo nem através de displayFunction específica.");
         }
         return customLabel;
     }
