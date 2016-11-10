@@ -38,6 +38,7 @@ import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.annotation.AnnotationComponent;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
@@ -80,8 +81,9 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
-                final BSContainer<?>       rootContainer   = ctx.getContainer();
-                SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rootContainer);
+                final BSContainer<?>       rootContainer     = ctx.getContainer();
+                final BSContainer<?>       externalContainer = ctx.getExternalContainer();
+                SValidationFeedbackHandler feedbackHandler   = SValidationFeedbackHandler.bindTo(new FeedbackFence(rootContainer, externalContainer));
                 feedbackHandler.findNestedErrorsMaxLevel();
                 grid.appendTag("div", ctx.createFeedbackPanel("feedback").setShowBox(true));
             }
