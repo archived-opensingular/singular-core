@@ -135,7 +135,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                                   Map<String, Object> params,
                                   QuickFilter filtro,
                                   List<String> siglasProcesso,
-                                  List<String> formNames) {
+                                  List<String> formNames, boolean count) {
 
         params.put("sim", SimNao.SIM);
 
@@ -176,6 +176,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         if (filtro.getSortProperty() != null) {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
+        } else if (!count){
+            if (filtro.isRascunho()){
+                hql.append(mountSort("creationDate", false));
+            } else {
+                hql.append(mountSort("processBeginDate", false));
+            }
         }
     }
 
@@ -211,7 +217,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         buildSelectClause(hql, count, filtro);
         buildFromClause(hql, filtro);
-        buildWhereClause(hql, params, filtro, siglasProcesso, formNames);
+        buildWhereClause(hql, params, filtro, siglasProcesso, formNames, count);
 
         final Query query = getSession().createQuery(hql.toString());
         setParametersQuery(query, params);
