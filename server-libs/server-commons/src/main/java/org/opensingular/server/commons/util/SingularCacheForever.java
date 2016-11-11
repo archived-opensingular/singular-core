@@ -9,9 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Cacheable(cacheNames = "forever", unless="#result == null", keyGenerator = "singularKeyGenerator")
+@Cacheable(cacheNames = SingularCacheForever.SINGULAR_CACHE_FOREVER_NAME, unless="#result == null", keyGenerator = "singularKeyGenerator")
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface SingularCacheForever {}
+public @interface SingularCacheForever {
+    public static final String SINGULAR_CACHE_FOREVER_NAME = "forever";
+}

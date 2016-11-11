@@ -16,10 +16,6 @@
 
 package org.opensingular.server.commons.spring;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.schedule.IScheduleService;
@@ -67,7 +63,12 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @SuppressWarnings("rawtypes")
@@ -243,6 +244,7 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
+    @Primary
     public CacheManager cacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
         return new EhCacheCacheManager(ehCacheManagerFactoryBean.getObject());
     }

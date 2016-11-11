@@ -9,9 +9,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Cacheable(cacheNames =  "defaultCache", unless="#result == null", keyGenerator = "singularKeyGenerator")
+/**
+ * Simple cache strategy with 2min duration.
+ */
+@Cacheable(cacheNames =  SingularCache.SINGULAR_CACHE_NAME, unless="#result == null", keyGenerator = "singularKeyGenerator")
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface SingularCache {}
+public @interface SingularCache {
+
+    public static final String SINGULAR_CACHE_NAME = "defaultCache";
+}

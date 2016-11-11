@@ -16,17 +16,17 @@
 
 package org.opensingular.server.commons.spring.security;
 
-import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.SFormUtil;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.server.commons.config.SingularServerConfiguration;
 import org.opensingular.server.commons.flow.rest.ActionConfig;
 import org.opensingular.server.commons.flow.rest.ActionDefinition;
 import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.PetitionService;
-import org.opensingular.server.commons.util.SingularCache;
+import org.opensingular.server.commons.util.SingularSessionCache;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,7 +51,7 @@ public class PermissionResolverService implements Loggable {
     private SingularServerConfiguration singularServerConfiguration;
 
 
-    @SingularCache
+    @SingularSessionCache
     public List<SingularPermission> searchPermissions(String idUsuario) {
         return peticionamentoUserDetailService.searchPermissions(idUsuario);
     }

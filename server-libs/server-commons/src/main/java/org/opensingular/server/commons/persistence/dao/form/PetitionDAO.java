@@ -17,16 +17,6 @@
 package org.opensingular.server.commons.persistence.dao.form;
 
 
-import org.opensingular.flow.core.TaskType;
-import org.opensingular.form.persistence.dao.FormVersionDAO;
-import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormVersionEntity;
-import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
-import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
-import org.opensingular.server.commons.persistence.filter.QuickFilter;
-import org.opensingular.server.commons.util.JPAQueryUtil;
-import org.opensingular.lib.support.persistence.BaseDAO;
-import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -34,6 +24,15 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.opensingular.flow.core.TaskType;
+import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.opensingular.lib.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.persistence.filter.QuickFilter;
+import org.opensingular.server.commons.util.JPAQueryUtil;
 
 import java.util.HashMap;
 import java.util.List;
