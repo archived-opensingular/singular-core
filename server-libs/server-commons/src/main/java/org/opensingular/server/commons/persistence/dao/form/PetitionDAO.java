@@ -178,7 +178,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
         } else if (!count){
             if (filtro.isRascunho()){
-                hql.append(mountSort("inclusionDate", false));
+                hql.append(mountSort("creationDate", false));
             } else {
                 hql.append(mountSort("processBeginDate", false));
             }
