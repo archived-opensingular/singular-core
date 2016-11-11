@@ -62,6 +62,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
 
+
     public AtrBasic noLabel() {
         return label("");
     }
@@ -279,4 +280,14 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_PHRASE_BREAK, phraseBreak);
         return this;
     }
+
+    public AtrBasic upperCaseText() {
+        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, true);
+        return this;
+    }
+
+    public Boolean isUpperCaseText() {
+        return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
+    }
+
 }
