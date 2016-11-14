@@ -38,7 +38,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
 
     @Inject
     private AttachmentContentDao<C> attachmentContentDao;
-    
+
     public AttachmentDao() {
         super((Class<T>) AttachmentEntity.class);
     }
@@ -62,10 +62,12 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     public void delete(Long id) {
-        T t = get(id);
-        Long codContent = t.getCodContent();
-        delete(t);
-        attachmentContentDao.delete(codContent);
+        final T t = get(id);
+        if (t != null) {
+            Long codContent = t.getCodContent();
+            delete(t);
+            attachmentContentDao.delete(codContent);
+        }
     }
 
     public List<T> list() {
@@ -74,9 +76,9 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     protected T createAttachment(C content, String name) {
-        
+
         T fileEntity = createInstance();
-        
+
         fileEntity.setCodContent(content.getCod());
         fileEntity.setHashSha1(content.getHashSha1());
         fileEntity.setSize(content.getSize());
