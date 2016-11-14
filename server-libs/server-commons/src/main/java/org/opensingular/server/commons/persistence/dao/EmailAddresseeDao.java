@@ -16,6 +16,7 @@
 package org.opensingular.server.commons.persistence.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -43,7 +44,7 @@ public class EmailAddresseeDao<T extends EmailAddresseeEntity> extends BaseDAO<T
         Criteria c = getSession().createCriteria(tipo);
         c.add(Restrictions.isNull("sentDate"));
         c.setProjection(Projections.rowCount());
-        return ((Number) c.uniqueResult()).intValue();
+        return Optional.ofNullable((Number)c.uniqueResult()).map(Number::intValue).orElse(0);
     }
     
     public List<T> listPending(int firstResult, int maxResults){

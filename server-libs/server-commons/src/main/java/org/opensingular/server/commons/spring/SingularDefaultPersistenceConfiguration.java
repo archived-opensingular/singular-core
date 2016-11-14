@@ -43,7 +43,7 @@ import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA
 import static org.opensingular.lib.commons.base.SingularProperties.USE_INMEMORY_DATABASE;
 
 @EnableTransactionManagement(proxyTargetClass = true)
-public abstract class SingularDefaultPersistenceConfiguration {
+public class SingularDefaultPersistenceConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingularDefaultPersistenceConfiguration.class);
 

@@ -148,6 +148,7 @@
         <singular.version>1.5.3-SNAPSHOT</singular.version>
         <singular.server.version>1.5.3-SNAPSHOT</singular.server.version>
         <cas.version>4.0.4</cas.version>
+        <cas.client.version>3.4.1</cas.client.version>
     </properties>
 
 </project>
