@@ -75,7 +75,12 @@
         }
 
         function clear() {
-            input.val(input.val().replace(/[^0-9]/g, ''));
+            var numberOnly;
+            numberOnly = input.val().replace(/[^\d]/g, '');
+            if (numberOnly.length > 11) {
+                numberOnly = numberOnly.substr(0, 11);
+            }
+            input.val(numberOnly);
         }
 
         function setEightDigitsMask() {
