@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>singular-flow</artifactId>
-	<name>[singular :: flo w]</name>
+	<name>[singular :: flow]</name>
 	<packaging>pom</packaging>
 
 	<modules>
