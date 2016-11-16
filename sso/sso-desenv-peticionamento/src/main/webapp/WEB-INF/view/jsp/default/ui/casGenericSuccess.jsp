@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	
 	<head>
-		<meta http-equiv="Refresh" content="0; URL=/singular/peticionamento" />
+		<meta http-equiv="Refresh" content="0; URL=/singular/petition" />
 	</head>
 
 </html>
