@@ -55,13 +55,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-
     public AtrBasic label(SimpleValueCalculation<String> valueCalculation) {
         setAttributeCalculation(SPackageBasic.ATR_LABEL, valueCalculation);
         return this;
     }
-
-
 
     public AtrBasic noLabel() {
         return label("");
