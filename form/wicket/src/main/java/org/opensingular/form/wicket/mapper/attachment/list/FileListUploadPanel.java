@@ -52,7 +52,6 @@ import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
@@ -98,7 +97,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
         label.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
             @Override
             protected Set<String> update(Set<String> oldClasses) {
-                if (model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
+                final Boolean required    = model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED);
+                final Integer minimumSize = model.getObject().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
+                if ((required != null && required) || (minimumSize != null && minimumSize > 0)) {
                     oldClasses.add("singular-form-required");
                 } else {
                     oldClasses.remove("singular-form-required");
