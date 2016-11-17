@@ -27,7 +27,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
@@ -57,18 +56,18 @@ public class SingularDefaultPersistenceConfiguration {
     @Value("classpath:db/ddl/create-constraints-form.sql")
     protected Resource sqlCreateConstraintsForm;
     @Value("classpath:db/ddl/create-function.sql")
-    private Resource sqlCreateFunction;
+    private   Resource sqlCreateFunction;
     @Value("classpath:db/ddl/create-tables-actor.sql")
-    private Resource sqlCreateTablesActor;
+    private   Resource sqlCreateTablesActor;
     @Value("classpath:db/ddl/create-tables-flow.sql")
-    private Resource sqlCreateTablesFlow;
+    private   Resource sqlCreateTablesFlow;
     @Value("classpath:db/dml/insert-flow-data.sql")
-    private Resource insertDadosSingular;
+    private   Resource insertDadosSingular;
 
     @Value("classpath:db/dml/insert-test-data.sql")
     private Resource insertTestData;
 
-    protected DatabasePopulator databasePopulator() {
+    protected ResourceDatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(drops);

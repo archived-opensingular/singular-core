@@ -61,7 +61,11 @@ public class SingularServerConfiguration implements ServletContextAware {
     }
 
     public List<Class<? extends SType<?>>> getFormTypes() {
-        return Collections.unmodifiableList(formTypes);
+        if (formTypes == null){
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(formTypes);
+        }
     }
 
     public String getProcessGroupCod() {
