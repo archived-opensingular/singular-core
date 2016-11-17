@@ -9,7 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Cacheable(cacheNames =  "defaultCache", unless="#result == null", keyGenerator = "singularKeyGenerator")
+@Cacheable(cacheNames =  "defaultCache", unless="T(org.opensingular.server.commons.cache.UnlessChecker).check(#result)", keyGenerator = "singularKeyGenerator")
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
