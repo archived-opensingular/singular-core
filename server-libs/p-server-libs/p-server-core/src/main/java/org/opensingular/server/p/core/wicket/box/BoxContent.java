@@ -197,7 +197,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             String url = mountStaticUrl(itemAction, baseUrl, additionalParams, boxItemModel);
 
             WebMarkupContainer link = new WebMarkupContainer(id);
-            link.add($b.attr("target", String.format("_%s", boxItemModel.getObject().getCod())));
+            link.add($b.attr("target", String.format("_%s_%s", itemAction.getName(),  boxItemModel.getObject().getCod())));
             link.add($b.attr("href", url));
             return link;
         };
@@ -462,7 +462,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
-        link.add($b.attr("target", String.format("_%s", item.getCod())));
+        link.add($b.attr("target", String.format("_%s_%s", formActions.getId(), item.getCod())));
         link.add($b.attr("href", href));
         return link;
     }

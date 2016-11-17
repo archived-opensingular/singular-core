@@ -38,6 +38,24 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         super(TaskInstanceEntity.class);
     }
 
+    protected Map<String, String> getSortPropertyToAliases() {
+        return new HashMap<String, String>() {
+            {
+                put("id", "ti.cod");
+                put("creationDate", "pi.beginDate");
+                put("protocolDate", "pi.beginDate");
+                put("description", "pi.description");
+                put("state", "tv.name");
+                put("taskName", "tv.name");
+                put("user", "au.nome");
+                put("nomeUsuarioAlocado", "au.nome");
+                put("codUsuarioAlocado", "au.cod");
+                put("situationBeginDate", "ti.beginDate");
+                put("processBeginDate", "pi.beginDate");
+            }
+        };
+    }
+
     protected Class<? extends PetitionEntity> getPetitionEntityClass() {
         return PetitionEntity.class;
     }
