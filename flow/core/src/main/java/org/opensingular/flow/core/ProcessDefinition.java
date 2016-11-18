@@ -168,12 +168,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
+            if (novo == null){
+                novo = new FlowMap(this);
+            }
             configureActions(novo);
-
             if (novo.getProcessDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada");
             }
-
             novo.verifyConsistency();
             MBPMUtil.calculateTaskOrder(novo);
             flowMap = novo;

@@ -467,7 +467,7 @@ public class FlowMap implements Serializable {
     public void verifyConsistency() {
         verifyTasksConsistency();
         if(startTask == null){
-            throw new SingularFlowException(createErrorMsg("There is no initial task setted"));
+            throw new SingularFlowException(createErrorMsg("There is no initial task set"));
         }
         checkRouteToTheEnd();
     }
