@@ -42,10 +42,14 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         return new HashMap<String, String>() {
             {
                 put("id", "ti.cod");
-                put("protocolDate", "p.creationDate");
+                put("creationDate", "pi.beginDate");
+                put("protocolDate", "pi.beginDate");
                 put("description", "pi.description");
                 put("state", "tv.name");
+                put("taskName", "tv.name");
                 put("user", "au.nome");
+                put("nomeUsuarioAlocado", "au.nome");
+                put("codUsuarioAlocado", "au.cod");
                 put("situationBeginDate", "ti.beginDate");
                 put("processBeginDate", "pi.beginDate");
             }
