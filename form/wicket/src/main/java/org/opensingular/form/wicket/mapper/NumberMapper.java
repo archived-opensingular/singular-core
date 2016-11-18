@@ -19,6 +19,7 @@ package org.opensingular.form.wicket.mapper;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -29,6 +30,8 @@ import org.apache.wicket.model.IModel;
 
 import java.util.HashMap;
 import java.util.Optional;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class NumberMapper<T extends Number> extends StringMapper {
 
@@ -55,6 +58,12 @@ public class NumberMapper<T extends Number> extends StringMapper {
                             put(InputMaskBehavior.MAX_LENGTH_ATTR, size.orElse(DEFAULT_SIZE));
                         }}))
                 );
+
+        size
+                .ifPresent(maxSize -> {
+                    comp.add($b.attr("maxlength", maxSize));
+                    comp.add(new CountDownBehaviour());
+                });
 
         return comp;
     }
