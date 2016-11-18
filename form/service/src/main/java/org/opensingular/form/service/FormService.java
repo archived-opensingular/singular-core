@@ -15,7 +15,6 @@
  */
 package org.opensingular.form.service;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SIList;
@@ -58,14 +57,19 @@ import java.util.stream.Collectors;
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
     private final Boolean KEEP_ANNOTATIONS = true;
+
     @Inject
     private FormDAO formDAO;
+
     @Inject
     private FormVersionDAO formVersionDAO;
+
     @Inject
     private FormAnnotationDAO formAnnotationDAO;
+
     @Inject
     private FormAnnotationVersionDAO formAnnotationVersionDAO;
+
     @Inject
     private FormTypeDAO formTypeDAO;
 
@@ -87,6 +91,34 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         final SInstance instance = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
         loadCurrentXmlAnnotationOrEmpty(instance, formVersionEntity);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
+        final SInstance instance = loadSInstance(key, refType, documentFactory);
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId) {
+        final SInstance instance = loadSInstance(key, refType, documentFactory, versionId);
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations) {
+        final SInstance instance =  newTransientSInstance(key, refType, documentFactory);
+        instance.asAtrAnnotation().clear();
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations) {
+        final SInstance instance =  newTransientSInstance(key, refType, documentFactory, versionId);
+        instance.asAtrAnnotation().clear();
         return instance;
     }
 

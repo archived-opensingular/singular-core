@@ -47,4 +47,11 @@ public @interface SInfoType {
      */
     String label() default "";
 
+    /**
+     * Identifica um tipo como sendo um tipo que pode originar
+     * novos registros no form. Tipos que não sejam newable
+     * serão inseridos por outros tipos até chegar a raiz que
+     * não é inserido por ninguém
+     */
+    boolean newable() default false;
 }

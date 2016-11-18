@@ -16,52 +16,55 @@
 
 package org.opensingular.form.persistence.dao;
 
-import java.io.InputStream;
-import java.util.Date;
-
-import javax.transaction.Transactional;
-
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.form.io.HashAndCompressInputStream;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
-@SuppressWarnings({"serial","unchecked"})
+import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterInputStream;
+
+@SuppressWarnings({"serial", "unchecked"})
 @Transactional(Transactional.TxType.MANDATORY)
 public class AttachmentContentDao<T extends AttachmentContentEntitty> extends BaseDAO<T, Long> {
 
     public AttachmentContentDao() {
         super((Class<T>) AttachmentContentEntitty.class);
     }
-    
+
     protected AttachmentContentDao(Class<T> tipo) {
         super(tipo);
     }
-    
+
     public T insert(T o) {
         getSession().save(o);
         return o;
     }
 
-    public T insert(InputStream is, long length) {
-        return insert(createContent(is, length));
+    public T insert(InputStream is, long length, String hashSha1) {
+        if (hashSha1 == null){
+            throw SingularException.rethrow("Essa persistencia de arquivo não suporta o cálculo de hash, favor fornecer o hash calculado.");
+        }
+        return insert(createContent(is, length, hashSha1));
     }
-    
+
     public void delete(Long codContent) {
         T contentEntitty = find(codContent);
         delete(contentEntitty);
     }
 
-    protected T createContent(InputStream in, long length) {
-        HashAndCompressInputStream inHash = new HashAndCompressInputStream(in);
-        T fileEntity = createInstance();
-        fileEntity.setContent(getSession().getLobHelper().createBlob(inHash, length));
-        fileEntity.setHashSha1(inHash.getHashSHA1());
+    protected T createContent(InputStream in, long length, String hashSha1) {
+        DeflaterInputStream inZip      = new DeflaterInputStream(in, new Deflater(Deflater.BEST_COMPRESSION));
+        T                   fileEntity = createInstance();
+        fileEntity.setContent(getSession().getLobHelper().createBlob(inZip, length));
+        fileEntity.setHashSha1(hashSha1);
         fileEntity.setSize(length);
         fileEntity.setInclusionDate(new Date());
         return fileEntity;
     }
-    
+
     protected T createInstance() {
         try {
             return tipo.newInstance();

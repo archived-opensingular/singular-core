@@ -28,10 +28,6 @@ import java.util.Collection;
  * permanente para formulário persistidos.
  * </p>
  * <p>
- * As referências ao arquivos é controlada por um string de 40 digitos que
- * consiste no hash SHA1 do conteudo do arquivo em questão.
- * </p>
- * <p>
  * O serviço de persistência não mantém nenhuma informação sobre o tipo do
  * arquivo, nome original ou outras informações. Se necessário algo nesse
  * sentido, a estrutura de dados que tem o id do arquivo deverá ter o cuidado de
