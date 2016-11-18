@@ -16,11 +16,6 @@
 
 package org.opensingular.server.commons.spring;
 
-import java.util.Properties;
-
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.hibernate.SessionFactory;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.support.persistence.entity.EntityInterceptor;
@@ -32,52 +27,47 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.util.Properties;
+
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
 import static org.opensingular.lib.commons.base.SingularProperties.USE_INMEMORY_DATABASE;
 
 @EnableTransactionManagement(proxyTargetClass = true)
-public abstract class SingularDefaultPersistenceConfiguration {
+public class SingularDefaultPersistenceConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingularDefaultPersistenceConfiguration.class);
 
     @Value("classpath:db/ddl/drops.sql")
     protected Resource drops;
-
-    @Value("classpath:db/ddl/create-function.sql")
-    private Resource sqlCreateFunction;
-
     @Value("classpath:db/ddl/create-tables-form.sql")
     protected Resource sqlCreateTablesForm;
-
     @Value("classpath:db/ddl/create-tables.sql")
     protected Resource sqlCreateTables;
-
-    @Value("classpath:db/ddl/create-tables-actor.sql")
-    private Resource sqlCreateTablesActor;
-
-    @Value("classpath:db/ddl/create-tables-flow.sql")
-    private Resource sqlCreateTablesFlow;
-
     @Value("classpath:db/ddl/create-constraints.sql")
     protected Resource sqlCreateConstraints;
-
     @Value("classpath:db/ddl/create-constraints-form.sql")
     protected Resource sqlCreateConstraintsForm;
-
+    @Value("classpath:db/ddl/create-function.sql")
+    private   Resource sqlCreateFunction;
+    @Value("classpath:db/ddl/create-tables-actor.sql")
+    private   Resource sqlCreateTablesActor;
+    @Value("classpath:db/ddl/create-tables-flow.sql")
+    private   Resource sqlCreateTablesFlow;
     @Value("classpath:db/dml/insert-flow-data.sql")
-    private Resource insertDadosSingular;
+    private   Resource insertDadosSingular;
 
     @Value("classpath:db/dml/insert-test-data.sql")
     private Resource insertTestData;
 
-    protected DatabasePopulator databasePopulator() {
+    protected ResourceDatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(drops);
@@ -91,7 +81,7 @@ public abstract class SingularDefaultPersistenceConfiguration {
         populator.addScript(insertTestData);
         return populator;
     }
-    
+
     @Bean
     public DataSourceInitializer scriptsInitializer(final DataSource dataSource) {
         final DataSourceInitializer initializer = new DataSourceInitializer();
@@ -134,9 +124,9 @@ public abstract class SingularDefaultPersistenceConfiguration {
             return dataSource;
         } else {
             LOGGER.info("Usando datasource configurado via JNDI");
-            DataSource   dataSource     = null;
-            JndiTemplate jndi           = new JndiTemplate();
-            String       dataSourceName = "java:jboss/datasources/singular";
+            DataSource dataSource = null;
+            JndiTemplate jndi = new JndiTemplate();
+            String dataSourceName = "java:jboss/datasources/singular";
             try {
                 dataSource = (DataSource) jndi.lookup(dataSourceName);
             } catch (NamingException e) {
@@ -172,8 +162,11 @@ public abstract class SingularDefaultPersistenceConfiguration {
     }
 
 
-    protected String[] hibernatePackagesToScan(){
-        return new String[]{"org.opensingular.singular"};
+    protected String[] hibernatePackagesToScan() {
+        return new String[]{
+                "org.opensingular.flow.persistence.entity",
+                "org.opensingular.server.commons.persistence.entity",
+                "org.opensingular.form.persistence.entity"};
     }
 
     protected Properties hibernateProperties() {
@@ -188,7 +181,7 @@ public abstract class SingularDefaultPersistenceConfiguration {
         hibernateProperties.put("hibernate.cache.use_second_level_cache", true);
         hibernateProperties.put("hibernate.cache.use_query_cache", true);
         /*não utilizar a singleton region factory para não conflitar com o cache do singular-server */
-        hibernateProperties.put("net.sf.ehcache.configurationResourceName","/default-singular-ehcache.xml");
+        hibernateProperties.put("net.sf.ehcache.configurationResourceName", "/default-singular-ehcache.xml");
         hibernateProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
         return hibernateProperties;
     }

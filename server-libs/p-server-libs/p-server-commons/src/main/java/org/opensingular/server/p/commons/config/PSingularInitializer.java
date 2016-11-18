@@ -28,6 +28,8 @@ public interface PSingularInitializer extends SingularInitializer {
 
     public PFlowInitializer flowConfiguration();
 
-    public PSpringSecurityInitializer springSecurityConfiguration();
+    default PSpringSecurityInitializer springSecurityConfiguration() {
+        return new PSpringSecurityInitializer();
+    }
 
 }

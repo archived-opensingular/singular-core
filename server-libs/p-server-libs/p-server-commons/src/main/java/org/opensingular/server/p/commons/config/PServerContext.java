@@ -56,10 +56,6 @@ public enum PServerContext implements IServerContext {
         return propertiesBaseKey;
     }
 
-    public String getServerPropertyKey(String basePropertyKey) {
-        return propertiesBaseKey + "." + basePropertyKey;
-    }
-
     @Override
     public String getName() {
         return this.name();

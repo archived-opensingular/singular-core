@@ -43,6 +43,10 @@ public interface IServerContext extends Serializable {
         throw SingularServerException.rethrow("Não foi possível determinar o contexto do servidor do singular");
     }
 
+    default String getServerPropertyKey(String basePropertyKey) {
+        return getPropertiesBaseKey() + "." + basePropertyKey;
+    }
+
     /**
      * O contexto no formato aceito por servlets e filtros
      *
