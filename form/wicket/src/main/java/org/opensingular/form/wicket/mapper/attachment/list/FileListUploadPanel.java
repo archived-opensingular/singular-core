@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -49,16 +48,15 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
 import org.opensingular.form.type.basic.AtrBasic;
-import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
 import org.opensingular.form.wicket.mapper.attachment.UploadResponseInfo;
+import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
@@ -95,17 +93,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
-        label.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                if (model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
-                    oldClasses.add("singular-form-required");
-                } else {
-                    oldClasses.remove("singular-form-required");
-                }
-                return oldClasses;
-            }
-        })));
+        label.add(new RequiredListLabelClassAppender(model));
         add(label);
 
         add((fileList = new WebMarkupContainer("fileList"))

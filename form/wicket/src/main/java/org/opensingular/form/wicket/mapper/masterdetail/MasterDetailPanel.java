@@ -45,6 +45,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.mapper.AbstractListaMapper;
+import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
@@ -159,7 +160,7 @@ public class MasterDetailPanel extends Panel {
         AtrBasic       attr       = lista.getObject().asAtr();
         IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
         ctx.configureContainer(labelModel);
-        return new Label("headLabel", labelModel);
+        return (Label) new Label("headLabel", labelModel).add(new RequiredListLabelClassAppender(ctx.getModel()));
     }
 
     private AjaxLink<String> newAddAjaxLink() {
@@ -215,7 +216,7 @@ public class MasterDetailPanel extends Panel {
 
         for (ColumnType columnType : columnTypes) {
             final String         label      = columnType.getCustomLabel(model.getObject());
-            final String         typeName = columnType.getTypeName();
+            final String         typeName   = columnType.getTypeName();
             final IModel<String> labelModel = $m.ofValue(label);
             propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnType.getDisplayFunction());
         }
@@ -356,7 +357,7 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getMInstancia() {
-                                return toInstance.apply((SIComposite) rowModel.getObject());
+                        return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };
             }
