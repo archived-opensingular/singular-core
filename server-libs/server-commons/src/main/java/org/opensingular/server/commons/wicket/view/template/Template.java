@@ -65,8 +65,8 @@ public abstract class Template extends SingularTemplate {
 
     }
 
-    protected WebMarkupContainer configureMenu(String id) {
-        return new Menu(id);
+    protected Menu configureMenu(String id){
+        return null;
     }
 
     protected WebMarkupContainer configureHeader(String id) {

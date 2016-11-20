@@ -60,7 +60,7 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.Icone;
 
-public class Menu extends Panel {
+public abstract class Menu extends Panel {
 
     /**
      *
