@@ -9,6 +9,7 @@ import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.service.dto.MenuGroup;
 import org.opensingular.server.commons.wicket.view.template.Menu;
+import org.opensingular.server.commons.wicket.view.template.SelecaoMenuItem;
 import org.opensingular.server.p.commons.config.PServerContext;
 import org.opensingular.server.p.core.wicket.acompanhamento.AcompanhamentoPage;
 import org.opensingular.server.p.core.wicket.rascunho.RascunhoPage;
