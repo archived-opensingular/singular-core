@@ -85,10 +85,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context, @RequestParam(USER) String user) {
-        List<MenuGroup> groups = listMenuGroups();
-        filterAccessRight(groups, user);
-        customizeMenu(groups, IServerContext.getContextFromName(context, singularServerConfiguration.getContexts()), user);
-        return groups;
+        return listMenu(IServerContext.getContextFromName(context, singularServerConfiguration.getContexts()), user);
     }
 
     protected List<MenuGroup> listMenuGroups() {

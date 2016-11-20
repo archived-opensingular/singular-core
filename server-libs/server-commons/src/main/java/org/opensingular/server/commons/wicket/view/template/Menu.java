@@ -41,6 +41,7 @@ import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.config.ServerContext;
+import org.opensingular.server.commons.config.SingularServerConfiguration;
 import org.opensingular.server.commons.spring.security.SingularUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,9 @@ public class Menu extends Panel {
     @SuppressWarnings("rawtypes")
     @Inject
     protected PetitionService petitionService;
+
+    @Inject
+    private SingularServerConfiguration singularServerConfiguration;
 
     public Menu(String id, Class<? extends WebPage>  boxPageClass) {
         super(id);
@@ -179,7 +183,7 @@ public class Menu extends Panel {
     }
 
     public IServerContext getMenuContext() {
-        return ServerContext.WORKLIST;
+        return IServerContext.getContextFromRequest(this.getRequest(), singularServerConfiguration.getContexts());
     }
 
     protected List<ProcessGroupEntity> getCategorias() {
