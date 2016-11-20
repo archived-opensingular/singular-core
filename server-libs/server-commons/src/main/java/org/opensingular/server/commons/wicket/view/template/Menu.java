@@ -73,21 +73,34 @@ public class Menu extends Panel {
 
     protected List<ProcessGroupEntity> categorias;
 
+    private Class<? extends WebPage> boxPageClass;
+
+    private MetronicMenu menu;
+
     @SuppressWarnings("rawtypes")
     @Inject
     protected PetitionService petitionService;
 
-    public Menu(String id) {
+    public Menu(String id, Class<? extends WebPage>  boxPageClass) {
         super(id);
+        this.boxPageClass = boxPageClass;
         add(buildMenu());
     }
 
     protected MetronicMenu buildMenu() {
-        MetronicMenu menu = new MetronicMenu("menu");
+        this.loadMenuGroups();
+        this.menu = new MetronicMenu("menu");
+        this.buildMenuSelecao();
+        this.getCategorias().forEach((processGroup) -> {
+            this.buildMenuGroup(this.menu, processGroup);
+        });
+        return this.menu;
+    }
 
-        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", SingularApplication.get().getHomePage()));
 
-        return menu;
+    private void buildMenuSelecao() {
+        SelecaoMenuItem selecaoMenuItem = new SelecaoMenuItem(categorias);
+        menu.addItem(selecaoMenuItem);
     }
 
     protected static class AddContadoresBehaviour extends AbstractDefaultAjaxBehavior {
@@ -275,8 +288,8 @@ public class Menu extends Panel {
                 .orElse(null);
     }
 
-    public Class<? extends WebPage> getBoxPageClass() {
-        return null;
+    public Class<? extends WebPage> getBoxPageClass(){
+        return boxPageClass;
     }
 
     protected static class MenuItemConfig {

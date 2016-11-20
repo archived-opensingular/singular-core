@@ -27,7 +27,7 @@ public class MenuPeticionamento extends Menu {
     private MetronicMenu menu;
 
     public MenuPeticionamento(String id) {
-        super(id);
+        super(id, null);
     }
 
     @Override
