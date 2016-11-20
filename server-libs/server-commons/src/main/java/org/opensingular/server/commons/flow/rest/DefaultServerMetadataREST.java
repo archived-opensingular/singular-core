@@ -16,36 +16,35 @@
 
 package org.opensingular.server.commons.flow.rest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.opensingular.form.SInfoType;
-import org.opensingular.server.commons.spring.security.AuthorizationService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SInfoType;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
+import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
+import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.config.SingularServerConfiguration;
 import org.opensingular.server.commons.service.IServerMetadataREST;
 import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.service.dto.MenuGroup;
 import org.opensingular.server.commons.service.dto.ProcessDTO;
+import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
 import org.opensingular.server.commons.spring.security.SingularPermission;
-import org.opensingular.lib.support.spring.util.AutoScanDisabled;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @AutoScanDisabled
 @RequestMapping("/rest/flow")
@@ -66,11 +65,18 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     protected SFormConfig<String> singularFormConfig;
 
     @Override
+    public List<MenuGroup> listMenu(IServerContext context, String user) {
+        List<MenuGroup> groups = listMenuGroups();
+        filterAccessRight(groups, user);
+        customizeMenu(groups, context, user);
+        return groups;
+    }
+
     @RequestMapping(value = PATH_LIST_MENU, method = RequestMethod.GET)
     public List<MenuGroup> listMenu(@RequestParam(MENU_CONTEXT) String context, @RequestParam(USER) String user) {
         List<MenuGroup> groups = listMenuGroups();
         filterAccessRight(groups, user);
-        customizeMenu(groups, context, user);
+        customizeMenu(groups, IServerContext.getContextFromName(context, singularServerConfiguration.getContexts()), user);
         return groups;
     }
 
@@ -83,8 +89,8 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
             menuGroup.setProcesses(new ArrayList<>());
             menuGroup.setForms(new ArrayList<>());
             definitions.forEach(d -> menuGroup
-                    .getProcesses()
-                    .add(new ProcessDTO(d.getKey(), d.getName(), null))
+                            .getProcesses()
+                            .add(new ProcessDTO(d.getKey(), d.getName(), null))
             );
             addForms(menuGroup);
             groups.add(menuGroup);
@@ -105,11 +111,11 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
 
     protected void addForms(MenuGroup menuGroup) {
         for (Class<? extends SType<?>> formClass : singularServerConfiguration.getFormTypes()) {
-            SInfoType                 annotation = formClass.getAnnotation(SInfoType.class);
-            String                    name       = SFormUtil.getTypeName(formClass);
-            SType<?>                  sType      = singularFormConfig.getTypeLoader().loadType(name).get();
+            SInfoType annotation = formClass.getAnnotation(SInfoType.class);
+            String name = SFormUtil.getTypeName(formClass);
+            SType<?> sType = singularFormConfig.getTypeLoader().loadType(name).get();
             Class<? extends SType<?>> sTypeClass = (Class<? extends SType<?>>) sType.getClass();
-            String                    label      = sType.asAtr().getLabel();
+            String label = sType.asAtr().getLabel();
             menuGroup.getForms().add(new FormDTO(name, SFormUtil.getTypeSimpleName(sTypeClass), label, annotation.newable()));
         }
     }
@@ -118,7 +124,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         authorizationService.filterBoxWithPermissions(groupDTOs, user);
     }
 
-    protected void customizeMenu(List<MenuGroup> groupDTOs, String menuContext, String user) {
+    protected void customizeMenu(List<MenuGroup> groupDTOs, IServerContext menuContext, String user) {
 
     }
 

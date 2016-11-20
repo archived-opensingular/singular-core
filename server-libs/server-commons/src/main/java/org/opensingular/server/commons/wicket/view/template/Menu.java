@@ -22,6 +22,7 @@ import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -38,6 +39,9 @@ import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.opensingular.server.commons.config.IServerContext;
+import org.opensingular.server.commons.config.ServerContext;
+import org.opensingular.server.commons.spring.security.SingularUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -161,8 +165,8 @@ public class Menu extends Panel {
         }
     }
 
-    public String getMenuContext() {
-        return "";
+    public IServerContext getMenuContext() {
+        return ServerContext.WORKLIST;
     }
 
     protected List<ProcessGroupEntity> getCategorias() {
@@ -262,11 +266,14 @@ public class Menu extends Panel {
     }
 
     protected String getIdPessoa() {
-        return null;
+        return getIdUsuarioLogado();
     }
 
     protected String getIdUsuarioLogado() {
-        return null;
+        SingularUserDetails singularUserDetails = SingularSession.get().getUserDetails();
+        return Optional.ofNullable(singularUserDetails)
+                .map(SingularUserDetails::getUsername)
+                .orElse(null);
     }
 
     public Class<? extends WebPage> getBoxPageClass() {

@@ -32,6 +32,15 @@ public interface IServerContext extends Serializable {
         return getContextFromRequest((HttpServletRequest) request.getContainerRequest(), contexts);
     }
 
+    public static IServerContext getContextFromName(String name, IServerContext[] contexts) {
+        for (IServerContext ctx : contexts) {
+            if (name.equals(ctx.getName())) {
+                return ctx;
+            }
+        }
+        throw SingularServerException.rethrow("Não foi possível determinar o contexto do servidor do singular");
+    }
+
     public static IServerContext getContextFromRequest(HttpServletRequest request, IServerContext[] contexts) {
         String contextPath = request.getContextPath();
         String context = request.getPathInfo().replaceFirst(contextPath, "");
