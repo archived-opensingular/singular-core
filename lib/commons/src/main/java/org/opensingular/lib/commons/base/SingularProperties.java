@@ -52,6 +52,7 @@ public interface SingularProperties {
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";
 
     String DEFAULT_CAS_ENABLED = "singular.cas.default.enabled";
+    String DISABLE_AUTHORIZATION = "singular.auth.disable";
 
 
     static SingularProperties get() {
