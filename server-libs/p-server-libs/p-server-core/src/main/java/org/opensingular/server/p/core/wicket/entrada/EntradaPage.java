@@ -24,7 +24,7 @@ import org.wicketstuff.annotation.mount.MountPath;
 import static org.opensingular.server.commons.util.DispatcherPageParameters.MENU_PARAM_NAME;
 import static org.opensingular.server.commons.util.DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME;
 
-@MountPath("caixaentrada")
+@MountPath("entrada")
 public class EntradaPage extends PeticionamentoTemplate {
 
 

@@ -17,11 +17,12 @@
 package org.opensingular.server.core.wicket.entrada;
 
 import org.opensingular.server.commons.wicket.view.template.Content;
+import org.opensingular.server.core.wicket.template.AnaliseTemplate;
 import org.opensingular.server.core.wicket.template.ServerTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("caixaentrada")
-public class CaixaEntradaAnalisePage extends ServerTemplate {
+public class CaixaEntradaAnalisePage extends AnaliseTemplate {
 
 
     @Override

@@ -16,17 +16,21 @@
 
 package org.opensingular.server.commons.spring.security;
 
+import com.google.common.base.Joiner;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.persistence.entity.Actor;
-import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
-import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.flow.persistence.entity.TaskVersionEntity;
+import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
@@ -34,14 +38,7 @@ import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.service.dto.BoxItemAction;
 import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.service.dto.MenuGroup;
-import org.opensingular.server.commons.spring.security.PermissionResolverService;
-import org.opensingular.server.commons.spring.security.SingularPermission;
-import org.opensingular.server.commons.spring.security.SingularUserDetails;
-import org.opensingular.server.commons.spring.security.SingularUserDetailsService;
 import org.opensingular.server.commons.wicket.SingularSession;
-import com.google.common.base.Joiner;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -113,11 +110,11 @@ public class AuthorizationService implements Loggable {
     }
 
     public void filterActors(List<Actor> actors, PetitionEntity petitionEntity, String actionName) {
-        if (actors != null && !actors.isEmpty()){
+        if (actors != null && !actors.isEmpty()) {
             Iterator<Actor> it = actors.iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 Actor a = it.next();
-                if (!hasPermission(petitionEntity, petitionEntity.getMainForm().getFormType().getAbbreviation(), a.getCodUsuario(), actionName)){
+                if (!hasPermission(petitionEntity, petitionEntity.getMainForm().getFormType().getAbbreviation(), a.getCodUsuario(), actionName)) {
                     it.remove();
                 }
             }
@@ -158,8 +155,8 @@ public class AuthorizationService implements Loggable {
 
     protected void filterForms(MenuGroup menuGroup, List<SingularPermission> permissions, String idUsuario) {
         for (Iterator<FormDTO> it = menuGroup.getForms().iterator(); it.hasNext(); ) {
-            FormDTO form             = it.next();
-            String  permissionNeeded = buildPermissionKey(null, form.getAbbreviation(), FormActions.FORM_FILL.name());
+            FormDTO form = it.next();
+            String permissionNeeded = buildPermissionKey(null, form.getAbbreviation(), FormActions.FORM_FILL.name());
             if (!hasPermission(idUsuario, permissionNeeded, permissions)) {
                 it.remove();
             }
@@ -168,6 +165,7 @@ public class AuthorizationService implements Loggable {
 
     /**
      * Monta a chave de permissão do singular, não deve ser utilizado diretamente.
+     *
      * @param petitionEntity
      * @param formSimpleName
      * @param action
@@ -217,6 +215,9 @@ public class AuthorizationService implements Loggable {
 
 
     protected boolean hasPermission(String idUsuario, String permissionNeeded, List<SingularPermission> permissions) {
+        if (SingularProperties.get().isTrue(SingularProperties.DISABLE_AUTHORIZATION)) {
+            return true;
+        }
         if (permissions.stream().filter(ps -> ps.getSingularId().equals(permissionNeeded)).findFirst().isPresent()) {
             return true;
         }

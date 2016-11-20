@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.wicket.view.template;
 
+import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.server.commons.wicket.view.SingularToastrHelper;
 import org.opensingular.server.commons.wicket.view.behavior.SingularJSBehavior;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
@@ -66,7 +67,12 @@ public abstract class Template extends SingularTemplate {
     }
 
     protected Menu configureMenu(String id){
-        return null;
+        return new Menu(id) {
+            @Override
+            protected MetronicMenu buildMenu() {
+                return super.buildMenu();
+            }
+        };
     }
 
     protected WebMarkupContainer configureHeader(String id) {
