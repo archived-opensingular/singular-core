@@ -60,7 +60,7 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.Icone;
 
-public abstract class Menu extends Panel {
+public class Menu extends Panel {
 
     /**
      *
@@ -227,7 +227,6 @@ public abstract class Menu extends Panel {
                 .collect(Collectors.toList());
 
         List<String> tipos = menuGroup.getProcesses().stream()
-                .filter(x -> x.getFormName() != null)
                 .map(ProcessDTO::getFormName)
                 .collect(Collectors.toList());
 

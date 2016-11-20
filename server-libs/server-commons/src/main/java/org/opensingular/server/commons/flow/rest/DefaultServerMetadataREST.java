@@ -80,6 +80,9 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         return groups;
     }
 
+    protected void customizeMenu(List<MenuGroup> groupDTOs, IServerContext menuContext, String user) {
+    }
+
     protected List<MenuGroup> listMenuGroups() {
         final List<MenuGroup> groups = new ArrayList<>();
         getDefinitionsMap().forEach((category, definitions) -> {
@@ -124,9 +127,8 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         authorizationService.filterBoxWithPermissions(groupDTOs, user);
     }
 
-    protected void customizeMenu(List<MenuGroup> groupDTOs, IServerContext menuContext, String user) {
 
-    }
+
 
     @Override
     @RequestMapping(value = PATH_LIST_PERMISSIONS, method = RequestMethod.GET)

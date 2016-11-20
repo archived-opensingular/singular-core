@@ -54,20 +54,6 @@ public class MenuPeticionamento extends Menu {
         menu.addItem(selecaoMenuItem);
     }
 
-    @Override
-    protected List<MenuItemConfig> buildDefaultSubMenus(MenuGroup menuGroup, ProcessGroupEntity processGroup) {
-        List<MenuItemConfig> defaultMenus = new ArrayList<>();
-
-        QuickFilter quickFilterRascunho = new QuickFilter();
-        quickFilterRascunho.withRascunho(true);
-        defaultMenus.add(MenuItemConfig.of(RascunhoPage.class, "Rascunho", Icone.DOCS, () -> String.valueOf(peticaoService.countQuickSearch(quickFilterRascunho))));
-
-        QuickFilter quickFilterAcompanhamento = new QuickFilter();
-        quickFilterAcompanhamento.withRascunho(false);
-        defaultMenus.add(MenuItemConfig.of(AcompanhamentoPage.class, "Acompanhamento", Icone.CLOCK, () -> String.valueOf(peticaoService.countQuickSearch(quickFilterAcompanhamento))));
-
-        return defaultMenus;
-    }
 
     @Override
     public IServerContext getMenuContext() {

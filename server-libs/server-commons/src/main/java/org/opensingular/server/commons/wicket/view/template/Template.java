@@ -67,12 +67,7 @@ public abstract class Template extends SingularTemplate {
     }
 
     protected Menu configureMenu(String id){
-        return new Menu(id) {
-            @Override
-            protected MetronicMenu buildMenu() {
-                return super.buildMenu();
-            }
-        };
+        return new Menu(id);
     }
 
     protected WebMarkupContainer configureHeader(String id) {
