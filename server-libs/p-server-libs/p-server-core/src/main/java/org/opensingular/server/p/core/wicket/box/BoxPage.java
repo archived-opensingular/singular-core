@@ -102,7 +102,8 @@ public class BoxPage extends ServerTemplate {
     }
 
     protected QuickFilter createFilter() {
-        return new QuickFilter();
+        return new QuickFilter()
+                .withIdUsuarioLogado(getIdUsuario());
     }
 
     protected String getIdUsuario() {
