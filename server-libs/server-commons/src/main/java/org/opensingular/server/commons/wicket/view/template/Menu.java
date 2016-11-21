@@ -42,6 +42,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.config.ServerContext;
 import org.opensingular.server.commons.config.SingularServerConfiguration;
+import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.spring.security.SingularUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,12 +246,13 @@ public class Menu extends Panel {
 
         List<String> tipos = menuGroup.getProcesses().stream()
                 .map(ProcessDTO::getFormName)
+                .filter(s -> s!=null)
                 .collect(Collectors.toList());
 
         List<MenuItemConfig> configs = new ArrayList<>();
 
         for (ItemBox itemBoxDTO : menuGroup.getItemBoxes()) {
-            final ISupplier<String> countSupplier = createCountSupplier(itemBoxDTO, siglas, processGroup, tipos);
+            final ISupplier<String> countSupplier = createCountSupplier(itemBoxDTO, siglas, processGroup, tipos, menuGroup.getForms());
             configs.add(MenuItemConfig.of(getBoxPageClass(), itemBoxDTO.getName(), itemBoxDTO.getIcone(), countSupplier));
 
         }
@@ -258,7 +260,7 @@ public class Menu extends Panel {
         return configs;
     }
 
-    private ISupplier<String> createCountSupplier(ItemBox itemBoxDTO, List<String> siglas, ProcessGroupEntity processGroup, List<String> tipos) {
+    protected ISupplier<String> createCountSupplier(ItemBox itemBoxDTO, List<String> siglas, ProcessGroupEntity processGroup, List<String> tipos, List<FormDTO> menuFormTypes) {
         return () -> {
             final String connectionURL = processGroup.getConnectionURL();
             final String url           = connectionURL + PATH_BOX_SEARCH + itemBoxDTO.getCountEndpoint();
@@ -266,10 +268,9 @@ public class Menu extends Panel {
             try {
                 QuickFilter filter = new QuickFilter()
                         .withProcessesAbbreviation(siglas)
-                        .withTypesNames(tipos)
+                        .withTypesNames(tipos.isEmpty()? menuFormTypes.stream().map(FormDTO::getName).collect(Collectors.toList()) : tipos)
                         .withRascunho(itemBoxDTO.isShowDraft())
                         .withEndedTasks(itemBoxDTO.getEndedTasks())
-                        .withIdPessoa(getIdPessoa())
                         .withIdUsuarioLogado(getIdUsuarioLogado());
                 qtd = new RestTemplate().postForObject(url, filter, Long.class);
             } catch (Exception e) {
