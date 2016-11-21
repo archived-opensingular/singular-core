@@ -1,2 +1,3 @@
-CREATE VIEW DBSINGULAR.VW_ATOR as
-  select 1 as "CO_ATOR", 'ricardo' as "CO_USUARIO", 'Ricardo' as "NO_ATOR", 'singular.teste@mirante.net.br' as "DS_EMAIL";
+CREATE VIEW DBSINGULAR.VW_ATOR AS
+  SELECT A.CO_ATOR, A.CO_USUARIO as "CO_USUARIO", A.CO_USUARIO  as "NO_ATOR", null as "DS_EMAIL"
+  FROM DBSINGULAR.TB_ATOR A

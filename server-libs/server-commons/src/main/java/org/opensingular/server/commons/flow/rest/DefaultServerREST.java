@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,8 +77,6 @@ public class DefaultServerREST {
     @Inject
     protected AuthorizationService authorizationService;
 
-    @Inject
-    protected SpringServiceRegistry springServiceRegistry;
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -120,7 +119,11 @@ public class DefaultServerREST {
     private IController getActionController(ProcessDefinition<?> processDefinition, ActionRequest actionRequest) {
         final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
         Class<? extends IController> controllerClass = actionConfig.getAction(actionRequest.getName());
-        return springServiceRegistry.lookupService(controllerClass);
+        if (ApplicationContextProvider.get().containsBean(controllerClass.getName())){
+            return ApplicationContextProvider.get().getBean(controllerClass);
+        } else {
+            return ApplicationContextProvider.get().getAutowireCapableBeanFactory().createBean(controllerClass);
+        }
     }
 
 
