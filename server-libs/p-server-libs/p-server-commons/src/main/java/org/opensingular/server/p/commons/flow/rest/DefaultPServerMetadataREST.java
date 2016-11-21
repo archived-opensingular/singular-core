@@ -42,7 +42,7 @@ public class DefaultPServerMetadataREST extends DefaultServerMetadataREST {
 
     protected void customizeMenu(List<MenuGroup> groupDTOs, IServerContext menuContext, String user) {
         super.customizeMenu(groupDTOs, menuContext, user);
-        if (Objects.equals(PServerContext.PETITION, menuContext)) {
+        if (Objects.equals(PServerContext.PETITION.getName(), menuContext.getName())) {
             for (MenuGroup menuGroup : groupDTOs) {
                 List<ItemBox> itemBoxes = new ArrayList<>();
                 criarItemRascunho(itemBoxes);
