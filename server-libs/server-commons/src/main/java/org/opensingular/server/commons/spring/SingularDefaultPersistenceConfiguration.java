@@ -64,9 +64,6 @@ public class SingularDefaultPersistenceConfiguration {
     @Value("classpath:db/dml/insert-flow-data.sql")
     private   Resource insertDadosSingular;
 
-    @Value("classpath:db/dml/insert-test-data.sql")
-    private Resource insertTestData;
-
     protected ResourceDatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
@@ -78,7 +75,6 @@ public class SingularDefaultPersistenceConfiguration {
         populator.addScript(sqlCreateConstraints);
         populator.addScript(sqlCreateConstraintsForm);
         populator.addScript(insertDadosSingular);
-        populator.addScript(insertTestData);
         return populator;
     }
 
