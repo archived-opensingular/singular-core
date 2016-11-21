@@ -73,7 +73,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAX_LENGTH            = new AtrRef<>(SPackageBasic.class, "maxLength", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_INTEGER_MAX_LENGTH    = new AtrRef<>(SPackageBasic.class, "integerMaxLength", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_FRACTIONAL_MAX_LENGTH = new AtrRef<>(SPackageBasic.class, "fractionalMaxLength", STypeInteger.class, SIInteger.class, Integer.class);
-    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_EDIT_SIZE             = new AtrRef<>(SPackageBasic.class, "editSize", STypeInteger.class, SIInteger.class, Integer.class);
+//    public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_EDIT_SIZE             = new AtrRef<>(SPackageBasic.class, "editSize", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_DISPLAY_STRING        = new AtrRef<>(SPackageBasic.class, "displayString", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_DISPLAY_ORDER         = new AtrRef<>(SPackageBasic.class, "displayOrder", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeAnnotationClassifierList, SIList, List>       ATR_ANNOTATED             = new AtrRef<>(SPackageBasic.class, "anotated", STypeAnnotationClassifierList.class, SIList.class, List.class);
@@ -133,7 +133,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeType(ATR_MAX_LENGTH);
         pb.createAttributeType(ATR_INTEGER_MAX_LENGTH);
         pb.createAttributeType(ATR_FRACTIONAL_MAX_LENGTH);
-        pb.createAttributeType(ATR_EDIT_SIZE);
+//        pb.createAttributeType(ATR_EDIT_SIZE);
         pb.createAttributeType(ATR_MAX_FILE_SIZE);
         pb.createAttributeType(ATR_ALLOWED_FILE_TYPES);
         pb.createAttributeType(ATR_UPPER_CASE_TEXT);
@@ -157,15 +157,15 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_DISPLAY_STRING);
 
         pb.addAttribute(STypeString.class, ATR_MAX_LENGTH, 100);
-        pb.addAttribute(STypeString.class, ATR_EDIT_SIZE, 50);
+//        pb.addAttribute(STypeString.class, ATR_EDIT_SIZE, 50);
         pb.addAttribute(STypeString.class, ATR_UPPER_CASE_TEXT, false);
 
         pb.addAttribute(STypeInteger.class, ATR_MAX_LENGTH);
-        pb.addAttribute(STypeInteger.class, ATR_EDIT_SIZE);
+//        pb.addAttribute(STypeInteger.class, ATR_EDIT_SIZE);
 
         pb.addAttribute(STypeLong.class, ATR_MAX_LENGTH);
 
-        pb.addAttribute(STypeDate.class, ATR_EDIT_SIZE, 10);
+//        pb.addAttribute(STypeDate.class, ATR_EDIT_SIZE, 10);
 
         pb.addAttribute(STypeDecimal.class, ATR_INTEGER_MAX_LENGTH, 9);
         pb.addAttribute(STypeDecimal.class, ATR_FRACTIONAL_MAX_LENGTH, 2);
@@ -180,13 +180,13 @@ public class SPackageBasic extends SPackage {
 
         // defina o meta dado do meta dado
         //@formatter:off
-        pb.getAttribute(ATR_LABEL).asAtr().label("Label").editSize(30).maxLength(50);
-        pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtitle").editSize(30).maxLength(50);
-        pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask").editSize(10).maxLength(20);
-        pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length").editSize(3).maxLength(4);
-        pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length").editSize(3).maxLength(4);
-        pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length").editSize(3).maxLength(4);
-        pb.getAttribute(ATR_EDIT_SIZE).asAtr().label("Edit size").editSize(3).maxLength(3);
+        pb.getAttribute(ATR_LABEL).asAtr().label("Label")/*.editSize(30)*/.maxLength(50);
+        pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtitle")/*.editSize(30)*/.maxLength(50);
+        pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask")/*.editSize(30)*/.maxLength(20);
+        pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length")/*.editSize(30)*/.maxLength(4);
+        pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length")/*.editSize(30)*/.maxLength(4);
+        pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length")/*.editSize(30)*/.maxLength(4);
+//        pb.getAttribute(ATR_EDIT_SIZE).asAtr().label("Edit size")/*.editSize(30)*/.maxLength(3);
         pb.getAttribute(ATR_VISIBLE).asAtr().label("Visible");
         pb.getAttribute(ATR_VISIBLE_FUNCTION).asAtr().label("Visible (function)");
         pb.getAttribute(ATR_ENABLED).asAtr().label("Enabled");
@@ -194,7 +194,7 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_DEPENDS_ON_FUNCTION).asAtr().label("Depends on (function)");
         //pb.getAtributo(ATR_ONCHANGE_BEHAVIOR        ).asAtr().label("On change (behavior)"      );
         pb.getAttribute(ATR_DISPLAY_ORDER).asAtr().label("Display order");
-        pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label").editSize(30).maxLength(50);
+        pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label")/*.editSize(30)*/.maxLength(50);
         //@formatter:on
     }
 }

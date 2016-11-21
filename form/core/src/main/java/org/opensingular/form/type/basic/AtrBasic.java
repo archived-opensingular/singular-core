@@ -79,10 +79,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic editSize(Integer value) {
-        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
-        return this;
-    }
+//    public AtrBasic editSize(Integer value) {
+//        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
+//        return this;
+//    }
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -221,9 +221,9 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_SUBTITLE);
     }
 
-    public Integer getEditSize() {
-        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
-    }
+//    public Integer getEditSize() {
+//        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
+//    }
 
     public Integer getMaxLength() {
         return getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
