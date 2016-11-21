@@ -20,6 +20,7 @@ import org.hibernate.Query;
 import org.opensingular.flow.core.TaskType;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
@@ -81,11 +82,11 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                         " count( distinct ti )" :
                         " new " + TaskInstanceDTO.class.getName() + " (pi.cod," +
                                 " ti.cod, td.cod, ti.versionStamp, " +
-                                " p.creationDate," +
+                                " pi.beginDate," +
                                 " pi.description, " +
                                 " au , " +
                                 " tv.name, " +
-                                " p.type, " +
+                                " form.formType.abbreviation as type, " +
                                 " pd.key, " +
                                 " p.cod," +
                                 " ti.beginDate,  " +
@@ -119,6 +120,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append(" left join ti.allocatedUser au ")
                 .append(" left join ti.task tv ")
                 .append(" left join tv.taskDefinition td  ")
+                .append(" left join p.formPetitionEntities formPetitionEntity on formPetitionEntity.mainForm = :sim ")
+                .append(" left join formPetitionEntity.form form ")
                 .append(" where 1 = 1")
                 .append(condition)
                 .append(addQuickFilter(filtroRapido))
@@ -126,6 +129,8 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
 
         Query query = getSession().createQuery(sb.toString());
+
+        query.setParameter("sim", SimNao.SIM);
 
         if (concluidas == null || concluidas) {
             query.setParameter("tipoEnd", TaskType.End);
@@ -163,7 +168,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
             sortProperty = "processBeginDate";
             ascending = true;
         }
-        return " order by " + sortProperty + (ascending ? " ASC " : " DESC ");
+        return " order by " + getSortPropertyToAliases().get(sortProperty) + (ascending ? " ASC " : " DESC ");
     }
 
 

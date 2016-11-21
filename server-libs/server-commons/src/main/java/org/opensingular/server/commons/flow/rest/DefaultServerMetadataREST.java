@@ -133,7 +133,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     }
 
     protected void customizeMenu(List<MenuGroup> groupDTOs, IServerContext menuContext, String user) {
-        if (Objects.equals(ServerContext.WORKLIST, menuContext)) {
+        if (Objects.equals(ServerContext.WORKLIST.getName(), menuContext.getName())) {
             for (MenuGroup menuGroup : groupDTOs) {
                 List<ItemBox> itemBoxes = new ArrayList<>();
                 criarItemCaixaEntrada(itemBoxes);
