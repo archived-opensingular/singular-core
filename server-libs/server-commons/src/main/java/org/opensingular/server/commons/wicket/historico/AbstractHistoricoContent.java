@@ -93,19 +93,19 @@ public abstract class AbstractHistoricoContent extends Content {
         return new BSDataTableBuilder<>(dataProvider)
                 .appendPropertyColumn(
                         getMessage("label.table.column.task.name"),
-                        p -> p.getTask().getTask().getName()
+                        p -> p.getTaskName()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.begin.date"),
-                        p -> p.getTask().getBeginDate()
+                        p -> p.getBeginDate()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.end.date"),
-                        p -> p.getTask().getEndDate()
+                        p -> p.getEndDate()
                 )
                 .appendPropertyColumn(
                         getMessage("label.table.column.allocated.user"),
-                        p -> Optional.of(p).map(PetitionHistoryDTO::getTask).map(TaskInstanceEntity::getAllocatedUser).map(Actor::getNome).orElse("")
+                        p -> p.getAllocatedUser()
                 )
 //                .appendActionColumn(
 //                        Model.of(""),
