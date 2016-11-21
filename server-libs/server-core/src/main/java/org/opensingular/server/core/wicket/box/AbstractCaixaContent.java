@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.view;
+package org.opensingular.server.core.wicket.box;
 
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;

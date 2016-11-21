@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.box;
+package org.opensingular.server.core.wicket.box;
 
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.apache.wicket.model.IModel;
