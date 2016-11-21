@@ -130,11 +130,15 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             if (parentPetition != null && parentPetition.getMainForm() != null) {
                 parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
             }
-            petition.setParentPetition(parentPetition);
-            if (parentPetition.getRootPetition() != null) {
-                petition.setRootPetition(parentPetition.getRootPetition());
-            } else {
-                petition.setRootPetition(parentPetition);
+            if (petition != null) {
+                petition.setParentPetition(parentPetition);
+                if (parentPetition != null) {
+                    if (parentPetition.getRootPetition() != null) {
+                        petition.setRootPetition(parentPetition.getRootPetition());
+                    } else {
+                        petition.setRootPetition(parentPetition);
+                    }
+                }
             }
         }
         currentModel = $m.loadable(() -> petition != null && petition.getCod() != null ? petitionService.findPetitionByCod(petition.getCod()) : petition);
