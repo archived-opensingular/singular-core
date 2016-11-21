@@ -310,7 +310,12 @@ public class FormPetitionService<P extends PetitionEntity> {
                 SInstances.findDescendantById(source, sourceAnnotation.getTargetId()).ifPresent(si -> {
                     String pathFromRoot = si.getPathFromRoot();
                     //localiza a instancia correspondente no formulario destino
-                    SInstance targetInstance = ((SIComposite) target).getField(pathFromRoot);
+                    SInstance targetInstance;
+                    if (pathFromRoot == null){
+                        targetInstance =((SIComposite) target);
+                    } else {
+                        targetInstance = ((SIComposite) target).getField(pathFromRoot);
+                    }
                     //Copiando todos os valores da anotação (inclusive o id na sinstance antiga)
                     SIAnnotation targetAnnotation = targetInstance.as(AtrAnnotation::new).annotation();
                     Value.copyValues(sourceAnnotation, targetAnnotation);
