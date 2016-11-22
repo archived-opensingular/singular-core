@@ -70,13 +70,15 @@ class AnnotationModalWindow extends BFModalWindow {
             final BSContainer container = new BSContainer<>("body");
             final BSGrid      grid      = container.newGrid();
 
+            BSControls formGroupAprove = grid.newRow().newCol(12).newFormGroup();
+            formGroupAprove.appendLabel(label);
+            formGroupAprove.appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", check);
+
             BSControls justificativa = grid.newRow().newCol(12).newFormGroup();
             justificativa.appendLabel(new Label("label", "Justificativa"));
             justificativa.appendTextarea(comment, 15);
 
-            BSControls formGroupAprove = grid.newRow().newCol(12).newFormGroup();
-            formGroupAprove.appendLabel(label);
-            formGroupAprove.appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", check);
+            check.add($b.on("switchChange.bootstrapSwitch", (c) -> JQuery.$(comment).append(".val('');")));
 
             setBody(container);
 
