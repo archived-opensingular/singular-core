@@ -49,7 +49,9 @@
     </bean>
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
+        <jdbc:script location="classpath:/db/ddl/drops.sql" />
         <jdbc:script location="classpath:/db/ddl/create-tables-form.sql" />
+        <jdbc:script location="classpath:/db/ddl/create-sequences-form.sql" />
         <jdbc:script location="classpath:/db/ddl/create-constraints-form.sql" />
     </jdbc:initialize-database>
 
