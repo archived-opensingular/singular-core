@@ -278,7 +278,11 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         if (mElement != null) {
             return mElement.toStringExato();
         } else {
-            return "";
+            //Retorna um xml vazio valido
+            //todo verificar se é a melhor solução
+            return Optional.of(instance)
+                    .map(x -> MElement.newInstance(x.getName()))
+                    .map(MElement::toString).orElse(StringUtils.EMPTY);
         }
     }
 
