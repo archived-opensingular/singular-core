@@ -59,8 +59,10 @@ public class SingularDefaultPersistenceConfiguration {
     private   Resource sqlCreateFunction;
     @Value("classpath:db/ddl/create-tables-actor.sql")
     private   Resource sqlCreateTablesActor;
-    @Value("classpath:db/ddl/create-tables-flow.sql")
-    private   Resource sqlCreateTablesFlow;
+    @Value("classpath:db/ddl/create-sequences-server.sql")
+    private   Resource sqlCreateSequencesServer;
+    @Value("classpath:db/dml/create-sequences-form.sql")
+    private   Resource sqlCreateSequencesForm;
     @Value("classpath:db/dml/insert-flow-data.sql")
     private   Resource insertDadosSingular;
 
@@ -71,7 +73,8 @@ public class SingularDefaultPersistenceConfiguration {
         populator.addScript(sqlCreateTablesForm);
         populator.addScript(sqlCreateTables);
         populator.addScript(sqlCreateTablesActor);
-        populator.addScript(sqlCreateTablesFlow);
+        populator.addScript(sqlCreateSequencesServer);
+        populator.addScript(sqlCreateSequencesForm);
         populator.addScript(sqlCreateConstraints);
         populator.addScript(sqlCreateConstraintsForm);
         populator.addScript(insertDadosSingular);
