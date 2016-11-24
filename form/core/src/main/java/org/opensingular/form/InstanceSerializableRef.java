@@ -62,7 +62,7 @@ public class InstanceSerializableRef<I extends SInstance> implements Externaliza
             instance = (I) FormSerializationUtil.toInstance(fs);
             instance.attachEventCollector();
             /*esse chamada é necessária nesse ponto para atualizar os atributos de visibilidade após a deserialização uma
-            * vez que estes não são persistenentes */
+            * vez que estes não são persistenentes . Talvez a melhor alternativa seja persistir esses valores de atributos*/
             instance.getDocument().updateAttributes(instance.getEventCollector());
             fs = null;
         }

@@ -1,16 +1,20 @@
 package org.opensingular.form.wicket.model;
 
 
+import net.vidageek.mirror.dsl.Mirror;
 import org.apache.wicket.model.IModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.SType;
 import org.opensingular.form.curriculo.SPackageCurriculo;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.wicket.util.WicketFormProcessing;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,6 +51,7 @@ public class ModelSerializationTest implements Serializable {
      * após a serialização e deserialização.
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testModelSerialization() throws Exception {
         SIComposite curriculo = newInstance();
@@ -76,5 +81,36 @@ public class ModelSerializationTest implements Serializable {
         Assert.assertSame(modelsListDeserialized.get(0).getObject(), modelsListDeserialized.get(1).getObject());
     }
 
+
+    /**
+     * Verifica se o estado de exibição da view de lista (atributo exists) se mantém calculado após serialização e deserialização.
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSInstanceVisibilityAttributesRecalculation() throws Exception {
+        SIComposite curriculo = newInstance();
+        populateInstance(curriculo);
+        curriculo.attachEventCollector();
+
+        curriculo.getField("primeiroEmprego").setValue(true);
+        curriculo.getDocument().updateAttributes((ISInstanceListener.EventCollector) new Mirror().on(curriculo).get().field("eventCollector"));
+
+        IModel<SInstance> model1 = new SInstanceRootModel<>(curriculo);
+
+        Assert.assertEquals(SInstanceViewState.HIDDEN, SInstanceViewState.get(((SIComposite) model1.getObject()).getField("experienciasProfissionais")));
+
+        ByteArrayOutputStream baos               = new ByteArrayOutputStream();
+        ObjectOutputStream    objectOutputStream = new ObjectOutputStream(baos);
+        objectOutputStream.writeObject(model1);
+        objectOutputStream.close();
+
+        byte[] serializedObject = baos.toByteArray();
+
+        ObjectInputStream       objectInputStream      = new ObjectInputStream(new ByteArrayInputStream(serializedObject));
+        IModel<SInstance>  model1Deserialized = (IModel<SInstance>) objectInputStream.readObject();
+
+        Assert.assertEquals(SInstanceViewState.HIDDEN, SInstanceViewState.get(((SIComposite) model1Deserialized.getObject()).getField("experienciasProfissionais")));
+    }
 
 }
