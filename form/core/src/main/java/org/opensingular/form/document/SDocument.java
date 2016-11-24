@@ -79,8 +79,6 @@ public class SDocument {
 
     private SetMultimap<Integer, IValidationError> validationErrors;
 
-    private Map<String, Serializable> transienteAttributes = new HashMap<>();
-
     public SDocument() {
     }
 
@@ -508,14 +506,6 @@ public class SDocument {
                 doPersistence(child);
             }
         }
-    }
-
-    public void addTransientAttribute(String key, Serializable val) {
-        transienteAttributes.put(key, val);
-    }
-
-    public Optional<Serializable> getTransientAttribute(String key) {
-        return Optional.ofNullable(transienteAttributes.get(key));
     }
 }
 
