@@ -20,6 +20,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import org.apache.wicket.core.util.string.JavaScriptUtils;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -59,6 +60,14 @@ public class DownloadLink extends Link<Void> {
 
     public void configureBody() {
         this.setBody($m.property(model, "fileName"));
+    }
+
+    @Override
+    protected void onComponentTag(ComponentTag tag) {
+        super.onComponentTag(tag);
+        if ($m.property(model, "fileName") != null) {
+            tag.getAttributes().put("title", $m.property(model, "fileName"));
+        }
     }
 
     private static String jsStringOrNull(String s) {
