@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.io;
+package org.opensingular.form;
 
-import org.opensingular.form.SInstance;
+import org.opensingular.form.io.FormSerializationUtil;
+import org.opensingular.form.io.FormSerialized;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -39,21 +40,16 @@ import java.util.function.Supplier;
  */
 public class InstanceSerializableRef<I extends SInstance> implements Externalizable, Supplier<I> {
 
-    private transient I instance;
+    private transient I              instance;
     private transient FormSerialized fs;
 
-    public InstanceSerializableRef() {
-        this(null);
-    }
-
-    public InstanceSerializableRef(I instance) {
-        set(instance);
-    }
-
     /**
-     * Aceita valor null.
+     * Construtor utilizado apenas pelo deserializador.
      */
-    public void set(I instance) {
+    public InstanceSerializableRef() {
+    }
+
+    protected InstanceSerializableRef(I instance) {
         this.instance = instance;
         if (instance != null) {
             FormSerializationUtil.checkIfSerializable(instance);
@@ -65,12 +61,14 @@ public class InstanceSerializableRef<I extends SInstance> implements Externaliza
         if (instance == null && fs != null) {
             instance = (I) FormSerializationUtil.toInstance(fs);
             fs = null;
+            instance.attachEventCollector();
         }
         return instance;
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
+        instance.detachEventCollector();
         FormSerialized fs = FormSerializationUtil.toSerializedObject(get());
         out.writeObject(fs);
     }
