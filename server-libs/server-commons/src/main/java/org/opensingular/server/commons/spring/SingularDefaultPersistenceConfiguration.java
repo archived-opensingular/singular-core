@@ -61,8 +61,8 @@ public class SingularDefaultPersistenceConfiguration {
     private   Resource sqlCreateTablesActor;
     @Value("classpath:db/ddl/create-sequences-server.sql")
     private   Resource sqlCreateSequencesServer;
-    @Value("classpath:db/dml/create-sequences-form.sql")
-    private   Resource sqlCreateSequencesForm;
+    @Value("classpath:db/ddl/create-sequences-form.sql")
+    protected   Resource sqlCreateSequencesForm;
     @Value("classpath:db/dml/insert-flow-data.sql")
     private   Resource insertDadosSingular;
 
