@@ -657,6 +657,10 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
+    ISInstanceListener.EventCollector getEventCollector() {
+        return eventCollector;
+    }
+
     public List<SInstanceEvent> getInstanceEvents() {
         if (eventCollector != null) {
             return eventCollector.getEvents();
