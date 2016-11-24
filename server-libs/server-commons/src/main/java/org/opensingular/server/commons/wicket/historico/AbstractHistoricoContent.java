@@ -27,21 +27,30 @@ import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.wicket.util.button.DropDownButtonPanel;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.server.commons.exception.SingularServerException;
+import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
+import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
+import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
+
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_VERSION_KEY;
 
 public abstract class AbstractHistoricoContent extends Content {
 
@@ -107,52 +116,52 @@ public abstract class AbstractHistoricoContent extends Content {
                         getMessage("label.table.column.allocated.user"),
                         p -> p.getAllocatedUser()
                 )
-//                .appendActionColumn(
-//                        Model.of(""),
-//                        column -> column.appendComponentFactory((id, model) -> {
-//
-//                            final DropDownButtonPanel dropDownButtonPanel;
-//
-//                            dropDownButtonPanel = new DropDownButtonPanel(id)
-//                                    .setDropdownLabel(Model.of("Formularios"))
-//                                    .setInvisibleIfEmpty(Boolean.TRUE)
-//                                    .setPullRight(Boolean.TRUE);
-//
-//                            Optional.of(model.getObject())
-//                                    .map(PetitionHistoryDTO::getPetitionContentHistory)
-//                                    .map(PetitionContentHistoryEntity::getFormVersionHistoryEntities)
-//                                    .ifPresent(list -> {
-//                                        list.forEach(fvh -> {
-//                                            dropDownButtonPanel
-//                                                    .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()));
-//                                        });
-//                                    });
-//
-//                            return dropDownButtonPanel;
-//                        })
-//                )
+                .appendActionColumn(
+                        Model.of(""),
+                        column -> column.appendComponentFactory((id, model) -> {
+
+                            final DropDownButtonPanel dropDownButtonPanel;
+
+                            dropDownButtonPanel = new DropDownButtonPanel(id)
+                                    .setDropdownLabel(Model.of("Formularios"))
+                                    .setInvisibleIfEmpty(Boolean.TRUE)
+                                    .setPullRight(Boolean.TRUE);
+
+                            Optional.of(model.getObject())
+                                    .map(PetitionHistoryDTO::getPetitionContentHistory)
+                                    .map(PetitionContentHistoryEntity::getFormVersionHistoryEntities)
+                                    .ifPresent(list -> {
+                                        list.forEach(fvh -> {
+                                            dropDownButtonPanel
+                                                    .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()));
+                                        });
+                                    });
+
+                            return dropDownButtonPanel;
+                        })
+                )
                 .build("tabela");
     }
 
-//    private IFunction<String, Button> viewFormButton(final Long versionPK) {
-//        final String url = DispatcherPageUtil
-//                .baseURL(getBaseUrl())
-//                .formAction(FormActions.FORM_ANALYSIS_VIEW.getId())
-//                .formId(null)
-//                .param(FORM_VERSION_KEY, versionPK)
-//                .build();
-//        return id -> new Button(id) {
-//            @Override
-//            protected String getOnClickScript() {
-//                return ";var newtab = window.open('" + url + "'); newtab.opener=null;";
-//            }
-//        };
-//    }
+    private IFunction<String, Button> viewFormButton(final Long versionPK) {
+        final String url = DispatcherPageUtil
+                .baseURL(getBaseUrl())
+                .formAction(FormActions.FORM_ANALYSIS_VIEW.getId())
+                .petitionId(null)
+                .param(FORM_VERSION_KEY, versionPK)
+                .build();
+        return id -> new Button(id) {
+            @Override
+            protected String getOnClickScript() {
+                return ";var newtab = window.open('" + url + "'); newtab.opener=null;";
+            }
+        };
+    }
 
     protected Map<String, String> buildViewFormParameters(IModel<PetitionHistoryDTO> model) {
         final Map<String, String> params = new HashMap<>();
         if (model.getObject().getPetitionContentHistory() != null) {
-            params.put(DispatcherPageParameters.FORM_VERSION_KEY, model
+            params.put(FORM_VERSION_KEY, model
                     .getObject()
                     .getPetitionContentHistory()
                     .getFormVersionHistoryEntities()

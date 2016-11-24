@@ -63,10 +63,12 @@ public class PetitionEntity extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CO_REQUISICAO_RAIZ")
+    @Transient
     private PetitionEntity rootPetition;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CO_REQUISICAO_PAI")
+    @Transient
     private PetitionEntity parentPetition;
 
     @Override
