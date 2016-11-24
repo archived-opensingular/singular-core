@@ -136,7 +136,7 @@ public class SingularDefaultPersistenceConfiguration {
     }
 
     protected String getUrlConnection() {
-        return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1";
+        return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1;MVCC=TRUE;LOCK_TIMEOUT=15000;";
     }
 
     @DependsOn("scriptsInitializer")
