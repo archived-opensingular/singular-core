@@ -38,7 +38,7 @@ import org.opensingular.lib.wicket.util.resource.Icone;
 public class MenuAnalise extends Menu {
 
     public MenuAnalise(String id) {
-        super(id);
+        super(id, null);
     }
 
     @SuppressWarnings("unchecked")

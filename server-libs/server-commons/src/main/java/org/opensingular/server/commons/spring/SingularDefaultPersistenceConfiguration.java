@@ -16,72 +16,71 @@
 
 package org.opensingular.server.commons.spring;
 
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import org.hibernate.SessionFactory;
 import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.support.persistence.entity.EntityInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.util.Properties;
+
+import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
+import static org.opensingular.lib.commons.base.SingularProperties.USE_INMEMORY_DATABASE;
+
 @EnableTransactionManagement(proxyTargetClass = true)
-public abstract class SingularDefaultPersistenceConfiguration {
+public class SingularDefaultPersistenceConfiguration {
 
-    @Value("classpath:db/ddl/create-function.sql")
-    private Resource sqlCreateFunction;
-
-    @Value("classpath:db/ddl/create-constraints.sql")
-    private Resource sqlCreateConstraints;
-
-    @Value("classpath:db/ddl/create-tables-flow.sql")
-    private Resource sqlCreateTablesFlow;
-
-    @Value("classpath:db/ddl/create-tables.sql")
-    private Resource sqlCreateTables;
-
-    @Value("classpath:db/ddl/create-tables-form.sql")
-    private Resource sqlCreateTablesForm;
-
-    @Value("classpath:db/ddl/create-constraints-form.sql")
-    private Resource sqlCreateConstraintsForm;
-
-    @Value("classpath:db/ddl/create-tables-actor.sql")
-    private Resource sqlCreateTablesActor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingularDefaultPersistenceConfiguration.class);
 
     @Value("classpath:db/ddl/drops.sql")
-    private Resource drops;
-
+    protected Resource drops;
+    @Value("classpath:db/ddl/create-tables-form.sql")
+    protected Resource sqlCreateTablesForm;
+    @Value("classpath:db/ddl/create-tables.sql")
+    protected Resource sqlCreateTables;
+    @Value("classpath:db/ddl/create-constraints.sql")
+    protected Resource sqlCreateConstraints;
+    @Value("classpath:db/ddl/create-constraints-form.sql")
+    protected Resource sqlCreateConstraintsForm;
+    @Value("classpath:db/ddl/create-function.sql")
+    private   Resource sqlCreateFunction;
+    @Value("classpath:db/ddl/create-tables-actor.sql")
+    private   Resource sqlCreateTablesActor;
+    @Value("classpath:db/ddl/create-sequences-server.sql")
+    private   Resource sqlCreateSequencesServer;
+    @Value("classpath:db/ddl/create-sequences-form.sql")
+    protected   Resource sqlCreateSequencesForm;
     @Value("classpath:db/dml/insert-flow-data.sql")
-    private Resource insertDadosSingular;
+    private   Resource insertDadosSingular;
 
-    @Value("classpath:db/dml/insert-test-data.sql")
-    private Resource insertTestData;
-
-    protected DatabasePopulator databasePopulator() {
+    protected ResourceDatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
         populator.addScript(drops);
         populator.addScript(sqlCreateTablesForm);
         populator.addScript(sqlCreateTables);
         populator.addScript(sqlCreateTablesActor);
-        populator.addScript(sqlCreateTablesFlow);
+        populator.addScript(sqlCreateSequencesServer);
+        populator.addScript(sqlCreateSequencesForm);
         populator.addScript(sqlCreateConstraints);
         populator.addScript(sqlCreateConstraintsForm);
         populator.addScript(insertDadosSingular);
-        populator.addScript(insertTestData);
         return populator;
     }
-    
+
     @Bean
     public DataSourceInitializer scriptsInitializer(final DataSource dataSource) {
         final DataSourceInitializer initializer = new DataSourceInitializer();
@@ -106,22 +105,38 @@ public abstract class SingularDefaultPersistenceConfiguration {
     }
 
     @Bean
-    public DriverManagerDataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(getUrlConnection());
-        dataSource.setUsername("sa");
-        dataSource.setPassword("sa");
-        final Properties connectionProperties = new Properties();
-        connectionProperties.setProperty("removeAbandoned", "true");
-        connectionProperties.setProperty("initialSize", "5");
-        connectionProperties.setProperty("maxActive", "10");
-        connectionProperties.setProperty("minIdle", "1");
-        dataSource.setDriverClassName("org.h2.Driver");
-        return dataSource;
+    public DataSource dataSource() {
+
+        if (SingularProperties.get().isTrue(USE_INMEMORY_DATABASE)) {
+            LOGGER.warn("Usando datasource banco em memória");
+            final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setUrl(getUrlConnection());
+            dataSource.setUsername("sa");
+            dataSource.setPassword("sa");
+            dataSource.setDriverClassName("org.h2.Driver");
+            final Properties connectionProperties = new Properties();
+            connectionProperties.setProperty("removeAbandoned", "true");
+            connectionProperties.setProperty("initialSize", "5");
+            connectionProperties.setProperty("maxActive", "10");
+            connectionProperties.setProperty("minIdle", "1");
+            dataSource.setConnectionProperties(connectionProperties);
+            return dataSource;
+        } else {
+            LOGGER.info("Usando datasource configurado via JNDI");
+            DataSource dataSource = null;
+            JndiTemplate jndi = new JndiTemplate();
+            String dataSourceName = "java:jboss/datasources/singular";
+            try {
+                dataSource = (DataSource) jndi.lookup(dataSourceName);
+            } catch (NamingException e) {
+                LOGGER.error(String.format("Datasource %s not found.", dataSourceName));
+            }
+            return dataSource;
+        }
     }
 
     protected String getUrlConnection() {
-        return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1";
+        return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;EARLY_FILTER=1;MVCC=TRUE;LOCK_TIMEOUT=15000;";
     }
 
     @DependsOn("scriptsInitializer")
@@ -131,6 +146,10 @@ public abstract class SingularDefaultPersistenceConfiguration {
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
+        if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
+            LOGGER.info("Utilizando schema customizado: " + SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME));
+            sessionFactoryBean.setEntityInterceptor(new EntityInterceptor());
+        }
         return sessionFactoryBean;
     }
 
@@ -142,19 +161,27 @@ public abstract class SingularDefaultPersistenceConfiguration {
     }
 
 
-    protected String[] hibernatePackagesToScan(){
-        return new String[]{"org.opensingular.singular"};
+    protected String[] hibernatePackagesToScan() {
+        return new String[]{
+                "org.opensingular.flow.persistence.entity",
+                "org.opensingular.server.commons.persistence.entity",
+                "org.opensingular.form.persistence.entity"};
     }
 
     protected Properties hibernateProperties() {
         final Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
-        hibernateProperties.put("hibernate.connection.isolation", "2");
-        hibernateProperties.put("hibernate.jdbc.batch_size", "30");
-        hibernateProperties.put("hibernate.show_sql", "false");
-        hibernateProperties.put("hibernate.format_sql", "true");
-        hibernateProperties.put("hibernate.cache.use_second_level_cache", "false");
-        hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", "true");
+        hibernateProperties.put("hibernate.connection.isolation", 2);
+        hibernateProperties.put("hibernate.jdbc.batch_size", 30);
+        hibernateProperties.put("hibernate.show_sql", false);
+        hibernateProperties.put("hibernate.format_sql", true);
+        hibernateProperties.put("hibernate.enable_lazy_load_no_trans", true);
+        hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", true);
+        hibernateProperties.put("hibernate.cache.use_second_level_cache", true);
+        hibernateProperties.put("hibernate.cache.use_query_cache", true);
+        /*não utilizar a singleton region factory para não conflitar com o cache do singular-server */
+        hibernateProperties.put("net.sf.ehcache.configurationResourceName", "/default-singular-ehcache.xml");
+        hibernateProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
         return hibernateProperties;
     }
 

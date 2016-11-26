@@ -140,7 +140,7 @@
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.connection>
         <project.scm.developerConnection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.developerConnection>
-        <sonar.exclusions>**/recursos/**</sonar.exclusions>
+        <sonar.exclusions>**/*.js, **/*.css</sonar.exclusions>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
@@ -148,6 +148,7 @@
         <singular.version>1.5.3-SNAPSHOT</singular.version>
         <singular.server.version>1.5.3-SNAPSHOT</singular.server.version>
         <cas.version>4.0.4</cas.version>
+        <cas.client.version>3.4.1</cas.client.version>
     </properties>
 
 </project>

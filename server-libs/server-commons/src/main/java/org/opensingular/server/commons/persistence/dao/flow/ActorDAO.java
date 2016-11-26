@@ -25,6 +25,7 @@ import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.support.persistence.BaseDAO;
 import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.SqlUtil;
 import org.opensingular.server.commons.exception.SingularServerException;
 
 import java.sql.PreparedStatement;
@@ -90,13 +91,15 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         if (result == null && cod == null) {
             if ("sequence".equals(SingularProperties.get().getProperty(SingularProperties.HIBERNATE_GENERATOR))) {
                 getSession().doWork(connection -> {
-                    PreparedStatement ps = connection.prepareStatement("insert into " + Constants.SCHEMA + ".TB_ATOR (CO_ATOR, CO_USUARIO) VALUES (" + Constants.SCHEMA + ".SQ_CO_ATOR.NEXTVAL, ? )");
+                    String            sql = SqlUtil.replaceSchemaName("insert into " + Constants.SCHEMA + ".TB_ATOR (CO_ATOR, CO_USUARIO) VALUES (" + Constants.SCHEMA + ".SQ_CO_ATOR.NEXTVAL, ? )");
+                    PreparedStatement ps  = connection.prepareStatement(sql);
                     ps.setString(1, codUsuario);
                     ps.execute();
                 });
             } else {
                 getSession().doWork(connection -> {
-                    PreparedStatement ps = connection.prepareStatement("insert into " + Constants.SCHEMA + ".TB_ATOR (CO_USUARIO) VALUES (?)");
+                    String            sql = SqlUtil.replaceSchemaName("insert into " + Constants.SCHEMA + ".TB_ATOR (CO_USUARIO) VALUES (?)");
+                    PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setString(1, codUsuario);
                     ps.execute();
                 });
@@ -105,7 +108,7 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
             result = (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("codUsuario", codUsuario)).uniqueResult();
 
             if (result == null) {
-                throw new SingularServerException("Usuário que deveria ter sido criado não pode ser recuperado.");
+                throw SingularServerException.rethrow("Usuário que deveria ter sido criado não pode ser recuperado.");
             }
         }
         return result;

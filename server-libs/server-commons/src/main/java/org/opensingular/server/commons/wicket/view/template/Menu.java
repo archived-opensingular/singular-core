@@ -17,11 +17,12 @@
 package org.opensingular.server.commons.wicket.view.template;
 
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static org.opensingular.server.commons.util.Parameters.*;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -38,6 +39,11 @@ import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.opensingular.server.commons.config.IServerContext;
+import org.opensingular.server.commons.config.ServerContext;
+import org.opensingular.server.commons.config.SingularServerConfiguration;
+import org.opensingular.server.commons.service.dto.FormDTO;
+import org.opensingular.server.commons.spring.security.SingularUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -69,21 +75,37 @@ public class Menu extends Panel {
 
     protected List<ProcessGroupEntity> categorias;
 
+    private Class<? extends WebPage> boxPageClass;
+
+    private MetronicMenu menu;
+
     @SuppressWarnings("rawtypes")
     @Inject
     protected PetitionService petitionService;
 
-    public Menu(String id) {
+    @Inject
+    private SingularServerConfiguration singularServerConfiguration;
+
+    public Menu(String id, Class<? extends WebPage>  boxPageClass) {
         super(id);
+        this.boxPageClass = boxPageClass;
         add(buildMenu());
     }
 
     protected MetronicMenu buildMenu() {
-        MetronicMenu menu = new MetronicMenu("menu");
+        this.loadMenuGroups();
+        this.menu = new MetronicMenu("menu");
+        this.buildMenuSelecao();
+        this.getCategorias().forEach((processGroup) -> {
+            this.buildMenuGroup(this.menu, processGroup);
+        });
+        return this.menu;
+    }
 
-        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", SingularApplication.get().getHomePage()));
 
-        return menu;
+    private void buildMenuSelecao() {
+        SelecaoMenuItem selecaoMenuItem = new SelecaoMenuItem(categorias);
+        menu.addItem(selecaoMenuItem);
     }
 
     protected static class AddContadoresBehaviour extends AbstractDefaultAjaxBehavior {
@@ -143,8 +165,8 @@ public class Menu extends Panel {
     }
 
     protected MenuSessionConfig getMenuSessionConfig() {
-        final SingularSession session = SingularSession.get();
-        MenuSessionConfig menuSessionConfig = (MenuSessionConfig) session.getAttribute(MENU_CACHE);
+        final SingularSession session           = SingularSession.get();
+        MenuSessionConfig     menuSessionConfig = (MenuSessionConfig) session.getAttribute(MENU_CACHE);
         if (menuSessionConfig == null) {
             menuSessionConfig = new MenuSessionConfig();
             session.setAttribute(MENU_CACHE, menuSessionConfig);
@@ -161,8 +183,8 @@ public class Menu extends Panel {
         }
     }
 
-    public String getMenuContext() {
-        return "";
+    public IServerContext getMenuContext() {
+        return IServerContext.getContextFromRequest(this.getRequest(), singularServerConfiguration.getContexts());
     }
 
     protected List<ProcessGroupEntity> getCategorias() {
@@ -224,12 +246,13 @@ public class Menu extends Panel {
 
         List<String> tipos = menuGroup.getProcesses().stream()
                 .map(ProcessDTO::getFormName)
+                .filter(s -> s!=null)
                 .collect(Collectors.toList());
 
         List<MenuItemConfig> configs = new ArrayList<>();
 
         for (ItemBox itemBoxDTO : menuGroup.getItemBoxes()) {
-            final ISupplier<String> countSupplier = createCountSupplier(itemBoxDTO, siglas, processGroup, tipos);
+            final ISupplier<String> countSupplier = createCountSupplier(itemBoxDTO, siglas, processGroup, tipos, menuGroup.getForms());
             configs.add(MenuItemConfig.of(getBoxPageClass(), itemBoxDTO.getName(), itemBoxDTO.getIcone(), countSupplier));
 
         }
@@ -237,7 +260,7 @@ public class Menu extends Panel {
         return configs;
     }
 
-    private ISupplier<String> createCountSupplier(ItemBox itemBoxDTO, List<String> siglas, ProcessGroupEntity processGroup, List<String> tipos) {
+    protected ISupplier<String> createCountSupplier(ItemBox itemBoxDTO, List<String> siglas, ProcessGroupEntity processGroup, List<String> tipos, List<FormDTO> menuFormTypes) {
         return () -> {
             final String connectionURL = processGroup.getConnectionURL();
             final String url           = connectionURL + PATH_BOX_SEARCH + itemBoxDTO.getCountEndpoint();
@@ -245,10 +268,9 @@ public class Menu extends Panel {
             try {
                 QuickFilter filter = new QuickFilter()
                         .withProcessesAbbreviation(siglas)
-                        .withTypesNames(tipos)
+                        .withTypesNames(tipos.isEmpty()? menuFormTypes.stream().map(FormDTO::getName).collect(Collectors.toList()) : tipos)
                         .withRascunho(itemBoxDTO.isShowDraft())
                         .withEndedTasks(itemBoxDTO.getEndedTasks())
-                        .withIdPessoa(getIdPessoa())
                         .withIdUsuarioLogado(getIdUsuarioLogado());
                 qtd = new RestTemplate().postForObject(url, filter, Long.class);
             } catch (Exception e) {
@@ -261,15 +283,18 @@ public class Menu extends Panel {
     }
 
     protected String getIdPessoa() {
-        return null;
+        return getIdUsuarioLogado();
     }
 
     protected String getIdUsuarioLogado() {
-        return null;
+        SingularUserDetails singularUserDetails = SingularSession.get().getUserDetails();
+        return Optional.ofNullable(singularUserDetails)
+                .map(SingularUserDetails::getUsername)
+                .orElse(null);
     }
 
-    public Class<? extends WebPage> getBoxPageClass() {
-        return null;
+    public Class<? extends WebPage> getBoxPageClass(){
+        return boxPageClass;
     }
 
     protected static class MenuItemConfig {

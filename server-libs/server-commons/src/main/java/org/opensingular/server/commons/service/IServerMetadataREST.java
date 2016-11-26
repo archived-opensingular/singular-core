@@ -18,6 +18,7 @@ package org.opensingular.server.commons.service;
 
 import java.util.List;
 
+import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.service.dto.MenuGroup;
 import org.opensingular.server.commons.spring.security.SingularPermission;
 
@@ -29,7 +30,7 @@ public interface IServerMetadataREST {
     String USER = "user";
     String PATH_BOX_SEARCH = "/box/search";
 
-    List<MenuGroup> listMenu(String context, String user);
+    List<MenuGroup> listMenu(IServerContext context, String user);
 
     List<SingularPermission> listAllPermissions();
 

@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.box;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+package org.opensingular.server.core.wicket.box;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,18 +32,14 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestTemplate;
-
-import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
+import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.IBSAction;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.server.commons.flow.rest.ActionAtribuirRequest;
 import org.opensingular.server.commons.flow.rest.ActionRequest;
 import org.opensingular.server.commons.flow.rest.ActionResponse;
@@ -63,21 +52,30 @@ import org.opensingular.server.commons.service.dto.ItemActionConfirmation;
 import org.opensingular.server.commons.service.dto.ItemActionType;
 import org.opensingular.server.commons.service.dto.ItemBox;
 import org.opensingular.server.commons.service.dto.ProcessDTO;
-import org.opensingular.server.commons.util.Parameters;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.core.wicket.ModuleLink;
 import org.opensingular.server.core.wicket.historico.HistoricoPage;
-import org.opensingular.server.p.core.wicket.model.BoxItemModel;
-import org.opensingular.server.p.core.wicket.view.AbstractCaixaContent;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.datatable.IBSAction;
-import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.server.core.wicket.model.BoxItemModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
 
 public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
     private Pair<String, SortOrder> sortProperty;
     private ItemBox                 itemBoxDTO;
@@ -102,16 +100,17 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
 
     private void showNew() {
         if (isShowNew() && getMenu() != null) {
-            for (FormDTO form : getForms()) {
+            List<FormDTO> forms = getForms().stream().filter(FormDTO::isNewable).collect(Collectors.toList());
+            for (FormDTO form : forms) {
                 String url = DispatcherPageUtil
                         .baseURL(getBaseUrl())
                         .formAction(FormActions.FORM_FILL.getId())
-                        .formId(null)
-                        .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                        .petitionId(null)
+                        .param(DispatcherPageParameters.FORM_NAME, form.getName())
                         .params(getLinkParams())
                         .build();
 
-                if (getForms().size() > 1) {
+                if (forms.size() > 1) {
                     dropdownMenu.adicionarMenu(id -> new ModuleLink(id, $m.ofValue(form.getDescription()), url));
                 } else {
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
@@ -124,7 +123,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     @Override
     protected void appendPropertyColumns(BSDataTableBuilder<BoxItemModel, String, IColumn<BoxItemModel, String>> builder) {
         for (Map.Entry<String, String> entry : getFieldsDatatable().entrySet()) {
-            builder.appendPropertyColumn($m.ofValue(entry.getKey()), entry.getValue());
+            builder.appendPropertyColumn($m.ofValue(entry.getKey()), entry.getValue(), entry.getValue());
         }
     }
 
@@ -169,16 +168,16 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BoxItemModel   boxItem        = boxItemModel.getObject();
         PageParameters pageParameters = new PageParameters();
         if (boxItem.getProcessInstanceId() != null) {
-            pageParameters.add(Parameters.PETITION_ID, boxItem.getCod());
-            pageParameters.add(Parameters.INSTANCE_ID, boxItem.getProcessInstanceId());
-            pageParameters.add(Parameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
+            pageParameters.add(DispatcherPageParameters.PETITION_ID, boxItem.getCod());
+            pageParameters.add(DispatcherPageParameters.INSTANCE_ID, boxItem.getProcessInstanceId());
+            pageParameters.add(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
         }
         BookmarkablePageLink<?> historiLink = new BookmarkablePageLink<>(id, getHistoricoPage(), pageParameters);
         historiLink.setVisible(boxItem.getProcessBeginDate() != null);
         return historiLink;
     }
 
-    protected Class<? extends HistoricoPage> getHistoricoPage(){
+    protected Class<? extends HistoricoPage> getHistoricoPage() {
         return HistoricoPage.class;
     }
 
@@ -196,7 +195,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             String url = mountStaticUrl(itemAction, baseUrl, additionalParams, boxItemModel);
 
             WebMarkupContainer link = new WebMarkupContainer(id);
-            link.add($b.attr("target", String.format("_%s", boxItemModel.getObject().getCod())));
+            link.add($b.attr("target", String.format("_%s_%s", itemAction.getName(),  boxItemModel.getObject().getCod())));
             link.add($b.attr("href", url));
             return link;
         };
@@ -297,9 +296,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
 
-        Model<Actor> model  = new Model<>();
-        IModel<List<Actor>>  actorsModel = $m.get(() -> buscarUsuarios(currentModel, confirmation));
-        DropDownChoice dropDownChoice = criarDropDown(actorsModel, model);
+        Model<Actor>        model          = new Model<>();
+        IModel<List<Actor>> actorsModel    = $m.get(() -> buscarUsuarios(currentModel, confirmation));
+        DropDownChoice      dropDownChoice = criarDropDown(actorsModel, model);
         dropDownChoice.setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
         confirmationModal.addOrReplace(dropDownChoice);
 
@@ -317,6 +316,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     relocate(itemAction, baseUrl, additionalParams, currentModel.getObject(), target, model.getObject());
                     target.add(tabela);
+                    atualizarContadores(target);
                     confirmationModal.hide(target);
                 }
             });
@@ -326,12 +326,17 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     executeDynamicAction(itemAction, baseUrl, additionalParams, currentModel.getObject(), target);
                     target.add(tabela);
+                    atualizarContadores(target);
                     confirmationModal.hide(target);
                 }
             });
         }
 
         return confirmationModal;
+    }
+
+    private void atualizarContadores(AjaxRequestTarget target) {
+        target.appendJavaScript("(function(){window.Singular.atualizarContadores();}())");
     }
 
     private DropDownChoice criarDropDown(IModel<List<Actor>> actorsModel, Model<Actor> model) {
@@ -367,7 +372,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
     private IFunction<IModel<BoxItemModel>, Boolean> visibleFunction(ItemAction itemAction) {
         return (model) -> {
             BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
-            boolean visible = boxItemModel.hasAction(itemAction);
+            boolean      visible      = boxItemModel.hasAction(itemAction);
             if (!visible) {
                 getLogger().debug(String.format("Action %s não está disponível para o item (%s: código da petição) da listagem ", itemAction.getName(), boxItemModel.getCod()));
             }
@@ -449,13 +454,13 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
-                .formId(item.getCod())
-                .param(SIGLA_FORM_NAME, item.get("type"))
+                .petitionId(item.getCod())
+                .param(FORM_NAME, item.get("type"))
                 .params(getCriarLinkParameters(item))
                 .build();
 
         WebMarkupContainer link = new WebMarkupContainer(id);
-        link.add($b.attr("target", String.format("_%s", item.getCod())));
+        link.add($b.attr("target", String.format("_%s_%s", formActions.getId(), item.getCod())));
         link.add($b.attr("href", href));
         return link;
     }

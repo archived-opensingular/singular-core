@@ -34,6 +34,7 @@ public class FormPageConfig implements Serializable {
     private LazyFlowDefinitionResolver         lazyFlowDefinitionResolver;
     private Class<? extends ProcessDefinition> processDefinition;
     private Long                               formVersionPK;
+    private String                             parentPetitionId;
 
     private FormPageConfig() {
         formAction = FormActions.FORM_VIEW;
@@ -43,12 +44,14 @@ public class FormPageConfig implements Serializable {
     private static FormPageConfig newConfig(String formType,
                                             String petitionId,
                                             FormActions formAction,
-                                            Long formVersionPK) {
+                                            Long formVersionPK,
+                                            String parentPetitionId) {
         final FormPageConfig cfg = new FormPageConfig();
         cfg.formType = formType;
         cfg.petitionId = petitionId;
         cfg.formAction = formAction;
         cfg.formVersionPK = formVersionPK;
+        cfg.parentPetitionId = parentPetitionId;
         return cfg;
     }
 
@@ -56,8 +59,9 @@ public class FormPageConfig implements Serializable {
                                            String formType,
                                            FormActions formAction,
                                            Long formVersionPK,
+                                           String parentPetitionId,
                                            Class<? extends ProcessDefinition> processDefinition) {
-        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK);
+        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK, parentPetitionId);
         cfg.processDefinition = processDefinition;
         return cfg;
     }
@@ -67,8 +71,9 @@ public class FormPageConfig implements Serializable {
                                            String petitionId,
                                            FormActions formAction,
                                            Long formVersionPK,
+                                           String parentPetitionId,
                                            LazyFlowDefinitionResolver lazyFlowDefinitionResolver) {
-        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK);
+        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK, parentPetitionId);
         cfg.lazyFlowDefinitionResolver = lazyFlowDefinitionResolver;
         return cfg;
     }
@@ -129,11 +134,11 @@ public class FormPageConfig implements Serializable {
         return formAction;
     }
 
-    public void setFormAction(FormActions formAction) {
-        this.formAction = formAction;
-    }
-
     public Long getFormVersionPK() {
         return formVersionPK;
+    }
+
+    public String getParentPetitionId() {
+        return parentPetitionId;
     }
 }

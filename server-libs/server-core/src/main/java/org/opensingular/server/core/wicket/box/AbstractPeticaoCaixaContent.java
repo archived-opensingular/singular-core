@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.view;
+package org.opensingular.server.core.wicket.box;
 
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
         String href = DispatcherPageUtil
                 .baseURL(getBaseUrl())
                 .formAction(formActions.getId())
-                .formId(peticao.getCodPeticao())
+                .petitionId(peticao.getCodPeticao())
                 .params(getCriarLinkParameters(peticao))
                 .build();
 
@@ -65,7 +65,7 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
     @Override
     protected Map<String, String> getCriarLinkParameters(T peticao){
         Map<String, String> params = new HashMap<>();
-        params.put(SIGLA_FORM_NAME, peticao.getType());
+        params.put(FORM_NAME, peticao.getType());
         return params;
     }
 

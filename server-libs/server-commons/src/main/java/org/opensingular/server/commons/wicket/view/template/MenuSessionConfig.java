@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opensingular.server.commons.config.IServerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -48,7 +49,7 @@ public class MenuSessionConfig implements Serializable {
         return Collections.unmodifiableMap(map);
     }
 
-    public void initialize(List<ProcessGroupEntity> categorias, String menuContext, String idUsername) {
+    public void initialize(List<ProcessGroupEntity> categorias, IServerContext menuContext, String idUsername) {
         for (ProcessGroupEntity categoria : categorias) {
             final List<MenuGroup> menuGroupDTOs = listMenus(categoria, menuContext, idUsername);
             addMenu(categoria, menuGroupDTOs);
@@ -57,10 +58,10 @@ public class MenuSessionConfig implements Serializable {
         initialized = true;
     }
 
-    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup, String menuContext, String idUsername) {
+    private List<MenuGroup> listMenus(ProcessGroupEntity processGroup, IServerContext menuContext, String idUsername) {
 
         final String url = processGroup.getConnectionURL() + PATH_LIST_MENU
-                + "?" + MENU_CONTEXT + "=" + menuContext
+                + "?" + MENU_CONTEXT + "=" + menuContext.getName()
                 + "&" + USER + "=" + idUsername;
         try {
             return Arrays.asList(new RestTemplate().getForObject(url, MenuGroup[].class));

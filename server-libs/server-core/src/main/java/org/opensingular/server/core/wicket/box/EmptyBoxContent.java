@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.core.wicket;
+package org.opensingular.server.core.wicket.box;
 
-import org.opensingular.server.commons.wicket.SingularApplication;
-import org.opensingular.server.core.wicket.entrada.CaixaEntradaAnalisePage;
-import org.apache.wicket.Page;
+import org.opensingular.server.commons.wicket.view.template.Content;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
-public class WorklistApplication extends SingularApplication {
-    @Override
-    protected String[] getPackagesToScan() {
-        return new String[]{"org.opensingular.singular"};
+/**
+ * Content utilizado para quando não for possivel encontrar um ItemBoxDTO para ser renderizado na BoxPage
+ */
+public class EmptyBoxContent extends Content {
+
+    public EmptyBoxContent(String id) {
+        super(id);
     }
 
     @Override
-    public Class<? extends Page> getHomePage() {
-        return CaixaEntradaAnalisePage.class;
+    protected IModel<?> getContentTitleModel() {
+        return Model.of("");
     }
+
+    @Override
+    protected IModel<?> getContentSubtitleModel() {
+        return Model.of("");
+    }
+
 }

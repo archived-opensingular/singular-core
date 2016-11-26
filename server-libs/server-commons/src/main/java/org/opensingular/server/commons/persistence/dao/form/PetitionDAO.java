@@ -18,7 +18,9 @@ package org.opensingular.server.commons.persistence.dao.form;
 
 
 import org.opensingular.flow.core.TaskType;
+import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
@@ -133,7 +135,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                                   Map<String, Object> params,
                                   QuickFilter filtro,
                                   List<String> siglasProcesso,
-                                  List<String> formNames) {
+                                  List<String> formNames, boolean count) {
 
         params.put("sim", SimNao.SIM);
 
@@ -146,7 +148,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         if (!filtro.isRascunho() && siglasProcesso != null && !siglasProcesso.isEmpty()) {
             hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
-            params.put("siglasProcesso", siglasProcesso);
+                params.put("siglasProcesso", siglasProcesso);
             if (formNames != null && !formNames.isEmpty()) {
                 hql.append(" OR formType.abbreviation in (:formNames)) ");
                 params.put("formNames", formNames);
@@ -170,15 +172,16 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
             params.put("tipoEnd", TaskType.End);
         }
 
-//        if (filtro.getIdPessoaRepresentada() != null) {
-//            hql.append(" AND p.peticionante = :peticionante ");
-//            params.put("peticionante", filtro.getIdPessoaRepresentada());
-//        }
-
         appendCustomWhereClauses(hql, params, filtro);
 
         if (filtro.getSortProperty() != null) {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
+        } else if (!count){
+            if (filtro.isRascunho()){
+                hql.append(mountSort("creationDate", false));
+            } else {
+                hql.append(mountSort("processBeginDate", false));
+            }
         }
     }
 
@@ -214,7 +217,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         buildSelectClause(hql, count, filtro);
         buildFromClause(hql, filtro);
-        buildWhereClause(hql, params, filtro, siglasProcesso, formNames);
+        buildWhereClause(hql, params, filtro, siglasProcesso, formNames, count);
 
         final Query query = getSession().createQuery(hql.toString());
         setParametersQuery(query, params);
@@ -242,4 +245,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                 .uniqueResult();
     }
 
+    @Override
+    public void delete(T obj) {
+        FormVersionEntity formVersionEntity = obj.getMainForm().getCurrentFormVersionEntity();
+        getSession().delete(formVersionEntity);
+        obj.getMainForm().setCurrentFormVersionEntity(null);
+        getSession().flush();
+        super.delete(obj);
+    }
 }

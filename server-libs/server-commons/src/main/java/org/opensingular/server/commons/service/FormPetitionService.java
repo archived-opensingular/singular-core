@@ -1,15 +1,26 @@
 package org.opensingular.server.commons.service;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
-import org.opensingular.form.*;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.SPackageFormPersistence;
+import org.opensingular.form.persistence.dao.FormAnnotationDAO;
+import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
+import org.opensingular.form.persistence.dao.FormDAO;
+import org.opensingular.form.persistence.dao.FormVersionDAO;
+import org.opensingular.form.persistence.entity.FormAnnotationEntity;
+import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
@@ -20,11 +31,17 @@ import org.opensingular.form.util.transformer.Value;
 import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.server.commons.persistence.dao.form.DraftDAO;
 import org.opensingular.server.commons.persistence.dao.form.FormPetitionDAO;
-import org.opensingular.server.commons.persistence.entity.form.*;
+import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
+import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
+import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
+import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -42,6 +59,18 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     @Inject
     protected DraftDAO draftDAO;
+
+    @Inject
+    protected FormDAO formDAO;
+
+    @Inject
+    protected FormVersionDAO formVersionDAO;
+
+    @Inject
+    protected FormAnnotationDAO formAnnotationDAO;
+
+    @Inject
+    protected FormAnnotationVersionDAO formAnnotationVersionDAO;
 
     public FormPetitionEntity findFormPetitionEntityByCod(Long cod) {
         return formPetitionDAO.find(cod);
@@ -61,7 +90,6 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     public FormKey saveFormPetition(P petition,
                                     SInstance instance,
-                                    boolean createNewDraftIfDoesntExists,
                                     boolean mainForm,
                                     SFormConfig config) {
 
@@ -70,26 +98,22 @@ public class FormPetitionService<P extends PetitionEntity> {
         FormPetitionEntity formPetitionEntity;
 
         codActor = userService.getUserCodIfAvailable();
-        key = instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
         formPetitionEntity = findFormPetitionEntity(petition, instance.getType().getName(), mainForm);
-
-        if (key == null) {
-            key = formPersistenceService.insert(instance, codActor);
-        }
 
         if (formPetitionEntity == null) {
             formPetitionEntity = newFormPetitionEntity(petition, mainForm);
             petition.getFormPetitionEntities().add(formPetitionEntity);
         }
 
-        if (formPetitionEntity.getCurrentDraftEntity() != null) {
-            formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, formPetitionEntity.getCurrentDraftEntity(), config, codActor));
-        } else if (createNewDraftIfDoesntExists) {
-            formPetitionEntity.setCurrentDraftEntity(saveOrUpdateDraft(instance, createNewDraftWithoutSave(), config, codActor));
-            formPetitionDAO.saveOrUpdate(formPetitionEntity);
-        } else {
-            formPersistenceService.update(instance, codActor);
+        DraftEntity currentDraftEntity = formPetitionEntity.getCurrentDraftEntity();
+        if (currentDraftEntity == null) {
+            currentDraftEntity = createNewDraftWithoutSave();
         }
+
+        saveOrUpdateDraft(instance, currentDraftEntity, config, codActor);
+        formPetitionEntity.setCurrentDraftEntity(currentDraftEntity);
+        formPetitionDAO.saveOrUpdate(formPetitionEntity);
+        key = formPersistenceService.keyFromObject(currentDraftEntity.getForm().getCod());
 
         return key;
     }
@@ -150,12 +174,10 @@ public class FormPetitionService<P extends PetitionEntity> {
             draft = newInstance(config, instance.getType().getName());
         }
 
+        instance.getDocument().persistFiles();
         copyValuesAndAnnotations(instance.getDocument(), draft.getDocument());
 
-        //TODO (by Daniel) A linha abaixo parece que vai deixar formulário orfãos. Na medida que apontar o rascunho
-        // para o novo formulário, não vai deixar o anterior abandonado no banco? Verificar.
-        FormKey newFormKey = formPersistenceService.insert(draft, actor);
-        draftEntity.setForm(formPersistenceService.loadFormEntity(newFormKey));
+        draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insertOrUpdate(draft, actor)));
         draftEntity.setEditionDate(new Date());
 
         draftDAO.saveOrUpdate(draftEntity);
@@ -183,35 +205,102 @@ public class FormPetitionService<P extends PetitionEntity> {
      */
     private void consolidadeDraft(SFormConfig formConfig, FormPetitionEntity formPetitionEntity) {
 
-        final DraftEntity draft = formPetitionEntity.getCurrentDraftEntity();
-
-        // salva para colocar a entidade com seu form entity na session
-        draftDAO.saveOrUpdate(draft);
-
-        final String type = draft.getForm().getFormType().getAbbreviation();
-        final SIComposite draftInstance = loadByCodAndType(formConfig, draft.getForm().getCod(), type);
-
+        final DraftEntity draft;
+        final String      type;
+        final SIComposite draftInstance;
         final SIComposite formInstance;
+        final boolean     isFirstVersion;
         final FormKey     key;
-        if (formPetitionEntity.getForm() == null) { //If first version
+
+        draft = draftDAO.get(formPetitionEntity.getCurrentDraftEntity().getCod());
+
+        type = draft.getForm().getFormType().getAbbreviation();
+        draftInstance = loadByCodAndType(formConfig, draft.getForm().getCod(), type);
+
+        isFirstVersion = formPetitionEntity.getForm() == null;
+
+        if (isFirstVersion) {
             formInstance = newInstance(formConfig, type);
-            copyValuesAndAnnotations(draftInstance.getDocument(), formInstance.getDocument());
-            Integer codActor = userService.getUserCodIfAvailable();
-            key = formPersistenceService.insert(formInstance, codActor);
         } else {
             formInstance = loadByCodAndType(formConfig, formPetitionEntity.getForm().getCod(), type);
-            copyValuesAndAnnotations(draftInstance.getDocument(), formInstance.getDocument());
+        }
+
+        copyValuesAndAnnotations(draftInstance.getDocument(), formInstance.getDocument());
+
+        if (isFirstVersion) {
+            final Integer codActor = userService.getUserCodIfAvailable();
+            key = formPersistenceService.insert(formInstance, codActor);
+        } else {
             key = formPersistenceService.newVersion(formInstance, userService.getUserCodIfAvailable());
         }
 
         formPetitionEntity.setForm(formPersistenceService.loadFormEntity(key));
         formPetitionEntity.setCurrentDraftEntity(null);
 
+        deassociateFormVersions(draft.getForm());
         draftDAO.delete(draft);
         formPetitionDAO.save(formPetitionEntity);
     }
 
-    private void copyValuesAndAnnotations(SDocument source, SDocument target) {
+
+    /**
+     * Deletes all form versions associated with the given @param form.
+     * It also delete all annotations and annotations versions associated with each version.
+     *
+     * @param form
+     */
+    public void deassociateFormVersions(FormEntity form) {
+        if (form != null) {
+            form.setCurrentFormVersionEntity(null);
+            formDAO.saveOrUpdate(form);
+            List<FormVersionEntity> fves = formVersionDAO.findVersions(form);
+            if (!CollectionUtils.isEmpty(fves)) {
+                Iterator<FormVersionEntity> it = fves.iterator();
+                for (; it.hasNext(); ) {
+                    FormVersionEntity fve = it.next();
+                    deleteFormVersion(fve);
+                }
+            }
+        }
+    }
+
+    private void deleteFormVersion(FormVersionEntity fve) {
+        if (fve != null) {
+            if (!CollectionUtils.isEmpty(fve.getFormAnnotations())) {
+                Iterator<FormAnnotationEntity> it = fve.getFormAnnotations().iterator();
+                for (; it.hasNext(); ) {
+                    FormAnnotationEntity fae = it.next();
+                    deleteAnnotation(fae);
+                    it.remove();
+                }
+            }
+            formVersionDAO.delete(fve);
+        }
+    }
+
+    private void deleteAnnotation(FormAnnotationEntity fae) {
+        if (fae != null) {
+            FormAnnotationVersionEntity formAnnotationVersionEntity = fae.getAnnotationCurrentVersion();
+            fae.setAnnotationCurrentVersion(null);
+            formAnnotationDAO.saveOrUpdate(fae);
+            deleteAnnotationVersion(formAnnotationVersionEntity);
+            if (!CollectionUtils.isEmpty(fae.getAnnotationVersions())) {
+                Iterator<FormAnnotationVersionEntity> it = fae.getAnnotationVersions().iterator();
+                for (; it.hasNext(); ) {
+                    FormAnnotationVersionEntity fave = it.next();
+                    deleteAnnotationVersion(fave);
+                    it.remove();
+                }
+            }
+            formAnnotationDAO.delete(fae);
+        }
+    }
+
+    private void deleteAnnotationVersion(FormAnnotationVersionEntity fave) {
+        formAnnotationVersionDAO.delete(fave);
+    }
+
+    private void copyValuesAndAnnotations(SInstance source, SInstance target) {
         Value.copyValues(source, target);
         target.getDocumentAnnotations().copyAnnotationsFrom(source);
     }

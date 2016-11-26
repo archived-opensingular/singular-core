@@ -17,30 +17,30 @@
 package org.opensingular.server.p.core.wicket.entrada;
 
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
-import org.opensingular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
-import org.opensingular.lib.wicket.util.resource.Icone;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.model.IModel;
+import org.opensingular.server.core.wicket.box.AbstractPeticaoCaixaContent;
 
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.opensingular.server.commons.util.Parameters.SIGLA_FORM_NAME;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
 
 public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
@@ -110,8 +110,8 @@ public class EntradaContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         String href = DispatcherPageUtil.
                 baseURL(getBaseUrl())
                 .formAction(FormActions.FORM_FILL_WITH_ANALYSIS.getId())
-                .formId(peticaoModel.getObject().getCodPeticao())
-                .param(SIGLA_FORM_NAME, peticaoModel.getObject().getType())
+                .petitionId(peticaoModel.getObject().getCodPeticao())
+                .param(FORM_NAME, peticaoModel.getObject().getType())
                 .build();
         WebMarkupContainer link = new WebMarkupContainer(id);
         link.add($b.attr("target", "_blank"));

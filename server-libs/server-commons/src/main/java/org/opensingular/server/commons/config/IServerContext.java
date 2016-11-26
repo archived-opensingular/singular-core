@@ -20,15 +20,25 @@ import org.opensingular.server.commons.exception.SingularServerException;
 import org.apache.wicket.request.Request;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * Utilitário para prover a configuração de contexto atual e os métodos utilitários
  * relacionados.
  */
-public interface IServerContext {
+public interface IServerContext extends Serializable {
 
     public static IServerContext getContextFromRequest(Request request, IServerContext[] contexts) {
         return getContextFromRequest((HttpServletRequest) request.getContainerRequest(), contexts);
+    }
+
+    public static IServerContext getContextFromName(String name, IServerContext[] contexts) {
+        for (IServerContext ctx : contexts) {
+            if (name.equals(ctx.getName())) {
+                return ctx;
+            }
+        }
+        throw SingularServerException.rethrow("Não foi possível determinar o contexto do servidor do singular");
     }
 
     public static IServerContext getContextFromRequest(HttpServletRequest request, IServerContext[] contexts) {
@@ -39,7 +49,11 @@ public interface IServerContext {
                 return ctx;
             }
         }
-        throw new SingularServerException("Não foi possível determinar o contexto do servidor do singular");
+        throw SingularServerException.rethrow("Não foi possível determinar o contexto do servidor do singular");
+    }
+
+    default String getServerPropertyKey(String basePropertyKey) {
+        return getPropertiesBaseKey() + "." + basePropertyKey;
     }
 
     /**

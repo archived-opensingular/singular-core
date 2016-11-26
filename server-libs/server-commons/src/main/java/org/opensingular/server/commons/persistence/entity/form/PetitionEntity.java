@@ -61,6 +61,14 @@ public class PetitionEntity extends BaseEntity<Long> {
     @OrderBy(" CO_FORMULARIO_REQUISICAO ASC ")
     private SortedSet<FormPetitionEntity> formPetitionEntities;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "CO_REQUISICAO_RAIZ")
+    private PetitionEntity rootPetition;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "CO_REQUISICAO_PAI")
+    private PetitionEntity parentPetition;
+
     @Override
     public Long getCod() {
         return cod;
@@ -100,6 +108,22 @@ public class PetitionEntity extends BaseEntity<Long> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public PetitionEntity getRootPetition() {
+        return rootPetition;
+    }
+
+    public void setRootPetition(PetitionEntity rootPetition) {
+        this.rootPetition = rootPetition;
+    }
+
+    public PetitionEntity getParentPetition() {
+        return parentPetition;
+    }
+
+    public void setParentPetition(PetitionEntity parentPetition) {
+        this.parentPetition = parentPetition;
     }
 
     public SortedSet<FormPetitionEntity> getFormPetitionEntities() {

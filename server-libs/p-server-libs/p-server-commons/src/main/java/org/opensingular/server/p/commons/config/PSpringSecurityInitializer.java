@@ -16,9 +16,21 @@
 
 package org.opensingular.server.p.commons.config;
 
+import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.config.SpringSecurityInitializer;
+import org.opensingular.server.p.commons.spring.security.SecurityConfigs;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-public abstract class PSpringSecurityInitializer extends SpringSecurityInitializer {
+public class PSpringSecurityInitializer extends SpringSecurityInitializer {
 
-
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <T extends WebSecurityConfigurerAdapter> Class<T> getSpringSecurityConfigClass(IServerContext context) {
+        if (context.equals(PServerContext.WORKLIST)) {
+            return (Class<T>) SecurityConfigs.CASAnalise.class;
+        } else if (context.equals(PServerContext.PETITION)) {
+            return (Class<T>) SecurityConfigs.CASPeticionamento.class;
+        }
+        return null;
+    }
 }

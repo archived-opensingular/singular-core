@@ -22,6 +22,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 public abstract class SchedulerInitializer {
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
-        applicationContext.register(getClass());
+        applicationContext.register(mailConfiguration());
     }
+
+    public abstract Class<?> mailConfiguration();
 }

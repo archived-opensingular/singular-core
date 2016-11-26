@@ -16,28 +16,27 @@
 
 package org.opensingular.server.p.core.wicket.rascunho;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.model.IModel;
-
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.service.dto.FormDTO;
-import org.opensingular.server.commons.util.Parameters;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.core.wicket.ModuleLink;
-import org.opensingular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.util.WicketUtils;
+import org.opensingular.server.core.wicket.box.AbstractPeticaoCaixaContent;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
@@ -95,21 +94,22 @@ public class RascunhoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
         super.onInitialize();
 
         if (getMenu() != null) {
-            for (FormDTO form : getForms()) {
-                if (getForms().size() > 1) {
+            List<FormDTO> forms = getForms().stream().filter(FormDTO::isNewable).collect(Collectors.toList());
+            for (FormDTO form : forms) {
+                if (forms.size() > 1) {
                     String processUrl = DispatcherPageUtil
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
-                            .formId(null)
-                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                            .petitionId(null)
+                            .param(DispatcherPageParameters.FORM_NAME, form.getName())
                             .build();
                     dropdownMenu.adicionarMenu(id -> new ModuleLink(id, WicketUtils.$m.ofValue(form.getDescription()), processUrl));
                 } else {
                     String url = DispatcherPageUtil
                             .baseURL(getBaseUrl())
                             .formAction(FormActions.FORM_FILL.getId())
-                            .formId(null)
-                            .param(Parameters.SIGLA_FORM_NAME, form.getName())
+                            .petitionId(null)
+                            .param(DispatcherPageParameters.FORM_NAME, form.getName())
                             .build();
                     adicionarBotaoGlobal(id -> new ModuleLink(id, getMessage("label.button.insert"), url));
                 }

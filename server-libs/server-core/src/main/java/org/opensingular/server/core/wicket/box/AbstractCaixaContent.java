@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.view;
+package org.opensingular.server.core.wicket.box;
 
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -257,7 +257,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
         builder.setStripedRows(false).setBorderedTable(false);
         tabela = construirTabela(builder);
         tabela.add($b.classAppender("worklist"));
-        
+
         add(form.add(filtroRapido, pesquisarButton, botoes, dropdownMenu));
         add(tabela);
         add(confirmationForm.add(confirmationModal));
@@ -328,7 +328,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
             final String path = new URL(groupConnectionURL).getPath();
             return path.substring(0, path.indexOf("/", 1));
         } catch (Exception e) {
-            throw new SingularServerException(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
+            throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
         }
     }
 

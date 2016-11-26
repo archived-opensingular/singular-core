@@ -68,4 +68,12 @@ public class SingularPermission implements Serializable {
     public int hashCode() {
         return Objects.hash(singularId, internalId);
     }
+
+    @Override
+    public String toString() {
+        return "SingularPermission{" +
+                "singularId='" + singularId + '\'' +
+                ", internalId=" + internalId +
+                '}';
+    }
 }

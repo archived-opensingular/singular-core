@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.box;
+package org.opensingular.server.core.wicket.box;
 
-import static org.opensingular.server.commons.util.Parameters.*;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,9 +46,9 @@ public class BoxPage extends ServerTemplate {
     @Override
     protected Content getContent(String id) {
 
-        String                  processGroupCod   = getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString();
-        String                  menu              = getPageParameters().get(MENU_PARAM_NAME).toString();
-        String                  item              = getPageParameters().get(ITEM_PARAM_NAME).toString();
+        String                  processGroupCod   = getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toOptionalString();
+        String                  menu              = getPageParameters().get(MENU_PARAM_NAME).toOptionalString();
+        String                  item              = getPageParameters().get(ITEM_PARAM_NAME).toOptionalString();
         final MenuSessionConfig menuSessionConfig = SingularSession.get().getMenuSessionConfig();
 
         if (processGroupCod == null
@@ -100,7 +100,8 @@ public class BoxPage extends ServerTemplate {
     }
 
     protected QuickFilter createFilter() {
-        return new QuickFilter();
+        return new QuickFilter()
+                .withIdUsuarioLogado(getIdUsuario());
     }
 
     protected String getIdUsuario() {

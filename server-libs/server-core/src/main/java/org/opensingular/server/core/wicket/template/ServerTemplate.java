@@ -16,8 +16,14 @@
 
 package org.opensingular.server.core.wicket.template;
 
+import org.opensingular.server.commons.wicket.view.template.Menu;
 import org.opensingular.server.commons.wicket.view.template.Template;
+import org.opensingular.server.core.wicket.box.BoxPage;
 
 public abstract class ServerTemplate extends Template {
 
+    @Override
+    protected Menu configureMenu(String id) {
+        return new Menu(id, BoxPage.class);
+    }
 }

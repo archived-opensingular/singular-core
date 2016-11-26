@@ -17,14 +17,14 @@
 package org.opensingular.server.p.core.wicket.acompanhamento;
 
 import org.opensingular.server.commons.wicket.view.template.Content;
-import org.opensingular.server.core.wicket.template.ServerTemplate;
+import org.opensingular.server.p.core.wicket.view.PeticionamentoTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import static org.opensingular.server.commons.util.Parameters.MENU_PARAM_NAME;
-import static org.opensingular.server.commons.util.Parameters.PROCESS_GROUP_PARAM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.MENU_PARAM_NAME;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME;
 
 @MountPath("acompanhamento")
-public class AcompanhamentoPage extends ServerTemplate {
+public class AcompanhamentoPage extends PeticionamentoTemplate {
 
     @Override
     protected Content getContent(String id) {

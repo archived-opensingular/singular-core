@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import javax.activation.DataHandler;
 import javax.annotation.PostConstruct;
+import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -88,10 +89,11 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 msg.setSentDate(Optional.ofNullable(e.getCreationDate()).orElseGet(Date::new));
                 msg.setFrom(new InternetAddress(Optional.ofNullable(from).orElseGet(this::getUsername)));
                 // destinatários
+                Message.RecipientType recipientType = addressee.getType().getRecipientType();
                 if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_SEND_EMAIL)) {
-                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(addressee.getAddress()));
+                    msg.addRecipient(recipientType, new InternetAddress(addressee.getAddress()));
                 } else {
-                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(EMAIL_DEVELOPMENT));
+                    msg.addRecipient(recipientType, new InternetAddress(EMAIL_DEVELOPMENT));
                 }
                 
                 // Cria o "contêiner" das várias partes do e-mail

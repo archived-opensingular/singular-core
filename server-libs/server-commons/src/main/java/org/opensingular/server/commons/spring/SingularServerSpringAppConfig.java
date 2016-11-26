@@ -16,29 +16,31 @@
 
 package org.opensingular.server.commons.spring;
 
+import org.hibernate.SessionFactory;
+import org.opensingular.flow.persistence.service.ProcessRetrieveService;
 import org.opensingular.form.context.SingularFormContext;
 import org.opensingular.form.spring.SpringServiceRegistry;
 import org.opensingular.form.wicket.SingularFormConfigWicket;
 import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
-import org.opensingular.flow.persistence.service.ProcessRetrieveService;
 import org.opensingular.lib.support.spring.util.AutoScanDisabled;
-import org.hibernate.SessionFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+@EnableTransactionManagement(proxyTargetClass = true)
+@EnableCaching
 @EnableWebMvc
 @EnableWebSecurity
 @ComponentScan(
-        basePackages = {"org.opensingular.singular", "org.opensingular.server"},
+        basePackages = {"org.opensingular"},
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ANNOTATION,
                         value = AutoScanDisabled.class)
         })
-
 public class SingularServerSpringAppConfig  {
 
     @Bean

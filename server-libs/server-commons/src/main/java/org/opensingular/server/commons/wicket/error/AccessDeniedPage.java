@@ -16,6 +16,8 @@
 
 package org.opensingular.server.commons.wicket.error;
 
+import org.apache.wicket.markup.html.WebPage;
+import org.opensingular.server.commons.wicket.view.template.Menu;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import org.opensingular.server.commons.wicket.view.template.Content;

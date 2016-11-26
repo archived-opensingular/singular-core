@@ -31,9 +31,9 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.service.PetitionService;
-import org.opensingular.server.p.core.wicket.view.AbstractPeticaoCaixaContent;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.server.core.wicket.box.AbstractPeticaoCaixaContent;
 
 public class AcompanhamentoContent extends AbstractPeticaoCaixaContent<PeticaoDTO> {
 
