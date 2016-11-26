@@ -7,6 +7,7 @@ import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
 import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.SPackageFormPersistence;
 import org.opensingular.form.persistence.entity.FormEntity;
@@ -149,9 +150,12 @@ public class FormPetitionService<P extends PetitionEntity> {
             draft = newInstance(config, instance.getType().getName());
         }
 
-        copyValuesAndAnnotations(instance, draft);
+        copyValuesAndAnnotations(instance.getDocument(), draft.getDocument());
 
-        draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insert(draft, actor)));
+        //TODO (by Daniel) A linha abaixo parece que vai deixar formulário orfãos. Na medida que apontar o rascunho
+        // para o novo formulário, não vai deixar o anterior abandonado no banco? Verificar.
+        FormKey newFormKey = formPersistenceService.insert(draft, actor);
+        draftEntity.setForm(formPersistenceService.loadFormEntity(newFormKey));
         draftEntity.setEditionDate(new Date());
 
         draftDAO.saveOrUpdate(draftEntity);
@@ -174,42 +178,29 @@ public class FormPetitionService<P extends PetitionEntity> {
     }
 
     /**
-     * Consolida o rascunho, copiando os valores do rascunho para o form principal criando versão inicial ou gerando nova versão
-     *
-     * @param formConfig         config
-     * @param formPetitionEntity etnidade
+     * Consolida o rascunho, copiando os valores do formulário rascunho para o form principal criando versão inicial do
+     * formulário ou gerando nova versão do formulário. Ou seja, transforma um rascunho em formulário efetivamente.
      */
     private void consolidadeDraft(SFormConfig formConfig, FormPetitionEntity formPetitionEntity) {
 
-        final DraftEntity draft;
-        final String      type;
-        final SIComposite draftInstance;
-        final SIComposite formInstance;
-        final boolean     isFirstVersion;
-        final FormKey     key;
-
-        draft = formPetitionEntity.getCurrentDraftEntity();
+        final DraftEntity draft = formPetitionEntity.getCurrentDraftEntity();
 
         // salva para colocar a entidade com seu form entity na session
         draftDAO.saveOrUpdate(draft);
 
-        type = draft.getForm().getFormType().getAbbreviation();
-        draftInstance = loadByCodAndType(formConfig, draft.getForm().getCod(), type);
+        final String type = draft.getForm().getFormType().getAbbreviation();
+        final SIComposite draftInstance = loadByCodAndType(formConfig, draft.getForm().getCod(), type);
 
-        isFirstVersion = formPetitionEntity.getForm() == null;
-
-        if (isFirstVersion) {
+        final SIComposite formInstance;
+        final FormKey     key;
+        if (formPetitionEntity.getForm() == null) { //If first version
             formInstance = newInstance(formConfig, type);
-        } else {
-            formInstance = loadByCodAndType(formConfig, formPetitionEntity.getForm().getCod(), type);
-        }
-
-        copyValuesAndAnnotations(draftInstance, formInstance);
-
-        if (isFirstVersion) {
-            final Integer codActor = userService.getUserCodIfAvailable();
+            copyValuesAndAnnotations(draftInstance.getDocument(), formInstance.getDocument());
+            Integer codActor = userService.getUserCodIfAvailable();
             key = formPersistenceService.insert(formInstance, codActor);
         } else {
+            formInstance = loadByCodAndType(formConfig, formPetitionEntity.getForm().getCod(), type);
+            copyValuesAndAnnotations(draftInstance.getDocument(), formInstance.getDocument());
             key = formPersistenceService.newVersion(formInstance, userService.getUserCodIfAvailable());
         }
 
@@ -220,25 +211,9 @@ public class FormPetitionService<P extends PetitionEntity> {
         formPetitionDAO.save(formPetitionEntity);
     }
 
-    private void copyValuesAndAnnotations(SInstance source, SInstance target) {
+    private void copyValuesAndAnnotations(SDocument source, SDocument target) {
         Value.copyValues(source, target);
-        SIList<SIAnnotation> annotations = source.asAtrAnnotation().persistentAnnotations();
-        if (annotations != null) {
-            for (SIAnnotation sourceAnnotation : annotations) {
-                //obtem o caminho completo da instancia anotada no formulario raiz
-                SInstances.findDescendantById(source, sourceAnnotation.getTargetId()).ifPresent(si -> {
-                    String pathFromRoot = si.getPathFromRoot();
-                    //localiza a instancia correspondente no formulario destino
-                    SInstance targetInstance = ((SIComposite) target).getField(pathFromRoot);
-                    //Copiando todos os valores da anotação (inclusive o id na sinstance antiga)
-                    SIAnnotation targetAnnotation = targetInstance.as(AtrAnnotation::new).annotation();
-                    Value.copyValues(sourceAnnotation, targetAnnotation);
-                    //Corrigindo o ID
-                    targetAnnotation.setTarget(targetInstance);
-                });
-
-            }
-        }
+        target.getDocumentAnnotations().copyAnnotationsFrom(source);
     }
 
     public SIComposite loadByCodAndType(SFormConfig config, Long cod, String type) {
