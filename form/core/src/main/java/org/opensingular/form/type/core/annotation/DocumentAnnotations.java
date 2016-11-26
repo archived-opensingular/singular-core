@@ -208,7 +208,7 @@ public class DocumentAnnotations {
         if (pos <= 0) {
             throw new SingularFormException("Trecho path inválido: '" + path[index] + "'");
         }
-        Integer id = new Integer(path[index].substring(pos + 1, path[index].length() - 1));
+        Integer id = Integer.valueOf(path[index].substring(pos+1,path[index].length()-1));
         SInstance instance = instancesById.get(id);
         if (instance != null) {
             return instance;
@@ -244,7 +244,10 @@ public class DocumentAnnotations {
                 source.findInstanceById(sourceAnnotation.getTargetId()).ifPresent(si -> {
                     String pathFromRoot = si.getPathFromRoot();
                     //localiza a instancia correspondente no formulario destino
-                    SInstance targetInstance = ((SIComposite) document.getRoot()).getField(pathFromRoot);
+                    SInstance targetInstance = ((SIComposite) document.getRoot());
+                    if (pathFromRoot != null){
+                        targetInstance = ((SIComposite) document.getRoot()).getField(pathFromRoot);
+                    }
                     //Copiando todos os valores da anotação (inclusive o id na sinstance antiga)
                     SIAnnotation targetAnnotation = getAnnotationOrCreate(targetInstance, sourceAnnotation.getClassifier());
                     Value.copyValues(sourceAnnotation, targetAnnotation);
