@@ -83,8 +83,8 @@ public class FormSerializationUtil {
         SInstance root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
-        if (!root.asAtrAnnotation().allAnnotations().isEmpty()) {
-            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.asAtrAnnotation().persistentAnnotations());
+        if (document.getDocumentAnnotations().hasAnnotations()) {
+            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getDocumentAnnotations().getAnnotations());
         }
 
         checkIfSerializable(root);
@@ -115,12 +115,12 @@ public class FormSerializationUtil {
                 + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
                 instance);
         }
-        if (document.annotations() != null) {
-            if (!document.annotations().getDocument().getRootRefType().isPresent()) {
+        if (document.getDocumentAnnotations().hasAnnotations()) {
+            if (!document.getDocumentAnnotations().getAnnotations().getDocument().getRootRefType().isPresent()) {
                 throw new SingularFormException("Não foi configurado o rootRefType nas anotações da instância, o que impedirá a "
                     + "serialização/deserialização do mesmo. ", instance);
             }
-            if (document.annotations().getDocument().getDocumentFactoryRef() == null) {
+            if (document.getDocumentAnnotations().getAnnotations().getDocument().getDocumentFactoryRef() == null) {
                 throw new SingularFormException("Não foi configurado o DocumentFactory nas anotações da instância, o que impedirá a "
                     + "serialização/deserialização do mesmo. ", instance);
             }

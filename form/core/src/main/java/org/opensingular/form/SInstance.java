@@ -176,6 +176,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return convert(getValue(), resultClass);
     }
 
+    /** Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade. */
     public abstract void clearInstance();
 
     /**

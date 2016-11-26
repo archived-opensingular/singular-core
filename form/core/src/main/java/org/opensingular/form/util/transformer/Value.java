@@ -28,6 +28,7 @@ import org.opensingular.form.SingularFormException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.opensingular.form.document.SDocument;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -273,6 +274,12 @@ public class Value {
         return Value.notNull(instancia, tipo);
     }
 
+    /** Copia os valores de um formulário para outro. Presupõem que os formulários são do mesmo tipo. */
+    public static void copyValues(SDocument origin, SDocument destiny) {
+        copyValues(origin.getRoot(), destiny.getRoot());
+    }
+
+    /** Copia os valores de uma instância para outra. Presupõem que as instâncias são do mesmo tipo. */
     public static void copyValues(SInstance origin, SInstance target) {
         target.clearInstance();
         hydrate(target, dehydrate(origin));

@@ -185,10 +185,10 @@ public class TabMapper extends DefaultCompositeMapper {
             SInstance field = instance.getField(name);
             if (field != null) {
                 AtrAnnotation annotatedField = field.asAtrAnnotation();
-                if (annotatedField.hasAnnotationOnTree()) {
+                if (annotatedField.hasAnyAnnotationOnTree()) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().getAnnotationMode().editable() &&
-                    annotatedField.isOrHasAnnotatedChild()) {
+                    annotatedField.hasAnyAnnotable()) {
                     isAnnotated = true;
                 }
             }

@@ -42,7 +42,7 @@ public class SIAnnotation extends SIComposite {
         return getValueInteger(STypeAnnotation.FIELD_TARGET_ID);
     }
 
-    public void setTargetId(Integer id) {
+    private void setTargetId(Integer id) {
         setValue(STypeAnnotation.FIELD_TARGET_ID, id);
     }
 
@@ -50,7 +50,7 @@ public class SIAnnotation extends SIComposite {
         return getValueString(STypeAnnotation.FIELD_TARGET_PATH);
     }
 
-    public void setTargetPath(String path) {
+    private void setTargetPath(String path) {
         setValue(STypeAnnotation.FIELD_TARGET_PATH, path);
     }
 
@@ -73,7 +73,7 @@ public class SIAnnotation extends SIComposite {
     /**
      * Associa a anotação a instância informada de forma a anotação aponte para o ID e XPath do mesmo.
      */
-    public void setTarget(SInstance target) {
+    final void setTarget(SInstance target) {
         setTargetId(target.getId());
         setTargetPath(buildXPath(target, new StringBuilder()).toString());
     }

@@ -340,7 +340,8 @@ public abstract class SInstances {
      * @param descendantId id do descendente
      * @return Optional da instância especificada
      */
-    public static Optional<SInstance> findDescendantById(SInstance node, Integer descendantId) {
+    final static Optional<SInstance> findDescendantById(SInstance node, Integer descendantId) {
+        //TODO (by Daniel) Remover esse método. Usar somente o de SDocument
         return streamDescendants(node, true)
             .filter(it -> descendantId.equals(it.getId()))
             .findAny();
