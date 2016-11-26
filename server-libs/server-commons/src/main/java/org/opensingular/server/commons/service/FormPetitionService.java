@@ -300,7 +300,7 @@ public class FormPetitionService<P extends PetitionEntity> {
         formAnnotationVersionDAO.delete(fave);
     }
 
-    private void copyValuesAndAnnotations(SInstance source, SInstance target) {
+    private void copyValuesAndAnnotations(SDocument source, SDocument target) {
         Value.copyValues(source, target);
         target.getDocumentAnnotations().copyAnnotationsFrom(source);
     }
