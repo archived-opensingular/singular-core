@@ -356,17 +356,20 @@ public class SDocument {
     }
 
     public Collection<IValidationError> getValidationErrors() {
-        return validationErrors().values();
+        return validationErrors == null ? Collections.emptyList() : validationErrors.values();
     }
 
     public Map<Integer, Collection<IValidationError>> getValidationErrorsByInstanceId() {
+        if (validationErrors == null) {
+            return Collections.emptyMap();
+        }
         ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
         copy.putAll(validationErrors());
         return copy.asMap();
     }
 
     public Set<IValidationError> getValidationErrors(Integer instanceId) {
-        return validationErrors().get(instanceId);
+        return validationErrors == null ? Collections.emptySet() : validationErrors().get(instanceId);
     }
 
     public Set<IValidationError> clearValidationErrors(Integer instanceId) {
@@ -382,7 +385,7 @@ public class SDocument {
     public void setValidationErrors(Iterable<IValidationError> errors) {
         validationErrors().clear();
         for (IValidationError error : errors) {
-            validationErrors().put(error.getInstanceId(), error);
+            validationErrors.put(error.getInstanceId(), error);
         }
     }
 
