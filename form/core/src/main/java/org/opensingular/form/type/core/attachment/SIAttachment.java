@@ -16,16 +16,14 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.tika.Tika;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.base.SingularUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
 
 public class SIAttachment extends SIComposite {
 
@@ -133,36 +131,14 @@ public class SIAttachment extends SIComposite {
         }
     }
 
-    public String getContentType() {
-        try (InputStream is = newInputStream()) {
-            return new Tika().detect(is);
-        } catch (IOException e) {
-            throw new SingularFormException("Não foi possivel detectar o content type.");
-        }
-    }
-
-    boolean isContentTypeBrowserFriendly(String contentType) {
-        final List<String> inlineContentTypes = STypeAttachment.INLINE_CONTENT_TYPES;
-        for (String inlineContentType : inlineContentTypes) {
-            if (contentType.matches(inlineContentType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isContentTypeBrowserFriendly() {
-        return isContentTypeBrowserFriendly(getContentType());
-    }
-
     @Override
     public String toStringDisplayDefault() {
         if (getFileSize() <= 0 || getFileName() == null) {
             return super.toStringDisplayDefault();
         }
-        final String[] sufixo = new String[] { "B", "KB", "MB", "GB" };
-        int posSufixo = 0;
-        double bytesSize = getFileSize();
+        final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
+        int            posSufixo = 0;
+        double         bytesSize = getFileSize();
 
         while (bytesSize > 900 && posSufixo < sufixo.length - 1) {
             bytesSize = bytesSize / 1024;

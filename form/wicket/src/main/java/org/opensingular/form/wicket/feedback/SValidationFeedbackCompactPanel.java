@@ -40,7 +40,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedbackPanel {
 
-    public SValidationFeedbackCompactPanel(String id, Component fence) {
+    public SValidationFeedbackCompactPanel(String id, FeedbackFence fence) {
         super(id, fence);
 
         add($b.classAppender("singular-validation-feedback-compact-panel"));
@@ -78,7 +78,7 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                 }
                 response.render(OnDomReadyHeaderItem.forScript(""
                         + "var $this = " + JQuery.$(SValidationFeedbackCompactPanel.this) + ";"
-                        + "var $fence = " + JQuery.$(fence) + ";"
+                        + "var $fence = " + JQuery.$(fence.getMainContainer()) + ";"
                         + "$fence.find(':input')"
                         + "  .on('focus', function(){ $this.addClass('singular-active'); })"
                         + "  .on('blur',  function(){ $this.removeClass('singular-active'); });"
@@ -145,7 +145,7 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {
-        return SValidationFeedbackHandler.get(getFence());
+        return SValidationFeedbackHandler.get(getFence().getMainContainer());
     }
 
 }

@@ -26,4 +26,16 @@ public class FormAnnotationDAO extends BaseDAO<FormAnnotationEntity, FormAnnotat
         super(FormAnnotationEntity.class);
     }
 
+    @Override
+    public void delete(FormAnnotationEntity obj) {
+        super.delete(obj);
+        getSession().flush();
+    }
+
+    @Override
+    public void saveOrUpdate(FormAnnotationEntity novoObj) {
+        super.saveOrUpdate(novoObj);
+        getSession().flush();
+
+    }
 }

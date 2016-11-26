@@ -45,15 +45,6 @@ public class SingularEventsHandlers extends Behavior {
 
     public enum FUNCTION {
 
-        /**
-         * Quando acontecer uma ação de clique, irá limpar um validar agendado
-         */
-        ADD_MOUSEDOWN_HANDLERS {
-            @Override
-            String getScript(Component component) {
-                return "window.SEH.addMousedownHandlers('"+component.getMarkupId(true)+"');";
-            }
-        },
         ADD_TEXT_FIELD_HANDLERS {
             @Override
             String getScript(Component component) {

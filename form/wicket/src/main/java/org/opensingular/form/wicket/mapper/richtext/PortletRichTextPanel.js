@@ -34,7 +34,7 @@
         nw.createCKEditor = function () {
             nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer).html();
             nw.CKEDITOR.replace("ck-text-area", {
-                extraPlugins: 'saveAndClose',
+                extraPlugins: 'finishAndClose,cancel',
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
@@ -46,7 +46,7 @@
                     }
                 },
                 toolbar: [
-                    {name: 'document', items: ['SaveAndClose', '-', 'NewPage', 'Preview', 'Print']},
+                    {name: 'document', items: ['FinishAndClose', 'Cancel', 'Preview', 'Print']},
                     {
                         name: 'clipboard',
                         items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']

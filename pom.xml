@@ -231,12 +231,5 @@
         <hibernate.version>4.3.11.Final</hibernate.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>project.local</id>
-            <name>project</name>
-            <url>file:${project.basedir}/lib/repo</url>
-        </repository>
-    </repositories>
 
 </project>

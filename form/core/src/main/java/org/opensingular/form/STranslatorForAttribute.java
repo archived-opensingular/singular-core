@@ -130,8 +130,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public <V> V getAttributeValue(AtrRef<?, ?, V> atr) {
-        return getTarget().getAttributeValue(atr);
+    public <V> V getAttributeValue(AtrRef<?, ?, V> atr) {return getTarget().getAttributeValue(atr);
     }
 
     @Override

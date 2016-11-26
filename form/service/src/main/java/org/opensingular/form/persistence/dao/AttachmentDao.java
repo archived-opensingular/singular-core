@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence.dao;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
@@ -36,7 +38,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
 
     @Inject
     private AttachmentContentDao<C> attachmentContentDao;
-    
+
     public AttachmentDao() {
         super((Class<T>) AttachmentEntity.class);
     }
@@ -51,15 +53,21 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     public T insert(InputStream is, long length, String name){
-        C content = attachmentContentDao.insert(is, length);
+        return insert(is, length, name, null);
+    }
+
+    public T insert(InputStream is, long length, String name, String hashSha1){
+        C content = attachmentContentDao.insert(is, length, hashSha1);
         return insert(createAttachment(content, name));
     }
 
     public void delete(Long id) {
-        T t = get(id);
-        Long codContent = t.getCodContent();
-        delete(t);
-        attachmentContentDao.delete(codContent);
+        final T t = get(id);
+        if (t != null) {
+            Long codContent = t.getCodContent();
+            delete(t);
+            attachmentContentDao.delete(codContent);
+        }
     }
 
     public List<T> list() {
@@ -68,9 +76,9 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     protected T createAttachment(C content, String name) {
-        
+
         T fileEntity = createInstance();
-        
+
         fileEntity.setCodContent(content.getCod());
         fileEntity.setHashSha1(content.getHashSha1());
         fileEntity.setSize(content.getSize());
@@ -83,7 +91,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         try {
             return tipo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularException(e);
+            throw SingularException.rethrow(e);
         }
     }
 

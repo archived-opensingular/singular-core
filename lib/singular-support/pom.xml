@@ -60,6 +60,17 @@
             <version>${hibernate.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>${hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.extended</artifactId>
             <version>4.0.0.GA</version>
@@ -157,13 +168,13 @@
             <version>1.2</version>
             <scope>provided</scope>
         </dependency>
-		
-		<dependency>
+
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
-		
+
     </dependencies>
 
 </project>

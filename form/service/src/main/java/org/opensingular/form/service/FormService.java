@@ -15,8 +15,12 @@
  */
 package org.opensingular.form.service;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -40,17 +44,22 @@ import org.opensingular.form.persistence.FormKeyLong;
 import org.opensingular.form.persistence.SPackageFormPersistence;
 import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
+
+    private final Boolean KEEP_ANNOTATIONS = true;
 
     @Inject
     private FormDAO formDAO;
@@ -66,8 +75,6 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Inject
     private FormTypeDAO formTypeDAO;
-
-    private final Boolean KEEP_ANNOTATIONS = true;
 
     public FormService() {
         super(FormKeyLong.class);
@@ -87,6 +94,34 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         SInstance instance = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
         loadCurrentXmlAnnotationOrEmpty(instance.getDocument(), formVersionEntity);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
+        final SInstance instance = loadSInstance(key, refType, documentFactory);
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId) {
+        final SInstance instance = loadSInstance(key, refType, documentFactory, versionId);
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations) {
+        final SInstance instance =  newTransientSInstance(key, refType, documentFactory);
+        instance.asAtrAnnotation().clear();
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations) {
+        final SInstance instance =  newTransientSInstance(key, refType, documentFactory, versionId);
+        instance.asAtrAnnotation().clear();
         return instance;
     }
 
@@ -112,16 +147,17 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     private FormEntity saveNewFormEntity(SInstance instance) {
         final FormEntity entity = new FormEntity();
-        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType().getName()));
+        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType()));
         formDAO.saveOrUpdate(entity);
         return entity;
     }
 
-    private FormTypeEntity getOrCreateNewFormTypeEntity(final String typeAbbreviation) {
-        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(typeAbbreviation);
+    private FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
+        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(type.getName());
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
-            formTypeEntity.setAbbreviation(typeAbbreviation);
+            formTypeEntity.setAbbreviation(type.getName());
+            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass()));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }
@@ -245,7 +281,11 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         if (mElement != null) {
             return mElement.toStringExato();
         } else {
-            return "";
+            //Retorna um xml vazio valido
+            //todo verificar se é a melhor solução
+            return Optional.of(instance)
+                    .map(x -> MElement.newInstance(x.getName()))
+                    .map(MElement::toString).orElse(StringUtils.EMPTY);
         }
     }
 

@@ -435,7 +435,7 @@ public class FlowMap implements Serializable {
     public MTask<?> getTask(ITaskDefinition taskDefinition) {
         MTask<?> task = getTaskWithName(taskDefinition.getName());
         if (task == null) {
-            throw new SingularException(
+            throw SingularException.rethrow(
                     "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey());
         }
         return task;
@@ -467,7 +467,7 @@ public class FlowMap implements Serializable {
     public void verifyConsistency() {
         verifyTasksConsistency();
         if(startTask == null){
-            throw new SingularFlowException(createErrorMsg("There is no initial task setted"));
+            throw new SingularFlowException(createErrorMsg("There is no initial task set"));
         }
         checkRouteToTheEnd();
     }

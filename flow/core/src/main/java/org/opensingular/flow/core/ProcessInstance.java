@@ -64,7 +64,7 @@ public class ProcessInstance implements Serializable {
 
     final void setProcessDefinition(ProcessDefinition<?> processDefinition) {
         if (processDefinitionRef != null) {
-            throw new SingularException("Erro Interno");
+            throw SingularException.rethrow("Erro Interno");
         }
         processDefinitionRef = RefProcessDefinition.of(processDefinition);
     }
@@ -79,7 +79,7 @@ public class ProcessInstance implements Serializable {
      */
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
-            throw new SingularException(
+            throw SingularException.rethrow(
                     "A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newInstance() a partir da definição do processo.");
         }
         return (K) processDefinitionRef.get();
@@ -159,7 +159,7 @@ public class ProcessInstance implements Serializable {
                 IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
                 if (newfromDB != null) {
                     if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcessVersion().getProcessDefinition())) {
-                        throw new SingularException(getProcessDefinition().getName() + " id=" + codEntity
+                        throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity
                             + " se refere a definição de processo " + newfromDB.getProcessVersion().getProcessDefinition().getKey()
                             + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
 
@@ -168,7 +168,7 @@ public class ProcessInstance implements Serializable {
                 }
             }
             if (entity == null) {
-                throw new SingularException(
+                throw SingularException.rethrow(
                     getClass().getName() + " is not binded to a new and neither to a existing database intance process entity.");
             }
         }
@@ -178,7 +178,7 @@ public class ProcessInstance implements Serializable {
     private TaskInstance getCurrentTaskOrException() {
         TaskInstance current = getCurrentTask();
         if (current == null) {
-            throw new SingularException(createErrorMsg("Não há um task atual para essa instancia"));
+            throw SingularException.rethrow(createErrorMsg("Não há um task atual para essa instancia"));
         }
         return current;
     }
@@ -229,11 +229,11 @@ public class ProcessInstance implements Serializable {
                 if (current != null && current.isFinished()) {
                     estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getAbbreviation());
                 } else {
-                    throw new SingularException(createErrorMsg(
+                    throw SingularException.rethrow(createErrorMsg(
                         "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
                 }
             } else {
-                throw new SingularException(createErrorMsg("getEstado() não pode ser invocado para essa instância"));
+                throw SingularException.rethrow(createErrorMsg("getEstado() não pode ser invocado para essa instância"));
             }
         }
         return estadoAtual;

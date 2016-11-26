@@ -22,6 +22,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.test.base.TestPanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -95,7 +96,7 @@ public class SValidationFeedbackHandlerTest {
 //            System.out.println(c.getMetaData(SValidationFeedbackHandler.MDK) + " " + c.getPageRelativePath());
 //        });
 
-        Set<? extends SInstance> lowerBound = SValidationFeedbackHandler.collectLowerBoundInstances(testPanel);
+        Set<? extends SInstance> lowerBound = SValidationFeedbackHandler.collectLowerBoundInstances(new FeedbackFence(testPanel));
 //        System.out.println(lowerBound);
         assertFalse(lowerBound.isEmpty());
     }

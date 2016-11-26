@@ -20,6 +20,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import org.apache.wicket.core.util.string.JavaScriptUtils;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -27,11 +28,20 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Classe de link para utilização em conjunto dom {@link DownloadSupportedBehavior}
  * para disponibilizar links de download de um único uso.
  */
 public class DownloadLink extends Link<Void> {
+
+
+    private static final String       FILE_REGEX_PATTERN   = ".*\\.(.*)";
+    private static final List<String> SUPPORTED_EXTENSIONS = Arrays.asList("pdf", "jpg", "gif", "png");
 
     private IModel<SIAttachment>      model;
     private DownloadSupportedBehavior downloadSupportedBehaviour;
@@ -46,20 +56,18 @@ public class DownloadLink extends Link<Void> {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        this.add($b.attr("onclick",
-            (IReadOnlyModel<String>) () -> "DownloadSupportedBehavior.ajaxDownload(" +
-                jsStringOrNull(downloadSupportedBehaviour.getUrl()) + "," +
-                jsStringOrNull(model.getObject().getFileId()) + "," +
-                jsStringOrNull(model.getObject().getFileName()) +
-                ");" +
-                "return false;"));
-        configureBody();
-        add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
-        add($b.attr("target", "_blank"));
     }
 
     public void configureBody() {
         this.setBody($m.property(model, "fileName"));
+    }
+
+    @Override
+    protected void onComponentTag(ComponentTag tag) {
+        super.onComponentTag(tag);
+        if ($m.property(model, "fileName") != null) {
+            tag.getAttributes().put("title", $m.property(model, "fileName"));
+        }
     }
 
     private static String jsStringOrNull(String s) {
@@ -69,6 +77,18 @@ public class DownloadLink extends Link<Void> {
     @Override
     protected void onConfigure() {
         super.onConfigure();
+        this.add($b.attr("onclick",
+                (IReadOnlyModel<String>) () -> "DownloadSupportedBehavior.ajaxDownload(" +
+                        jsStringOrNull(downloadSupportedBehaviour.getUrl()) + "," +
+                        jsStringOrNull(model.getObject().getFileId()) + "," +
+                        jsStringOrNull(model.getObject().getFileName()) +
+                        ");" +
+                        "return false;"));
+        configureBody();
+        add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
+        if (isContentTypeBrowserFriendly(model.getObject().getFileName())) {
+            add($b.attr("target", "_blank"));
+        }
         setEnabled(isFileAssigned());
     }
 
@@ -77,6 +97,15 @@ public class DownloadLink extends Link<Void> {
     }
 
     @Override
-    public void onClick() {}
+    public void onClick() {
+    }
+
+    private boolean isContentTypeBrowserFriendly(String filename) {
+        return filename != null && isContentTypeBrowserFriendly(Pattern.compile(FILE_REGEX_PATTERN).matcher(filename));
+    }
+
+    private boolean isContentTypeBrowserFriendly(Matcher matcher) {
+        return matcher.matches() && SUPPORTED_EXTENSIONS.contains(matcher.group(1));
+    }
 
 }

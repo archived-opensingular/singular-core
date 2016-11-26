@@ -16,8 +16,15 @@
 
 package org.opensingular.form.type.basic;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STranslatorForAttribute;
+import org.opensingular.form.SType;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.enums.PhraseBreak;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,21 +36,15 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.opensingular.form.SAttributeEnabled;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.SType;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IConsumer;
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class AtrBasic extends STranslatorForAttribute {
 
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
-    public AtrBasic() {}
+    public AtrBasic() {
+    }
 
     public AtrBasic(SAttributeEnabled alvo) {
         super(alvo);
@@ -53,6 +54,12 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_LABEL, value);
         return this;
     }
+
+    public AtrBasic label(SimpleValueCalculation<String> valueCalculation) {
+        setAttributeCalculation(SPackageBasic.ATR_LABEL, valueCalculation);
+        return this;
+    }
+
     public AtrBasic noLabel() {
         return label("");
     }
@@ -72,10 +79,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic editSize(Integer value) {
-        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
-        return this;
-    }
+//    public AtrBasic editSize(Integer value) {
+//        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
+//        return this;
+//    }
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -86,11 +93,12 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
         return this;
     }
+
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
-            Stream.of(value)
-                .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-                .collect(joining(",")));
+                Stream.of(value)
+                        .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                        .collect(joining(",")));
         return this;
     }
 
@@ -213,9 +221,9 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_SUBTITLE);
     }
 
-    public Integer getEditSize() {
-        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
-    }
+//    public Integer getEditSize() {
+//        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
+//    }
 
     public Integer getMaxLength() {
         return getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
@@ -227,7 +235,7 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public List<String> getAllowedFileTypes() {
         return Arrays.asList(defaultString(
-            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
                 .split(ALLOWED_FILE_TYPES_SPLIT_REGEX));
     }
 
@@ -269,4 +277,14 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_PHRASE_BREAK, phraseBreak);
         return this;
     }
+
+    public AtrBasic upperCaseText() {
+        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, true);
+        return this;
+    }
+
+    public Boolean isUpperCaseText() {
+        return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
+    }
+
 }

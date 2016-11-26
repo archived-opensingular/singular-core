@@ -16,12 +16,8 @@
 
 package org.opensingular.form.document;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 import java.util.function.Supplier;
 
 import org.opensingular.form.SInstance;
@@ -61,8 +57,8 @@ import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPer
  */
 public class SDocument {
 
-    public static final String                     FILE_TEMPORARY_SERVICE   = "fileTemporary";
-    public static final String                     FILE_PERSISTENCE_SERVICE = "filePersistence";
+    public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
+    public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private SInstance root;
 
@@ -100,7 +96,9 @@ public class SDocument {
         lastId = value;
     }
 
-    /** Retorna null se estiver no modo de restore da persistencia. */
+    /**
+     * Retorna null se estiver no modo de restore da persistencia.
+     */
     final public Integer nextId() {
         if (lastId == -1) {
             return null;
@@ -136,7 +134,7 @@ public class SDocument {
      * os anexos adicionados nesse serviços deverão ser descartados pelo mesmo.
      *
      * @return Nunca null. Retorna {@link InMemoryAttachmentPersitenceHandler}
-     *         por default.
+     * por default.
      */
     @SuppressWarnings("unchecked")
     public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistenceTemporaryHandler() {
@@ -159,12 +157,7 @@ public class SDocument {
      */
     @SuppressWarnings("unchecked")
     public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistencePermanentHandler() {
-        IAttachmentPersistenceHandler<? extends IAttachmentRef> h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        //        if (h == null) {
-        //            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
-        //                + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
-        //        }
-        return h;
+        return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     /**
@@ -201,7 +194,9 @@ public class SDocument {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
 
-    /** USO INTERNO. */
+    /**
+     * USO INTERNO.
+     */
     public final void setDocumentFactory(SDocumentFactory context) {
         if (documentFactory != null) {
             throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
@@ -209,7 +204,7 @@ public class SDocument {
         documentFactory = context;
         if (context.getDocumentFactoryRef() == null) {
             throw new SingularFormException(
-                context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
+                    context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
         }
         ServiceRegistry sr = documentFactory.getServiceRegistry();
         if (sr != null) {
@@ -219,7 +214,7 @@ public class SDocument {
 
     /**
      * Stablishes a new registry where to look for services, which is chained
-     *  to the default one.
+     * to the default one.
      */
     public void addServiceRegistry(ServiceRegistry registry) {
         this.registry.addRegistry(registry);
@@ -325,7 +320,7 @@ public class SDocument {
     //  would be persisted.
     public void persistFiles() {
         IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent = getAttachmentPersistencePermanentHandler();
-        IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary = getAttachmentPersistenceTemporaryHandler();
+        IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary  = getAttachmentPersistenceTemporaryHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
@@ -359,33 +354,42 @@ public class SDocument {
                 .filter(it -> instanceId.equals(it.getId()))
                 .findAny();
     }
+
     public Collection<IValidationError> getValidationErrors() {
         return validationErrors().values();
     }
+
     public Map<Integer, Collection<IValidationError>> getValidationErrorsByInstanceId() {
         ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
         copy.putAll(validationErrors());
         return copy.asMap();
     }
+
     public Set<IValidationError> getValidationErrors(Integer instanceId) {
         return validationErrors().get(instanceId);
     }
+
     public Set<IValidationError> clearValidationErrors(Integer instanceId) {
         return setValidationErrors(instanceId, Collections.emptyList());
     }
+
     public Set<IValidationError> setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
         Set<IValidationError> removed = validationErrors().removeAll(instanceId);
         validationErrors().putAll(instanceId, errors);
         return removed;
     }
+
     public void setValidationErrors(Iterable<IValidationError> errors) {
         validationErrors().clear();
-        for (IValidationError error : errors)
+        for (IValidationError error : errors) {
             validationErrors().put(error.getInstanceId(), error);
+        }
     }
+
     private SetMultimap<Integer, IValidationError> validationErrors() {
-        if (validationErrors == null)
+        if (validationErrors == null) {
             validationErrors = LinkedHashMultimap.create();
+        }
         return validationErrors;
     }
 
@@ -393,15 +397,14 @@ public class SDocument {
      * Responsible for moving files from temporary state to persistent.
      *
      * @author Fabricio Buzeto
-     *
      */
     private static class AttachmentPersistenceHelper {
 
         private IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary, persistent;
 
         public AttachmentPersistenceHelper(
-            IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary,
-            IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent) {
+                IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary,
+                IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent) {
 
             this.temporary = Objects.requireNonNull(temporary);
             this.persistent = Objects.requireNonNull(persistent);
@@ -426,7 +429,7 @@ public class SDocument {
                     IAttachmentRef newRef = persistent.copy(fileRef);
                     deleteOldFiles(attachment, fileRef);
                     updateFileId(attachment, newRef);
-                } else if(attachment.getOriginalFileId() != null){
+                } else if (attachment.getOriginalFileId() != null) {
                     persistent.deleteAttachment(attachment.getOriginalFileId());
                 }
             }
@@ -434,7 +437,7 @@ public class SDocument {
 
         private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
             temporary.deleteAttachment(fileRef.getId());
-            if(attachment.getOriginalFileId() != null){
+            if (attachment.getOriginalFileId() != null) {
                 persistent.deleteAttachment(attachment.getOriginalFileId());
             }
         }
@@ -457,3 +460,4 @@ public class SDocument {
         }
     }
 }
+

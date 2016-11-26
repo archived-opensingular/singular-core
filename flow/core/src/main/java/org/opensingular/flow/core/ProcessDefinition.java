@@ -130,7 +130,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(processInstanceClass, "processInstanceClass");
         if (getClass().getSimpleName().equalsIgnoreCase(key)) {
-            throw new SingularFlowException("A chave do processo(" + getClass().getSimpleName() + ") não pode ser igual a key.");
+            throw new SingularFlowException("A o nome simples da classe do processo(" + getClass().getSimpleName() + ") não pode ser igual a chave definida em @DefinitionInfo.");
         }
         this.key = key;
         this.processInstanceClass = processInstanceClass;
@@ -168,12 +168,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
+            if (novo == null){
+                novo = new FlowMap(this);
+            }
             configureActions(novo);
-
             if (novo.getProcessDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada");
             }
-
             novo.verifyConsistency();
             MBPMUtil.calculateTaskOrder(novo);
             flowMap = novo;
