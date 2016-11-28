@@ -21,6 +21,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
@@ -61,6 +62,7 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
     @Column(name = "NO_VARIAVEL", nullable = false)
     private String name;
 
+    @Lob
     @Column(name = "VL_VARIAVEL", length = 1000)
     private String value;
 
