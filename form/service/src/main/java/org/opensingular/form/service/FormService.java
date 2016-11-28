@@ -155,7 +155,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(type.getName());
-            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass()));
+            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
+                    .orElse(SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) type.getClass())));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }
