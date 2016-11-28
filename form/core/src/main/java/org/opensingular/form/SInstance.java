@@ -551,10 +551,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean hasNestedValidationErrors() {
-        return SInstances.visit(this, (i, v) -> {
-            if (i.hasValidationErrors())
-                v.stop(true);
-        }).isPresent();
+        return SInstances.hasAny(this, i -> hasValidationErrors());
     }
 
     public Collection<IValidationError> getValidationErrors() {

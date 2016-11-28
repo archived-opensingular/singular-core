@@ -304,31 +304,12 @@ public class DocumentAnnotations {
      * Retorna true se a instância ou algum de seus filhos tiver alguma anotação preenchida (não em branco).
      */
     public boolean hasAnyAnnotationsOnTree(SInstance instance) {
-        //TODO (by Daniel) Esse método e os próximo deveriam usar método em SInstance para leitura em profundidade
-        if (hasAnnotation(instance)) {
-            return true;
-        } else if (instance instanceof ICompositeInstance) {
-            for (SInstance si : ((ICompositeInstance) instance).getAllChildren()) {
-                if (hasAnyAnnotationsOnTree(si)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return SInstances.hasAny(instance, i -> hasAnnotation(i));
     }
 
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */
     public boolean hasAnyRefusal(SInstance instance) {
-        if (hasAnnotation(instance) && !instance.asAtrAnnotation().annotation().getApproved()) {
-            return true;
-        } else if (instance instanceof ICompositeInstance) {
-            for (SInstance si : ((ICompositeInstance) instance).getAllChildren()) {
-                if (hasAnyRefusal(si)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return SInstances.hasAny(instance, i -> hasAnnotation(i) && !i.asAtrAnnotation().annotation().getApproved());
     }
 
     /**
@@ -336,15 +317,6 @@ public class DocumentAnnotations {
      * anotável.
      */
     public boolean hasAnyAnnotable(SInstance instance) {
-        if (instance.asAtrAnnotation().isAnnotated()) {
-            return true;
-        } else if (instance instanceof ICompositeInstance) {
-            for (SInstance si : ((ICompositeInstance) instance).getAllChildren()) {
-                if (hasAnyAnnotable(si)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return SInstances.hasAny(instance, i -> i.asAtrAnnotation().isAnnotated());
     }
 }

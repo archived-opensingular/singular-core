@@ -372,20 +372,20 @@ public class SDocument {
         return validationErrors == null ? Collections.emptySet() : validationErrors().get(instanceId);
     }
 
-    public Set<IValidationError> clearValidationErrors(Integer instanceId) {
-        return setValidationErrors(instanceId, Collections.emptyList());
+    public void clearValidationErrors(Integer instanceId) {
+        if (validationErrors != null) {
+            validationErrors().removeAll(instanceId);
+        }
     }
 
     public Set<IValidationError> setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
-        Set<IValidationError> removed = validationErrors().removeAll(instanceId);
-        validationErrors().putAll(instanceId, errors);
-        return removed;
+        return validationErrors().replaceValues(instanceId, errors);
     }
 
     public void setValidationErrors(Iterable<IValidationError> errors) {
-        validationErrors().clear();
+        validationErrors = null;
         for (IValidationError error : errors) {
-            validationErrors.put(error.getInstanceId(), error);
+            validationErrors().put(error.getInstanceId(), error);
         }
     }
 

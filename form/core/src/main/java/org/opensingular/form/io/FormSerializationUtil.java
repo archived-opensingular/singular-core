@@ -153,7 +153,7 @@ public class FormSerializationUtil {
         try {
             SInstance root = MformPersistenciaXML.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
             deserializeServices(fs.getServices(), root.getDocument());
-            MformPersistenciaXML.annotationLoadFromXml(root, fs.getAnnotations());
+            MformPersistenciaXML.annotationLoadFromXml(root.getDocument(), fs.getAnnotations());
             root.getDocument().setValidationErrors(fs.getValidationErrors());
             return defineRoot(fs, root);
         } catch (Exception e) {
