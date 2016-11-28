@@ -18,12 +18,7 @@ package org.opensingular.form;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -191,13 +186,12 @@ public final class SFormUtil {
         return infoType.name();
     }
 
-    public static String getTypeLabel(Class<? extends SType> typeClass) {
+    public static Optional<String> getTypeLabel(Class<? extends SType> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
         if (StringUtils.isBlank(infoType.label())) {
-            throw new SingularFormException("O tipo " + typeClass.getName() + " não define o label do tipo por meio da anotação @"
-                    + SInfoType.class.getSimpleName());
+            return Optional.empty();
         }
-        return infoType.label();
+        return Optional.of(infoType.label());
     }
 
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
