@@ -55,6 +55,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import static org.opensingular.form.wicket.IWicketComponentMapper.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 @SuppressWarnings("unchecked")
@@ -99,7 +100,7 @@ class SearchModalBodyPanel extends Panel {
         add(filterButton = buildFilterButton());
         add(resultTable = buildResultTable(getConfig()));
 
-        innerSingularFormPanel.add($b.onEnterDelegate(filterButton));
+        innerSingularFormPanel.add($b.onEnterDelegate(filterButton, SINGULAR_PROCESS_EVENT));
 
     }
 
@@ -110,7 +111,7 @@ class SearchModalBodyPanel extends Panel {
     }
 
     private FilteredPagedProvider getFilteredProvider() {
-        FilteredProvider provider =  getInstance().asAtrProvider().getFilteredProvider();
+        FilteredProvider provider = getInstance().asAtrProvider().getFilteredProvider();
 
         if (!(provider instanceof FilteredPagedProvider)) {
             provider = new InMemoryFilteredPagedProviderDecorator<>(provider);

@@ -25,4 +25,9 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
         super(FormEntity.class);
     }
 
+    @Override
+    public void saveOrUpdate(FormEntity novoObj) {
+        super.saveOrUpdate(novoObj);
+        getSession().flush();
+    }
 }

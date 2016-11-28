@@ -20,6 +20,9 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ import java.util.List;
  * 
  * @author Daniel C. Bordin
  */
-public abstract class AbstractSViewListWithCustomColuns<SELF extends AbstractSViewList> extends AbstractSViewListWithControls<SELF> {
+public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSViewList> extends AbstractSViewListWithControls<SELF> {
 
     private List<Column> columns = new ArrayList<>();
 

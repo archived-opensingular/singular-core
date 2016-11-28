@@ -16,6 +16,7 @@
 
 package org.opensingular.form.exemplos.notificacaosimplificada.spring;
 
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +62,7 @@ public class NotificaoSimplificadaSpringConfiguration {
     @Bean
     public DriverManagerDataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:h2:file:./notificacaodb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;MULTI_THREADED=1;EARLY_FILTER=1");
+        dataSource.setUrl("jdbc:h2:file:./notificacaodb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;EARLY_FILTER=1;MVCC=TRUE;LOCK_TIMEOUT=15000;");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         dataSource.setDriverClassName("org.h2.Driver");
@@ -95,7 +96,7 @@ public class NotificaoSimplificadaSpringConfiguration {
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSqlScriptEncoding("UTF-8");
-        if (Boolean.valueOf(System.getProperty("anvisa.enabled.h2.inserts", "true"))) {
+        if (!SingularProperties.get().isFalse("anvisa.enabled.h2.inserts")) {
             populator.addScript(drops);
             populator.addScript(createTables);
             populator.addScript(inserts);

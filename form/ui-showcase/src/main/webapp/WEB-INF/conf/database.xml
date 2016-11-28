@@ -13,7 +13,7 @@
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=MSSQLServer;CACHE_SIZE=2048;MULTI_THREADED=1;INIT=CREATE SCHEMA IF NOT EXISTS DBSINGULAR"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=MSSQLServer;CACHE_SIZE=2048;INIT=CREATE SCHEMA IF NOT EXISTS DBSINGULAR;MVCC=TRUE;LOCK_TIMEOUT=15000;"/>
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
         <property name="removeAbandoned" value="true"/>
@@ -31,6 +31,7 @@
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>

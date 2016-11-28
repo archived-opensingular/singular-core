@@ -15,6 +15,8 @@ import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.type.util.STypePersonName;
 import org.opensingular.form.type.util.STypeYearMonth;
+import org.opensingular.form.util.SingularPredicates;
+import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.view.SViewTab;
@@ -33,150 +35,155 @@ public class SPackageCurriculo extends SPackage {
         final STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
         {
             curriculo
-                .asAtr().label("Currículo");
+                    .asAtr().label("Currículo");
         }
 
         final STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
-        final STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
-        final STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
-        final STypeDate dtNasc = informacoesPessoais.addFieldDate("dataNascimento", true);
+        final STypePersonName   nome                = informacoesPessoais.addField("nome", STypePersonName.class, true);
+        final STypeCPF          cpf                 = informacoesPessoais.addField("cpf", STypeCPF.class, true);
+        final STypeDate         dtNasc              = informacoesPessoais.addFieldDate("dataNascimento", true);
         {
             informacoesPessoais
-                .asAtr().label("Informações Pessoais");
+                    .asAtr().label("Informações Pessoais");
             nome
-                .asAtr().label("Nome").subtitle("nome completo").maxLength(50)
-                .asAtrBootstrap().colPreference(7);
+                    .asAtr().label("Nome").subtitle("nome completo").maxLength(50)
+                    .asAtrBootstrap().colPreference(7);
             cpf
-                .asAtrBootstrap().colPreference(3);
+                    .asAtrBootstrap().colPreference(3);
             dtNasc
-                .asAtr().label("Dt.Nasc.")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Dt.Nasc.")
+                    .asAtrBootstrap().colPreference(2);
         }
 
-        final STypeComposite<?> contatos = informacoesPessoais.addFieldComposite("contatos");
-        final STypeEMail email = contatos.addField("email", STypeEMail.class, true);
-        final STypeTelefoneNacional telFixo = contatos.addField("telefoneFixo", STypeTelefoneNacional.class);
+        final STypeComposite<?>     contatos = informacoesPessoais.addFieldComposite("contatos");
+        final STypeEMail            email    = contatos.addField("email", STypeEMail.class, true);
+        final STypeTelefoneNacional telFixo  = contatos.addField("telefoneFixo", STypeTelefoneNacional.class);
         final STypeTelefoneNacional telFixo2 = contatos.addField("telefoneFixo2", STypeTelefoneNacional.class);
-        final STypeTelefoneNacional telCel = contatos.addField("telefoneCelular", STypeTelefoneNacional.class);
+        final STypeTelefoneNacional telCel   = contatos.addField("telefoneCelular", STypeTelefoneNacional.class);
         {
             contatos
-                .asAtr().label("Contatos");
+                    .asAtr().label("Contatos");
             email
-                .asAtr().label("e-Mail")
-                .asAtrBootstrap().colPreference(6);
+                    .asAtr().label("e-Mail")
+                    .asAtrBootstrap().colPreference(6);
             telFixo
-                .asAtr().label("Tel.Fixo")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Tel.Fixo")
+                    .asAtrBootstrap().colPreference(2);
             telFixo2
-                .asAtr().label("Tel.Fixo")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Tel.Fixo")
+                    .asAtrBootstrap().colPreference(2);
             telCel
-                .asAtr().label("Tel.Celular")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Tel.Celular")
+                    .asAtrBootstrap().colPreference(2);
         }
 
-        final STypeComposite<?> referencia = curriculo.addFieldComposite("referencia");
-        final STypeBoolean foiIndicado = referencia.addFieldBoolean("foiIndicado");
-        final STypeBoolean refTemNaEmpresa = referencia.addFieldBoolean("conheceColaboradorNaEmpresa");
-        final STypeString refQuemNaEmpresa = referencia.addFieldString("colaboradorContato");
+
+        final STypeComposite<?> referencia       = curriculo.addFieldComposite("referencia");
+        final STypeBoolean      foiIndicado      = referencia.addFieldBoolean("foiIndicado");
+        final STypeBoolean      refTemNaEmpresa  = referencia.addFieldBoolean("conheceColaboradorNaEmpresa");
+        final STypeString       refQuemNaEmpresa = referencia.addFieldString("colaboradorContato");
         {
             referencia
-                .asAtr().label("Referência");
+                    .asAtr()
+                    .label("Referência");
             refTemNaEmpresa
-                .asAtr().label("Conhece colaborador na empresa")
-                .asAtrBootstrap().colPreference(4);
+                    .asAtr().label("Conhece colaborador na empresa")
+                    .asAtrBootstrap().colPreference(4);
             foiIndicado.withRadioView();
             foiIndicado
-                .asAtr().label("Foi indicado")
-                .asAtrBootstrap().colPreference(3);
+                    .asAtr().label("Foi indicado")
+                    .asAtrBootstrap().colPreference(3);
             refQuemNaEmpresa
-                .asAtr().label("Colaborador")
-                .asAtrBootstrap().colPreference(5);
+                    .asAtr().label("Colaborador")
+                    .asAtrBootstrap().colPreference(5);
         }
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> formacao       = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
         final STypeComposite<?>                                   cursoAcademico = formacao.getElementsType();
         final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
-            .selectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
-        final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
-        final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
-        final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);
-        final STypeInteger academicoCargaHoraria = cursoAcademico.addField("cargaHoraria", STypeInteger.class, true);
+                .selectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado").cast();
+        final STypeString    academicoNomeCurso    = cursoAcademico.addFieldString("nomeCurso", true);
+        final STypeString    academicoInstituicao  = cursoAcademico.addFieldString("instituicao", true);
+        final STypeCNPJ      academicoCNPJ         = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);
+        final STypeInteger   academicoCargaHoraria = cursoAcademico.addField("cargaHoraria", STypeInteger.class, true);
         final STypeYearMonth academicoMesConclusao = cursoAcademico.addField("mesConclusao", STypeYearMonth.class, true);
         {
             formacao
-                .asAtr().label("Formação Acadêmica");
+                    .asAtr().label("Formação Acadêmica");
             academicoTipo
-                .withRadioView()
-                .asAtr().label("Tipo")
-                .asAtrBootstrap().colPreference(2);
+                    .withRadioView()
+                    .asAtr().label("Tipo")
+                    .asAtrBootstrap().colPreference(2);
             academicoNomeCurso
-                .asAtr().label("Nome");
+                    .asAtr().label("Nome");
             academicoInstituicao
-                .asAtr().label("Instituição")
-                .asAtrBootstrap().colPreference(3);
+                    .asAtr().label("Instituição")
+                    .asAtrBootstrap().colPreference(3);
             academicoCNPJ
-                .asAtrBootstrap().colPreference(3);
+                    .asAtrBootstrap().colPreference(3);
             academicoCargaHoraria
-                .asAtr().label("Carga Horária (h)")
-                .asAtr().maxLength(5)
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Carga Horária (h)")
+                    .asAtr().maxLength(5)
+                    .asAtrBootstrap().colPreference(2);
             academicoMesConclusao
-                .asAtr().label("Mês de Conclusão")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Mês de Conclusão")
+                    .asAtrBootstrap().colPreference(2);
         }
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = curriculo.addFieldListOfComposite("experienciasProfissionais", "experiencia");
-        final STypeComposite<?> experiencia = experiencias.getElementsType();
-        final STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
-        final STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
-        final STypeString empresa = experiencia.addFieldString("empresa", true);
-        final STypeString cargo = experiencia.addFieldString("cargo", true);
-        final STypeString atividades = experiencia.addFieldString("atividades");
+        final STypeBoolean      primeiroEmprego  = curriculo.addFieldBoolean("primeiroEmprego");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias        = curriculo.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        final STypeComposite<?>                                   experiencia         = experiencias.getElementsType();
+        final STypeYearMonth                                      dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        final STypeYearMonth                                      dtFimExperiencia    = experiencia.addField("fim", STypeYearMonth.class);
+        final STypeString                                         empresa             = experiencia.addFieldString("empresa", true);
+        final STypeString                                         cargo               = experiencia.addFieldString("cargo", true);
+        final STypeString                                         atividades          = experiencia.addFieldString("atividades");
         {
             experiencias
-                .withView(SViewListByForm::new)
-                .asAtr().label("Experiências profissionais");
+                    .withView(SViewListByForm::new)
+                    .asAtr().label("Experiências profissionais")
+                    .dependsOn(primeiroEmprego)
+                    .exists(SingularPredicates.typeValueIsFalseOrNull(primeiroEmprego));
             dtInicioExperiencia
-                .asAtr().label("Data inicial")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Data inicial")
+                    .asAtrBootstrap().colPreference(2);
             dtFimExperiencia
-                .asAtr().label("Data final")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Data final")
+                    .asAtrBootstrap().colPreference(2);
             empresa
-                .asAtr().label("Empresa")
-                .asAtrBootstrap().colPreference(8);
+                    .asAtr().label("Empresa")
+                    .asAtrBootstrap().colPreference(8);
             cargo
-                .asAtr().label("Cargo");
+                    .asAtr().label("Cargo");
             atividades
-                .withTextAreaView()
-                .asAtr().label("Atividades Desenvolvidas");
+                    .withTextAreaView()
+                    .asAtr().label("Atividades Desenvolvidas");
         }
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = curriculo.addFieldListOfComposite("certificacoes", "certificacao");
-        final STypeComposite<?> certificacao = certificacoes.getElementsType();
-        final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
-        final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
-        final STypeDate validadeCertificacao = certificacao.addFieldDate("validade");
-        final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
+        final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes        = curriculo.addFieldListOfComposite("certificacoes", "certificacao");
+        final STypeComposite<?>                                   certificacao         = certificacoes.getElementsType();
+        final STypeYearMonth                                      dataCertificacao     = certificacao.addField("data", STypeYearMonth.class, true);
+        final STypeString                                         entidadeCertificacao = certificacao.addFieldString("entidade", true);
+        final STypeDate                                           validadeCertificacao = certificacao.addFieldDate("validade");
+        final STypeString                                         nomeCertificacao     = certificacao.addFieldString("nome", true);
         {
             certificacoes
-                .withView(SViewListByTable::new)
-                .asAtr().label("Certificações");
+                    .withView(SViewListByTable::new)
+                    .asAtr().label("Certificações");
             certificacao
-                .asAtr().label("Certificação");
+                    .asAtr().label("Certificação");
             dataCertificacao
-                .asAtr().label("Data")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Data")
+                    .asAtrBootstrap().colPreference(2);
             entidadeCertificacao
-                .asAtr().label("Entidade")
-                .asAtrBootstrap().colPreference(10);
+                    .asAtr().label("Entidade")
+                    .asAtrBootstrap().colPreference(10);
             validadeCertificacao
-                .asAtr().label("Validade")
-                .asAtrBootstrap().colPreference(2);
+                    .asAtr().label("Validade")
+                    .asAtrBootstrap().colPreference(2);
             nomeCertificacao
-                .asAtr().label("Nome")
-                .asAtrBootstrap().colPreference(10);
+                    .asAtr().label("Nome")
+                    .asAtrBootstrap().colPreference(10);
         }
 
         final STypeString informacoesAdicionais = curriculo.addFieldString("informacoesAdicionais");
@@ -196,8 +203,8 @@ public class SPackageCurriculo extends SPackage {
                 .add(referencia)
                 .add(informacoesAdicionais);
         tabbed.addTab("formacaoCurso", "Formacção e Curso")
-            .add(formacao)
-            .add(certificacoes);
+                .add(formacao)
+                .add(certificacoes);
         tabbed.addTab(experiencias);
 
         // Comportamentos

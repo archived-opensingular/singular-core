@@ -101,7 +101,21 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return type;
     }
 
-    final FieldMapOfRecordType getFieldsConsolidated() {
+    /** Retorna a quantidade de campos do tipo, incluindo os campos herdados do tipo pai. */
+    public int size() {
+        return getFieldsConsolidated().size();
+    }
+
+    /**
+     * Retorna o indice do campo com o nome informado dentro do tipo.
+     *
+     * @return -1 senão encontrar
+     */
+    public int findIndexOf(String fieldSimpleName) {
+        return getFieldsConsolidated().findIndex(fieldSimpleName);
+    }
+
+    private final FieldMapOfRecordType getFieldsConsolidated() {
         if(isRecursiveReference()) {
             return ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
         }
@@ -207,6 +221,13 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
     public SType<?> getField(String fieldSimpleName) {
         return getFieldsConsolidated().get(fieldSimpleName);
+    }
+
+    /**
+     * Retorna o campo da posição solicitada.
+     */
+    public SType<?> getField(int index) {
+        return getFieldsConsolidated().getByIndex(index);
     }
 
     /**

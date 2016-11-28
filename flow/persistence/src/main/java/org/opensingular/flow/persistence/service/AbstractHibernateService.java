@@ -46,7 +46,7 @@ public abstract class AbstractHibernateService {
         try {
             return classe.newInstance();
         } catch (Exception e) {
-            throw new SingularException("Erro instanciando entidade " + classe.getName(), e);
+            throw SingularException.rethrow("Erro instanciando entidade " + classe.getName(), e);
         }
     }
 }

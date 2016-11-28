@@ -16,12 +16,9 @@
 
 package org.opensingular.form.wicket.model;
 
+import org.opensingular.form.InstanceSerializableRef;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEvent;
-import org.opensingular.form.event.SInstanceEventType;
-import org.opensingular.form.event.SInstanceListeners;
-import org.opensingular.form.io.InstanceSerializableRef;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,68 +31,65 @@ import java.util.Objects;
  * posterior resolução do respectivo Dicionário para viabilziar deserialziação.
  * </p>
  *
- * @see {@link InstanceSerializableRef}
  * @author Daniel C. Bordin
+ * @see {@link InstanceSerializableRef}
  */
 public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I> implements ISInstanceEventCollector<I> {
 
-    private final InstanceSerializableRef<I> instanceRef;
-
-    private transient ISInstanceListener.EventCollector instanceListener;
+    private InstanceSerializableRef<I> instanceRef;
 
     public SInstanceRootModel() {
-        instanceRef = new InstanceSerializableRef<I>();
     }
 
+    @SuppressWarnings("unchecked")
     public SInstanceRootModel(I object) {
-        instanceRef = new InstanceSerializableRef<I>(object);
+        instanceRef = (InstanceSerializableRef<I>) object.getSerializableRef();
     }
 
     @Override
     public I getObject() {
-        if (instanceRef.get() != null && this.instanceListener == null) {
-            this.instanceListener = new ISInstanceListener.EventCollector();
-            SInstanceListeners listeners = instanceRef.get().getDocument().getInstanceListeners();
-            listeners.add(SInstanceEventType.VALUE_CHANGED, this.instanceListener);
-            listeners.add(SInstanceEventType.LIST_ELEMENT_ADDED, this.instanceListener);
-            listeners.add(SInstanceEventType.LIST_ELEMENT_REMOVED, this.instanceListener);
-        }
+        instanceRef.get().attachEventCollector();
         return instanceRef.get();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setObject(I object) {
-        detachListener();
-        instanceRef.set(object);
+        detachEventCollector();
+        instanceRef = (InstanceSerializableRef<I>) object.getSerializableRef();
     }
 
     @Override
     public void detach() {
         super.detach();
-        detachListener();
+        detachEventCollector();
     }
 
-    protected void detachListener() {
-        if (instanceRef.get() != null && this.instanceListener != null) {
-            instanceRef.get().getDocument().getInstanceListeners().remove(SInstanceEventType.values(), this.instanceListener);
+    protected void detachEventCollector() {
+        if (instanceRef != null && instanceRef.get() != null) {
+            instanceRef.get().detachEventCollector();
         }
-        this.instanceListener = null;
     }
 
     @Override
     public List<SInstanceEvent> getInstanceEvents() {
-        return (instanceListener == null) ? Collections.emptyList() : instanceListener.getEvents();
+        if (instanceRef.get() != null) {
+            instanceRef.get().getInstanceEvents();
+        }
+        return Collections.emptyList();
     }
+
     @Override
     public void clearInstanceEvents() {
-        if (instanceListener != null)
-            instanceListener.clear();
+        if (instanceRef.get() != null) {
+            instanceRef.get().clearInstanceEvents();
+        }
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((instanceRef.get() == null) ? 0 : instanceRef.get().hashCode());
         return result;
     }

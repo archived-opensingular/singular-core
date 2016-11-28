@@ -25,6 +25,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.lib.support.persistence.util.Constants;
@@ -33,6 +35,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 /**
  * The persistent class for the TB_DEFINICAO_PROCESSO database table.
  */
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @GenericGenerator(name = AbstractProcessDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)

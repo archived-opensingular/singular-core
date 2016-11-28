@@ -40,6 +40,7 @@ import org.apache.wicket.model.Model;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.behavior.FormChoiceAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.FormComponentAjaxUpdateBehavior;
@@ -53,10 +54,11 @@ public interface IBehaviorsMixin extends Serializable {
     default AttributeAppender attrAppender(String attribute, Serializable valueOrModel, String separator) {
         return attrAppender(attribute, valueOrModel, separator, Model.of(true));
     }
+
     default AttributeAppender attrAppender(String attribute, Serializable valueOrModel, String separator, IModel<Boolean> enabledModel) {
         return new AttributeAppender(attribute,
-            (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel),
-            separator) {
+                (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel),
+                separator) {
             @Override
             public boolean isEnabled(Component component) {
                 return Boolean.TRUE.equals(enabledModel.getObject());
@@ -68,8 +70,8 @@ public interface IBehaviorsMixin extends Serializable {
         return new AttributeModifier(attribute, patternToRemove) {
             @Override
             protected String newValue(String currentValue, String replacementValue) {
-                String regex = (isolateWord) ? "\\b" + replacementValue + "\\b" : replacementValue;
-                Matcher m = Pattern.compile(regex).matcher(currentValue);
+                String  regex  = (isolateWord) ? "\\b" + replacementValue + "\\b" : replacementValue;
+                Matcher m      = Pattern.compile(regex).matcher(currentValue);
                 boolean result = m.find();
                 if (result) {
                     StringBuffer sb = new StringBuffer();
@@ -88,9 +90,10 @@ public interface IBehaviorsMixin extends Serializable {
     default AttributeModifier attr(String attribute, Serializable valueOrModel) {
         return attr(attribute, valueOrModel, Model.of(true));
     }
+
     default AttributeModifier attr(String attribute, Serializable valueOrModel, IModel<Boolean> enabledModel) {
         return new AttributeModifier(attribute,
-            (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel)) {
+                (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel)) {
             @Override
             public boolean isEnabled(Component component) {
                 return enabledModel.getObject();
@@ -115,11 +118,30 @@ public interface IBehaviorsMixin extends Serializable {
         };
     }
 
+    default Behavior notVisibleIf(ISupplier<Boolean> model) {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                component.setVisible(!model.get());
+            }
+        };
+    }
+
     default Behavior visibleIf(ISupplier<Boolean> model) {
         return new Behavior() {
             @Override
             public void onConfigure(Component component) {
                 component.setVisible(model.get());
+            }
+        };
+    }
+
+    default <T> Behavior visibleIfModelObject(IPredicate<T> predicate) {
+        return new Behavior() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onConfigure(Component component) {
+                component.setVisible(predicate.test((T) component.getDefaultModelObject()));
             }
         };
     }
@@ -216,7 +238,7 @@ public interface IBehaviorsMixin extends Serializable {
 
     default Behavior on(String event, IFunction<Component, CharSequence> scriptFunction) {
         return onReadyScript(comp -> String.format("Wicket.Event.add('%s', '%s', function(event) { %s; });",
-            comp.getMarkupId(), event, scriptFunction.apply(comp)));
+                comp.getMarkupId(), event, scriptFunction.apply(comp)));
     }
 
     default Behavior onReadyScript(ISupplier<CharSequence> scriptSupplier) {
@@ -225,7 +247,7 @@ public interface IBehaviorsMixin extends Serializable {
 
     default Behavior onReadyScript(IFunction<Component, CharSequence> scriptFunction) {
         return onReadyScript(scriptFunction,
-            comp -> comp.isVisibleInHierarchy() && comp.isEnabledInHierarchy());
+                comp -> comp.isVisibleInHierarchy() && comp.isEnabledInHierarchy());
     }
 
     default Behavior onReadyScript(IFunction<Component, CharSequence> scriptFunction, IFunction<Component, Boolean> isEnabled) {
@@ -233,11 +255,12 @@ public interface IBehaviorsMixin extends Serializable {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 response.render(OnDomReadyHeaderItem.forScript(""
-                    + "(function(){"
-                    + "'use strict';"
-                    + scriptFunction.apply(component)
-                    + "})();"));
+                        + "(function(){"
+                        + "'use strict';"
+                        + scriptFunction.apply(component)
+                        + "})();"));
             }
+
             @Override
             public boolean isEnabled(Component component) {
                 return isEnabled.apply(component);
@@ -245,10 +268,10 @@ public interface IBehaviorsMixin extends Serializable {
         };
     }
 
-    default Behavior onEnterDelegate(Component target) {
-        return $b.onReadyScript(c -> {
-            return JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){e.preventDefault(); " + JQuery.$(target) + ".click();}");
-        });
+    default Behavior onEnterDelegate(Component newTarget, String originalTargetEvent) {
+        return $b.onReadyScript(c -> JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){" +
+                (originalTargetEvent != null ? "$(e.target).trigger('" + originalTargetEvent + "');" : "") +
+                "e.preventDefault(); " + JQuery.$(newTarget) + ".click();}"));
     }
 
 }

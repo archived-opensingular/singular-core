@@ -16,29 +16,21 @@
 
 package org.opensingular.form.wicket.feedback;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.IFeedback;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.validation.IValidationError;
@@ -48,29 +40,40 @@ import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
-public class SValidationFeedbackPanel extends Panel implements IFeedback {
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-    private final Component fence;
-    private boolean         showBox = false;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
-    public SValidationFeedbackPanel(String id, Component fence) {
-        super(id);
-        this.fence = fence;
+public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
+
+    private boolean showBox = false;
+
+    public SValidationFeedbackPanel(String id, FeedbackFence fence) {
+        super(id, fence);
 
         WebMarkupContainer feedbackul = new WebMarkupContainer("feedbackul") {
             protected void onConfigure() {
                 super.onConfigure();
-                boolean visible = anyMessage();
-                setVisible(visible);
+                if (anyMessage()) {
+                    setVisible(true);
+                    Optional.ofNullable(getRequestCycle().find(AjaxRequestTarget.class)).ifPresent(ajx -> {
+                        ajx.appendJavaScript(";if($('.modal-backdrop').length == 0)$('html, body').animate({scrollTop:  '0' }, 'slow');");
+                    });
+                } else {
+                    setVisible(false);
+                }
             }
         };
         add(feedbackul
-            .add(new ListView<IValidationError>("messages", newValidationErrorsModel()) {
-                @Override
-                protected void populateItem(ListItem<IValidationError> item) {
-                    item.add(newMessageDisplayComponent("message", item.getModel()));
-                }
-            }));
+                .add(new ListView<IValidationError>("messages", newValidationErrorsModel()) {
+                    @Override
+                    protected void populateItem(ListItem<IValidationError> item) {
+                        item.add(newMessageDisplayComponent("message", item.getModel()));
+                    }
+                }));
 
         add(new Behavior() {
             @Override
@@ -78,17 +81,18 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
                 super.renderHead(component, response);
                 SValidationFeedbackPanel fp = (SValidationFeedbackPanel) component;
                 if (fp.anyMessage(ValidationErrorLevel.ERROR)) {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"));
+                    response.render($canHaveError(fp, ".addClass('has-error');"));
                 } else if (fp.anyMessage(ValidationErrorLevel.WARNING)) {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"));
+                    response.render($canHaveError(fp, ".addClass('has-warning');"));
                 } else {
-                    response.render(OnDomReadyHeaderItem.forScript(
-                        JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"));
+                    response.render($canHaveError(fp, ".removeClass('has-error').removeClass('has-warning');"));
                 }
             }
         });
+    }
+
+    private HeaderItem $canHaveError(Component c, String script) {
+        return OnDomReadyHeaderItem.forScript(JQuery.$(c) + ".closest('.can-have-error')" + script);
     }
 
     public boolean anyMessage() {
@@ -100,40 +104,32 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
     }
 
     protected IModel<? extends List<IValidationError>> newValidationErrorsModel() {
-        //        return $m.get(() -> getValidationFeedbackHandler().collectNestedErrors());
-        return new IReadOnlyModel<List<IValidationError>>() {
-            @Override
-            public List<IValidationError> getObject() {
-                return getValidationFeedbackHandler().collectNestedErrors();
-            }
-        };
+        return (IReadOnlyModel<List<IValidationError>>) () -> getValidationFeedbackHandler().collectNestedErrors();
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {
-        return SValidationFeedbackHandler.get(getFence());
+        return SValidationFeedbackHandler.get(getFence().getMainContainer());
     }
 
     protected Component newMessageDisplayComponent(String id, IModel<IValidationError> error) {
-        final Component component = new Label(id, $m.map(error, it -> it.getMessage()));
+        final Component component = new Label(id, $m.map(error, IValidationError::getMessage));
         component.setEscapeModelStrings(SValidationFeedbackPanel.this.getEscapeModelStrings());
-        component.add($b.classAppender($m.map(error, it -> getCSSClass(it))));
+        component.add($b.classAppender($m.map(error, this::getCSSClass)));
 
-        if (component instanceof Label) {
-            final Label label = (Label) component;
+        final Label label = (Label) component;
 
-            if (error instanceof SFeedbackMessage) {
-                final SFeedbackMessage bfm = (SFeedbackMessage) error;
+        if (error instanceof SFeedbackMessage) {
+            final SFeedbackMessage bfm = (SFeedbackMessage) error;
 
-                final SInstance instance = bfm.getInstanceModel().getObject();
-                final SInstance parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
-                final Optional<Component> reporter = WicketFormUtils.findChildByInstance((MarkupContainer) getFence(), instance);
+            final SInstance           instance      = bfm.getInstanceModel().getObject();
+            final SInstance           parentContext = WicketFormUtils.resolveInstance(getFence().getMainContainer()).orElse(null);
+            final Optional<Component> reporter      = WicketFormUtils.findChildByInstance(getFence().getMainContainer(), instance);
 
-                final String labelPath = StringUtils.defaultString(
-                    reporter.map(it -> WicketFormUtils.generateTitlePath(getFence(), parentContext, it, instance)).orElse(null),
+            final String labelPath = StringUtils.defaultString(
+                    reporter.map(it -> WicketFormUtils.generateTitlePath(getFence().getMainContainer(), parentContext, it, instance)).orElse(null),
                     SFormUtil.generatePath(instance, it -> Objects.equals(it, parentContext)));
 
-                label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
-            }
+            label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
         }
 
         return component;
@@ -143,24 +139,16 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
         if (isShowBox()) {
-            final Optional<ValidationErrorLevel> level = SValidationFeedbackHandler.get(getFence())
-                .findNestedErrorsMaxLevel();
-            if (level.isPresent()) {
-                final String alertLevel = level.get().isWarning()
-                    ? "alert alert-warning"
-                    : "alert alert-danger";
-                new AttributeAppender("class", alertLevel).onComponentTag(this, tag);
-            }
+            SValidationFeedbackHandler.get(getFence().getMainContainer()).findNestedErrorsMaxLevel().ifPresent(level -> {
+                new AttributeAppender("class", level.isWarning() ? "alert alert-warning" : "alert alert-danger").onComponentTag(this, tag);
+            });
         }
-    }
-
-    public Component getFence() {
-        return fence;
     }
 
     public boolean isShowBox() {
         return showBox;
     }
+
     public SValidationFeedbackPanel setShowBox(boolean showBox) {
         this.showBox = showBox;
         return this;
@@ -168,11 +156,10 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
 
     /**
      * Gets the css class for the given message.
-     * 
-     * @param message
-     *            the message
+     *
+     * @param message the message
      * @return the css class; by default, this returns feedbackPanel + the message level, eg
-     *         'feedbackPanelERROR', but you can override this method to provide your own
+     * 'feedbackPanelERROR', but you can override this method to provide your own
      */
     protected String getCSSClass(final IValidationError message) {
         String cssClass;
@@ -188,4 +175,5 @@ public class SValidationFeedbackPanel extends Panel implements IFeedback {
         }
         return cssClass;
     }
+
 }

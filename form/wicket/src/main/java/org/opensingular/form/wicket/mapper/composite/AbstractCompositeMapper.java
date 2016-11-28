@@ -38,6 +38,7 @@ import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.annotation.AnnotationComponent;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
@@ -80,8 +81,9 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
-                final BSContainer<?> rootContainer = ctx.getContainer();
-                SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(rootContainer);
+                final BSContainer<?>       rootContainer     = ctx.getContainer();
+                final BSContainer<?>       externalContainer = ctx.getExternalContainer();
+                SValidationFeedbackHandler feedbackHandler   = SValidationFeedbackHandler.bindTo(new FeedbackFence(rootContainer, externalContainer));
                 feedbackHandler.findNestedErrorsMaxLevel();
                 grid.appendTag("div", ctx.createFeedbackPanel("feedback").setShowBox(true));
             }
@@ -98,18 +100,11 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         }
 
         protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row, final SInstanceFieldModel<SInstance> mCampo) {
-
             final SInstance iCampo   = mCampo.getObject();
             final ViewMode  viewMode = ctx.getViewMode();
-
-            final BSCol col = row.newCol();
+            final BSCol     col      = row.newCol();
             configureColspan(ctx, iCampo, col);
-
-            if (iCampo instanceof SIComposite) {
-                wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
-            } else {
-                wicketBuilder.build(ctx.createChild(col, true, mCampo), viewMode);
-            }
+            wicketBuilder.build(ctx.createChild(col, true, mCampo), viewMode);
         }
 
         protected void configureColspan(WicketBuildContext ctx, final SInstance iCampo, BSCol col) {
@@ -131,12 +126,12 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         }
 
         protected int getPrefColspan(WicketBuildContext ctx, final SInstance iCampo) {
-            final SType<?> tCampo = iCampo.getType();
+            final SType<?>                 tCampo        = iCampo.getType();
             final HashMap<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
             return (hintColWidths.containsKey(tCampo.getName()))
-                ? hintColWidths.get(tCampo.getName())
-                : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
+                    ? hintColWidths.get(tCampo.getName())
+                    : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
 
         protected SInstanceFieldModel<SInstance> fieldModel(SType<?> tCampo) {
@@ -164,13 +159,13 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
 
         private boolean renderAnnotations() {
             return ctx.getRootContext().getAnnotationMode().enabled() &&
-                getInstance().asAtrAnnotation().isAnnotated();
+                    getInstance().asAtrAnnotation().isAnnotated();
         }
 
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
 
             final BSContainer<?> parentCol = ctx.getContainer();
-            final BSGrid grid = parentCol.newGrid();
+            final BSGrid         grid      = parentCol.newGrid();
 
             addLabelIfNeeded(ctx, grid);
 
@@ -183,8 +178,8 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             BSRow row = grid.newRow();
 
-            final WicketBuildContext rootContext = ctx.getRootContext();
-            final IBSComponentFactory<Component> factory = rootContext.getPreFormPanelFactory();
+            final WicketBuildContext             rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
 
             if (factory != null) {
                 grid.newComponent(factory);

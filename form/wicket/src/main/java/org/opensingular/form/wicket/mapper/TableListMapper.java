@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -217,11 +218,11 @@ public class TableListMapper extends AbstractListaMapper {
             final IModel<SInstance> im  = item.getModel();
             final SInstance         ins = im.getObject();
 
-            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(row)
+            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(row))
                     .addInstanceModel(im)
                     .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
             row.add($b.classAppender("singular-form-table-row can-have-error"));
-            row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(it -> it.containsNestedErrors())));
+            row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
 
             if (!(view instanceof SViewListByTable)) {
                 return;

@@ -19,11 +19,14 @@ package org.opensingular.form.type.core.annotation;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.document.SDocument;
 
 /**
  * Instance class form the MTipoAnnotation type.
  *
  * @author Fabricio Buzeto
+ * @author Daniel Bordin
  */
 public class SIAnnotation extends SIComposite {
 
@@ -39,9 +42,16 @@ public class SIAnnotation extends SIComposite {
         return getValueInteger(STypeAnnotation.FIELD_TARGET_ID);
     }
 
-    public SIAnnotation setTargetId(Integer id) {
+    public void setTargetId(Integer id) {
         setValue(STypeAnnotation.FIELD_TARGET_ID, id);
-        return this;
+    }
+
+    public String getTargetPath() {
+        return getValueString(STypeAnnotation.FIELD_TARGET_PATH);
+    }
+
+    public void setTargetPath(String path) {
+        setValue(STypeAnnotation.FIELD_TARGET_PATH, path);
     }
 
     public Boolean getApproved() {
@@ -60,6 +70,28 @@ public class SIAnnotation extends SIComposite {
         return (String) getValue(STypeAnnotation.FIELD_CLASSIFIER);
     }
 
+    /**
+     * Associa a anotação a instância informada de forma a anotação aponte para o ID e XPath do mesmo.
+     */
+    public void setTarget(SInstance target) {
+        setTargetId(target.getId());
+        setTargetPath(buildXPath(target, new StringBuilder()).toString());
+    }
+
+    /**
+     * Criar um XPath para a instância no formato "order[@id=1]/address[@id=4]/street[@id=5]".
+     */
+    private StringBuilder buildXPath(SInstance instance, StringBuilder path) {
+        if (instance.getParent() != null) {
+            buildXPath(instance.getParent(), path);
+        }
+        if (path.length() != 0) {
+            path.append('/');
+        }
+        path.append(instance.getName()).append("[@id=").append(instance.getId()).append("]");
+        return path;
+    }
+
     @Override
     public Object getValue() {
         return this;
@@ -71,6 +103,7 @@ public class SIAnnotation extends SIComposite {
             SIAnnotation other = (SIAnnotation) valor;
             this.setText(other.getText());
             this.setTargetId(other.getTargetId());
+            this.setTargetPath(other.getTargetPath());
             this.setApproved(other.getApproved());
             this.setClassifier(other.getClassifier());
         }

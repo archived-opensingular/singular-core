@@ -21,9 +21,12 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +49,7 @@ public final class ProcessDefinitionCache {
     private static ProcessDefinitionCache cache;
 
     private final String[] packagesNames;
-    
+
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String[] packagesNames) {
         this.packagesNames = packagesNames;
@@ -54,7 +57,9 @@ public final class ProcessDefinitionCache {
         Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
         Map<Class<? extends ProcessInstance>, ProcessDefinition<?>> cacheByInstanceType = new HashMap<>();
 
-        Reflections reflections = new Reflections(packagesNames);
+        String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 1);
+        packagesToScan[packagesToScan.length -1] = "org.opensingular";
+        Reflections reflections = new Reflections(packagesToScan);
 
         Set<Class<? extends ProcessDefinition>> subTypes = reflections.getSubTypesOf(ProcessDefinition.class);
 

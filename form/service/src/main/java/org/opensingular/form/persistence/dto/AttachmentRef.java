@@ -89,15 +89,12 @@ public class AttachmentRef implements IAttachmentRef{
                 
                 AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntitty> persistenceHandler = 
                     ApplicationContextProvider.get().getBean(SDocument.FILE_PERSISTENCE_SERVICE, AttachmentPersistenceService.class);
-                
-                Blob content = persistenceHandler.loadAttachmentContent(codContent);
 
                 file = File.createTempFile(name, hashSha1 + "."+id);
                 file.deleteOnExit();
-                
-                try (InputStream in = content.getBinaryStream();
-                    OutputStream fos = IOUtil.newBuffredOutputStream(file)) {
-                    IOUtils.copy(in, fos);
+
+                try (OutputStream fos = IOUtil.newBuffredOutputStream(file)) {
+                    persistenceHandler.loadAttachmentContent(codContent, fos);
                 }
             }
             return CompressionUtil.inflateToInputStream(new FileInputStream(file));

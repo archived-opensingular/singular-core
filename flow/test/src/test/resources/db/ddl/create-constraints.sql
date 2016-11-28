@@ -152,6 +152,8 @@ ALTER TABLE DBSINGULAR.RL_PAPEL_TAREFA
    ADD CONSTRAINT FK_TAREFA_PAPEL FOREIGN KEY (CO_DEFINICAO_PAPEL)
       REFERENCES DBSINGULAR.TB_DEFINICAO_PAPEL (CO_DEFINICAO_PAPEL);
 
+
+
 /*==============================================================*/
 /* Index: IX_INSTANCIA_PROCESSO                                 */
 /*==============================================================*/

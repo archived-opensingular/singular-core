@@ -18,12 +18,7 @@ package org.opensingular.form;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -189,6 +184,14 @@ public final class SFormUtil {
                     + SInfoType.class.getSimpleName());
         }
         return infoType.name();
+    }
+
+    public static Optional<String> getTypeLabel(Class<? extends SType> typeClass) {
+        SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
+        if (StringUtils.isBlank(infoType.label())) {
+            return Optional.empty();
+        }
+        return Optional.of(infoType.label());
     }
 
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {

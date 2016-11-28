@@ -171,4 +171,15 @@ public class BSModalWindow extends Panel {
             tag.setName("div");
         }
     }
+
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        modalBorder.setWithAutoFocus(isWithAutoFocus());
+    }
+
+    public boolean isWithAutoFocus() {
+        return modalBorder.isWithAutoFocus();
+    }
+
 }
