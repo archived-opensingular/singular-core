@@ -4,7 +4,7 @@
     <parent>
         <artifactId>singular-flow</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.2</version>
+        <version>1.5.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -24,6 +24,13 @@
             <artifactId>flow-persistence</artifactId>
             <version>${singular.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>form-service</artifactId>
+            <version>${singular.version}</version>
+        </dependency>
+
 
         <!-- Spring -->
         <dependency>

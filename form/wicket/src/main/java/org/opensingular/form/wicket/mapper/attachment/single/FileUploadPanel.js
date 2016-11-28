@@ -52,17 +52,21 @@
                 formData:{
                     'upload_id' : params.upload_id,
                 },
-            	add: function(e,data) {
-            		if (!FileUploadPanel.validateInputFile(e, data, params.max_file_size)) {
-            			return false;
-            		}
-            		if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
-            	        data.process().done(function () {
-            	            data.submit();
-            	        });
-            	    }
-            		return true;
-            	},
+                add: function(e,data) {
+                    if (!FileUploadPanel.validateInputFile(
+                    		e,
+                    		data,
+                    		params.max_file_size,
+                    		params.allowed_file_types)) {
+                        return false;
+                    }
+                    if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
+                        data.process().done(function () {
+                            data.submit();
+                        });
+                    }
+                    return true;
+                },
                 start: function (e, data) {
                     // console.log($('#files_" + fieldId + "'));
                     $('#' + params.files_id ).html('');
@@ -71,58 +75,88 @@
                 },
                 done: function (e, data) {
                     //console.log('done',e,data);
-                    $.each(data.result, function (index, file) {
-                        //console.log('f',file, $('#' + params.files_id ));
-                        $.getJSON(params.add_url,
-                            {
-                                name: file.name,
-                                fileId: file.fileId,
-                                hashSHA1: file.hashSHA1,
-                                size: file.size,
+                    $.each(data.result, function (index, fileString) {
+                        var resp = JSON.parse(fileString);
+                        console.log('f',resp, $('#' + params.files_id ));
+                        if (resp.errorMessage) {
+                        	update_action_buttons();
+                        	toastr.error(resp.name + ': ' + resp.errorMessage);
+                        	$('#' + params.progress_bar_id).hide();
 
-                            }, function (dataSInstance, status, jqXHR) {
-                            	var $link = $('<a target="_blank"></a>').text(dataSInstance.name);
-                            	DownloadSupportedBehavior.resolveUrl(params.download_url, dataSInstance.fileId, dataSInstance.name, function(url){
-                            		$link.attr('href', url);
-                            	});
-                                $('#' + params.files_id).empty();
-                                $('#' + params.files_id).append($link);
-                                $('#' + params.progress_bar_id).hide();
-
-                                update_action_buttons();
-                            });
+                        } else {
+	                        $.getJSON(params.add_url,
+	                            {
+	                                name: resp.name,
+	                                fileId: resp.fileId,
+	                                hashSHA1: resp.hashSHA1,
+	                                size: resp.size
+	                            },
+	                            function (dataSInstance, status, jqXHR) {
+	                                var $link = $('<a></a>').text(dataSInstance.name);
+	                                DownloadSupportedBehavior.resolveUrl(
+	                            		params.download_url,
+	                            		dataSInstance.fileId,
+	                            		dataSInstance.name,
+	                            		function(url) { $link.attr('href', url); }
+	                        		);
+                                    if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
+                                        $link.attr('target', '_blank');
+                                    }
+	                                $('#' + params.files_id).empty().append($link);
+	                                $('#' + params.progress_bar_id).hide();
+	
+	                                update_action_buttons();
+	                            }
+                            );
+                        }
                     });
                 },
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     //console.log($('#' + params.progress_bar_id));
-                    $('#' + params.progress_bar_id).show();
-                    $('#' + params.progress_bar_id + ' .progress-bar').css( 'width',
-                        progress + '%' );
+                    $('#' + params.progress_bar_id).show()
+                    	.find('.progress-bar').css('width', progress + '%');
                 }
             })
-	            .on('focus', function() { $(this).closest('.fileinput')   .addClass('focus'); })
-	            .on('blur' , function() { $(this).closest('.fileinput').removeClass('focus'); })
-            	.prop('disabled', !$.support.fileInput)
-                .parent().addClass($.support.fileInput ? undefined : 'disabled');
-            
+            .on('focus', function() { $(this).closest('.fileinput')   .addClass('focus'); })
+            .on('blur' , function() { $(this).closest('.fileinput').removeClass('focus'); })
+            .prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
         }
 
         // Legacy for multple files
 
-        window.FileUploadPanel.validateInputFile = function(e, data, maxSize){
-            if ( maxSize && data.files[0].size  > maxSize) {
-                toastr.error("Arquivo não pode ser maior que "+FileUploadPanel.humaneSize(maxSize));
+        window.FileUploadPanel.validateInputFile = function (e, data, maxSize, allowed_file_types) {
+            if (data.files[0].size == 0) {
+            	toastr.error("Arquivo não pode ser de tamanho 0 (zero)");
                 FileUploadPanel.resetFormElement(e);
                 return false;
             }
+            
+            if (maxSize && data.files[0].size > maxSize) {
+            	toastr.error("Arquivo não pode ser maior que " + FileUploadPanel.humaneSize(maxSize));
+            	FileUploadPanel.resetFormElement(e);
+            	return false;
+            }
+            
+            if (allowed_file_types && allowed_file_types.length > 0) {
+            	var file = data.files[0];
+            	var extension 		 = file.name.substring(file.name.lastIndexOf(".") + 1);
+            	var invalidType 	 = (jQuery.inArray(file.type, allowed_file_types) < 0);
+            	var invalidExtension = (jQuery.inArray(extension, allowed_file_types) < 0);
+	        	if (invalidType && invalidExtension) {
+	        		toastr.error("Tipo de arquivo não permitido");
+	        		FileUploadPanel.resetFormElement(e);
+	        		return false;
+	        	}
+        	}
             return true;
         };
 
         window.FileUploadPanel.resetFormElement = function(e) {
-        	var $input = $(e.target || e.srcElement);
-        	$input.wrap('<form>').closest('form').get(0).reset();
-        	$input.unwrap();
+            var $input = $(e.target || e.srcElement);
+            $input.wrap('<form>').closest('form').get(0).reset();
+            $input.unwrap();
 
             // Prevent form submission
             e.stopPropagation();

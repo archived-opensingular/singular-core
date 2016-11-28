@@ -108,6 +108,7 @@ public class DecimalMapper extends StringMapper {
         nf.setParseBigDecimal(true);
         nf.setGroupingUsed(groupingUsed);
         nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(bigDecimal.scale());
         return nf.format(bigDecimal);
     }
 

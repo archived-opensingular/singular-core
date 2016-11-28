@@ -30,8 +30,6 @@ import org.opensingular.form.type.core.STypeString;
 @SInfoType(name = "Attachment", spackage = SPackageCore.class)
 public class STypeAttachment extends STypeComposite<SIAttachment> {
 
-    public static final List<String>                          INLINE_CONTENT_TYPES = Arrays.asList("application/pdf", "image/.*");
-
     public static final String                                FIELD_NAME           = "name";
     public static final String                                FIELD_FILE_ID        = "fileId";
     public static final String                                FIELD_SIZE           = "size";

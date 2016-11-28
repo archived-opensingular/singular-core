@@ -64,7 +64,16 @@ public class ToastrHelper {
         return generator.generateJs();
     }
 
-    protected ToastrSettings getDefaultSettings() {
+    public static String generateJs(Exception exception, ToastrType toastrType, boolean withDocumentReadyFunction) {
+        ToastrSettings settings = getDefaultSettings();
+        settings.getToastrType().setValue(toastrType);
+        settings.getNotificationTitle().setValue(exception.getMessage());
+
+        ToastJsGenerator generator = new ToastJsGenerator(settings, withDocumentReadyFunction);
+        return generator.generateJs();
+    }
+
+    protected static ToastrSettings getDefaultSettings() {
         ToastrSettings settings = ToastrSettings.builder().build();
         settings.getPositionClass().setValue(Position.TOP_CENTER);
         settings.getTimeOut().setValue(0);

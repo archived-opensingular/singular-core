@@ -16,6 +16,18 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.event.SInstanceEventType;
+import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.form.io.PersistenceBuilderXML;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.validation.IValidationError;
+import org.opensingular.lib.commons.lambda.IConsumer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,14 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.io.PersistenceBuilderXML;
-import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.validation.IValidationError;
 
 public abstract class SInstance implements SAttributeEnabled {
 
@@ -49,6 +53,11 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /** Mapa de bits de flags. Veja {@link InstanceFlags} */
     private int flags;
+
+    /** Informações encontradas na persitência, mas sem correspondência no tipo na instância atual. */
+    private List<MElement> unreadInfo;
+    private InstanceSerializableRef<SInstance> serializableRef;
+    private ISInstanceListener.EventCollector eventCollector;
 
     public SType<?> getType() {
         return type;
@@ -359,10 +368,6 @@ public abstract class SInstance implements SAttributeEnabled {
         return this.parent;
     }
 
-    public <K extends SInstance> K getBrother(SType<K> tipoPai) {
-        throw new RuntimeException("implementar");
-    }
-
     public <A extends SInstance & ICompositeInstance> A getAncestor(SType<A> ancestorType) {
         return findAncestor(ancestorType).get();
     }
@@ -586,5 +591,80 @@ public abstract class SInstance implements SAttributeEnabled {
             sb.append(getType().getClass().getSimpleName()).append('@').append(getType().getTypeId());
         }
         return sb;
+    }
+
+    //----------------------------------------------------
+    // Métodos de uso interno expostos via InternalAccess
+    //----------------------------------------------------
+
+    /**
+     * Salva uma informação lida da persitência para o qual não foi encontrado estruturada de dados correspondente no
+     * tipo. Essa informações provavelmente será salva quando a instancia for persistida novamente. Ou seja, esse
+     * dado não será perdido no ato de ler e regravar.
+     */
+    final void addUnreadInfo(MElement xmlInfo) {
+        //TODO Está trabalhando com XML. Generalizar para permitir outras estruturas de dados como por exemplo JSON.
+        // (by Daniel Bordin)
+        if (unreadInfo == null) {
+            unreadInfo = new ArrayList<>();
+        }
+        unreadInfo.add(xmlInfo);
+    }
+
+    /**
+     * Retorna uma lista das informações encontrada para essa instância que não foram "consumidas" durante a leitura
+     * a parti da persistência. Ou seja, dados "perdidos".
+     * @return Nunca null
+     */
+    final List<MElement> getUnreadInfo() {
+        return unreadInfo == null ? Collections.emptyList() : unreadInfo;
+    }
+
+    public InstanceSerializableRef<SInstance> getSerializableRef() {
+        if (serializableRef == null){
+            serializableRef = new InstanceSerializableRef<>(this);
+        }
+        return serializableRef;
+    }
+
+    /**
+     * configura os instance listeners em uma instancia.
+     * Geralmente chamado após uma deserialização;
+     */
+    public void attachEventCollector() {
+        if (this.eventCollector == null) {
+            this.eventCollector = new ISInstanceListener.EventCollector();
+            SInstanceListeners listeners = this.getDocument().getInstanceListeners();
+            listeners.add(SInstanceEventType.VALUE_CHANGED, this.eventCollector);
+            listeners.add(SInstanceEventType.LIST_ELEMENT_ADDED, this.eventCollector);
+            listeners.add(SInstanceEventType.LIST_ELEMENT_REMOVED, this.eventCollector);
+        }
+    }
+
+    /**
+     * Chamado durante deserialização para remover os listeners de um objeto
+     */
+    public void detachEventCollector() {
+        if (eventCollector != null) {
+            this.getDocument().getInstanceListeners().remove(SInstanceEventType.values(), this.eventCollector);
+            this.eventCollector = null;
+        }
+    }
+
+    public void clearInstanceEvents() {
+        if (eventCollector != null) {
+            eventCollector.clear();
+        }
+    }
+
+    ISInstanceListener.EventCollector getEventCollector() {
+        return eventCollector;
+    }
+
+    public List<SInstanceEvent> getInstanceEvents() {
+        if (eventCollector != null) {
+            return eventCollector.getEvents();
+        }
+        return Collections.emptyList();
     }
 }

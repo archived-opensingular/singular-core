@@ -15,34 +15,49 @@
  */
 
 (function () {
+
+    const FILE_REGEX_PATTERN = /.*\.(.*)/;
+    const SUPPORTED_EXTENSIONS = ['pdf', 'jpg', 'gif', 'png'];
+
     "use strict";
     if (window.DownloadSupportedBehavior == undefined) {
         window.DownloadSupportedBehavior = function () {
         };
         window.DownloadSupportedBehavior.ajaxDownload = function (url, fileId, filename) {
+            var newWindow;
+            if (window.DownloadSupportedBehavior.isContentTypeBrowserFriendly(filename)) {
+                newWindow = window.open();
+            }
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 url: url + '&fileId=' + fileId + '&fileName=' + filename,
                 success: function (response, status, request) {
-                    var form = $('<form method="GET" action="' + response.url + '">');
-                    $('body').append(form);
-                    form.submit();
-                    form.remove();
+                    if (typeof newWindow != "undefined") {
+                        newWindow.location = location.protocol + "//" + location.host + response.url;
+                    } else {
+                        var form = $('<form method="GET" action="' + response.url + '">');
+                        $('body').append(form);
+                        form.submit();
+                        form.remove();
+                    }
                 }
             });
             return false;
-        }
+        };
         window.DownloadSupportedBehavior.resolveUrl = function (url, fileId, filename, callback) {
-        	$.ajax({
-        		type: "POST",
-        		dataType: 'json',
-        		url: url + '&fileId=' + fileId + '&fileName=' + filename,
-        		success: function (response, status, request) {
-        			callback(response.url);
-        		}
-        	});
-        	return false;
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: url + '&fileId=' + fileId + '&fileName=' + filename,
+                success: function (response, status, request) {
+                    callback(response.url);
+                }
+            });
+            return false;
+        };
+        window.DownloadSupportedBehavior.isContentTypeBrowserFriendly = function (filename) {
+            return FILE_REGEX_PATTERN.test(filename) && SUPPORTED_EXTENSIONS.indexOf(FILE_REGEX_PATTERN.exec(filename)[1]) >= 0;
         }
     }
 })();

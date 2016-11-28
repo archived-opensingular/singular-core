@@ -16,22 +16,11 @@
 
 package org.opensingular.form.wicket.mapper.attachment.single;
 
-import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -41,24 +30,24 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
-import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
-import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
-import org.opensingular.form.wicket.mapper.attachment.DownloadUtil;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
+import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -109,7 +98,8 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         add((filesContainer = new WebMarkupContainer("files")).add(downloadLink));
         add(uploadFileButton.add(fileField));
-        add(removeFileButton);
+        add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
+
         add(progressBar = new WebMarkupContainer("progress"));
 
         add(new ClassAttributeModifier() {
@@ -120,9 +110,6 @@ public class FileUploadPanel extends Panel implements Loggable {
                 return oldClasses;
             }
         });
-
-        uploadFileButton.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
-        downloadLink.add(new SingularEventsHandlers(ADD_MOUSEDOWN_HANDLERS));
     }
 
     @Override
@@ -133,14 +120,10 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
             final SIAttachment attachment = getModelObject();
-            final Map<Boolean, List<String>> groups = attachment.asAtr().getAllowedFileTypes().stream()
-                .collect(groupingBy((String it) -> StringUtils.contains(it, '/')));
-
             this.uploadId = fileUploadManager.createUpload(
-                defaultIfNull(attachment.asAtr().getMaxFileSize(), Long.MAX_VALUE),
-                1,
-                groups.get(false),
-                groups.get(true));
+                Optional.ofNullable(attachment.asAtr().getMaxFileSize()),
+                Optional.empty(),
+                Optional.ofNullable(attachment.asAtr().getAllowedFileTypes()));
         }
     }
 
@@ -156,17 +139,18 @@ public class FileUploadPanel extends Panel implements Loggable {
             return ""
             //@formatter:off
                 + "\n $(function () { "
-                + "\n   window.FileUploadPanel.setup({ "
-                + "\n     param_name: '"        + PARAM_NAME                    + "',"
-                + "\n     panel_id: '"          + self.getMarkupId()            + "',"
-                + "\n     file_field_id: '"     + fileField.getMarkupId()       + "',"
-                + "\n     files_id: '"          + filesContainer.getMarkupId()  + "',"
-                + "\n     progress_bar_id: '"   + progressBar.getMarkupId()     + "',"
-                + "\n     upload_url: '"        + getUploadUrl()                + "',"
-                + "\n     download_url: '"      + getDownloaderUrl()            + "',"
-                + "\n     add_url: '"           + getAdderUrl()                 + "',"
-                + "\n     max_file_size: "      + getMaxFileSize()              + "  "
-                + "\n   });"
+                + "\n   window.FileUploadPanel.setup(" + new JSONObject()
+                          .put("param_name"        , PARAM_NAME                  )
+                          .put("panel_id"          , self.getMarkupId()          )
+                          .put("file_field_id"     , fileField.getMarkupId()     )
+                          .put("files_id"          , filesContainer.getMarkupId())
+                          .put("progress_bar_id"   , progressBar.getMarkupId()   )
+                          .put("upload_url"        , getUploadUrl()              )
+                          .put("download_url"      , getDownloaderUrl()          )
+                          .put("add_url"           , getAdderUrl()               )
+                          .put("max_file_size"     , getMaxFileSize()            )
+                          .put("allowed_file_types", getAllowedFileTypes()       )
+                          .toString(2) + "); "
                 + "\n });";
             //@formatter:on
         } else {
@@ -196,6 +180,9 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private long getMaxFileSize() {
         return getModelObject().asAtr().getMaxFileSize();
+    }
+    private List<String> getAllowedFileTypes() {
+        return getModelObject().asAtr().getAllowedFileTypes();
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -262,23 +249,24 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         @Override
         public void onResourceRequested() {
+            final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
+            final HttpServletResponse httpResp = (HttpServletResponse) getWebResponse().getContainerResponse();
+
             try {
                 final String pFileId = getParamFileId("fileId").toString();
                 final String pName = getParamFileId("name").toString();
-                final long pSize = getParamFileId("size").toLong();
 
-                getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={},size={})", pFileId, pName, pSize);
+                getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
-                final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
-
-                boolean found = FileUploadServlet.consumeFile(httpReq, pFileId, file -> {
+                Optional<UploadResponseInfo> responseInfo = FileUploadServlet.consumeFile(httpReq, pFileId, file -> {
                     final SIAttachment siAttachment = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
-                    siAttachment.setContent(pName, file, pSize);
-                    DownloadUtil.writeJSONtoResponse(siAttachment, RequestCycle.get().getResponse());
+                    siAttachment.setContent(pName, file, file.length());
+                    return new UploadResponseInfo(siAttachment);
                 });
 
-                if (!found)
-                    throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND);
+                responseInfo
+                    .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND))
+                    .writeJsonObjectResponseTo(httpResp);
 
             } catch (AbortWithHttpErrorCodeException e) {
                 getLogger().error(e.getMessage(), e);

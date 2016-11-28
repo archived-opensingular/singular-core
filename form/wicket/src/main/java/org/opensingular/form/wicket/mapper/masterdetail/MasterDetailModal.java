@@ -16,33 +16,32 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.component.BFModalWindow;
-import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-import org.opensingular.form.wicket.model.SInstanceListItemModel;
-import org.opensingular.form.wicket.util.FormStateUtil;
-import org.opensingular.form.wicket.util.WicketFormProcessing;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.UIBuilderWicket;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.component.BFModalWindow;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.form.wicket.util.FormStateUtil;
+import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
+
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 class MasterDetailModal extends BFModalWindow {
 
-    protected final IModel<String>         listaLabel;
+    protected final IModel<String>               listaLabel;
     protected final WicketBuildContext           ctx;
     protected final UIBuilderWicket              wicketBuilder;
     protected final Component                    table;
@@ -81,13 +80,9 @@ class MasterDetailModal extends BFModalWindow {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(table);
                 MasterDetailModal.this.hide(target);
+                WicketFormProcessing.onFieldProcess(table, target, model);
             }
 
-            @Override
-            protected void onInitialize() {
-                super.onInitialize();
-                add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
-            }
         });
 
         if (viewMode.isEdition()) {
@@ -102,11 +97,6 @@ class MasterDetailModal extends BFModalWindow {
                     MasterDetailModal.this.hide(target);
                 }
 
-                @Override
-                protected void onInitialize() {
-                    super.onInitialize();
-                    add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_MOUSEDOWN_HANDLERS));
-                }
             });
         }
 
@@ -156,10 +146,10 @@ class MasterDetailModal extends BFModalWindow {
 
     private void configureNewContent(String prefix, AjaxRequestTarget target) {
 
-        setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
+        setTitleText($m.get(() -> (prefix + " " + listaLabel.getObject()).trim()));
 
-        final BSContainer<?> modalBody = new BSContainer<>("bogoMips");
-        ViewMode viewModeModal = viewMode;
+        final BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
+        ViewMode             viewModeModal = viewMode;
 
         setBody(modalBody);
 
@@ -184,8 +174,9 @@ class MasterDetailModal extends BFModalWindow {
     @Override
     public void show(AjaxRequestTarget target) {
         super.show(target);
-        target.appendJavaScript(getConfigureBackdropScript());
+        target.appendJavaScript(Scripts.multipleModalBackDrop());
     }
+
     @Override
     public void hide(AjaxRequestTarget target) {
         super.hide(target);
@@ -193,31 +184,25 @@ class MasterDetailModal extends BFModalWindow {
             onHideCallback.accept(target);
     }
 
-    private String getConfigureBackdropScript() {
-        String js = "";
-        js += " (function (zindex){ ";
-        js += "     $('.modal-backdrop').each(function(index) { ";
-        js += "         var zIndex = $(this).css('z-index'); ";
-        js += "         $(this).css('z-index', zindex-1+index); ";
-        js += "     }); ";
-        js += "     $('.modal').each(function(index) { ";
-        js += "         var zIndex = $(this).css('z-index'); ";
-        js += "         $(this).css('z-index', zindex+index); ";
-        js += "     }); ";
-        js += " })(10050); ";
-        return js;
-    }
 
     @SuppressWarnings("unchecked")
     public IModel<SIList<SInstance>> getModel() {
         return (IModel<SIList<SInstance>>) super.getDefaultModel();
     }
+
     @SuppressWarnings("unchecked")
     public SIList<SInstance> getModelObject() {
         return (SIList<SInstance>) super.getDefaultModelObject();
     }
+
     public MasterDetailModal setOnHideCallback(IConsumer<AjaxRequestTarget> onHideCallback) {
         this.onHideCallback = onHideCallback;
         return this;
     }
+
+    @Override
+    public boolean isWithAutoFocus() {
+        return viewMode == null || viewMode.isEdition();
+    }
+
 }

@@ -16,20 +16,68 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <wicket:head>
+        <style type="text/css">
+            .FileListUploadPanel .list-detail-empty {
+                display: none;
+            }
+
+            .FileListUploadPanel .upload-list-add {
+                display: block;
+            }
+
+            .FileListUploadPanel .list-action-uploading {
+                display: none;
+            }
+
+            .FileListUploadPanel .list-action-remove {
+                display: inline;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_empty .list-detail-empty {
+                display: block;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_empty .upload-list-add {
+                display: none;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_uploading .list-action-uploading {
+                display: block;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_success .list-action-remove {
+                display: inline;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_error .list-action-remove {
+                display: inline;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_error .list-item-icon > a > i {
+                color: red;
+            }
+
+            .FileListUploadPanel.FileListUploadPanel_disabled {
+                display: none;
+            }
+
+        </style>
+    </wicket:head>
+</head>
 <body>
 <wicket:panel>
     <div class="upload-panel">
-        <div class="upload-panel-body">
+        <div class="upload-panel-body can-have-error">
             <div class="upload-panel-heading">
                 <span wicket:id="uploadLabel"/>
             </div>
             <div wicket:id="empty-box" class='list-detail-empty'>
-                <a wicket:id="select-file-link">
-                    <p wicket:id="select-file-link-message"
-                       class='list-detail-empty-message'/>
+                <a wicket:id="select-file-link" href="javascript:void(0);">
+                    <p wicket:id="select-file-link-message" class='list-detail-empty-message'/>
                 </a>
-                <p wicket:id="empty-message"
-                   class='list-detail-empty-message'/>
+                <p wicket:id="empty-message" class='list-detail-empty-message'/>
             </div>
             <div class="upload-list">
                 <div class="upload-list-container">
@@ -61,6 +109,7 @@
                     </ul>
                 </div>
             </div>
+            <div class="upload-list-feedback" wicket:id="feedback"></div>
         </div>
     </div>
 </wicket:panel>

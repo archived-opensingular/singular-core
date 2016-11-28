@@ -74,4 +74,8 @@ public final class InstanceValidators {
     public static MEmailValidator emailLocalAddress(){
         return MEmailValidator.INSTANCE_ALLOW_LOCAL_ADDRESS;
     }
+
+    public static MMaxDateValidator maxDate(){
+        return MMaxDateValidator.INSTANCE;
+    }
 }

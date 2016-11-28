@@ -133,7 +133,9 @@ public class STypeProcesso extends STypeComposite<SIComposite> {
     public void addObrasProcesso(){
         final STypeList<STypeObra, SIComposite> obrasProcesso = this.addFieldListOf(FIELD_OBRAS_PROCESSO, STypeObra.class);
         obrasProcesso.asAtr().itemLabel("Obra");
-        obrasProcesso.withView(new SViewListByMasterDetail(), 
+        obrasProcesso.withView(new SViewListByMasterDetail(),
+            view -> view.col(obrasProcesso.getElementsType().getFieldValorSolicitado()), 
+            view -> view.col(obrasProcesso.getElementsType().getFieldValorContratado()), 
             view -> view.col("Valor Empenhado", instancia -> {
                 final BigDecimal valorEmpenhado = ((SIComposite)instancia).getFieldList(STypeObra.FIELD_VALORES_EMPENHADOS, SIComposite.class)
                     .stream().map(instanciaComposta -> (BigDecimal) Value.of(instanciaComposta, STypeValorEmpenhadoObra.FIELD_VALOR_EMPENHADO))

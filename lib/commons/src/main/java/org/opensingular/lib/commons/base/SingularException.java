@@ -32,7 +32,7 @@ public class SingularException extends RuntimeException {
      * Constructs a new <code>SingularException</code> without specified
      * detail message.
      */
-    public SingularException() {
+    protected SingularException() {
         super();
     }
 
@@ -42,7 +42,7 @@ public class SingularException extends RuntimeException {
      *
      * @param msg the error message
      */
-    public SingularException(String msg) {
+    protected SingularException(String msg) {
         super(msg);
     }
 
@@ -53,7 +53,7 @@ public class SingularException extends RuntimeException {
      * @param cause the exception or error that caused this exception to be
      *              thrown
      */
-    public SingularException(Throwable cause) {
+    protected SingularException(Throwable cause) {
         super(cause);
     }
 
@@ -65,10 +65,25 @@ public class SingularException extends RuntimeException {
      * @param cause the exception or error that caused this exception to be
      *              thrown
      */
-    public SingularException(String msg, Throwable cause) {
+    protected SingularException(String msg, Throwable cause) {
         super(msg, cause);
     }
 
+    public static SingularException rethrow(Throwable e) {
+        return rethrow(null, e);
+    }
+
+    public static SingularException rethrow(String message) {
+        return rethrow(message, null);
+    }
+
+    public static SingularException rethrow(String message, Throwable e) {
+        if (e instanceof SingularException) {
+            return (SingularException) e;
+        } else {
+            return new SingularException(message, e);
+        }
+    }
 
     /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.

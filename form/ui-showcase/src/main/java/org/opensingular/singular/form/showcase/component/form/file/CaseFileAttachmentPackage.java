@@ -39,8 +39,12 @@ public class CaseFileAttachmentPackage extends SPackage {
         STypeAttachment anexo = tipoMyForm.addField("anexo", STypeAttachment.class);
         anexo.asAtr().label("Anexo");
         anexo.asAtr().required(true);
-        anexo.as(AtrBootstrap.class).colPreference(3);
+        anexo.as(AtrBootstrap.class).colPreference(6);
 
+        STypeAttachment foto = tipoMyForm.addField("foto", STypeAttachment.class);
+        foto.asAtr().label("Foto").required(false).allowedFileTypes("jpg", "image/png");
+        foto.as(AtrBootstrap.class).colPreference(6);
+        
 //        tipoMyForm.addField("a1", STypeAttachment.class).asAtr().label("a1");
 //        tipoMyForm.addField("a2", STypeAttachment.class).asAtr().label("a2");
 //        tipoMyForm.addField("a3", STypeAttachment.class).asAtr().label("a3");

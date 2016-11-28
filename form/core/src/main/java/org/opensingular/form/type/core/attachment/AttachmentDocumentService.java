@@ -58,7 +58,7 @@ class AttachmentDocumentService {
         }
     }
 
-    private IAttachmentPersistenceHandler getTemporaryAttachmentHandler() {
+    private IAttachmentPersistenceHandler<?> getTemporaryAttachmentHandler() {
         return document.getAttachmentPersistenceTemporaryHandler();
     }
 

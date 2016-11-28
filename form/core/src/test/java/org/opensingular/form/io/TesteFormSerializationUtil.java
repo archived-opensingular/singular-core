@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
+import org.opensingular.form.InstanceSerializableRef;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
@@ -299,7 +300,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
         endereco.setValue("aqui");
 
-        InstanceSerializableRef<?> ref = new InstanceSerializableRef<>(endereco);
+        InstanceSerializableRef<?> ref = endereco.getSerializableRef();
         testSerializacao(ref);
     }
 
@@ -310,9 +311,9 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         SInstance instancia2 = SDocumentFactory.empty().createInstance(instancia1.getDocument().getRootRefType().get());
 
         TwoReferences tr1 = new TwoReferences();
-        tr1.ref1 = new InstanceSerializableRef<>(instancia1);
+        tr1.ref1 = instancia1.getSerializableRef();
         tr1.ref1.get().setValue("Rua 1");
-        tr1.ref2 = new InstanceSerializableRef<>(instancia2);
+        tr1.ref2 = instancia2.getSerializableRef();
         tr1.ref2.get().setValue("Rua 2");
 
         assertSame(tr1.ref1.get().getDictionary(), tr1.ref2.get().getDictionary());

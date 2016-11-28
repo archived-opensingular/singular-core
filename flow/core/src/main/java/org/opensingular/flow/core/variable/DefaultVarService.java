@@ -42,7 +42,7 @@ public class DefaultVarService implements VarService {
 
     @Override
     public VarDefinition newDefinition(String ref, String name, VarType type) {
-        return null;
+        return new VarDefinitionImpl(ref, name, type, false);
     }
 
     @Deprecated

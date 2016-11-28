@@ -21,4 +21,10 @@ public interface IScheduleService {
     void schedule(IScheduledJob scheduledJob);
 
     void trigger(IScheduledJob scheduledJob);
+
+    /**
+     * Método para destruir o serviço de agendamento.
+     * Essa assinatura é reconhecida como uma assinatura implícita de destruição de beans pelo spring.
+     */
+    void shutdown();
 }

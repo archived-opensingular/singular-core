@@ -58,6 +58,7 @@ public class AnnotationComponent extends Panel {
     static final String                             ID_EMPTY_BUTTON    = "emptyButton";
     static final String                             ID_TOGGLE_BUTTON   = "toggleButton";
     static final String                             ID_EDIT_BUTTON     = "editButton";
+    static final String                             ID_VIEW_BUTTON     = "viewButton";
     static final String                             ID_REMOVE_BUTTON   = "removeButton";
 
     private final WicketBuildContext                context;
@@ -97,11 +98,12 @@ public class AnnotationComponent extends Panel {
                 .add(new WebMarkupContainer(ID_TOGGLE_BUTTON)
                         .add($b.classAppender($m.get(() -> getToggleButtonCSS(getReferencedModel())))))
                 .add(new Label("title", $m.ofValue(getTitle(getReferencedModel()))))
-                .add(new Label(ID_ANNOTATION_TEXT, $m.get(() -> getTrimmedText())))
+                .add(new Label(ID_ANNOTATION_TEXT, $m.get(this::getTrimmedText)))
                 .add(new ApprovalStatusLabel(ID_APPROVAL_LABEL, approvedModel))
-                .add(new EditAnnotationButton(ID_EDIT_BUTTON, editAnnotationModal, editable))
+                .add(new EditAnnotationButton(ID_EDIT_BUTTON, editAnnotationModal).setVisible(editable))
+                .add(new ViewAnnotationButton(ID_VIEW_BUTTON, editAnnotationModal).setVisible(!editable))
                 .add(new RemoveAnnotationButton(ID_REMOVE_BUTTON, removeAnnotationModal).setVisible(editable))
-                .add($b.visibleIf(() -> hasAnnotationText())));
+                .add($b.visibleIf(this::hasAnnotationText)));
     }
 
     @Override
@@ -200,10 +202,25 @@ public class AnnotationComponent extends Panel {
     private final class EditAnnotationButton extends ActionAjaxButton {
         private final BFModalWindow annotationModal;
 
-        private EditAnnotationButton(String id, BFModalWindow annotationModal, boolean editable) {
+        private EditAnnotationButton(String id, BFModalWindow annotationModal) {
             super(id);
             this.annotationModal = annotationModal;
             this.add(new Label("editIcon"));
+        }
+
+        @Override
+        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            annotationModal.show(target);
+        }
+    }
+
+    private final class ViewAnnotationButton extends ActionAjaxButton {
+        private final BFModalWindow annotationModal;
+
+        private ViewAnnotationButton(String id, BFModalWindow annotationModal) {
+            super(id);
+            this.annotationModal = annotationModal;
+            this.add(new Label("viewIcon"));
         }
 
         @Override

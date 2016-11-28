@@ -30,8 +30,7 @@ import org.opensingular.singular.form.showcase.component.Resource;
 /**
  * Campo para anexar vários arquivos
  */
-@CaseItem(componentName = "Multiple Attachments", group = Group.FILE,
-resources = @Resource(PageWithAttachment.class))
+@CaseItem(componentName = "Multiple Attachments", group = Group.FILE, resources = @Resource(PageWithAttachment.class))
 public class CaseFileMultipleAttachmentsPackage extends SPackage {
 
     @Override
@@ -39,18 +38,18 @@ public class CaseFileMultipleAttachmentsPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         final STypeAttachmentList layoutsRotulagem = tipoMyForm
-                .addFieldListOfAttachment("layoutsRotulagem", "layout");
+            .addFieldListOfAttachment("layoutsRotulagem", "layout");
         layoutsRotulagem
-                .withMiniumSizeOf(1);
-        layoutsRotulagem
-                .withMaximumSizeOf(4);
-        layoutsRotulagem
-                .asAtr()
-                .label("Layouts Rotulagem");
+            .withMiniumSizeOf(1)
+            .withMaximumSizeOf(4);
+        layoutsRotulagem.asAtr()
+            .label("Layouts Rotulagem");
+        layoutsRotulagem.getElementsType().asAtr()
+            .allowedFileTypes("image/png", "image/jpeg", "pdf", "zip");
 
         tipoMyForm.asAtr().displayString(cc -> cc.instance()
-                .findNearest(layoutsRotulagem)
-                .map(SInstance::toStringDisplay)
-                .orElse(StringUtils.EMPTY));
+            .findNearest(layoutsRotulagem)
+            .map(SInstance::toStringDisplay)
+            .orElse(StringUtils.EMPTY));
     }
 }
