@@ -89,7 +89,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     private SInstance internalLoadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, FormVersionEntity formVersionEntity) {
-        final SInstance instance = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
+        final SInstance instance = MformPersistenciaXML.fromXML(refType.get(), formVersionEntity.getXml());
         loadCurrentXmlAnnotationOrEmpty(instance, formVersionEntity);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         return instance;
