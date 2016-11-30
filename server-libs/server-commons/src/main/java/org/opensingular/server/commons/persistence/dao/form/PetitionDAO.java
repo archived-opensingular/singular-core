@@ -108,8 +108,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     private void buildFromClause(StringBuilder hql, QuickFilter filtro) {
         hql.append(" FROM ").append(tipo.getName()).append(" p ");
+        hql.append(" INNER JOIN p.petitioner petitioner ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
-        hql.append(" LEFT JOIN p.petitioner petitioner ");
         hql.append(" LEFT JOIN p.formPetitionEntities formPetitionEntity on formPetitionEntity.mainForm = :sim ");
         hql.append(" LEFT JOIN formPetitionEntity.form formEntity ");
         hql.append(" LEFT JOIN formPetitionEntity.currentDraftEntity currentDraftEntity ");
@@ -137,14 +137,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                                   List<String> siglasProcesso,
                                   List<String> formNames, boolean count) {
 
-        params.put("sim", SimNao.SIM);
 
         hql.append(" WHERE 1=1 ");
+        hql.append(" AND petitioner.idPessoa = :idPessoa ");
 
-        if (StringUtils.isNotBlank(filtro.getIdPessoa())) {
-            hql.append(" AND petitioner.idPessoa = :idPessoa ");
-            params.put("idPessoa", filtro.getIdPessoa());
-        }
+        params.put("idPessoa", filtro.getIdPessoa());
+        params.put("sim", SimNao.SIM);
 
         if (!filtro.isRascunho() && siglasProcesso != null && !siglasProcesso.isEmpty()) {
             hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
