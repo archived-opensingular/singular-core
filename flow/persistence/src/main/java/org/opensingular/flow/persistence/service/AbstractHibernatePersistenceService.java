@@ -437,6 +437,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void endLastAllocation(TASK_INSTANCE entityTaskInstance) {
+        entityTaskInstance.setAllocatedUser(null);
+        getSession().saveOrUpdate(entityTaskInstance);
         List<? extends IEntityTaskInstanceHistory> histories = entityTaskInstance.getTaskHistoric();
         for (ListIterator<? extends IEntityTaskInstanceHistory> it = histories.listIterator(histories.size()); it.hasPrevious(); ) {
             IEntityTaskInstanceHistory history = it.previous();
