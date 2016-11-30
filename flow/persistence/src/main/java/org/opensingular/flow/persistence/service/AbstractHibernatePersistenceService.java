@@ -439,7 +439,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     public void endLastAllocation(TASK_INSTANCE entityTaskInstance) {
         entityTaskInstance.setAllocatedUser(null);
         getSession().saveOrUpdate(entityTaskInstance);
-        List<? extends IEntityTaskInstanceHistory> histories = entityTaskInstance.getTaskHistoric();
+        List<? extends IEntityTaskInstanceHistory> histories = entityTaskInstance.getTaskHistory();
         for (ListIterator<? extends IEntityTaskInstanceHistory> it = histories.listIterator(histories.size()); it.hasPrevious(); ) {
             IEntityTaskInstanceHistory history = it.previous();
             if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALOCACAO.toLowerCase())) {
