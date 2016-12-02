@@ -320,7 +320,12 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected String createPetitionDescriptionFromForm(SInstance instance) {
-        return instance.toStringDisplay();
+        String description =  instance.toStringDisplay();
+        if (description != null && description.length() > 200){
+            getLogger().error("Descrição do formulário muito extensa. A descrição foi cortada.");
+            return description.substring(0, 197)+"...";
+        }
+        return description;
     }
 
     protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
