@@ -45,6 +45,7 @@ import javax.inject.Named;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Classe responsável por resolver as permissões do usuário em permissões do singular
@@ -52,6 +53,8 @@ import java.util.Optional;
  * @author Vinicius Nunes
  */
 public class AuthorizationService implements Loggable {
+
+    private static final String LIST_TASKS_PERMISSION_PREFIX = "LIST_TASKS";
 
     @Inject
     protected PermissionResolverService permissionResolverService;
@@ -119,6 +122,10 @@ public class AuthorizationService implements Loggable {
                 }
             }
         }
+    }
+
+    public List<SingularPermission> filterListTaskPermissions(List<SingularPermission> permissions){
+        return permissions.stream().filter( p -> p != null && p.getSingularId() != null && p.getSingularId().startsWith(LIST_TASKS_PERMISSION_PREFIX)).collect(Collectors.toList());
     }
 
     public boolean hasPermission(Long petitionId, String formType, String idUsuario, String action) {

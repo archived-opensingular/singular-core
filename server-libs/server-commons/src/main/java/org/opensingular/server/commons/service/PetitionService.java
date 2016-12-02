@@ -365,7 +365,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     }
 
     public List<TaskInstanceDTO> listTasks(QuickFilter filter, List<SingularPermission> permissions) {
-        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, permissions);
+        List<TaskInstanceDTO> tasks = taskInstanceDAO.findTasks(filter, authorizationService.filterListTaskPermissions(permissions));
         parseResultsTask(tasks);
         for (TaskInstanceDTO task : tasks) {
             checkTaskActions(task, filter);
@@ -414,16 +414,17 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     }
 
     public Long countTasks(QuickFilter filter, List<SingularPermission> permissions) {
-        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), permissions, filter.getFilter(), filter.getEndedTasks());
+        return taskInstanceDAO.countTasks(filter.getProcessesAbbreviation(), authorizationService.filterListTaskPermissions(permissions), filter.getFilter(), filter.getEndedTasks());
     }
 
     public List<? extends TaskInstanceDTO> listTasks(int first, int count, String sortProperty, boolean ascending, String siglaFluxo, List<SingularPermission> permissions, String filtroRapido, boolean concluidas) {
-        return taskInstanceDAO.findTasks(first, count, sortProperty, ascending, siglaFluxo, permissions, filtroRapido, concluidas);
+
+        return taskInstanceDAO.findTasks(first, count, sortProperty, ascending, siglaFluxo, authorizationService.filterListTaskPermissions(permissions), filtroRapido, concluidas);
     }
 
 
     public Long countTasks(String siglaFluxo, List<SingularPermission> permissions, String filtroRapido, boolean concluidas) {
-        return taskInstanceDAO.countTasks(Collections.singletonList(siglaFluxo), permissions, filtroRapido, concluidas);
+        return taskInstanceDAO.countTasks(Collections.singletonList(siglaFluxo), authorizationService.filterListTaskPermissions(permissions), filtroRapido, concluidas);
     }
 
     public List<MTransition> listCurrentTaskTransitions(Long petitionId) {
