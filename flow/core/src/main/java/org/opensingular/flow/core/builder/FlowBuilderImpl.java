@@ -27,6 +27,7 @@ import org.opensingular.flow.core.MTaskPeople;
 import org.opensingular.flow.core.MTransition;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarType;
 import org.opensingular.flow.core.MTaskWait;
@@ -255,6 +256,13 @@ public class FlowBuilderImpl extends
         @Override
         public MProcessRole getProcessRole() {
             return processRole;
+        }
+    }
+
+    @Override
+    public void addListenerToAllTasks(StartedTaskListener listener) {
+        for (MTask<?> mTask : getFlowMap().getAllTasks()) {
+            mTask.addStartedTaskListener(listener);
         }
     }
 }
