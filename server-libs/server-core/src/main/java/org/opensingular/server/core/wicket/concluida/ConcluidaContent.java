@@ -52,7 +52,7 @@ public class ConcluidaContent extends AbstractCaixaAnaliseContent<TaskInstanceDT
                 .appendPropertyColumn(getMessage("label.table.column.in.date"), "processBeginDate", TaskInstanceDTO::getProcessBeginDate)
 //                .appendPropertyColumn(getMessage("label.table.column.number"), "id", TaskInstanceDTO::getNumeroProcesso)
 //                .appendPropertyColumn(getMessage("label.table.column.requester"), "requester", TaskInstanceDTO::getSolicitante)
-                .appendPropertyColumn(getMessage("label.table.column.description"), "description", TaskInstanceDTO::getDescricao)
+                .appendPropertyColumn(getMessage("label.table.column.description"), "description", TaskInstanceDTO::getDescription)
                 .appendPropertyColumn(getMessage("label.table.column.situation.date"), "situationBeginDate", TaskInstanceDTO::getSituationBeginDate)
                 .appendColumn(new MetronicStatusColumn<>(getMessage("label.table.column.state"), "state", TaskInstanceDTO::getTaskName, this::badgeMapper))
                 .appendColumn(buildActionColumn())
