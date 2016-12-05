@@ -329,7 +329,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     /**
      * Executa a transição informada, consolidando todos os rascunhos, este metodo não salva a petição
      *
-     * @param tn           nome tra transicao
+     * @param tn           nome da transicao
      * @param petition     peticao
      * @param cfg          formConfig
      * @param onTransition listener
