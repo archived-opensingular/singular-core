@@ -73,7 +73,6 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
         return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("singular-form-panel"));
     }
 
-
     @Override
     public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         this.transitionName = tn;
@@ -112,11 +111,13 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
                 } else {
                     instance = singularFormConfig.getDocumentFactory().createInstance(refType);
                 }
-
-                appendDirtyListener(instance);
                 if (onCreateInstance != null) {
                     onCreateInstance.accept((SIComposite) instance, transitionName);
                 }
+                /*
+                deve ser adicionado apos o listener de criar a instancia
+                 */
+                appendDirtyListener(instance);
                 return instance;
             }
         };
@@ -142,5 +143,15 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     public STypeBasedFlowConfirmModal setDirty(boolean dirty) {
         this.dirty = dirty;
         return this;
+    }
+
+    @Override
+    protected void onConfirm(String tn, IModel<? extends SInstance> im) {
+        super.onConfirm(tn, im);
+        /*
+            força o estado de "dirty" mesmo que não exista
+          nenhuma alteração ao confirmar o envio
+         */
+        this.setDirty(true);
     }
 }

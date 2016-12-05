@@ -252,11 +252,10 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
 
     public void send(P peticao, SInstance instance, String codResponsavel, SFormConfig config) {
 
-        formPetitionService.consolidateDrafts(peticao, config);
-
-        final ProcessDefinition<?>  processDefinition = PetitionUtil.getProcessDefinition(peticao);
-        final ProcessInstance       processInstance   = processDefinition.newInstance();
-        final ProcessInstanceEntity processEntity     = processInstance.saveEntity();
+        final List<FormEntity>      consolidatedDrafts = formPetitionService.consolidateDrafts(peticao, config);
+        final ProcessDefinition<?>  processDefinition  = PetitionUtil.getProcessDefinition(peticao);
+        final ProcessInstance       processInstance    = processDefinition.newInstance();
+        final ProcessInstanceEntity processEntity      = processInstance.saveEntity();
 
         processInstance.setDescription(peticao.getDescription());
         peticao.setProcessInstanceEntity(processEntity);
@@ -265,13 +264,13 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
 
         onSend(peticao, instance, processEntity, codResponsavel);
 
-        savePetitionHistory(peticao);
+        savePetitionHistory(peticao, consolidatedDrafts);
     }
 
     protected void onSend(P peticao, SInstance instance, ProcessInstanceEntity processEntity, String codResponsavel) {
     }
 
-    private void savePetitionHistory(PetitionEntity petition) {
+    private void savePetitionHistory(PetitionEntity petition, List<FormEntity> newEntities) {
 
         final TaskInstanceEntity taskInstance = findCurrentTaskByPetitionId(petition.getCod());
         final FormEntity         formEntity   = petition.getMainForm();
@@ -300,31 +299,13 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
                 petition
                         .getFormPetitionEntities()
                         .stream()
-                        .filter(isMainFormOrIsForCurrentTaskDefinition(petition))
+                        .filter(fpe -> newEntities.contains(fpe.getForm()))
                         .map(f -> formPetitionService.createFormVersionHistory(contentHistoryEntity, f))
                         .collect(Collectors.toList())
         );
     }
 
-    private Predicate<FormPetitionEntity> isMainFormOrIsForCurrentTaskDefinition(PetitionEntity petitionEntity) {
-        return f ->
-                Optional.ofNullable(f)
-                        .map(FormPetitionEntity::getMainForm)
-                        .map(SIM::equals)
-                        .orElse(false)
-                        ||
-                        Optional.ofNullable(petitionEntity)
-                                .map(PetitionEntity::getProcessInstanceEntity)
-                                .map(ProcessInstanceEntity::getCurrentTask)
-                                .map(TaskInstanceEntity::getTask)
-                                .map(TaskVersionEntity::getTaskDefinition)
-                                .map(definition -> Optional.ofNullable(f)
-                                        .map(FormPetitionEntity::getTaskDefinitionEntity)
-                                        .map(definition::equals)
-                                        .orElse(false)
-                                )
-                                .orElse(false);
-    }
+
 
     /**
      * Executa a transição informada, consolidando todos os rascunhos, este metodo não salva a petição
@@ -340,17 +321,24 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
             if (onTransition != null) {
                 onTransition.accept(petition, tn);
             }
-            formPetitionService.consolidateDrafts(petition, cfg);
-            savePetitionHistory(petition);
+
+            final List<FormEntity> consolidatedDrafts = formPetitionService.consolidateDrafts(petition, cfg);
+
+            savePetitionHistory(petition, consolidatedDrafts);
+
             final Class<? extends ProcessDefinition> clazz = PetitionUtil.getProcessDefinition(petition).getClass();
             final ProcessInstance                    pi    = Flow.getProcessInstance(clazz, petition.getProcessInstanceEntity().getCod());
+
             checkTaskIsEqual(petition.getProcessInstanceEntity(), pi);
+
             if (params != null && !params.isEmpty()) {
                 for (Map.Entry<String, String> entry : params.entrySet()) {
                     pi.getVariaveis().addValor(entry.getKey(), new VarTypeString(), entry.getValue());
                 }
             }
+
             pi.executeTransition(tn);
+
         } catch (SingularException e) {
             throw e;
         } catch (Exception e) {
