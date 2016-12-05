@@ -127,8 +127,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
-        final ISupplier<? extends UIComponentMapper> customMapperFactory = instancia.getType().getCustomMapperFactory();
-        final UIComponentMapper                      customMapper        = (customMapperFactory != null) ? customMapperFactory.get() : null;
+
+        final UIComponentMapper customMapper = instancia.getType().getComponentMapper();
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {

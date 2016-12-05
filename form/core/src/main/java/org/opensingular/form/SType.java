@@ -102,8 +102,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private SView view;
 
-    private ISupplier<? extends UIComponentMapper> customMapperFactory;
-
     /** Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}. */
     private boolean callingOnLoadType;
 
@@ -888,13 +886,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 (superType != null && superType.hasValidationInternal());
     }
 
-    public <T extends UIComponentMapper> SType<I> withCustomMapper(ISupplier<T> factory) {
-        this.customMapperFactory = factory;
+    public <T extends UIComponentMapper> SType<I> withCustomMapper(T mapper) {
+        this.asAtr().setAttributeValue(SPackageBasic.ATR_MAPPER, mapper);
         return this;
     }
 
-    public ISupplier<? extends UIComponentMapper> getCustomMapperFactory() {
-        return customMapperFactory;
+    public UIComponentMapper getComponentMapper(){
+        return this.asAtr().getAttributeValue(SPackageBasic.ATR_MAPPER);
     }
 
     @SuppressWarnings("unchecked")
