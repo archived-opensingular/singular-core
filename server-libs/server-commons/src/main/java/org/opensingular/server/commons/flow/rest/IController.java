@@ -36,9 +36,9 @@ public abstract class IController {
 
     private boolean hasPermission(PetitionEntity petition, ActionRequest actionRequest) {
         if (getType() == Type.PROCESS) {
-            return authorizationService.hasPermission(petition, null, actionRequest.getIdUsuario(), getActionName());
+            return authorizationService.hasPermission(petition.getCod(), null, actionRequest.getIdUsuario(), getActionName());
         } else {
-            return authorizationService.hasPermission(petition, null, actionRequest.getIdUsuario(), getActionName());
+            return authorizationService.hasPermission(petition.getCod(), null, actionRequest.getIdUsuario(), getActionName());
         }
     }
 

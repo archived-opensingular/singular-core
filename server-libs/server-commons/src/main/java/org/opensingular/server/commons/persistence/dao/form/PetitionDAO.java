@@ -24,6 +24,7 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
+import org.opensingular.server.commons.spring.security.PetitionAuthMetadataDTO;
 import org.opensingular.server.commons.util.JPAQueryUtil;
 import org.opensingular.lib.support.persistence.BaseDAO;
 import org.opensingular.lib.support.persistence.enums.SimNao;
@@ -38,6 +39,7 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
@@ -250,5 +252,25 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         obj.getMainForm().setCurrentFormVersionEntity(null);
         getSession().flush();
         super.delete(obj);
+    }
+
+    public PetitionAuthMetadataDTO findPetitionAuthMetadata(Long petitionId) {
+        StringBuilder query = new StringBuilder();
+        query.append(" select distinct new "+PetitionAuthMetadataDTO.class.getName()+"(ft.abbreviation, ftm.abbreviation, td.abbreviation, pd.key, ct.cod) from ");
+        query.append(" " + PetitionEntity.class.getName() + " pe ");
+        query.append(" left join pe.processDefinitionEntity pd  ");
+        query.append(" left join pe.processInstanceEntity pi  ");
+        query.append(" left join pi.currentTasks ct  ");
+        query.append(" left join ct.task t  ");
+        query.append(" left join t.taskDefinition td  ");
+        query.append(" left join pe.formPetitionEntities fpe ");
+        query.append(" left join fpe.form for ");
+        query.append(" left join for.formType ftm ");
+        query.append(" left join fpe.currentDraftEntity cde  ");
+        query.append(" left join cde.form  f ");
+        query.append(" left join f.formType ft ");
+        query.append(" where pe.cod = :petitionId ");
+        query.append(" order by ct.cod DESC ");
+        return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString()).setParameter("petitionId", petitionId).setMaxResults(1).list()).filter(l -> l.size() > 0).map(l -> l.get(0)).orElse(null);
     }
 }

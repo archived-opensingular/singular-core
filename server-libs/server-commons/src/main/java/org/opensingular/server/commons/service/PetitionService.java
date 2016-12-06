@@ -59,6 +59,7 @@ import org.opensingular.server.commons.persistence.entity.form.PetitionerEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.service.dto.BoxItemAction;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
+import org.opensingular.server.commons.spring.security.PetitionAuthMetadataDTO;
 import org.opensingular.server.commons.spring.security.SingularPermission;
 import org.opensingular.server.commons.util.PetitionUtil;
 import org.opensingular.server.commons.wicket.view.form.FormPageConfig;
@@ -503,4 +504,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         return tasks.get(tasks.indexOf(currentTask) - 1).getExecutedTransition().getName();
     }
 
+    public PetitionAuthMetadataDTO findPetitionAuthMetadata(Long petitionId) {
+        return petitionDAO.findPetitionAuthMetadata(petitionId);
+    }
 }
