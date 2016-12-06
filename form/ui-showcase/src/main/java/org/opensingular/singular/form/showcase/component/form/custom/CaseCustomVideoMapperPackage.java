@@ -54,7 +54,7 @@ public class CaseCustomVideoMapperPackage extends SPackage {
                 }
             })
             //@destacar
-            .withCustomMapper(() -> new VideoMapper())
+            .withCustomMapper(new VideoMapper())
             .asAtr().label("Vídeo").required(true);
     }
 
