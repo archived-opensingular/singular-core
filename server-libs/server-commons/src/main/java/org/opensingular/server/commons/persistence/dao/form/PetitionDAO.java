@@ -260,7 +260,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         query.append(" " + PetitionEntity.class.getName() + " pe ");
         query.append(" left join pe.processDefinitionEntity pd  ");
         query.append(" left join pe.processInstanceEntity pi  ");
-        query.append(" left join pi.currentTasks ct  ");
+        query.append(" left join pi.tasks ct  ");
         query.append(" left join ct.task t  ");
         query.append(" left join t.taskDefinition td  ");
         query.append(" left join pe.formPetitionEntities fpe ");
@@ -269,10 +269,11 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         query.append(" left join fpe.currentDraftEntity cde  ");
         query.append(" left join cde.form  f ");
         query.append(" left join f.formType ft ");
-        query.append(" where pe.cod = :petitionId and (ftm is null or fpe.mainForm = :sim )");
+        query.append(" where pe.cod = :petitionId and (ftm is null or fpe.mainForm = :sim ) AND (ct.endDate is null or t.type = :fim )");
         query.append(" order by ct.cod DESC ");
         return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString())
                 .setParameter("sim",SimNao.SIM)
+                .setParameter("fim", TaskType.End)
                 .setParameter("petitionId", petitionId)
                 .setMaxResults(1)
                 .list())
