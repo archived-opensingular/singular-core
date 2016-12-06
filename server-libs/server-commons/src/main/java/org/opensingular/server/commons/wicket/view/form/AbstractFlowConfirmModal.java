@@ -17,17 +17,14 @@
 package org.opensingular.server.commons.wicket.view.form;
 
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
-import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 
 public abstract class AbstractFlowConfirmModal<T extends PetitionEntity> implements FlowConfirmModal<T> {
 
@@ -45,7 +42,17 @@ public abstract class AbstractFlowConfirmModal<T extends PetitionEntity> impleme
      * @return the new AjaxButton
      */
     protected FlowConfirmButton<T> newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
-        return new FlowConfirmButton<>(tn, "confirm-btn", im, ViewMode.EDIT.equals(vm), formPage, m);
+        return new FlowConfirmButton<T>(tn, "confirm-btn", im, ViewMode.EDIT.equals(vm), formPage, m){
+            @Override
+            protected void onValidationSuccess(AjaxRequestTarget ajaxRequestTarget, Form form, IModel model) {
+                super.onValidationSuccess(ajaxRequestTarget, form, model);
+                onConfirm(tn, im);
+            }
+        };
+    }
+
+    protected void onConfirm(String tn, IModel<? extends SInstance> im) {
+
     }
 
     protected void addDefaultConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder modal) {

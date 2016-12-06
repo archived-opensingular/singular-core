@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Transactional
 public class FormPetitionService<P extends PetitionEntity> {
@@ -191,20 +192,27 @@ public class FormPetitionService<P extends PetitionEntity> {
         return draftEntity;
     }
 
-    public void consolidateDrafts(P petition, SFormConfig formConfig) {
-        petition.getFormPetitionEntities()
+    /**
+     * Consolida todos os rascunhos da petição
+     * @param petition
+     * @param formConfig
+     * @return as novas entidades criadas
+     */
+    public List<FormEntity> consolidateDrafts(P petition, SFormConfig formConfig) {
+        return petition.getFormPetitionEntities()
                 .stream()
                 .filter(formPetitionEntity -> formPetitionEntity.getCurrentDraftEntity() != null)
-                .forEach(formPetitionEntity -> consolidadeDraft(formConfig, formPetitionEntity));
+                .map(formPetitionEntity -> consolidadeDraft(formConfig, formPetitionEntity))
+                .collect(Collectors.toList());
     }
 
     /**
      * Consolida o rascunho, copiando os valores do rascunho para o form principal criando versão inicial ou gerando nova versão
-     *
-     * @param formConfig         config
-     * @param formPetitionEntity etnidade
+     * @param formConfig
+     * @param formPetitionEntity
+     * @return a nova versão criada
      */
-    private void consolidadeDraft(SFormConfig formConfig, FormPetitionEntity formPetitionEntity) {
+    private FormEntity consolidadeDraft(SFormConfig formConfig, FormPetitionEntity formPetitionEntity) {
 
         final DraftEntity draft;
         final String      type;
@@ -241,6 +249,8 @@ public class FormPetitionService<P extends PetitionEntity> {
         deassociateFormVersions(draft.getForm());
         draftDAO.delete(draft);
         formPetitionDAO.save(formPetitionEntity);
+
+        return formPetitionEntity.getForm();
     }
 
 
