@@ -269,8 +269,15 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         query.append(" left join fpe.currentDraftEntity cde  ");
         query.append(" left join cde.form  f ");
         query.append(" left join f.formType ft ");
-        query.append(" where pe.cod = :petitionId ");
+        query.append(" where pe.cod = :petitionId and (ftm is null or fpe.mainForm = :sim )");
         query.append(" order by ct.cod DESC ");
-        return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString()).setParameter("petitionId", petitionId).setMaxResults(1).list()).filter(l -> l.size() > 0).map(l -> l.get(0)).orElse(null);
+        return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString())
+                .setParameter("sim",SimNao.SIM)
+                .setParameter("petitionId", petitionId)
+                .setMaxResults(1)
+                .list())
+                .filter(l -> l.size() > 0)
+                .map(l -> l.get(0))
+                .orElse(null);
     }
 }
