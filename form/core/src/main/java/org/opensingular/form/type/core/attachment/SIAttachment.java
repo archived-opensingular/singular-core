@@ -63,7 +63,7 @@ public class SIAttachment extends SIComposite {
         super.onRemove();
     }
 
-    IAttachmentRef getAttachmentRef() {
+    public IAttachmentRef getAttachmentRef() {
         IAttachmentRef ref = null;
         if (getDocument().isAttachmentPersistenceTemporaryHandlerSupported()) {
             ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
