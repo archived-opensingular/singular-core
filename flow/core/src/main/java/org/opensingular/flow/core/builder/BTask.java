@@ -19,6 +19,7 @@ package org.opensingular.flow.core.builder;
 import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
+import org.opensingular.flow.core.property.MetaDataRef;
 
 public interface BTask {
 
@@ -33,5 +34,7 @@ public interface BTask {
     public BTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
 
     public BTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
+
+    public <T> BTask setMetaDataValue(MetaDataRef<T> propRef, T value);
 
 }

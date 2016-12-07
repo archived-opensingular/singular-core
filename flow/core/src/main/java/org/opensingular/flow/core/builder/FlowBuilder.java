@@ -179,6 +179,10 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return getFlowMap().getTask(taskRef);
     }
 
+    public boolean hasTask(TASK_DEF taskRef) {
+        return getFlowMap().getTaskWithName(taskRef.getName()) != null;
+    }
+
     protected BUILDER_TRANSITION addTransition(BTask origin, String actionName, TASK_DEF destination) {
         return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
