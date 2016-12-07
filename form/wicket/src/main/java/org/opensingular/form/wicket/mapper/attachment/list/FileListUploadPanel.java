@@ -93,7 +93,11 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
-        label.add(new RequiredListLabelClassAppender(model));
+
+        if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
+            label.add(new RequiredListLabelClassAppender(model));
+        }
+
         add(label);
 
         add((fileList = new WebMarkupContainer("fileList"))

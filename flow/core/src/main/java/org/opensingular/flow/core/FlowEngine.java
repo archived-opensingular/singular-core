@@ -64,7 +64,7 @@ class FlowEngine {
             if (!taskDestino.isImmediateExecution()) {
                 initTask(instancia, taskDestino, instanciaTarefa);
                 
-                if (taskDestino.isPeople() && transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
+                if (transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
                     for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
                         if (papel.isAutomaticUserAllocation()) {
                             MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,

@@ -22,10 +22,10 @@ import java.util.List;
 
 public final class TaskHistoricLog {
 
-    private final IEntityTaskInstanceHistory historic;
+    private final IEntityTaskInstanceHistory history;
 
     public TaskHistoricLog(IEntityTaskInstanceHistory historico) {
-        this.historic = historico;
+        this.history = historico;
     }
 
     public void sendEmail() {
@@ -37,22 +37,22 @@ public final class TaskHistoricLog {
     }
 
     public ProcessInstance getProcessInstance() {
-        return Flow.getProcessInstance(historic.getTaskInstance().getProcessInstance());
+        return Flow.getProcessInstance(history.getTaskInstance().getProcessInstance());
     }
 
     public MUser getAllocatorUser() {
-        return historic.getAllocatorUser();
+        return history.getAllocatorUser();
     }
 
     public MUser getAllocatedUser() {
-        return historic.getAllocatedUser();
+        return history.getAllocatedUser();
     }
 
     public String getTypeDescription() {
-        return historic.getType().getDescription();
+        return history.getType().getDescription();
     }
 
     public String getDescription() {
-        return historic.getDescription();
+        return history.getDescription();
     }
 }

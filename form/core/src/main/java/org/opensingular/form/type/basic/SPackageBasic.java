@@ -31,26 +31,18 @@ import org.opensingular.form.STypeConsumer;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.STypeSupplier;
+import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.type.core.SIBoolean;
-import org.opensingular.form.type.core.SILong;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeDate;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeFormula;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeLong;
-import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.*;
 import org.opensingular.form.type.core.annotation.STypeAnnotationClassifierList;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SIPredicate;
 import org.opensingular.form.STypeBehavior;
 import org.opensingular.form.STypePredicate;
-import org.opensingular.form.type.core.SIInteger;
-import org.opensingular.form.type.core.STypeBoolean;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -62,8 +54,8 @@ public class SPackageBasic extends SPackage {
     public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
 
     //@formatter:off
-    public static final AtrRef<?, ?, Object>                                      ATR_DEFAULT_IF_NULL       = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
-    public static final AtrRef<?, ?, Object>                                      ATR_INITIAL_VALUE         = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue");
+    public static final AtrRef<?, ?, Object>                     ATR_DEFAULT_IF_NULL    = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
+    public static final AtrRef<?, ?, Object>                     ATR_INITIAL_VALUE      = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue");
     public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                 = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_TRIM                  = new AtrRef<>(SPackageBasic.class, "trim", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeFormula, SIComposite, Object>                 ATR_FORMULA               = new AtrRef<>(SPackageBasic.class, "formula", STypeFormula.class, SIComposite.class, Object.class);
@@ -89,12 +81,15 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypePhraseBreak, SIPhraseBreak, PhraseBreak>      ATR_PHRASE_BREAK          = new AtrRef<>(SPackageBasic.class, "phraseBreak", STypePhraseBreak.class, SIPhraseBreak.class, PhraseBreak.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_ITEM_LABEL            = new AtrRef<>(SPackageBasic.class, "itemLabel", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_INIT_LISTENER         = new AtrRef<>(SPackageBasic.class, "initListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
+    public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_LOAD_LISTENER         = new AtrRef<>(SPackageBasic.class, "loadListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
     public static final AtrRef<STypeConsumer, SIConsumer, IConsumer>              ATR_UPDATE_LISTENER       = new AtrRef<>(SPackageBasic.class, "updateListener", STypeConsumer.class, SIConsumer.class, IConsumer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MINIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "minimumSize", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAXIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "maximumSize", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeLong, SILong, Long>                           ATR_MAX_FILE_SIZE         = new AtrRef<>(SPackageBasic.class, "maxFileSize", STypeLong.class, SILong.class, Long.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_ALLOWED_FILE_TYPES    = new AtrRef<>(SPackageBasic.class, "allowedFileTypes", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_UPPER_CASE_TEXT       = new AtrRef<>(SPackageBasic.class, "uppperCaseText", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeDate, SIDate, Date>                           ATR_MAX_DATE              = new AtrRef<>(SPackageBasic.class, "maxDate", STypeDate.class, SIDate.class, Date.class);
+    public static final AtrRef<STypeMapper, SIMapper, UIComponentMapper>          ATR_MAPPER                = new AtrRef<>(SPackageBasic.class, "mapper", STypeMapper.class, SIMapper.class, UIComponentMapper.class);
 
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
@@ -111,8 +106,10 @@ public class SPackageBasic extends SPackage {
         pb.createType(STypeConsumer.class);
         pb.createType(STypePhraseBreak.class);
         pb.createType(STypeAnnotationClassifierList.class);
+        pb.createType(STypeMapper.class);
 
         pb.createAttributeIntoType(SType.class, ATR_DEFAULT_IF_NULL);
+        pb.createAttributeIntoType(SType.class, ATR_MAPPER);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS);
@@ -125,6 +122,8 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(STypeList.class, ATR_ITEM_LABEL);
         pb.createAttributeIntoType(STypeList.class, ATR_MAXIMUM_SIZE);
         pb.createAttributeIntoType(STypeList.class, ATR_MINIMUM_SIZE);
+
+        pb.createAttributeIntoType(STypeDate.class, ATR_MAX_DATE);
 
         pb.getAttribute(ATR_REQUIRED).withDefaultValueIfNull(false);
         pb.getAttribute(ATR_EXISTS).withDefaultValueIfNull(true);
@@ -152,6 +151,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATED);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATION_LABEL);
         pb.createAttributeIntoType(SType.class, ATR_INIT_LISTENER);
+        pb.createAttributeIntoType(SType.class, ATR_LOAD_LISTENER);
         pb.createAttributeIntoType(SType.class, ATR_UPDATE_LISTENER);
 
         pb.createAttributeIntoType(SType.class, ATR_DISPLAY_STRING);

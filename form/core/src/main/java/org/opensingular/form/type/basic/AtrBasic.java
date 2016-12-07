@@ -25,6 +25,7 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.util.Arrays;
 import java.util.Collection;

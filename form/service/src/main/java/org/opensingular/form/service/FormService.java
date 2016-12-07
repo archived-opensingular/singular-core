@@ -44,8 +44,10 @@ import org.opensingular.form.persistence.FormKeyLong;
 import org.opensingular.form.persistence.SPackageFormPersistence;
 import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -90,10 +92,19 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return super.insertOrUpdate(instance, inclusionActor);
     }
 
-    private SInstance internalLoadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, FormVersionEntity formVersionEntity) {
-        SInstance instance = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
+    private SInstance internalLoadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory,
+                                            FormVersionEntity formVersionEntity) {
+
+        final SInstance instance     = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
+        final IConsumer loadListener = instance.getAttributeValue(SPackageBasic.ATR_LOAD_LISTENER);
+
         loadCurrentXmlAnnotationOrEmpty(instance.getDocument(), formVersionEntity);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+
+        if (loadListener != null) {
+            loadListener.accept(instance);
+        }
+
         return instance;
     }
 
@@ -113,14 +124,14 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations) {
-        final SInstance instance =  newTransientSInstance(key, refType, documentFactory);
+        final SInstance instance = newTransientSInstance(key, refType, documentFactory);
         instance.asAtrAnnotation().clear();
         return instance;
     }
 
     @Override
     public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations) {
-        final SInstance instance =  newTransientSInstance(key, refType, documentFactory, versionId);
+        final SInstance instance = newTransientSInstance(key, refType, documentFactory, versionId);
         instance.asAtrAnnotation().clear();
         return instance;
     }
@@ -157,7 +168,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(type.getName());
-            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass()));
+            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
+                    .orElse(SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) type.getClass())));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }

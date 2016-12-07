@@ -210,9 +210,11 @@ public class TaskInstance {
             return;
         }
 
+        IEntityTaskInstance entityTaskInstance = getEntityTaskInstance(versionStamp);
+
         endLastAllocation();
 
-        getPersistenceService().relocateTask(getEntityTaskInstance(versionStamp), user);
+        getPersistenceService().relocateTask(entityTaskInstance, user);
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 
