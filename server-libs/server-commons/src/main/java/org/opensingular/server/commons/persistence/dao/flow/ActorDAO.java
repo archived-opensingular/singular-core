@@ -20,6 +20,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.lib.commons.base.SingularProperties;
@@ -117,42 +118,18 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
     @SuppressWarnings("unchecked")
     public List<Actor> listAllocableUsers(Integer taskInstanceId) {
         StringBuilder sql = new StringBuilder();
-
         sql.append(" SELECT DISTINCT a.CO_ATOR AS \"cod\",");
         sql.append("   a.CO_USUARIO            AS \"codUsuario\",");
         sql.append("   UPPER(a.NO_ATOR)        AS \"nome\",");
         sql.append("   a.DS_EMAIL              AS \"email\"");
-        sql.append(" FROM "+ Constants.SCHEMA +" .TB_INSTANCIA_TAREFA it");
-        sql.append(" INNER JOIN "+ Constants.SCHEMA +" .tb_versao_tarefa VT");
-        sql.append(" ON it.co_versao_tarefa = VT.co_versao_tarefa");
-        sql.append(" INNER JOIN "+ Constants.SCHEMA +" .tb_definicao_tarefa DT");
-        sql.append(" ON dt.co_definicao_tarefa = Vt.co_definicao_tarefa");
-        sql.append(" INNER JOIN "+ Constants.SCHEMA +" .rl_permissao_tarefa PT");
-        sql.append(" ON dt.co_definicao_tarefa = PT.co_definicao_tarefa");
-        sql.append(" INNER JOIN "+ Constants.SCHEMA +" .tb_funcionalidade_requisicao FR");
-        sql.append(" ON pt.co_permissao = fr.co_funcionalidade");
-        sql.append(" INNER JOIN DBSEGURANCA.tb_modulo M");
-        sql.append(" ON M.CO_SISTEMA = fr.co_modulo_singular");
-        sql.append(" AND m.co_modulo = fr.co_permissao");
-        sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL_DETALHE pd");
-        sql.append(" ON pd.CO_MODULO   = m.CO_MODULO");
-        sql.append(" AND pd.CO_SISTEMA = m.CO_SISTEMA");
-        sql.append(" INNER JOIN DBSEGURANCA.TB_PERFIL p");
-        sql.append(" ON p.co_perfil = pD.co_perfil");
-        sql.append(" INNER JOIN DBSEGURANCA.rl_perfil_usuario PU");
-        sql.append(" ON pu.co_perfil = p.co_perfil");
-        sql.append(" INNER JOIN DBSEGURANCA.TB_USUARIO u");
-        sql.append(" ON u.CO_USERNAME = pu.co_username");
-        sql.append(" INNER JOIN "+ Constants.SCHEMA +" .VW_ATOR a");
-        sql.append(" ON A.CO_USUARIO              = U.CO_USERNAME");
-        sql.append(" WHERE it.CO_INSTANCIA_TAREFA = :taskInstanceId ");
+        sql.append(" FROM "+ Constants.SCHEMA +" .VW_ATOR a");
         sql.append(" ORDER BY UPPER(a.NO_ATOR)");
-
         SQLQuery query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("taskInstanceId", taskInstanceId);
-
+        query.addScalar("cod", StandardBasicTypes.INTEGER);
+        query.addScalar("codUsuario", StandardBasicTypes.STRING);
+        query.addScalar("nome", StandardBasicTypes.STRING);
+        query.addScalar("email", StandardBasicTypes.STRING);
         query.setResultTransformer(Transformers.aliasToBean(Actor.class));
-
         return query.list();
     }
 }

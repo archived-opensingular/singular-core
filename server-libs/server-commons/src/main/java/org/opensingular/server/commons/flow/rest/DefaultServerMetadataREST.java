@@ -165,7 +165,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         fields.put("Número", "codPeticao");
         fields.put("Dt. de Entrada", "creationDate");
         fields.put("Solicitante", "solicitante");
-        fields.put("Descrição", "descricao");
+        fields.put("Descrição", "description");
         fields.put("Dt. Situação", "situationBeginDate");
         fields.put("Situação", "taskName");
         fields.put("Alocado", "nomeUsuarioAlocado");
@@ -191,7 +191,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         fields.put("Número", "codPeticao");
         fields.put("Dt. de Entrada", "creationDate");
         fields.put("Solicitante", "solicitante");
-        fields.put("Descrição", "descricao");
+        fields.put("Descrição", "description");
         fields.put("Dt. Situação", "situationBeginDate");
         fields.put("Situação", "taskName");
         return fields;

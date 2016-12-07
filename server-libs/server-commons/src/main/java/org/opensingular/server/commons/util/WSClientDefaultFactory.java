@@ -1,13 +1,11 @@
 package org.opensingular.server.commons.util;
 
-import org.opensingular.form.util.SingularPredicates;
-import org.opensingular.lib.commons.base.SingularProperties;
-
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.SOAPBinding;
-
 import java.util.Map;
 import java.util.function.Supplier;
+
+import javax.xml.ws.BindingProvider;
+
+import org.opensingular.lib.commons.base.SingularProperties;
 
 /**
  * Factory que constrói o cliente do WEB-SERVICE substituindo o endpoint pelo
@@ -26,12 +24,9 @@ public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFa
     }
 
     @Override
-    public T getReference(boolean enableMTOM) {
+    public T getReference() {
         T servicePortType = supplier.get();
         changeTargetEndpointAddress(servicePortType);
-        if (enableMTOM) {
-            enableMTOM(servicePortType);
-        }
         return servicePortType;
     }
 
@@ -43,12 +38,6 @@ public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFa
         Map<String, Object> requestContext = ((BindingProvider) servicePortType).getRequestContext();
         requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, propertyValue);
         requestContext.put("set-jaxb-validation-event-handler", Boolean.FALSE);
-    }
-
-    private void enableMTOM(T servicePortType) {
-        BindingProvider bp      = (BindingProvider) servicePortType;
-        SOAPBinding     binding = (SOAPBinding) bp.getBinding();
-        binding.setMTOMEnabled(true);
     }
 
 

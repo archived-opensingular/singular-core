@@ -33,7 +33,7 @@ public class DefaultActions {
     public static final ActionDefinition ACTION_RELOCATE = new ActionDefinition("realocar");
 
     public static final ItemActionConfirmation CONFIRMATION_DELETE   = new ItemActionConfirmation("Excluir o rascunho", "Confirma a exclusão?", "Cancelar", "Remover", null);
-    public static final ItemActionConfirmation CONFIRMATION_RELOCATE = new ItemActionConfirmation("Realocar", "Escolha:", "Cancelar", "Realocar", DefaultServerREST.USERS);
+    public static final ItemActionConfirmation CONFIRMATION_RELOCATE = new ItemActionConfirmation("Realocar", "Usuário:", "Cancelar", "Realocar", DefaultServerREST.USERS);
 
     public static final ItemAction EDIT     = new ItemAction(ACTION_EDIT.getName(), "Alterar", Icone.PENCIL, ItemActionType.POPUP);
     public static final ItemAction DELETE   = new ItemAction(ACTION_DELETE.getName(), "Excluir", Icone.MINUS, ItemActionType.ENDPOINT, CONFIRMATION_DELETE);

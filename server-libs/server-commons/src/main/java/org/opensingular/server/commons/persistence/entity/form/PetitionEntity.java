@@ -61,11 +61,11 @@ public class PetitionEntity extends BaseEntity<Long> {
     @OrderBy(" CO_FORMULARIO_REQUISICAO ASC ")
     private SortedSet<FormPetitionEntity> formPetitionEntities;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "CO_REQUISICAO_RAIZ")
     private PetitionEntity rootPetition;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "CO_REQUISICAO_PAI")
     private PetitionEntity parentPetition;
 

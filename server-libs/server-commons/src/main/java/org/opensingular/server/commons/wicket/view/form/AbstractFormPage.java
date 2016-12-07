@@ -314,13 +314,18 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance, boolean mainForm) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite && mainForm) {
-            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
+            String description = createPetitionDescriptionFromForm(currentInstance.getObject());
+            if (description != null && description.length() > 200) {
+                getLogger().error("Descrição do formulário muito extensa. A descrição foi cortada.");
+                description = description.substring(0, 197) + "...";
+            }
+            petition.setDescription(description);
         }
         return petition;
     }
 
     protected String createPetitionDescriptionFromForm(SInstance instance) {
-        return instance.toStringDisplay();
+        return  instance.toStringDisplay();
     }
 
     protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {

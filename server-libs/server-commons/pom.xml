@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>server-libs</artifactId>
-        <version>1.5.3-SNAPSHOT</version>
+        <version>1.5.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>server-commons</artifactId>
@@ -124,11 +124,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.7.3</version>
-        </dependency>
-        <dependency>
-            <groupId>y.ed</groupId>
-            <artifactId>yfiles</artifactId>
-            <version>3.0.0.1</version>
         </dependency>
 
         <!-- JAVA MAIL -->

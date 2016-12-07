@@ -64,7 +64,7 @@ public class InicioContent extends AbstractCaixaAnaliseContent<TaskInstanceDTO> 
             //                .appendPropertyColumn(getMessage("label.table.column.requester"),
             //                        "requester", TaskInstanceDTO::getSolicitante)
             .appendPropertyColumn(getMessage("label.table.column.description"),
-                "description", TaskInstanceDTO::getDescricao)
+                "description", TaskInstanceDTO::getDescription)
             .appendPropertyColumn(getMessage("label.table.column.situation.date"),
                 "situationBeginDate", TaskInstanceDTO::getSituationBeginDate)
             .appendColumn(new MetronicStatusColumn<>(getMessage("label.table.column.state"),

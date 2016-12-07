@@ -20,11 +20,21 @@ public class ActionAtribuirRequest extends ActionRequest {
 
     private String idUsuarioDestino;
 
+    private boolean endLastAllocation;
+
     public String getIdUsuarioDestino() {
         return idUsuarioDestino;
     }
 
     public void setIdUsuarioDestino(String idUsuarioDestino) {
         this.idUsuarioDestino = idUsuarioDestino;
+    }
+
+    public boolean isEndLastAllocation() {
+        return endLastAllocation;
+    }
+
+    public void setEndLastAllocation(boolean endLastAllocation) {
+        this.endLastAllocation = endLastAllocation;
     }
 }
