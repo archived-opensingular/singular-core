@@ -473,8 +473,9 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
                 .orElseThrow(() -> new SingularFlowException("Não foi possivel recuperar a definição do processo"));
     }
 
-    public List<PetitionHistoryDTO> listPetitionContentHistoryByPetitionCod(long petitionCod) {
-        return petitionContentHistoryDAO.listPetitionContentHistoryByPetitionCod(petitionCod);
+    public List<PetitionHistoryDTO> listPetitionContentHistoryByPetitionCod(long petitionCod, String menu, boolean filter) {
+        P petition = petitionDAO.find(petitionCod);
+        return petitionContentHistoryDAO.listPetitionContentHistoryByPetitionCod(petition, menu, filter);
     }
 
     public List<Actor> listAllocableUsers(Map<String, Object> selectedTask) {

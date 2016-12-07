@@ -78,4 +78,12 @@ public class MenuGroup implements Serializable {
     public void setForms(List<FormDTO> forms) {
         this.forms = forms;
     }
+
+    public ProcessDTO getProcessByAbbreviation(String processAbbreviation) {
+        return getProcesses()
+                .stream()
+                .filter(p -> p.getAbbreviation().equalsIgnoreCase(processAbbreviation))
+                .findFirst()
+                .orElse(null);
+    }
 }
