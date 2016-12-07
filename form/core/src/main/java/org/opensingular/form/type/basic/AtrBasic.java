@@ -25,6 +25,7 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -119,6 +120,16 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic visible(Predicate<SInstance> value) {
         setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, value);
+        return this;
+    }
+
+    public AtrBasic composeVisible(IFunction<Predicate<SInstance>, Predicate<SInstance>> composition) {
+        final Predicate<SInstance> currentFunction = getAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION);
+        if (currentFunction != null) {
+            setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, composition.apply(currentFunction));
+        } else {
+            setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, composition.apply((x) -> true));
+        }
         return this;
     }
 

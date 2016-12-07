@@ -157,10 +157,19 @@ public class MasterDetailPanel extends Panel {
     }
 
     private Label newHeadLabel() {
-        AtrBasic       attr       = lista.getObject().asAtr();
-        IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
+
+        final AtrBasic       attr       = lista.getObject().asAtr();
+        final IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
+
         ctx.configureContainer(labelModel);
-        return (Label) new Label("headLabel", labelModel).add(new RequiredListLabelClassAppender(ctx.getModel()));
+
+        final Label headLabel = new Label("headLabel", labelModel);
+
+        if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
+            headLabel.add(new RequiredListLabelClassAppender(ctx.getModel()));
+        }
+
+        return headLabel;
     }
 
     private AjaxLink<String> newAddAjaxLink() {
