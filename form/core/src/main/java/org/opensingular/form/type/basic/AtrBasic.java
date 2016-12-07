@@ -123,16 +123,6 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic composeVisible(IFunction<Predicate<SInstance>, Predicate<SInstance>> composition) {
-        final Predicate<SInstance> currentFunction = getAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION);
-        if (currentFunction != null) {
-            setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, composition.apply(currentFunction));
-        } else {
-            setAttributeValue(SPackageBasic.ATR_VISIBLE_FUNCTION, composition.apply((x) -> true));
-        }
-        return this;
-    }
-
     public AtrBasic enabled(Boolean value) {
         setAttributeValue(SPackageBasic.ATR_ENABLED, value);
         return this;
