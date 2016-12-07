@@ -131,7 +131,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     }
 
     private void appendDirtyListener(SInstance instance) {
-        instance.getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, evt -> dirty = true);
+        instance.getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, evt -> setDirty(true));
     }
 
     @SuppressWarnings("unchecked")
