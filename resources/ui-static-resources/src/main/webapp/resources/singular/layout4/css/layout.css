@@ -1581,6 +1581,9 @@ Theme Panel
 .feedbackPanelERROR {
   font-size: 12px; }
 
+.feedbackPanelWARNING {
+  font-size: 12px; }
+
 .btn-noclose {
   float: right;
   margin-left: 20px; }
