@@ -90,9 +90,10 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
             return true;
         }
 
-        ProcessDefinitionEntity processDefinition = petitionHistoryDTO.getTask().getProcessInstance().getProcessVersion().getProcessDefinition();
+        ProcessDefinitionEntity processDefinition     = petitionHistoryDTO.getTask().getProcessInstance().getProcessVersion().getProcessDefinition();
         ProcessDTO              processByAbbreviation = menuGroup.getProcessByAbbreviation(processDefinition.getKey());
-        return processByAbbreviation.getAllowedHistoryTasks().contains(petitionHistoryDTO.getTask().getTask().getAbbreviation());
+        return processByAbbreviation != null
+                && processByAbbreviation.getAllowedHistoryTasks().contains(petitionHistoryDTO.getTask().getTask().getAbbreviation());
     }
 
     public FormVersionHistoryEntity findLastestByPetitionCodAndType(String typeName, Long cod) {
