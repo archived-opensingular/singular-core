@@ -2786,3 +2786,11 @@ Login page
     padding-top: 3px; }
   .login .checkbox {
     font-size: 13px; } }
+
+.richtext-panel {
+  box-shadow: none;
+  border: 1px solid #65697c;
+  border-radius: 3px; }
+
+.has-error > div > .richtext-panel {
+  border: 1px solid #e82724; }

@@ -31,7 +31,7 @@ public class PortletRichTextMapper extends StringMapper {
 
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        return ctx.getContainer().newComponent(id -> new PortletRichTextPanel(id, ctx));
+        return formGroup.newComponent(id -> new PortletRichTextPanel(id, ctx));
     }
 
     @Override
