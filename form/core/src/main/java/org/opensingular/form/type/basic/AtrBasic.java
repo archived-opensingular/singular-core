@@ -27,12 +27,7 @@ import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -235,9 +230,9 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public List<String> getAllowedFileTypes() {
-        return Arrays.asList(defaultString(
+        return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES)).map(in -> Arrays.asList(defaultString(
                 getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
-                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX));
+                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX))).orElse(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
