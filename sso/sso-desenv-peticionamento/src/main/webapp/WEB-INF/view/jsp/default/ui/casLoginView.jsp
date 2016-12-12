@@ -114,7 +114,7 @@
 
 </div>
 <div class="copyright">
-    2016 © Singular
+    2016 ©
     <a target="_blank" id="ownerLink7" href="http://www.opensingular.org"
        title="Soluções Inteligentes para criação de petição e análise.">
         Singular.
