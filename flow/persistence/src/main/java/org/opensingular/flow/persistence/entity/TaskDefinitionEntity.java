@@ -17,14 +17,19 @@
 package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
+import org.opensingular.flow.core.entity.IEntityTaskPermission;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
+
+import java.util.List;
 
 /**
  * The persistent class for the TB_DEFINICAO_TAREFA database table.
@@ -36,16 +41,8 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<ProcessDefinitionEntity, TaskVersionEntity, RoleTaskEntity> {
     private static final long serialVersionUID = 1L;
 
-//    // bi-directional many-to-one association to TaskRight
-//    @OneToMany(mappedBy = "taskDefinition")
-//    private List<TaskRight> permissoesTarefas;
-//
-//    public List<TaskRight> getPermissoesTarefas() {
-//        return permissoesTarefas;
-//    }\
-//
-//    public void setPermissoesTarefas(List<TaskRight> permissoesTarefas) {
-//        this.permissoesTarefas = permissoesTarefas;
-//    }
+    @OneToMany(mappedBy = "taskDefinition", fetch = FetchType.LAZY)
+    private List<TaskPermissionEntity> taskPermissions;
+
 
 }
