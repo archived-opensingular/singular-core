@@ -55,7 +55,7 @@ import org.opensingular.server.commons.service.dto.ProcessDTO;
 import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.core.wicket.ModuleLink;
-import org.opensingular.server.core.wicket.historico.HistoricoPage;
+import org.opensingular.server.core.wicket.history.HistoryPage;
 import org.opensingular.server.core.wicket.model.BoxItemModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
 
-public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
+public class BoxContent extends AbstractBoxContent<BoxItemModel> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
@@ -178,8 +178,8 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return historiLink;
     }
 
-    protected Class<? extends HistoricoPage> getHistoricoPage() {
-        return HistoricoPage.class;
+    protected Class<? extends HistoryPage> getHistoricoPage() {
+        return HistoryPage.class;
     }
 
     @Override

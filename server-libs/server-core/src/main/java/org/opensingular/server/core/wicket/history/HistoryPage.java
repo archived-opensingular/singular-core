@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.rascunho;
+package org.opensingular.server.core.wicket.history;
+
 
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.core.wicket.template.ServerTemplate;
-import org.opensingular.server.p.core.wicket.view.PeticionamentoTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.MENU_PARAM_NAME;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME;
-@MountPath("rascunho")
-public class RascunhoPage extends PeticionamentoTemplate {
+
+
+@MountPath("historico")
+public class HistoryPage extends ServerTemplate {
+
+    private static final long serialVersionUID = -3344810189307767761L;
 
     @Override
     protected Content getContent(String id) {
-        return new RascunhoContent(id,
-                getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString(),
-                getPageParameters().get(MENU_PARAM_NAME).toString()
-        );
+        return new HistoryContent(id);
     }
+
 }
