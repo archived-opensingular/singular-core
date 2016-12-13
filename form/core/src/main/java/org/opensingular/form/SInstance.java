@@ -39,11 +39,11 @@ import java.util.function.Function;
 
 public abstract class SInstance implements SAttributeEnabled {
 
-    private SInstance              parent;
+    private SInstance parent;
 
-    private AttributeInstanceInfo  attributeInstanceInfo;
+    private AttributeInstanceInfo attributeInstanceInfo;
 
-    private SType<?>               type;
+    private SType<?> type;
 
     private Map<String, SInstance> attributes;
 
@@ -51,13 +51,17 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private Integer id;
 
-    /** Mapa de bits de flags. Veja {@link InstanceFlags} */
+    /**
+     * Mapa de bits de flags. Veja {@link InstanceFlags}
+     */
     private int flags;
 
-    /** Informações encontradas na persitência, mas sem correspondência no tipo na instância atual. */
-    private List<MElement> unreadInfo;
+    /**
+     * Informações encontradas na persitência, mas sem correspondência no tipo na instância atual.
+     */
+    private List<MElement>                     unreadInfo;
     private InstanceSerializableRef<SInstance> serializableRef;
-    private ISInstanceListener.EventCollector eventCollector;
+    private ISInstanceListener.EventCollector  eventCollector;
 
     public SType<?> getType() {
         return type;
@@ -123,7 +127,9 @@ public abstract class SInstance implements SAttributeEnabled {
         attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
     }
 
-    /** Retorna informações de atributo extra se a instância atual for um atributo. */
+    /**
+     * Retorna informações de atributo extra se a instância atual for um atributo.
+     */
     public final AttributeInstanceInfo getAttributeInstanceInfo() {
         return attributeInstanceInfo;
     }
@@ -146,8 +152,8 @@ public abstract class SInstance implements SAttributeEnabled {
          */
         if (this.parent != null && pai != null) {
             throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
-                + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
-                + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
+                    + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
+                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
@@ -319,7 +325,7 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         if (!(instance instanceof SISimple)) {
             throw new SingularFormException("O atributo " + instance.getPathFull() + " não é do tipo " + SISimple.class.getName(),
-                instance);
+                    instance);
         }
         ((SISimple) instance).setValueCalculation(valueCalculation);
     }
@@ -340,7 +346,9 @@ public abstract class SInstance implements SAttributeEnabled {
         return instanceAtr;
     }
 
-    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    /**
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
+     */
     public Optional<SInstance> getAttribute(String fullName) {
         return attributes == null ? Optional.empty() : Optional.ofNullable(attributes.get(fullName));
     }
@@ -358,6 +366,7 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /**
      * Lista todos os atributos com valor associado diretamente à instância atual.
+     *
      * @return Nunca null
      */
     public Collection<SInstance> getAttributes() {
@@ -371,17 +380,21 @@ public abstract class SInstance implements SAttributeEnabled {
     public <A extends SInstance & ICompositeInstance> A getAncestor(SType<A> ancestorType) {
         return findAncestor(ancestorType).get();
     }
+
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return SInstances.findAncestor(this, ancestorType);
     }
+
     public <A extends SInstance> Optional<A> findNearest(SType<A> targetType) {
         return SInstances.findNearest(this, targetType);
     }
+
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
         Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
         return (Optional<V>) nearest.map(it -> it.getValueWithDefault());
     }
+
     public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> classeValor) {
         Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
         return nearest.map(it -> classeValor.cast(it.getValueWithDefault(classeValor)));
@@ -401,8 +414,9 @@ public abstract class SInstance implements SAttributeEnabled {
             return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
         throw new RuntimeException(
-            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
+                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
+
     @Override
     public <T> T as(Function<SAttributeEnabled, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -411,18 +425,23 @@ public abstract class SInstance implements SAttributeEnabled {
     public boolean isRequired() {
         return SInstances.attributeValue(this, SPackageBasic.ATR_REQUIRED, false);
     }
+
     public void setRequired(Boolean value) {
         setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
     }
+
     public void updateRequired() {
         SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_REQUIRED, SPackageBasic.ATR_REQUIRED_FUNCTION);
     }
+
     public boolean exists() {
         return SInstances.attributeValue(this, SPackageBasic.ATR_EXISTS, true);
     }
+
     public void setExists(Boolean value) {
         setAttributeValue(SPackageBasic.ATR_EXISTS, value);
     }
+
     public void updateExists() {
         SInstances.updateBooleanAttribute(this, SPackageBasic.ATR_EXISTS, SPackageBasic.ATR_EXISTS_FUNCTION);
         if (!exists())
@@ -441,7 +460,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * Exemplos, supundo que enderecos e experiencias estao dentro de um
      * elemento raiz (vamos dizer chamado cadastro):
      * </p>
-     *
+     * <p>
      * <pre>
      *     "enderecos[0].rua"
      *     "experiencias[0].empresa.nome"
@@ -462,7 +481,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * Exemplos, supundo que enderecos e experiencias estao dentro de um
      * elemento raiz (vamos dizer chamado cadastro):
      * </p>
-     *
+     * <p>
      * <pre>
      *     "cadastro.enderecos[0].rua"
      *     "cadastro.experiencias[0].empresa.nome"
@@ -492,7 +511,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     protected final String errorMsg(String msgToBeAppended) {
         return "'" + getPathFull() + "' do tipo " + getType().getName() + "(" + getType().getClass().getSimpleName() + ") : "
-            + msgToBeAppended;
+                + msgToBeAppended;
     }
 
     /**
@@ -503,7 +522,7 @@ public abstract class SInstance implements SAttributeEnabled {
         onRemove();
         if (getFlag(InstanceFlags.RemovendoInstancia)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
         setParent(null);
         removeChildren();
@@ -576,8 +595,8 @@ public abstract class SInstance implements SAttributeEnabled {
      * escrevendo-o.
      */
     StringBuilder toStringInternal() {
-        StringBuilder sb = new StringBuilder();
-        String name = getClass().getName();
+        StringBuilder sb   = new StringBuilder();
+        String        name = getClass().getName();
         if (name.startsWith(SInstance.class.getPackage().getName())) {
             sb.append(getClass().getSimpleName());
         } else {
@@ -614,6 +633,7 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Retorna uma lista das informações encontrada para essa instância que não foram "consumidas" durante a leitura
      * a parti da persistência. Ou seja, dados "perdidos".
+     *
      * @return Nunca null
      */
     final List<MElement> getUnreadInfo() {
@@ -621,7 +641,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public InstanceSerializableRef<SInstance> getSerializableRef() {
-        if (serializableRef == null){
+        if (serializableRef == null) {
             serializableRef = new InstanceSerializableRef<>(this);
         }
         return serializableRef;
