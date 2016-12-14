@@ -323,7 +323,7 @@ public class MasterDetailPanel extends Panel {
 
             @Override
             public boolean isVisible(IModel<SInstance> model) {
-                return model.getObject().hasNestedValidationErrors();
+                return model != null && model.getObject() != null && model.getObject().hasNestedValidationErrors();
             }
         };
     }
