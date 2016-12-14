@@ -17,6 +17,7 @@
 package org.opensingular.server.commons.wicket;
 
 import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.server.commons.wicket.error.Page410;
 import org.opensingular.server.commons.wicket.listener.SingularServerContextListener;
 import org.opensingular.lib.wicket.util.application.SkinnableApplication;
 import org.opensingular.lib.wicket.util.page.error.Error403Page;
@@ -60,6 +61,7 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
         Locale.setDefault(new Locale("pt", "BR"));
 
         getApplicationSettings().setAccessDeniedPage(Error403Page.class);
+        getApplicationSettings().setPageExpiredErrorPage(Page410.class);
 
         // Don't forget to check your Application server for this
         getApplicationSettings().setDefaultMaximumUploadSize(Bytes.megabytes(10));

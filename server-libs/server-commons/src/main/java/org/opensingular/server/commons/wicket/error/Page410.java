@@ -14,24 +14,44 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.p.core.wicket.acompanhamento;
+package org.opensingular.server.commons.wicket.error;
 
+import org.apache.wicket.devutils.stateless.StatelessComponent;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.opensingular.server.commons.wicket.view.template.Content;
-import org.opensingular.server.p.core.wicket.view.PeticionamentoTemplate;
+import org.opensingular.server.commons.wicket.view.template.Template;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import static org.opensingular.server.commons.util.DispatcherPageParameters.MENU_PARAM_NAME;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME;
+@StatelessComponent
+@MountPath("public/error/410")
+public class Page410 extends Template {
 
-@MountPath("acompanhamento")
-public class AcompanhamentoPage extends PeticionamentoTemplate {
+    public Page410() {
+    }
 
     @Override
     protected Content getContent(String id) {
-        return new AcompanhamentoContent(id,
-                getPageParameters().get(PROCESS_GROUP_PARAM_NAME).toString(),
-                getPageParameters().get(MENU_PARAM_NAME).toString()
-        );
+        return new Page410Content(id);
+    }
+
+    @Override
+    protected WebMarkupContainer configureHeader(String id) {
+        return (WebMarkupContainer) new WebMarkupContainer(id).setVisible(false);
+    }
+
+    @Override
+    protected boolean withMenu() {
+        return false;
+    }
+
+    @Override
+    protected boolean withTopAction() {
+        return false;
+    }
+
+    @Override
+    protected boolean withSideBar() {
+        return false;
     }
 
 }

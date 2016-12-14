@@ -24,6 +24,7 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
+import org.opensingular.server.commons.spring.security.PetitionAuthMetadataDTO;
 import org.opensingular.server.commons.util.JPAQueryUtil;
 import org.opensingular.lib.support.persistence.BaseDAO;
 import org.opensingular.lib.support.persistence.enums.SimNao;
@@ -38,6 +39,7 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
@@ -108,8 +110,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     private void buildFromClause(StringBuilder hql, QuickFilter filtro) {
         hql.append(" FROM ").append(tipo.getName()).append(" p ");
+        hql.append(" INNER JOIN p.petitioner petitioner ");
         hql.append(" LEFT JOIN p.processInstanceEntity pie ");
-        hql.append(" LEFT JOIN p.petitioner petitioner ");
         hql.append(" LEFT JOIN p.formPetitionEntities formPetitionEntity on formPetitionEntity.mainForm = :sim ");
         hql.append(" LEFT JOIN formPetitionEntity.form formEntity ");
         hql.append(" LEFT JOIN formPetitionEntity.currentDraftEntity currentDraftEntity ");
@@ -137,14 +139,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                                   List<String> siglasProcesso,
                                   List<String> formNames, boolean count) {
 
-        params.put("sim", SimNao.SIM);
 
         hql.append(" WHERE 1=1 ");
+        hql.append(" AND petitioner.idPessoa = :idPessoa ");
 
-        if (StringUtils.isNotBlank(filtro.getIdPessoa())) {
-            hql.append(" AND petitioner.idPessoa = :idPessoa ");
-            params.put("idPessoa", filtro.getIdPessoa());
-        }
+        params.put("idPessoa", filtro.getIdPessoa());
+        params.put("sim", SimNao.SIM);
 
         if (!filtro.isRascunho() && siglasProcesso != null && !siglasProcesso.isEmpty()) {
             hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
@@ -252,5 +252,43 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         obj.getMainForm().setCurrentFormVersionEntity(null);
         getSession().flush();
         super.delete(obj);
+    }
+
+    public PetitionAuthMetadataDTO findPetitionAuthMetadata(Long petitionId) {
+        StringBuilder query = new StringBuilder();
+        query.append(" select distinct new "+PetitionAuthMetadataDTO.class.getName()+"(ft.abbreviation, ftm.abbreviation, td.abbreviation, pd.key, ct.cod) from ");
+        query.append(" " + PetitionEntity.class.getName() + " pe ");
+        query.append(" left join pe.processDefinitionEntity pd  ");
+        query.append(" left join pe.processInstanceEntity pi  ");
+        query.append(" left join pi.tasks ct  ");
+        query.append(" left join ct.task t  ");
+        query.append(" left join t.taskDefinition td  ");
+        query.append(" left join pe.formPetitionEntities fpe ");
+        query.append(" left join fpe.form for ");
+        query.append(" left join for.formType ftm ");
+        query.append(" left join fpe.currentDraftEntity cde  ");
+        query.append(" left join cde.form  f ");
+        query.append(" left join f.formType ft ");
+        query.append(" where pe.cod = :petitionId and (ftm is null or fpe.mainForm = :sim ) AND (ct.endDate is null or t.type = :fim )");
+        query.append(" order by ct.cod DESC ");
+        return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString())
+                .setParameter("sim",SimNao.SIM)
+                .setParameter("fim", TaskType.End)
+                .setParameter("petitionId", petitionId)
+                .setMaxResults(1)
+                .list())
+                .filter(l -> l.size() > 0)
+                .map(l -> l.get(0))
+                .orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<PetitionEntity> findByRootPetition(T rootPetition) {
+        String hql = "FROM " + PetitionEntity.class.getName() + " pe "
+               + " WHERE pe.rootPetition = :rootPetition ";
+
+        Query query = getSession().createQuery(hql);
+        query.setParameter("rootPetition", rootPetition);
+        return query.list();
     }
 }

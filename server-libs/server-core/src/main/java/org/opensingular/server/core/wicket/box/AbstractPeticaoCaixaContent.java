@@ -35,7 +35,7 @@ import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 /**
  * Classe base para construição de caixas do servidor de petições
  */
-public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends AbstractCaixaContent<T> {
+public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends AbstractBoxContent<T> {
 
     private static final long serialVersionUID = -3611649597709058163L;
 

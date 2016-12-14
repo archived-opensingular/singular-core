@@ -55,7 +55,7 @@ import org.opensingular.server.commons.service.dto.ProcessDTO;
 import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 import org.opensingular.server.core.wicket.ModuleLink;
-import org.opensingular.server.core.wicket.historico.HistoricoPage;
+import org.opensingular.server.core.wicket.history.HistoryPage;
 import org.opensingular.server.core.wicket.model.BoxItemModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,13 +73,13 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
 import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
 
-public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
+public class BoxContent extends AbstractBoxContent<BoxItemModel> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoxContent.class);
 
     private Pair<String, SortOrder> sortProperty;
     private ItemBox                 itemBoxDTO;
-    private IModel<BoxItemModel>    currentModel;
+    protected IModel<BoxItemModel>    currentModel;
 
     public BoxContent(String id, String processGroupCod, String menu, ItemBox itemBoxDTO) {
         super(id, processGroupCod, menu);
@@ -171,14 +171,15 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
             pageParameters.add(DispatcherPageParameters.PETITION_ID, boxItem.getCod());
             pageParameters.add(DispatcherPageParameters.INSTANCE_ID, boxItem.getProcessInstanceId());
             pageParameters.add(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME, getProcessGroup().getCod());
+            pageParameters.add(DispatcherPageParameters.MENU_PARAM_NAME, getMenu());
         }
         BookmarkablePageLink<?> historiLink = new BookmarkablePageLink<>(id, getHistoricoPage(), pageParameters);
         historiLink.setVisible(boxItem.getProcessBeginDate() != null);
         return historiLink;
     }
 
-    protected Class<? extends HistoricoPage> getHistoricoPage() {
-        return HistoricoPage.class;
+    protected Class<? extends HistoryPage> getHistoricoPage() {
+        return HistoryPage.class;
     }
 
     @Override
@@ -225,7 +226,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
-    private void executeDynamicAction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem, AjaxRequestTarget target) {
+    protected void executeDynamicAction(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem, AjaxRequestTarget target) {
         final BoxItemAction boxAction = boxItem.getActionByName(itemAction.getName());
 
         String url = baseUrl
@@ -242,7 +243,7 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
-    private void relocate(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem, AjaxRequestTarget target, Actor actor) {
+    protected void relocate(ItemAction itemAction, String baseUrl, Map<String, String> additionalParams, BoxItemModel boxItem, AjaxRequestTarget target, Actor actor) {
         final BoxItemAction boxAction = boxItem.getActionByName(itemAction.getName());
 
         String url = baseUrl
@@ -259,10 +260,14 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         }
     }
 
-    private Object buildCallAtribuirObject(BoxItemAction boxAction, BoxItemModel boxItem, Actor actor) {
+    protected Object buildCallAtribuirObject(BoxItemAction boxAction, BoxItemModel boxItem, Actor actor) {
         ActionAtribuirRequest actionRequest = new ActionAtribuirRequest();
         actionRequest.setIdUsuario(getBoxPage().getIdUsuario());
-        actionRequest.setIdUsuarioDestino(actor.getCodUsuario());
+        if (actor == null) {
+            actionRequest.setEndLastAllocation(true);
+        } else {
+            actionRequest.setIdUsuarioDestino(actor.getCodUsuario());
+        }
         if (boxAction.isUseExecute()) {
             actionRequest.setName(boxAction.getName());
             actionRequest.setLastVersion(boxItem.getVersionStamp());
@@ -296,9 +301,9 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         BSModalBorder                confirmationModal = new BSModalBorder("confirmationModal", $m.ofValue(confirmation.getTitle()));
         confirmationModal.addOrReplace(new Label("message", $m.ofValue(confirmation.getConfirmationMessage())));
 
-        Model<Actor>        model          = new Model<>();
+        Model<Actor>        actorModel          = new Model<>();
         IModel<List<Actor>> actorsModel    = $m.get(() -> buscarUsuarios(currentModel, confirmation));
-        DropDownChoice      dropDownChoice = criarDropDown(actorsModel, model);
+        DropDownChoice      dropDownChoice = criarDropDown(actorsModel, actorModel);
         dropDownChoice.setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
         confirmationModal.addOrReplace(dropDownChoice);
 
@@ -308,13 +313,15 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
                 currentModel = null;
                 confirmationModal.hide(target);
             }
-        });
+        }.setDefaultFormProcessing(false));
+
+        appendExtraButtons(confirmationModal, actorModel, itemAction, baseUrl, additionalParams);
 
         if (StringUtils.isNotBlank(confirmation.getSelectEndpoint())) {
             confirmationModal.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.ofValue(confirmation.getConfirmationButtonLabel()), new AjaxButton("delete-btn", confirmationForm) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    relocate(itemAction, baseUrl, additionalParams, currentModel.getObject(), target, model.getObject());
+                    relocate(itemAction, baseUrl, additionalParams, currentModel.getObject(), target, actorModel.getObject());
                     target.add(tabela);
                     atualizarContadores(target);
                     confirmationModal.hide(target);
@@ -335,15 +342,21 @@ public class BoxContent extends AbstractCaixaContent<BoxItemModel> {
         return confirmationModal;
     }
 
-    private void atualizarContadores(AjaxRequestTarget target) {
+    protected void appendExtraButtons(BSModalBorder confirmationModal, Model<Actor> actorModel, ItemAction itemAction, String baseUrl, Map<String, String> additionalParams) {
+
+    }
+
+    protected void atualizarContadores(AjaxRequestTarget target) {
         target.appendJavaScript("(function(){window.Singular.atualizarContadores();}())");
     }
 
     private DropDownChoice criarDropDown(IModel<List<Actor>> actorsModel, Model<Actor> model) {
-        return new DropDownChoice<>("selecao",
+        DropDownChoice<Actor> dropDownChoice = new DropDownChoice<>("selecao",
                 model,
                 actorsModel,
                 new ChoiceRenderer<>("nome", "codUsuario"));
+        dropDownChoice.setRequired(true);
+        return dropDownChoice;
     }
 
     @SuppressWarnings("unchecked")

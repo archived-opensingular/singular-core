@@ -17,6 +17,7 @@
 package org.opensingular.server.commons.flow.rest;
 
 import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInfoType;
@@ -29,6 +30,7 @@ import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.config.ServerContext;
 import org.opensingular.server.commons.config.SingularServerConfiguration;
 import org.opensingular.server.commons.flow.action.DefaultActions;
+import org.opensingular.server.commons.flow.metadata.PetitionHistoryTaskMetaDataValue;
 import org.opensingular.server.commons.service.IServerMetadataREST;
 import org.opensingular.server.commons.service.dto.FormDTO;
 import org.opensingular.server.commons.service.dto.ItemBox;
@@ -96,9 +98,13 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
             menuGroup.setLabel(category);
             menuGroup.setProcesses(new ArrayList<>());
             menuGroup.setForms(new ArrayList<>());
-            definitions.forEach(d -> menuGroup
-                            .getProcesses()
-                            .add(new ProcessDTO(d.getKey(), d.getName(), null))
+            definitions.forEach(d -> {
+                List<MTask<?>> tasks = d.getFlowMap().getTasksWithMetadata(PetitionHistoryTaskMetaDataValue.KEY);
+                List<String>   allowedHistoryTasks = tasks.stream().map(MTask::getAbbreviation).collect(Collectors.toList());
+                menuGroup
+                                .getProcesses()
+                                .add(new ProcessDTO(d.getKey(), d.getName(), null, allowedHistoryTasks));
+                    }
             );
             addForms(menuGroup);
             groups.add(menuGroup);
@@ -165,7 +171,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         fields.put("Número", "codPeticao");
         fields.put("Dt. de Entrada", "creationDate");
         fields.put("Solicitante", "solicitante");
-        fields.put("Descrição", "descricao");
+        fields.put("Descrição", "description");
         fields.put("Dt. Situação", "situationBeginDate");
         fields.put("Situação", "taskName");
         fields.put("Alocado", "nomeUsuarioAlocado");
@@ -191,7 +197,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         fields.put("Número", "codPeticao");
         fields.put("Dt. de Entrada", "creationDate");
         fields.put("Solicitante", "solicitante");
-        fields.put("Descrição", "descricao");
+        fields.put("Descrição", "description");
         fields.put("Dt. Situação", "situationBeginDate");
         fields.put("Situação", "taskName");
         return fields;

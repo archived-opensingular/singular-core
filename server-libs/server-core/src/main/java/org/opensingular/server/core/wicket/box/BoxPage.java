@@ -38,7 +38,9 @@ import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.MenuSessionConfig;
 import org.opensingular.server.core.wicket.template.ServerTemplate;
+import org.wicketstuff.annotation.mount.MountPath;
 
+@MountPath( "caixa")
 public class BoxPage extends ServerTemplate {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(BoxPage.class);

@@ -35,7 +35,7 @@ public class TaskInstanceDTO implements Serializable {
     private Integer taskId;
     private String taskName;
     private Date creationDate;
-    private String descricao;
+    private String description;
     private String codUsuarioAlocado;
     private String nomeUsuarioAlocado;
     private String type;
@@ -59,7 +59,7 @@ public class TaskInstanceDTO implements Serializable {
         this.taskId = taskId;
         this.versionStamp = versionStamp;
         this.creationDate = creationDate;
-        this.descricao = descricao;
+        this.description = descricao;
         this.codUsuarioAlocado = usuarioAlocado == null ? null : usuarioAlocado.getCodUsuario();
         this.nomeUsuarioAlocado = usuarioAlocado == null ? null : usuarioAlocado.getSimpleName();
         this.taskName = taskName;
@@ -107,13 +107,12 @@ public class TaskInstanceDTO implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCodUsuarioAlocado() {

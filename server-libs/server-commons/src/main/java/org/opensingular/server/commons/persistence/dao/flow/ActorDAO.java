@@ -20,6 +20,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.lib.commons.base.SingularProperties;
@@ -124,6 +125,10 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
         sql.append(" FROM "+ Constants.SCHEMA +" .VW_ATOR a");
         sql.append(" ORDER BY UPPER(a.NO_ATOR)");
         SQLQuery query = getSession().createSQLQuery(sql.toString());
+        query.addScalar("cod", StandardBasicTypes.INTEGER);
+        query.addScalar("codUsuario", StandardBasicTypes.STRING);
+        query.addScalar("nome", StandardBasicTypes.STRING);
+        query.addScalar("email", StandardBasicTypes.STRING);
         query.setResultTransformer(Transformers.aliasToBean(Actor.class));
         return query.list();
     }

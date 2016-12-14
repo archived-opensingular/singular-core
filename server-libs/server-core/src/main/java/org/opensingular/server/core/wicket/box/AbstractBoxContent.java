@@ -61,7 +61,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 /**
  * Classe base para construição de caixas do servidor de petições
  */
-public abstract class AbstractCaixaContent<T extends Serializable> extends Content {
+public abstract class AbstractBoxContent<T extends Serializable> extends Content {
 
     private static final long serialVersionUID = -3611649597709058163L;
 
@@ -125,7 +125,7 @@ public abstract class AbstractCaixaContent<T extends Serializable> extends Conte
 
     private ProcessGroupEntity processGroup;
 
-    public AbstractCaixaContent(String id, String processGroupCod, String menu) {
+    public AbstractBoxContent(String id, String processGroupCod, String menu) {
         super(id);
         this.processGroupCod = processGroupCod;
         this.menu = menu;

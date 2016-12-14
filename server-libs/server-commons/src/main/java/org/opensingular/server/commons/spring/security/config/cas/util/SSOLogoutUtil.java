@@ -2,6 +2,7 @@ package org.opensingular.server.commons.spring.security.config.cas.util;
 
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.server.commons.config.IServerContext;
+import org.opensingular.server.commons.exception.SingularServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class SSOLogoutUtil {
             response.sendRedirect(redirect);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw SingularServerException.rethrow(e.getMessage(), e);
         }
     }
 
