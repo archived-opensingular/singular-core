@@ -104,7 +104,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
 
     @OrderBy(clause = "DT_INICIO_ALOCACAO")
     @OneToMany(mappedBy = "taskInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<TASK_HISTORY> taskHistoric = new ArrayList<>();
+    private List<TASK_HISTORY> taskHistory = new ArrayList<>();
 
     @OrderBy(clause = "DT_HISTORICO")
     @OneToMany(mappedBy = "destinationTask", fetch = FetchType.LAZY)
@@ -205,12 +205,12 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     }
 
     @Override
-    public List<TASK_HISTORY> getTaskHistoric() {
-        return taskHistoric;
+    public List<TASK_HISTORY> getTaskHistory() {
+        return taskHistory;
     }
 
-    public void setTaskHistoric(List<TASK_HISTORY> taskHistoric) {
-        this.taskHistoric = taskHistoric;
+    public void setTaskHistory(List<TASK_HISTORY> taskHistory) {
+        this.taskHistory = taskHistory;
     }
 
     @Override
@@ -241,9 +241,13 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     }
 
     @Override
-    public void setVersionStamp(Integer versionStamp) {    this.versionStamp = versionStamp;   }
+    public void setVersionStamp(Integer versionStamp) {
+        this.versionStamp = versionStamp;
+    }
 
     @Override
-    public Integer getVersionStamp() {   return versionStamp;  }
+    public Integer getVersionStamp() {
+        return versionStamp;
+    }
 
 }

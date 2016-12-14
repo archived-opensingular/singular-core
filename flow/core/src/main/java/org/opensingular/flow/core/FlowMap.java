@@ -454,6 +454,12 @@ public class FlowMap implements Serializable {
         return endTasks.get(name);
     }
 
+    public List<MTask<?>> getTasksWithMetadata(MetaDataRef ref) {
+        return (List<MTask<?>>) getAllTasks().stream()
+                .filter(t -> t.getMetaData().get(ref) != null)
+                .collect(Collectors.toList());
+    }
+
     /**
      * <p>Verifica a consistência deste mapa.</p>
      *

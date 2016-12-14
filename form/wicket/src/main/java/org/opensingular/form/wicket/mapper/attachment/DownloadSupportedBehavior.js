@@ -23,9 +23,9 @@
     if (window.DownloadSupportedBehavior == undefined) {
         window.DownloadSupportedBehavior = function () {
         };
-        window.DownloadSupportedBehavior.ajaxDownload = function (url, fileId, filename) {
+        window.DownloadSupportedBehavior.ajaxDownload = function (url, fileId, filename, openInNewTabIfIsBrowserFriendly) {
             var newWindow;
-            if (window.DownloadSupportedBehavior.isContentTypeBrowserFriendly(filename)) {
+            if (openInNewTabIfIsBrowserFriendly && window.DownloadSupportedBehavior.isContentTypeBrowserFriendly(filename)) {
                 newWindow = window.open();
             }
             $.ajax({

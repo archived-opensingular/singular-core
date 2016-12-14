@@ -343,24 +343,24 @@ body {
   .form-group.form-md-line-input.has-success label {
     color: #27a4b0; }
   .form-group.form-md-line-input.has-warning .form-control {
-    border-bottom: 1px solid #c29d0b; }
+    border-bottom: 1px solid #312803; }
     .form-group.form-md-line-input.has-warning .form-control.edited:not([readonly]) ~ label:after,
     .form-group.form-md-line-input.has-warning .form-control.edited:not([readonly]) ~ .form-control-focus:after, .form-group.form-md-line-input.has-warning .form-control.form-control-static ~ label:after,
     .form-group.form-md-line-input.has-warning .form-control.form-control-static ~ .form-control-focus:after, .form-group.form-md-line-input.has-warning .form-control:focus:not([readonly]) ~ label:after,
     .form-group.form-md-line-input.has-warning .form-control:focus:not([readonly]) ~ .form-control-focus:after, .form-group.form-md-line-input.has-warning .form-control.focus:not([readonly]) ~ label:after,
     .form-group.form-md-line-input.has-warning .form-control.focus:not([readonly]) ~ .form-control-focus:after {
-      background: #c29d0b; }
+      background: #312803; }
     .form-group.form-md-line-input.has-warning .form-control.edited:not([readonly]) ~ label, .form-group.form-md-line-input.has-warning .form-control.form-control-static ~ label, .form-group.form-md-line-input.has-warning .form-control:focus:not([readonly]) ~ label, .form-group.form-md-line-input.has-warning .form-control.focus:not([readonly]) ~ label {
-      color: #c29d0b; }
+      color: #312803; }
     .form-group.form-md-line-input.has-warning .form-control.edited:not([readonly]) ~ i, .form-group.form-md-line-input.has-warning .form-control.form-control-static ~ i, .form-group.form-md-line-input.has-warning .form-control:focus:not([readonly]) ~ i, .form-group.form-md-line-input.has-warning .form-control.focus:not([readonly]) ~ i {
-      color: #c29d0b; }
+      color: #312803; }
     .form-group.form-md-line-input.has-warning .form-control.edited:not([readonly]) ~ .help-block, .form-group.form-md-line-input.has-warning .form-control.form-control-static ~ .help-block, .form-group.form-md-line-input.has-warning .form-control:focus:not([readonly]) ~ .help-block, .form-group.form-md-line-input.has-warning .form-control.focus:not([readonly]) ~ .help-block {
-      color: #c29d0b; }
+      color: #312803; }
   .form-group.form-md-line-input.has-warning .input-group-addon {
-    color: #c29d0b;
-    border-bottom: 1px solid #c29d0b; }
+    color: #312803;
+    border-bottom: 1px solid #312803; }
   .form-group.form-md-line-input.has-warning label {
-    color: #c29d0b; }
+    color: #312803; }
   .form-group.form-md-line-input.has-error .form-control {
     border-bottom: 1px solid #e73d4a; }
     .form-group.form-md-line-input.has-error .form-control.edited:not([readonly]) ~ label:after,
@@ -547,15 +547,15 @@ body {
 
 .has-warning .md-checkbox label,
 .has-warning.md-checkbox label {
-  color: #c29d0b; }
+  color: #312803; }
 
 .has-warning .md-checkbox label > .box,
 .has-warning.md-checkbox label > .box {
-  border-color: #c29d0b; }
+  border-color: #312803; }
 
 .has-warning .md-checkbox label > .check,
 .has-warning.md-checkbox label > .check {
-  border-color: #c29d0b; }
+  border-color: #312803; }
 
 .has-info .md-checkbox label,
 .has-info.md-checkbox label {
@@ -731,15 +731,15 @@ body {
 
 .has-warning .md-radio label,
 .has-warning.md-radio label {
-  color: #c29d0b; }
+  color: #312803; }
 
 .has-warning .md-radio label > .box,
 .has-warning.md-radio label > .box {
-  border-color: #c29d0b; }
+  border-color: #312803; }
 
 .has-warning .md-radio label > .check,
 .has-warning.md-radio label > .check {
-  background: #c29d0b; }
+  background: #312803; }
 
 .has-info .md-radio label,
 .has-info.md-radio label {
@@ -6246,27 +6246,27 @@ Customized List Group
     border-color: #327ad5; }
 
 .list-group .list-group-item-warning {
-  color: #c29d0b;
-  background-color: #f9e491; }
+  color: #312803;
+  background-color: #f7dc6f; }
 
 .list-group a.list-group-item-warning,
 .list-group button.list-group-item-warning {
-  color: #c29d0b; }
+  color: #312803; }
   .list-group a.list-group-item-warning .list-group-item-heading,
   .list-group button.list-group-item-warning .list-group-item-heading {
     color: inherit; }
   .list-group a.list-group-item-warning:hover, .list-group a.list-group-item-warning:focus,
   .list-group button.list-group-item-warning:hover,
   .list-group button.list-group-item-warning:focus {
-    color: #c29d0b;
-    background-color: #f7de79; }
+    color: #312803;
+    background-color: #f5d657; }
   .list-group a.list-group-item-warning.active, .list-group a.list-group-item-warning.active:hover, .list-group a.list-group-item-warning.active:focus,
   .list-group button.list-group-item-warning.active,
   .list-group button.list-group-item-warning.active:hover,
   .list-group button.list-group-item-warning.active:focus {
     color: #fff;
-    background-color: #c29d0b;
-    border-color: #c29d0b; }
+    background-color: #312803;
+    border-color: #312803; }
 
 .list-group .list-group-item-danger {
   color: #e73d4a;
@@ -6597,16 +6597,16 @@ Notes
       border-color: #b5cff0;
       box-shadow: 5px 5px rgba(185, 210, 241, 0.2); }
   .note.note-warning {
-    background-color: #faeaa9;
-    border-color: #f3cc31;
+    background-color: #f8e287;
+    border-color: #f1c40f;
     color: black; }
     .note.note-warning.note-bordered {
-      background-color: #f8e38c;
-      border-color: #f4d249; }
+      background-color: #f6db6b;
+      border-color: #f2ca27; }
     .note.note-warning.note-shadow {
-      background-color: #f9e491;
-      border-color: #f6d861;
-      box-shadow: 5px 5px rgba(246, 217, 102, 0.2); }
+      background-color: #f7dc6f;
+      border-color: #f4d03f;
+      box-shadow: 5px 5px rgba(244, 209, 68, 0.2); }
   .note.note-danger {
     background-color: #fef7f8;
     border-color: #f0868e;

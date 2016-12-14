@@ -96,7 +96,7 @@
                         + '    <a class="list-item-uploading" href="#"><i class="fa fa-file-text"></i></a>'
                         + '  </div>'
                         + '  <div class="list-item-content">'
-                        + '    <a target="_blank" href="#" title="'+name+'" class="download-link"><span>' + name + '</span></a>'
+                        + '    <a href="#" title="'+name+'" class="download-link"><span>' + name + '</span></a>'
                         + '  </div>'
                         + '  <div class="list-item-action">'
                         + '    <div class="list-action-uploading" id="progress_bar_' + fake_id + '">'

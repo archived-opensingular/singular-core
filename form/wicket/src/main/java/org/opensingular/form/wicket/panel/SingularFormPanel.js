@@ -36,15 +36,16 @@ jQuery(document).ready(function () {
 	
 	        jQuery('div > div.can-have-error').each(function () {
 	            var $this       = $(this);
-	            var topPosition = $this.offset().top;
-	            var fieldsList  = fieldsByTopPosition[topPosition];
-	
-	            if (fieldsList == undefined) {
-	                fieldsList                       = [];
-	                fieldsByTopPosition[topPosition] = fieldsList;
-	            }
-	
-	            fieldsList.push($this);
+	            if(!$this.hasClass('upload-panel-body')) {//deve ignorar o painel de anexo
+                    var topPosition = $this.offset().top;
+                    var fieldsList = fieldsByTopPosition[topPosition];
+
+                    if (fieldsList == undefined) {
+                        fieldsList = [];
+                        fieldsByTopPosition[topPosition] = fieldsList;
+                    }
+                    fieldsList.push($this);
+                }
 	        });
 	
 	        for (var topPosition in fieldsByTopPosition) {

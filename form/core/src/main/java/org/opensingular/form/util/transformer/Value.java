@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -144,6 +145,21 @@ public class Value {
             }
         }
         return null;
+    }
+
+    public static <T extends Serializable> Optional<T> ofOpt(SInstance instanciaComposta, String...path) {
+        if (instanciaComposta instanceof SIComposite) {
+            Optional<SInstance> campoOpt = ((SIComposite) instanciaComposta).getFieldOpt(Arrays.stream(path).collect(Collectors.joining(".")));
+            if (campoOpt.isPresent()) {
+                SInstance campo = campoOpt.get();
+                if (campo instanceof SISimple) {
+                    return Optional.ofNullable(Value.of((SISimple<T>) campo));
+                } else if (campo instanceof SIList) {
+                    return Optional.ofNullable((T) ofList((SIList) campo));
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     public static String stringValueOf(SInstance instanciaComposta, String path) {

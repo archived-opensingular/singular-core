@@ -261,7 +261,7 @@ Error state for WYSIWYG Editors
   border: 1px solid #abe7ed !important; }
 
 .has-warning .md-editor {
-  border: 1px solid #f9e491 !important; }
+  border: 1px solid #f7dc6f !important; }
 
 /***
 Bootstrap Modal
@@ -323,7 +323,7 @@ Bootstrap Select
   border-color: #abe7ed; }
 
 .has-warning .bootstrap-select .btn {
-  border-color: #f9e491; }
+  border-color: #f7dc6f; }
 
 .bootstrap-select.open .btn {
   border-color: #3FB9A7; }
@@ -592,7 +592,7 @@ Error state for WYSIWYG Editors
   border: 1px solid #abe7ed !important; }
 
 .has-warning .wysihtml5-sandbox {
-  border: 1px solid #f9e491 !important; }
+  border: 1px solid #f7dc6f !important; }
 
 /***
 Error state for WYSIWYG Editors
@@ -639,7 +639,7 @@ Error state for WYSIWYG Editors
   border: 1px solid #abe7ed !important; }
 
 .has-warning .note-editor {
-  border: 1px solid #f9e491 !important; }
+  border: 1px solid #f7dc6f !important; }
 
 /***
 Bootstrap GtreeTable
@@ -914,7 +914,7 @@ Error state for WYSIWYG Editors
   border: 1px solid #abe7ed !important; }
 
 .has-warning .cke {
-  border: 1px solid #f9e491 !important; }
+  border: 1px solid #f7dc6f !important; }
 
 /***
 Clockface

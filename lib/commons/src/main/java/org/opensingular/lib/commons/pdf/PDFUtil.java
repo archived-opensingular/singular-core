@@ -16,11 +16,14 @@
 
 package org.opensingular.lib.commons.pdf;
 
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * Classe utilitária para a manipulação de PDF's.
@@ -250,29 +253,29 @@ public abstract class PDFUtil implements Loggable {
     /**
      * adiciona um script minificado de break de texto com mais de 1000 caracteres de forma automatica,
      * segue em comentario a versão original
-     *
+     * <p>
      * (function () {
-     *     function preventBreakWrap(value) {
-     *         return '<span style=\'page-break-inside: avoid\'>' + value + '</span>';
-     *     }
-     *     function breakInBlocks(value, size) {
-     *         if (value.length > size) {
-     *             return preventBreakWrap(value.substr(0, size)) + breakInBlocks(value.substr(size, value.length), size);
-     *         }
-     *         return value;
-     *     }
-     *     function visitLeafs(root, visitor) {
-     *         if (root.children.length == 0) {
-     *             visitor(root);
-     *         } else {
-     *             for (var i = 0; i < root.children.length; i += 1) {
-     *                 visitLeafs(root.children[i], visitor);
-     *             }
-     *         }
-     *     }
-     *     visitLeafs(document.getElementsByTagName('body')[0], function(e) {
-     *         e.innerHTML = breakInBlocks(e.innerHTML, 1000);
-     *     });
+     * function preventBreakWrap(value) {
+     * return '<span style=\'page-break-inside: avoid\'>' + value + '</span>';
+     * }
+     * function breakInBlocks(value, size) {
+     * if (value.length > size) {
+     * return preventBreakWrap(value.substr(0, size)) + breakInBlocks(value.substr(size, value.length), size);
+     * }
+     * return value;
+     * }
+     * function visitLeafs(root, visitor) {
+     * if (root.children.length == 0) {
+     * visitor(root);
+     * } else {
+     * for (var i = 0; i < root.children.length; i += 1) {
+     * visitLeafs(root.children[i], visitor);
+     * }
+     * }
+     * }
+     * visitLeafs(document.getElementsByTagName('body')[0], function(e) {
+     * e.innerHTML = breakInBlocks(e.innerHTML, 1000);
+     * });
      * })();
      *
      * @param commandArgs os argumentos
@@ -399,6 +402,25 @@ public abstract class PDFUtil implements Loggable {
         }
     }
 
+    public File merge(List<InputStream> pdfs) {
+
+        final PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+
+        try {
+            pdfs.forEach(pdfMergerUtility::addSource);
+            File tempMergedFile = File.createTempFile("merged-" + UUID.randomUUID().toString(), ".pdf");
+            try (FileOutputStream output = new FileOutputStream(tempMergedFile)) {
+                pdfMergerUtility.setDestinationStream(output);
+                pdfMergerUtility.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
+                return tempMergedFile;
+            }
+        } catch (IOException e) {
+            getLogger().error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+
     protected String safeWrapHtml(String html) {
         if (html == null || html.startsWith(("<!DOCTYPE"))) {
             return html;
@@ -414,6 +436,5 @@ public abstract class PDFUtil implements Loggable {
         }
         return wraped;
     }
-
 
 }
