@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>ws</artifactId>
-        <version>1.5.4-SNAPSHOT</version>
+        <version>1.5.4</version>
     </parent>
 
     <artifactId>wkhtmltopdf-ws</artifactId>
