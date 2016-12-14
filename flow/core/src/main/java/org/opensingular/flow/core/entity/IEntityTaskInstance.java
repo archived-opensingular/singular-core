@@ -59,7 +59,7 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     List<? extends IEntityExecutionVariable> getOutputVariables();
 
-    List<? extends IEntityTaskInstanceHistory> getTaskHistoric();
+    List<? extends IEntityTaskInstanceHistory> getTaskHistory();
 
     List<? extends IEntityProcessInstance> getChildProcesses();
 

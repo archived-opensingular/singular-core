@@ -16,7 +16,11 @@
 
 package org.opensingular.form.persistence.service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,16 +31,15 @@ import javax.transaction.Transactional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
-
+import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dto.AttachmentRef;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularUtil;
 
 @Transactional
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {

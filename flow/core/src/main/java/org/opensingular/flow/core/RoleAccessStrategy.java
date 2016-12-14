@@ -119,4 +119,10 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     public AccessStrategyType getType() {
         return AccessStrategyType.E;
     }
+
+    @Override
+    public MUser getAutomaticAllocatedUser(ProcessInstance instancia, TaskInstance tarefa) {
+        IEntityRoleInstance role = instancia.getRoleUserByAbbreviation(executionRole.getName());
+        return role != null ? role.getUser() : null;
+    }
 }

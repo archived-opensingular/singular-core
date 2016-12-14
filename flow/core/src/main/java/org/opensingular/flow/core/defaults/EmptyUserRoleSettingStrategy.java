@@ -28,6 +28,6 @@ public class EmptyUserRoleSettingStrategy extends UserRoleSettingStrategy<Proces
     @Override
     public List<? extends MUser> listAllocableUsers(ProcessInstance processInstance) {
             return Collections.emptyList();
-        }
+    }
 
 }
