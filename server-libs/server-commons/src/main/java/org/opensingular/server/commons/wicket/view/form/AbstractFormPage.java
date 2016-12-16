@@ -47,6 +47,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.exception.SingularServerFormValidationError;
 import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
@@ -88,7 +89,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
-    protected IModel<T>           currentModel;
+    protected       IModel<T>           currentModel;
     protected final IModel<FormKey>     formModel;
     protected final IModel<FormKey>     parentPetitionformModel;
     protected       AbstractFormContent content;
@@ -307,7 +308,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
     }
 
-    protected Boolean isTransitionButtonVisibible(MTransition transition){
+    protected Boolean isTransitionButtonVisibible(MTransition transition) {
         return true;
     }
 
@@ -325,7 +326,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected String createPetitionDescriptionFromForm(SInstance instance) {
-        return  instance.toStringDisplay();
+        return instance.toStringDisplay();
     }
 
     protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
@@ -421,10 +422,39 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         }
     }
 
-    protected void send(IModel<? extends SInstance> currentInstance, AjaxRequestTarget target, BSModalBorder enviarModal) {
-        if (onBeforeSend(currentInstance)) {
-            petitionService.send(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), SingularSession.get().getUsername(), singularFormConfig);
-            onAfterSend(target, enviarModal);
+    /**
+     * Inicia o fluxo da petição, consolidando os formularios de rascunho e criando o historico
+     *
+     * @param mi    modal da instancia atual do formulario
+     * @param ajxrt ajax request target do wicket
+     * @param sm    modal que disparou a confirmação
+     */
+    protected void send(IModel<? extends SInstance> mi, AjaxRequestTarget ajxrt, BSModalBorder sm) {
+        //executa antes de enviar, chance para fazer validações, salvar o formulario e alterar dados na peticao
+        if (onBeforeSend(mi)) {
+
+            //peticao atual, atualizações devem ser feitas em before send
+            T petition = currentModel.getObject();
+
+            //instancia atual do formulario
+            SInstance instance = mi.getObject();
+
+            //usuario para persistencia
+            String username = SingularSession.get().getUsername();
+
+            //executa em block try, caso exita rollback deve recarregar a peticao, para que a mesma não
+            //tenha dados que sofreram rollback
+            try {
+                //executa o envio, iniciando o fluxo informado
+                petitionService.send(petition, instance, username, singularFormConfig);
+                //janela de oportunidade para executar ações apos o envio, normalmente utilizado para mostrar mensagens
+                onAfterSend(ajxrt, sm);
+            } catch (Exception ex) {
+                //recarrega a petição novamente
+                currentModel.setObject(petitionService.findPetitionByCod(petition.getCod()));
+                //faz o rethrow da exeção, algumas são tratadas e exibidas na tela como mensagens informativas
+                throw SingularServerException.rethrow(ex.getMessage(), ex);
+            }
         }
     }
 
