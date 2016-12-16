@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
@@ -476,14 +477,43 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         saveForm(currentInstance, transitionName);
     }
 
-    protected void executeTransition(AjaxRequestTarget ajaxRequestTarget,
-                                     Form<?> form,
-                                     String transitionName,
-                                     IModel<? extends SInstance> currentInstance)
-            throws SingularServerFormValidationError {
-        onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance);
-        petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition, getTransitionParameters(transitionName));
-        onTransitionExecuted(ajaxRequestTarget, transitionName);
+    /**
+     * Executa a transição da tarefa para a transição informada
+     * @param ajxrt target do wicket
+     * @param form form atual
+     * @param tn transição a ser executada
+     * @param mi model contendo a instancia atual
+     * @throws SingularServerFormValidationError caso exista erros de validação
+     * @see AbstractFormPage#onBeforeExecuteTransition
+     * @see PetitionService#executeTransition(String, PetitionEntity, SFormConfig, BiConsumer, Map)
+     * @see AbstractFormPage#onTransitionExecuted(AjaxRequestTarget, String)
+     */
+    protected void executeTransition(AjaxRequestTarget ajxrt, Form<?> form, String tn, IModel<? extends SInstance> mi)
+            throws SingularServerFormValidationError
+    {
+
+        //relizada a chamada, abrindo janela de oportunidade para salvar e alteradas dados da petição
+        onBeforeExecuteTransition(ajxrt, form, tn, mi);
+
+        //petição atual, qualuer alteracao deve ser feita em onBeforeExecuteTransition
+        T petition = currentModel.getObject();
+
+        //busca os parametros de transicao do FLOW
+        Map<String, String> transitionParams = getTransitionParameters(tn);
+
+        //Executa em bloco try, executa rollback da petição caso exista erro
+        try {
+            //executa a transicao informada
+            petitionService.executeTransition(tn, petition, singularFormConfig, this::onTransition, transitionParams);
+
+            //executa chamada, abrindo janela de oportunidade de executar ações apos execução da transicao
+            onTransitionExecuted(ajxrt, tn);
+        } catch (Exception ex) {
+            //recarrega a petição novamente
+            currentModel.setObject(petitionService.findPetitionByCod(petition.getCod()));
+            //faz o rethrow da exeção, algumas são tratadas e exibidas na tela como mensagens informativas
+            throw SingularServerException.rethrow(ex.getMessage(), ex);
+        }
     }
 
     protected Map<String, String> getTransitionParameters(String transition) {
