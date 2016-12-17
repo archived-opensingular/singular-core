@@ -281,4 +281,14 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                 .map(l -> l.get(0))
                 .orElse(null);
     }
+
+    @SuppressWarnings("unchecked")
+    public List<PetitionEntity> findByRootPetition(T rootPetition) {
+        String hql = "FROM " + PetitionEntity.class.getName() + " pe "
+               + " WHERE pe.rootPetition = :rootPetition ";
+
+        Query query = getSession().createQuery(hql);
+        query.setParameter("rootPetition", rootPetition);
+        return query.list();
+    }
 }

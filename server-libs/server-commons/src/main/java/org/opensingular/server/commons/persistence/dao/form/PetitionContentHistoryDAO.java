@@ -16,17 +16,21 @@
 
 package org.opensingular.server.commons.persistence.dao.form;
 
-
-import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
-import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
-import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
-import org.opensingular.lib.support.persistence.BaseDAO;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.lib.support.persistence.BaseDAO;
+import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
+import org.opensingular.server.commons.persistence.entity.form.FormVersionHistoryEntity;
+import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.service.dto.MenuGroup;
+import org.opensingular.server.commons.service.dto.ProcessDTO;
+import org.opensingular.server.commons.wicket.SingularSession;
+import org.opensingular.server.commons.wicket.view.template.MenuSessionConfig;
 
 public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEntity, Long> {
 
@@ -34,7 +38,7 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
         super(PetitionContentHistoryEntity.class);
     }
 
-    public List<PetitionHistoryDTO> listPetitionContentHistoryByPetitionCod(long petitionCod) {
+    public List<PetitionHistoryDTO> listPetitionContentHistoryByPetitionCod(PetitionEntity petitionEntity, String menu, boolean filter) {
 
         final List<TaskInstanceEntity>           tasks;
         final List<PetitionContentHistoryEntity> histories;
@@ -44,12 +48,12 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
         tasks = getSession()
                 .createQuery("select task from PetitionEntity p " +
                         " inner join p.processInstanceEntity.tasks as task where p.cod = :petitionCod")
-                .setParameter("petitionCod", petitionCod).list();
+                .setParameter("petitionCod", petitionEntity.getCod()).list();
 
         histories = getSession()
                 .createQuery("select h from PetitionContentHistoryEntity h " +
                         " where h.petitionEntity.cod = :petitionCod")
-                .setParameter("petitionCod", petitionCod).list();
+                .setParameter("petitionCod", petitionEntity.getCod()).list();
 
         petitionHistoryDTOs = new ArrayList<>();
 
@@ -70,11 +74,26 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
                     petitionHistoryDTOs.add(new PetitionHistoryDTO().setTask(task));
                 });
 
+        MenuSessionConfig menuSessionConfig = SingularSession.get().getMenuSessionConfig();
+        MenuGroup         menuGroup         = menuSessionConfig.getMenuPorLabel(menu);
+
         return petitionHistoryDTOs
                 .stream()
+                .filter(p -> filterAllowedHistoryTasks(p, menuGroup, filter))
                 .sorted((a,b) -> a.getTask().getBeginDate().compareTo(b.getTask().getBeginDate()))
                 .collect(Collectors.toList());
 
+    }
+
+    private boolean filterAllowedHistoryTasks(PetitionHistoryDTO petitionHistoryDTO, MenuGroup menuGroup, boolean filter) {
+        if (!filter) {
+            return true;
+        }
+
+        ProcessDefinitionEntity processDefinition     = petitionHistoryDTO.getTask().getProcessInstance().getProcessVersion().getProcessDefinition();
+        ProcessDTO              processByAbbreviation = menuGroup.getProcessByAbbreviation(processDefinition.getKey());
+        return processByAbbreviation != null
+                && processByAbbreviation.getAllowedHistoryTasks().contains(petitionHistoryDTO.getTask().getTask().getAbbreviation());
     }
 
     public FormVersionHistoryEntity findLastestByPetitionCodAndType(String typeName, Long cod) {

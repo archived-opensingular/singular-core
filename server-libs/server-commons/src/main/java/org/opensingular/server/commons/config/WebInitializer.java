@@ -41,8 +41,8 @@ import org.opensingular.server.commons.wicket.SingularApplication;
 public abstract class WebInitializer {
 
 
-    static final String SINGULAR_SECURITY = "[SINGULAR][WEB] %s";
-    public static final Logger logger = LoggerFactory.getLogger(SpringSecurityInitializer.class);
+    static final        String SINGULAR_SECURITY = "[SINGULAR][WEB] %s";
+    public static final Logger logger            = LoggerFactory.getLogger(SpringSecurityInitializer.class);
 
     public void init(ServletContext ctx) throws ServletException {
         onStartup(ctx);
@@ -52,18 +52,18 @@ public abstract class WebInitializer {
         addSessionListener(ctx);
         addOpenSessionInView(ctx);
         for (IServerContext context : serverContexts()) {
-            logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: "+context.getContextPath()));
+            logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: " + context.getContextPath()));
             addWicketFilter(ctx, context);
         }
     }
 
-    protected IServerContext[] serverContexts(){
+    protected IServerContext[] serverContexts() {
         return ServerContext.values();
     }
 
 
     protected void addWicketFilter(ServletContext ctx, IServerContext context) {
-        FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter(context.getName()+System.identityHashCode(context), WicketFilter.class);
+        FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter(context.getName() + System.identityHashCode(context), WicketFilter.class);
         wicketFilterAnalise.setInitParameter("applicationClassName", getWicketApplicationClass(context).getName());
         wicketFilterAnalise.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, context.getContextPath());
         wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, context.getContextPath());
@@ -82,7 +82,7 @@ public abstract class WebInitializer {
         urls.add("/resources/*");
         urls.add("/public/*");
         urls.add("/index.html");
-        for (IServerContext ctx : serverContexts()){
+        for (IServerContext ctx : serverContexts()) {
             urls.add(ctx.getUrlPath() + "/wicket/resource/*");
             urls.add(ctx.getUrlPath() + "/public/*");
         }
@@ -96,7 +96,7 @@ public abstract class WebInitializer {
      * @return
      */
     protected int getSessionTimeoutMinutes() {
-        return 30;
+        return 15;//15 minutos
     }
 
     /**

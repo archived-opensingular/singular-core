@@ -17,20 +17,23 @@
 package org.opensingular.server.commons.service.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ProcessDTO implements Serializable {
 
-    private String name;
-    private String formName;
-    private String abbreviation;
+    private String       name;
+    private String       formName;
+    private String       abbreviation;
+    private List<String> allowedHistoryTasks;
 
     public ProcessDTO() {
     }
 
-    public ProcessDTO(String abbreviation, String name, String formName) {
+    public ProcessDTO(String abbreviation, String name, String formName, List<String> allowedHistoryTasks) {
         this.abbreviation = abbreviation;
         this.name = name;
         this.formName = formName;
+        this.allowedHistoryTasks = allowedHistoryTasks;
     }
 
     public String getName() {
@@ -49,4 +52,7 @@ public class ProcessDTO implements Serializable {
         return abbreviation;
     }
 
+    public List<String> getAllowedHistoryTasks() {
+        return allowedHistoryTasks;
+    }
 }

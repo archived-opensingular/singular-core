@@ -14,24 +14,37 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.core.wicket.entrada;
+package org.opensingular.server.commons.wicket.error;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.opensingular.server.commons.wicket.view.template.Content;
-import org.opensingular.server.core.wicket.template.AnaliseTemplate;
-import org.opensingular.server.core.wicket.template.ServerTemplate;
-import org.wicketstuff.annotation.mount.MountPath;
 
-@MountPath("caixaentrada")
-public class CaixaEntradaAnalisePage extends AnaliseTemplate {
+import java.util.logging.Logger;
 
 
-    @Override
-    protected String getPageTitleLocalKey() {
-        return "worklist.page.title";
+public class Page410Content extends Content {
+
+    private final static Logger LOGGER = Logger.getLogger("GENERAL_LOGGER");
+
+    public Page410Content(String id) {
+        super(id);
     }
 
     @Override
-    protected Content getContent(String id) {
-        return new EntradaContent(id);
+    protected void onInitialize() {
+        super.onInitialize();
+        pageHead.setVisible(false);
     }
+
+    @Override
+    protected IModel<?> getContentSubtitleModel() {
+        return Model.of("");
+    }
+
+    @Override
+    protected IModel<?> getContentTitleModel() {
+        return Model.of("");
+    }
+
 }

@@ -31,8 +31,6 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.opensingular.flow.persistence.entity.Actor;
-import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.lib.wicket.util.button.DropDownButtonPanel;
@@ -62,6 +60,7 @@ public abstract class AbstractHistoricoContent extends Content {
     private int    instancePK;
     private long   petitionPK;
     private String processGroupPK;
+    private String menu;
 
     public AbstractHistoricoContent(String id) {
         super(id);
@@ -83,6 +82,7 @@ public abstract class AbstractHistoricoContent extends Content {
         petitionPK = getPage().getPageParameters().get(DispatcherPageParameters.PETITION_ID).toLong();
         instancePK = getPage().getPageParameters().get(DispatcherPageParameters.INSTANCE_ID).toInt();
         processGroupPK = getPage().getPageParameters().get(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME).toString();
+        menu = getPage().getPageParameters().get(DispatcherPageParameters.MENU_PARAM_NAME).toString();
         queue(setupDataTable(createDataProvider()));
         queue(getBtnCancelar());
     }
@@ -178,12 +178,12 @@ public abstract class AbstractHistoricoContent extends Content {
     protected BaseDataProvider<PetitionHistoryDTO, String> createDataProvider() {
         return new BaseDataProvider<PetitionHistoryDTO, String>() {
 
-            List<PetitionHistoryDTO> cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+            List<PetitionHistoryDTO> cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK, menu, isFilterAllowedHistoryTasks());
 
             @Override
             public long size() {
                 if (cache == null) {
-                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK, menu, isFilterAllowedHistoryTasks());
                 }
                 return cache.size();
             }
@@ -191,11 +191,15 @@ public abstract class AbstractHistoricoContent extends Content {
             @Override
             public Iterator<PetitionHistoryDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
                 if (cache == null) {
-                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK);
+                    cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK, menu, isFilterAllowedHistoryTasks());
                 }
                 return cache.subList(first, first + count).iterator();
             }
         };
+    }
+
+    protected boolean isFilterAllowedHistoryTasks() {
+        return false;
     }
 
     protected String getBaseUrl() {
