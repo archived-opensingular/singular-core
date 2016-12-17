@@ -280,7 +280,7 @@ public class WicketFormProcessing implements Loggable {
 
 
     private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
-        if (!isSkipValidationOnRequest()) {
+            if (!isSkipValidationOnRequest()) {
 
             final InstanceValidationContext validationContext;
 

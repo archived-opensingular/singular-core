@@ -17,16 +17,17 @@ import com.google.common.collect.ImmutableSet;
 
 final class UploadInfo implements Serializable {
 
-    final UUID            uploadId;
-    final long            maxFileSize;
-    final int             maxFileCount;
-    final Set<String>     allowedFileTypes;
-    private volatile long lastAccess;
+    final            UUID        uploadId;
+    final            long        maxFileSize;
+    final            int         maxFileCount;
+    final            Set<String> allowedFileTypes;
+    private volatile long        lastAccess;
+
     public UploadInfo(
-        UUID uploadId,
-        long maxFileSize,
-        int maxFileCount,
-        Collection<String> allowedFileTypes) {
+            UUID uploadId,
+            long maxFileSize,
+            int maxFileCount,
+            Collection<String> allowedFileTypes) {
 
         this.uploadId = uploadId;
         this.maxFileSize = Math.max(1L, maxFileSize);
@@ -36,9 +37,10 @@ final class UploadInfo implements Serializable {
     }
 
     public boolean isFileTypeAllowed(String mimeTypeOrExtension) {
-        return allowedFileTypes.contains(mimeTypeOrExtension)
-            || allowedFileTypes.contains(MimeTypes.getExtensionForMimeType(mimeTypeOrExtension))
-            || allowedFileTypes.contains(MimeTypes.getMimeTypeForExtension(mimeTypeOrExtension));
+        return allowedFileTypes.isEmpty()
+                || allowedFileTypes.contains(mimeTypeOrExtension)
+                || allowedFileTypes.contains(MimeTypes.getExtensionForMimeType(mimeTypeOrExtension))
+                || allowedFileTypes.contains(MimeTypes.getMimeTypeForExtension(mimeTypeOrExtension));
     }
 
     public long lastAccess() {
@@ -57,15 +59,15 @@ final class UploadInfo implements Serializable {
     @Override
     public String toString() {
         StringWriter buffer = new StringWriter();
-        JSONWriter writer = new JSONWriter(buffer);
+        JSONWriter   writer = new JSONWriter(buffer);
         //@formatter:off
         writer.object()
-            .key("uploadId"         ).value(uploadId.toString())
-            .key("maxFileSize"      ).value(maxFileSize)
-            .key("maxFileCount"     ).value(maxFileCount)
-            .key("allowedFileTypes" ).value(new JSONArray(allowedFileTypes))
-            .key("lastAccess"       ).value(lastAccess)
-            .endObject();
+                .key("uploadId").value(uploadId.toString())
+                .key("maxFileSize").value(maxFileSize)
+                .key("maxFileCount").value(maxFileCount)
+                .key("allowedFileTypes").value(new JSONArray(allowedFileTypes))
+                .key("lastAccess").value(lastAccess)
+                .endObject();
         //@formatter:on
         return buffer.toString();
     }

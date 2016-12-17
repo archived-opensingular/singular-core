@@ -19,6 +19,7 @@ package org.opensingular.flow.core.builder;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.TaskAccessStrategy;
+import org.opensingular.flow.core.property.MetaDataRef;
 
 import java.util.function.Consumer;
 
@@ -52,6 +53,12 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
     @Override
     default SELF addStartedTaskListener(StartedTaskListener listenerInicioTarefa) {
         getTask().addStartedTaskListener(listenerInicioTarefa);
+        return self();
+    }
+
+    @Override
+    default <T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getTask().setMetaDataValue(propRef, value);
         return self();
     }
 }

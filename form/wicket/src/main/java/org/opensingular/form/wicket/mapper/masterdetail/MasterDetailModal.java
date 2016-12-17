@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.masterdetail;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
@@ -80,9 +81,8 @@ class MasterDetailModal extends BFModalWindow {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(table);
                 MasterDetailModal.this.hide(target);
-                WicketFormProcessing.onFieldProcess(table, target, model);
+                WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
             }
-
         });
 
         if (viewMode.isEdition()) {

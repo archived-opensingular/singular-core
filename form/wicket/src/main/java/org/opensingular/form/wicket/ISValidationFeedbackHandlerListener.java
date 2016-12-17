@@ -24,6 +24,7 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 public interface ISValidationFeedbackHandlerListener extends Serializable {
 
@@ -34,7 +35,7 @@ public interface ISValidationFeedbackHandlerListener extends Serializable {
                            Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors);
 
     static ISValidationFeedbackHandlerListener refresh(Component... components) {
-        return withTarget(t -> t.add(components));
+        return withTarget(t -> Stream.of(components).filter(Component::isVisibleInHierarchy).forEach(t::add));
     }
 
     static ISValidationFeedbackHandlerListener withTarget(IConsumer<AjaxRequestTarget> withTarget) {
