@@ -42,7 +42,8 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 @Transactional
-public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
+public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty>
+        implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
     private AttachmentDao<T, C> attachmentDao;
