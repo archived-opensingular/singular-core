@@ -42,11 +42,15 @@ public class TestValidationWithInheritedType extends TestCaseForm {
 
         public STypeString fieldOne;
         public STypeString fieldTwo;
+        public STypeComposite<SIComposite> compositeOne;
+        public STypeString compositeOneFieldOne;
 
         @Override
         protected void onLoadType(TypeBuilder tb) {
             fieldOne = addField("fieldOne", STypeString.class);
             fieldTwo = addField("fieldTwo", STypeString.class);
+            compositeOne = addFieldComposite("compositeOne");
+            compositeOneFieldOne = compositeOne.addField("compositeOneFieldOne", STypeString.class);
 
             this.addInstanceValidator(validatable -> {
 //                if ("x".equals(validatable.getInstance().getField(fieldOne.getNameSimple()).getValue())) {  //funciona utilizando o nome
