@@ -4,6 +4,7 @@ import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +23,27 @@ import static java.util.stream.Collectors.toList;
 public class FileUploadManager implements Serializable, HttpSessionBindingListener {
 
     private static final Logger log         = LoggerFactory.getLogger(FileUploadManager.class);
-    private static final String SESSION_KEY = FileUploadManager.class.getName();
+    public static final  String SESSION_KEY = FileUploadManager.class.getName();
 
     private volatile Path baseDirPath;
 
     private final ConcurrentHashSet<UploadInfo>     registeredUploads = new ConcurrentHashSet<>();
     private final ConcurrentHashSet<FileUploadInfo> uploadedFiles     = new ConcurrentHashSet<>();
 
-    ///////////////////////////////////////////////////////////////////////////
+    private final ISupplier<IAttachmentPersistenceHandler> persistenceHandler;
+
+    public FileUploadManager() {
+        this.persistenceHandler = () -> ApplicationContextProvider
+                .get()
+                .getBean(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+    }
+
+    public FileUploadManager(ISupplier<IAttachmentPersistenceHandler> persistenceHandler) {
+        this.persistenceHandler = persistenceHandler;
+    }
+
+
+///////////////////////////////////////////////////////////////////////////
     // 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -130,9 +144,9 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
                 .collect(toList());
     }
 
-    public FileUploadInfo createFile(AttachmentKey uploadId, String originalFilename, InputStream input) throws IOException {
+    public FileUploadInfo createFile(AttachmentKey key, String fileName, InputStream input) throws IOException {
 
-        log.debug("createFile({},{},{})", uploadId, originalFilename, input);
+        log.debug("createFile({},{},{})", key, fileName, input);
 
         final Path                          path;
         final IAttachmentPersistenceHandler handler;
@@ -148,7 +162,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
         Files.copy(input, path);
 
-        attachment = handler.addAttachment(file, Files.size(path), originalFilename);
+        attachment = handler.addAttachment(file, Files.size(path), fileName);
         info = new FileUploadInfo(attachment);
 
         uploadedFiles.add(info);
@@ -216,7 +230,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     }
 
     public IAttachmentPersistenceHandler getTemporaryAttachmentPersistenceHandler() {
-        return ApplicationContextProvider.get().getBean(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        return persistenceHandler.get();
     }
 
 }
