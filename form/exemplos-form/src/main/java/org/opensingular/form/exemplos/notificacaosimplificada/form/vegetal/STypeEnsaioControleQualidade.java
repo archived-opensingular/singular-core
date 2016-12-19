@@ -50,7 +50,6 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         tipoEnsaio = this.addFieldComposite("tipoEnsaio");
         idTipoEnsaio = tipoEnsaio.addFieldInteger("id");
         descricaoTipoEnsaio = tipoEnsaio.addFieldString("descricao");

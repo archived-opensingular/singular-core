@@ -27,8 +27,7 @@ public class STypeCredenciamentoEscolaGoverno extends STypeComposite<SIComposite
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
+
         this.asAtr().label("Credenciamento de Escola de Governo");
         
         

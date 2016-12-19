@@ -105,12 +105,17 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                         "Erro tentando setar valor na instância extendida de " + composite +
                                 " pois não foi encontrado o valor para atribuir ao campo " + ref.getField().getName()));
             }
-            try {
-                ref.getField().set(composite, newFieldValue);
-            } catch (IllegalAccessException e) {
-                throw new SingularFormException(erroValue(composite, newFieldValue, ref, null,
-                        "Erro tentando setar valor na instância extendida de " + composite.getClass().getName()), e);
-            }
+            setJavaField(composite, ref, newFieldValue);
+        }
+    }
+
+    /** Seta o valor do field Java com o valor informado. */
+    private void setJavaField(STypeComposite composite, PublicFieldRef ref, SType<?> newFieldValue) {
+        try {
+            ref.getField().set(composite, newFieldValue);
+        } catch (IllegalAccessException e) {
+            throw new SingularFormException(erroValue(composite, newFieldValue, ref, null,
+                    "Erro tentando setar valor na instância extendida de " + composite.getClass().getName()), e);
         }
     }
 
@@ -132,15 +137,19 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             SType<?> expectedType = composite.getField(ref.getField().getName());
             if (expectedType == null) {
                 if (currentValue == null) {
-                    throw new SingularFormException(erroValue(composite, null, ref, null,
-                            "O campo java deveria ter um valor, mas está null"));
+                    throw new SingularFormException(
+                            erroValue(composite, null, ref, null, "O campo java deveria ter um valor, mas está null"));
                 } else if (!isTypeChildrenOf(composite, currentValue)) {
                     throw new SingularFormException(erroValue(composite, null, ref, currentValue,
                             "O campo java tem um tipo que não é filho direto (ou indireto) de " + composite));
                 }
+            } else if (currentValue == null) {
+                setJavaField(composite, ref, expectedType);
             } else if (currentValue != expectedType) {
                 throw new SingularFormException(erroValue(composite, expectedType, ref, currentValue,
-                        "O campo público da classe deveria ter o valor do atributo " + expectedType.getNameSimple()));
+                        "O field java público '" + expectedType.getNameSimple() +
+                                "' da classe " + composite.getClass().getSimpleName() +
+                                " deveria ter o valor do atributo '" + expectedType.getNameSimple() + "' do type"));
             }
         }
     }

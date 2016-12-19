@@ -30,7 +30,6 @@ public class STypeNotificacaoSimplificadaGasMedicinal extends STypeComposite<SIC
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         asAtr().displayString(" ${nomeComercial} - ${descricao} ");
         asAtr().label("Gás Medicinal");

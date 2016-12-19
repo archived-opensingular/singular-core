@@ -2,6 +2,7 @@ package org.opensingular.form;
 
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
+import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaC;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -29,10 +30,12 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         tipoEndereco.addField("rua", STypeString.class);
         tipoEndereco.addFieldString("bairro", true);
         tipoEndereco.addFieldInteger("cep", true);
+        assertType(tipoEndereco).isExtensionCorrect(STypeComposite.class);
 
         STypeComposite<?> tipoClassificacao = tipoEndereco.addFieldComposite("classificacao");
         tipoClassificacao.addFieldInteger("prioridade");
         tipoClassificacao.addFieldString("descricao");
+        assertType(tipoClassificacao).isExtensionCorrect(STypeComposite.class);
 
         assertTipo(tipoEndereco.getLocalType("rua"), "rua", STypeString.class);
         assertTipo(tipoEndereco.getField("rua"), "rua", STypeString.class);
@@ -91,7 +94,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
 
         STypeComposite<?> tipoBloco = pb.createCompositeType("bloco");
-        tipoBloco.addFieldString("nome");
+        STypeString typeNome = tipoBloco.addFieldString("nome");
         tipoBloco.addFieldString("endereco");
 
         assertOrdemCampos(tipoBloco.getFields(), "nome", "endereco");
@@ -104,6 +107,9 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertOrdemCampos(tipoSubBloco.getFields(), "nome", "endereco", "idade", "area");
         //TODO O resultado abaixo talvez tenha que ser repensando
         assertOrdemCampos(tipoSubBloco.getFieldsLocal(), "nome", "endereco", "idade", "area");
+
+        assertType(tipoSubBloco).isExtensionCorrect(tipoBloco);
+        assertType(tipoSubBloco).field("nome").isExtensionCorrect(typeNome);
 
         SIComposite subBloco = tipoSubBloco.newInstance();
         testAtribuicao(subBloco, "area", "sul", 1);
@@ -129,6 +135,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         tipoBloco.addFieldListOf("enderecos", STypeString.class);
         tipoBloco.addFieldListOfComposite("itens", "item").getElementsType().addFieldInteger("qtd");
         tipoBloco.addFieldComposite("subBloco").addFieldBoolean("teste");
+        assertType(tipoBloco).isExtensionCorrect(STypeComposite.class);
 
         SIComposite bloco = tipoBloco.newInstance();
 
@@ -185,6 +192,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldListOf("enderecos", STypeString.class);
+        assertType(tipoBloco).isExtensionCorrect(STypeComposite.class);
 
         assertTipo(tipoBloco.getLocalType("enderecos"), "enderecos", STypeList.class);
         assertTipo(tipoBloco.getField("enderecos"), "enderecos", STypeList.class);
@@ -226,6 +234,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         STypeComposite<?> tipoEndereco = tipoEnderecos.getElementsType();
         tipoEndereco.addFieldString("rua");
         tipoEndereco.addFieldString("cidade");
+        assertType(tipoBloco).isExtensionCorrect(STypeComposite.class);
 
         SIComposite bloco = tipoBloco.newInstance();
         assertNull(bloco.getValue("enderecos"));
@@ -276,6 +285,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     @Test
     public void testeOnCargaTipoDireto() {
         TestTipoCompositeComCargaInterna tipo = createTestDictionary().getType(TestTipoCompositeComCargaInterna.class);
+        assertType(tipo).isExtensionCorrect(STypeComposite.class);
         assertEquals("xxx", tipo.asAtr().getLabel());
         assertNotNull(tipo.getField("nome"));
         assertEquals((Boolean) true, tipo.isRequired());
@@ -287,6 +297,8 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         TestTipoCompositeComCargaInterna tipo = pb.createType("derivado", TestTipoCompositeComCargaInterna.class);
 
         TestTipoCompositeComCargaInterna tipoPai = pb.getDictionary().getType(TestTipoCompositeComCargaInterna.class);
+        assertType(tipo).isExtensionCorrect(tipoPai);
+
         assertEquals("xxx", tipoPai.asAtr().getLabel());
         assertNotNull(tipoPai.getField("nome"));
         assertEquals((Boolean) true, tipoPai.isRequired());
@@ -294,6 +306,14 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals("xxx", tipo.asAtr().getLabel());
         assertNotNull(tipo.getField("nome"));
         assertEquals((Boolean) true, tipo.isRequired());
+    }
+
+    @Test
+    public void testExtensionTypeFromClassWithSubTypeFromClass() {
+        PackageBuilder pb = createTestDictionary().createNewPackage("test");
+        TestTipoCompositeComCargaInternaB typeD = pb.createType("typeD", TestTipoCompositeComCargaInternaB.class);
+        typeD.addFieldString("info");
+        assertType(typeD).isExtensionCorrect(TestTipoCompositeComCargaInternaB.class);
     }
 
     @Test
@@ -360,6 +380,13 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertA.field("nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "sss");
         assertB.field("bloco1.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "rrr");
         assertB.field("bloco2.nome").isAttribute(SPackageBasic.ATR_SUBTITLE, "sss");
+
+        assertType(a).isExtensionCorrect(STypeComposite.class);
+        assertType(a.nome).isExtensionCorrect(STypeString.class);
+        assertType(b).isExtensionCorrect(STypeComposite.class);
+        assertType(b.descricao).isExtensionCorrect(STypeString.class);
+        assertType(b.bloco1).isExtensionCorrect(a);
+        assertType(b.bloco2).isExtensionCorrect(a);
     }
 
     @Test
@@ -384,7 +411,6 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertC.isComposite("blocoB1", 3).isString("bloco2.nome");
         assertC.isComposite("blocoB1.bloco1", 1).isString("nome");
         assertC.isComposite("blocoB2.bloco2", 1).isString("nome");
-
 
         assertNotNull(blocoA1.nome);
         assertNotNull(b.descricao);
@@ -447,6 +473,27 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertC.field("blocoB1.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
         assertC.field("blocoB2.bloco1").isAttribute(SPackageBasic.ATR_LABEL, "www");
         assertC.field("blocoB2.bloco2").isAttribute(SPackageBasic.ATR_LABEL, "zzz");
+
+        assertType(a).isExtensionCorrect(STypeComposite.class);
+        assertType(b).isExtensionCorrect(STypeComposite.class);
+        assertType(c).isExtensionCorrect(STypeComposite.class);
+        assertType(blocoA1).isExtensionCorrect(a);
+        assertType(blocoB1).isExtensionCorrect(b);
+    }
+
+    @Test
+    public void testCorrectExtensionWhenCompositeClassExtendsOtherCompositeClass() {
+        SDictionary dictionary = createTestDictionary();
+        TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
+        TestTipoCompositeComCargaInternaC c = dictionary.getType(TestTipoCompositeComCargaInternaC.class);
+
+        assertType(c).isExtensionCorrect(b);
+        assertType(c.info).isExtensionCorrect(STypeString.class);
+        assertType(c.descricao).isExtensionCorrect(b.descricao);
+        assertType(c.bloco1).isExtensionCorrect(b.bloco1);
+        assertType(c.bloco2).isExtensionCorrect(b.bloco2);
+        assertType(c.bloco3).isExtensionCorrect(a);
     }
 
     @SInfoPackage(name = "teste.pacoteCompostoA")
@@ -456,6 +503,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         protected void onLoadPackage(PackageBuilder pb) {
             pb.createType(TestTipoCompositeComCargaInterna.class);
             pb.createType(TestTipoCompositeComCargaInternaB.class);
+            pb.createType(TestTipoCompositeComCargaInternaC.class);
         }
 
         @SInfoType(name = "TestTipoCompostoComCargaInterna", spackage = TestPacoteCompostoA.class)
@@ -472,7 +520,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         }
 
         @SInfoType(name = "TestTipoCompostoComCargaInternaB", spackage = TestPacoteCompostoA.class)
-        public static final class TestTipoCompositeComCargaInternaB extends STypeComposite<SIComposite> {
+        public static class TestTipoCompositeComCargaInternaB extends STypeComposite<SIComposite> {
 
             public STypeString descricao;
             public TestTipoCompositeComCargaInterna bloco1;
@@ -487,6 +535,18 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
             }
         }
 
+        @SInfoType(name = "TestTipoCompostoComCargaInternaC", spackage = TestPacoteCompostoA.class)
+        public static final class TestTipoCompositeComCargaInternaC extends TestTipoCompositeComCargaInternaB  {
+
+            public STypeString info;
+            public TestTipoCompositeComCargaInterna bloco3;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                info = addFieldString("info");
+                bloco3 = addField("bloco3", TestTipoCompositeComCargaInterna.class);
+            }
+        }
     }
 
     @Test
@@ -551,9 +611,77 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         PackageBuilder pb = createTestDictionary().createNewPackage("teste");
         STypeComposite<SIComposite> block = pb.createCompositeType("block");
         block.addFieldString("field1");
-        assertException(() -> block.addFieldString("field1"), "Já existe um campo criado com o nome");
-        assertException(() -> block.addFieldComposite("field1"), "Já existe um campo criado com o nome");
-        assertException(() -> block.addFieldListOfComposite("field1","f"), "Já existe um campo criado com o nome");
+        assertException(() -> block.addFieldString("field1"), "Tentativa de criar um segundo campo com o nome");
+        assertException(() -> block.addFieldComposite("field1"), "Tentativa de criar um segundo campo com o nome");
+        assertException(() -> block.addFieldListOfComposite("field1","f"), "Tentativa de criar um segundo campo com o nome");
         assertType(block).isComposite(1);
+    }
+
+    @Test
+    public void testDetectionOfWrongSuperOnLoadTypeCall_Case1() {
+        SDictionary dictionary = createTestDictionary();
+        assertException(() -> dictionary.getType(TestPackageWithErrorW.TestCompositeErrorCallOnLoadA.class),
+                "As implementações de onLoadType() não devem chamar super.onLoadType()");
+    }
+
+    @Test
+    public void testDetectionOfWrongSuperOnLoadTypeCall_Case2() {
+        SDictionary dictionary = createTestDictionary();
+        assertException(() -> dictionary.getType(TestPackageWithErrorZ.TestCompositeErrorCallOnLoadB.class),
+                "Verifique se não ocorreu uma chamada indevida de super.onLoadType()");
+    }
+
+    @SInfoPackage(name = "test.TestPackageWithErrorW")
+    public static final class TestPackageWithErrorW extends SPackage {
+
+        @Override
+        protected void onLoadPackage(PackageBuilder pb) {
+            pb.createType(TestCompositeErrorCallOnLoadA.class);
+        }
+
+        @SInfoType(name = "TestCompositeErrorCallOnLoadA", spackage = TestPackageWithErrorW.class)
+        public static final class TestCompositeErrorCallOnLoadA extends STypeComposite<SIComposite> {
+
+            public STypeString name;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                super.onLoadType(tb); //Should trow a exception here
+                name = addFieldString("name");
+            }
+        }
+    }
+
+    @SInfoPackage(name = "test.TestPackageWithErrorZ")
+    public static final class TestPackageWithErrorZ extends SPackage {
+
+        @Override
+        protected void onLoadPackage(PackageBuilder pb) {
+            pb.createType(TestCompositeErrorCallOnLoadB.class);
+            pb.createType(TestCompositeErrorCallOnLoadC.class);
+        }
+
+        @SInfoType(name = "TestCompositeErrorCallOnLoadB", spackage = TestPackageWithErrorZ.class)
+        public static class TestCompositeErrorCallOnLoadB extends STypeComposite<SIComposite> {
+
+            public STypeString name;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                name = addFieldString("name");
+            }
+        }
+
+        @SInfoType(name = "TestCompositeErrorCallOnLoadC", spackage = TestPackageWithErrorZ.class)
+        public static final class TestCompositeErrorCallOnLoadC extends TestCompositeErrorCallOnLoadB  {
+
+            public STypeString info;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                super.onLoadType(tb); //Should trow a exception here
+                info = addFieldString("info");
+            }
+        }
     }
 }

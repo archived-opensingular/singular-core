@@ -43,8 +43,6 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
         addFieldString(FIELD_TEXT);
         addFieldString(FIELD_CLASSIFIER);
         addFieldBoolean(FIELD_APPROVED);

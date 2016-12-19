@@ -34,8 +34,6 @@ public class STypeObra extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
         addFieldString(FIELD_NUM_CONTRATO, true)
             .asAtr().label("Nº Contrato").asAtrBootstrap().colPreference(4);
         addFieldString(FIELD_DESCRICAO_OBRA, true)
