@@ -16,6 +16,11 @@
 
 package org.opensingular.flow.schedule;
 
+import java.util.Set;
+
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+
 public interface IScheduleService {
 
     void schedule(IScheduledJob scheduledJob);
@@ -27,4 +32,7 @@ public interface IScheduleService {
      * Essa assinatura é reconhecida como uma assinatura implícita de destruição de beans pelo spring.
      */
     void shutdown();
+
+    Set<JobKey> getAllJobKeys() throws SchedulerException;
+
 }
