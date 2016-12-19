@@ -57,6 +57,8 @@ import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.IEmailService;
 import org.opensingular.server.commons.service.ParameterService;
 import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.service.attachment.ServerAttachmentPersistenceService;
+import org.opensingular.server.commons.service.attachment.ServerTemporaryAttachmentPersistenceService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.DefaultUserDetailService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
@@ -120,17 +122,12 @@ public class SingularDefaultBeanFactory {
 
     @Bean(name = SDocument.FILE_PERSISTENCE_SERVICE)
     public IAttachmentPersistenceHandler attachmentPersistenceService() {
-        return new AttachmentPersistenceService();
+        return new ServerAttachmentPersistenceService();
     }
 
     @Bean(name = SDocument.FILE_TEMPORARY_SERVICE)
     public IAttachmentPersistenceHandler attachmentTemporaryService() {
-        try {
-            return FileSystemAttachmentHandler.newTemporaryHandler();
-        } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
-            return new InMemoryAttachmentPersitenceHandler();
-        }
+        return new ServerTemporaryAttachmentPersistenceService();
     }
 
     @Bean
