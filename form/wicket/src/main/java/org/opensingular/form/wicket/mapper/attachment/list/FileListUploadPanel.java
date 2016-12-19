@@ -136,9 +136,10 @@ public class FileListUploadPanel extends Panel implements Loggable {
         if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
             final AtrBasic atrAttachment = getModelObject().getElementsType().asAtr();
             this.uploadId = fileUploadManager.createUpload(
-                    Optional.ofNullable(atrAttachment.getMaxFileSize()),
-                    Optional.empty(),
-                    Optional.ofNullable(atrAttachment.getAllowedFileTypes()));
+                    atrAttachment.getMaxFileSize(),
+                    null,
+                    atrAttachment.getAllowedFileTypes()
+            );
         }
     }
 

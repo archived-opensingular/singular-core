@@ -37,52 +37,55 @@ import org.slf4j.LoggerFactory;
 
 public class FileUploadManager implements Serializable, HttpSessionBindingListener {
 
-    public static final String                      FILE_HASH_ALGORITHM = "SHA-1";
+    public static final String FILE_HASH_ALGORITHM = "SHA-1";
 
-    private static final Logger                     log                 = LoggerFactory.getLogger(FileUploadManager.class);
-    private static final String                     SESSION_KEY         = FileUploadManager.class.getName();
+    private static final Logger log         = LoggerFactory.getLogger(FileUploadManager.class);
+    private static final String SESSION_KEY = FileUploadManager.class.getName();
 
-    private volatile Path                           baseDirPath;
+    private volatile Path baseDirPath;
 
-    private final ConcurrentHashSet<UploadInfo>     registeredUploads   = new ConcurrentHashSet<>();
-    private final ConcurrentHashSet<FileUploadInfo> uploadedFiles       = new ConcurrentHashSet<>();
+    private final ConcurrentHashSet<UploadInfo>     registeredUploads = new ConcurrentHashSet<>();
+    private final ConcurrentHashSet<FileUploadInfo> uploadedFiles     = new ConcurrentHashSet<>();
 
     ///////////////////////////////////////////////////////////////////////////
     // 
     ///////////////////////////////////////////////////////////////////////////
 
-    public static FileUploadManager get(HttpSession session) {
-        synchronized (session) {
-            FileUploadManager manager = (FileUploadManager) session.getAttribute(SESSION_KEY);
-            if (manager == null) {
-                manager = new FileUploadManager();
-                session.setAttribute(SESSION_KEY, manager);
-                log.debug("Manager created: SESSION_ID = " + session.getId());
-            }
-            return manager;
+    public static synchronized FileUploadManager get(HttpSession session) {
+        FileUploadManager manager = (FileUploadManager) session.getAttribute(SESSION_KEY);
+        if (manager == null) {
+            manager = new FileUploadManager();
+            session.setAttribute(SESSION_KEY, manager);
+            log.debug("Manager created: SESSION_ID = " + session.getId());
         }
+        return manager;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // UPLOADS
     ///////////////////////////////////////////////////////////////////////////
 
-    public UUID createUpload(Optional<Long> maxFileSize,
-                             Optional<Integer> maxFileCount,
-                             Optional<Collection<String>> allowedFileTypes) {
+    public UUID createUpload(Long maxFileSize, Integer maxFileCount, Collection<String> allowedFileTypes) {
+
+        Optional<Long>               oMaxFileSize      = Optional.ofNullable(maxFileSize);
+        Optional<Integer>            oMaxFileCount     = Optional.ofNullable(maxFileCount);
+        Optional<Collection<String>> oAllowedFileTypes = Optional.ofNullable(allowedFileTypes);
 
         log.debug("createUpload({},{},{})",
-            maxFileSize.orElse(null),
-            maxFileCount.orElse(null),
-            allowedFileTypes.orElseGet(Collections::emptyList));
+                oMaxFileSize.orElse(null),
+                oMaxFileCount.orElse(null),
+                oAllowedFileTypes.orElseGet(Collections::emptyList)
+        );
 
         final UUID uuid = UUID.randomUUID();
 
         registeredUploads.add(new UploadInfo(
-            uuid,
-            maxFileSize.orElse(Long.MAX_VALUE),
-            maxFileCount.orElse(1),
-            allowedFileTypes.orElseGet(Collections::emptyList)));
+                uuid,
+                oMaxFileSize.orElse(Long.MAX_VALUE),
+                oMaxFileCount.orElse(1),
+                oAllowedFileTypes.orElseGet(Collections::emptyList)
+        ));
+
         return uuid;
     }
 
@@ -90,9 +93,9 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         log.debug("findUploadInfo({})", uploadId);
 
         return registeredUploads.stream()
-            .filter(it -> it.uploadId.equals(uploadId))
-            .map(it -> it.touch())
-            .findFirst();
+                .filter(it -> it.uploadId.equals(uploadId))
+                .map(UploadInfo::touch)
+                .findFirst();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -102,8 +105,8 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     public Optional<FileUploadInfo> findFileInfo(UUID fileId) {
         log.debug("findFileInfo({})", fileId);
         return uploadedFiles.stream()
-            .filter(it -> it.fileId.equals(fileId))
-            .findAny();
+                .filter(it -> it.fileId.equals(fileId))
+                .findAny();
     }
 
     public <R> Optional<R> consumeFile(UUID fileId, Function<File, R> callback) {
@@ -124,15 +127,15 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     public Optional<File> findLocalFile(UUID fileId) {
         log.debug("findLocalFile({})", fileId);
         return findFileInfo(fileId)
-            .map(it -> getLocalFilePath(it))
-            .map(it -> it.toFile());
+                .map(this::getLocalFilePath)
+                .map(Path::toFile);
     }
 
     public List<FileUploadInfo> listFileInfo(UUID uploadId) {
         log.debug("listFileInfo({})", uploadId);
         return uploadedFiles.stream()
-            .filter(it -> it.uploadId.equals(uploadId))
-            .collect(toList());
+                .filter(it -> it.uploadId.equals(uploadId))
+                .collect(toList());
     }
 
     public FileUploadInfo createFile(UUID uploadId, String originalFilename, InputStream input) throws IOException {
@@ -143,18 +146,18 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         final Path file = getLocalFilePath(fileId);
         file.toFile().deleteOnExit();
 
-        final CountingInputStream countStream = new CountingInputStream(input);
-        final DigestInputStream digestStream = new DigestInputStream(countStream, getMessageDigest());
+        final CountingInputStream countStream  = new CountingInputStream(input);
+        final DigestInputStream   digestStream = new DigestInputStream(countStream, getMessageDigest());
 
         Files.copy(digestStream, file);
 
         final FileUploadInfo fileInfo = new FileUploadInfo(
-            uploadId,
-            fileId,
-            originalFilename,
-            countStream.getByteCount(),
-            HashUtil.bytesToBase16(digestStream.getMessageDigest().digest()),
-            System.currentTimeMillis());
+                uploadId,
+                fileId,
+                originalFilename,
+                countStream.getByteCount(),
+                HashUtil.bytesToBase16(digestStream.getMessageDigest().digest()),
+                System.currentTimeMillis());
 
         uploadedFiles.add(fileInfo);
         return fileInfo;
@@ -174,7 +177,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
         } catch (IOException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
-        } finally {}
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -184,6 +187,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     private Path getLocalFilePath(FileUploadInfo fileInfo) {
         return getLocalFilePath(fileInfo.fileId);
     }
+
     private Path getLocalFilePath(UUID fileId) {
         return baseDir().resolve(fileId.toString());
     }
@@ -211,24 +215,23 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     }
 
     private void deleteLocalFiles() {
-        new ArrayList<>(uploadedFiles).stream()
-            .forEach(it -> deleteFile(it));
+        new ArrayList<>(uploadedFiles).forEach(this::deleteFile);
     }
 
     protected void gc() {
-        final FileUploadConfig config = new FileUploadConfig(SingularProperties.get());
-        final Instant timestampLimit = Instant.now().minus(Duration.ofMillis(config.globalMaxFileAge));
+        final FileUploadConfig config         = new FileUploadConfig(SingularProperties.get());
+        final Instant          timestampLimit = Instant.now().minus(Duration.ofMillis(config.globalMaxFileAge));
 
         final Set<FileUploadInfo> oldFiles = uploadedFiles.stream()
-            .filter(it -> Instant.ofEpochMilli(it.timestamp).isBefore(timestampLimit))
-            .collect(toSet());
+                .filter(it -> Instant.ofEpochMilli(it.timestamp).isBefore(timestampLimit))
+                .collect(toSet());
         for (FileUploadInfo file : oldFiles)
             deleteFile(file);
 
         while (uploadedFiles.size() > config.globalMaxFileCount) {
             FileUploadInfo oldest = uploadedFiles.stream()
-                .max((a, b) -> NumberUtils.compare(a.timestamp, b.timestamp))
-                .get();
+                    .max((a, b) -> NumberUtils.compare(a.timestamp, b.timestamp))
+                    .get();
             deleteFile(oldest);
         }
     }
@@ -238,7 +241,8 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void valueBound(HttpSessionBindingEvent event) {}
+    public void valueBound(HttpSessionBindingEvent event) {
+    }
 
     @Override
     public void valueUnbound(HttpSessionBindingEvent event) {

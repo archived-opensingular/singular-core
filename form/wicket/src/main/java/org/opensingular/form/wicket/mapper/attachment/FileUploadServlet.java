@@ -37,13 +37,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
  */
-@WebServlet(urlPatterns = { FileUploadServlet.UPLOAD_URL + "/*" })
+@WebServlet(urlPatterns = {FileUploadServlet.UPLOAD_URL + "/*"})
 public class FileUploadServlet extends HttpServlet {
 
     public final static String UPLOAD_URL = "/upload";
@@ -54,40 +55,49 @@ public class FileUploadServlet extends HttpServlet {
         return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + uploadId;
     }
 
-    public final static Optional<File> lookupFile(HttpServletRequest req, String fileId) {
-        return FileUploadManager.get(req.getSession())
-            .findLocalFile(UUID.fromString(fileId));
+    public static Optional<File> lookupFile(HttpServletRequest req, String fileId) {
+        return getFileUploadManager(req).findLocalFile(UUID.fromString(fileId));
     }
 
-    public final static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<File, R> callback) {
-        FileUploadManager manager = FileUploadManager.get(req.getSession());
-        return manager.consumeFile(UUID.fromString(fileId), callback);
+    public static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<File, R> callback) {
+        return getFileUploadManager(req).consumeFile(UUID.fromString(fileId), callback);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         if (!ServletFileUpload.isMultipartContent(req)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request is not multipart, please 'multipart/form-data' enctype for your form.");
             return;
         }
 
-        final String uploadIdParam = substringAfterLast(defaultString(req.getPathTranslated()), File.separator);
-        if (isBlank(uploadIdParam)) {
+        final UUID uploadID = getUploadID(req);
+
+        if (uploadID == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
             return;
         }
 
-        final UUID uploadId = UUID.fromString(uploadIdParam);
+        //recupera o upload info preconfigurado na sessão (deve ser configurado antes de usar a servlet)
+        final Optional<UploadInfo> uploadInfo = getFileUploadManager(req).findUploadInfo(uploadID);
 
-        final FileUploadManager manager = FileUploadManager.get(req.getSession());
-        final Optional<UploadInfo> uploadInfo = manager.findUploadInfo(uploadId);
         if (!uploadInfo.isPresent()) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
             return;
         }
 
-        final FileUploadProcessor processor = new FileUploadProcessor(uploadInfo.get(), req, resp);
-        processor.handleFiles();
+        new FileUploadProcessor(uploadInfo.get(), req, resp).handleFiles();
+    }
+
+    private UUID getUploadID(HttpServletRequest req) throws IOException {
+        return Optional.ofNullable(substringAfterLast(defaultString(req.getPathTranslated()), File.separator))
+                .filter(x -> !StringUtils.isBlank(x))
+                .map(UUID::fromString)
+                .orElse(null);
+    }
+
+    private static FileUploadManager getFileUploadManager(HttpServletRequest req) {
+        return FileUploadManager.get(req.getSession());
     }
 
     private static class FileUploadProcessor {
@@ -104,22 +114,22 @@ public class FileUploadServlet extends HttpServlet {
             this.request = request;
             this.response = response;
             this.filesJson = new ArrayList<>();
-            this.manager = FileUploadManager.get(request.getSession());
+            this.manager = getFileUploadManager(request);
             this.config = new FileUploadConfig(SingularProperties.get());
         }
 
-        private ServletFileUpload createHandler(FileUploadConfig config) {
+        private ServletFileUpload createServletFileUpload(FileUploadConfig config) {
             final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
 
             servletFileUpload.setFileSizeMax(resolveMax(
-                uploadInfo.maxFileSize,
-                config.defaultMaxFileSize,
-                config.globalMaxFileSize));
+                    uploadInfo.maxFileSize,
+                    config.defaultMaxFileSize,
+                    config.globalMaxFileSize));
 
             servletFileUpload.setSizeMax(resolveMax(
-                uploadInfo.maxFileSize * uploadInfo.maxFileCount,
-                config.defaultMaxRequestSize,
-                config.globalMaxRequestSize));
+                    uploadInfo.maxFileSize * uploadInfo.maxFileCount,
+                    config.defaultMaxRequestSize,
+                    config.globalMaxRequestSize));
 
             return servletFileUpload;
         }
@@ -130,9 +140,10 @@ public class FileUploadServlet extends HttpServlet {
 
         public void handleFiles() {
             try {
-                Map<String, List<FileItem>> params = createHandler(config).parseParameterMap(request);
-                for (FileItem item : params.get(PARAM_NAME))
+                Map<String, List<FileItem>> params = createServletFileUpload(config).parseParameterMap(request);
+                for (FileItem item : params.get(PARAM_NAME)) {
                     processFileItem(filesJson, item);
+                }
             } catch (Exception e) {
                 throw SingularException.rethrow(e);
             } finally {
@@ -142,15 +153,16 @@ public class FileUploadServlet extends HttpServlet {
 
         private void processFileItem(List<UploadResponseInfo> response, FileItem item) throws Exception {
             if (!item.isFormField()) {
+
                 final String originalFilename = item.getName();
-                final String contentType = lowerCase(item.getContentType());
-                final String extension = lowerCase(substringAfterLast(originalFilename, "."));
+                final String contentType      = lowerCase(item.getContentType());
+                final String extension        = lowerCase(substringAfterLast(originalFilename, "."));
 
                 if (item.getSize() == 0) {
                     response.add(new UploadResponseInfo(originalFilename, "Arquivo não pode ser de tamanho 0 (zero)"));
                     return;
                 }
-                
+
                 if (!(uploadInfo.isFileTypeAllowed(contentType) || uploadInfo.isFileTypeAllowed(extension))) {
                     response.add(new UploadResponseInfo(originalFilename, "Tipo de arquivo não permitido"));
                     return;
@@ -162,5 +174,6 @@ public class FileUploadServlet extends HttpServlet {
                 }
             }
         }
+
     }
 }

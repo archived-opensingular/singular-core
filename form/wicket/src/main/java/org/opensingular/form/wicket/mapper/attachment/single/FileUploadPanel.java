@@ -51,14 +51,14 @@ import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.P
 
 public class FileUploadPanel extends Panel implements Loggable {
 
-    private FileUploadPanel           self             = this;
-    private AddFileBehavior           adder;
-    private final ViewMode            viewMode;
-    private final AjaxButton          removeFileButton = new RemoveButton("remove_btn");
-    private final WebMarkupContainer  uploadFileButton = new UploadButton("upload_btn");
+    private FileUploadPanel self = this;
+    private       AddFileBehavior adder;
+    private final ViewMode        viewMode;
+    private final AjaxButton         removeFileButton = new RemoveButton("remove_btn");
+    private final WebMarkupContainer uploadFileButton = new UploadButton("upload_btn");
 
-    private FileUploadField           fileField;
-    private WebMarkupContainer        filesContainer, progressBar;
+    private FileUploadField    fileField;
+    private WebMarkupContainer filesContainer, progressBar;
     private DownloadSupportedBehavior downloader;
     private DownloadLink              downloadLink;
     private UUID                      uploadId;
@@ -72,6 +72,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     public IModel<SIAttachment> getModel() {
         return (IModel<SIAttachment>) getDefaultModel();
     }
+
     public SIAttachment getModelObject() {
         return (SIAttachment) getDefaultModelObject();
     }
@@ -79,10 +80,23 @@ public class FileUploadPanel extends Panel implements Loggable {
     private ISInstanceAwareModel<List<FileUpload>> dummyModel(final IModel<SIAttachment> model) {
         return new ISInstanceAwareModel<List<FileUpload>>() {
             //@formatter:off
-            @Override public List<FileUpload> getObject() { return null; }
-            @Override public void setObject(List<FileUpload> object) {}
-            @Override public void detach() {}
-            @Override public SInstance getMInstancia() { return model.getObject(); }
+            @Override
+            public List<FileUpload> getObject() {
+                return null;
+            }
+
+            @Override
+            public void setObject(List<FileUpload> object) {
+            }
+
+            @Override
+            public void detach() {
+            }
+
+            @Override
+            public SInstance getMInstancia() {
+                return model.getObject();
+            }
             //@formatter:on
         };
     }
@@ -121,9 +135,9 @@ public class FileUploadPanel extends Panel implements Loggable {
         if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
             final SIAttachment attachment = getModelObject();
             this.uploadId = fileUploadManager.createUpload(
-                Optional.ofNullable(attachment.asAtr().getMaxFileSize()),
-                Optional.empty(),
-                Optional.ofNullable(attachment.asAtr().getAllowedFileTypes()));
+                    attachment.asAtr().getMaxFileSize(),
+                    null,
+                    attachment.asAtr().getAllowedFileTypes());
         }
     }
 
@@ -137,21 +151,21 @@ public class FileUploadPanel extends Panel implements Loggable {
     private String generateInitJS() {
         if (viewMode.isEdition()) {
             return ""
-            //@formatter:off
-                + "\n $(function () { "
-                + "\n   window.FileUploadPanel.setup(" + new JSONObject()
-                          .put("param_name"        , PARAM_NAME                  )
-                          .put("panel_id"          , self.getMarkupId()          )
-                          .put("file_field_id"     , fileField.getMarkupId()     )
-                          .put("files_id"          , filesContainer.getMarkupId())
-                          .put("progress_bar_id"   , progressBar.getMarkupId()   )
-                          .put("upload_url"        , getUploadUrl()              )
-                          .put("download_url"      , getDownloaderUrl()          )
-                          .put("add_url"           , getAdderUrl()               )
-                          .put("max_file_size"     , getMaxFileSize()            )
-                          .put("allowed_file_types", getAllowedFileTypes()       )
-                          .toString(2) + "); "
-                + "\n });";
+                    //@formatter:off
+                    + "\n $(function () { "
+                    + "\n   window.FileUploadPanel.setup(" + new JSONObject()
+                    .put("param_name", PARAM_NAME)
+                    .put("panel_id", self.getMarkupId())
+                    .put("file_field_id", fileField.getMarkupId())
+                    .put("files_id", filesContainer.getMarkupId())
+                    .put("progress_bar_id", progressBar.getMarkupId())
+                    .put("upload_url", getUploadUrl())
+                    .put("download_url", getDownloaderUrl())
+                    .put("add_url", getAdderUrl())
+                    .put("max_file_size", getMaxFileSize())
+                    .put("allowed_file_types", getAllowedFileTypes())
+                    .toString(2) + "); "
+                    + "\n });";
             //@formatter:on
         } else {
             return "";
@@ -181,6 +195,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     private long getMaxFileSize() {
         return getModelObject().asAtr().getMaxFileSize();
     }
+
     private List<String> getAllowedFileTypes() {
         return getModelObject().asAtr().getAllowedFileTypes();
     }
@@ -197,6 +212,7 @@ public class FileUploadPanel extends Panel implements Loggable {
         private UploadButton(String id) {
             super(id);
         }
+
         @Override
         protected void onInitialize() {
             super.onInitialize();
@@ -215,6 +231,7 @@ public class FileUploadPanel extends Panel implements Loggable {
         private RemoveButton(String id) {
             super(id);
         }
+
         @Override
         protected void onInitialize() {
             super.onInitialize();
@@ -227,6 +244,7 @@ public class FileUploadPanel extends Panel implements Loggable {
                 }
             });
         }
+
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
@@ -249,12 +267,12 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         @Override
         public void onResourceRequested() {
-            final HttpServletRequest httpReq = (HttpServletRequest) getWebRequest().getContainerRequest();
+            final HttpServletRequest  httpReq  = (HttpServletRequest) getWebRequest().getContainerRequest();
             final HttpServletResponse httpResp = (HttpServletResponse) getWebResponse().getContainerResponse();
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName = getParamFileId("name").toString();
+                final String pName   = getParamFileId("name").toString();
 
                 getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
@@ -265,8 +283,8 @@ public class FileUploadPanel extends Panel implements Loggable {
                 });
 
                 responseInfo
-                    .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND))
-                    .writeJsonObjectResponseTo(httpResp);
+                        .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND))
+                        .writeJsonObjectResponseTo(httpResp);
 
             } catch (AbortWithHttpErrorCodeException e) {
                 getLogger().error(e.getMessage(), e);
