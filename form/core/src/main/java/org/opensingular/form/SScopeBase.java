@@ -119,6 +119,7 @@ public abstract class SScopeBase implements SScope {
         newType.setRecursiveReference(isRecursiveReference(newType));
         if (newType.getSuperType() == null || newType.getSuperType().getClass() != newType.getClass()) {
             newType.extendSubReference();
+            TypeProcessorPublicFieldsReferences.INSTANCE.processTypePreOnLoadTypeCall(newType);
             newType.setCallingOnLoadType(true);
             callOnLoadTypeIfNecessary(newType);
             newType.setCallingOnLoadType(false);

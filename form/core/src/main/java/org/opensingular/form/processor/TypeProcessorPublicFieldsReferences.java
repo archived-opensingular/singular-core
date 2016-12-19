@@ -45,8 +45,18 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     private static LoadingCache<Class<?>, CompositePublicInfo> classInfoCache;
 
     @Override
+    public void processTypePreOnLoadTypeCall(SType<?> type) {
+        if (! isDerivedClassOfSTypeComposite(type)) {
+            return;
+        }
+        STypeComposite composite = (STypeComposite) type;
+        CompositePublicInfo info = getCompositePublicInfo(composite.getClass());
+        propagatePublicFieldsToExtendedComposite(composite, info, true);
+    }
+
+    @Override
     public void processTypePosRegister(SType<?> type, boolean onLoadCalled) {
-        if (!(type instanceof STypeComposite) || type.getClass() == STypeComposite.class) {
+        if (! isDerivedClassOfSTypeComposite(type)) {
             return;
         }
         STypeComposite composite = (STypeComposite) type;
@@ -62,12 +72,17 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                     verifyAllFieldsCorrectedFilled(composite, info);
                 }
             } else {
-                propagatePublicFieldsToExtendedComposite(composite, info);
+                propagatePublicFieldsToExtendedComposite(composite, info, false);
             }
         }
     }
 
-    private void propagatePublicFieldsToExtendedComposite(STypeComposite composite, CompositePublicInfo info) {
+    private boolean isDerivedClassOfSTypeComposite(SType<?> type) {
+        return (type instanceof STypeComposite) && type.getClass() != STypeComposite.class;
+    }
+
+    private void propagatePublicFieldsToExtendedComposite(STypeComposite composite, CompositePublicInfo info,
+            boolean preOnLoad) {
         for (PublicFieldRef ref : info) {
             SType<?> newFieldValue = composite.getField(ref.getField().getName());
             if (newFieldValue == null) {
@@ -101,11 +116,15 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             }
 
             if (newFieldValue == null) {
-                throw new SingularFormException(erroValue(composite, null, ref, null,
-                        "Erro tentando setar valor na instância extendida de " + composite +
-                                " pois não foi encontrado o valor para atribuir ao campo " + ref.getField().getName()));
+                if (! preOnLoad) {
+                    throw new SingularFormException(erroValue(composite, null, ref, null,
+                            "Erro tentando setar valor na instância extendida de " + composite +
+                                    " pois não foi encontrado o valor para atribuir ao campo " +
+                                    ref.getField().getName()));
+                }
+            } else {
+                setJavaField(composite, ref, newFieldValue);
             }
-            setJavaField(composite, ref, newFieldValue);
         }
     }
 
