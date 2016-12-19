@@ -1,30 +1,28 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import com.google.common.collect.ImmutableSet;
+import org.json.JSONArray;
+import org.json.JSONWriter;
+import org.opensingular.form.servlet.MimeTypes;
 
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
 
-import org.json.JSONArray;
-import org.json.JSONWriter;
-import org.opensingular.form.servlet.MimeTypes;
-
-import com.google.common.collect.ImmutableSet;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 final class UploadInfo implements Serializable {
 
-    final            UUID        uploadId;
-    final            long        maxFileSize;
-    final            int         maxFileCount;
-    final            Set<String> allowedFileTypes;
-    private volatile long        lastAccess;
+    final            AttachmentKey uploadId;
+    final            long          maxFileSize;
+    final            int           maxFileCount;
+    final            Set<String>   allowedFileTypes;
+    private volatile long          lastAccess;
 
     public UploadInfo(
-            UUID uploadId,
+            AttachmentKey uploadId,
             long maxFileSize,
             int maxFileCount,
             Collection<String> allowedFileTypes) {
@@ -62,7 +60,7 @@ final class UploadInfo implements Serializable {
         JSONWriter   writer = new JSONWriter(buffer);
         //@formatter:off
         writer.object()
-                .key("uploadId").value(uploadId.toString())
+                .key("uploadId").value(uploadId)
                 .key("maxFileSize").value(maxFileSize)
                 .key("maxFileCount").value(maxFileCount)
                 .key("allowedFileTypes").value(new JSONArray(allowedFileTypes))

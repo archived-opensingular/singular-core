@@ -1,46 +1,42 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
+import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.ajax.json.JSONObject;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.lib.commons.base.SingularUtil;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
-import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.lib.commons.base.SingularUtil;
 
 public class UploadResponseInfo implements Serializable {
-    public final UUID   fileId;
-    public final String name;
-    public final long   size;
-    public final String hashSHA1;
-    public final String errorMessage;
-    public UploadResponseInfo(FileUploadInfo fileUploadInfo) {
-        this(
-            fileUploadInfo.fileId,
-            fileUploadInfo.name,
-            fileUploadInfo.size,
-            fileUploadInfo.hash);
+
+    private final AttachmentKey fileId;
+    private final String        name;
+    private final long          size;
+    private final String        hashSHA1;
+    private final String        errorMessage;
+
+    public UploadResponseInfo(IAttachmentRef attachmentRef) {
+        this(attachmentRef.getId(), attachmentRef.getName(), attachmentRef.getSize(), attachmentRef.getHashSHA1());
     }
+
     public UploadResponseInfo(SIAttachment attachment) {
-        this(
-            UUID.fromString(attachment.getFileId()),
-            attachment.getFileName(),
-            attachment.getFileSize(),
-            attachment.getFileHashSHA1());
+        this(attachment.getFileId(), attachment.getFileName(), attachment.getFileSize(), attachment.getFileHashSHA1());
     }
-    public UploadResponseInfo(UUID fileId, String name, long size, String hashSHA1) {
-        this.fileId = fileId;
+
+    private UploadResponseInfo(String fileId, String name, long size, String hashSHA1) {
+        this.fileId = AttachmentKey.fromString(fileId);
         this.name = name;
         this.size = size;
         this.hashSHA1 = hashSHA1;
         this.errorMessage = null;
     }
-    public UploadResponseInfo(String name, String errorMessage) {
+
+    UploadResponseInfo(String name, String errorMessage) {
         this.fileId = null;
         this.name = name;
         this.size = 0L;
@@ -52,7 +48,8 @@ public class UploadResponseInfo implements Serializable {
     public String toString() {
         return toJson().toString();
     }
-    public JSONObject toJson() {
+
+    private JSONObject toJson() {
         JSONObject jsonFile = new JSONObject();
         if (errorMessage != null) {
             jsonFile.put("name", name);
@@ -69,7 +66,8 @@ public class UploadResponseInfo implements Serializable {
     public void writeJsonObjectResponseTo(HttpServletResponse response) {
         doWrite(response, this.toString());
     }
-    public static void writeJsonArrayResponseTo(HttpServletResponse response, List<UploadResponseInfo> list) {
+
+    static void writeJsonArrayResponseTo(HttpServletResponse response, List<UploadResponseInfo> list) {
         JSONArray array = new JSONArray();
         for (UploadResponseInfo r : list)
             array.put(r);

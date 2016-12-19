@@ -50,12 +50,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
-import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
-import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.FileUploadServlet;
-import org.opensingular.form.wicket.mapper.attachment.UploadResponseInfo;
+import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
@@ -81,7 +76,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     private final DownloadSupportedBehavior downloader;
     private final WicketBuildContext        ctx;
 
-    private UUID uploadId;
+    private AttachmentKey uploadId;
 
     public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
         super(id, model);
@@ -138,8 +133,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
             this.uploadId = fileUploadManager.createUpload(
                     atrAttachment.getMaxFileSize(),
                     null,
-                    atrAttachment.getAllowedFileTypes()
-            );
+                    atrAttachment.getAllowedFileTypes());
         }
     }
 
@@ -265,10 +259,10 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
                 getLogger().debug("FileListUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
-                Optional<UploadResponseInfo> responseInfo = FileUploadServlet.consumeFile(httpReq, pFileId, file -> {
-                    final SIAttachment siAttachment = currentInstance().addNew();
-                    siAttachment.setContent(pName, file, file.length());
-                    return new UploadResponseInfo(siAttachment);
+                Optional<UploadResponseInfo> responseInfo = FileUploadServlet.consumeFile(httpReq, pFileId, attachment -> {
+                    final SIAttachment si = currentInstance().addNew();
+                    si.update(attachment);
+                    return new UploadResponseInfo(si);
                 });
 
                 responseInfo

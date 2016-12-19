@@ -61,7 +61,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     private WebMarkupContainer filesContainer, progressBar;
     private DownloadSupportedBehavior downloader;
     private DownloadLink              downloadLink;
-    private UUID                      uploadId;
+    private AttachmentKey                    uploadId;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -276,10 +276,10 @@ public class FileUploadPanel extends Panel implements Loggable {
 
                 getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
-                Optional<UploadResponseInfo> responseInfo = FileUploadServlet.consumeFile(httpReq, pFileId, file -> {
-                    final SIAttachment siAttachment = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
-                    siAttachment.setContent(pName, file, file.length());
-                    return new UploadResponseInfo(siAttachment);
+                Optional<UploadResponseInfo> responseInfo = FileUploadServlet.consumeFile(httpReq, pFileId, attachment -> {
+                    final SIAttachment si = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
+                    si.update(attachment);
+                    return new UploadResponseInfo(si);
                 });
 
                 responseInfo

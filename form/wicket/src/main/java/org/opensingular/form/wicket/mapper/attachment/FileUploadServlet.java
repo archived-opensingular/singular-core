@@ -16,30 +16,26 @@
 
 package org.opensingular.form.wicket.mapper.attachment;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Function;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularProperties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.function.Function;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.base.SingularProperties;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -51,16 +47,16 @@ public class FileUploadServlet extends HttpServlet {
 
     public static final String PARAM_NAME = "FILE-UPLOAD";
 
-    public static String getUploadUrl(HttpServletRequest req, UUID uploadId) {
-        return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + uploadId;
+    public static String getUploadUrl(HttpServletRequest req, AttachmentKey attachmentKey) {
+        return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + attachmentKey.asString();
     }
 
     public static Optional<File> lookupFile(HttpServletRequest req, String fileId) {
-        return getFileUploadManager(req).findLocalFile(UUID.fromString(fileId));
+        return getFileUploadManager(req).findLocalFile(fileId);
     }
 
-    public static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<File, R> callback) {
-        return getFileUploadManager(req).consumeFile(UUID.fromString(fileId), callback);
+    public static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<IAttachmentRef, R> callback) {
+        return getFileUploadManager(req).consumeFile(fileId, callback);
     }
 
     @Override
@@ -71,7 +67,7 @@ public class FileUploadServlet extends HttpServlet {
             return;
         }
 
-        final UUID uploadID = getUploadID(req);
+        final AttachmentKey uploadID = getUploadID(req);
 
         if (uploadID == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
@@ -89,10 +85,10 @@ public class FileUploadServlet extends HttpServlet {
         new FileUploadProcessor(uploadInfo.get(), req, resp).handleFiles();
     }
 
-    private UUID getUploadID(HttpServletRequest req) throws IOException {
+    private AttachmentKey getUploadID(HttpServletRequest req) throws IOException {
         return Optional.ofNullable(substringAfterLast(defaultString(req.getPathTranslated()), File.separator))
                 .filter(x -> !StringUtils.isBlank(x))
-                .map(UUID::fromString)
+                .map(AttachmentKey::fromString)
                 .orElse(null);
     }
 
@@ -170,7 +166,7 @@ public class FileUploadServlet extends HttpServlet {
 
                 try (InputStream in = item.getInputStream()) {
                     final FileUploadInfo fileInfo = manager.createFile(uploadInfo.uploadId, originalFilename, in);
-                    response.add(new UploadResponseInfo(fileInfo));
+                    response.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
                 }
             }
         }

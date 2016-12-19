@@ -147,4 +147,12 @@ public class SIAttachment extends SIComposite {
 
         return getFileName() + " (" + Math.round(bytesSize) + " " + sufixo[posSufixo] + ")";
     }
+
+    public void update(IAttachmentRef ref) {
+        this.setFileName(ref.getName());
+        this.setFileId(ref.getId());
+        this.setFileHashSHA1(ref.getHashSHA1());
+        this.setFileSize(ref.getSize());
+    }
+
 }
