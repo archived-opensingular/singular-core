@@ -91,6 +91,10 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         attachmentDao.delete(Long.valueOf(id));
     }
 
+    public void deleteAttachmentContent(Long id) {
+        attachmentContentDao.delete(id);
+    }
+
     public AttachmentRef createRef(T attachmentEntity) {
         return new AttachmentRef(attachmentEntity);
     }
@@ -113,4 +117,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         }
     }
 
+    public List<AttachmentContentEntitty> listOldOrphanAttachments() {
+        return attachmentDao.listOldOrphanAttachments();
+    }
 }
