@@ -1,14 +1,11 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
+import com.google.common.collect.ComparisonChain;
+import org.json.JSONObject;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
-
-import com.sun.istack.internal.NotNull;
-import org.json.JSONObject;
-
-import com.google.common.collect.ComparisonChain;
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 public class FileUploadInfo implements Serializable, Comparable<FileUploadInfo> {
 

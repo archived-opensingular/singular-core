@@ -35,7 +35,7 @@ public class SIAttachment extends SIComposite {
         if (file == null) {
             throw new SingularFormException("O arquivo não pode ser nulo.");
         }
-        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name));
+        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name, getDocument()));
     }
 
     private void setContent(String name, IAttachmentRef ref) {
@@ -47,7 +47,7 @@ public class SIAttachment extends SIComposite {
 
     void deleteReference() {
         if (getFileId() != null) {
-            getAttachmentService().deleteReference(getFileId());
+            getAttachmentService().deleteReference(getFileId(), getDocument());
         }
         setValue(STypeAttachment.FIELD_FILE_ID, null);
         setValue(STypeAttachment.FIELD_HASH_SHA1, null);

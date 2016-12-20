@@ -286,7 +286,6 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         if (instance == null) {
             return null;
         }
-        instance.getDocument().persistFiles();
         final MElement mElement = MformPersistenciaXML.toXML(instance);
         if (mElement != null) {
             return mElement.toStringExato();

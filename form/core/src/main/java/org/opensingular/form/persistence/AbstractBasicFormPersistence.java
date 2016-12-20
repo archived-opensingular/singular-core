@@ -130,6 +130,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
         KEY key = insertInternal(instance, inclusionActor);
         checkKey(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        instance.getDocument().persistFiles();
         return key;
     }
 

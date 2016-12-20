@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.IOUtil;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.io.IOUtils;
@@ -109,9 +111,9 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
-        try (InputStream is = toBeCopied.getInputStream()){
-            return addAttachment(is, toBeCopied.getSize(), toBeCopied.getName());
+    public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
+        try (InputStream is = attachmentRef.getInputStream()){
+            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName()));
         } catch (Exception e) {
             throw SingularException.rethrow(e);
         }
@@ -165,11 +167,11 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public void deleteAttachment(String fileId) {
-        if (fileId == null) return;
-        File file = findFileFromId(fileId);
+    public void deleteAttachment(String key, SDocument document) {
+        if (key == null) return;
+        File file = findFileFromId(key);
         file.delete();
-        File infoFile = infoFileFromId(fileId);
+        File infoFile = infoFileFromId(key);
         infoFile.delete();
     }
 }

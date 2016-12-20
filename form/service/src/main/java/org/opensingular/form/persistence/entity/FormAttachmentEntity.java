@@ -19,36 +19,29 @@ package org.opensingular.form.persistence.entity;
 
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.hibernate.annotations.GenericGenerator;
+
 
 import javax.persistence.*;
 
 @Entity
-@GenericGenerator(name = FormAttachmentEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_ANEXO_FORMULARIO", schema = Constants.SCHEMA)
-public class FormAttachmentEntity extends BaseEntity<Long> {
+public class FormAttachmentEntity extends BaseEntity<FormAttachmentEntityId> {
 
-    public static final String PK_GENERATOR_NAME = "GENERATED_CO_ANEXO_FORMULARIO";
+    @EmbeddedId
+    private FormAttachmentEntityId cod;
 
-    @Id
-    @Column(name = "CO_ANEXO_FORMULARIO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
-    private Long cod;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO")
+    @ManyToOne
+    @JoinColumn(name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false)
     private FormVersionEntity formVersionEntity;
 
-    @Column(name = "TX_SHA1", nullable = false)
-    private String hashSha1;
+    @ManyToOne
+    @JoinColumn(name = "CO_ARQUIVO", insertable = false, updatable = false)
+    private AttachmentEntity attachmentEntity;
 
-    @Override
-    public Long getCod() {
-        return cod;
+    public FormAttachmentEntity() {
     }
 
-    public void setCod(Long cod) {
+    public FormAttachmentEntity(FormAttachmentEntityId cod) {
         this.cod = cod;
     }
 
@@ -56,16 +49,17 @@ public class FormAttachmentEntity extends BaseEntity<Long> {
         return formVersionEntity;
     }
 
-    public void setFormVersionEntity(FormVersionEntity formVersionEntity) {
-        this.formVersionEntity = formVersionEntity;
+    public AttachmentEntity getAttachmentEntity() {
+        return attachmentEntity;
     }
 
-    public String getHashSha1() {
-        return hashSha1;
+    @Override
+    public FormAttachmentEntityId getCod() {
+        return cod;
     }
 
-    public void setHashSha1(String hashSha1) {
-        this.hashSha1 = hashSha1;
+    public FormAttachmentEntity setCod(FormAttachmentEntityId cod) {
+        this.cod = cod;
+        return this;
     }
-
 }

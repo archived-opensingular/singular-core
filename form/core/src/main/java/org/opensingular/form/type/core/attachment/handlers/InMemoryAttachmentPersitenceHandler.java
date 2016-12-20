@@ -16,6 +16,8 @@
 
 package org.opensingular.form.type.core.attachment.handlers;
 
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.lang3.StringUtils;
@@ -43,10 +45,10 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
-        FileSystemAttachmentRef ref = super.copy(toBeCopied);
-        attachments.put(ref.getId(), ref);
-        return ref;
+    public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
+        AttachmentCopyContext<FileSystemAttachmentRef> acr = super.copy(attachmentRef, document);
+        attachments.put(acr.getNewAttachmentRef().getId(), acr.getNewAttachmentRef());
+        return acr;
     }
 
     @Override
@@ -57,9 +59,9 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    public void deleteAttachment(String fileId) {
-        super.deleteAttachment(fileId);
-        attachments.remove(fileId);
+    public void deleteAttachment(String key, SDocument document) {
+        super.deleteAttachment(key, document);
+        attachments.remove(key);
     }
 
     @Override

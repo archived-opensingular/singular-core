@@ -16,6 +16,8 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.opensingular.form.document.SDocument;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -57,7 +59,7 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      * Copia o conteúdo de um IAttachmentRef para esse persistence handler e retorna
      * o novo IAttachmentRef criado.
      */
-    T copy(IAttachmentRef toBeCopied);
+    AttachmentCopyContext<T> copy(IAttachmentRef attachmentRef, SDocument document);
 
     /**
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
@@ -67,5 +69,5 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
 
     IAttachmentRef getAttachment(String fileId);
 
-    void deleteAttachment(String fileId);
+    void deleteAttachment(String key, SDocument document);
 }

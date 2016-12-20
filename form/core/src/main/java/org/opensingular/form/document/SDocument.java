@@ -29,6 +29,7 @@ import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.annotation.STypeAnnotationList;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.validation.IValidationError;
 import com.google.common.collect.ArrayListMultimap;
@@ -474,19 +475,31 @@ public class SDocument {
             if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
                 IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
                 if (fileRef != null) {
-                    IAttachmentRef newRef = persistent.copy(fileRef);
-                    deleteOldFiles(attachment, fileRef);
-                    updateFileId(attachment, newRef);
+
+                    AttachmentCopyContext attachmentCopyContext;
+                    IAttachmentRef        newRef;
+
+                    attachmentCopyContext = persistent.copy(fileRef, attachment.getDocument());
+                    newRef = attachmentCopyContext.getNewAttachmentRef();
+
+                    if (attachmentCopyContext.isDeleteOldFiles()) {
+                        deleteOldFiles(attachment, fileRef);
+                    }
+
+                    if (attachmentCopyContext.isUpdateFileId()) {
+                        updateFileId(attachment, newRef);
+                    }
+
                 } else if (attachment.getOriginalFileId() != null) {
-                    persistent.deleteAttachment(attachment.getOriginalFileId());
+                    persistent.deleteAttachment(attachment.getOriginalFileId(), attachment.getDocument());
                 }
             }
         }
 
         private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
-            temporary.deleteAttachment(fileRef.getId());
+            temporary.deleteAttachment(fileRef.getId(), attachment.getDocument());
             if (attachment.getOriginalFileId() != null) {
-                persistent.deleteAttachment(attachment.getOriginalFileId());
+                persistent.deleteAttachment(attachment.getOriginalFileId(), attachment.getDocument());
             }
         }
 

@@ -31,11 +31,13 @@ import javax.transaction.Transactional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dto.AttachmentRef;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularException;
@@ -46,10 +48,10 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
-    private AttachmentDao<T, C> attachmentDao;
+    protected AttachmentDao<T, C> attachmentDao;
 
     @Inject
-    private AttachmentContentDao<C> attachmentContentDao;
+    protected AttachmentContentDao<C> attachmentContentDao;
 
     @Override
     public AttachmentRef addAttachment(File file, long length, String name) {
@@ -62,10 +64,10 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     @Override
-    public AttachmentRef copy(IAttachmentRef toBeCopied) {
-        try (InputStream is = toBeCopied.getInputStream()) {
-            T file = attachmentDao.insert(is, toBeCopied.getSize(), toBeCopied.getName(), toBeCopied.getHashSHA1());
-            return createRef(file);
+    public AttachmentCopyContext<AttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
+        try (InputStream is = attachmentRef.getInputStream()) {
+            T file = attachmentDao.insert(is, attachmentRef.getSize(), attachmentRef.getName(), attachmentRef.getHashSHA1());
+            return new AttachmentCopyContext<>(createRef(file));
         } catch (IOException e) {
             throw SingularUtil.propagate(e);
         }
@@ -87,7 +89,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     @Override
-    public void deleteAttachment(String id) {
+    public void deleteAttachment(String id, SDocument document) {
         attachmentDao.delete(Long.valueOf(id));
     }
 
