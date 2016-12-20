@@ -124,4 +124,8 @@ public class FormVersionEntity extends BaseEntity<Long> {
         this.formAnnotations = formAnnotations;
     }
 
+    public List<FormAttachmentEntity> getFormAttachmentEntities() {
+        return formAttachmentEntities;
+    }
+
 }
