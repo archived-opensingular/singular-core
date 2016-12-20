@@ -44,20 +44,14 @@ public class FormJavascriptUtil {
     /**
      * Devolve uma instância cacheada da engine de execução de Javascript.
      */
-    private static ScriptEngine getEngine() {
-        if (engineSupplier == null) {
-            synchronized (FormJavascriptUtil.class) {
-                if (engineSupplier == null) {
-                    engineSupplier = SupplierUtil.cached(() -> {
-                        ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-                        if (!(engine instanceof Compilable)) {
-                            throw new SingularFormException("Esperado que a engine " + engine + " fosse compilável");
-                        }
-                        return engine;
-                    });
-                }
+    private synchronized static ScriptEngine getEngine() {
+        engineSupplier = SupplierUtil.cached(() -> {
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+            if (!(engine instanceof Compilable)) {
+                throw new SingularFormException("Esperado que a engine " + engine + " fosse compilável");
             }
-        }
+            return engine;
+        });
         return engineSupplier.get();
     }
 

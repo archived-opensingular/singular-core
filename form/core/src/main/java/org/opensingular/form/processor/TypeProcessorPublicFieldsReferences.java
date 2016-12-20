@@ -253,20 +253,14 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                 ref.getField().getName() + ";";
     }
 
-    private static CompositePublicInfo getCompositePublicInfo(Class<? extends STypeComposite> compositeClass) {
-        if (classInfoCache == null) {
-            synchronized (TypeProcessorPublicFieldsReferences.class) {
-                if (classInfoCache == null) {
-                    classInfoCache = CacheBuilder.newBuilder().weakValues().build(
-                            new CacheLoader<Class<?>, CompositePublicInfo>() {
-                                @Override
-                                public CompositePublicInfo load(Class<?> aClass) throws Exception {
-                                    return readPublicFields(aClass);
-                                }
-                            });
-                }
-            }
-        }
+    private synchronized static CompositePublicInfo getCompositePublicInfo(Class<? extends STypeComposite> compositeClass) {
+        classInfoCache = CacheBuilder.newBuilder().weakValues().build(
+                new CacheLoader<Class<?>, CompositePublicInfo>() {
+                    @Override
+                    public CompositePublicInfo load(Class<?> aClass) throws Exception {
+                        return readPublicFields(aClass);
+                    }
+                });
         return classInfoCache.getUnchecked(compositeClass);
     }
 
