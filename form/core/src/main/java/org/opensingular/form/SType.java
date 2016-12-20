@@ -133,10 +133,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * Esse método é chamado quando do primeiro registro de um classe Java que extende SType. Esse método é chamado
      * apenas uma única vez para o registro de cada classe. Se forem criadas extensões do mesmo tipo sem criar uma nova
      * classe Java, esse método não será chamado para o tipos filhos.
+     * <p>ATENÇÃO: A implementação não deve chamar super.onLoadType(), pois pode deixar o tipo incosistente</p>
      *
      * @param tb Classe utilitária de apoio na configuração do tipo
      */
     protected void onLoadType(TypeBuilder tb) {
+        throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()");
         // Esse método será implementado nas classes derevidas se precisarem
     }
 
@@ -158,7 +160,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     /**
-     * Metodo invocado após um tipo ser extendido, de modo, que o mesmo possa extender sub referência que possua.
+     * Metodo invocado após um tipo ser extendido, de modo, que o mesmo possa extender sub referências que possua.
      */
     protected void extendSubReference() {
         //Se necessário, a classes derivadas vão implementar esse método
@@ -761,7 +763,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 return;
             }
         }
-        throw new SingularFormException("A instância " + instance + " não é do tipo " + this, instance);
+        throw new SingularFormException(
+                "A instância " + instance + " é do tipo " + instance.getType() + ", mas era esperada ser do tipo " +
+                        this, instance);
     }
 
     @Override
@@ -774,11 +778,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         try {
             SType<?> at = this.isAttribute() ? this : null;
             pad(appendable, level).append(at == null ? "def " : "defAtt ");
-            appendable.append(getNameSimple());
+            appendable.append(getNameSimple()).append("@" + getTypeId());
             if (at != null) {
                 SType<?> owner = at.getAttributeDefinitionInfo().getOwner();
                 if (owner != null && owner != at.getParentScope()) {
-                    appendable.append(" for ").append(suppressPackage(owner.getName()));
+                    appendable.append(" for ");
+                    appendNameAndId(appendable, owner);
                 }
             }
             if (at == null) {
@@ -793,11 +798,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 appendable.append(" (SELF)");
             }
             if (superType != null && (at == null || !at.isSelfReference())) {
-                appendable.append(" extend ").append(suppressPackage(superType.getName()));
+                appendable.append(" extend ");
+                appendNameAndId(appendable, superType);
                 if (this instanceof STypeList) {
                     STypeList<?, ?> lista = (STypeList<?, ?>) this;
                     if (lista.getElementsType() != null) {
-                        appendable.append(" of ").append(suppressPackage(lista.getElementsType().getName()));
+                        appendable.append(" of ");
+                        appendNameAndId(appendable, lista.getElementsType());
                     }
                 }
             }
@@ -812,9 +819,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             attributesDefined.getAttributes().stream().filter(att -> !getLocalTypeOptional(att.getNameSimple())
                     .isPresent()).forEach(att -> {
                 try {
-                    pad(appendable, level + 1).append("att ").append('\n').append(suppressPackage(att.getName()))
+                    pad(appendable, level + 1).append("att ").append(suppressPackage(att.getName()))
                             .append(':').append(suppressPackage(att.getSuperType().getName())).append(
-                            att.isSelfReference() ? " SELF" : "");
+                            att.isSelfReference() ? " SELF" : "").append('\n');
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                 }
@@ -844,6 +851,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+
+    private void appendNameAndId(Appendable appendable, SType<?> type) throws IOException {
+        appendable.append(suppressPackage(type.getName())).append("@" + type.getTypeId());
     }
 
     private String suppressPackage(String name) {

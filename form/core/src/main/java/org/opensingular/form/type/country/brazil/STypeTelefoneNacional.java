@@ -34,7 +34,6 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.telefoneNacional());
         asAtr().maxLength(15).label("Telefone");
     }

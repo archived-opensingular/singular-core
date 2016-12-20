@@ -21,14 +21,13 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.type.core.annotation.AnnotationClassifier;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.type.core.annotation.STypeAnnotationList;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.validation.IValidationError;
@@ -36,13 +35,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
 
-import org.opensingular.form.SIList;
 import org.opensingular.form.STypes;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
@@ -76,7 +73,7 @@ public class SDocument {
 
     private SDocumentFactory documentFactory;
 
-    private SIList<SIAnnotation> annotations;
+    private final DocumentAnnotations documentAnnotations = new DocumentAnnotations(this);
 
     private SetMultimap<Integer, IValidationError> validationErrors;
 
@@ -343,93 +340,51 @@ public class SDocument {
         this.rootRefType = rootRefType;
     }
 
-    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation(Integer id, T classifier) {
-        if (annotations == null)
-            return null;
-        for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
-            if (id.equals(a.getTargetId()) && classifier.name().equals(a.getClassifier())) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public <T extends Enum<T> & AnnotationClassifier> List<SIAnnotation> annotationsAnyClassifier(Integer id) {
-        List<SIAnnotation> siAnnotationList = new ArrayList<>();
-        if (annotations == null)
-            return null;
-        for (SIAnnotation a : (List<SIAnnotation>) annotations.getValues()) {
-            if (id.equals(a.getTargetId())) {
-                siAnnotationList.add(a);
-            }
-        }
-        return siAnnotationList;
-    }
-
     private SDictionary dictionary() {
         return root.getDictionary();
     }
 
-    @SuppressWarnings("unchecked")
-    private SIList<SIAnnotation> newAnnotationList() {
-        if (getRootRefType().isPresent()) {
-            RefType refTypeAnnotation = getRootRefType().get().createSubReference(STypeAnnotationList.class);
-            if (getDocumentFactoryRef() != null) {
-                return (SIList<SIAnnotation>) getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
-            }
-            return (SIList<SIAnnotation>) SDocumentFactory.empty().createInstance(refTypeAnnotation);
-        }
-        return dictionary().newInstance(STypeAnnotationList.class);
-    }
-
-    public SIAnnotation newAnnotation() {
-        if (annotations == null) {
-            this.annotations = newAnnotationList();
-        }
-        return (SIAnnotation) annotations.addNew();
-    }
-
-    public SIList<SIAnnotation> annotations() {
-        return annotations;
-    }
-
-    /**
-     * Verifica se o documento possui alguma anotação.
-     */
-    public boolean hasAnnotations() {
-        return annotations != null && !annotations.isEmpty();
+    /** Retorna o serviço de anotação para do documento. */
+    public DocumentAnnotations getDocumentAnnotations() {
+        return documentAnnotations;
     }
 
     public Optional<SInstance> findInstanceById(Integer instanceId) {
-        return SInstances.findDescendantById(getRoot(), instanceId);
+        //TODO (by Daniel) otimizar esse método. Faz pesquisa em profundidade e poderia ser indexado.
+        return SInstances.streamDescendants(getRoot(), true)
+                .filter(it -> instanceId.equals(it.getId()))
+                .findAny();
     }
 
     public Collection<IValidationError> getValidationErrors() {
-        return validationErrors().values();
+        return validationErrors == null ? Collections.emptyList() : validationErrors.values();
     }
 
     public Map<Integer, Collection<IValidationError>> getValidationErrorsByInstanceId() {
+        if (validationErrors == null) {
+            return Collections.emptyMap();
+        }
         ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
         copy.putAll(validationErrors());
         return copy.asMap();
     }
 
     public Set<IValidationError> getValidationErrors(Integer instanceId) {
-        return validationErrors().get(instanceId);
+        return validationErrors == null ? Collections.emptySet() : validationErrors().get(instanceId);
     }
 
-    public Set<IValidationError> clearValidationErrors(Integer instanceId) {
-        return setValidationErrors(instanceId, Collections.emptyList());
+    public void clearValidationErrors(Integer instanceId) {
+        if (validationErrors != null) {
+            validationErrors().removeAll(instanceId);
+        }
     }
 
     public Set<IValidationError> setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
-        Set<IValidationError> removed = validationErrors().removeAll(instanceId);
-        validationErrors().putAll(instanceId, errors);
-        return removed;
+        return validationErrors().replaceValues(instanceId, errors);
     }
 
     public void setValidationErrors(Iterable<IValidationError> errors) {
-        validationErrors().clear();
+        validationErrors = null;
         for (IValidationError error : errors) {
             validationErrors().put(error.getInstanceId(), error);
         }

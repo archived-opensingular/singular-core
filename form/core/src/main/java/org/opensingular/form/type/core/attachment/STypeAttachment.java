@@ -44,8 +44,6 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
         addFieldString(FIELD_FILE_ID);
         addFieldString(FIELD_NAME);
         addFieldString(FIELD_HASH_SHA1);

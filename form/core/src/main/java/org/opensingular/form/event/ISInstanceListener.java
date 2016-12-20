@@ -20,33 +20,49 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface ISInstanceListener extends Serializable {
 
     void onInstanceEvent(SInstanceEvent evt);
 
     public static class EventCollector implements ISInstanceListener {
-        private final List<SInstanceEvent> events = new ArrayList<>();
-        private Predicate<SInstanceEvent>  filter;
+
+        private List<SInstanceEvent> events;
+
+        private final Predicate<SInstanceEvent> filter;
+
         public EventCollector() {
-            this.filter = e -> true;
+            filter = null;
         }
+
         public EventCollector(Predicate<SInstanceEvent> filter) {
             this.filter = filter;
         }
+
         @Override
         public void onInstanceEvent(SInstanceEvent evt) {
-            if (filter.test(evt)) {
+            if (filter == null || filter.test(evt)) {
+                if (events == null) {
+                    events = new ArrayList<>();
+                }
                 events.add(evt);
             }
         }
-        public List<SInstanceEvent> getEvents() {
-            return ImmutableList.copyOf(events);
+
+        public Stream<SInstanceEvent> streamEvents() {
+            return events == null ? Stream.empty() : events.stream();
         }
+
+        public List<SInstanceEvent> getEvents() {
+            return events == null ? Collections.emptyList() : ImmutableList.copyOf(events);
+        }
+
         public void clear() {
-            this.events.clear();
+            this.events = null;
         }
     }
 }
