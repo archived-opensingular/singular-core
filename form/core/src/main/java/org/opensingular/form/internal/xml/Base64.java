@@ -16,6 +16,8 @@
 
 package org.opensingular.form.internal.xml;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -832,8 +834,10 @@ final class Base64 {
     public static boolean encodeToFile(byte[] dataToEncode, String filename) {
         boolean success = false;
         Base64.OutputStream bos = null;
+        FileOutputStream fos = null;
         try {
-            bos = new Base64.OutputStream(new java.io.FileOutputStream(filename), Base64.ENCODE);
+            fos = new FileOutputStream(filename);
+            bos = new Base64.OutputStream(fos, Base64.ENCODE);
             bos.write(dataToEncode);
             success = true;
         } catch (java.io.IOException e) {
@@ -844,6 +848,10 @@ final class Base64 {
                 if (bos != null) {
                     bos.close();
                 }
+                if (fos != null) {
+                    fos.close();
+                }
+
             } catch (Exception e) {
                 Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
             }
@@ -864,8 +872,10 @@ final class Base64 {
     public static boolean decodeToFile(String dataToDecode, String filename) {
         boolean success = false;
         Base64.OutputStream bos = null;
+        FileOutputStream fos = null;
         try {
-            bos = new Base64.OutputStream(new java.io.FileOutputStream(filename), Base64.DECODE);
+            fos = new FileOutputStream(filename);
+            bos = new Base64.OutputStream(fos, Base64.DECODE);
             bos.write(dataToDecode.getBytes(PREFERRED_ENCODING));
             success = true;
         } catch (java.io.IOException e) {
@@ -874,6 +884,9 @@ final class Base64 {
             try {
                 if (bos != null) {
                     bos.close();
+                }
+                if (fos != null) {
+                    fos.close();
                 }
             } catch (Exception e) {
                 Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
@@ -924,6 +937,7 @@ final class Base64 {
     public static byte[] decodeFromFile(String filename) {
         byte[] decodedData = null;
         Base64.InputStream bis = null;
+        FileInputStream fis = null;
         try {
             // Set up some useful variables
             java.io.File file = new java.io.File(filename);
@@ -941,8 +955,9 @@ final class Base64 {
             buffer = new byte[(int) file.length()];
 
             // Open a stream
+            fis = new FileInputStream(file);
             bis = new Base64.InputStream(new java.io.BufferedInputStream(
-                    new java.io.FileInputStream(file)), Base64.DECODE);
+                    fis), Base64.DECODE);
 
             // Read until done
             while ((numBytes = bis.read(buffer, length, 4096)) >= 0)
@@ -958,6 +973,9 @@ final class Base64 {
             try {
                 if (bis != null) {
                     bis.close();
+                }
+                if (fis != null) {
+                    fis.close();
                 }
             } catch (Exception e) {
                 Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
@@ -978,6 +996,7 @@ final class Base64 {
     public static String encodeFromFile(String filename) {
         String encodedData = null;
         Base64.InputStream bis = null;
+        FileInputStream fis = null;
         try {
             // Set up some useful variables
             java.io.File file = new java.io.File(filename);
@@ -986,8 +1005,9 @@ final class Base64 {
             int numBytes = 0;
 
             // Open a stream
+            fis = new FileInputStream(file);
             bis = new Base64.InputStream(new java.io.BufferedInputStream(
-                    new java.io.FileInputStream(file)), Base64.ENCODE);
+                    fis), Base64.ENCODE);
 
             // Read until done
             while ((numBytes = bis.read(buffer, length, 4096)) >= 0)
@@ -1002,6 +1022,9 @@ final class Base64 {
             try {
                 if (bis != null) {
                     bis.close();
+                }
+                if (fis != null) {
+                    fis.close();
                 }
             } catch (Exception e) {
                 Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
