@@ -16,10 +16,6 @@
 
 package org.opensingular.server.commons.spring;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.schedule.IScheduleService;
@@ -28,15 +24,13 @@ import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
+import org.opensingular.form.persistence.dao.FormAttachmentDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
 import org.opensingular.form.persistence.dao.FormTypeDAO;
 import org.opensingular.form.persistence.dao.FormVersionDAO;
-import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.service.FormService;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
-import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import org.opensingular.server.commons.cache.SingularKeyGenerator;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.opensingular.server.commons.persistence.dao.EmailAddresseeDao;
@@ -228,7 +222,7 @@ public class SingularDefaultBeanFactory {
 
     @Bean
     public <T extends PetitionEntity> FormPetitionService<T> formPetitionService() {
-        return new FormPetitionService<T>();
+        return new FormPetitionService<>();
     }
 
     @Bean
@@ -247,5 +241,10 @@ public class SingularDefaultBeanFactory {
     @Bean(name = "singularKeyGenerator")
     public KeyGenerator singularKeyGenerator() {
         return new SingularKeyGenerator();
+    }
+
+    @Bean
+    public FormAttachmentDAO formAttachmentDAO() {
+        return new FormAttachmentDAO();
     }
 }

@@ -60,7 +60,7 @@ public class EmailPersistenceService implements IEmailService<Email>{
         emailEntity.setReplyTo(email.getReplyToJoining());
         
         for (IAttachmentRef attachmentRef : email.getAttachments()) {
-            IAttachmentRef attachment = persistenceHandler.copy(attachmentRef);
+            IAttachmentRef attachment = persistenceHandler.copy(attachmentRef, null).getNewAttachmentRef();
             emailEntity.getAttachments().add(persistenceHandler.getAttachmentEntity(attachment));
         }
         emailEntity.setCreationDate(new Date());

@@ -14,6 +14,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.SPackageFormPersistence;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
@@ -174,15 +175,24 @@ public class FormPetitionService<P extends PetitionEntity> {
             draft = newInstance(config, instance.getType().getName());
         }
 
-        instance.getDocument().persistFiles();
         copyValuesAndAnnotations(instance, draft);
 
         draftEntity.setForm(formPersistenceService.loadFormEntity(formPersistenceService.insertOrUpdate(draft, actor)));
         draftEntity.setEditionDate(new Date());
 
+        //atualiza a instancia com a key salva
+        copyFormKey(draft, instance);
+
         draftDAO.saveOrUpdate(draftEntity);
 
         return draftEntity;
+    }
+
+    private void copyFormKey(SInstance a, SInstance b) {
+        final FormKey key = a.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
+        if (key != null) {
+            b.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        }
     }
 
     private DraftEntity createNewDraftWithoutSave() {
@@ -194,6 +204,7 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     /**
      * Consolida todos os rascunhos da petição
+     *
      * @param petition
      * @param formConfig
      * @return as novas entidades criadas
@@ -208,6 +219,7 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     /**
      * Consolida o rascunho, copiando os valores do rascunho para o form principal criando versão inicial ou gerando nova versão
+     *
      * @param formConfig
      * @param formPetitionEntity
      * @return a nova versão criada
@@ -321,8 +333,8 @@ public class FormPetitionService<P extends PetitionEntity> {
                     String pathFromRoot = si.getPathFromRoot();
                     //localiza a instancia correspondente no formulario destino
                     SInstance targetInstance;
-                    if (pathFromRoot == null){
-                        targetInstance =((SIComposite) target);
+                    if (pathFromRoot == null) {
+                        targetInstance = ((SIComposite) target);
                     } else {
                         targetInstance = ((SIComposite) target).getField(pathFromRoot);
                     }
