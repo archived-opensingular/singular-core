@@ -60,9 +60,6 @@ public class FormVersionEntity extends BaseEntity<Long> {
     @JoinColumn(referencedColumnName = "CO_VERSAO_FORMULARIO", name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false)
     private List<FormAnnotationEntity> formAnnotations = new ArrayList<>(0);
 
-    @OneToMany(mappedBy = "formVersionEntity", cascade = {CascadeType.REMOVE})
-    private List<FormAttachmentEntity> formAttachmentEntities = new ArrayList<>(0);
-
     public FormVersionEntity() {
         setInclusionDate(new Date());
     }
@@ -122,10 +119,6 @@ public class FormVersionEntity extends BaseEntity<Long> {
 
     public void setFormAnnotations(List<FormAnnotationEntity> formAnnotations) {
         this.formAnnotations = formAnnotations;
-    }
-
-    public List<FormAttachmentEntity> getFormAttachmentEntities() {
-        return formAttachmentEntities;
     }
 
 }
