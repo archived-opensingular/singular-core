@@ -239,6 +239,7 @@ public class FormPetitionService<P extends PetitionEntity> {
         final SIComposite formInstance;
         final boolean     isFirstVersion;
         final FormKey     key;
+        final Integer     userCod;
 
         draft = draftDAO.get(formPetitionEntity.getCurrentDraftEntity().getCod());
 
@@ -253,23 +254,27 @@ public class FormPetitionService<P extends PetitionEntity> {
             formInstance = loadByCodAndType(formConfig, formPetitionEntity.getForm().getCod(), type);
         }
 
+        userCod = userService.getUserCodIfAvailable();
+
+        //cria a versao antes de copiar os valores
+        if (isFirstVersion) {
+            key = formPersistenceService.insert(formInstance, userCod);
+        } else {
+            key = formPersistenceService.newVersion(formInstance, userCod);
+        }
+
         copyValuesAndAnnotations(draftInstance, formInstance);
 
-        if (isFirstVersion) {
-            final Integer codActor = userService.getUserCodIfAvailable();
-            key = formPersistenceService.insert(formInstance, codActor);
-        } else {
-            key = formPersistenceService.newVersion(formInstance, userService.getUserCodIfAvailable());
-        }
+        formPersistenceService.update(formInstance, userCod);
 
         formPetitionEntity.setForm(formPersistenceService.loadFormEntity(key));
         formPetitionEntity.setCurrentDraftEntity(null);
 
+        formInstance.getDocument().persistFiles();
+
         deassociateFormVersions(draft.getForm());
         draftDAO.delete(draft);
         formPetitionDAO.save(formPetitionEntity);
-
-        formInstance.getDocument().persistFiles();
 
         return formPetitionEntity.getForm();
     }
@@ -306,13 +311,8 @@ public class FormPetitionService<P extends PetitionEntity> {
                     it.remove();
                 }
             }
-            if (!CollectionUtils.isEmpty(fve.getFormAttachmentEntities())) {
-                Iterator<FormAttachmentEntity> it = fve.getFormAttachmentEntities().iterator();
-                for (; it.hasNext(); ) {
-                    deleteFormAttachmentEntity(it.next());
-                    it.remove();
-                }
-            }
+            formAttachmentDAO.findFormAttachmentByFormVersionCod(fve.getCod())
+                    .forEach(this::deleteFormAttachmentEntity);
             formVersionDAO.delete(fve);
         }
     }
