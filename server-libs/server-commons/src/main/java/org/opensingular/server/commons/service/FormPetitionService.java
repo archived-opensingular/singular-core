@@ -17,10 +17,12 @@ import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.SPackageFormPersistence;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
+import org.opensingular.form.persistence.dao.FormAttachmentDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
 import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.persistence.entity.FormAnnotationEntity;
 import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
+import org.opensingular.form.persistence.entity.FormAttachmentEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
@@ -72,6 +74,9 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     @Inject
     protected FormAnnotationVersionDAO formAnnotationVersionDAO;
+
+    @Inject
+    private FormAttachmentDAO formAttachmentDAO;
 
     public FormPetitionEntity findFormPetitionEntityByCod(Long cod) {
         return formPetitionDAO.find(cod);
@@ -185,6 +190,8 @@ public class FormPetitionService<P extends PetitionEntity> {
 
         draftDAO.saveOrUpdate(draftEntity);
 
+        draft.getDocument().persistFiles();
+
         return draftEntity;
     }
 
@@ -262,6 +269,8 @@ public class FormPetitionService<P extends PetitionEntity> {
         draftDAO.delete(draft);
         formPetitionDAO.save(formPetitionEntity);
 
+        formInstance.getDocument().persistFiles();
+
         return formPetitionEntity.getForm();
     }
 
@@ -297,8 +306,19 @@ public class FormPetitionService<P extends PetitionEntity> {
                     it.remove();
                 }
             }
+            if (!CollectionUtils.isEmpty(fve.getFormAttachmentEntities())) {
+                Iterator<FormAttachmentEntity> it = fve.getFormAttachmentEntities().iterator();
+                for (; it.hasNext(); ) {
+                    deleteFormAttachmentEntity(it.next());
+                    it.remove();
+                }
+            }
             formVersionDAO.delete(fve);
         }
+    }
+
+    private void deleteFormAttachmentEntity(FormAttachmentEntity fae) {
+        formAttachmentDAO.delete(fae);
     }
 
     private void deleteAnnotation(FormAnnotationEntity fae) {
