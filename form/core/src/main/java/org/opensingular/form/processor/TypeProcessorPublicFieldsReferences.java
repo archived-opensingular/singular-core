@@ -16,11 +16,7 @@
 
 package org.opensingular.form.processor;
 
-import org.opensingular.form.SScope;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.SType;
+import org.opensingular.form.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -50,7 +46,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             return;
         }
         STypeComposite composite = (STypeComposite) type;
-        CompositePublicInfo info = getCompositePublicInfo(composite.getClass());
+        CompositePublicInfo info = getPublicInfo(composite.getClass());
         propagatePublicFieldsToExtendedComposite(composite, info, true);
     }
 
@@ -60,7 +56,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             return;
         }
         STypeComposite composite = (STypeComposite) type;
-        CompositePublicInfo info = getCompositePublicInfo(composite.getClass());
+        CompositePublicInfo info = getPublicInfo(composite.getClass());
         if (! info.isEmpty()) {
             if (onLoadCalled) {
                 if (!info.isPublicFieldsMatched()) {
@@ -83,21 +79,33 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
     private void propagatePublicFieldsToExtendedComposite(STypeComposite composite, CompositePublicInfo info,
             boolean preOnLoad) {
+        CompositePublicInfo infoSuper = null;
         for (PublicFieldRef ref : info) {
-            SType<?> newFieldValue = composite.getField(ref.getField().getName());
+            SType<?> newFieldValue = composite.getField(ref.getName());
             if (newFieldValue == null) {
-                if (composite.getSuperType().getClass() == composite.getClass()) {
+                boolean shouldCopyFromSuperType = false;
+                if(composite.getSuperType().getClass() == composite.getClass()) {
+                    shouldCopyFromSuperType = true;
+                } else if(ref.isFieldCameFromSuperType() && ! isCoreClass(composite.getSuperType().getClass())) {
+                    //Precisa verificar de novo pois ref.isFieldCameFromSuperType() pode se referencia uma classe pai
+                    // intermediária que não chegou a virar um Type
+                    if (infoSuper == null) {
+                        infoSuper = getPublicInfo(composite.getSuperType().getClass());
+                    }
+                    shouldCopyFromSuperType = (infoSuper.getPublicField(ref.getName()) != null);
+                }
+                if (shouldCopyFromSuperType) {
                     SType<?> parentValue;
                     try {
                         parentValue = (SType<?>) ref.getField().get(composite.getSuperType());
                     } catch (IllegalAccessException e) {
                         throw new SingularFormException(erroValue(composite, null, ref, null,
-                                "Erro tentando ler valor do campo Java " + ref.getField().getName() + " em " +
+                                "Erro tentando ler valor do campo Java " + ref.getName() + " em " +
                                         composite.getSuperType() + ", que é a instância pai de " + composite), e);
                     }
                     if (parentValue == null) {
                         throw new SingularFormException(erroValue(composite, null, ref, null,
-                                "O valor do campo Java " + ref.getField().getName() + " está null em " +
+                                "O valor do campo Java " + ref.getName() + " está null em " +
                                         composite.getSuperType() + ", que é a instância pai de " + composite + ""));
                     }
                     newFieldValue = tryToFindInHierarchy(composite, parentValue.getParentScope(),
@@ -106,7 +114,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                         //Verificação de sanidade do resultado
                         if (newFieldValue.getSuperType() != parentValue) {
                             throw new SingularFormException(erroValue(composite, null, ref, null,
-                                    "O valor encontrado para atribuir ao campo Java '" + ref.getField().getName() +
+                                    "O valor encontrado para atribuir ao campo Java '" + ref.getName() +
                                             "' em " + composite + " foi\n       encontrado: " + newFieldValue +
                                             "\ne esse não é uma extensão da referência do pai\n             pai: " +
                                             parentValue));
@@ -119,8 +127,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                 if (! preOnLoad) {
                     throw new SingularFormException(erroValue(composite, null, ref, null,
                             "Erro tentando setar valor na instância extendida de " + composite +
-                                    " pois não foi encontrado o valor para atribuir ao campo " +
-                                    ref.getField().getName()));
+                                    " pois não foi encontrado o valor para atribuir ao campo " + ref.getName()));
                 }
             } else {
                 setJavaField(composite, ref, newFieldValue);
@@ -138,6 +145,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         }
     }
 
+    /** Resolve o valor encontrado em referencia ao tipo destino, mesmo se for um sub campo de um sub campo. */
     private SType<?> tryToFindInHierarchy(STypeComposite composite, SScope scope, String nextType) {
         if (!(scope instanceof SType)) {
             return null;
@@ -153,7 +161,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     private void verifyAllFieldsCorrectedFilled(STypeComposite<?> composite, CompositePublicInfo info) {
         for (PublicFieldRef ref : info) {
             SType<?> currentValue = ref.getCurrentFieldValue(composite);
-            SType<?> expectedType = composite.getField(ref.getField().getName());
+            SType<?> expectedType = composite.getField(ref.getName());
             if (expectedType == null) {
                 if (currentValue == null) {
                     throw new SingularFormException(
@@ -207,11 +215,11 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
     private void verifyIfAllPublicFieldsAreValid(STypeComposite composite, CompositePublicInfo info) {
         for (PublicFieldRef ref : info) {
-            SType<?> type = composite.getField(ref.getField().getName());
-            //if (type == null && ! isInsideChildrenTypes(composite, ref.getField().getName())) {
+            SType<?> type = composite.getField(ref.getName());
+            //if (type == null && ! isInsideChildrenTypes(composite, ref.getName())) {
             //    throw new SingularFormException(erroMsg(composite, null, ref, true,
             //            "Foi encontrado um campo na classe para o qual não existe campo na estrutura de dados do " +
-            //                   "composite\n Esperado  : que existisse o campo '" + ref.getField().getName() + "' em
+            //                   "composite\n Esperado  : que existisse o campo '" + ref.getName() + "' em
             // " +
             //                    composite + " ou em um campo filho"));
             //}
@@ -253,7 +261,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         m += ": " + msg;
         if (showExpected) {
             if (fieldType == null) {
-                m += "\n Esperado  : 'nenhum field Java de nome '" + ref.getField().getName() + "'";
+                m += "\n Esperado  : 'nenhum field Java de nome '" + ref.getName() + "'";
             } else {
                 m += "\n Esperado  : public " + fieldType.getClass().getSimpleName() + " " + fieldType.getNameSimple() +
                         ";";
@@ -278,10 +286,10 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
     private String getFieldDescription(PublicFieldRef ref) {
         return Modifier.toString(ref.getField().getModifiers()) + " " + ref.getField().getType().getSimpleName() + " " +
-                ref.getField().getName() + ";";
+                ref.getName() + ";";
     }
 
-    private static CompositePublicInfo getCompositePublicInfo(Class<? extends STypeComposite> compositeClass) {
+    private static CompositePublicInfo getPublicInfo(Class<?> typeClass) {
         if (classInfoCache == null) {
             synchronized (TypeProcessorPublicFieldsReferences.class) {
                 if (classInfoCache == null) {
@@ -295,7 +303,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                 }
             }
         }
-        return classInfoCache.getUnchecked(compositeClass);
+        return classInfoCache.getUnchecked(typeClass);
     }
 
     private static CompositePublicInfo readPublicFields(Class<?> aClass) {
@@ -309,7 +317,24 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             }
         }
         info.finisheLoad();
+
+        if (! info.isEmpty()) {
+            Class<?> superClass = aClass.getSuperclass();
+            if (! isCoreClass(superClass)) {
+                CompositePublicInfo superInfo = getPublicInfo(superClass);
+                for(PublicFieldRef refSuper : superInfo) {
+                    info.getPublicField(refSuper.getName()).setFieldCameFromSuperType(true);
+                }
+            }
+        }
         return info;
+    }
+
+    /** Verifica se a classe é do usuário ou da implementação core. */
+    private static boolean isCoreClass(Class<?> aClass) {
+        return aClass.getPackage() == SType.class.getPackage() &&
+                (aClass == STypeComposite.class || aClass == STypeSimple.class || aClass == STypeList.class ||
+                        aClass == SType.class);
     }
 
     private static class CompositePublicInfo implements Iterable<PublicFieldRef> {
@@ -358,6 +383,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     private static class PublicFieldRef {
 
         private final Field field;
+        private boolean fieldCameFromSuperType;
 
         private PublicFieldRef(Field field) {this.field = field;}
 
@@ -374,6 +400,18 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
         public Field getField() {
             return field;
+        }
+
+        public void setFieldCameFromSuperType(boolean value) {
+            this.fieldCameFromSuperType = value;
+        }
+
+        public boolean isFieldCameFromSuperType() {
+            return fieldCameFromSuperType;
+        }
+
+        public String getName() {
+            return field.getName();
         }
     }
 }
