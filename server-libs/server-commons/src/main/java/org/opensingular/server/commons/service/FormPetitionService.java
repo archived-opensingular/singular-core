@@ -264,7 +264,7 @@ public class FormPetitionService<P extends PetitionEntity> {
             key = formPersistenceService.newVersion(formInstance, userCod);
         }
 
-        copyValuesAndAnnotations(draftInstance, formInstance);
+        copyValuesAndAnnotations(draftInstance.getDocument(), formInstance.getDocument());
 
         formPersistenceService.update(formInstance, userCod);
 
