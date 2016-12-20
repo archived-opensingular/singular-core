@@ -33,7 +33,6 @@ public class STypeAnnotationClassifierList extends STypeList<STypeString, SIStri
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         setElementsType(getDictionary().getType(STypeString.class));
     }
 }

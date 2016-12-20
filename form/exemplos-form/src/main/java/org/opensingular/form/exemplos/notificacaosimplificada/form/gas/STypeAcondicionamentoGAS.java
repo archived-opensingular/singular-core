@@ -43,7 +43,6 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         embalagemPrimaria = this.addFieldString("embalagemPrimaria");
         embalagemPrimaria.selectionOf("Cilindro", "Tanque", "Caminhão Tanque");

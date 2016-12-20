@@ -56,8 +56,6 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
 
         embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
         embalagemPrimaria.asAtr().displayString("${descricao}");

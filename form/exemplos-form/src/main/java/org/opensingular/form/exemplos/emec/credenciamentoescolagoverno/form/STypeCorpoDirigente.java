@@ -33,7 +33,6 @@ public class STypeCorpoDirigente extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> corpoDirigenteMembrosCPA = this.addFieldListOfComposite("corpoDirigenteMembrosCPA", "membro");
 

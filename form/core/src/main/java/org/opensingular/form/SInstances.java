@@ -40,10 +40,12 @@ import org.opensingular.form.type.core.STypeBoolean;
 public abstract class SInstances {
 
     public static SIComposite getRootInstance(SInstance instance) {
-        if (instance.getParent() == null){
-            return (SIComposite) instance;
+        //TODO (by Daniel) Deveria retornar SInstance. Refatorar.
+        SInstance i = instance;
+        while (i.getParent() != null) {
+            i = i.getParent();
         }
-        return getRootInstance(instance.getParent());
+        return (SIComposite) i;
     }
 
     public static interface IVisit<R> extends Serializable {
@@ -317,7 +319,9 @@ public abstract class SInstances {
      * @return instância especificada
      * @throws NoSuchElementException se não encontrar a instancia especificada
      */
+    @Deprecated
     public static <D extends SInstance> D getDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
+        //TODO (by Daniel) apagar esse método e passar a usar SDocumento.findInstanceById()
         return findDescendantById(node, descendantId, descendantType).get();
     }
 
@@ -328,20 +332,10 @@ public abstract class SInstances {
      * @param descendantType tipo do descendente
      * @return Optional da instância especificada
      */
+    @Deprecated
     public static <D extends SInstance> Optional<D> findDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
+        //TODO (by Daniel) apagar esse método e passar a usar SDocumento.findInstanceById()
         return streamDescendants(node, true, descendantType)
-            .filter(it -> descendantId.equals(it.getId()))
-            .findAny();
-    }
-
-    /**
-     * Busca descendente de <code>node</code> do tipo especificado, por id.
-     * @param node instância inicial da busca
-     * @param descendantId id do descendente
-     * @return Optional da instância especificada
-     */
-    public static Optional<SInstance> findDescendantById(SInstance node, Integer descendantId) {
-        return streamDescendants(node, true)
             .filter(it -> descendantId.equals(it.getId()))
             .findAny();
     }
@@ -421,6 +415,29 @@ public abstract class SInstances {
         return StreamSupport.stream(new SInstanceRecursiveSpliterator(root, includeRoot), false);
     }
 
+    /**
+     * Verifica se a instância ou algum filho atende a condição informada ou não.
+     */
+    public static boolean hasAny(SInstance instance, Predicate<SInstance> predicate) {
+        return hasAny(instance, true, predicate);
+    }
+
+    /**
+     * Verifica se a instância ou algum filho atende a condição informada ou não.
+     * @param checkRoot Indica se a condição deve ser verificada ao nó raiz informado ou somente a partir dos filhos.
+     */
+    private static boolean hasAny(SInstance instance, boolean checkRoot, Predicate<SInstance> predicate) {
+        if (checkRoot && predicate.test(instance)) {
+            return true;
+        } else if (instance instanceof ICompositeInstance) {
+            for (SInstance si : ((ICompositeInstance) instance).getAllChildren()) {
+                if( hasAny(si, true, predicate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */

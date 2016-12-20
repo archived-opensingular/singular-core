@@ -22,9 +22,9 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MDocument;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.annotation.STypeAnnotationList;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Attr;
@@ -226,25 +226,44 @@ public class MformPersistenciaXML {
      * Carrega na instance informada as anotação contidas no xml, fazendo
      * parser do mesmo antes.
      *
-     * @param xmlString
-     *            Se nulo ou em branco, não faz carga
+     * @param xmlString Se nulo ou em branco, não faz carga
      */
+    @Deprecated
     public static void annotationLoadFromXml(SInstance instance, String xmlString) {
-        annotationLoadFromXml(instance, parseXml(xmlString));
+        annotationLoadFromXml(instance.getDocument(), xmlString);
     }
 
     /**
      * Carrega na instance informada as anotação contidas no xml, fazendo
      * parser do mesmo antes.
      *
-     * @param xmlAnnotations
-     *            Se nulo, não faz carga
+     * @param xmlAnnotations Se nulo, não faz carga
      */
+    @Deprecated
     public static void annotationLoadFromXml(SInstance instance, MElement xmlAnnotations) {
+        annotationLoadFromXml(instance.getDocument(), xmlAnnotations);
+    }
+
+    /**
+     * Carrega na instance informada as anotação contidas no xml, fazendo
+     * parser do mesmo antes.
+     *
+     * @param xmlString Se nulo ou em branco, não faz carga
+     */
+    public static void annotationLoadFromXml(SDocument document, String xmlString) {
+        annotationLoadFromXml(document, parseXml(xmlString));
+    }
+
+    /**
+     * Carrega na instance informada as anotação contidas no xml, fazendo
+     * parser do mesmo antes.
+     *
+     * @param xmlAnnotations Se nulo, não faz carga
+     */
+    public static void annotationLoadFromXml(SDocument document, MElement xmlAnnotations) {
         if (xmlAnnotations == null) {
             return;
         }
-        SDocument document = instance.getDocument();
         SIList<SIAnnotation> iAnnotations;
         if (document.getRootRefType().isPresent()) {
             RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
@@ -255,7 +274,7 @@ public class MformPersistenciaXML {
             STypeAnnotationList typeAnnotation = document.getRoot().getDictionary().getType(STypeAnnotationList.class);
             iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(typeAnnotation, xmlAnnotations);
         }
-        instance.asAtrAnnotation().loadAnnotations(iAnnotations);
+        document.getDocumentAnnotations().loadAnnotations(iAnnotations);
     }
 
     /** Gera um XML representando as anotações se existirem. */
@@ -270,12 +289,17 @@ public class MformPersistenciaXML {
 
     /** Gera um XML representando as anotações se existirem. */
     public static Optional<MElement> annotationToXml(SInstance instance, String classifier) {
-        AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
-        if (instance.getDocument().hasAnnotations()) {
+        return annotationToXml(instance.getDocument(), classifier);
+    }
+
+    /** Gera um XML representando as anotações se existirem. */
+    public static Optional<MElement> annotationToXml(SDocument document, String classifier) {
+        DocumentAnnotations documentAnnotations = document.getDocumentAnnotations();
+        if (documentAnnotations.hasAnnotations()) {
             if (classifier != null) {
-                return Optional.of(toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
+                return Optional.of(toXML(documentAnnotations.persistentAnnotationsClassified(classifier)));
             } else {
-                return Optional.of(toXML(annotatedInstance.persistentAnnotations()));
+                return Optional.of(toXML(documentAnnotations.getAnnotations()));
             }
         }
         return Optional.empty();

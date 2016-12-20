@@ -25,7 +25,6 @@ public class STypeSexo extends STypeString {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         asAtr().label("Sexo");
         selectionOf("Masculino", "Feminino").withSelectView();
     }
