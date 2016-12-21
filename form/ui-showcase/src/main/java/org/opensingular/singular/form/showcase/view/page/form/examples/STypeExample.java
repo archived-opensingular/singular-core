@@ -55,7 +55,6 @@ public class STypeExample extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         buildOrderType(tb);
     }
 

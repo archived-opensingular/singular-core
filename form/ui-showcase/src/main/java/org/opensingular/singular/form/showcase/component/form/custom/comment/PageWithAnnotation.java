@@ -40,7 +40,7 @@ public class PageWithAnnotation {
          * Como as anotações são armazenadas de forma separada da instancia a qual faz referencia
          * esta deve ser carregada em conjunto para a exibição das anotações para edição.
          */
-        pedido.asAtrAnnotation().loadAnnotations(annotations);
+        pedido.getDocument().getDocumentAnnotations().loadAnnotations(annotations);
     }
 
     public void saveAnnotations(SIComposite pedido){
@@ -55,7 +55,8 @@ public class PageWithAnnotation {
         /**
          * As anotações pordem ser persistidas separadamente ou de forma conjunta.
          */
-        SIList anotacoes = instanciaCampoCliente.asAtrAnnotation().persistentAnnotations();
+        //TODO explicar melhor como funciona a persistencia de anotação
+        //SIList anotacoes = instanciaCampoCliente.getDocument().getDocumentAnnotations().persistentAnnotations();
     }
 
 }

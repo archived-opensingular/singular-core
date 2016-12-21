@@ -100,7 +100,7 @@ public class ShowCaseTable {
                 if (SPackage.class.isAssignableFrom(caseClass)) {
                     caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
 //                } else if (CollectionDefinition.class.isAssignableFrom(caseClass)) {
-//                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+//                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.getAnnotation());
 //                } else {
 //                    throw new RuntimeException("Apenas classes do tipo " + SPackage.class.getName() + " e " + CollectionDefinition.class.getName() + " podem ser anotadas com @" + CaseItem.class.getName());
                 }

@@ -33,8 +33,6 @@ public class STypeEncaminhamento extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
         addFieldString("responsavel", true).asAtr().label("Responsável");
         addFieldDateTime("dataHora", true).asAtr().label("Data");
         addFieldString("detalhamento", true).withTextAreaView().asAtr().label("Detalhamento");

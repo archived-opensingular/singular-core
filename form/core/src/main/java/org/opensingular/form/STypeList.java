@@ -147,7 +147,6 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addInstanceValidator(validatable -> {
             final Integer minimumSize = validatable.getInstance().asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
             if (minimumSize != null && validatable.getInstance().getValue().size() < minimumSize) {

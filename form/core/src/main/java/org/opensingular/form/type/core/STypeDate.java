@@ -41,7 +41,6 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.maxDate());
     }
 

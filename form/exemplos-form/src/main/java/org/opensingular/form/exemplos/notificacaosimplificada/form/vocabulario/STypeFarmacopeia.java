@@ -35,7 +35,6 @@ public class STypeFarmacopeia extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         id = this.addFieldInteger("id");
         descricao = this.addFieldString("descricao");
         {

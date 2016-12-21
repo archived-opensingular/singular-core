@@ -22,15 +22,10 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
-import org.opensingular.form.persistence.AbstractBasicFormPersistence;
-import org.opensingular.form.persistence.AnnotationKey;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormKeyLong;
-import org.opensingular.form.persistence.SPackageFormPersistence;
-import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
@@ -42,6 +37,13 @@ import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.opensingular.form.persistence.AbstractBasicFormPersistence;
+import org.opensingular.form.persistence.AnnotationKey;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyLong;
+import org.opensingular.form.persistence.SPackageFormPersistence;
+import org.opensingular.form.persistence.SingularFormPersistenceException;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
@@ -96,7 +98,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         final SInstance instance     = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
         final IConsumer loadListener = instance.getAttributeValue(SPackageBasic.ATR_LOAD_LISTENER);
 
-        loadCurrentXmlAnnotationOrEmpty(instance, formVersionEntity);
+        loadCurrentXmlAnnotationOrEmpty(instance.getDocument(), formVersionEntity);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
 
         if (loadListener != null) {
@@ -226,10 +228,10 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formAnnotationDAO.save(formAnnotationEntity);
     }
 
-    private void loadCurrentXmlAnnotationOrEmpty(SInstance instance, FormVersionEntity formVersionEntity) {
-        instance.as(AtrAnnotation::new).clear();
+    private void loadCurrentXmlAnnotationOrEmpty(SDocument document, FormVersionEntity formVersionEntity) {
+        document.getDocumentAnnotations().clear();
         for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formVersionEntity).map(FormVersionEntity::getFormAnnotations).orElse(new ArrayList<>(0))) {
-            MformPersistenciaXML.annotationLoadFromXml(instance,
+            MformPersistenciaXML.annotationLoadFromXml(document,
                     Optional
                             .ofNullable(formAnnotationEntity.getAnnotationCurrentVersion())
                             .map(FormAnnotationVersionEntity::getXml)
@@ -274,9 +276,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
      * @return
      */
     private Map<String, String> extractAnnotations(SInstance instance) {
-        AtrAnnotation       annotatedInstance = instance.as(AtrAnnotation::new);
+        DocumentAnnotations documentAnnotations = instance.getDocument().getDocumentAnnotations();
         Map<String, String> mapClassifierXml  = new HashMap<>();
-        for (Map.Entry<String, SIList<SIAnnotation>> entry : annotatedInstance.persistentAnnotationsClassified().entrySet()) {
+        for (Map.Entry<String, SIList<SIAnnotation>> entry : documentAnnotations.persistentAnnotationsClassified().entrySet()) {
             mapClassifierXml.put(entry.getKey(), extractContent(entry.getValue()));
         }
         return mapClassifierXml;

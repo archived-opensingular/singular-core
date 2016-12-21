@@ -31,7 +31,6 @@ import org.apache.wicket.util.visit.Visits;
 import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
-import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -212,9 +211,8 @@ public class WicketFormProcessing implements Loggable {
 
         if (target != null) {
 
-            final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                    .map(SInstanceEvent::getSource)
-                    .map(SInstance::getId)
+            final Set<Integer> updatedInstanceIds = eventCollector.streamEvents()
+                    .map(event -> event.getSource().getId())
                     .collect(toSet());
 
             final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
@@ -224,9 +222,7 @@ public class WicketFormProcessing implements Loggable {
 
                 if (childInstance == null) {
                     return false;
-                }
-
-                if (updatedInstanceIds.contains(childInstance.getId())) {
+                } else if (updatedInstanceIds.contains(childInstance.getId())) {
                     return true;
                 }
 

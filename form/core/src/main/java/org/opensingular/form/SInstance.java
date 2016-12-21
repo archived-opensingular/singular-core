@@ -187,6 +187,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return convert(getValue(), resultClass);
     }
 
+    /** Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade. */
     public abstract void clearInstance();
 
     /**
@@ -569,10 +570,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean hasNestedValidationErrors() {
-        return SInstances.visit(this, (i, v) -> {
-            if (i.hasValidationErrors())
-                v.stop(true);
-        }).isPresent();
+        return SInstances.hasAny(this, i -> hasValidationErrors());
     }
 
     public Collection<IValidationError> getValidationErrors() {

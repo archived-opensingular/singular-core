@@ -20,7 +20,6 @@ public class TestViewResolver2 extends SPackage {
 
         @Override
         protected void onLoadType(TypeBuilder tb) {
-            super.onLoadType(tb);
             this.setView(SViewAutoComplete::new);
         }
     }

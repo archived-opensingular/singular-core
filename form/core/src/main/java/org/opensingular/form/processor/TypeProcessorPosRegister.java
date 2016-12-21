@@ -28,6 +28,13 @@ import org.opensingular.form.SType;
 public interface TypeProcessorPosRegister {
 
     /**
+     * Chamada imediatamente antes de chamar o método {@link SType#onLoadType(TypeBuilder)} de um classe derivada de
+     * SType.
+     */
+    public default void processTypePreOnLoadTypeCall(SType<?> type) {
+    }
+
+    /**
      * @param type         Tipo que foi carregado
      * @param onLoadCalled Indica se o tipo teve o método {@link SType#onLoadType(TypeBuilder)} chamado para o tipo ou
      *                     não (se for a extensão de um tipo que já teve o método chamado).
