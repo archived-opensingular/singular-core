@@ -178,7 +178,7 @@ public abstract class AbstractHistoricoContent extends Content {
     protected BaseDataProvider<PetitionHistoryDTO, String> createDataProvider() {
         return new BaseDataProvider<PetitionHistoryDTO, String>() {
 
-            List<PetitionHistoryDTO> cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK, menu, isFilterAllowedHistoryTasks());
+            transient List<PetitionHistoryDTO> cache = petitionService.listPetitionContentHistoryByPetitionCod(petitionPK, menu, isFilterAllowedHistoryTasks());
 
             @Override
             public long size() {
