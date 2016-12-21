@@ -31,7 +31,6 @@ public class STypeHabilitacaoEmpresa extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         asAtr().label("Habilitação Empresa");
 

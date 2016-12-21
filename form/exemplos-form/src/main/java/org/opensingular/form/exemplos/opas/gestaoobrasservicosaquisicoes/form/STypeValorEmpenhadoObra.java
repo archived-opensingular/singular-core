@@ -30,8 +30,6 @@ public class STypeValorEmpenhadoObra extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
         final STypeInteger exercicio = addFieldInteger(FIELD_EXERCICIO, true);
         exercicio.asAtr().label("Exercício");
         exercicio.selection()

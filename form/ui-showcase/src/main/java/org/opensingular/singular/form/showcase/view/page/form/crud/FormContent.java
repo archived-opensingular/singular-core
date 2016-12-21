@@ -36,6 +36,7 @@ import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.singular.form.showcase.dao.form.ExampleDataDAO;
@@ -126,7 +127,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
 
                 SInstance instance = loadOrCreateInstance(singularFormConfig, refType);
-                loadAnnotationsIfNeeded(instance);
+                loadAnnotationsIfNeeded(instance.getDocument());
 
                 return instance;
             }
@@ -142,10 +143,10 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                 return instance;
             }
 
-            private void loadAnnotationsIfNeeded(SInstance instance) {
+            private void loadAnnotationsIfNeeded(SDocument document) {
                 String annotationsXml = currentModel.getAnnnotations();
                 if (StringUtils.isNotBlank(annotationsXml)) {
-                    MformPersistenciaXML.annotationLoadFromXml(instance, currentModel.getAnnnotations());
+                    MformPersistenciaXML.annotationLoadFromXml(document, currentModel.getAnnnotations());
                 }
             }
 

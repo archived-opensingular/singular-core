@@ -26,8 +26,7 @@ public class STypePDIProjetoPedagogico extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
+
         addPerfilCurso();
         addAtividadesCurso();
         addPerfilEgresso();
