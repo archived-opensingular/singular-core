@@ -202,6 +202,7 @@ public class PDFUtilWin extends PDFUtil {
                     }
                     if (fos != null) {
                         fos.close();
+                        fos = null;
                     }
                 }
             }
@@ -209,7 +210,8 @@ public class PDFUtilWin extends PDFUtil {
             if (footer != null) {
                 try {
                     File footerFile = new File(tempFolder, "footer.html");
-                    fw = new OutputStreamWriter(new FileOutputStream(footerFile),
+                    fos = new FileOutputStream(footerFile);
+                    fw = new OutputStreamWriter(fos,
                             Charset.forName("UTF-8").newEncoder());
                     fw.write(footer);
                     commandAndArgs.add("--footer-html");
@@ -218,6 +220,9 @@ public class PDFUtilWin extends PDFUtil {
                 } finally {
                     if (fw != null) {
                         fw.close();
+                    }
+                    if (fos != null) {
+                        fos.close();
                     }
                 }
             }
