@@ -59,7 +59,7 @@ public class DefaultServerREST {
 
     public static final String PATH_BOX_ACTION  = "/box/action";
     public static final String DELETE           = "/delete";
-    public static final String EXECUTE          = "/execute";
+    public static final String EXECUTE          = "/executar";
     public static final String SEARCH_PETITIONS = "/searchPetitions";
     public static final String COUNT_PETITIONS  = "/countPetitions";
     public static final String SEARCH_TASKS     = "/searchTasks";
@@ -101,7 +101,7 @@ public class DefaultServerREST {
     }
 
     @RequestMapping(value = PATH_BOX_ACTION + EXECUTE, method = RequestMethod.POST)
-    public ActionResponse execute(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
+    public ActionResponse executar(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
             final PetitionEntity petition = petitionService.findPetitionByCod(id);
             final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(petition);

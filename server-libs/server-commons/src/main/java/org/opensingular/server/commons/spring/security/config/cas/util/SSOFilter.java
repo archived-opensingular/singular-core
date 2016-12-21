@@ -110,7 +110,7 @@ public class SSOFilter extends SSOConfigurableFilter {
             for (String urlExcludePattern : urlExcludePatterns) {
                 if (urlMatches(request, urlExcludePattern)) {
                     logger.info(
-                            String.format("Filter skipped due to regex patterns defined in urlExcludePattern properties ",
+                            String.format("Filter skipped due to regex patterns defined in urlExcludePattern properties. URL: %s ",
                                     request.getRequestURL()));
                     return true;
                 }

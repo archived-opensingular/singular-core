@@ -278,7 +278,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
                 .setParameter("petitionId", petitionId)
                 .setMaxResults(1)
                 .list())
-                .filter(l -> l.size() > 0)
+                .filter(l -> !l.isEmpty())
                 .map(l -> l.get(0))
                 .orElse(null);
     }
