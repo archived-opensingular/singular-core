@@ -1,9 +1,12 @@
-package org.opensingular.form.wicket.mapper.attachment;
+package org.opensingular.form.wicket.mapper.attachment.upload.manager;
 
 import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.slf4j.Logger;
@@ -12,10 +15,18 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -98,7 +109,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         log.debug("findUploadInfo({})", uploadId);
 
         return registeredUploads.stream()
-                .filter(it -> it.uploadId.equals(uploadId))
+                .filter(it -> it.getUploadId().equals(uploadId))
                 .map(UploadInfo::touch)
                 .findFirst();
     }

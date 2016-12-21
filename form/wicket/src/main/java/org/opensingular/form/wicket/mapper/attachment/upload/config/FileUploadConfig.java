@@ -1,4 +1,4 @@
-package org.opensingular.form.wicket.mapper.attachment;
+package org.opensingular.form.wicket.mapper.attachment.upload.config;
 
 import static org.opensingular.lib.commons.util.ConversionUtils.*;
 

@@ -1,9 +1,10 @@
-package org.opensingular.form.wicket.mapper.attachment;
+package org.opensingular.form.wicket.mapper.attachment.upload.info;
 
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +37,7 @@ public class UploadResponseInfo implements Serializable {
         this.errorMessage = null;
     }
 
-    UploadResponseInfo(String name, String errorMessage) {
+    public UploadResponseInfo(String name, String errorMessage) {
         this.fileId = null;
         this.name = name;
         this.size = 0L;
@@ -67,7 +68,7 @@ public class UploadResponseInfo implements Serializable {
         doWrite(response, this.toString());
     }
 
-    static void writeJsonArrayResponseTo(HttpServletResponse response, List<UploadResponseInfo> list) {
+    public static void writeJsonArrayResponseTo(HttpServletResponse response, List<UploadResponseInfo> list) {
         JSONArray array = new JSONArray();
         for (UploadResponseInfo r : list)
             array.put(r);

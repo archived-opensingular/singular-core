@@ -17,7 +17,7 @@
 package org.opensingular.form.wicket.mapper.attachment.list;
 
 import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.*;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
@@ -51,6 +51,10 @@ import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.attachment.*;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
+import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;

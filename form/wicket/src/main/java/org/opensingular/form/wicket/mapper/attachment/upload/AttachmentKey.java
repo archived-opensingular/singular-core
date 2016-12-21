@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.attachment;
+package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import java.io.Serializable;
 import java.util.UUID;

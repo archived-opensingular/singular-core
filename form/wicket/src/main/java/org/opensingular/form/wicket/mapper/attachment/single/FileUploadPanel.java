@@ -37,6 +37,10 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.*;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
+import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
 
@@ -45,9 +49,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
-import static org.opensingular.form.wicket.mapper.attachment.FileUploadServlet.PARAM_NAME;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -61,7 +64,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     private WebMarkupContainer filesContainer, progressBar;
     private DownloadSupportedBehavior downloader;
     private DownloadLink              downloadLink;
-    private AttachmentKey                    uploadId;
+    private AttachmentKey             uploadId;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);

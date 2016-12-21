@@ -1,9 +1,10 @@
-package org.opensingular.form.wicket.mapper.attachment;
+package org.opensingular.form.wicket.mapper.attachment.upload.info;
 
 import com.google.common.collect.ImmutableSet;
 import org.json.JSONArray;
 import org.json.JSONWriter;
 import org.opensingular.form.servlet.MimeTypes;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-final class UploadInfo implements Serializable {
+public final class UploadInfo implements Serializable {
 
     final            AttachmentKey uploadId;
     final            long          maxFileSize;
@@ -68,5 +69,30 @@ final class UploadInfo implements Serializable {
                 .endObject();
         //@formatter:on
         return buffer.toString();
+    }
+
+    public AttachmentKey getUploadId() {
+        return uploadId;
+    }
+
+    public long getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    public int getMaxFileCount() {
+        return maxFileCount;
+    }
+
+    public Set<String> getAllowedFileTypes() {
+        return allowedFileTypes;
+    }
+
+    public long getLastAccess() {
+        return lastAccess;
+    }
+
+    public UploadInfo setLastAccess(long lastAccess) {
+        this.lastAccess = lastAccess;
+        return this;
     }
 }

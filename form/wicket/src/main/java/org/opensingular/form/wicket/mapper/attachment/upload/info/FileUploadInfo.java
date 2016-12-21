@@ -1,4 +1,4 @@
-package org.opensingular.form.wicket.mapper.attachment;
+package org.opensingular.form.wicket.mapper.attachment.upload.info;
 
 import com.google.common.collect.ComparisonChain;
 import org.json.JSONObject;
