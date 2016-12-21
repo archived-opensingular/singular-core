@@ -28,7 +28,9 @@ public class SDocumentFactoryEmpty extends SDocumentFactory {
     protected SDocumentFactoryEmpty() {}
 
     final synchronized static SDocumentFactory getEmptyInstance() {
-        instance = new SDocumentFactoryEmpty();
+        if (instance == null) {
+            instance = new SDocumentFactoryEmpty();
+        }
         return instance;
     }
 

@@ -233,14 +233,16 @@ public final class SFormUtil {
     private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
     private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
-        singularPackages = SupplierUtil.cached(() -> {
-            Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
-            // addPackage(builder, SPackageBasic.class);
-            addPackage(builder, SPackageUtil.class);
-            addPackage(builder, SPackageBootstrap.class);
-            addPackage(builder, SPackageCountryBrazil.class);
-            return builder.build();
-        });
+        if (singularPackages == null) {
+            singularPackages = SupplierUtil.cached(() -> {
+                Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
+                // addPackage(builder, SPackageBasic.class);
+                addPackage(builder, SPackageUtil.class);
+                addPackage(builder, SPackageBootstrap.class);
+                addPackage(builder, SPackageCountryBrazil.class);
+                return builder.build();
+            });
+        }
         return singularPackages.get();
     }
 

@@ -80,7 +80,9 @@ public final class ProcessDefinitionCache {
     }
 
     public synchronized static ProcessDefinitionCache get(String[] packagesNames) {
-        cache = new ProcessDefinitionCache(packagesNames);
+        if (cache == null) {
+            cache = new ProcessDefinitionCache(packagesNames);
+        }
         return cache;
     }
 
