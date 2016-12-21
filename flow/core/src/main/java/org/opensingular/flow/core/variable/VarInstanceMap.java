@@ -205,10 +205,10 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     public void onValueChanged(VarInstance changedVar);
 
     public static VarInstanceMap<?> empty() {
-        return EMPTY;
+        return EMPTY_INSTANCE;
     }
 
-    public static final VarInstanceMap<?> EMPTY = new VarInstanceMap<VarInstance>() {
+    public static final VarInstanceMap<?> EMPTY_INSTANCE = new VarInstanceMap<VarInstance>() {
 
         @Override
         public VarInstance getVariavel(String ref) {
