@@ -8,7 +8,7 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 
 import javax.inject.Inject;
 
-public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, C extends AttachmentContentEntitty, F extends AbstractFormAttachmentEntity<T>> {
+public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, C extends AttachmentContentEntitty, F extends AbstractFormAttachmentEntity<T>> implements IFormAttachmentService {
 
     @Inject
     private AttachmentService<T, C> attachmentService;
@@ -20,6 +20,7 @@ public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, 
      * @param formVersion a versao do formulario
      * @return a pk ou null caso nao consiga cronstruir
      */
+    @Override
     public FormAttachmentEntityId createFormAttachmentEntityId(Long id, FormVersionEntity formVersion) {
         AttachmentEntity attachmentEntity = attachmentService.getAttachmentEntity(id);
         if (formVersion != null || attachmentEntity != null) {
@@ -35,6 +36,7 @@ public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, 
      * @param attachmentEntity anexo
      * @return a chave instanciada, null caso algum parametro seja nulo
      */
+    @Override
     public FormAttachmentEntityId createFormAttachmentEntityId(FormVersionEntity formVersion, AttachmentEntity attachmentEntity) {
         if (formVersion != null && attachmentEntity != null) {
             return new FormAttachmentEntityId(formVersion.getCod(), attachmentEntity.getCod());

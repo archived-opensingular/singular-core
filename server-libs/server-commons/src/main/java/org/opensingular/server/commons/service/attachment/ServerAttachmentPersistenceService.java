@@ -6,13 +6,21 @@ import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dto.AttachmentRef;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 @Transactional
 public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> extends ServerAbstractAttachmentPersistenceService<T, C> {
+
+    @Inject
+    protected transient IFormService formService;
+
+    @Inject
+    protected transient IFormAttachmentService formAttachmentService;
 
     /**
      * Faz o vinculo entre anexo persistido e formversionentity
