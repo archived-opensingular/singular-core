@@ -86,8 +86,10 @@ public class PermissionResolverService implements Loggable {
     public List<? extends SingularPermission> listAllProcessesPermissions() {
         List<SingularPermission> permissions = new ArrayList<>();
 
-        for (ProcessDefinition pd : singularFlowConfigurationBean.get().getDefinitions()) {
-            permissions.addAll(listPermissions(pd.getClass()));
+        if (singularFlowConfigurationBean.isPresent()) {
+            for (ProcessDefinition pd : singularFlowConfigurationBean.get().getDefinitions()) {
+                permissions.addAll(listPermissions(pd.getClass()));
+            }
         }
 
         return permissions;

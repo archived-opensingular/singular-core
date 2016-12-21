@@ -238,8 +238,11 @@ public class AuthorizationService implements Loggable {
         if (StringUtils.isBlank(formTypeName)) {
             return null;
         }
-        SType<?> sType = singularFormConfig.get().getTypeLoader().loadType(formTypeName).get();
-        return SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.getClass()).toUpperCase();
+
+        return singularFormConfig
+                .map(formConfig -> formConfig.getTypeLoader().loadType(formTypeName))
+                .map(sType -> SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.get().getClass()).toUpperCase())
+                .orElse(null);
     }
 
 }
