@@ -7,13 +7,13 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 
 public interface IFormAttachmentService {
 
-    void saveNewFormAttachmentEntity(Long attachmentID, FormVersionEntity currentFormVersion);
+    void saveNewFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity currentFormVersion);
 
-    void deleteFormAttachmentEntity(Long id, FormVersionEntity formVersionEntity);
+    void deleteFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity formVersionEntity);
 
-    FormAttachmentEntity findFormAttachmentEntity(Long id, FormVersionEntity formVersionEntity);
+    FormAttachmentEntity findFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity formVersionEntity);
 
-    FormAttachmentEntityId createFormAttachmentEntityId(Long id, FormVersionEntity formVersion);
+    FormAttachmentEntityId createFormAttachmentEntityId(AttachmentEntity attachmentEntity, FormVersionEntity formVersion);
 
     FormAttachmentEntityId createFormAttachmentEntityId(FormVersionEntity formVersion, AttachmentEntity attachmentEntity);
 

@@ -16,12 +16,6 @@ public class FormAttachmentService extends AbstractFormAttachmentService<Attachm
     @Inject
     private FormAttachmentDAO formAttachmentDAO;
 
-    /**
-     * Salva uma nova relacional caso não encontre nenhuma para a chave informada
-     *
-     * @param formAttachmentPK o id do FormAttachmentEntity
-     * @return a FormAttachmentEntity salva ou recupera do banco caso ja exita
-     */
     private FormAttachmentEntity saveNewFormAttachmentEntity(FormAttachmentEntityId formAttachmentPK) {
         if (formAttachmentPK != null) {
             FormAttachmentEntity fae = formAttachmentDAO.find(formAttachmentPK);
@@ -34,35 +28,21 @@ public class FormAttachmentService extends AbstractFormAttachmentService<Attachm
     }
 
     @Override
-    public void saveNewFormAttachmentEntity(Long attachmentID, FormVersionEntity currentFormVersion) {
-        saveNewFormAttachmentEntity(createFormAttachmentEntityId(attachmentID, currentFormVersion));
+    public void saveNewFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity currentFormVersion) {
+        saveNewFormAttachmentEntity(createFormAttachmentEntityId(attachmentEntity, currentFormVersion));
     }
 
-
-    /**
-     * Deleta a relacional entre anexo e formversionentity
-     *
-     * @param id                o id do anexo
-     * @param formVersionEntity a versao atual(FormVersioEntity)
-     */
     @Override
-    public void deleteFormAttachmentEntity(Long id, FormVersionEntity formVersionEntity) {
-        FormAttachmentEntity formAttachmentEntity = findFormAttachmentEntity(id, formVersionEntity);
+    public void deleteFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity formVersionEntity) {
+        FormAttachmentEntity formAttachmentEntity = findFormAttachmentEntity(attachmentEntity, formVersionEntity);
         if (formAttachmentEntity != null) {
             formAttachmentDAO.delete(formAttachmentEntity);
         }
     }
 
-    /**
-     * Busca a relacional pelo id do anexo e documento
-     *
-     * @param id                o id do anexo
-     * @param formVersionEntity a versao atual (FormVersioEntity)
-     * @return a entidade que relacionada anexo e formversion ou null caso nao encontre
-     */
     @Override
-    public FormAttachmentEntity findFormAttachmentEntity(Long id, FormVersionEntity formVersionEntity) {
-        FormAttachmentEntityId formAttachmentPK = createFormAttachmentEntityId(id, formVersionEntity);
+    public FormAttachmentEntity findFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity formVersionEntity) {
+        FormAttachmentEntityId formAttachmentPK = createFormAttachmentEntityId(attachmentEntity, formVersionEntity);
         if (formAttachmentPK != null) {
             return formAttachmentDAO.find(formAttachmentPK);
         }

@@ -1,6 +1,5 @@
 package org.opensingular.server.commons.service.attachment;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dto.AttachmentRef;
@@ -36,23 +35,11 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
                     " anexos persistidos em banco de dados e referencias do tipo " + AttachmentRef.class.getName());
         }
         if (sdoc != null && sdoc.getRoot() != null) {
-            formAttachmentService.saveNewFormAttachmentEntity(getAttachmentID(ref), formService.findCurrentFormVersion(sdoc));
+            formAttachmentService.saveNewFormAttachmentEntity(getAttachmentEntity(ref), formService.findCurrentFormVersion(sdoc));
         }
         return new AttachmentCopyContext<>((AttachmentRef) ref).setDeleteOldFiles(false).setUpdateFileId(false);
     }
 
-
-    /**
-     * Recupera o codigo do AttachmentEntity a partir da referencia
-     * @param attachmentRef referencia
-     * @return o ID
-     */
-    private Long getAttachmentID(IAttachmentRef attachmentRef) {
-        if (StringUtils.isNumeric(attachmentRef.getId())) {
-            return Long.valueOf(attachmentRef.getId());
-        }
-        return null;
-    }
 
     /**
      * Aciona o metodo de deletar a relacional {@link FormAttachmentService#deleteFormAttachmentEntity }
@@ -62,9 +49,7 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
      */
     @Override
     public void deleteAttachment(String id, SDocument document) {
-        if (StringUtils.isNumeric(id)) {
-            formAttachmentService.deleteFormAttachmentEntity(Long.valueOf(id), formService.findCurrentFormVersion(document));
-        }
+        formAttachmentService.deleteFormAttachmentEntity(getAttachmentEntity(id), formService.findCurrentFormVersion(document));
     }
 
 }

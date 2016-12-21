@@ -1,6 +1,5 @@
 package org.opensingular.server.commons.service.attachment;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
@@ -27,16 +26,12 @@ public class ServerTemporaryAttachmentPersistenceService<T extends AttachmentEnt
      */
     @Override
     public void deleteAttachment(String id, SDocument document) {
-        if (StringUtils.isNumeric(id)) {
-            deleteAttachment(Long.valueOf(id), formService.findCurrentFormVersion(document));
+        if (document != null) {
+            FormVersionEntity formVersion = formService.findCurrentFormVersion(document);
+            if (formVersion != null) {
+                formAttachmentService.deleteFormAttachmentEntity(getAttachmentEntity(id), formVersion);
+            }
         }
     }
-
-    private void deleteAttachment(Long id, FormVersionEntity formVersionEntity) {
-        if (formVersionEntity != null && id != null) {
-            formAttachmentService.deleteFormAttachmentEntity(id, formVersionEntity);
-        }
-    }
-
 
 }

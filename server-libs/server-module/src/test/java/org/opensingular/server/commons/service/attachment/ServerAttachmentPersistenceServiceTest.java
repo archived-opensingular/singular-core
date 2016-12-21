@@ -7,7 +7,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dto.AttachmentRef;
+import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
@@ -41,17 +44,22 @@ public class ServerAttachmentPersistenceServiceTest {
     @Mock
     private FormVersionEntity formVersionEntity;
 
+    @Mock
+    private AttachmentDao<AttachmentEntity, AttachmentContentEntitty> attachmentDao;
+
     @InjectMocks
     private ServerAttachmentPersistenceService serverAttachmentPersistenceService;
 
     @Test
     public void copy() throws Exception {
 
-        final Long myAttachmenyID = 1L;
+        final Long             myAttachmenyID   = 1L;
+        final AttachmentEntity attachmentEntity = new AttachmentEntity();
 
         when(document.getRoot()).thenReturn(root);
         when(attachmentRef.getId()).thenReturn(String.valueOf(myAttachmenyID));
         when(formService.findCurrentFormVersion(eq(document))).thenReturn(formVersionEntity);
+        when(attachmentDao.find(myAttachmenyID)).thenReturn(attachmentEntity);
 
         AttachmentCopyContext context = serverAttachmentPersistenceService.copy(attachmentRef, document);
 
@@ -59,36 +67,23 @@ public class ServerAttachmentPersistenceServiceTest {
         assertFalse(context.isUpdateFileId());
         assertEquals(attachmentRef, context.getNewAttachmentRef());
 
-        verify(formAttachmentService).saveNewFormAttachmentEntity(eq(myAttachmenyID), eq(formVersionEntity));
+        verify(formAttachmentService).saveNewFormAttachmentEntity(eq(attachmentEntity), eq(formVersionEntity));
     }
 
     @Test
     public void deleteAttachment() throws Exception {
 
-        final Long myAttachmenyID = 10L;
+        final Long             myAttachmenyID   = 10L;
+        final AttachmentEntity attachmentEntity = new AttachmentEntity();
+
+        attachmentEntity.setCod(1L);
 
         when(formService.findCurrentFormVersion(eq(document))).thenReturn(formVersionEntity);
+        when(attachmentDao.find(myAttachmenyID)).thenReturn(attachmentEntity);
 
         serverAttachmentPersistenceService.deleteAttachment(String.valueOf(myAttachmenyID), document);
 
-        verify(formAttachmentService).deleteFormAttachmentEntity(eq(myAttachmenyID), eq(formVersionEntity));
-    }
-
-
-    @Test
-    public void deleteAttachmentWithNomNumericID() throws Exception {
-
-        serverAttachmentPersistenceService.deleteAttachment("abc", document);
-        verifyZeroInteractions(formAttachmentService);
-
-        serverAttachmentPersistenceService.deleteAttachment("123abc", document);
-        verifyZeroInteractions(formAttachmentService);
-
-        serverAttachmentPersistenceService.deleteAttachment("abc123", document);
-        verifyZeroInteractions(formAttachmentService);
-
-        serverAttachmentPersistenceService.deleteAttachment("1a2b3", document);
-        verifyZeroInteractions(formAttachmentService);
+        verify(formAttachmentService).deleteFormAttachmentEntity(eq(attachmentEntity), eq(formVersionEntity));
     }
 
 }

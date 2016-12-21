@@ -6,9 +6,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.persistence.dao.AttachmentDao;
+import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -28,28 +33,26 @@ public class ServerTemporaryAttachmentPersistenceServiceTest {
     @Mock
     private IFormAttachmentService formAttachmentService;
 
+    @Mock
+    private AttachmentDao<AttachmentEntity, AttachmentContentEntitty> attachmentDao;
+
     @InjectMocks
     private ServerTemporaryAttachmentPersistenceService serverTemporaryAttachmentPersistenceService;
 
     @Test
     public void deleteAttachment() throws Exception {
-        Long myAttachmentID = 10L;
+
+        Long             myAttachmentID   = 10L;
+        AttachmentEntity attachmentEntity = new AttachmentEntity();
+
+        attachmentEntity.setCod(1L);
+
         when(formService.findCurrentFormVersion(document)).thenReturn(formVersionEntity);
+        when(attachmentDao.find(myAttachmentID)).thenReturn(attachmentEntity);
+
         serverTemporaryAttachmentPersistenceService.deleteAttachment(String.valueOf(myAttachmentID), document);
-        verify(formAttachmentService).deleteFormAttachmentEntity(myAttachmentID, formVersionEntity);
+        verify(formAttachmentService).deleteFormAttachmentEntity(eq(attachmentEntity), eq(formVersionEntity));
     }
 
-    @Test
-    public void deleteAttachmentWithNomNumericID() throws Exception {
-        when(formService.findCurrentFormVersion(document)).thenReturn(formVersionEntity);
-        serverTemporaryAttachmentPersistenceService.deleteAttachment("abc", document);
-        verifyZeroInteractions(formAttachmentService);
-        serverTemporaryAttachmentPersistenceService.deleteAttachment("123abc", document);
-        verifyZeroInteractions(formAttachmentService);
-        serverTemporaryAttachmentPersistenceService.deleteAttachment("abc123", document);
-        verifyZeroInteractions(formAttachmentService);
-        serverTemporaryAttachmentPersistenceService.deleteAttachment("1a2b3c", document);
-        verifyZeroInteractions(formAttachmentService);
-    }
 
 }

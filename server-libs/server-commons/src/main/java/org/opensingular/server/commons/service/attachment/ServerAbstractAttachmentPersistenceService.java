@@ -24,7 +24,7 @@ public abstract class ServerAbstractAttachmentPersistenceService<T extends Attac
     protected transient FormAttachmentDAO formAttachmentDAO;
 
     @Inject
-    protected transient FileInputStreamAndHashFactory fileInputStreamAndHashFactory;
+    private transient FileInputStreamAndHashFactory fileInputStreamAndHashFactory;
 
     /**
      * Adiciona o anexo ao banco de dados, faz o calculo de HASH

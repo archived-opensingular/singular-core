@@ -6,23 +6,16 @@ import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.entity.FormAttachmentEntityId;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 
-import javax.inject.Inject;
-
 public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, C extends AttachmentContentEntitty, F extends AbstractFormAttachmentEntity<T>> implements IFormAttachmentService {
-
-    @Inject
-    private AttachmentService<T, C> attachmentService;
 
     /**
      * cria a chave utilizando a ref e o documento
      *
-     * @param id          do anexo
      * @param formVersion a versao do formulario
      * @return a pk ou null caso nao consiga cronstruir
      */
     @Override
-    public FormAttachmentEntityId createFormAttachmentEntityId(Long id, FormVersionEntity formVersion) {
-        AttachmentEntity attachmentEntity = attachmentService.getAttachmentEntity(id);
+    public FormAttachmentEntityId createFormAttachmentEntityId(AttachmentEntity attachmentEntity, FormVersionEntity formVersion) {
         if (formVersion != null || attachmentEntity != null) {
             return createFormAttachmentEntityId(formVersion, attachmentEntity);
         }
