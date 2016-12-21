@@ -25,7 +25,7 @@ public class STypeIdentifiersTest {
             this.identifier = identifier;
         }
 
-        @Before public void setup(){
+        @Before public void setUp(){
             SDictionary dict = SDictionary.create();
             pkg = dict.createNewPackage("test");
         }
@@ -54,7 +54,7 @@ public class STypeIdentifiersTest {
             this.identifier = identifier;
         }
 
-        @Before public void setup(){
+        @Before public void setUp(){
             SDictionary dict = SDictionary.create();
             pkg = dict.createNewPackage("test");
         }

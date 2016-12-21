@@ -25,7 +25,7 @@ public class TestViewMapperRegistry {
     private ViewMapperRegistry<String> mapper;
 
     @Before
-    public void setup() {
+    public void setUp() {
         mapper = new ViewMapperRegistry<>();
     }
 

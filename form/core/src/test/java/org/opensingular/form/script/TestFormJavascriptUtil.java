@@ -48,7 +48,7 @@ public class TestFormJavascriptUtil extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
         curriculumType = pkt.createCompositeType("curriculum");
 
