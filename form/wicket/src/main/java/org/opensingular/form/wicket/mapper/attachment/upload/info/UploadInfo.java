@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public final class UploadInfo implements Serializable {
+public class UploadInfo implements Serializable {
 
     final            AttachmentKey uploadId;
     final            long          maxFileSize;
