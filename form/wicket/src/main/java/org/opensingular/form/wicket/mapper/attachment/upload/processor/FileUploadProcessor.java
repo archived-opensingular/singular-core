@@ -1,9 +1,8 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.processor;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.opensingular.form.wicket.mapper.attachment.upload.config.FileUploadConfig;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
@@ -30,39 +29,23 @@ public class FileUploadProcessor {
     private final UploadInfo               uploadInfo;
     private final FileUploadManager        manager;
     private final FileUploadConfig         config;
+    private final FileUploadObjectFactory  fileUploadObjectFactory;
 
-    public FileUploadProcessor(UploadInfo uploadInfo, HttpServletRequest request, HttpServletResponse response, FileUploadManager fileUploadManager) {
+    public FileUploadProcessor(UploadInfo uploadInfo, HttpServletRequest request, HttpServletResponse response,
+                               FileUploadManager fileUploadManager,
+                               FileUploadObjectFactory fileUploadObjectFactory) {
         this.uploadInfo = uploadInfo;
         this.request = request;
         this.response = response;
+        this.fileUploadObjectFactory = fileUploadObjectFactory;
         this.filesJson = new ArrayList<>();
         this.manager = fileUploadManager;
         this.config = new FileUploadConfig(SingularProperties.get());
     }
 
-    private ServletFileUpload createServletFileUpload(FileUploadConfig config) {
-        final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
-
-        servletFileUpload.setFileSizeMax(resolveMax(
-                uploadInfo.getMaxFileSize(),
-                config.defaultMaxFileSize,
-                config.globalMaxFileSize));
-
-        servletFileUpload.setSizeMax(resolveMax(
-                uploadInfo.getMaxFileSize() * uploadInfo.getMaxFileCount(),
-                config.defaultMaxRequestSize,
-                config.globalMaxRequestSize));
-
-        return servletFileUpload;
-    }
-
-    private static long resolveMax(long specifiedMax, long defaultMax, long globalMax) {
-        return Math.min((specifiedMax > 0) ? specifiedMax : defaultMax, globalMax);
-    }
-
     public void handleFiles() {
         try {
-            Map<String, List<FileItem>> params = createServletFileUpload(config).parseParameterMap(request);
+            Map<String, List<FileItem>> params = fileUploadObjectFactory.newServletFileUpload(config, uploadInfo).parseParameterMap(request);
             for (FileItem item : params.get(PARAM_NAME)) {
                 processFileItem(filesJson, item);
             }

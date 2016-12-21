@@ -5,6 +5,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -41,16 +42,20 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     private final ConcurrentHashSet<UploadInfo>     registeredUploads = new ConcurrentHashSet<>();
     private final ConcurrentHashSet<FileUploadInfo> uploadedFiles     = new ConcurrentHashSet<>();
 
+    private final FileUploadObjectFactory                  fileUploadObjectFactory;
     private final ISupplier<IAttachmentPersistenceHandler> persistenceHandler;
 
     public FileUploadManager() {
         this.persistenceHandler = () -> ApplicationContextProvider
                 .get()
                 .getBean(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        this.fileUploadObjectFactory = new FileUploadObjectFactory();
     }
 
-    public FileUploadManager(ISupplier<IAttachmentPersistenceHandler> persistenceHandler) {
+    public FileUploadManager(ISupplier<IAttachmentPersistenceHandler> persistenceHandler,
+                             FileUploadObjectFactory fileUploadObjectFactory) {
         this.persistenceHandler = persistenceHandler;
+        this.fileUploadObjectFactory = fileUploadObjectFactory;
     }
 
 
@@ -92,7 +97,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
                 oAllowedFileTypes.orElseGet(Collections::emptyList)
         );
 
-        final AttachmentKey newkey = AttachmentKey.newKey();
+        final AttachmentKey newkey = fileUploadObjectFactory.newAttachmentKey();
 
         registeredUploads.add(new UploadInfo(
                 newkey,
@@ -166,7 +171,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         final File                          file;
 
         handler = getTemporaryAttachmentPersistenceHandler();
-        path = getLocalFilePath(AttachmentKey.newKey().toString());
+        path = getLocalFilePath(fileUploadObjectFactory.newAttachmentKey().toString());
         file = path.toFile();
 
         file.deleteOnExit();

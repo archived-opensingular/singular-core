@@ -26,21 +26,12 @@ public class AttachmentKey implements Serializable {
 
     private String key;
 
-    public static AttachmentKey newKey(){
-        return fromString(UUID.randomUUID().toString());
-    }
-
-    public AttachmentKey() {
+    public AttachmentKey(String key) {
+        this.key = key;
     }
 
     public String asString() {
         return key;
-    }
-
-    public static AttachmentKey fromString(String key) {
-       AttachmentKey attachmentKey = new AttachmentKey();
-       attachmentKey.key = key;
-       return attachmentKey;
     }
 
     @Override

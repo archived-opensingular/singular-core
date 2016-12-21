@@ -30,7 +30,7 @@ public class UploadResponseInfo implements Serializable {
     }
 
     private UploadResponseInfo(String fileId, String name, long size, String hashSHA1) {
-        this.fileId = AttachmentKey.fromString(fileId);
+        this.fileId = new AttachmentKey(fileId);
         this.name = name;
         this.size = size;
         this.hashSHA1 = hashSHA1;

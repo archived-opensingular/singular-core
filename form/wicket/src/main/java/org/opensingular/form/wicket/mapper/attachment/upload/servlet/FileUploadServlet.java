@@ -17,25 +17,20 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.upload.processor.FileUploadProcessor;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -47,16 +42,22 @@ public class FileUploadServlet extends HttpServlet {
 
     public static final String PARAM_NAME = "FILE-UPLOAD";
 
+    private final FileUploadObjectFactory fileUploadObjectFactory;
+
+    public FileUploadServlet() {
+        this(new FileUploadObjectFactory());
+    }
+
+    public FileUploadServlet(FileUploadObjectFactory fileUploadObjectFactory) {
+        this.fileUploadObjectFactory = fileUploadObjectFactory;
+    }
+
     public static String getUploadUrl(HttpServletRequest req, AttachmentKey attachmentKey) {
         return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + attachmentKey.asString();
     }
 
-    public static Optional<File> lookupFile(HttpServletRequest req, String fileId) {
-        return getFileUploadManager(req).findLocalFile(fileId);
-    }
-
     public static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<IAttachmentRef, R> callback) {
-        return getFileUploadManager(req).consumeFile(fileId, callback);
+        return FileUploadManager.get(req.getSession()).consumeFile(fileId, callback);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class FileUploadServlet extends HttpServlet {
             return;
         }
 
-        final AttachmentKey uploadID = getUploadID(req);
+        final AttachmentKey uploadID = fileUploadObjectFactory.newAttachmentKey(req);
 
         if (uploadID == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
@@ -75,25 +76,17 @@ public class FileUploadServlet extends HttpServlet {
         }
 
         //recupera o upload info preconfigurado na sessão (deve ser configurado antes de usar a servlet)
-        final Optional<UploadInfo> uploadInfo = getFileUploadManager(req).findUploadInfo(uploadID);
+        final Optional<UploadInfo> uploadInfo = FileUploadManager.get(req.getSession()).findUploadInfo(uploadID);
 
-        if (!uploadInfo.isPresent()) {
+        if (uploadInfo.isPresent()) {
+            fileUploadObjectFactory
+                    .newFileUploadProcessor(req, resp, uploadInfo.get(), FileUploadManager.get(req.getSession()), fileUploadObjectFactory)
+                    .handleFiles();
+        } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
-            return;
         }
 
-        new FileUploadProcessor(uploadInfo.get(), req, resp, getFileUploadManager(req)).handleFiles();
     }
 
-    private AttachmentKey getUploadID(HttpServletRequest req) throws IOException {
-        return Optional.ofNullable(substringAfterLast(defaultString(req.getPathTranslated()), File.separator))
-                .filter(x -> !StringUtils.isBlank(x))
-                .map(AttachmentKey::fromString)
-                .orElse(null);
-    }
-
-    private static FileUploadManager getFileUploadManager(HttpServletRequest req) {
-        return FileUploadManager.get(req.getSession());
-    }
 
 }

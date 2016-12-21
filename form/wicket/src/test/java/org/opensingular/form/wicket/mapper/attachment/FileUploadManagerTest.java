@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
 
 import javax.servlet.http.HttpSession;
@@ -43,12 +44,13 @@ public class FileUploadManagerTest {
     public void testeCreateFile() throws IOException {
 
         //mocks
-        IAttachmentRef                attachmentRef = Mockito.mock(IAttachmentRef.class);
-        IAttachmentPersistenceHandler handler       = Mockito.mock(IAttachmentPersistenceHandler.class);
-        InputStream                   inputStream   = Mockito.mock(InputStream.class);
+        IAttachmentRef                attachmentRef           = Mockito.mock(IAttachmentRef.class);
+        IAttachmentPersistenceHandler handler                 = Mockito.mock(IAttachmentPersistenceHandler.class);
+        InputStream                   inputStream             = Mockito.mock(InputStream.class);
+        FileUploadObjectFactory       fileUploadObjectFactory = Mockito.spy(FileUploadObjectFactory.class);
 
         //manager
-        FileUploadManager fum = new FileUploadManager(() -> handler);
+        FileUploadManager fum = new FileUploadManager(() -> handler, fileUploadObjectFactory);
 
         //mock return values
         Mockito.when(handler.addAttachment(Mockito.any(), Mockito.anyLong(), Mockito.anyString())).thenReturn(attachmentRef);
