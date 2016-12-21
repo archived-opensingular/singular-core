@@ -46,7 +46,7 @@ public class FileUploadServletTest {
     UploadInfo info;
 
     @Mock
-    FileUploadManager fum;
+    FileUploadManager fmngr;
 
     @Mock
     FileUploadProcessor processor;
@@ -80,7 +80,7 @@ public class FileUploadServletTest {
         String                           key      = "123465";
 
         FileUploadServlet.consumeFile(req, key, callback);
-        verify(fum).consumeFile(eq(key), eq(callback));
+        verify(fmngr).consumeFile(eq(key), eq(callback));
     }
 
     @Test
@@ -109,14 +109,13 @@ public class FileUploadServletTest {
 
         mockMultipartAndPost();
         mockKeySessionAndFileUploadManager(myKey);
-        when(fum.findUploadInfo(eq(myKey))).thenReturn(Optional.of(info));
-
-        when(factory.newFileUploadProcessor(eq(req), eq(resp), eq(info), eq(fum), eq(factory))).thenReturn(processor);
+        when(fmngr.findUploadInfo(eq(myKey))).thenReturn(Optional.of(info));
+        when(factory.newFileUploadProcessor(eq(req), eq(resp), eq(info), eq(fmngr), eq(factory))).thenReturn(processor);
 
         servlet.doPost(req, resp);
 
         verify(factory).newAttachmentKey(eq(req));
-        verify(factory).newFileUploadProcessor(eq(req), eq(resp), eq(info), eq(fum), eq(factory));
+        verify(factory).newFileUploadProcessor(eq(req), eq(resp), eq(info), eq(fmngr), eq(factory));
         verify(processor).handleFiles();
     }
 
@@ -127,11 +126,8 @@ public class FileUploadServletTest {
 
         mockMultipartAndPost();
         mockKeySessionAndFileUploadManager(myKey);
-        when(fum.findUploadInfo(eq(myKey))).thenReturn(Optional.empty());
-
-        when(factory.newFileUploadProcessor(eq(req), eq(resp),
-                eq(info), eq(fum), eq(factory))
-        ).thenReturn(processor);
+        when(fmngr.findUploadInfo(eq(myKey))).thenReturn(Optional.empty());
+        when(factory.newFileUploadProcessor(eq(req), eq(resp), eq(info), eq(fmngr), eq(factory))).thenReturn(processor);
 
         servlet.doPost(req, resp);
 
@@ -151,6 +147,6 @@ public class FileUploadServletTest {
 
     private void mockSessionAndFileUploadManager() {
         when(req.getSession()).thenReturn(session);
-        when(session.getAttribute(FileUploadManager.SESSION_KEY)).thenReturn(fum);
+        when(session.getAttribute(FileUploadManager.SESSION_KEY)).thenReturn(fmngr);
     }
 }
