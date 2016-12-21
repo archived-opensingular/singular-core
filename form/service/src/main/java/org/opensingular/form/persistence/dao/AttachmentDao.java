@@ -27,11 +27,9 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.opensingular.form.io.HashUtil;
-import org.opensingular.form.persistence.dto.AttachmentRef;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
@@ -116,5 +114,12 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
 
 //        return query.list();
         return Collections.emptyList();
+    }
+
+    @Override
+    public T find(Long aLong) {
+        T t = super.find(aLong);
+        Hibernate.initialize(t);
+        return t;
     }
 }

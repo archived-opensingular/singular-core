@@ -16,21 +16,8 @@
 
 package org.opensingular.form.persistence.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
@@ -42,6 +29,17 @@ import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularUtil;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty>
@@ -81,9 +79,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     @Override
     public IAttachmentRef getAttachment(String fileId) {
         if (StringUtils.isNumeric(fileId)) {
-            AttachmentEntity ref = attachmentDao.find(Long.valueOf(fileId));
-            Hibernate.initialize(ref);
-            return new AttachmentRef(ref);
+            return new AttachmentRef(attachmentDao.find(Long.valueOf(fileId)));
         }
         return null;
     }
@@ -102,9 +98,11 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     public T getAttachmentEntity(IAttachmentRef ref) {
-        T entity = attachmentDao.find(Long.valueOf(ref.getId()));
-        Hibernate.initialize(entity);
-        return entity;
+        return attachmentDao.find(Long.valueOf(ref.getId()));
+    }
+
+    public T getAttachmentEntity(String id) {
+        return attachmentDao.find(Long.valueOf(id));
     }
 
     public void loadAttachmentContent(Long codContent, OutputStream fos) {
