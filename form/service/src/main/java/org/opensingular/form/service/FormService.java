@@ -342,4 +342,22 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     public AnnotationKey keyFromClassifier(FormKey formKey, String classifier) {
         throw new NotImplementedException("Não implementado");
     }
+
+    @Override
+    public FormVersionEntity findCurrentFormVersion(SDocument document) {
+        FormEntity form = findFormEntity(document);
+        if (form != null) {
+            return form.getCurrentFormVersionEntity();
+        }
+        return null;
+    }
+
+    @Override
+    public FormEntity findFormEntity(SDocument document) {
+        FormKey key = document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
+        if (key != null) {
+            return loadFormEntity(key);
+        }
+        return null;
+    }
 }

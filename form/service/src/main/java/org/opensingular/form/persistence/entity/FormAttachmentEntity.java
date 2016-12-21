@@ -17,49 +17,21 @@
 package org.opensingular.form.persistence.entity;
 
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "TB_ANEXO_FORMULARIO", schema = Constants.SCHEMA)
-public class FormAttachmentEntity extends BaseEntity<FormAttachmentEntityId> {
-
-    @EmbeddedId
-    private FormAttachmentEntityId cod;
-
-    @ManyToOne
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false)
-    private FormVersionEntity formVersionEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "CO_ARQUIVO", insertable = false, updatable = false)
-    private AttachmentEntity attachmentEntity;
+public class FormAttachmentEntity extends AbstractFormAttachmentEntity<AttachmentEntity> {
 
     public FormAttachmentEntity() {
     }
 
     public FormAttachmentEntity(FormAttachmentEntityId cod) {
-        this.cod = cod;
+        setCod(cod);
     }
 
-    public FormVersionEntity getFormVersionEntity() {
-        return formVersionEntity;
-    }
 
-    public AttachmentEntity getAttachmentEntity() {
-        return attachmentEntity;
-    }
-
-    @Override
-    public FormAttachmentEntityId getCod() {
-        return cod;
-    }
-
-    public FormAttachmentEntity setCod(FormAttachmentEntityId cod) {
-        this.cod = cod;
-        return this;
-    }
 }
