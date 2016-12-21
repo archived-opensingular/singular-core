@@ -54,18 +54,18 @@ import static com.google.common.collect.Lists.newArrayList;
 public class SPackagePrototype extends SPackage {
 
     public static final String PACOTE = "mform.prototype",
-            META_FORM = "MetaForm",
-            META_FORM_COMPLETE = PACOTE + "." + META_FORM,
-            CHILDREN = "children",
-            NAME = "name",
-            TYPE = "type",
-            IS_LIST = "isList",
-            TAMANHO_CAMPO = "tamanhoCampo",
-            OBRIGATORIO = "obrigatorio",
-            TAMANHO_MAXIMO = "tamanhoMaximo",
-            TAMANHO_INTEIRO_MAXIMO = "tamanhoInteiroMaximo",
-            TAMANHO_DECIMAL_MAXIMO = "tamanhoDecimalMaximo",
-            FIELDS = "fields";
+            META_FORM                 = "MetaForm",
+            META_FORM_COMPLETE        = PACOTE + "." + META_FORM,
+            CHILDREN                  = "children",
+            NAME                      = "name",
+            TYPE                      = "type",
+            IS_LIST                   = "isList",
+            TAMANHO_CAMPO             = "tamanhoCampo",
+            CAMPO_OBRIGATORIO         = "obrigatorio",
+            TAMANHO_MAXIMO            = "tamanhoMaximo",
+            TAMANHO_INTEIRO_MAXIMO    = "tamanhoInteiroMaximo",
+            TAMANHO_DECIMAL_MAXIMO    = "tamanhoDecimalMaximo",
+            FIELDS                    = "fields";
     public static final String NAME_FIELD = "name";
 
     private STypeInteger tamanhoCampo;
@@ -167,7 +167,7 @@ public class SPackagePrototype extends SPackage {
         tamanhoCampo.asAtr().label("Colunas").maxLength(12)
                 .getTipo().asAtrBootstrap().colPreference(2);
 
-        obrigatorio = fieldType.addFieldBoolean(OBRIGATORIO);
+        obrigatorio = fieldType.addFieldBoolean(CAMPO_OBRIGATORIO);
         obrigatorio.withRadioView().asAtr().label("Obrigatório").getTipo().asAtrBootstrap().colPreference(2);
 
         fieldType.addFieldInteger(TAMANHO_MAXIMO)

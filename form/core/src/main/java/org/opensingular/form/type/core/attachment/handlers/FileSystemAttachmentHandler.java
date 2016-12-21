@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -79,9 +81,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     public static File createTemporaryFolder() throws IOException {
-        File tmpDir = File.createTempFile("singular", "showcase");
-        tmpDir.delete();
-        tmpDir.mkdir();
+        File tmpDir = Files.createTempDirectory("singular").toFile();
         tmpDir.deleteOnExit();
         return tmpDir;
     }

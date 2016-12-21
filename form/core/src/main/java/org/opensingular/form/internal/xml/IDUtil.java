@@ -58,7 +58,7 @@ public final class IDUtil {
         /**
          * Espaço temporário para gerar o ID.
          */
-        private final StringBuffer buffer_ = new StringBuffer(32);
+        private final StringBuilder buffer_ = new StringBuilder(32);
 
         /**
          * Permite a construção apenas a partir da IDUtil.

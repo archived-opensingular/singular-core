@@ -335,7 +335,7 @@ final class XMLToolkitWriter {
         if (LISTA_SPACE[0] == null) {
             //Primeira chama monta array de espaços
             int tamBuffer = SPACE.length() * LISTA_SPACE.length;
-            StringBuffer buf = new StringBuffer(tamBuffer);
+            StringBuilder buf = new StringBuilder(tamBuffer);
             for (int i = 0; i < LISTA_SPACE.length; i++) {
                 LISTA_SPACE[i] = buf.toString();
                 buf.append(SPACE);

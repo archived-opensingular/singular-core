@@ -99,7 +99,7 @@ public final class XPathToolkit {
      * @see #getFullPath(Node, Node)
      */
     public static String getFullPath(Node no) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         getFullPath(buffer, no, null);
         return buffer.toString();
     }
@@ -115,7 +115,7 @@ public final class XPathToolkit {
      * @return path completo
      */
     public static String getFullPath(Node no, Node topo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         getFullPath(buffer, no, topo);
         return buffer.toString();
     }
@@ -131,7 +131,7 @@ public final class XPathToolkit {
      * @param topo Nó até onde será montado o path. O path incluirá esse nó.
      * Pode ser null para indicar até o topo.
      */
-    private static void getFullPath(StringBuffer buffer, Node no, Node topo) {
+    private static void getFullPath(StringBuilder buffer, Node no, Node topo) {
 
         Node parent = no.getParentNode();
         if (parent == null) {
@@ -178,7 +178,7 @@ public final class XPathToolkit {
      * @param buffer Destino do texto
      * @param e Node a ser pesquisado o nível
      */
-    private static void getIndiceElemento(StringBuffer buffer, Node e) {
+    private static void getIndiceElemento(StringBuilder buffer, Node e) {
         int pos = -1;
         // Verifica se possui no com mesmo nome antes
         Node cursor = e.getPreviousSibling();

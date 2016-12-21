@@ -79,13 +79,9 @@ public final class ProcessDefinitionCache {
         definitionsByKey = ImmutableMap.copyOf(cacheByKey);
     }
 
-    public static ProcessDefinitionCache get(String[] packagesNames) {
+    public synchronized static ProcessDefinitionCache get(String[] packagesNames) {
         if (cache == null) {
-            synchronized (ProcessDefinitionCache.class) {
-                if (cache == null) {
-                    cache = new ProcessDefinitionCache(packagesNames);
-                }
-            }
+            cache = new ProcessDefinitionCache(packagesNames);
         }
         return cache;
     }

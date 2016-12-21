@@ -50,7 +50,7 @@ public class PrototypePageTest {
         private FormTester          form;
 
         @Before
-        public void setup() {
+        public void setUp() {
             driver = springWicketTester.wt();
             dictionary = SDictionary.create();
             dictionary.loadPackage(SPackagePrototype.class);
