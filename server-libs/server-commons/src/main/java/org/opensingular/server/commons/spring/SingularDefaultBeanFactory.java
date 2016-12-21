@@ -51,6 +51,8 @@ import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.IEmailService;
 import org.opensingular.server.commons.service.ParameterService;
 import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.service.attachment.AttachmentService;
+import org.opensingular.server.commons.service.attachment.FormAttachmentService;
 import org.opensingular.server.commons.service.attachment.ServerAttachmentPersistenceService;
 import org.opensingular.server.commons.service.attachment.ServerTemporaryAttachmentPersistenceService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
@@ -246,5 +248,15 @@ public class SingularDefaultBeanFactory {
     @Bean
     public FormAttachmentDAO formAttachmentDAO() {
         return new FormAttachmentDAO();
+    }
+
+    @Bean
+    public AttachmentService<?, ?> attachmentService() {
+        return new AttachmentService<>();
+    }
+
+    @Bean
+    public FormAttachmentService formAttachmentService() {
+        return new FormAttachmentService();
     }
 }

@@ -1,12 +1,11 @@
 package org.opensingular.server.commons.service.attachment;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dto.AttachmentRef;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
-import org.opensingular.form.persistence.entity.FormAttachmentEntity;
-import org.opensingular.form.persistence.entity.FormAttachmentEntityId;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
@@ -17,7 +16,8 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
 
     /**
      * Faz o vinculo entre anexo persistido e formversionentity
-     * @param ref referencia a um anexo ja persistido no banco de dados
+     *
+     * @param ref  referencia a um anexo ja persistido no banco de dados
      * @param sdoc documento atual do formulario
      * @return os dados de contexto para ações pos copia
      */
@@ -28,22 +28,35 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
                     " anexos persistidos em banco de dados e referencias do tipo " + AttachmentRef.class.getName());
         }
         if (sdoc != null && sdoc.getRoot() != null) {
-            FormAttachmentEntityId formAttachmentPK = createFormAttachmentEntityId(ref, sdoc);
-            if (formAttachmentPK != null && formAttachmentDAO.find(formAttachmentPK) == null) {
-                formAttachmentDAO.save(new FormAttachmentEntity(formAttachmentPK));
-            }
+            formAttachmentService.saveNewFormAttachmentEntity(getAttachmentID(ref), formService.findCurrentFormVersion(sdoc));
         }
         return new AttachmentCopyContext<>((AttachmentRef) ref).setDeleteOldFiles(false).setUpdateFileId(false);
     }
 
+
     /**
-     * Aciona o metodo de deletar a relacional {@link ServerAbstractAttachmentPersistenceService#deleteFormAttachmentEntity }
-     * @param id id do anexo
+     * Recupera o codigo do AttachmentEntity a partir da referencia
+     * @param attachmentRef referencia
+     * @return o ID
+     */
+    private Long getAttachmentID(IAttachmentRef attachmentRef) {
+        if (StringUtils.isNumeric(attachmentRef.getId())) {
+            return Long.valueOf(attachmentRef.getId());
+        }
+        return null;
+    }
+
+    /**
+     * Aciona o metodo de deletar a relacional {@link FormAttachmentService#deleteFormAttachmentEntity }
+     *
+     * @param id       id do anexo
      * @param document o documento atual
      */
     @Override
     public void deleteAttachment(String id, SDocument document) {
-        deleteFormAttachmentEntity(id, document);
+        if (StringUtils.isNumeric(id)) {
+            formAttachmentService.deleteFormAttachmentEntity(Long.valueOf(id), formService.findCurrentFormVersion(document));
+        }
     }
 
 }

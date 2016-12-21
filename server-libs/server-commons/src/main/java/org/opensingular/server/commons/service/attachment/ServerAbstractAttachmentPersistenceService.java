@@ -24,6 +24,7 @@ import java.security.DigestInputStream;
 
 /**
  * Classe base para os anexos do singular server
+ *
  * @param <T> a entidade de anexo
  * @param <C> a entidade de anexo conteudo
  */
@@ -33,13 +34,17 @@ public abstract class ServerAbstractAttachmentPersistenceService<T extends Attac
     protected transient IFormService formService;
 
     @Inject
+    protected transient FormAttachmentService formAttachmentService;
+
+    @Inject
     protected transient FormAttachmentDAO formAttachmentDAO;
 
     /**
      * Adiciona o anexo ao banco de dados, faz o calculo de HASH
-     * @param file o arquivo a ser inserido
+     *
+     * @param file   o arquivo a ser inserido
      * @param length tamanho maximo
-     * @param name o nome
+     * @param name   o nome
      * @return a referencia
      */
     @Override
@@ -51,84 +56,5 @@ public abstract class ServerAbstractAttachmentPersistenceService<T extends Attac
         }
     }
 
-    /**
-     * cria a chave utilizando a ref e o documento
-     * @param attachmentRef a referencia persistida
-     * @param document o documento do formulario
-     * @return a pk ou null caso nao consiga cronstruir
-     */
-    protected FormAttachmentEntityId createFormAttachmentEntityId(IAttachmentRef attachmentRef, SDocument document) {
-        FormVersionEntity formVersion      = findCurrentFormVersion(document);
-        T                 attachmentEntity = getAttachmentEntity(attachmentRef);
-        if (formVersion != null || attachmentEntity != null) {
-            return createFormAttachmentEntityId(formVersion, attachmentEntity);
-        }
-        return null;
-    }
-
-    /**
-     * cria a primaria key de form attachment entity
-     * @param formVersion versao do formulario
-     * @param attachmentEntity anexo
-     * @return a chave instanciada, null caso algum parametro seja nulo
-     */
-    protected FormAttachmentEntityId createFormAttachmentEntityId(FormVersionEntity formVersion, T attachmentEntity) {
-        if (formVersion != null && attachmentEntity != null) {
-            return new FormAttachmentEntityId(formVersion.getCod(), attachmentEntity.getCod());
-        }
-        return null;
-    }
-
-    /**
-     * procura a FormVersionEntity a partir do documento (instancia raiz)
-     * @param document documento do formulario
-     * @return a entidade
-     */
-    protected FormVersionEntity findCurrentFormVersion(SDocument document) {
-        FormEntity form = findFormEntity(document);
-        if (form != null) {
-            return form.getCurrentFormVersionEntity();
-        }
-        return null;
-    }
-
-    /**
-     * busca a form version entity pelo documento
-     * @param document o documento do form
-     * @return a entidade ou null caso nao encontre
-     */
-    protected FormEntity findFormEntity(SDocument document) {
-        FormKey key = document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
-        if (key != null) {
-            return formService.loadFormEntity(key);
-        }
-        return null;
-    }
-
-    /**
-     * Deleta a relacional entre anexo e formversionentity
-     * @param id o id do anexo
-     * @param document documetno para buscar a versao atual(FormVersioEntity)
-     */
-    protected void deleteFormAttachmentEntity(String id, SDocument document) {
-        FormAttachmentEntity formAttachmentEntity = findFormAttachmentEntity(id, document);
-        if (formAttachmentEntity != null) {
-            formAttachmentDAO.delete(formAttachmentEntity);
-        }
-    }
-
-    /**
-     * Busca a relacional pelo id do anexo e documento
-     * @param id o id do anexo
-     * @param document documetno para buscar a versao atual(FormVersioEntity)
-     * @return a entidade que relacionada anexo e formversion ou null caso nao encontre
-     */
-    protected FormAttachmentEntity findFormAttachmentEntity(String id, SDocument document) {
-        FormAttachmentEntityId formAttachmentPK = createFormAttachmentEntityId(getAttachment(id), document);
-        if (formAttachmentPK != null) {
-            return formAttachmentDAO.find(formAttachmentPK);
-        }
-        return null;
-    }
 
 }
