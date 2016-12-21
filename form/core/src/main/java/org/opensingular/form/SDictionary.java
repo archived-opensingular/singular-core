@@ -173,6 +173,10 @@ public class SDictionary {
             Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
             SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
             SPackage pacoteDestino = findPackage(scope);
+            if (pacoteDestino == null) {
+                throw new SingularFormException("O pacote de destino para carregar o tipo " +
+                        newType.getNameSimple() + " não pode ser nulo.");
+            }
             if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
                 throw new SingularFormException(
                         "Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '" +
