@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.*;
 
 import java.util.ArrayList;
@@ -357,10 +358,10 @@ public final class MElementResult extends MElement implements EWrapper {
             if (atualList_ < list_.getLength()) {
                 no = list_.item(atualList_);
                 if (no == null) {
-                    throw new RuntimeException(
+                    throw new SingularFormException(
                             "O result da consulta na posição " + atualList_ + " está null");
                 } else if (no.getNodeType() != ELEMENT_NODE) {
-                    throw new RuntimeException(
+                    throw new SingularFormException(
                             "O result da consulta na posição "
                                     + atualList_
                                     + " não é um Element. É um no do tipo "

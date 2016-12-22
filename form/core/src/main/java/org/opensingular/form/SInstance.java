@@ -178,7 +178,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public void setValue(Object value) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     public abstract Object getValue();
@@ -250,15 +250,15 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     <T extends Object> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     void setValue(PathReader pathReader, Object value) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     final SInstance getField(PathReader pathReader) {
@@ -275,7 +275,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     SInstance getFieldLocal(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     final Optional<SInstance> getFieldOpt(PathReader pathReader) {
@@ -293,7 +293,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     public String toStringDisplayDefault() {
@@ -414,7 +414,7 @@ public abstract class SInstance implements SAttributeEnabled {
         if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
             return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
-        throw new RuntimeException(
+        throw new SingularFormException(
                 "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
 

@@ -266,7 +266,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     protected void deleteInternal(FormKeyLong key) {
-        throw new RuntimeException("Metodo nao implementado");
+        throw new UnsupportedOperationException("Metodo nao implementado");
     }
 
     /**

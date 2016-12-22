@@ -398,8 +398,8 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             return field;
         }
 
-        public void setFieldCameFromSuperType(boolean value) {
-            this.fieldCameFromSuperType = value;
+        public void setFieldCameFromSuperType(boolean fieldCameFromSuperType) {
+            this.fieldCameFromSuperType = fieldCameFromSuperType;
         }
 
         public boolean isFieldCameFromSuperType() {

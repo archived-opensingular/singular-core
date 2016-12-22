@@ -98,7 +98,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
     }
 
     public VALUE fromString(String value) {
-        throw new RuntimeException("Não implementado");
+        throw new UnsupportedOperationException("Não implementado");
     }
 
     @SuppressWarnings("unchecked")

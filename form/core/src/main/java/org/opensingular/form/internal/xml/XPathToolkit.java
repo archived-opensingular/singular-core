@@ -17,6 +17,8 @@
 package org.opensingular.form.internal.xml;
 
 import com.sun.org.apache.xpath.internal.XPathAPI;
+
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -347,7 +349,7 @@ public final class XPathToolkit {
             return null;
         }
         if (result.getNodeType() != Node.ELEMENT_NODE) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                     "O elemento resultante ("
                             + getFullPath(result)
                             + ") não é um Element, mas um "
