@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
+import org.opensingular.flow.core.SingularFlowException;
+
 public class DefaultVarDefinitionMap implements VarDefinitionMap {
 
     private VarService varService;
@@ -48,7 +50,7 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
     @Override
     public VarDefinition addVariable(VarDefinition defVar) {
         if (map.containsKey(defVar.getRef())) {
-            throw new RuntimeException("Já existe a definição '" + defVar.getRef() + "'");
+            throw new SingularFlowException("Já existe a definição '" + defVar.getRef() + "'");
         }
         map.put(defVar.getRef(), defVar);
         return defVar;

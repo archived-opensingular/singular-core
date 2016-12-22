@@ -67,17 +67,17 @@ class JSWrapperInstance<T extends SInstance> implements JSObject {
 
     @Override
     public Object call(Object o, Object... objects) {
-        throw new SingularFormException("Método não suportado");
+        throw new UnsupportedOperationException("Método não suportado");
     }
 
     @Override
     public Object newObject(Object... objects) {
-        throw new SingularFormException("Método não suportado");
+        throw new UnsupportedOperationException("Método não suportado");
     }
 
     @Override
     public Object eval(String s) {
-        throw new SingularFormException("Método não suportado");
+        throw new UnsupportedOperationException("Método não suportado");
     }
 
     @Override
@@ -106,12 +106,12 @@ class JSWrapperInstance<T extends SInstance> implements JSObject {
 
     @Override
     public void setMember(String s, Object o) {
-        throw new SingularFormException("Método não suportado");
+        throw new UnsupportedOperationException("Método não suportado");
     }
 
     @Override
     public void setSlot(int i, Object o) {
-        throw new SingularFormException("Método não suportado");
+        throw new UnsupportedOperationException("Método não suportado");
     }
 
     @Override

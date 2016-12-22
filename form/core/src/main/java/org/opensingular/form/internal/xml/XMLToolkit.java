@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -407,10 +408,10 @@ public final class XMLToolkit {
      * @param xPath Path a ser
      * @return O elemento no destino ou null se o xPath não existir
      *
-     * @throws RuntimeException Se o node no xPath não for um Element
+     * @throws SingularFormException Se o node no xPath não for um Element
      * @see XPathToolkit
      */
-    public static Element getElement(Node contexto, String xPath) throws RuntimeException {
+    public static Element getElement(Node contexto, String xPath) {
         return XPathToolkit.selectElement(contexto, xPath);
     }
 

@@ -27,6 +27,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import org.opensingular.form.SingularFormException;
+
 /**
  * @author Expedito Júnior
  */
@@ -139,7 +141,7 @@ public final class ConversorToolkit {
                 return getDateFormat("dd/MM/yy").parse(new String(novo));
             }
         } catch (ParseException e) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                     "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset());
         }
     }

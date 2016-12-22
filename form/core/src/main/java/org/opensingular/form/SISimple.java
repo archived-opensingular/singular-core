@@ -71,7 +71,7 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
     @Override
     final <T extends Object> T getValueWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         if (!leitor.isEmpty()) {
-            throw new RuntimeException("Não ser aplica path a um tipo simples");
+            throw new SingularFormException("Não ser aplica path a um tipo simples");
         }
         return getValueWithDefault(classeDestino);
     }

@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.*;
 
 import java.io.PrintWriter;
@@ -223,7 +224,7 @@ final class XMLToolkitWriter {
                 out.print(node.getNodeValue());
                 break;
             default:
-                throw new RuntimeException(
+                throw new SingularFormException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -242,7 +243,7 @@ final class XMLToolkitWriter {
                 }
                 break;
             default:
-                throw new RuntimeException(
+                throw new SingularFormException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -280,7 +281,7 @@ final class XMLToolkitWriter {
                 }
                 break;
             default:
-                throw new RuntimeException(
+                throw new SingularFormException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }

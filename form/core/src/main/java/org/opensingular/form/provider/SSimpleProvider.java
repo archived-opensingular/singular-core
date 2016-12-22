@@ -18,6 +18,7 @@ package org.opensingular.form.provider;
 
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.util.transformer.SCompositeListBuilder;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
@@ -41,7 +42,7 @@ public interface SSimpleProvider extends SimpleProvider<Content, SInstance> {
         }
 
         if (typeComposite == null) {
-            throw new RuntimeException("Não foi possivel obter o tipo da instancia");
+            throw new SingularFormException("Não foi possivel obter o tipo da instancia");
         }
 
         final SCompositeListBuilder builder = new SCompositeListBuilder(typeComposite, ins);
