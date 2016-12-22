@@ -1,5 +1,6 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.manager;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
@@ -57,23 +58,14 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     public AttachmentKey createUpload(Long maxFileSize, Integer maxFileCount, Collection<String> allowedFileTypes,
                                       TemporaryAttachmentPersistenceHandlerSupplier temporaryAttachmentPersistenceHandlerSupplier) {
 
-        Optional<Long>               oMaxFileSize      = Optional.ofNullable(maxFileSize);
-        Optional<Integer>            oMaxFileCount     = Optional.ofNullable(maxFileCount);
-        Optional<Collection<String>> oAllowedFileTypes = Optional.ofNullable(allowedFileTypes);
-
-        getLogger().debug("createUpload({},{},{})",
-                oMaxFileSize.orElse(null),
-                oMaxFileCount.orElse(null),
-                oAllowedFileTypes.orElseGet(Collections::emptyList)
-        );
+        getLogger().debug("createUpload({},{},{})", maxFileSize, maxFileCount, allowedFileTypes);
 
         final AttachmentKey newkey = attachmentKeyFactory.get();
 
-        uploadInfoRepository.add(new UploadInfo(
-                newkey,
-                oMaxFileSize.orElse(Long.MAX_VALUE),
-                oMaxFileCount.orElse(1),
-                oAllowedFileTypes.orElseGet(Collections::emptyList),
+        uploadInfoRepository.add(new UploadInfo(newkey,
+                ObjectUtils.defaultIfNull(maxFileSize, Long.MAX_VALUE),
+                ObjectUtils.defaultIfNull(maxFileCount, 1),
+                ObjectUtils.defaultIfNull(allowedFileTypes, Collections.emptyList()),
                 temporaryAttachmentPersistenceHandlerSupplier));
 
         return newkey;
