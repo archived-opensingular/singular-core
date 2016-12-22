@@ -81,9 +81,9 @@ public class FileUploadServlet extends HttpServlet {
 
         if (uploadInfo.isPresent()) {
 
-            UploadInfo               info      = uploadInfo.get();
-            FileUploadConfig         config    = factories.getFileUploadConfigFactory().get();
-            List<UploadResponseInfo> filesJson = new ArrayList<>();
+            UploadInfo               info         = uploadInfo.get();
+            FileUploadConfig         config       = factories.getFileUploadConfigFactory().get();
+            List<UploadResponseInfo> allResponses = new ArrayList<>();
 
             try {
 
@@ -91,13 +91,13 @@ public class FileUploadServlet extends HttpServlet {
                 FileUploadProcessor         processor = factories.getFileUploadProcessorFactory().get(info, fileUploadManager);
 
                 for (FileItem item : params.get(PARAM_NAME)) {
-                    processor.processFileItem(filesJson, item);
+                    allResponses.addAll(processor.process(item));
                 }
 
             } catch (Exception e) {
                 throw SingularException.rethrow(e);
             } finally {
-                factories.getUploadResponseWriterFactory().get().writeJsonArrayResponseTo(resp, filesJson);
+                factories.getUploadResponseWriterFactory().get().writeJsonArrayResponseTo(resp, allResponses);
             }
 
         } else {

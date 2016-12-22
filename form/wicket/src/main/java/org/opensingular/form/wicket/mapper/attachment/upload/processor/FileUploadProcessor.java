@@ -7,10 +7,12 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.*;
 
 public class FileUploadProcessor {
 
@@ -22,7 +24,10 @@ public class FileUploadProcessor {
         this.manager = fileUploadManager;
     }
 
-    public void processFileItem(List<UploadResponseInfo> response, FileItem item) throws Exception {
+    public List<UploadResponseInfo> process(FileItem item) throws Exception {
+
+        final List<UploadResponseInfo> responses = new ArrayList<>();
+
         if (!item.isFormField()) {
 
             final String originalFilename = item.getName();
@@ -30,20 +35,20 @@ public class FileUploadProcessor {
             final String extension        = lowerCase(substringAfterLast(originalFilename, "."));
 
             if (item.getSize() == 0) {
-                response.add(new UploadResponseInfo(originalFilename, "Arquivo não pode ser de tamanho 0 (zero)"));
-                return;
-            }
+                responses.add(new UploadResponseInfo(originalFilename, ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO));
 
-            if (!(uploadInfo.isFileTypeAllowed(contentType) || uploadInfo.isFileTypeAllowed(extension))) {
-                response.add(new UploadResponseInfo(originalFilename, "Tipo de arquivo não permitido"));
-                return;
-            }
+            } else if (!(uploadInfo.isFileTypeAllowed(contentType) || uploadInfo.isFileTypeAllowed(extension))) {
+                responses.add(new UploadResponseInfo(originalFilename, TIPO_DE_ARQUIVO_NAO_PERMITIDO));
 
-            try (InputStream in = item.getInputStream()) {
-                final FileUploadInfo fileInfo = manager.createFile(uploadInfo, originalFilename, in);
-                response.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
+            } else {
+                try (InputStream in = item.getInputStream()) {
+                    final FileUploadInfo fileInfo = manager.createFile(uploadInfo, originalFilename, in);
+                    responses.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
+                }
             }
         }
+
+        return responses;
     }
 
 }

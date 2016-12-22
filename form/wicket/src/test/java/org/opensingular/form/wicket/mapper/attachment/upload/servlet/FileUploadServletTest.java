@@ -149,8 +149,8 @@ public class FileUploadServletTest {
 
         verify(attachmentKeyFactory).get(eq(request));
         verify(fileUploadProcessorFactory).get(eq(uploadInfo), eq(uploadManager));
-        verify(uploadProcessor).processFileItem(any(), eq(fileItem1));
-        verify(uploadProcessor).processFileItem(any(), eq(fileItem2));
+        verify(uploadProcessor).process(eq(fileItem1));
+        verify(uploadProcessor).process(eq(fileItem2));
     }
 
     @Test

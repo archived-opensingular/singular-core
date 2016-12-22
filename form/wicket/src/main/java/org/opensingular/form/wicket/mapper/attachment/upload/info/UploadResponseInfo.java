@@ -15,6 +15,9 @@ import java.util.List;
 
 public class UploadResponseInfo implements Serializable {
 
+    public static final String ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO = "Arquivo não pode ser de tamanho 0 (zero)";
+    public static final String TIPO_DE_ARQUIVO_NAO_PERMITIDO          = "Tipo de arquivo não permitido";
+
     private final AttachmentKey fileId;
     private final String        name;
     private final long          size;
@@ -64,4 +67,23 @@ public class UploadResponseInfo implements Serializable {
         return jsonFile;
     }
 
+    public AttachmentKey getFileId() {
+        return fileId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public String getHashSHA1() {
+        return hashSHA1;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 }
