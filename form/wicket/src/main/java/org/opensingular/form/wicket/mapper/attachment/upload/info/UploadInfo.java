@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONWriter;
 import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.supplier.TemporaryAttachmentPersistenceHandlerSupplier;
 
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -16,22 +17,26 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class UploadInfo implements Serializable {
 
-    final            AttachmentKey uploadId;
-    final            long          maxFileSize;
-    final            int           maxFileCount;
-    final            Set<String>   allowedFileTypes;
-    private volatile long          lastAccess;
+    final AttachmentKey                                 uploadId;
+    final long                                          maxFileSize;
+    final int                                           maxFileCount;
+    final Set<String>                                   allowedFileTypes;
+    final TemporaryAttachmentPersistenceHandlerSupplier persistenceHandlerSupplier;
+
+    private volatile long lastAccess;
 
     public UploadInfo(
             AttachmentKey uploadId,
             long maxFileSize,
             int maxFileCount,
-            Collection<String> allowedFileTypes) {
+            Collection<String> allowedFileTypes,
+            TemporaryAttachmentPersistenceHandlerSupplier persistenceHandlerSupplier) {
 
         this.uploadId = uploadId;
         this.maxFileSize = Math.max(1L, maxFileSize);
         this.maxFileCount = Math.max(1, maxFileCount);
         this.allowedFileTypes = toSet(allowedFileTypes);
+        this.persistenceHandlerSupplier = persistenceHandlerSupplier;
         this.touch();
     }
 
@@ -94,5 +99,9 @@ public class UploadInfo implements Serializable {
     public UploadInfo setLastAccess(long lastAccess) {
         this.lastAccess = lastAccess;
         return this;
+    }
+
+    public TemporaryAttachmentPersistenceHandlerSupplier getPersistenceHandlerSupplier() {
+        return persistenceHandlerSupplier;
     }
 }

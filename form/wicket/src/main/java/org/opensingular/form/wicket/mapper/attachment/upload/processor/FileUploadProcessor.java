@@ -2,7 +2,7 @@ package org.opensingular.form.wicket.mapper.attachment.upload.processor;
 
 import org.apache.commons.fileupload.FileItem;
 import org.opensingular.form.wicket.mapper.attachment.upload.config.FileUploadConfig;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.ServletFileUploadFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
@@ -29,15 +29,15 @@ public class FileUploadProcessor {
     private final UploadInfo               uploadInfo;
     private final FileUploadManager        manager;
     private final FileUploadConfig         config;
-    private final FileUploadObjectFactory  fileUploadObjectFactory;
+    private final ServletFileUploadFactory servletFileUploadFactory;
 
     public FileUploadProcessor(UploadInfo uploadInfo, HttpServletRequest request, HttpServletResponse response,
                                FileUploadManager fileUploadManager,
-                               FileUploadObjectFactory fileUploadObjectFactory) {
+                               ServletFileUploadFactory servletFileUploadFactory) {
         this.uploadInfo = uploadInfo;
         this.request = request;
         this.response = response;
-        this.fileUploadObjectFactory = fileUploadObjectFactory;
+        this.servletFileUploadFactory = servletFileUploadFactory;
         this.filesJson = new ArrayList<>();
         this.manager = fileUploadManager;
         this.config = new FileUploadConfig(SingularProperties.get());
@@ -45,7 +45,7 @@ public class FileUploadProcessor {
 
     public void handleFiles() {
         try {
-            Map<String, List<FileItem>> params = fileUploadObjectFactory.newServletFileUpload(config, uploadInfo).parseParameterMap(request);
+            Map<String, List<FileItem>> params = servletFileUploadFactory.get(config, uploadInfo).parseParameterMap(request);
             for (FileItem item : params.get(PARAM_NAME)) {
                 processFileItem(filesJson, item);
             }
@@ -74,7 +74,7 @@ public class FileUploadProcessor {
             }
 
             try (InputStream in = item.getInputStream()) {
-                final FileUploadInfo fileInfo = manager.createFile(uploadInfo.getUploadId(), originalFilename, in);
+                final FileUploadInfo fileInfo = manager.createFile(uploadInfo, originalFilename, in);
                 response.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
             }
         }

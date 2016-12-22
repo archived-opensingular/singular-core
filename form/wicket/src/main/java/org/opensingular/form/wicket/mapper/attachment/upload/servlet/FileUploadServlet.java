@@ -17,11 +17,11 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.AttachmentKeyFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadProcessorFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -42,22 +41,24 @@ public class FileUploadServlet extends HttpServlet {
 
     public static final String PARAM_NAME = "FILE-UPLOAD";
 
-    private final FileUploadObjectFactory fileUploadObjectFactory;
+    private final FileUploadProcessorFactory fileUploadProcessorFactory;
+    private final AttachmentKeyFactory       attachmentKeyFactory;
+    private final FileUploadManagerFactory   fileUploadManagerFactory;
 
     public FileUploadServlet() {
-        this(new FileUploadObjectFactory());
+        this(new FileUploadProcessorFactory(), new AttachmentKeyFactory(), new FileUploadManagerFactory());
     }
 
-    public FileUploadServlet(FileUploadObjectFactory fileUploadObjectFactory) {
-        this.fileUploadObjectFactory = fileUploadObjectFactory;
+    public FileUploadServlet(FileUploadProcessorFactory fileUploadProcessorFactory,
+                             AttachmentKeyFactory attachmentKeyFactory,
+                             FileUploadManagerFactory fileUploadManagerFactory) {
+        this.fileUploadProcessorFactory = fileUploadProcessorFactory;
+        this.attachmentKeyFactory = attachmentKeyFactory;
+        this.fileUploadManagerFactory = fileUploadManagerFactory;
     }
 
     public static String getUploadUrl(HttpServletRequest req, AttachmentKey attachmentKey) {
         return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + attachmentKey.asString();
-    }
-
-    public static <R> Optional<R> consumeFile(HttpServletRequest req, String fileId, Function<IAttachmentRef, R> callback) {
-        return FileUploadManager.get(req.getSession()).consumeFile(fileId, callback);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class FileUploadServlet extends HttpServlet {
             return;
         }
 
-        final AttachmentKey uploadID = fileUploadObjectFactory.newAttachmentKey(req);
+        final AttachmentKey uploadID = attachmentKeyFactory.get(req);
 
         if (uploadID == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
@@ -76,17 +77,16 @@ public class FileUploadServlet extends HttpServlet {
         }
 
         //recupera o upload info preconfigurado na sessão (deve ser configurado antes de usar a servlet)
-        final Optional<UploadInfo> uploadInfo = FileUploadManager.get(req.getSession()).findUploadInfo(uploadID);
+        final Optional<UploadInfo> uploadInfo = fileUploadManagerFactory.get(req.getSession()).findUploadInfo(uploadID);
 
         if (uploadInfo.isPresent()) {
-            fileUploadObjectFactory
-                    .newFileUploadProcessor(req, resp, uploadInfo.get(), FileUploadManager.get(req.getSession()), fileUploadObjectFactory)
+            fileUploadProcessorFactory
+                    .get(req, resp, uploadInfo.get(), fileUploadManagerFactory.get(req.getSession()))
                     .handleFiles();
         } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
         }
 
     }
-
 
 }

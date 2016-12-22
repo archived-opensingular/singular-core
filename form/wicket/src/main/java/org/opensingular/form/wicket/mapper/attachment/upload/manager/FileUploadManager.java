@@ -1,81 +1,50 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.manager;
 
-import org.apache.wicket.util.collections.ConcurrentHashSet;
-import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.UploadPathHandler;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.AttachmentKeyFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfoRepository;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
-import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfoRepository;
+import org.opensingular.form.wicket.mapper.attachment.upload.supplier.TemporaryAttachmentPersistenceHandlerSupplier;
+import org.opensingular.lib.commons.util.Loggable;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.toList;
+public class FileUploadManager implements Serializable, HttpSessionBindingListener, Loggable {
 
-public class FileUploadManager implements Serializable, HttpSessionBindingListener {
+    public static final String SESSION_KEY = FileUploadManager.class.getName();
 
-    private static final Logger log         = LoggerFactory.getLogger(FileUploadManager.class);
-    public static final  String SESSION_KEY = FileUploadManager.class.getName();
-
-    private volatile Path baseDirPath;
-
-    private final ConcurrentHashSet<UploadInfo>     registeredUploads = new ConcurrentHashSet<>();
-    private final ConcurrentHashSet<FileUploadInfo> uploadedFiles     = new ConcurrentHashSet<>();
-
-    private final FileUploadObjectFactory                  fileUploadObjectFactory;
-    private final ISupplier<IAttachmentPersistenceHandler> persistenceHandler;
+    private AttachmentKeyFactory     attachmentKeyFactory;
+    private UploadInfoRepository     uploadInfoRepository;
+    private UploadPathHandler        uploadPathHandler;
+    private FileUploadInfoRepository fileUploadInfoRepository;
 
     public FileUploadManager() {
-        this.persistenceHandler = () -> ApplicationContextProvider
-                .get()
-                .getBean(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
-        this.fileUploadObjectFactory = new FileUploadObjectFactory();
+        this(new AttachmentKeyFactory(), new UploadInfoRepository(), new UploadPathHandler(), new FileUploadInfoRepository());
     }
 
-    public FileUploadManager(ISupplier<IAttachmentPersistenceHandler> persistenceHandler,
-                             FileUploadObjectFactory fileUploadObjectFactory) {
-        this.persistenceHandler = persistenceHandler;
-        this.fileUploadObjectFactory = fileUploadObjectFactory;
+    public FileUploadManager(AttachmentKeyFactory attachmentKeyFactory, UploadInfoRepository uploadInfoRepository,
+                             UploadPathHandler uploadPathHandler, FileUploadInfoRepository fileUploadInfoRepository) {
+        this.attachmentKeyFactory = attachmentKeyFactory;
+        this.uploadInfoRepository = uploadInfoRepository;
+        this.uploadPathHandler = uploadPathHandler;
+        this.fileUploadInfoRepository = fileUploadInfoRepository;
     }
-
-
-///////////////////////////////////////////////////////////////////////////
-    // 
-    ///////////////////////////////////////////////////////////////////////////
-
-    public static synchronized FileUploadManager get(HttpSession session) {
-        FileUploadManager manager = (FileUploadManager) session.getAttribute(SESSION_KEY);
-        if (manager == null) {
-            manager = new FileUploadManager();
-            session.setAttribute(SESSION_KEY, manager);
-            log.debug("Manager created: SESSION_ID = " + session.getId());
-        }
-        return manager;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // UPLOADS
-    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Cria um contexto de upload na servlet, atribiuindo os metadados necessarios a session
@@ -85,84 +54,50 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
      * @param allowedFileTypes os tipos permitidos
      * @return a chave para os dados de upload
      */
-    public AttachmentKey createUpload(Long maxFileSize, Integer maxFileCount, Collection<String> allowedFileTypes) {
+    public AttachmentKey createUpload(Long maxFileSize, Integer maxFileCount, Collection<String> allowedFileTypes,
+                                      TemporaryAttachmentPersistenceHandlerSupplier temporaryAttachmentPersistenceHandlerSupplier) {
 
         Optional<Long>               oMaxFileSize      = Optional.ofNullable(maxFileSize);
         Optional<Integer>            oMaxFileCount     = Optional.ofNullable(maxFileCount);
         Optional<Collection<String>> oAllowedFileTypes = Optional.ofNullable(allowedFileTypes);
 
-        log.debug("createUpload({},{},{})",
+        getLogger().debug("createUpload({},{},{})",
                 oMaxFileSize.orElse(null),
                 oMaxFileCount.orElse(null),
                 oAllowedFileTypes.orElseGet(Collections::emptyList)
         );
 
-        final AttachmentKey newkey = fileUploadObjectFactory.newAttachmentKey();
+        final AttachmentKey newkey = attachmentKeyFactory.get();
 
-        registeredUploads.add(new UploadInfo(
+        uploadInfoRepository.add(new UploadInfo(
                 newkey,
                 oMaxFileSize.orElse(Long.MAX_VALUE),
                 oMaxFileCount.orElse(1),
-                oAllowedFileTypes.orElseGet(Collections::emptyList)
-        ));
+                oAllowedFileTypes.orElseGet(Collections::emptyList),
+                temporaryAttachmentPersistenceHandlerSupplier));
 
         return newkey;
     }
 
-
     public synchronized Optional<UploadInfo> findUploadInfo(AttachmentKey uploadId) {
-        log.debug("findUploadInfo({})", uploadId);
-
-        return registeredUploads.stream()
-                .filter(it -> it.getUploadId().equals(uploadId))
-                .map(UploadInfo::touch)
-                .findFirst();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // FILES
-    ///////////////////////////////////////////////////////////////////////////
-
-    public Optional<FileUploadInfo> findFileInfo(String fid) {
-        log.debug("findFileInfo({})", fid);
-        return uploadedFiles.stream()
-                .filter(it -> it.getAttachmentRef().getId().equals(fid))
-                .findAny();
+        return uploadInfoRepository.findByAttachmentKey(uploadId);
     }
 
     public <R> Optional<R> consumeFile(String fid, Function<IAttachmentRef, R> callback) {
-        log.debug("consumeFile({})", fid);
-
-        final Optional<FileUploadInfo> fileInfo = findFileInfo(fid);
-        if (fileInfo.isPresent()) {
-            IAttachmentRef ref = fileInfo.get().getAttachmentRef();
-            if (ref != null) {
-                R result = callback.apply(ref);
-                deleteFile(fileInfo.get());
-                return Optional.ofNullable(result);
+        getLogger().debug("consumeFile({})", fid);
+        return fileUploadInfoRepository.findByID(fid).map(info -> {
+            if (info.getAttachmentRef() != null) {
+                R result = callback.apply(info.getAttachmentRef());
+                deleteFile(info);
+                return result;
             }
-        }
-
-        return Optional.empty();
+            return null;
+        });
     }
 
-    public Optional<File> findLocalFile(String fid) {
-        log.debug("findLocalFile({})", fid);
-        return findFileInfo(fid)
-                .map(this::getLocalFilePath)
-                .map(Path::toFile);
-    }
+    public FileUploadInfo createFile(UploadInfo uploadInfo, String fileName, InputStream input) throws IOException {
 
-    public List<FileUploadInfo> listFileInfo(String uid) {
-        log.debug("listFileInfo({})", uid);
-        return uploadedFiles.stream()
-                .filter(it -> uid.equals(it.getAttachmentRef().getId()))
-                .collect(toList());
-    }
-
-    public FileUploadInfo createFile(AttachmentKey key, String fileName, InputStream input) throws IOException {
-
-        log.debug("createFile({},{},{})", key, fileName, input);
+        getLogger().debug("createFile({},{},{})", uploadInfo.getUploadId(), fileName, input);
 
         final Path                          path;
         final IAttachmentPersistenceHandler handler;
@@ -170,8 +105,8 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         final FileUploadInfo                info;
         final File                          file;
 
-        handler = getTemporaryAttachmentPersistenceHandler();
-        path = getLocalFilePath(fileUploadObjectFactory.newAttachmentKey().toString());
+        handler = uploadInfo.getPersistenceHandlerSupplier().get();
+        path = uploadPathHandler.getLocalFilePath(attachmentKeyFactory.get().toString());
         file = path.toFile();
 
         file.deleteOnExit();
@@ -181,60 +116,20 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         attachment = handler.addAttachment(file, Files.size(path), fileName);
         info = new FileUploadInfo(attachment);
 
-        uploadedFiles.add(info);
+        fileUploadInfoRepository.add(info);
 
         return info;
     }
 
-    public void writeFileTo(FileUploadInfo fileInfo, OutputStream output) throws IOException {
-        log.debug("writeFileTo({})", output);
-        Path filePath = getLocalFilePath(fileInfo);
-        Files.copy(filePath, output);
-    }
-
     private void deleteFile(FileUploadInfo fileInfo) {
-        log.debug("deleteFile({})", fileInfo);
+        getLogger().debug("deleteFile({})", fileInfo);
         try {
-            Files.deleteIfExists(getLocalFilePath(fileInfo));
-            uploadedFiles.remove(fileInfo);
-
+            Files.deleteIfExists(uploadPathHandler.getLocalFilePath(fileInfo));
+            fileUploadInfoRepository.remove(fileInfo);
         } catch (IOException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
         }
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // PRIVATE
-    ///////////////////////////////////////////////////////////////////////////
-
-    private Path getLocalFilePath(FileUploadInfo fileInfo) {
-        return getLocalFilePath(fileInfo.getAttachmentRef().getId());
-    }
-
-    private Path getLocalFilePath(String id) {
-        return baseDir().resolve(id);
-    }
-
-    private synchronized Path baseDir() {
-        if (baseDirPath == null || !Files.exists(baseDirPath)) {
-            try {
-                baseDirPath = Files.createTempDirectory(FileUploadManager.class.getSimpleName() + "_");
-                baseDirPath.toFile().deleteOnExit();
-            } catch (IOException ex) {
-                log.warn(ex.getMessage(), ex);
-            }
-        }
-        return baseDirPath;
-    }
-
-    private void deleteLocalFiles() {
-        new ArrayList<>(uploadedFiles).forEach(this::deleteFile);
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // HttpSessionBoundObject
-    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     public void valueBound(HttpSessionBindingEvent event) {
@@ -242,11 +137,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
     @Override
     public void valueUnbound(HttpSessionBindingEvent event) {
-        deleteLocalFiles();
-    }
-
-    public IAttachmentPersistenceHandler getTemporaryAttachmentPersistenceHandler() {
-        return persistenceHandler.get();
+        fileUploadInfoRepository.stream().forEach(this::deleteFile);
     }
 
 }

@@ -34,12 +34,15 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
@@ -54,9 +57,12 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.File
 
 public class FileUploadPanel extends Panel implements Loggable {
 
-    private FileUploadPanel self = this;
+    private final FileUploadManagerFactory fileUploadManagerFactory = new FileUploadManagerFactory();
+
     private       AddFileBehavior adder;
     private final ViewMode        viewMode;
+
+    private final FileUploadPanel    self             = this;
     private final AjaxButton         removeFileButton = new RemoveButton("remove_btn");
     private final WebMarkupContainer uploadFileButton = new UploadButton("upload_btn");
 
@@ -137,11 +143,12 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
             final SIAttachment attachment = getModelObject();
-            this.uploadId = fileUploadManager.createUpload(
-                    attachment.asAtr().getMaxFileSize(),
-                    null,
-                    attachment.asAtr().getAllowedFileTypes());
+            this.uploadId = fileUploadManager.createUpload(attachment.asAtr().getMaxFileSize(), null, attachment.asAtr().getAllowedFileTypes(), this::getTemporaryHandler);
         }
+    }
+
+    private IAttachmentPersistenceHandler getTemporaryHandler() {
+        return getModel().getObject().getDocument().lookupLocalService(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     @Override
@@ -188,7 +195,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return FileUploadManager.get(getServletRequest().getSession());
+        return fileUploadManagerFactory.get(getServletRequest().getSession());
     }
 
     private HttpServletRequest getServletRequest() {
@@ -270,7 +277,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         @Override
         public void onResourceRequested() {
-            final HttpServletRequest  httpReq  = (HttpServletRequest) getWebRequest().getContainerRequest();
+
             final HttpServletResponse httpResp = (HttpServletResponse) getWebResponse().getContainerResponse();
 
             try {
@@ -279,7 +286,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
                 getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
-                Optional<UploadResponseInfo> responseInfo = FileUploadServlet.consumeFile(httpReq, pFileId, attachment -> {
+                Optional<UploadResponseInfo> responseInfo = getFileUploadManager().consumeFile(pFileId, attachment -> {
                     final SIAttachment si = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
                     si.update(attachment);
                     return new UploadResponseInfo(si);
