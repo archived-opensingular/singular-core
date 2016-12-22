@@ -64,25 +64,4 @@ public class UploadResponseInfo implements Serializable {
         return jsonFile;
     }
 
-    public void writeJsonObjectResponseTo(HttpServletResponse response) {
-        doWrite(response, this.toString());
-    }
-
-    public static void writeJsonArrayResponseTo(HttpServletResponse response, List<UploadResponseInfo> list) {
-        JSONArray array = new JSONArray();
-        for (UploadResponseInfo r : list)
-            array.put(r);
-        doWrite(response, array.toString());
-    }
-
-    private static void doWrite(HttpServletResponse response, String s) {
-        response.setContentType("application/json");
-        try {
-            PrintWriter writer = response.getWriter();
-            writer.write(s);
-            writer.close();
-        } catch (IOException e) {
-            throw SingularUtil.propagate(e);
-        }
-    }
 }

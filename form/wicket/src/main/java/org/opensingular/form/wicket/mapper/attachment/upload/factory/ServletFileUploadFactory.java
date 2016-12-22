@@ -5,7 +5,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.opensingular.form.wicket.mapper.attachment.upload.config.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 
-public class ServletFileUploadFactory {
+import java.io.Serializable;
+
+public class ServletFileUploadFactory  implements Serializable {
 
     public ServletFileUpload get(FileUploadConfig config, UploadInfo uploadInfo) {
         final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());

@@ -34,15 +34,14 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactories;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
@@ -57,7 +56,7 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.File
 
 public class FileUploadPanel extends Panel implements Loggable {
 
-    private final FileUploadManagerFactory fileUploadManagerFactory = new FileUploadManagerFactory();
+    private final FileUploadObjectFactories fileUploadObjectFactories = new FileUploadObjectFactories();
 
     private       AddFileBehavior adder;
     private final ViewMode        viewMode;
@@ -148,7 +147,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private IAttachmentPersistenceHandler getTemporaryHandler() {
-        return getModel().getObject().getDocument().lookupLocalService(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        return getModel().getObject().getDocument().getAttachmentPersistenceTemporaryHandler();
     }
 
     @Override
@@ -195,7 +194,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return fileUploadManagerFactory.get(getServletRequest().getSession());
+        return fileUploadObjectFactories.getFileUploadManagerFactory().get(getServletRequest().getSession());
     }
 
     private HttpServletRequest getServletRequest() {
@@ -292,9 +291,11 @@ public class FileUploadPanel extends Panel implements Loggable {
                     return new UploadResponseInfo(si);
                 });
 
-                responseInfo
-                        .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND))
-                        .writeJsonObjectResponseTo(httpResp);
+                UploadResponseInfo uploadResponseInfo = responseInfo
+                        .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND));
+
+                fileUploadObjectFactories.getUploadResponseWriterFactory().get()
+                        .writeJsonObjectResponseTo(httpResp, uploadResponseInfo);
 
             } catch (AbortWithHttpErrorCodeException e) {
                 getLogger().error(e.getMessage(), e);

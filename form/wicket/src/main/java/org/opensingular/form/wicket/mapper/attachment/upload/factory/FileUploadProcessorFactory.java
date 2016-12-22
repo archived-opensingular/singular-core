@@ -4,14 +4,12 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.processor.FileUploadProcessor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 
-public class FileUploadProcessorFactory {
+public class FileUploadProcessorFactory implements Serializable {
 
-    public FileUploadProcessor get(HttpServletRequest req, HttpServletResponse resp,
-                                   UploadInfo uploadInfo, FileUploadManager fileUploadManager) {
-        return new FileUploadProcessor(uploadInfo, req, resp, fileUploadManager, new ServletFileUploadFactory());
+    public FileUploadProcessor get(UploadInfo uploadInfo, FileUploadManager fileUploadManager) {
+        return new FileUploadProcessor(uploadInfo, fileUploadManager);
     }
 
 }
