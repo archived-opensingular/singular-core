@@ -8,6 +8,7 @@ import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -20,6 +21,9 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
 
     @Inject
     protected transient IFormAttachmentService formAttachmentService;
+
+    @Inject
+    private IAttachmentPersistenceHelper attachmentPersistenceHelper;
 
     /**
      * Faz o vinculo entre anexo persistido e formversionentity
@@ -50,6 +54,11 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
     @Override
     public void deleteAttachment(String id, SDocument document) {
         formAttachmentService.deleteFormAttachmentEntity(getAttachmentEntity(id), formService.findCurrentFormVersion(document));
+    }
+
+    @Override
+    public IAttachmentPersistenceHelper getAttachmentPersistenceHelper() {
+        return attachmentPersistenceHelper;
     }
 
 }

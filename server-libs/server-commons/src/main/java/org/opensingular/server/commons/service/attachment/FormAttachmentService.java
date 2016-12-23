@@ -9,6 +9,7 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Transactional
 public class FormAttachmentService extends AbstractFormAttachmentService<AttachmentEntity, AttachmentContentEntitty, FormAttachmentEntity> {
@@ -47,6 +48,16 @@ public class FormAttachmentService extends AbstractFormAttachmentService<Attachm
             return formAttachmentDAO.find(formAttachmentPK);
         }
         return null;
+    }
+
+    @Override
+    public List<FormAttachmentEntity> findAllByVersion(FormVersionEntity formVersionEntity) {
+        return formAttachmentDAO.findFormAttachmentByFormVersionCod(formVersionEntity.getCod());
+    }
+
+    @Override
+    public void deleteFormAttachmentEntity(FormAttachmentEntity formAttachmentEntity) {
+        formAttachmentDAO.delete(formAttachmentEntity);
     }
 
 }

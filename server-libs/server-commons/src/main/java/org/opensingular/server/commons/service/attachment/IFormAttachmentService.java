@@ -5,6 +5,8 @@ import org.opensingular.form.persistence.entity.FormAttachmentEntity;
 import org.opensingular.form.persistence.entity.FormAttachmentEntityId;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 
+import java.util.List;
+
 public interface IFormAttachmentService {
 
     void saveNewFormAttachmentEntity(AttachmentEntity attachmentEntity, FormVersionEntity currentFormVersion);
@@ -17,4 +19,7 @@ public interface IFormAttachmentService {
 
     FormAttachmentEntityId createFormAttachmentEntityId(FormVersionEntity formVersion, AttachmentEntity attachmentEntity);
 
+    List<FormAttachmentEntity> findAllByVersion(FormVersionEntity formVersionEntity);
+
+    void deleteFormAttachmentEntity(FormAttachmentEntity formAttachmentEntity);
 }

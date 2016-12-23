@@ -12,11 +12,6 @@ import javax.transaction.Transactional;
 @Transactional
 public class ServerTemporaryAttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> extends ServerAbstractAttachmentPersistenceService<T, C> {
 
-    @Inject
-    protected transient IFormService formService;
-
-    @Inject
-    protected transient IFormAttachmentService formAttachmentService;
 
     /**
      * Deleta a relacional caso exita
@@ -26,12 +21,9 @@ public class ServerTemporaryAttachmentPersistenceService<T extends AttachmentEnt
      */
     @Override
     public void deleteAttachment(String id, SDocument document) {
-        if (document != null) {
-            FormVersionEntity formVersion = formService.findCurrentFormVersion(document);
-            if (formVersion != null) {
-                formAttachmentService.deleteFormAttachmentEntity(getAttachmentEntity(id), formVersion);
-            }
-        }
+        /**
+         * do nothing
+         */
     }
 
 }

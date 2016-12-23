@@ -31,6 +31,8 @@ import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.service.FormService;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
+import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
 import org.opensingular.server.commons.cache.SingularKeyGenerator;
 import org.opensingular.server.commons.file.FileInputStreamAndHashFactory;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
@@ -54,6 +56,7 @@ import org.opensingular.server.commons.service.ParameterService;
 import org.opensingular.server.commons.service.PetitionService;
 import org.opensingular.server.commons.service.attachment.FormAttachmentService;
 import org.opensingular.server.commons.service.attachment.IFormAttachmentService;
+import org.opensingular.server.commons.service.attachment.ServerAttachmentPersistenceHelper;
 import org.opensingular.server.commons.service.attachment.ServerAttachmentPersistenceService;
 import org.opensingular.server.commons.service.attachment.ServerTemporaryAttachmentPersistenceService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
@@ -260,6 +263,11 @@ public class SingularDefaultBeanFactory {
     @Bean
     public FileInputStreamAndHashFactory fileInputStreamAndHashFactory() {
         return new FileInputStreamAndHashFactory();
+    }
+
+    @Bean
+    public IAttachmentPersistenceHelper serverAttachmentPersistenceHelper(IFormService formService, IFormAttachmentService attachmentService) {
+        return new ServerAttachmentPersistenceHelper(formService, attachmentService);
     }
 
 }
