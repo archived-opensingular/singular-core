@@ -24,7 +24,7 @@ public class DefaultAttachmentPersistenceHelper implements IAttachmentPersistenc
         });
     }
 
-    private void handleAttachment(SIAttachment attachment,
+    public void handleAttachment(SIAttachment attachment,
                                   IAttachmentPersistenceHandler temporaryHandler,
                                   IAttachmentPersistenceHandler persistenceHandler) {
 
