@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.List;
 
-public class UploadResponseWriter {
+public class UploadResponseWriter implements Serializable {
 
     public void writeJsonObjectResponseTo(HttpServletResponse response, UploadResponseInfo uploadResponseInfo) {
         doWrite(response, uploadResponseInfo.toString());
