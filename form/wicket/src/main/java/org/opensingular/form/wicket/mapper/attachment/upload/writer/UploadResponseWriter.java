@@ -12,19 +12,22 @@ import java.util.List;
 
 public class UploadResponseWriter implements Serializable {
 
+    public static final String APPLICATION_JSON = "application/json";
+
     public void writeJsonObjectResponseTo(HttpServletResponse response, UploadResponseInfo uploadResponseInfo) {
         doWrite(response, uploadResponseInfo.toString());
     }
 
     public void writeJsonArrayResponseTo(HttpServletResponse response, List<UploadResponseInfo> list) {
         JSONArray array = new JSONArray();
-        for (UploadResponseInfo r : list)
+        for (UploadResponseInfo r : list) {
             array.put(r);
+        }
         doWrite(response, array.toString());
     }
 
     private void doWrite(HttpServletResponse response, String s) {
-        response.setContentType("application/json");
+        response.setContentType(APPLICATION_JSON);
         try {
             PrintWriter writer = response.getWriter();
             writer.write(s);
