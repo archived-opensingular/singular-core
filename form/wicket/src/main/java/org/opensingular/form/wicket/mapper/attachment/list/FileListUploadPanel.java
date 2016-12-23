@@ -53,10 +53,11 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactories;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
+import org.opensingular.form.wicket.mapper.attachment.upload.writer.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
@@ -75,7 +76,8 @@ import org.opensingular.lib.wicket.util.resource.Icone;
  */
 public class FileListUploadPanel extends Panel implements Loggable {
 
-    private final FileUploadObjectFactories fileUploadObjectFactories = new FileUploadObjectFactories();
+    private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
+    private final UploadResponseWriter     upResponseWriter = new UploadResponseWriter();
 
     private final Component                 fileField;
     private final WebMarkupContainer        fileList;
@@ -223,7 +225,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return fileUploadObjectFactories.getFileUploadManagerFactory().get(getServletRequest().getSession());
+        return upManagerFactory.get(getServletRequest().getSession());
     }
 
     public static class LabelWithIcon extends Label {
@@ -277,8 +279,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 UploadResponseInfo uploadResponseInfo = responseInfo
                         .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND));
 
-                fileUploadObjectFactories.getUploadResponseWriterFactory().get()
-                        .writeJsonObjectResponseTo(httpResp, uploadResponseInfo);
+                upResponseWriter.writeJsonObjectResponseTo(httpResp, uploadResponseInfo);
 
 
             } catch (Exception e) {

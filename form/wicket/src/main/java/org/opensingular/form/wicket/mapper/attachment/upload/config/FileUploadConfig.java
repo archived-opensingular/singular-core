@@ -29,10 +29,4 @@ public class FileUploadConfig implements Serializable {
         //@formatter:on
     }
 
-    public static class Factory implements Serializable {
-        public FileUploadConfig get() {
-            return new FileUploadConfig(SingularProperties.get());
-        }
-    }
-
 }

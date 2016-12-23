@@ -16,15 +16,8 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadR
 
 public class FileUploadProcessor {
 
-    private final UploadInfo        uploadInfo;
-    private final FileUploadManager manager;
 
-    public FileUploadProcessor(UploadInfo uploadInfo, FileUploadManager fileUploadManager) {
-        this.uploadInfo = uploadInfo;
-        this.manager = fileUploadManager;
-    }
-
-    public List<UploadResponseInfo> process(FileItem item) throws Exception {
+    public List<UploadResponseInfo> process(FileItem item, UploadInfo upInfo, FileUploadManager upManager) throws Exception {
 
         final List<UploadResponseInfo> responses = new ArrayList<>();
 
@@ -37,12 +30,12 @@ public class FileUploadProcessor {
             if (item.getSize() == 0) {
                 responses.add(new UploadResponseInfo(originalFilename, ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO));
 
-            } else if (!(uploadInfo.isFileTypeAllowed(contentType) || uploadInfo.isFileTypeAllowed(extension))) {
+            } else if (!(upInfo.isFileTypeAllowed(contentType) || upInfo.isFileTypeAllowed(extension))) {
                 responses.add(new UploadResponseInfo(originalFilename, TIPO_DE_ARQUIVO_NAO_PERMITIDO));
 
             } else {
                 try (InputStream in = item.getInputStream()) {
-                    final FileUploadInfo fileInfo = manager.createFile(uploadInfo, originalFilename, in);
+                    final FileUploadInfo fileInfo = upManager.createFile(upInfo, originalFilename, in);
                     responses.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
                 }
             }

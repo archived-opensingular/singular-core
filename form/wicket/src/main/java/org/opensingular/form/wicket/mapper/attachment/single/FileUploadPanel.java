@@ -39,10 +39,11 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactories;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
+import org.opensingular.form.wicket.mapper.attachment.upload.writer.UploadResponseWriter;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
 
@@ -56,7 +57,8 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.File
 
 public class FileUploadPanel extends Panel implements Loggable {
 
-    private final FileUploadObjectFactories fileUploadObjectFactories = new FileUploadObjectFactories();
+    private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
+    private final UploadResponseWriter     upResponseWriter = new UploadResponseWriter();
 
     private       AddFileBehavior adder;
     private final ViewMode        viewMode;
@@ -194,7 +196,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return fileUploadObjectFactories.getFileUploadManagerFactory().get(getServletRequest().getSession());
+        return upManagerFactory.get(getServletRequest().getSession());
     }
 
     private HttpServletRequest getServletRequest() {
@@ -294,8 +296,7 @@ public class FileUploadPanel extends Panel implements Loggable {
                 UploadResponseInfo uploadResponseInfo = responseInfo
                         .orElseThrow(() -> new AbortWithHttpErrorCodeException(HttpServletResponse.SC_NOT_FOUND));
 
-                fileUploadObjectFactories.getUploadResponseWriterFactory().get()
-                        .writeJsonObjectResponseTo(httpResp, uploadResponseInfo);
+                upResponseWriter.writeJsonObjectResponseTo(httpResp, uploadResponseInfo);
 
             } catch (AbortWithHttpErrorCodeException e) {
                 getLogger().error(e.getMessage(), e);

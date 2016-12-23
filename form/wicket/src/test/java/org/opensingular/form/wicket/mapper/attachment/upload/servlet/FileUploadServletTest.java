@@ -5,14 +5,11 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 import org.opensingular.form.wicket.mapper.attachment.upload.config.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.factory.AttachmentKeyFactory;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadObjectFactories;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.FileUploadProcessorFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.factory.ServletFileUploadFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
@@ -57,9 +54,6 @@ public class FileUploadServletTest {
     private AttachmentKeyFactory attachmentKeyFactory;
 
     @Mock
-    private FileUploadProcessorFactory fileUploadProcessorFactory;
-
-    @Mock
     private UploadInfo uploadInfo;
 
     @Mock
@@ -72,13 +66,7 @@ public class FileUploadServletTest {
     private FileUploadManagerFactory fileUploadManagerFactory;
 
     @Mock
-    private FileUploadConfig.Factory fileUploadConfigFactory;
-
-    @Mock
     private FileUploadConfig fileUploadConfig;
-
-    @Mock
-    private UploadResponseWriter.Factory uploadResponseWriterFactory;
 
     @Mock
     private UploadResponseWriter uploadResponseWriter;
@@ -89,14 +77,13 @@ public class FileUploadServletTest {
     @Mock
     private ServletFileUpload servletFileUpload;
 
-    @InjectMocks
-    private FileUploadObjectFactories fileUploadObjectFactories;
 
     private FileUploadServlet uploadServlet;
 
     @Before
     public void setUp() {
-        uploadServlet = new FileUploadServlet(fileUploadObjectFactories);
+        uploadServlet = new FileUploadServlet(fileUploadManagerFactory, attachmentKeyFactory,
+                servletFileUploadFactory, uploadProcessor, uploadResponseWriter, fileUploadConfig);
     }
 
     @Test
@@ -127,11 +114,11 @@ public class FileUploadServletTest {
     @Test
     public void testDoPostWithMultipartValidKey() throws Exception {
 
-        Map<String, List<FileItem>> params    = new HashMap<>();
+        Map<String, List<FileItem>> params = new HashMap<>();
 
-        List<FileItem>              fileItems = new ArrayList<>();
-        FileItem                    fileItem1 = mock(FileItem.class);
-        FileItem                    fileItem2 = mock(FileItem.class);
+        List<FileItem> fileItems = new ArrayList<>();
+        FileItem       fileItem1 = mock(FileItem.class);
+        FileItem       fileItem2 = mock(FileItem.class);
 
         fileItems.add(fileItem1);
         fileItems.add(fileItem2);
@@ -148,9 +135,8 @@ public class FileUploadServletTest {
         uploadServlet.doPost(request, response);
 
         verify(attachmentKeyFactory).get(eq(request));
-        verify(fileUploadProcessorFactory).get(eq(uploadInfo), eq(uploadManager));
-        verify(uploadProcessor).process(eq(fileItem1));
-        verify(uploadProcessor).process(eq(fileItem2));
+        verify(uploadProcessor).process(eq(fileItem1), eq(uploadInfo), eq(uploadManager));
+        verify(uploadProcessor).process(eq(fileItem2), eq(uploadInfo), eq(uploadManager));
     }
 
     @Test
@@ -165,11 +151,8 @@ public class FileUploadServletTest {
     }
 
     private void mockFactories() {
-        when(fileUploadConfigFactory.get()).thenReturn(fileUploadConfig);
         when(fileUploadManagerFactory.get(eq(session))).thenReturn(uploadManager);
-        when(fileUploadProcessorFactory.get(eq(uploadInfo), eq(uploadManager))).thenReturn(uploadProcessor);
         when(servletFileUploadFactory.get(eq(fileUploadConfig), eq(uploadInfo))).thenReturn(servletFileUpload);
-        when(uploadResponseWriterFactory.get()).thenReturn(uploadResponseWriter);
     }
 
     private void mockMultipartAndPost() {

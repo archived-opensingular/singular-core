@@ -34,9 +34,4 @@ public class UploadResponseWriter {
         }
     }
 
-    public static class Factory implements Serializable {
-        public UploadResponseWriter get() {
-            return new UploadResponseWriter();
-        }
-    }
 }

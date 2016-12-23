@@ -38,7 +38,7 @@ public class FileUploadProcessorTest {
     public void testProcesessWithSizeEquals0() throws Exception {
         when(fileItem.getSize()).thenReturn(0L);
 
-        List<UploadResponseInfo> response = processor.process(fileItem);
+        List<UploadResponseInfo> response = processor.process(fileItem, uploadInfo, manager);
 
         Assert.assertEquals(1L, response.size());
         Assert.assertEquals(UploadResponseInfo.ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO, response.get(0).getErrorMessage());
@@ -49,7 +49,7 @@ public class FileUploadProcessorTest {
         when(fileItem.getSize()).thenReturn(10L);
         when(uploadInfo.isFileTypeAllowed(anyString())).thenReturn(false);
 
-        List<UploadResponseInfo> response = processor.process(fileItem);
+        List<UploadResponseInfo> response = processor.process(fileItem, uploadInfo, manager);
 
         Assert.assertEquals(1L, response.size());
         Assert.assertEquals(UploadResponseInfo.TIPO_DE_ARQUIVO_NAO_PERMITIDO, response.get(0).getErrorMessage());
@@ -70,7 +70,7 @@ public class FileUploadProcessorTest {
         when(manager.createFile(eq(uploadInfo), eq(name), eq(stream))).thenReturn(info);
         when(info.getAttachmentRef()).thenReturn(ref);
 
-        List<UploadResponseInfo> response = processor.process(fileItem);
+        List<UploadResponseInfo> response = processor.process(fileItem, uploadInfo, manager);
 
         Assert.assertEquals(1L, response.size());
         Assert.assertNull(response.get(0).getErrorMessage());
