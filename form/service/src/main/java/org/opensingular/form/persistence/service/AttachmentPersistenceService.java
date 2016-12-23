@@ -42,8 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
-public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty>
-        implements IAttachmentPersistenceHandler<AttachmentRef> {
+public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
     protected AttachmentDao<T, C> attachmentDao;
@@ -77,7 +76,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     @Override
-    public IAttachmentRef getAttachment(String fileId) {
+    public AttachmentRef getAttachment(String fileId) {
         if (StringUtils.isNumeric(fileId)) {
             return new AttachmentRef(attachmentDao.find(Long.valueOf(fileId)));
         }

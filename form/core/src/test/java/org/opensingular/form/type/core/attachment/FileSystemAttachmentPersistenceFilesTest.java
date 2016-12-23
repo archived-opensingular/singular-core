@@ -1,6 +1,6 @@
 package org.opensingular.form.type.core.attachment;
 
-import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
+import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentPersistenceHandler;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -25,7 +25,7 @@ public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPers
     @SuppressWarnings("serial")
     protected IAttachmentPersistenceHandler createHandler() throws Exception {
         createFolders();
-        FileSystemAttachmentHandler handler = new FileSystemAttachmentHandler(tmpFolder);
+        FileSystemAttachmentPersistenceHandler handler = new FileSystemAttachmentPersistenceHandler(tmpFolder);
         return handler;
     }
 

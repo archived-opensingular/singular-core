@@ -17,6 +17,8 @@
 package org.opensingular.form.type.core.attachment;
 
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
+import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +69,22 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      */
     Collection<T> getAttachments();
 
-    IAttachmentRef getAttachment(String fileId);
+    /**
+     * Deve retornar o attachment baseado no seu ID
+     * @param fileId o id do attachment
+     * @return referencia
+     */
+    T getAttachment(String fileId);
 
-    void deleteAttachment(String key, SDocument document);
+    /**
+     * Deleta o attachment a partir do id e do documento
+     * @param id id do anexo
+     * @param document documento
+     */
+    void deleteAttachment(String id, SDocument document);
+
+    default IAttachmentPersistenceHelper getAttachmentPersistenceHelper(){
+        return new DefaultAttachmentPersistenceHelper();
+    }
+
 }

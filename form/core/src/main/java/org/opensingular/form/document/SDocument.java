@@ -16,19 +16,17 @@
 
 package org.opensingular.form.document;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Supplier;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
-import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.validation.IValidationError;
 import com.google.common.collect.ArrayListMultimap;
@@ -40,9 +38,7 @@ import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 
 /**
  * <p>
@@ -134,14 +130,14 @@ public class SDocument {
      * anexos incluidos durante a edição. Se o formulário não for salvo, então
      * os anexos adicionados nesse serviços deverão ser descartados pelo mesmo.
      *
-     * @return Nunca null. Retorna {@link InMemoryAttachmentPersitenceHandler}
+     * @return Nunca null. Retorna {@link InMemoryAttachmentPersistenceHandler}
      * por default.
      */
     @SuppressWarnings("unchecked")
     public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistenceTemporaryHandler() {
         IAttachmentPersistenceHandler<? extends IAttachmentRef> ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
-            ref = new InMemoryAttachmentPersitenceHandler();
+            ref = new InMemoryAttachmentPersistenceHandler();
             setAttachmentPersistenceTemporaryHandler(RefService.of(ref));
         }
         return ref;
@@ -314,15 +310,10 @@ public class SDocument {
         }
     }
 
-    //TODO: Review how this method works. It'd be better if the developer did
-    //  not had to remember to call this before saving in the database.
-    //  Maybe if the document worked as an Active Record, we'd be able to
-    //  intercept the persist call and do this job before the model
-    //  would be persisted.
     public void persistFiles() {
         IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent = getAttachmentPersistencePermanentHandler();
         IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary  = getAttachmentPersistenceTemporaryHandler();
-        new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
+        persistent.getAttachmentPersistenceHelper().doPersistence(this, temporary, persistent);
     }
 
     /**
@@ -397,83 +388,5 @@ public class SDocument {
         return validationErrors;
     }
 
-    /**
-     * Responsible for moving files from temporary state to persistent.
-     *
-     * @author Fabricio Buzeto
-     */
-    private static class AttachmentPersistenceHelper {
-
-        private IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary, persistent;
-
-        public AttachmentPersistenceHelper(
-                IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary,
-                IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent) {
-
-            this.temporary = Objects.requireNonNull(temporary);
-            this.persistent = Objects.requireNonNull(persistent);
-        }
-
-        public void doPersistence(SInstance element) {
-            if (element instanceof SIAttachment) {
-                handleAttachment((SIAttachment) element);
-            } else if (element instanceof ICompositeInstance) {
-                visitChildrenIfAny((ICompositeInstance) element);
-            }
-        }
-
-        private void handleAttachment(SIAttachment attachment) {
-            moveFromTemporaryToPersistentIfNeeded(attachment);
-        }
-
-        private void moveFromTemporaryToPersistentIfNeeded(SIAttachment attachment) {
-            if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
-                IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
-                if (fileRef != null) {
-
-                    AttachmentCopyContext attachmentCopyContext;
-                    IAttachmentRef        newRef;
-
-                    attachmentCopyContext = persistent.copy(fileRef, attachment.getDocument());
-                    newRef = attachmentCopyContext.getNewAttachmentRef();
-
-                    if (attachmentCopyContext.isDeleteOldFiles()) {
-                        deleteOldFiles(attachment, fileRef);
-                    }
-
-                    if (attachmentCopyContext.isUpdateFileId()) {
-                        updateFileId(attachment, newRef);
-                    }
-
-                } else if (attachment.getOriginalFileId() != null) {
-                    persistent.deleteAttachment(attachment.getOriginalFileId(), attachment.getDocument());
-                }
-            }
-        }
-
-        private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
-            temporary.deleteAttachment(fileRef.getId(), attachment.getDocument());
-            if (attachment.getOriginalFileId() != null) {
-                persistent.deleteAttachment(attachment.getOriginalFileId(), attachment.getDocument());
-            }
-        }
-
-        private void updateFileId(SIAttachment attachment, IAttachmentRef newRef) {
-            attachment.setFileId(newRef.getId());
-            attachment.setOriginalFileId(newRef.getId());
-        }
-
-        private void visitChildrenIfAny(ICompositeInstance composite) {
-            if (!composite.getAllChildren().isEmpty()) {
-                visitAllChildren(composite);
-            }
-        }
-
-        private void visitAllChildren(ICompositeInstance composite) {
-            for (SInstance child : composite.getAllChildren()) {
-                doPersistence(child);
-            }
-        }
-    }
 }
 

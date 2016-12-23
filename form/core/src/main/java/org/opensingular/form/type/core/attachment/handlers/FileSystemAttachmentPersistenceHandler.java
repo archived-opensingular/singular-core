@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -50,7 +49,7 @@ import org.opensingular.form.io.HashUtil;
  * SDocument sdocument = instance.getDocument();
  * sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
  * public IAttachmentPersistenceHandler get() {
- * return new FileSystemAttachmentHandler("/tmp");
+ * return new FileSystemAttachmentPersistenceHandler("/tmp");
  * }
  * });
  * </code>
@@ -58,17 +57,17 @@ import org.opensingular.form.io.HashUtil;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
+public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
 
     protected static final String INFO_SUFFIX = ".INFO";
 
     private File folder;
 
-    public FileSystemAttachmentHandler(String folder) {
+    public FileSystemAttachmentPersistenceHandler(String folder) {
         this(new File(folder));
     }
 
-    public FileSystemAttachmentHandler(File folder) {
+    public FileSystemAttachmentPersistenceHandler(File folder) {
         this.folder = folder;
     }
 
@@ -76,8 +75,8 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
      * @return Creates a temporary handler for temporary files.
      * @throws IOException
      */
-    public static FileSystemAttachmentHandler newTemporaryHandler() throws IOException {
-        return new FileSystemAttachmentHandler(createTemporaryFolder());
+    public static FileSystemAttachmentPersistenceHandler newTemporaryHandler() throws IOException {
+        return new FileSystemAttachmentPersistenceHandler(createTemporaryFolder());
     }
 
     public static File createTemporaryFolder() throws IOException {
@@ -135,7 +134,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public IAttachmentRef getAttachment(String fileId) {
+    public FileSystemAttachmentRef getAttachment(String fileId) {
         if(fileId != null){
             File file = findFileFromId(fileId);
             if (file.exists()) {

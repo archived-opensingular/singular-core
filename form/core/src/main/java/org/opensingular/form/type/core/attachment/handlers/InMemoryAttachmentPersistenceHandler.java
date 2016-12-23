@@ -36,11 +36,11 @@ import java.util.Map;
  * @author Daniel C. Bordin
  */
 @SuppressWarnings("serial")
-public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHandler {
+public class InMemoryAttachmentPersistenceHandler extends FileSystemAttachmentPersistenceHandler {
 
     private Map<String, FileSystemAttachmentRef> attachments = new HashMap<>();
 
-    public InMemoryAttachmentPersitenceHandler() {
+    public InMemoryAttachmentPersistenceHandler() {
         super(StringUtils.isEmpty(System.getProperty("java.io.tmpdir")) ? "./tmp" : System.getProperty("java.io.tmpdir"));
     }
 
@@ -65,7 +65,7 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    public IAttachmentRef getAttachment(String fileId) {
+    public FileSystemAttachmentRef getAttachment(String fileId) {
         return attachments.get(fileId);
     }
 

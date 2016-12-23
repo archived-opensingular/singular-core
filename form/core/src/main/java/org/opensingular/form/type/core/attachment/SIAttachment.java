@@ -58,6 +58,12 @@ public class SIAttachment extends SIComposite {
     }
 
     @Override
+    public void clearInstance() {
+        deleteReference();
+        super.clearInstance();
+    }
+
+    @Override
     protected void onRemove() {
         deleteReference();
         super.onRemove();
