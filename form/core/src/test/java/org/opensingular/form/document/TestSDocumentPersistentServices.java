@@ -30,6 +30,7 @@ import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {
@@ -89,7 +90,11 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(persistentHandler.copy(eq(tempRef), any()))
                 .thenReturn(new AttachmentCopyContext<>(persistentRef));
 
+        when(persistentHandler.getAttachmentPersistenceHelper())
+                .thenReturn(new DefaultAttachmentPersistenceHelper());
+
         document.persistFiles();
+
         verify(persistentHandler).copy(eq(tempRef), any());
     }
 
@@ -110,6 +115,9 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         when(persistentHandler.copy(eq(tempRef), any()))
                 .thenReturn(new AttachmentCopyContext<>(persistentRef));
+
+        when(persistentHandler.getAttachmentPersistenceHelper())
+                .thenReturn(new DefaultAttachmentPersistenceHelper());
 
         document.persistFiles();
         assertThat(fileFieldInstance.getFileId()).isEqualTo("avocado");
@@ -134,6 +142,8 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(persistentHandler.copy(eq(tempRef), Mockito.anyObject()))
                 .thenReturn(new AttachmentCopyContext<>(persistentRef));
 
+        when(persistentHandler.getAttachmentPersistenceHelper())
+                .thenReturn(new DefaultAttachmentPersistenceHelper());
 
         document.persistFiles();
         verify(tempHandler).deleteAttachment(eq("abacate"), any());
@@ -155,6 +165,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
                 .thenReturn(persistentRef);
         when(persistentHandler.copy(eq(tempRef), Mockito.anyObject()))
                 .thenReturn(new AttachmentCopyContext<>(persistentRef));
+        when(persistentHandler.getAttachmentPersistenceHelper()).thenReturn(new DefaultAttachmentPersistenceHelper());
 
         document.persistFiles();
         verify(persistentHandler).deleteAttachment(eq("avocado"), any());
@@ -165,6 +176,8 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         fileFieldInstance.setFileId("abacate");
         fileFieldInstance.setOriginalFileId("abacate");
 
+        when(persistentHandler.getAttachmentPersistenceHelper()).thenReturn(new DefaultAttachmentPersistenceHelper());
+
         document.persistFiles();
         verify(persistentHandler, never()).deleteAttachment(any(), any());
         verify(tempHandler, never()).deleteAttachment(any(), any());
@@ -174,7 +187,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
     public void naoFalhaCasoNaoTenhaNadaTemporario() {
         fileFieldInstance.setFileId("abacate");
         fileFieldInstance.setOriginalFileId(null);
-
+        when(persistentHandler.getAttachmentPersistenceHelper()).thenReturn(new DefaultAttachmentPersistenceHelper());
         document.persistFiles();
         verify(persistentHandler, never()).deleteAttachment(any(), any());
         verify(tempHandler, never()).deleteAttachment(any(), any());
