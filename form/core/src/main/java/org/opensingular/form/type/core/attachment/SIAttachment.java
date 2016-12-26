@@ -53,8 +53,12 @@ public class SIAttachment extends SIComposite {
         setValue(STypeAttachment.FIELD_HASH_SHA1, null);
         setValue(STypeAttachment.FIELD_SIZE, null);
         setValue(STypeAttachment.FIELD_NAME, null);
-        setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
-        setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, null);
+        if (hasAttribute(STypeAttachment.ATR_ORIGINAL_ID)) {
+            setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
+        }
+        if (hasAttribute(STypeAttachment.ATR_IS_TEMPORARY)) {
+            setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, null);
+        }
     }
 
     @Override
