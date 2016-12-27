@@ -29,6 +29,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * Decorates an Instance as annotated enabling access to its anotations.
  *
  * @author Fabricio Buzeto
+ * @author Daniel C. Bordin
  */
 public class AtrAnnotation extends STranslatorForAttribute {
 
@@ -154,50 +155,6 @@ public class AtrAnnotation extends STranslatorForAttribute {
      */
     public boolean hasAnnotation() {
         return getAnnotationService().hasAnnotation(target());
-    }
-
-    /**
-     * @return All annotations on this instance and its children.
-     */
-    @Deprecated
-    public List<SIAnnotation> allAnnotations() {
-        return getAnnotationService().getAnnotationsAsList();
-    }
-
-    @Deprecated
-    public void loadAnnotations(SIList<SIAnnotation> annotations) {
-        getAnnotationService().loadAnnotations(annotations);
-    }
-
-    /**
-     * @return A ready to persist object containing all annotations from this instance and its children.
-     */
-    @Deprecated
-    public SIList<SIAnnotation> persistentAnnotationsClassified(String classifier) {
-        return getAnnotationService().persistentAnnotationsClassified(classifier);
-    }
-
-    /**
-     * @return A ready to persist object containing all annotations from this instance and its children
-     * mapped by its classifier
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public Map<String, SIList<SIAnnotation>> persistentAnnotationsClassified() {
-        return getAnnotationService().persistentAnnotationsClassified();
-    }
-
-    @Deprecated
-    public SIList<SIAnnotation> persistentAnnotations() {
-        return getAnnotationService().getAnnotations();
-    }
-
-    /**
-     * Limpa todas a anotações no documento atual
-     */
-    @Deprecated
-    public void clear() {
-        getAnnotationService().clear();
     }
 
     /** Retorna true se a instância ou algum de seus filhos tiver alguma anotação preenchida (não em branco). */
