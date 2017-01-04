@@ -16,11 +16,11 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,7 +79,7 @@ public abstract class SScopeBase implements SScope {
     }
 
     final Optional<SType<?>> getLocalTypeOptional(PathReader pathReader) {
-        SType<?> type = getLocalTypesMap().get(pathReader.getTrecho());
+        SType<?> type = getLocalTypesMap().get(pathReader.getToken());
         if (type == null) {
             return Optional.empty();
         } else if (pathReader.isLast()) {
@@ -97,15 +97,15 @@ public abstract class SScopeBase implements SScope {
     }
 
     final SType<?> getLocalType(PathReader pathReader) {
-        SType<?> type = getLocalTypesMap().get(pathReader.getTrecho());
+        SType<?> type = getLocalTypesMap().get(pathReader.getToken());
         if (type != null) {
             if (pathReader.isLast()) {
                 return type;
             }
             return type.getLocalType(pathReader.next());
         }
-        throw new SingularFormException(pathReader.getTextoErro(this,
-                "Não foi encontrado o tipo '" + pathReader.getTrecho() + "' em '" + getName() + "'"), this);
+        throw new SingularFormException(pathReader.getErrorMsg(this,
+                "Não foi encontrado o tipo '" + pathReader.getToken() + "' em '" + getName() + "'"), this);
     }
 
     final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {

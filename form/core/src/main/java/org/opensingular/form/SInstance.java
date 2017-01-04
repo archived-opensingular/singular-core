@@ -22,6 +22,7 @@ import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -268,7 +269,7 @@ public abstract class SInstance implements SAttributeEnabled {
             if (pathReader.isLast()) {
                 return instance;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             pathReader = pathReader.next();
         }
@@ -285,7 +286,7 @@ public abstract class SInstance implements SAttributeEnabled {
             if (!result.isPresent() || pathReader.isLast()) {
                 return result;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             instance = result.get();
             pathReader = pathReader.next();

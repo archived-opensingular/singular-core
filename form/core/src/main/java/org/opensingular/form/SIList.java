@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.internal.PathReader;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -197,18 +199,18 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             if (pathReader == null) {
                 throw new SingularFormException(msg, this);
             }
-            throw new SingularFormException(pathReader.getErroMsg(this, msg));
+            throw new SingularFormException(pathReader.getErrorMsg(this, msg));
         }
         return values.get(index);
     }
 
     private int resolveIndex(PathReader pathReader) {
         if (!pathReader.isIndex()) {
-            throw new SingularFormException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getTrecho() + "'"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getToken() + "'"));
         }
         int index = pathReader.getIndex();
         if (index < 0) {
-            throw new SingularFormException(pathReader.getErroMsg(this, index + " é um valor inválido de índice"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, index + " é um valor inválido de índice"));
         }
         return index;
     }

@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.opensingular.form.calculation.CalculationContext;
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.internal.PathReader;
 
 public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
 

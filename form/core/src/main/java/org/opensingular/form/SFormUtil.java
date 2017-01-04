@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import javax.lang.model.SourceVersion;
 
+import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
@@ -45,7 +46,7 @@ public final class SFormUtil {
     private SFormUtil() {
     }
 
-    static boolean isValidSimpleName(String name) {
+    public static boolean isValidSimpleName(String name) {
         return idPattern.matcher(name).matches();
     }
 
@@ -72,22 +73,22 @@ public final class SFormUtil {
     private static SType<?> resolveFieldTypeInternal(SType<?> type, PathReader pathReader) {
         if (type instanceof STypeComposite) {
             if (pathReader.isIndex()) {
-                throw new SingularFormException(pathReader.getTextoErro(type, "Índice de lista não se aplica a um tipo composto"));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"));
             }
-            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getTrecho());
+            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getToken());
             if (campo == null) {
-                throw new SingularFormException(pathReader.getTextoErro(type, "Não existe o campo '" + pathReader.getTrecho() + '\''));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + pathReader.getToken() + '\''));
             }
             return campo;
         } else if (type instanceof STypeList) {
             if (pathReader.isIndex()) {
                 return ((STypeList<?, ?>) type).getElementsType();
             }
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não se aplica a um tipo lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica a um tipo lista"));
         } else if (type instanceof STypeSimple) {
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não se aplica um path a um tipo simples"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica um path a um tipo simples"));
         } else {
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não implementado para " + type.getClass()));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não implementado para " + type.getClass()));
         }
     }
 
