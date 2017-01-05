@@ -201,6 +201,8 @@ public class TestDocumentDiff extends TestCaseForm {
 
 
         DocumentDiff diff;
+        AssertionsDiff compact;
+
         diff = calculateDiff(iC1, iC1, 0);
         assertDiffUnchanged(diff, typeC);
         assertDiffUnchangedEmpty(diff, typeC.personA);
@@ -225,6 +227,12 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffUnchanged(diff, "personB.name");
         assertDiffNew(diff, "personB.age");
         assertDiffDeleted(diff, "personB.info");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertChanged(2).isOriginal(iC3).isNewer(iC1);
+        compact.get(0).assertDeleted(0).isOriginal(iC3.getField("personA.name"));
+        compact.get(1).assertChanged(2).isOriginal(iC3.getField("personB"));
+        compact.get(1).get(0).assertNew(0).isNewer(iC1.getField("personB.age"));
+        compact.get(1).get(1).assertDeleted(0).isOriginal(iC3.getField("personB.info"));
 
         diff = calculateDiff(iA3, iC3, 5);
         assertDiffChanged(diff, typeC);
@@ -237,11 +245,21 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffNew(diff, "personB.info");
         assertDiffDeleted(diff, "name");
         assertDiffDeleted(diff, "age");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertChanged(4).isNewer(iC3);
+        compact.get(0).assertNew(0).isNewer(iC3.getField("personA.name"));
+        compact.get(1).assertNew(2).isNewer(iC3.getField("personB"));
+        compact.get(1).get(0).assertNew(0).isNewer(iC3.getField("personB.name"));
+        compact.get(1).get(1).assertNew(0).isNewer(iC3.getField("personB.info"));
+        compact.get(2).assertDeleted(0).isOriginal(iA3.getField("name"));
+        compact.get(3).assertDeleted(0).isOriginal(iA3.getField("age"));
 
         diff = calculateDiff(iA3, iC3.getField("personA"), 1);
         assertDiffChanged(diff, typeA);
         assertDiffUnchanged(diff, "name");
         assertDiffDeleted(diff, "age");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertDeleted(0).isOriginal(iA3.getField("age"));
 
     }
 
@@ -270,6 +288,8 @@ public class TestDocumentDiff extends TestCaseForm {
         iL6.addValue("D");
 
         DocumentDiff diff;
+        AssertionsDiff compact;
+
         diff = calculateDiff(iL1, iL1, 0);
         diff = calculateDiff(iL2, iL2, 0);
         assertDiffUnchanged(diff, "");
@@ -292,6 +312,9 @@ public class TestDocumentDiff extends TestCaseForm {
         diff = calculateDiff(iL2, iL3, 1);
         assertDiffChanged(diff, "");
         assertDiffChanged(diff, "[0]");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertChanged(0).isNewer(iL3.get(0)).isIndex(0, 0);
+
 
         diff = calculateDiff(iL2, iL5, 3);
         assertDiffChanged(diff, "");
@@ -311,6 +334,11 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffUnchanged(diff, "[1]");
         assertDiffChanged(diff, "[2]");
         assertDiffNew(diff, "[3]");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertChanged(3).isNewer(iL6);
+        compact.get(0).assertNew(0).isNewer(iL6.get(0)).isIndex(-1, 0);
+        compact.get(1).assertChanged(0).isNewer(iL6.get(2)).isIndex(1, 2);
+        compact.get(2).assertNew(0).isNewer(iL6.get(3)).isIndex(-1, 3);
 
         diff = calculateDiff(iL6, iL5, 3);
         assertDiffChanged(diff, "");
@@ -318,12 +346,153 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffUnchanged(diff, "[1]");
         assertDiffChanged(diff, "[2]");
         assertDiffDeleted(diff, "[3]");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertChanged(3).isOriginal(iL6);
+        compact.get(0).assertDeleted(0).isOriginal(iL6.get(0));
+        compact.get(1).assertChanged(0).isOriginal(iL6.get(2));
+        compact.get(2).assertDeleted(0).isOriginal(iL6.get(3));
     }
 
-    private void assertType(DiffType expected, DiffInfo info) {
+    @Test
+    public void testListOfComposite() {
+        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
+
+        SIComposite c;
+        SIList<SIComposite> iLC1 = typeCs.newInstance();
+        SIList<SIComposite> iLC2 = typeCs.newInstance();
+        c = iLC2.addNew();
+        c.setValue("personA.name", "Daniel");
+        SIList<SIComposite> iLC3 = typeCs.newInstance();
+        c = iLC3.addNew();
+        c.setValue("personA.name", "Daniel");
+        c = iLC3.addNew();
+        c.setValue("personA.name", "Renato");
+        c.setValue("personB.name", "Lara");
+        SIList<SIComposite> iLC4 = typeCs.newInstance();
+        c = iLC4.addNew();
+        c.setValue("personA.name", "Daniel");
+        c = iLC4.addNew();
+        c.setValue("personA.name", "Renato");
+        c.setValue("personB.name", "Lara2");
+        c = iLC4.addNew();
+        c.setValue("personB.name", "Tomas");
+        iLC4.remove(0);
+
+        DocumentDiff diff;
+        AssertionsDiff compact;
+        diff = calculateDiff(iLC1, iLC1, 0);
+        diff = calculateDiff(iLC2, iLC2, 0);
+        assertDiffUnchanged(diff, "");
+        assertDiffUnchanged(diff, "[0]");
+        assertDiffUnchanged(diff, "[0].personA");
+        assertDiffUnchanged(diff, "[0].personA.name");
+        assertDiffUnchangedEmpty(diff, "[0].personA.age");
+        assertDiffUnchangedEmpty(diff, "[0].personB");
+        diff = calculateDiff(iLC3, iLC3, 0);
+
+        diff = calculateDiff(iLC1, iLC2, 1);
+        assertDiffNew(diff, "");
+        assertDiffNew(diff, "[0]");
+        assertDiffNew(diff, "[0].personA");
+        assertDiffNew(diff, "[0].personA.name");
+        assertDiffUnchangedEmpty(diff, "[0].personA.age");
+        assertDiffUnchangedEmpty(diff, "[0].personB");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertNew(0).isNewer(iLC2.getField("[0]"));
+
+        diff = calculateDiff(iLC1, iLC3, 3);
+        assertDiffNew(diff, "");
+        assertDiffNew(diff, "[0]");
+        assertDiffNew(diff, "[0].personA");
+        assertDiffNew(diff, "[0].personA.name");
+        assertDiffUnchangedEmpty(diff, "[0].personA.age");
+        assertDiffUnchangedEmpty(diff, "[0].personB");
+        assertDiffNew(diff, "[1]");
+        assertDiffNew(diff, "[1].personA");
+        assertDiffNew(diff, "[1].personA.name");
+        assertDiffUnchangedEmpty(diff, "[1].personA.age");
+        assertDiffNew(diff, "[1].personB");
+        assertDiffNew(diff, "[1].personB.name");
+        assertDiffUnchangedEmpty(diff, "[1].personB.age");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertNew(2).isNewer(iLC3);
+        compact.get(0).assertNew(0).isNewer(iLC3.get(0));
+        compact.get(1).assertNew(0).isNewer(iLC3.get(1));
+
+        diff = calculateDiff(iLC3, iLC1, 3);
+        assertDiffDeleted(diff, "");
+        assertDiffDeleted(diff, "[0]");
+        assertDiffDeleted(diff, "[0].personA");
+        assertDiffDeleted(diff, "[0].personA.name");
+        assertDiffUnchangedEmpty(diff, "[0].personA.age");
+        assertDiffUnchangedEmpty(diff, "[0].personB");
+        assertDiffDeleted(diff, "[1]");
+        assertDiffDeleted(diff, "[1].personA");
+        assertDiffDeleted(diff, "[1].personA.name");
+        assertDiffUnchangedEmpty(diff, "[1].personA.age");
+        assertDiffDeleted(diff, "[1].personB");
+        assertDiffDeleted(diff, "[1].personB.name");
+        assertDiffUnchangedEmpty(diff, "[1].personB.age");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertDeleted(2).isOriginal(iLC3);
+        compact.get(0).assertDeleted(0).isOriginal(iLC3.get(0));
+        compact.get(1).assertDeleted(0).isOriginal(iLC3.get(1));
+
+        diff = calculateDiff(iLC2, iLC3, 2);
+        assertDiffChanged(diff, "");
+        assertDiffUnchanged(diff, "[0]");
+        assertDiffUnchanged(diff, "[0].personA");
+        assertDiffUnchanged(diff, "[0].personA.name");
+        assertDiffUnchangedEmpty(diff, "[0].personA.age");
+        assertDiffUnchangedEmpty(diff, "[0].personB");
+        assertDiffNew(diff, "[1]");
+        assertDiffNew(diff, "[1].personA");
+        assertDiffNew(diff, "[1].personA.name");
+        assertDiffUnchangedEmpty(diff, "[1].personA.age");
+        assertDiffNew(diff, "[1].personB");
+        assertDiffNew(diff, "[1].personB.name");
+        assertDiffUnchangedEmpty(diff, "[1].personB.age");
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertNew(0).isNewer(iLC3.get(1)).isIndex(-1, 1);
+
+        diff = calculateDiff(iLC3, iLC4, 3);
+
+        compact = assertDiff(diff.removeUnchangedAndCompact());
+        compact.assertChanged(3).isOriginal(iLC3).isNewer(iLC4);
+        compact.get(0).assertDeleted(0).isOriginal(iLC3.get(0)).isIndex(0, -1);
+        compact.get(1).assertChanged(0).isOriginal(iLC3.getField("[1].personB.name"));
+        compact.get(2).assertNew(0).isOriginal(null).isNewer(iLC4.get(1)).isIndex(-1, 1);
+    }
+
+    private void assertDiffNew(DiffInfo info, int expectedChildren) {
+        assertDiff(info, expectedChildren, DiffType.CHANGED_NEW);
+    }
+
+    private void assertDiffDeleted(DiffInfo info, int expectedChildren) {
+        assertDiff(info, expectedChildren, DiffType.CHANGED_DELETED);
+    }
+
+    private static void assertDiff(DiffInfo info, int expectedChildren, DiffType expectedType) {
+        assertNotNull(info);
+        assertType(expectedType, info);
+        if (expectedChildren != info.getChildren().size()) {
+            throw new AssertionFailedError(
+                    "Era esperado " + expectedChildren + " filhos mas foram encontrados " + info.getChildren().size() +
+                            " para o diff de " + info.getOriginalOrNewer().getPathFull());
+        }
+    }
+
+    @Test
+    public void testListOfListOfComposite() {
+
+    }
+
+    private static void assertType(DiffType expected, DiffInfo info) {
         if (!expected.equals(info.getType())) {
             throw new AssertionFailedError(
-                    "Para o item " + info.getOriginalOrNewer() + "\nExpected :" + expected + "\nActual   :" + info.getType());
+                    "Para o item " + info.getOriginalOrNewer() + "\nExpected :" + expected + "\nActual   :" +
+                            info.getType());
         }
     }
 
@@ -369,15 +538,19 @@ public class TestDocumentDiff extends TestCaseForm {
 
     private DocumentDiff calculateDiff(SInstance original, SInstance newer, int expectedSize) {
         DocumentDiff diff = DocumentDiffUtil.calculateDiff(original, newer);
-        System.out.println("==============");
-        diff.debug(true);
-        Optional<DiffInfo> compacted = diff.removeUnchangedAndCompact();
-        if (compacted.isPresent()) {
-            System.out.println("-------------");
-            compacted.get().debug();
-        }
+        //debug(diff);
         assertEquals(expectedSize, diff.getQtdChanges());
         return diff;
+    }
+
+    private void debug(DocumentDiff diff) {
+        System.out.println("==============");
+        diff.debug(true);
+        DocumentDiff compacted = diff.removeUnchangedAndCompact();
+        if (compacted.hasChange()) {
+            System.out.println("-------------");
+            compacted.debug();
+        }
     }
 
     @SInfoPackage(name = "test.diff")
@@ -425,6 +598,62 @@ public class TestDocumentDiff extends TestCaseForm {
                 personA = addField("personA", TestCompositeA.class);
                 personB = addField("personB", TestCompositeB.class);
             }
+        }
+    }
+
+    private static AssertionsDiff assertDiff(DocumentDiff documentDiff) {
+        return assertDiff(documentDiff.getDiffRoot());
+    }
+
+    private static AssertionsDiff assertDiff(DiffInfo info) {
+        return new AssertionsDiff(info);
+    }
+
+    private static final class AssertionsDiff {
+
+        private final DiffInfo info;
+
+        public AssertionsDiff(DiffInfo info) {
+            this.info = info;
+        }
+
+        public AssertionsDiff assertNew(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.CHANGED_NEW);
+            assertNotNull(info.getNewer());
+            return this;
+        }
+
+        public AssertionsDiff assertDeleted(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.CHANGED_DELETED);
+            assertNotNull(info.getOriginal());
+            return this;
+        }
+
+        public AssertionsDiff assertChanged(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.CHANGED_CONTENT);
+            assertNotNull(info.getOriginal());
+            assertNotNull(info.getNewer());
+            return this;
+        }
+
+        public AssertionsDiff get(int childIndex) {
+            return new AssertionsDiff(info.get(childIndex));
+        }
+
+        public AssertionsDiff isOriginal(SInstance expectedInstance) {
+            assertSame(expectedInstance, info.getOriginal());
+            return this;
+        }
+
+        public AssertionsDiff isNewer(SInstance expectedInstance) {
+            assertSame(expectedInstance, info.getNewer());
+            return this;
+        }
+
+        public AssertionsDiff isIndex(int expectedOriginalIndex, int expectedNewerIndex) {
+            assertEquals(expectedOriginalIndex, info.getOriginalIndex());
+            assertEquals(expectedNewerIndex, info.getNewerIndex());
+            return this;
         }
     }
 }

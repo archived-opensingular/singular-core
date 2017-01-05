@@ -231,6 +231,11 @@ public final class DiffInfo {
         throw new SingularFormException(getErrorMsg(pathReader, "Não encontrado"), getOriginalOrNewer());
     }
 
+    /** Retorna o sub diff na posição indicada. */
+    final DiffInfo get(int childIndex) {
+        return getChildren().get(childIndex);
+    }
+
     /** Monta uma mensagem de erro referente ao processo do path informado. */
     private String getErrorMsg(PathReader pathReader, String msg) {
         return pathReader.getErrorMsg("Para o diff da instância " + getOriginalOrNewer().getPathFull(), msg);
@@ -264,6 +269,11 @@ public final class DiffInfo {
      */
     public int getNewerIndex() {
         return newerIndex;
+    }
+
+    /** Indica se o diff se refere uma instancia que elemento de uma lista. */
+    final boolean isElementOfAList() {
+        return newerIndex != -1 || originalIndex != -1;
     }
 
     /** Define informação complemetar para a alteração detectada. */

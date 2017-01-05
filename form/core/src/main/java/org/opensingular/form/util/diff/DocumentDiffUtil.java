@@ -47,7 +47,7 @@ public final class DocumentDiffUtil {
     /** Cálcula a diferença entre o conteúdo de duas instâncias. */
     public static DocumentDiff calculateDiff(SInstance original, SInstance newer) {
         DiffInfo info = calculateDiff(null, original, newer);
-        return new DocumentDiff(original, newer, info);
+        return new DocumentDiff(info, false);
     }
 
     private static DiffInfo calculateDiff(DiffInfo parent, SInstance original, SInstance newer) {
@@ -207,7 +207,7 @@ public final class DocumentDiffUtil {
         if (info.isUnknownState() || info.isUnchanged()) {
             return null;
         }
-        if (!info.hasChildren()) {
+        if (!info.hasChildren() || isListDeletedOrNewElement(info)) {
             return copyWithoutChildren(info);
         }
         List<DiffInfo> children = info.getChildren();
@@ -228,6 +228,10 @@ public final class DocumentDiffUtil {
         DiffInfo newInfo = newList.get(0);
         newInfo.addPrePath(info);
         return newInfo;
+    }
+
+    private static boolean isListDeletedOrNewElement(DiffInfo info) {
+        return info.isElementOfAList() && (info.isChangedDeleted() || info.isChangedNew());
     }
 
     private static DiffInfo copyWithoutChildren(DiffInfo info) {

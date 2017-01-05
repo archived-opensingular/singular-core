@@ -39,9 +39,11 @@ public class DocumentDiff {
     private HashMap<Integer, DiffInfo> infoForOriginal = new HashMap<>();
     private HashMap<Integer, DiffInfo> infoForNewer = new HashMap<>();
 
-    DocumentDiff(SInstance original, SInstance newer, DiffInfo diffRoot) {
+    DocumentDiff(DiffInfo diffRoot, boolean compactado) {
         this.diffRoot = diffRoot;
-        addToMap(diffRoot);
+        if (!compactado) {
+            addToMap(diffRoot);
+        }
     }
 
     /** Indexa as informações de diff pelos IDs das instâncias. */
@@ -67,7 +69,12 @@ public class DocumentDiff {
      * possuam sub itens adicionais (ou seja, conta apenas as alterações nas folhas).
      */
     public int getQtdChanges() {
-        return diffRoot.getQtdChanges();
+        return diffRoot == null ? 0 : diffRoot.getQtdChanges();
+    }
+
+    /** Indica se foi detectada alguma alteração como resultado da comparação. */
+    public boolean hasChange() {
+        return diffRoot == null ? false : ! diffRoot.isUnchanged();
     }
 
     /**
@@ -75,7 +82,7 @@ public class DocumentDiff {
      * informado.
      */
     public Optional<DiffInfo> findFirst(Predicate<DiffInfo> predicate) {
-        return diffRoot.findFirst(predicate);
+        return diffRoot == null ? Optional.empty() : diffRoot.findFirst(predicate);
     }
 
     /** Veja {@link DiffInfo#get(PathReader)}. */
@@ -114,27 +121,33 @@ public class DocumentDiff {
      * Unchanged e em alguns casos colapsando um pai e um filho único, quando fizer sentido. Visa apresenta uma
      * informação mais enxuta.
      *
-     * @return Pode não retorna um conteúdo senão houver nenhum alteração detectada
+     * @return Pode retornar objeto com conteúdo vazio senão houver nenhum alteração detectada
      */
-    public Optional<DiffInfo> removeUnchangedAndCompact() {
-        return Optional.ofNullable(DocumentDiffUtil.removeUnchangedAndCompact(diffRoot));
+    public DocumentDiff removeUnchangedAndCompact() {
+        return new DocumentDiff(DocumentDiffUtil.removeUnchangedAndCompact(diffRoot), true);
     }
 
     /**
-     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da comparação
+     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
+     * comparação
      * de cada item da estrutura.
      */
     public void debug() {
-        diffRoot.debug();
+        if (diffRoot != null) {
+            diffRoot.debug();
+        }
     }
 
     /**
-     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da comparação
+     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
+     * comparação
      * de cada item da estrutura.
      *
      * @param showAll Indica se exibe todos os itens (true) ou somente aqueles que tiveram alteração (false)
      */
     public void debug(boolean showAll) {
-        diffRoot.debug(showAll);
+        if (diffRoot != null) {
+            diffRoot.debug(showAll);
+        }
     }
 }
