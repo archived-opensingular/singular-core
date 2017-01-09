@@ -527,22 +527,22 @@ public class TestDocumentDiff extends TestCaseForm {
         fS25.clearInstance();
 
         AssertionsDiff diff;
-        diff = diff(fS20, fS20, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
-        diff = diff(fS20, null, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
-        diff = diff(null, fS20, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
-        diff = diff(fS21, fS21, 0).assertUnchanged(0).compact(0).assertEmpty();
+        diff = diff(fS20, fS20, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+        diff = diff(fS20, null, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+        diff = diff(null, fS20, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+        diff = diff(fS21, fS21, 0).assertUnchanged(0).compact(0).assertUnchanged(0);
         diff = diff(null, fS21, 1).assertNew(0).compact(1).assertNew(0);
         diff = diff(fS20, fS21, 1).assertNew(0).compact(1).assertNew(0);
         diff = diff(fS21, fS20, 1).assertDeleted(0).compact(1).assertDeleted(0);
         diff = diff(fS21, null, 1).assertDeleted(0).compact(1).assertDeleted(0);
 
-        diff = diff(fS21, fS22, 0).assertUnchanged(0).compact(0).assertEmpty();
+        diff = diff(fS21, fS22, 0).assertUnchanged(0).compact(0).assertUnchanged(0);
 
         diff = diff(fS21, fS23, 1).assertChanged(0).compact(1).assertChanged(0);
         diff = diff(fS21, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
         diff = diff(fS23, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
 
-        diff = diff(fS20, fS25, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
+        diff = diff(fS20, fS25, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
 
         SIComposite o1 = typeOrder.newInstance();
         SIComposite o2 = typeOrder.newInstance();
@@ -553,7 +553,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
         diff = diff(o1, o1, 0).assertUnchangedEmpty(1);
         diff.get(0).assertUnchangedEmpty(0);
-        diff.compact(0).assertEmpty();
+        diff.compact(0).assertUnchangedEmpty(0);
 
         diff = diff(o1, o2, 1).assertNew(1);
         diff.get(0).assertNew(0).isNewer(o2.getField("file"));
@@ -561,7 +561,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
         diff = diff(o1, o3, 0).assertUnchangedEmpty(1);
         diff.get(0).assertUnchangedEmpty(0);
-        diff.compact(0).assertEmpty();
+        diff.compact(0).assertUnchangedEmpty(0);
 
         diff = diff(o2, o3, 1).assertDeleted(1);
         diff.get(0).assertDeleted(0).isOriginal(o2.getField("file"));
@@ -793,11 +793,6 @@ public class TestDocumentDiff extends TestCaseForm {
             DocumentDiff compact = documentDiff.removeUnchangedAndCompact();
             AssertionsDiff a = new AssertionsDiff(compact, compact.getDiffRoot(), documentDiff);
             return a.assertChangesSize(expectedChangesSize);
-        }
-
-        public AssertionsDiff assertEmpty() {
-            assertNull(info);
-            return this;
         }
     }
 }
