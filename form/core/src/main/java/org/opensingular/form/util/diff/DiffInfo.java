@@ -38,6 +38,8 @@ import java.util.logging.Logger;
  */
 public final class DiffInfo implements Serializable {
 
+    private Integer id;
+
     private transient final SInstance original;
     private transient final SInstance newer;
 
@@ -383,6 +385,14 @@ public final class DiffInfo implements Serializable {
             appendable.append(' ');
         }
         return appendable;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    final void setId(Integer id) {
+        this.id = id;
     }
 }
 

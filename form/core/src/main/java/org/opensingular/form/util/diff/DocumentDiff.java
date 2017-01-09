@@ -40,24 +40,35 @@ public class DocumentDiff implements Serializable {
 
     private HashMap<Integer, DiffInfo> infoForOriginal = new HashMap<>();
     private HashMap<Integer, DiffInfo> infoForNewer = new HashMap<>();
+    private HashMap<Integer, DiffInfo> byId = new HashMap<>();
+    private Integer lastId = 0;
 
     DocumentDiff(DiffInfo diffRoot, boolean compactado) {
         this.diffRoot = diffRoot;
-        if (!compactado) {
-            addToMap(diffRoot);
-        }
+        addToMap(diffRoot, compactado);
     }
 
-    /** Indexa as informações de diff pelos IDs das instâncias. */
-    private void addToMap(DiffInfo info) {
-        if (info.getOriginal() != null) {
-            infoForOriginal.put(info.getOriginal().getId(), info);
+    /**
+     * Indexa as informações de diff pelos IDs das instâncias.
+     *
+     * @param info info a ser adicionado no documento
+     * @param compactado indica se esse é um diff compactado
+     */
+    private void addToMap(DiffInfo info, boolean compactado) {
+        if (!compactado) {
+            if (info.getOriginal() != null) {
+                infoForOriginal.put(info.getOriginal().getId(), info);
+            }
+            if (info.getNewer() != null) {
+                infoForNewer.put(info.getNewer().getId(), info);
+            }
         }
-        if (info.getNewer() != null) {
-            infoForNewer.put(info.getNewer().getId(), info);
-        }
+
+        info.setId(lastId++);
+        byId.put(info.getId(), info);
+
         if (info.hasChildren()) {
-            info.getChildren().forEach(c -> addToMap(c));
+            info.getChildren().forEach(c -> addToMap(c, compactado));
         }
     }
 
@@ -118,6 +129,10 @@ public class DocumentDiff implements Serializable {
         return infoForNewer.get(instanceId);
     }
 
+    public DiffInfo getById(Integer id) {
+        return byId.get(id);
+    }
+
     /**
      * Retorna uma versão compactada do resultado da comparação, onde serão removidas todas as comparações marcada como
      * Unchanged e em alguns casos colapsando um pai e um filho único, quando fizer sentido. Visa apresenta uma
@@ -126,7 +141,13 @@ public class DocumentDiff implements Serializable {
      * @return Pode retornar objeto com conteúdo vazio senão houver nenhum alteração detectada
      */
     public DocumentDiff removeUnchangedAndCompact() {
-        return new DocumentDiff(DocumentDiffUtil.removeUnchangedAndCompact(diffRoot), true);
+        DiffInfo compactRoot;
+        if (diffRoot.isUnknownState() || diffRoot.isUnchanged()) {
+            compactRoot = DocumentDiffUtil.copyWithoutChildren(diffRoot);
+        } else {
+            compactRoot = DocumentDiffUtil.removeUnchangedAndCompact(diffRoot);
+        }
+        return new DocumentDiff(compactRoot, true);
     }
 
     /**

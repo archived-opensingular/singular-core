@@ -24,18 +24,28 @@ package org.opensingular.form.util.diff;
 public enum DiffType {
 
     /** Resultado da comparação indefinido */
-    UNKNOWN_STATE,
+    UNKNOWN_STATE("Indefinido"),
     /** As instâncias não foram alterandas e ambas apresentem o mesmo valor não nulo atribuido. */
-    UNCHANGED_WITH_VALUE,
+    UNCHANGED_WITH_VALUE("Igual"),
     /** As instâncias não foram alterandas e apresentem ambas conteúdo null */
-    UNCHANGED_EMPTY,
+    UNCHANGED_EMPTY("Vazio"),
     /**
      * Foi alterado ou por inserção de um novo item em uma lista ou antes a instância era null e agora passou para não
      * null.
      */
-    CHANGED_NEW,
+    CHANGED_NEW("Incluído"),
     /** Foi alterado ou por ter sido apagado da lista ou pelo conteudo ter sido alterado tudo para null. */
-    CHANGED_DELETED,
+    CHANGED_DELETED("Excluído"),
     /** O conteúdo foi alterado, sendo que tanto antes quando depois as instâncias tinham conteudo diferente de null. */
-    CHANGED_CONTENT;
+    CHANGED_CONTENT("Alterado");
+
+    private String nomeModificacao;
+
+    DiffType(String nomeModificacao) {
+        this.nomeModificacao = nomeModificacao;
+    }
+
+    public String getNomeModificacao() {
+        return nomeModificacao;
+    }
 }

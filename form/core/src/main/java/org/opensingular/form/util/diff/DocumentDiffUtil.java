@@ -299,7 +299,7 @@ public final class DocumentDiffUtil {
     }
 
     /** Faz uma copia do diff sem copia os filhos do mesmo para a nova copia. */
-    private static DiffInfo copyWithoutChildren(DiffInfo info) {
+    static DiffInfo copyWithoutChildren(DiffInfo info) {
         DiffInfo newInfo = new DiffInfo(info.getOriginal(), info.getNewer(), info.getType());
         newInfo.setOriginalIndex(info.getOriginalIndex());
         newInfo.setNewerIndex(info.getNewerIndex());
