@@ -35,6 +35,8 @@ import java.util.logging.Logger;
  */
 public final class DiffInfo {
 
+    private Integer id;
+
     private final SInstance original;
     private final SInstance newer;
 
@@ -308,7 +310,7 @@ public final class DiffInfo {
      * Imprime para a saída informa o item atual de forma indentada e depois chama para os demais subitens se
      * existirem.
      */
-    private void debug(Appendable appendable, int level, boolean showAll) {
+    public void debug(Appendable appendable, int level, boolean showAll) {
         if (!showAll && isUnchanged()) {
             return;
         }
@@ -377,6 +379,14 @@ public final class DiffInfo {
             appendable.append(' ');
         }
         return appendable;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    final void setId(Integer id) {
+        this.id = id;
     }
 }
 

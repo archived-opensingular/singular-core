@@ -234,7 +234,13 @@ public final class DocumentDiffUtil {
         return info.isElementOfAList() && (info.isChangedDeleted() || info.isChangedNew());
     }
 
-    private static DiffInfo copyWithoutChildren(DiffInfo info) {
+    /**
+     * Cria uma cópia do {@link DiffInfo} desconsiderando
+     * os filhos
+     * @param info
+     * @return uma nova instância de DiffInfo sem os filhos
+     */
+    static DiffInfo copyWithoutChildren(DiffInfo info) {
         DiffInfo newInfo = new DiffInfo(info.getOriginal(), info.getNewer(), info.getType());
         newInfo.setOriginalIndex(info.getOriginalIndex());
         newInfo.setNewerIndex(info.getNewerIndex());
