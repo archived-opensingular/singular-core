@@ -18,6 +18,7 @@ package org.opensingular.form.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.BasicAnnotationPersistence;
 import org.opensingular.form.persistence.BasicFormPersistence;
@@ -108,5 +109,19 @@ public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnno
     FormVersionEntity loadFormVersionEntity(Long versionId);
 
     String extractContent(SInstance instance);
+
+    /**
+     * busca a form version entity pelo documento
+     * @param document o documento do form
+     * @return a entidade ou null caso nao encontre
+     */
+    FormEntity findFormEntity(SDocument document);
+
+    /**
+     * procura a FormVersionEntity a partir do documento (instancia raiz)
+     * @param document documento do formulario
+     * @return a entidade
+     */
+    FormVersionEntity findCurrentFormVersion(SDocument document);
 
 }

@@ -16,6 +16,8 @@
 
 package org.opensingular.form.type.core.attachment.handlers;
 
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.lang3.StringUtils;
@@ -34,19 +36,19 @@ import java.util.Map;
  * @author Daniel C. Bordin
  */
 @SuppressWarnings("serial")
-public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHandler {
+public class InMemoryAttachmentPersistenceHandler extends FileSystemAttachmentPersistenceHandler {
 
     private Map<String, FileSystemAttachmentRef> attachments = new HashMap<>();
 
-    public InMemoryAttachmentPersitenceHandler() {
+    public InMemoryAttachmentPersistenceHandler() {
         super(StringUtils.isEmpty(System.getProperty("java.io.tmpdir")) ? "./tmp" : System.getProperty("java.io.tmpdir"));
     }
 
     @Override
-    public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
-        FileSystemAttachmentRef ref = super.copy(toBeCopied);
-        attachments.put(ref.getId(), ref);
-        return ref;
+    public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
+        AttachmentCopyContext<FileSystemAttachmentRef> acr = super.copy(attachmentRef, document);
+        attachments.put(acr.getNewAttachmentRef().getId(), acr.getNewAttachmentRef());
+        return acr;
     }
 
     @Override
@@ -57,13 +59,13 @@ public class InMemoryAttachmentPersitenceHandler extends FileSystemAttachmentHan
     }
 
     @Override
-    public void deleteAttachment(String fileId) {
-        super.deleteAttachment(fileId);
-        attachments.remove(fileId);
+    public void deleteAttachment(String key, SDocument document) {
+        super.deleteAttachment(key, document);
+        attachments.remove(key);
     }
 
     @Override
-    public IAttachmentRef getAttachment(String fileId) {
+    public FileSystemAttachmentRef getAttachment(String fileId) {
         return attachments.get(fileId);
     }
 

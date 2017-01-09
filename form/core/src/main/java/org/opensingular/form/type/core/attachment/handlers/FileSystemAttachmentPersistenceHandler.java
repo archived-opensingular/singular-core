@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,7 +29,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.IOUtil;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +49,7 @@ import org.opensingular.form.io.HashUtil;
  * SDocument sdocument = instance.getDocument();
  * sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
  * public IAttachmentPersistenceHandler get() {
- * return new FileSystemAttachmentHandler("/tmp");
+ * return new FileSystemAttachmentPersistenceHandler("/tmp");
  * }
  * });
  * </code>
@@ -54,17 +57,17 @@ import org.opensingular.form.io.HashUtil;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
+public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
 
     protected static final String INFO_SUFFIX = ".INFO";
 
     private File folder;
 
-    public FileSystemAttachmentHandler(String folder) {
+    public FileSystemAttachmentPersistenceHandler(String folder) {
         this(new File(folder));
     }
 
-    public FileSystemAttachmentHandler(File folder) {
+    public FileSystemAttachmentPersistenceHandler(File folder) {
         this.folder = folder;
     }
 
@@ -72,14 +75,12 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
      * @return Creates a temporary handler for temporary files.
      * @throws IOException
      */
-    public static FileSystemAttachmentHandler newTemporaryHandler() throws IOException {
-        return new FileSystemAttachmentHandler(createTemporaryFolder());
+    public static FileSystemAttachmentPersistenceHandler newTemporaryHandler() throws IOException {
+        return new FileSystemAttachmentPersistenceHandler(createTemporaryFolder());
     }
 
     public static File createTemporaryFolder() throws IOException {
-        File tmpDir = File.createTempFile("singular", "showcase");
-        tmpDir.delete();
-        tmpDir.mkdir();
+        File tmpDir = Files.createTempDirectory("singular").toFile();
         tmpDir.deleteOnExit();
         return tmpDir;
     }
@@ -109,9 +110,9 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public FileSystemAttachmentRef copy(IAttachmentRef toBeCopied) {
-        try (InputStream is = toBeCopied.getInputStream()){
-            return addAttachment(is, toBeCopied.getSize(), toBeCopied.getName());
+    public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
+        try (InputStream is = attachmentRef.getInputStream()){
+            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName()));
         } catch (Exception e) {
             throw SingularException.rethrow(e);
         }
@@ -133,7 +134,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public IAttachmentRef getAttachment(String fileId) {
+    public FileSystemAttachmentRef getAttachment(String fileId) {
         if(fileId != null){
             File file = findFileFromId(fileId);
             if (file.exists()) {
@@ -165,11 +166,11 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     }
 
     @Override
-    public void deleteAttachment(String fileId) {
-        if (fileId == null) return;
-        File file = findFileFromId(fileId);
+    public void deleteAttachment(String key, SDocument document) {
+        if (key == null) return;
+        File file = findFileFromId(key);
         file.delete();
-        File infoFile = infoFileFromId(fileId);
+        File infoFile = infoFileFromId(key);
         infoFile.delete();
     }
 }

@@ -43,8 +43,6 @@ public class STypeCurriculo extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
         {
             asAtr().label("Currículo");
         }

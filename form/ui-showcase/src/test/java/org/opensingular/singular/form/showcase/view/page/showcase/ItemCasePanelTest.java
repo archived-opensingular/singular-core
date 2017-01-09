@@ -40,7 +40,7 @@ public class ItemCasePanelTest {
     private SpringWicketTester springWicketTester;
 
     @Before
-    public void setup() {
+    public void setUp() {
         cb = new CaseBaseForm(CaseInputCoreIntegerPackage.class, "Numeric", "Integer", AnnotationMode.NONE);
     }
 

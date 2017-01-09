@@ -173,6 +173,10 @@ public class SDictionary {
             Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
             SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
             SPackage pacoteDestino = findPackage(scope);
+            if (pacoteDestino == null) {
+                throw new SingularFormException("O pacote de destino para carregar o tipo " +
+                        newType.getNameSimple() + " não pode ser nulo.");
+            }
             if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
                 throw new SingularFormException(
                         "Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '" +
@@ -209,7 +213,7 @@ public class SDictionary {
     }
 
     /** Executa todos os processadores para o tipo informado que estiverem pendentes de execução (se existirem). */
-    public  void runPendingTypeProcessorExecution(SType<?> type) {
+    final void runPendingTypeProcessorExecution(SType<?> type) {
         if(pendingTypeProcessorExecution != null) {
             Collection<Runnable> tasks = pendingTypeProcessorExecution.removeAll(type);
             if(pendingTypeProcessorExecution.isEmpty()) {
@@ -225,11 +229,10 @@ public class SDictionary {
      * Registra que existem processadores pendentes de execução para o tipo, os quais deverão ser executados depois de
      * concluir a execução do onLoadType da classe.
      */
-    public void addTypeProcessorForLatterExecutuion(SType<?> type, Runnable runnable) {
+    final void addTypeProcessorForLatterExecutuion(SType<?> type, Runnable runnable) {
         if(pendingTypeProcessorExecution == null) {
             pendingTypeProcessorExecution = ArrayListMultimap.create();
         }
-        SType<?> dependentType = type.getSuperType();
-        pendingTypeProcessorExecution.put(dependentType, runnable);
+        pendingTypeProcessorExecution.put(type, runnable);
     }
 }

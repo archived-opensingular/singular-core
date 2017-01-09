@@ -20,17 +20,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
 
-import org.apache.commons.io.IOUtils;
-
+import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.CompressionUtil;
 import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
-import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
@@ -87,7 +84,7 @@ public class AttachmentRef implements IAttachmentRef{
         try {
             if (file == null || !file.exists()) {
                 
-                AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntitty> persistenceHandler = 
+                AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntitty> persistenceHandler =
                     ApplicationContextProvider.get().getBean(SDocument.FILE_PERSISTENCE_SERVICE, AttachmentPersistenceService.class);
 
                 file = File.createTempFile(name, hashSha1 + "."+id);

@@ -1,6 +1,6 @@
 package org.opensingular.form.type.core.attachment;
 
-import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 
 public class InMemoryAttachmentPersistenceFilesTest extends BaseAttachmentPersistenceFilesTest {
 
@@ -10,7 +10,7 @@ public class InMemoryAttachmentPersistenceFilesTest extends BaseAttachmentPersis
 
     @Override
     protected IAttachmentPersistenceHandler createHandler() {
-        return new InMemoryAttachmentPersitenceHandler();
+        return new InMemoryAttachmentPersistenceHandler();
     }
 
 

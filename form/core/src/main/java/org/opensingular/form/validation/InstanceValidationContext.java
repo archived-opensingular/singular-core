@@ -71,9 +71,8 @@ public class InstanceValidationContext {
 
     protected void updateDocumentErrors(SInstance rootInstance) {
         SInstances.streamDescendants(rootInstance, true)
-                .map(SInstance::getId)
-                .forEach(instanceId -> rootInstance.getDocument()
-                        .setValidationErrors(instanceId, contextErrors.get(instanceId)));
+                .forEach(instance -> rootInstance.getDocument()
+                        .setValidationErrors(instance.getId(), contextErrors.get(instance.getId())));
     }
 
     public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {

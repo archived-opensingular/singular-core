@@ -28,7 +28,7 @@ public class TestSDocumentServices extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         createTypes(createTestDictionary().createNewPackage("teste"));
         createInstances();
     }
@@ -95,7 +95,7 @@ public class TestSDocumentServices extends TestCaseForm {
         document.bindLocalService(Object.class, ref(provider)); 
         document.bindLocalService(Object.class, ref(provider)); 
         
-        assertThat(document.lookupService(Object.class));
+        document.lookupService(Object.class);
     }
     
     @SuppressWarnings("unchecked")

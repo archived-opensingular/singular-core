@@ -22,6 +22,7 @@ import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -178,7 +179,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public void setValue(Object value) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     public abstract Object getValue();
@@ -187,6 +188,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return convert(getValue(), resultClass);
     }
 
+    /** Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade. */
     public abstract void clearInstance();
 
     /**
@@ -249,15 +251,15 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     <T extends Object> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     void setValue(PathReader pathReader, Object value) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     final SInstance getField(PathReader pathReader) {
@@ -267,14 +269,14 @@ public abstract class SInstance implements SAttributeEnabled {
             if (pathReader.isLast()) {
                 return instance;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             pathReader = pathReader.next();
         }
     }
 
     SInstance getFieldLocal(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     final Optional<SInstance> getFieldOpt(PathReader pathReader) {
@@ -284,7 +286,7 @@ public abstract class SInstance implements SAttributeEnabled {
             if (!result.isPresent() || pathReader.isLast()) {
                 return result;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             instance = result.get();
             pathReader = pathReader.next();
@@ -292,7 +294,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     public String toStringDisplayDefault() {
@@ -413,7 +415,7 @@ public abstract class SInstance implements SAttributeEnabled {
         if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
             return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
-        throw new RuntimeException(
+        throw new SingularFormException(
                 "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
 
@@ -569,10 +571,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean hasNestedValidationErrors() {
-        return SInstances.visit(this, (i, v) -> {
-            if (i.hasValidationErrors())
-                v.stop(true);
-        }).isPresent();
+        return SInstances.hasAny(this, i -> hasValidationErrors());
     }
 
     public Collection<IValidationError> getValidationErrors() {

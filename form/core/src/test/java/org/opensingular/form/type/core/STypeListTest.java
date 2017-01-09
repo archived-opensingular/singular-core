@@ -29,7 +29,7 @@ public class STypeListTest extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");

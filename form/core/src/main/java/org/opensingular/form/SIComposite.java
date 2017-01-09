@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.util.transformer.Value;
 
 public class SIComposite extends SInstance implements ICompositeInstance {
@@ -220,9 +221,9 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      */
     private int findFieldIndexOpt(PathReader pathReader) {
         if (pathReader.isIndex()) {
-            throw new SingularFormException(pathReader.getErroMsg(this, "Não é uma lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é uma lista"));
         }
-        return getType().findIndexOf(pathReader.getTrecho());
+        return getType().findIndexOf(pathReader.getToken());
     }
 
     /**
@@ -232,7 +233,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     private int findFieldIndex(PathReader pathReader) {
         int fieldIndex = findFieldIndexOpt(pathReader);
         if (fieldIndex == -1) {
-            throw new SingularFormException(pathReader.getErroMsg(this, "Não é um campo definido"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é um campo definido"));
         }
         return fieldIndex;
     }

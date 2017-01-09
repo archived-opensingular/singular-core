@@ -78,7 +78,7 @@ class BindingsSInstance<W extends JSWrapperInstance<I>, I extends SInstance> imp
 
     @Override
     public Set<Entry<String, Object>> entrySet() {
-        throw new SingularFormException("Método não implementado");
+        throw new UnsupportedOperationException("Método não implementado");
     }
 
     @Override
@@ -104,7 +104,7 @@ class BindingsSInstance<W extends JSWrapperInstance<I>, I extends SInstance> imp
 
     @Override
     public boolean containsValue(Object value) {
-        throw new SingularFormException("Método não implementado");
+        throw new UnsupportedOperationException("Método não implementado");
     }
 
     @Override

@@ -46,7 +46,6 @@ public class STypeNotificacaoSimplificadaBaixoRisco extends STypeComposite<SICom
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         {
             asAtr().displayString("${nomeComercial} - ${configuracaoLinhaProducao.descricao} (<#list substancias as c>${c.substancia.descricao} ${c.concentracao.descricao}<#sep>, </#sep></#list>) ");

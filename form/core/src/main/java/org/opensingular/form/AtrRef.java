@@ -68,7 +68,7 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
 
     public String getNameFull() {
         if (!isBinded()) {
-            throw new RuntimeException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
+            throw new SingularFormException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
         }
 
         return nameFull;
@@ -89,7 +89,7 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
             nameFull = scopeName + "." + nameSimple;
         } else {
             if (!this.nameScope.equals(scopeName)) {
-                throw new RuntimeException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
+                throw new SingularFormException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
                     + "' não podendo ser reassoaciado ao pacote " + scopeName);
             }
         }

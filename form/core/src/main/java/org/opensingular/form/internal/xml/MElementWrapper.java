@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -109,7 +110,7 @@ public class MElementWrapper extends MElement implements EWrapper {
                 documentBuilder__ = f.newDocumentBuilder();
             } catch (Exception e) {
                 //} catch(javax.xml.parsers.ParserConfigurationException e) {
-                throw new RuntimeException("Não instancia o parser XML: ", e);
+                throw new SingularFormException("Não instancia o parser XML: ", e);
             }
         }
         return documentBuilder__.newDocument();
@@ -214,7 +215,7 @@ public class MElementWrapper extends MElement implements EWrapper {
                     copyElement(novo, (Element) atual);
                     break;
                 default:
-                    throw new RuntimeException("O no do tipo "
+                    throw new SingularFormException("O no do tipo "
                             + atual.getNodeType()
                             + " não é suportado");
             }
