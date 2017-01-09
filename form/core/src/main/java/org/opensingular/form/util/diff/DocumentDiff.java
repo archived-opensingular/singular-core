@@ -20,6 +20,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.internal.PathReader;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -29,10 +30,11 @@ import java.util.function.Predicate;
  * informação de comparação para todas as instâncias da versão original e da versão nova, mesmo que a resultado seja o
  * de indicação de não alteração para cada nó. <p>A informação para uma instância específica pode ser obtida usando o
  * método {@link #getByNewer(SInstance)} ou {@link #getByOriginal(SInstance)}.</p>
+ * <p>O Diff é serializável, mas perde o apontamento para as instâncias original e a nova.</p>
  *
  * @author Daniel C. Bordin on 24/12/2016.
  */
-public class DocumentDiff {
+public class DocumentDiff implements Serializable {
 
     private final DiffInfo diffRoot;
 
@@ -74,7 +76,7 @@ public class DocumentDiff {
 
     /** Indica se foi detectada alguma alteração como resultado da comparação. */
     public boolean hasChange() {
-        return diffRoot == null ? false : ! diffRoot.isUnchanged();
+        return diffRoot == null ? false : !diffRoot.isUnchanged();
     }
 
     /**

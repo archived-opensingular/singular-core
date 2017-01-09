@@ -18,24 +18,35 @@ package org.opensingular.form.util.diff;
 
 import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 
 import java.util.*;
 
 /**
  * Classe utilitária para cálculo da diferença na estrutura e conteúdo de SDocument ou SIntance. <p>Aceita comparar
- * instância de dicionários diferentes ou mesmo de SType diferentes.</p><p> Utiliza a seguinte heuristica: <ol> <li>Se
- * ambas instâncias forem {@link SISimple}, então compara o {@link SISimple#getValue()} das instâncias;</li> <li>Se
- * ambas instâncias forem {@link SIComposite}, então compara os campos com mesmo nome entre os composites, reaplicando
- * essa heurística para cada campo. Campos com nome sem correpondência no outro composite são considerados com inclusões
- * ou deleções.</li> <li>Se ambas instância forem {@link SIList}, então compara os sub itens da lista que possuirem o
+ * instância de dicionários diferentes ou mesmo de SType diferentes.</p>
+ * <p> Utiliza a seguinte heuristica:
+ * <ol>
+ * <li>Se ambas instâncias forem {@link SISimple}, então compara o {@link SISimple#getValue()} das instâncias;</li>
+ * <li>Se ambas instâncias forem {@link SIComposite}, então compara os campos com mesmo nome entre os composites,
+ * reaplicando essa heurística para cada campo. Campos com nome sem correpondência no outro composite são considerados
+ * com inclusões ou deleções.</li>
+ * <li>Se ambas instância forem {@link SIList}, então compara os sub itens da lista que possuirem o
  * mesmo ID de instância, reaplicando essa heurística para cada correspondência. Se uma instância da lista não tiver
  * correspondente na outra lista (não encontra um item na lista com mesmo ID), então será considerada uma inclusão ou
- * exclusão da lista.</li><li>Não caindo nos casos anteriores, então são considerados como itens totalmente diferentes e
- * ficam como um inclusão e exclusão.</li> </ol> </p>
+ * exclusão da lista.</li>
+ * <li>Não caindo nos casos anteriores, então são considerados como itens totalmente diferentes e ficam como um
+ * inclusão e exclusão.</li>
+ * </ol>
+ * </p>
  *
  * @author Daniel C. Bordin on 24/12/2016.
  */
 public final class DocumentDiffUtil {
+
+    /** Registro com os diferentes algorítmos de resolução de diff de acordo com a classe do SType. */
+    private static TypeDiffRegister register;
 
     private DocumentDiffUtil() {}
 
@@ -50,61 +61,36 @@ public final class DocumentDiffUtil {
         return new DocumentDiff(info, false);
     }
 
+    //TODO Implementar o Diff de String usando a biblioteca / exemplo abaixo
+    //https://bitbucket.org/cowwoc/google-diff-match-patch/wiki/Home
+    //https://neil.fraser.name/software/diff_match_patch/svn/trunk/demos/demo_diff.html
+    //https://bitbucket.org/cowwoc/google-diff-match-patch/wiki/API
+    //Se for comparar HTML:
+    //https://github.com/DaisyDiff/DaisyDiff
+
+    /**
+     * Retorna (nunca null) o diff das duas instâncias informadas, já fazendo a chamada recursiva para o sub nós de
+     * cada
+     * instância. Ou seja, retorna o DiffInfo preenchido com sub DiffInfo (se for o caso).
+     */
     private static DiffInfo calculateDiff(DiffInfo parent, SInstance original, SInstance newer) {
         DiffInfo info = new DiffInfo(original, newer, DiffType.UNKNOWN_STATE);
-        Class<?> originalClass = simplifyType(original);
-        Class<?> newerClass = simplifyType(newer);
-        if (originalClass != newerClass && original != null && newer != null) {
+        CalculatorEntry originalEntry = getRegister().get(original);
+        CalculatorEntry newerEntry = getRegister().get(newer);
+
+        if (originalEntry != newerEntry && original != null && newer != null) {
             if (parent == null) {
                 calculateDiff(info, original, null);
                 calculateDiff(info, null, newer);
                 return info;
+            } else {
+                calculateDiff(parent, original, null);
+                return calculateDiff(parent, null, newer);
             }
-            calculateDiff(parent, original, null);
-            return calculateDiff(parent, null, newer);
         }
 
-        Class<?> commonClass = originalClass != null ? originalClass : newerClass;
-        if (commonClass == STypeSimple.class) {
-            Object originalValue = original == null ? null : original.getValue();
-            Object newerValue = newer == null ? null : newer.getValue();
-            if (originalValue == null) {
-                if (newerValue == null) {
-                    info.setType(DiffType.UNCHANGED_EMPTY);
-                } else {
-                    info.setType(DiffType.CHANGED_NEW);
-                }
-            } else if (newerValue == null) {
-                info.setType(DiffType.CHANGED_DELETED);
-            } else if (originalValue.equals(newerValue)) {
-                info.setType(DiffType.UNCHANGED_WITH_VALUE);
-            } else {
-                info.setType(DiffType.CHANGED_CONTENT);
-            }
-        } else if (commonClass == STypeComposite.class) {
-            Set<String> names = new HashSet<>();
-            if (newer != null) {
-                for (SType<?> newerTypeField : ((STypeComposite<?>) newer.getType()).getFields()) {
-                    SInstance newerField = ((SIComposite) newer).getField(newerTypeField);
-                    SInstance originalField = null;
-                    if (original != null) {
-                        originalField = ((SIComposite) original).getFieldOpt(newerTypeField.getNameSimple()).orElse(
-                                null);
-                    }
-                    calculateDiff(info, originalField, newerField);
-                    names.add(newerTypeField.getNameSimple());
-                }
-            }
-            if (original != null) {
-                for (SType<?> originalTypeField : ((STypeComposite<?>) original.getType()).getFields()) {
-                    if (!names.contains(originalTypeField.getNameSimple())) {
-                        calculateDiff(info, ((SIComposite) original).getField(originalTypeField), null);
-                    }
-                }
-            }
-        } else if (commonClass == STypeList.class) {
-            calculateDiffList(info, (SIList<?>) original, (SIList<?>) newer);
-        }
+        CalculatorEntry commonEntry = originalEntry != null ? originalEntry : newerEntry;
+        commonEntry.getCalculator().calculateDiff(info, original, newer);
 
         if (info.isUnknownState()) {
             throw new SingularFormException("Invalid internal state for " + info);
@@ -115,7 +101,56 @@ public final class DocumentDiffUtil {
         return info;
     }
 
-    private static void calculateDiffList(DiffInfo parent, SIList<?> original, SIList<?> newer) {
+    /** Calcula o Diff para uma instância do tipo {@link STypeSimple}. */
+    private static void calculateDiffSimple(DiffInfo info, SInstance original, SInstance newer) {
+        Object originalValue = original == null ? null : original.getValue();
+        Object newerValue = newer == null ? null : newer.getValue();
+        if (originalValue == null) {
+            if (newerValue == null) {
+                info.setType(DiffType.UNCHANGED_EMPTY);
+            } else {
+                info.setType(DiffType.CHANGED_NEW);
+            }
+        } else if (newerValue == null) {
+            info.setType(DiffType.CHANGED_DELETED);
+        } else if (originalValue.equals(newerValue)) {
+            info.setType(DiffType.UNCHANGED_WITH_VALUE);
+        } else {
+            info.setType(DiffType.CHANGED_CONTENT);
+        }
+    }
+
+    /**
+     * Calcula o Diff para uma instância do tipo {@link STypeComposite}. Faz chamada de diff recursiva para os
+     * cada campo da lista.
+     */
+    private static void calculateDiffComposite(DiffInfo info, SIComposite original, SIComposite newer) {
+        Set<String> names = new HashSet<>();
+        if (newer != null) {
+            for (SType<?> newerTypeField : ((STypeComposite<?>) newer.getType()).getFields()) {
+                SInstance newerField = newer.getField(newerTypeField);
+                SInstance originalField = null;
+                if (original != null) {
+                    originalField = original.getFieldOpt(newerTypeField.getNameSimple()).orElse(null);
+                }
+                calculateDiff(info, originalField, newerField);
+                names.add(newerTypeField.getNameSimple());
+            }
+        }
+        if (original != null) {
+            for (SType<?> originalTypeField : ((STypeComposite<?>) original.getType()).getFields()) {
+                if (!names.contains(originalTypeField.getNameSimple())) {
+                    calculateDiff(info, original.getField(originalTypeField), null);
+                }
+            }
+        }
+    }
+
+    /**
+     * Calcula o Diff para uma instância do tipo {@link STypeList}. Faz chamada de diff recursiva para os subElementos
+     * de cada lista.
+     */
+    private static void calculateDiffList(DiffInfo info, SIList<?> original, SIList<?> newer) {
         List<? extends SInstance> originals = original == null ? Collections.emptyList() : new ArrayList<>(
                 original.getValues());
         List<? extends SInstance> newers = newer == null ? Collections.emptyList() : new LinkedList<>(
@@ -126,27 +161,28 @@ public final class DocumentDiffUtil {
             SInstance iO = originals.get(posO);
             int posN = findById(iO.getId(), newers);
             if (posN == -1) {
-                posNotConsumed = diffLinha(parent, iO, posO, newers, consumed, posN, posNotConsumed);
+                posNotConsumed = diffLinha(info, iO, posO, newers, consumed, posN, posNotConsumed);
             } else {
                 for (int posD = posNotConsumed; posD < posN; posD++) {
                     if (!consumed[posD]) {
-                        posNotConsumed = diffLinha(parent, null, -1, newers, consumed, posD, posNotConsumed);
+                        posNotConsumed = diffLinha(info, null, -1, newers, consumed, posD, posNotConsumed);
                     }
                 }
-                posNotConsumed = diffLinha(parent, iO, posO, newers, consumed, posN, posNotConsumed);
+                posNotConsumed = diffLinha(info, iO, posO, newers, consumed, posN, posNotConsumed);
             }
         }
 
         for (int posN = posNotConsumed; posN < newers.size(); posN++) {
             if (!consumed[posN]) {
-                calculateDiff(parent, null, newers.get(posN)).setNewerIndex(posN);
+                calculateDiff(info, null, newers.get(posN)).setNewerIndex(posN);
             }
         }
-        if (parent.isUnknownState()) {
-            parent.setType(DiffType.UNCHANGED_EMPTY);
+        if (info.isUnknownState()) {
+            info.setType(DiffType.UNCHANGED_EMPTY);
         }
     }
 
+    /** Calcula o diff entre dois elementos de lista diferentes, sem fazer chamada recursiva. */
     private static int diffLinha(DiffInfo parent, SInstance instanceOriginal, int posO,
             List<? extends SInstance> newers, boolean[] consumed, int posN, int posNotConsumed) {
         SInstance instanceNewer = posN == -1 ? null : newers.get(posN);
@@ -162,6 +198,7 @@ public final class DocumentDiffUtil {
         return posNotConsumed;
     }
 
+    /** Encontra a posição de um elemento dentro da lista com o ID informado. Retorna -1 senão encontrar. */
     private static int findById(Integer instanceId, List<? extends SInstance> list) {
         for (int i = 0; i < list.size(); i++) {
             if (instanceId.equals(list.get(i).getId())) {
@@ -171,6 +208,7 @@ public final class DocumentDiffUtil {
         return -1;
     }
 
+    /** Inclui novo diff em seu pai já alterando o tipo do pai (se necessário) de acordo com o tipo do novo. */
     private static void addToParent(DiffInfo parent, DiffInfo info) {
         parent.addChild(info);
         if (parent.isUnknownState() || parent.isUnchangedEmpty()) {
@@ -180,27 +218,53 @@ public final class DocumentDiffUtil {
         }
     }
 
-    private static Class<?> simplifyType(SInstance instance) {
-        if (instance == null) {
-            return null;
-        }
-        SType<?> type = instance.getType();
-        while (true) {
-            if (type.getClass() == STypeSimple.class || type.getClass() == STypeComposite.class ||
-                    type.getClass() == STypeList.class) {
-                return type.getClass();
-            } else if (type.getClass() == SType.class) {
-                throw new SingularFormException(
-                        "O Diff não está preparado para tratar tipos da classe " + type.getClass(), instance);
+
+    /** Calcula o Diff para uma instância do tipo {@link STypeAttachment}. Não faz diff recursivos nos sub campos. */
+    private static void calculateDiffAttachment(DiffInfo info, SIAttachment original, SIAttachment newer) {
+        String originalFileId = original == null ? null : original.getFileId();
+        String originalName = original == null ? null : original.getFileName();
+        String originalSHA1 = original == null ? null : original.getFileHashSHA1();
+        boolean originalEmpty = (originalFileId == null);
+
+        String newerFileId = newer == null ? null : newer.getFileId();
+        String newerName = newer == null ? null : newer.getFileName();
+        String newerSHA1 = newer == null ? null : newer.getFileHashSHA1();
+        boolean newerEmpty = (newerFileId == null);
+
+        if (originalEmpty) {
+            if (newerEmpty) {
+                info.setType(DiffType.UNCHANGED_EMPTY);
+            } else {
+                info.setType(DiffType.CHANGED_NEW);
+                info.setDetail(newer.toStringDisplay());
             }
-            type = type.getSuperType();
+        } else if (newerEmpty) {
+            info.setType(DiffType.CHANGED_DELETED);
+        } else {
+            if (!Objects.equals(originalName, newerName)) {
+                if (Objects.equals(originalSHA1, newerSHA1)) {
+                    info.setDetail("Nome alterado de '" + originalName + "' para '" + newerName +
+                            "', mas conteúdo identico (" + original.fileSizeToString() + ')');
+                } else {
+                    info.setDetail("Conteúdo alterado e nome alterado de '" + original.toStringDisplay() + "' para '" +
+                            newer.toStringDisplay() + "'");
+                }
+                info.setType(DiffType.CHANGED_CONTENT);
+            } else if (!Objects.equals(originalSHA1, newerSHA1)) {
+                info.setDetail("Nome do arquivo o mesmo, mas conteúdo alterado (tamanho anterior " +
+                        original.fileSizeToString() + ", novo tamanho " + newer.fileSizeToString() + ')');
+                info.setType(DiffType.CHANGED_CONTENT);
+            } else {
+                info.setType(DiffType.UNCHANGED_WITH_VALUE);
+            }
         }
     }
 
     /**
-     * Retorna uma versão compactada do diff informado, onde serão removidas todas as comparações marcada como Unchanged
-     * e em alguns casos colapsando um pai e um filho único, quando fizer sentido. Visa apresenta uma informação mais
-     * enxuta.
+     * Retorna uma versão compactada do diff informado, onde serão removidas todas as comparações marcada como
+     * Unchanged e em alguns casos colapsando um pai e um filho único, quando fizer sentido. Visa apresentar uma
+     * informação mais enxuta.
+     *
      * @return Null se o Diff e seus subitens não tiver não uma alteração
      */
     static DiffInfo removeUnchangedAndCompact(DiffInfo info) {
@@ -234,10 +298,149 @@ public final class DocumentDiffUtil {
         return info.isElementOfAList() && (info.isChangedDeleted() || info.isChangedNew());
     }
 
+    /** Faz uma copia do diff sem copia os filhos do mesmo para a nova copia. */
     private static DiffInfo copyWithoutChildren(DiffInfo info) {
         DiffInfo newInfo = new DiffInfo(info.getOriginal(), info.getNewer(), info.getType());
         newInfo.setOriginalIndex(info.getOriginalIndex());
         newInfo.setNewerIndex(info.getNewerIndex());
+        newInfo.setDetail(info.getDetail());
         return newInfo;
+    }
+
+    /** Retorna o registro de calculadores de diff por tipo. */
+    private static TypeDiffRegister getRegister() {
+        if (register == null) {
+            register = new TypeDiffRegister();
+        }
+        return register;
+    }
+
+    /**
+     * Preenche o diff informado de acordo com a diferença de duas instâncias.
+     */
+    @FunctionalInterface
+    private static interface TypeDiffCalculator<I extends SInstance> {
+        /**
+         * Chamado para fazer o cálculo do diff para duas instâncias. Se necessário, o método deve fazer o diff
+         * recursivo para as sub informações de cada instância.
+         * <p>Uma das instâncias pode ser null, mas nunca ambas. Ambas as instâncias podem ter conteúdo completamente
+         * nulls.</p>
+         *
+         * @param info     Diff a ser preenchido
+         * @param original Instância original (pode ser null)
+         * @param newer    Nova versão da instância (pode ser null)
+         */
+        public void calculateDiff(DiffInfo info, I original, I newer);
+    }
+
+    /**
+     * Registra os diferentes calculadores de diff para cada classe de {@link SType} e permitir procurar o calculador
+     * mais pertinente para uma instância. Leva em consideração qual a implementação mas específica para cada caso (por
+     * exemplo, um anexo extende composite, mas retorna o específico para anexo).
+     * <p>Por em quanto, o registro (mapeamento) de classe e implementação de calculador de diff está hard coded no
+     * construtor.</p>
+     */
+    private static class TypeDiffRegister {
+        private final CalculatorEntry root;
+
+        TypeDiffRegister() {
+            root = new CalculatorEntry(SType.class, null);
+            //Cuidado: A ordem de inclusão faz diferença. Um tipo derivado deve ser adicionado depois do tipo pai
+            register(STypeSimple.class, DocumentDiffUtil::calculateDiffSimple);
+            register(STypeComposite.class, DocumentDiffUtil::calculateDiffComposite);
+            register(STypeList.class, DocumentDiffUtil::calculateDiffList);
+            register(STypeAttachment.class, DocumentDiffUtil::calculateDiffAttachment);
+        }
+
+        private <I extends SInstance> void register(Class<?> typeClass, TypeDiffCalculator<I> calculator) {
+            if (!root.register(new CalculatorEntry(typeClass, calculator))) {
+                throw new SingularFormException("O Diff não está preparado para tratar tipos da classe " + typeClass);
+            }
+        }
+
+        /** Retorna o calculador de diff mais apropriado para a instância ou dispara exception senão encontrar. */
+        public CalculatorEntry get(SInstance instance) {
+            if (instance == null) {
+                return null;
+            }
+            SType<?> type = instance.getType();
+            CalculatorEntry entry = root.get(type.getClass());
+            if (entry == null || entry == root) {
+                throw new SingularFormException(
+                        "O Diff não está preparado para tratar tipos da classe " + instance.getType().getClass(),
+                        instance);
+            }
+            return entry;
+        }
+    }
+
+    /**
+     * Representa uma registro (mapeamento) de classe de SType e sua respectiva implementação de diff, bem como,
+     * registrar os sub calculadores mais específicos para os tipos derivados da classe de SType.
+     * <p>Por exemplo, a entrada para {@link STypeComposite} tera como sub entrada para {@link STypeAttachment}, pois
+     * esse último é uma class derivada de {@link STypeComposite}.</p>
+     */
+    private static class CalculatorEntry {
+        private final Class<?> typeClass;
+        private final TypeDiffCalculator<?> calculator;
+        private List<CalculatorEntry> subEntries;
+
+        private CalculatorEntry(Class<?> typeClass, TypeDiffCalculator<?> calculator) {
+            this.typeClass = typeClass;
+            this.calculator = calculator;
+        }
+
+        /** Retorna a class de {@link SType} para a qual essa entrada se refere. */
+        public Class<?> getTypeClass() {
+            return typeClass;
+        }
+
+        /** Retorna a implementação do calculador de diff para a classe atual. */
+        public TypeDiffCalculator<SInstance> getCalculator() {
+            return (TypeDiffCalculator<SInstance>) calculator;
+        }
+
+        /**
+         * Registra a entrada informada com sub entrada da entrada atual se a mesma for de uma classe de {@link SType}
+         * derivada da classe da entrada atual.
+         *
+         * @return True se adicionou como entrada ou False a entrada não pertecer com sub entrada da atual.
+         */
+        final <I extends SInstance> boolean register(CalculatorEntry newEntry) {
+            if (!this.typeClass.isAssignableFrom(newEntry.getTypeClass())) {
+                return false;
+            }
+            if (subEntries == null) {
+                subEntries = new ArrayList<>(2);
+            } else {
+                for (CalculatorEntry e : subEntries) {
+                    if (e.register(newEntry)) {
+                        return true;
+                    }
+                }
+            }
+            subEntries.add(newEntry);
+            return true;
+        }
+
+        /**
+         * Localiza a entrada mais específica possível para a classe de {@link SType} informada ou retorna null senão
+         * tiver nenhum match.
+         */
+        public CalculatorEntry get(Class<?> typeClassTarget) {
+            if (this.typeClass.isAssignableFrom(typeClassTarget)) {
+                if (subEntries != null) {
+                    CalculatorEntry result = null;
+                    for (CalculatorEntry e : subEntries) {
+                        result = e.get(typeClassTarget);
+                        if (result != null) {
+                            return result;
+                        }
+                    }
+                }
+                return this;
+            }
+            return null;
+        }
     }
 }

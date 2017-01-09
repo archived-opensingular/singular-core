@@ -16,11 +16,13 @@
 
 package org.opensingular.form.util.diff;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.internal.PathReader;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -28,15 +30,16 @@ import java.util.logging.Logger;
 
 /**
  * Representa a informação de compração entre duas instâncias. <p> Pode ser que uma das instâncias seja null quando for
- * uma alteração de criação ou exclusão. Também pode contem uma lista de informações de comparações para os sub itens da
- * instância (ver {@link #getChildren()}). </p>
+ * uma alteração de criação ou exclusão. Também pode contem uma lista de informações de comparações para os sub itens
+ * da instância (ver {@link #getChildren()}). </p>
+ * <p>O Diff é serializável, mas perde o apontamento para as instâncias original e a nova.</p>
  *
  * @author Daniel C. Bordin on 24/12/2016.
  */
-public final class DiffInfo {
+public final class DiffInfo implements Serializable {
 
-    private final SInstance original;
-    private final SInstance newer;
+    private transient final SInstance original;
+    private transient final SInstance newer;
 
     private int originalIndex = -1;
     private int newerIndex = -1;
@@ -206,8 +209,8 @@ public final class DiffInfo {
 
     /**
      * Retorna o DiffInfo referente ao path informado. Usa mesma anotação para path de instâncias. Para consulta
-     * indexadas (por exemplo, "nomes[3]", o índice considerado não é o da lista da SInstance, mas da lista da sub lista
-     * de comparação.
+     * indexadas (por exemplo, "nomes[3]", o índice considerado não é o da lista da SInstance, mas da lista da sub
+     * lista de comparação.
      *
      * @return Nunca retorna null.
      */
@@ -254,18 +257,18 @@ public final class DiffInfo {
     /**
      * Se a instância original estava dentro de uma lista, indica qual o índice dela dentro dessa lista. Se a instancia
      * original for null ou senão fazia parte de uma lista, então retorna -1. <p> {@link #getOriginalIndex()} e {@link
-     * #getNewerIndex()} em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido ou
-     * removido.</p>
+     * #getNewerIndex()} em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido
+     * ou removido.</p>
      */
     public int getOriginalIndex() {
         return originalIndex;
     }
 
     /**
-     * Se a instância nova estava dentro de uma lista, indica qual o índice dela dentro dessa lista. Se a instancia nova
-     * for null ou senão fazia parte de uma lista, então retorna -1. <p> {@link #getOriginalIndex()} e {@link
-     * #getNewerIndex()} em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido ou
-     * removido.</p>
+     * Se a instância nova estava dentro de uma lista, indica qual o índice dela dentro dessa lista. Se a instancia
+     * nova for null ou senão fazia parte de uma lista, então retorna -1. <p> {@link #getOriginalIndex()} e {@link
+     * #getNewerIndex()} em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido
+     * ou removido.</p>
      */
     public int getNewerIndex() {
         return newerIndex;
@@ -287,16 +290,16 @@ public final class DiffInfo {
     }
 
     /**
-     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da comparação
-     * de cada item da estrutura.
+     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
+     * comparação de cada item da estrutura.
      */
     public void debug() {
         debug(System.out, 0, true);
     }
 
     /**
-     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da comparação
-     * de cada item da estrutura.
+     * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
+     * comparação de cada item da estrutura.
      *
      * @param showAll Indica se exibe todos os itens (true) ou somente aqueles que tiveram alteração (false)
      */
@@ -340,6 +343,9 @@ public final class DiffInfo {
                     printPathItem(appendable, prePath.get(i), i != 0);
                 }
                 printPathItem(appendable, this, true);
+            }
+            if (StringUtils.isNotBlank(detail)) {
+                appendable.append(" : ").append(detail);
             }
             appendable.append('\n');
             if (children != null) {

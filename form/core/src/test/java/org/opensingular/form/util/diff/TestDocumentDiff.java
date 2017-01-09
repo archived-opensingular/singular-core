@@ -24,11 +24,14 @@ import org.opensingular.form.*;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.AttachmentTestUtil;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeA;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeB;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeC;
 
-import java.util.Optional;
+import java.io.IOException;
 
 /**
  * @author Daniel C. Bordin on 27/12/2016.
@@ -359,7 +362,7 @@ public class TestDocumentDiff extends TestCaseForm {
         STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
 
         SIComposite c;
-        SIList<SIComposite> iLC1 = typeCs.newInstance();
+        SIList<SIComposite> iLC0 = typeCs.newInstance();
         SIList<SIComposite> iLC2 = typeCs.newInstance();
         c = iLC2.addNew();
         c.setValue("personA.name", "Daniel");
@@ -381,7 +384,8 @@ public class TestDocumentDiff extends TestCaseForm {
 
         DocumentDiff diff;
         AssertionsDiff compact;
-        diff = calculateDiff(iLC1, iLC1, 0);
+        diff = calculateDiff(iLC0, iLC0, 0);
+
         diff = calculateDiff(iLC2, iLC2, 0);
         assertDiffUnchanged(diff, "");
         assertDiffUnchanged(diff, "[0]");
@@ -391,7 +395,7 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffUnchangedEmpty(diff, "[0].personB");
         diff = calculateDiff(iLC3, iLC3, 0);
 
-        diff = calculateDiff(iLC1, iLC2, 1);
+        diff = calculateDiff(iLC0, iLC2, 1);
         assertDiffNew(diff, "");
         assertDiffNew(diff, "[0]");
         assertDiffNew(diff, "[0].personA");
@@ -401,7 +405,7 @@ public class TestDocumentDiff extends TestCaseForm {
         compact = assertDiff(diff.removeUnchangedAndCompact());
         compact.assertNew(0).isNewer(iLC2.getField("[0]"));
 
-        diff = calculateDiff(iLC1, iLC3, 3);
+        diff = calculateDiff(iLC0, iLC3, 3);
         assertDiffNew(diff, "");
         assertDiffNew(diff, "[0]");
         assertDiffNew(diff, "[0].personA");
@@ -420,7 +424,7 @@ public class TestDocumentDiff extends TestCaseForm {
         compact.get(0).assertNew(0).isNewer(iLC3.get(0));
         compact.get(1).assertNew(0).isNewer(iLC3.get(1));
 
-        diff = calculateDiff(iLC3, iLC1, 3);
+        diff = calculateDiff(iLC3, iLC0, 3);
         assertDiffDeleted(diff, "");
         assertDiffDeleted(diff, "[0]");
         assertDiffDeleted(diff, "[0].personA");
@@ -463,6 +467,105 @@ public class TestDocumentDiff extends TestCaseForm {
         compact.get(0).assertDeleted(0).isOriginal(iLC3.get(0)).isIndex(0, -1);
         compact.get(1).assertChanged(0).isOriginal(iLC3.getField("[1].personB.name"));
         compact.get(2).assertNew(0).isOriginal(null).isNewer(iLC4.get(1)).isIndex(-1, 1);
+    }
+
+    @Test
+    public void testListOfCompositeEmpty() {
+        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
+
+        SIList<SIComposite>[] iL = new SIList[6];
+
+        SIComposite c;
+        iL[0] = typeCs.newInstance();
+        iL[1] = typeCs.newInstance();
+        c = iL[1].addNew();
+        iL[2] = typeCs.newInstance();
+        c = iL[2].addNew();
+        c = iL[2].addNew();
+        iL[3] = typeCs.newInstance();
+        c = iL[3].addNew();
+        c = iL[3].addNew();
+        iL[3].remove(0);
+        iL[4] = typeCs.newInstance();
+        c = iL[4].addNew();
+        c.getField("personA.name");
+
+
+        for (int i = 0; i < iL.length; i++) {
+            for (int j = 0; j < iL.length; j++) {
+                if (iL[i] != null && iL[j] != null) {
+                    DocumentDiff diff = calculateDiff(iL[i], iL[j], 0);
+                    assertFalse(diff.removeUnchangedAndCompact().hasChange());
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testAttachment() throws IOException {
+        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        STypeComposite<SIComposite> typeOrder = pkg.createCompositeType("order");
+        STypeAttachment typeFile1 = typeOrder.addFieldAttachment("file", false);
+        STypeAttachment typeFile2 = pkg.getDictionary().getType(STypeAttachment.class);
+
+        byte[] content0 = new byte[]{};
+        byte[] content1 = new byte[]{10, 20, 30};
+        byte[] content2 = new byte[]{1, 2, 3, 4};
+
+        SIAttachment fS20 = typeFile2.newInstance();
+        SIAttachment fS21 = typeFile2.newInstance();
+        fS21.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
+        SIAttachment fS22 = typeFile2.newInstance();
+        fS22.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
+        SIAttachment fS23 = typeFile2.newInstance();
+        fS23.setContent("f00", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
+        SIAttachment fS24 = typeFile2.newInstance();
+        fS24.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content2), content2.length);
+        SIAttachment fS25 = typeFile2.newInstance();
+        fS25.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content2), content2.length);
+        fS25.clearInstance();
+
+        AssertionsDiff diff;
+        diff = diff(fS20, fS20, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
+        diff = diff(fS20, null, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
+        diff = diff(null, fS20, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
+        diff = diff(fS21, fS21, 0).assertUnchanged(0).compact(0).assertEmpty();
+        diff = diff(null, fS21, 1).assertNew(0).compact(1).assertNew(0);
+        diff = diff(fS20, fS21, 1).assertNew(0).compact(1).assertNew(0);
+        diff = diff(fS21, fS20, 1).assertDeleted(0).compact(1).assertDeleted(0);
+        diff = diff(fS21, null, 1).assertDeleted(0).compact(1).assertDeleted(0);
+
+        diff = diff(fS21, fS22, 0).assertUnchanged(0).compact(0).assertEmpty();
+
+        diff = diff(fS21, fS23, 1).assertChanged(0).compact(1).assertChanged(0);
+        diff = diff(fS21, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
+        diff = diff(fS23, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
+
+        diff = diff(fS20, fS25, 0).assertUnchangedEmpty(0).compact(0).assertEmpty();
+
+        SIComposite o1 = typeOrder.newInstance();
+        SIComposite o2 = typeOrder.newInstance();
+        o2.getField(typeFile1).setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
+        SIComposite o3 = typeOrder.newInstance();
+        o3.getField(typeFile1).setContent("f1", AttachmentTestUtil.writeBytesToTempFile(content2), content2.length);
+        o3.clearInstance();
+
+        diff = diff(o1, o1, 0).assertUnchangedEmpty(1);
+        diff.get(0).assertUnchangedEmpty(0);
+        diff.compact(0).assertEmpty();
+
+        diff = diff(o1, o2, 1).assertNew(1);
+        diff.get(0).assertNew(0).isNewer(o2.getField("file"));
+        diff.compact(1).assertNew(0).isNewer(o2.getField("file"));
+
+        diff = diff(o1, o3, 0).assertUnchangedEmpty(1);
+        diff.get(0).assertUnchangedEmpty(0);
+        diff.compact(0).assertEmpty();
+
+        diff = diff(o2, o3, 1).assertDeleted(1);
+        diff.get(0).assertDeleted(0).isOriginal(o2.getField("file"));
+        diff.compact(1).assertDeleted(0).isOriginal(o2.getField("file"));
     }
 
     private void assertDiffNew(DiffInfo info, int expectedChildren) {
@@ -536,10 +639,20 @@ public class TestDocumentDiff extends TestCaseForm {
         assertType(DiffType.CHANGED_NEW, diff.get(path));
     }
 
+
+    private AssertionsDiff diff(SInstance original, SInstance newer, int expectedChangesSize) {
+        return new AssertionsDiff(calculateDiff(original, newer)).assertChangesSize(expectedChangesSize);
+    }
+
     private DocumentDiff calculateDiff(SInstance original, SInstance newer, int expectedSize) {
-        DocumentDiff diff = DocumentDiffUtil.calculateDiff(original, newer);
-        //debug(diff);
+        DocumentDiff diff = calculateDiff(original, newer);
         assertEquals(expectedSize, diff.getQtdChanges());
+        return diff;
+    }
+
+    private DocumentDiff calculateDiff(SInstance original, SInstance newer) {
+        DocumentDiff diff = DocumentDiffUtil.calculateDiff(original, newer);
+        debug(diff);
         return diff;
     }
 
@@ -602,19 +715,22 @@ public class TestDocumentDiff extends TestCaseForm {
     }
 
     private static AssertionsDiff assertDiff(DocumentDiff documentDiff) {
-        return assertDiff(documentDiff.getDiffRoot());
-    }
-
-    private static AssertionsDiff assertDiff(DiffInfo info) {
-        return new AssertionsDiff(info);
+        return new AssertionsDiff(documentDiff);
     }
 
     private static final class AssertionsDiff {
-
+        private final DocumentDiff documentDiff;
+        private final DocumentDiff documentDiffOrginal;
         private final DiffInfo info;
 
-        public AssertionsDiff(DiffInfo info) {
+        public AssertionsDiff(DocumentDiff documentDiff) {
+            this(documentDiff, documentDiff.getDiffRoot(), null);
+        }
+
+        private AssertionsDiff(DocumentDiff documentDiff, DiffInfo info, DocumentDiff documentDiffOrginal) {
+            this.documentDiff = documentDiff;
             this.info = info;
+            this.documentDiffOrginal = documentDiffOrginal;
         }
 
         public AssertionsDiff assertNew(int expectedChildrenSize) {
@@ -629,6 +745,16 @@ public class TestDocumentDiff extends TestCaseForm {
             return this;
         }
 
+        public AssertionsDiff assertUnchanged(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.UNCHANGED_WITH_VALUE);
+            return this;
+        }
+
+        public AssertionsDiff assertUnchangedEmpty(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.UNCHANGED_EMPTY);
+            return this;
+        }
+
         public AssertionsDiff assertChanged(int expectedChildrenSize) {
             assertDiff(info, expectedChildrenSize, DiffType.CHANGED_CONTENT);
             assertNotNull(info.getOriginal());
@@ -637,7 +763,7 @@ public class TestDocumentDiff extends TestCaseForm {
         }
 
         public AssertionsDiff get(int childIndex) {
-            return new AssertionsDiff(info.get(childIndex));
+            return new AssertionsDiff(documentDiff, info.get(childIndex), null);
         }
 
         public AssertionsDiff isOriginal(SInstance expectedInstance) {
@@ -653,6 +779,24 @@ public class TestDocumentDiff extends TestCaseForm {
         public AssertionsDiff isIndex(int expectedOriginalIndex, int expectedNewerIndex) {
             assertEquals(expectedOriginalIndex, info.getOriginalIndex());
             assertEquals(expectedNewerIndex, info.getNewerIndex());
+            return this;
+        }
+
+        public AssertionsDiff assertChangesSize(int expectedChangesSize) {
+            if (expectedChangesSize == 0 && info != null) {
+                assertEquals(expectedChangesSize, info.getQtdChanges());
+            }
+            return this;
+        }
+
+        public AssertionsDiff compact(int expectedChangesSize) {
+            DocumentDiff compact = documentDiff.removeUnchangedAndCompact();
+            AssertionsDiff a = new AssertionsDiff(compact, compact.getDiffRoot(), documentDiff);
+            return a.assertChangesSize(expectedChangesSize);
+        }
+
+        public AssertionsDiff assertEmpty() {
+            assertNull(info);
             return this;
         }
     }

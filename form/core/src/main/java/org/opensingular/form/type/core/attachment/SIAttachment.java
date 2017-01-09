@@ -141,21 +141,28 @@ public class SIAttachment extends SIComposite {
         }
     }
 
+    public String fileSizeToString() {
+        if (getFileSize() <= 0) {
+            return "";
+        }
+        final String[] sufix = new String[]{"B", "KB", "MB", "GB"};
+        int posSufix = 0;
+        double bytesSize = getFileSize();
+
+        while (bytesSize > 900 && posSufix < sufix.length - 1) {
+            bytesSize = bytesSize / 1024;
+            posSufix++;
+        }
+
+        return Math.round(bytesSize) + " " + sufix[posSufix];
+    }
+
     @Override
     public String toStringDisplayDefault() {
         if (getFileSize() <= 0 || getFileName() == null) {
             return super.toStringDisplayDefault();
         }
-        final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
-        int            posSufixo = 0;
-        double         bytesSize = getFileSize();
-
-        while (bytesSize > 900 && posSufixo < sufixo.length - 1) {
-            bytesSize = bytesSize / 1024;
-            posSufixo++;
-        }
-
-        return getFileName() + " (" + Math.round(bytesSize) + " " + sufixo[posSufixo] + ")";
+        return getFileName() + " (" + fileSizeToString() + ")";
     }
 
     public void update(IAttachmentRef ref) {
