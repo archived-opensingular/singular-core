@@ -162,6 +162,11 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
         return this;
     }
 
+    public BSDataTableBuilder<T, S, PREVCOL> disablePagination() {
+        setRowsPerPage(Long.MAX_VALUE);
+        return this;
+    }
+
     public BSDataTable<T, S> build(String id) {
         return newDatatable(id, new ArrayList<>(columns), dataProvider)
                 .setRowsPerPage(rowsPerPage)

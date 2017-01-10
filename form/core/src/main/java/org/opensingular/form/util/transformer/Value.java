@@ -202,7 +202,7 @@ public class Value {
 
     /**
      * Configura os valores contidos em value na MInstancia passara como
-     * parametro recursivamente. Usualmente value é o retorno do metodo
+     * parametro recursivamente. Usualmente content é o retorno do metodo
      * dehydrate.
      *
      * @param instancia

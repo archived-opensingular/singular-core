@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.*;
+import org.opensingular.form.io.TesteFormSerializationUtil;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -30,6 +31,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeA;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeB;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeC;
+import org.opensingular.form.view.SViewAutoComplete;
 
 import java.io.IOException;
 
@@ -263,7 +265,58 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffDeleted(diff, "age");
         compact = assertDiff(diff.removeUnchangedAndCompact());
         compact.assertDeleted(0).isOriginal(iA3.getField("age"));
+        compact.assertNames("age", "Age", "personA.age", "Person A : Age");
 
+    }
+
+    @Test
+    public void testCompositeResumedBecauseOfView() {
+        assertNotNull(SViewAutoComplete.class.getAnnotation(DiffCompositeDetailNoRetention.class));
+        TestCompositeC typeC = createTestDictionary().getType(TestCompositeC.class);
+        typeC.getField(typeC.personB).setView(SViewAutoComplete::new);
+
+        SIComposite c0 = typeC.newInstance();
+        c0.setValue("personA.name", "Lara");
+        c0.setValue("personA.age", 7);
+        SIComposite c1 = typeC.newInstance();
+        c1.setValue("personA.name", "Daniel");
+        c1.setValue("personA.age", 40);
+        c1.setValue("personB.name", "Marcos");
+        c1.setValue("personB.age", 20);
+        SIComposite c2 = typeC.newInstance();
+        c2.setValue("personA.name", "Daniel B");
+        c2.setValue("personA.age", 41);
+        c2.setValue("personB.name", "Marcos B");
+        c2.setValue("personB.age", 21);
+
+        AssertionsDiff diff;
+        diff = diff(c1, c2, 4).assertChanged(2);
+        diff.get(0).assertChanged(2);
+        diff.get(0).get(0).assertChanged(0);
+        diff.get(0).get(1).assertChanged(0);
+        diff.get(1).assertChanged(3);
+        diff.get(1).get(0).assertChanged(0);
+        diff.get(1).get(1).assertChanged(0);
+        diff.get(1).get(2).assertUnchangedEmpty(0);
+        diff = diff.compact(3);
+        diff.get(0).assertChanged(2);
+        diff.get(0).get(0).assertChanged(0);
+        diff.get(0).get(1).assertChanged(0);
+        diff.get(1).assertChanged(0);
+
+        diff = diff(c0, c2, 4).assertChanged(2);
+        diff.get(0).assertChanged(2);
+        diff.get(0).get(0).assertChanged(0);
+        diff.get(0).get(1).assertChanged(0);
+        diff.get(1).assertNew(3);
+        diff.get(1).get(0).assertNew(0);
+        diff.get(1).get(1).assertNew(0);
+        diff.get(1).get(2).assertUnchangedEmpty(0);
+        diff = diff.compact(3);
+        diff.get(0).assertChanged(2);
+        diff.get(0).get(0).assertChanged(0);
+        diff.get(0).get(1).assertChanged(0);
+        diff.get(1).assertNew(0);
     }
 
     @Test
@@ -342,6 +395,9 @@ public class TestDocumentDiff extends TestCaseForm {
         compact.get(0).assertNew(0).isNewer(iL6.get(0)).isIndex(-1, 0);
         compact.get(1).assertChanged(0).isNewer(iL6.get(2)).isIndex(1, 2);
         compact.get(2).assertNew(0).isNewer(iL6.get(3)).isIndex(-1, 3);
+        compact.get(0).assertNames("String", null, "[ >0]", "Linha nova");
+        compact.get(1).assertNames("String", null, "[1>2]", "Linha 2");
+        compact.get(2).assertNames("String", null, "[ >3]", "Linha nova");
 
         diff = calculateDiff(iL6, iL5, 3);
         assertDiffChanged(diff, "");
@@ -354,12 +410,16 @@ public class TestDocumentDiff extends TestCaseForm {
         compact.get(0).assertDeleted(0).isOriginal(iL6.get(0));
         compact.get(1).assertChanged(0).isOriginal(iL6.get(2));
         compact.get(2).assertDeleted(0).isOriginal(iL6.get(3));
+        compact.get(0).assertNames("String", null, "[0> ]", "Linha 1");
+        compact.get(1).assertNames("String", null, "[2>1]", "Linha 3");
+        compact.get(2).assertNames("String", null, "[3> ]", "Linha 4");
     }
 
     @Test
     public void testListOfComposite() {
         PackageBuilder pkg = createTestDictionary().createNewPackage("test");
         STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
+        typeCs.asAtr().label("Clients");
 
         SIComposite c;
         SIList<SIComposite> iLC0 = typeCs.newInstance();
@@ -459,6 +519,7 @@ public class TestDocumentDiff extends TestCaseForm {
         assertDiffUnchangedEmpty(diff, "[1].personB.age");
         compact = assertDiff(diff.removeUnchangedAndCompact());
         compact.assertNew(0).isNewer(iLC3.get(1)).isIndex(-1, 1);
+        compact.assertNames("TestCompositeC", "Composite C", "Cs[ >1]", "Clients : Linha nova");
 
         diff = calculateDiff(iLC3, iLC4, 3);
 
@@ -467,6 +528,10 @@ public class TestDocumentDiff extends TestCaseForm {
         compact.get(0).assertDeleted(0).isOriginal(iLC3.get(0)).isIndex(0, -1);
         compact.get(1).assertChanged(0).isOriginal(iLC3.getField("[1].personB.name"));
         compact.get(2).assertNew(0).isOriginal(null).isNewer(iLC4.get(1)).isIndex(-1, 1);
+        compact.get(0).assertNames("TestCompositeC", "Composite C", "[0> ]", "Linha 1");
+        compact.get(1).assertNames("name", "Name", "[1>0].personB.name", "Linha 2 : Person B : Name");
+        compact.get(2).assertNames("TestCompositeC", "Composite C", "[ >1]", "Linha nova");
+
     }
 
     @Test
@@ -587,7 +652,27 @@ public class TestDocumentDiff extends TestCaseForm {
     }
 
     @Test
-    public void testListOfListOfComposite() {
+    public void testSerialization() {
+        TestCompositeC typeC = createTestDictionary().getType(TestCompositeC.class);
+
+        SIComposite iC1 = typeC.newInstance();
+        iC1.setValue("personB.name", "Renato");
+        iC1.setValue("personB.age", 40);
+        SIComposite iC3 = typeC.newInstance();
+        iC3.setValue("personA.name", "Daniel Bordin");
+        iC3.setValue("personB.name", "Renato");
+        iC3.setValue("personB.info", "second");
+
+        AssertionsDiff diff = diff(iC3, iC1, 3).assertChanged(2);
+        diff = diff.compact(3).assertChanged(2);
+
+        AssertionsDiff diff2 = new AssertionsDiff(
+                TesteFormSerializationUtil.toAndFromByteArray(diff.getDocumentDiff()));
+        diff2.assertChangedWithInstancesNull(2).assertNames("TestCompositeC", "Composite C");
+        diff2.get(0).assertDeletedWithInstancesNull(0).assertNames("name", "Name", "personA.name", "Person A : Name");
+        diff2.get(1).assertChangedWithInstancesNull(2).assertNames("personB", "Person B");
+        diff2.get(1).get(0).assertNewWithInstancesNull(0).assertNames("age", "Age");
+        diff2.get(1).get(1).assertDeletedWithInstancesNull(0).assertNames("info", "Info");
 
     }
 
@@ -652,13 +737,13 @@ public class TestDocumentDiff extends TestCaseForm {
 
     private DocumentDiff calculateDiff(SInstance original, SInstance newer) {
         DocumentDiff diff = DocumentDiffUtil.calculateDiff(original, newer);
-        debug(diff);
+        //debug(diff);
         return diff;
     }
 
     private void debug(DocumentDiff diff) {
         System.out.println("==============");
-        diff.debug(true);
+        diff.debug();
         DocumentDiff compacted = diff.removeUnchangedAndCompact();
         if (compacted.hasChange()) {
             System.out.println("-------------");
@@ -686,6 +771,10 @@ public class TestDocumentDiff extends TestCaseForm {
             protected void onLoadType(TypeBuilder tb) {
                 name = addFieldString("name");
                 age = addFieldInteger("age");
+
+                asAtr().label("Person");
+                name.asAtr().label("Name");
+                age.asAtr().label("Age");
             }
         }
 
@@ -697,6 +786,9 @@ public class TestDocumentDiff extends TestCaseForm {
             @Override
             protected void onLoadType(TypeBuilder tb) {
                 info = addFieldString("info");
+
+                asAtr().label("Person of B");
+                info.asAtr().label("Info");
             }
         }
 
@@ -710,6 +802,10 @@ public class TestDocumentDiff extends TestCaseForm {
             protected void onLoadType(TypeBuilder tb) {
                 personA = addField("personA", TestCompositeA.class);
                 personB = addField("personB", TestCompositeB.class);
+
+                asAtr().label("Composite C");
+                personA.asAtr().label("Person A");
+                personB.asAtr().label("Person B");
             }
         }
     }
@@ -720,7 +816,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     private static final class AssertionsDiff {
         private final DocumentDiff documentDiff;
-        private final DocumentDiff documentDiffOrginal;
+        private final DocumentDiff documentDiffOriginal;
         private final DiffInfo info;
 
         public AssertionsDiff(DocumentDiff documentDiff) {
@@ -730,7 +826,15 @@ public class TestDocumentDiff extends TestCaseForm {
         private AssertionsDiff(DocumentDiff documentDiff, DiffInfo info, DocumentDiff documentDiffOrginal) {
             this.documentDiff = documentDiff;
             this.info = info;
-            this.documentDiffOrginal = documentDiffOrginal;
+            this.documentDiffOriginal = documentDiffOrginal;
+        }
+
+        public DocumentDiff getDocumentDiff() {
+            return documentDiff;
+        }
+
+        public DiffInfo getInfo() {
+            return info;
         }
 
         public AssertionsDiff assertNew(int expectedChildrenSize) {
@@ -739,10 +843,20 @@ public class TestDocumentDiff extends TestCaseForm {
             return this;
         }
 
+        public AssertionsDiff assertNewWithInstancesNull(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.CHANGED_NEW);
+            return assertBothInstancesNull();
+        }
+
         public AssertionsDiff assertDeleted(int expectedChildrenSize) {
             assertDiff(info, expectedChildrenSize, DiffType.CHANGED_DELETED);
             assertNotNull(info.getOriginal());
             return this;
+        }
+
+        public AssertionsDiff assertDeletedWithInstancesNull(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.CHANGED_DELETED);
+            return assertBothInstancesNull();
         }
 
         public AssertionsDiff assertUnchanged(int expectedChildrenSize) {
@@ -760,6 +874,17 @@ public class TestDocumentDiff extends TestCaseForm {
             assertNotNull(info.getOriginal());
             assertNotNull(info.getNewer());
             return this;
+        }
+
+        private AssertionsDiff assertBothInstancesNull() {
+            assertNull(info.getOriginal());
+            assertNull(info.getNewer());
+            return this;
+        }
+
+        public AssertionsDiff assertChangedWithInstancesNull(int expectedChildrenSize) {
+            assertDiff(info, expectedChildrenSize, DiffType.CHANGED_CONTENT);
+            return assertBothInstancesNull();
         }
 
         public AssertionsDiff get(int childIndex) {
@@ -793,6 +918,19 @@ public class TestDocumentDiff extends TestCaseForm {
             DocumentDiff compact = documentDiff.removeUnchangedAndCompact();
             AssertionsDiff a = new AssertionsDiff(compact, compact.getDiffRoot(), documentDiff);
             return a.assertChangesSize(expectedChangesSize);
+        }
+
+        public AssertionsDiff assertNames(String expectedSimpleName, String expectedSimpleLabel) {
+            return assertNames(expectedSimpleName, expectedSimpleLabel, expectedSimpleName, expectedSimpleLabel);
+        }
+
+        public AssertionsDiff assertNames(String expectedSimpleName, String expectedSimpleLabel, String expectedName,
+                String expectedLabel) {
+            assertEquals(expectedSimpleName, info.getSimpleName());
+            assertEquals(expectedSimpleLabel, info.getSimpleLabel());
+            assertEquals(expectedName, info.getName());
+            assertEquals(expectedLabel, info.getLabel());
+            return this;
         }
     }
 }
