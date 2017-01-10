@@ -488,5 +488,11 @@ public final class DiffInfo implements Serializable {
         }
         return appendable;
     }
+
+    public List<DiffInfo> getPrePath() {
+        return prePath == null
+                ? prePath
+                : Collections.unmodifiableList(prePath);
+    }
 }
 
