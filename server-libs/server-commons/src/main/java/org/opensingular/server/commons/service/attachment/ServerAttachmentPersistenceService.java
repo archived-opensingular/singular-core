@@ -23,7 +23,7 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
     protected transient IFormAttachmentService formAttachmentService;
 
     @Inject
-    private IAttachmentPersistenceHelper attachmentPersistenceHelper;
+    protected transient IAttachmentPersistenceHelper attachmentPersistenceHelper;
 
     /**
      * Faz o vinculo entre anexo persistido e formversionentity
