@@ -16,6 +16,12 @@
 
 package org.opensingular.server.module.wicket.view.util.dispatcher;
 
+import java.lang.reflect.Constructor;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wicket.Component;
@@ -52,6 +58,7 @@ import org.opensingular.server.commons.wicket.error.AccessDeniedPage;
 import org.opensingular.server.commons.wicket.view.SingularHeaderResponseDecorator;
 import org.opensingular.server.commons.wicket.view.behavior.SingularJSBehavior;
 import org.opensingular.server.commons.wicket.view.form.AbstractFormPage;
+import org.opensingular.server.commons.wicket.view.form.DiffFormPage;
 import org.opensingular.server.commons.wicket.view.form.FormPageConfig;
 import org.opensingular.server.commons.wicket.view.form.ReadOnlyFormPage;
 import org.opensingular.server.commons.wicket.view.template.Template;
@@ -61,18 +68,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.lang.reflect.Constructor;
-import java.util.Optional;
-
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.ACTION;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_NAME;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.FORM_VERSION_KEY;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.PARENT_PETITION_ID;
-import static org.opensingular.server.commons.util.DispatcherPageParameters.PETITION_ID;
+import static org.opensingular.server.commons.util.DispatcherPageParameters.*;
 
 @SuppressWarnings("serial")
 @MountPath(DispatcherPageUtil.DISPATCHER_PAGE_PATH)
@@ -142,11 +140,17 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private WebPage retrieveDestination(FormPageConfig config) {
-        if (config.getViewMode().isVisualization() && !AnnotationMode.EDIT.equals(config.getAnnotationMode())) {
+        if (config.isDiff()) {
+            return newDiffPage(config);
+        } else if (config.getViewMode().isVisualization() && !AnnotationMode.EDIT.equals(config.getAnnotationMode())) {
             return newVisualizationPage(config);
         } else {
             return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
         }
+    }
+
+    private WebPage newDiffPage(FormPageConfig config) {
+        return new DiffFormPage(config.getPetitionId());
     }
 
     private WebPage newVisualizationPage(FormPageConfig config) {
@@ -256,6 +260,7 @@ public abstract class DispatcherPage extends WebPage {
         final StringValue formVersionPK    = getParam(r, FORM_VERSION_KEY);
         final StringValue formName         = getParam(r, FORM_NAME);
         final StringValue parentPetitionId = getParam(r, PARENT_PETITION_ID);
+        final StringValue diffValue        = getParam(r, DIFF);
 
         if (action.isEmpty()) {
             throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
@@ -265,6 +270,7 @@ public abstract class DispatcherPage extends WebPage {
 
         final String pi  = petitionId.toString("");
         final Long   fvk = formVersionPK.isEmpty() ? null : formVersionPK.toLong();
+        final boolean diff = Boolean.parseBoolean(diffValue.toOptionalString());
 
         String fn = null;
 
@@ -274,7 +280,7 @@ public abstract class DispatcherPage extends WebPage {
             fn = loadTypeNameFormFormVersionPK(fvk);
         }
 
-        final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk, parentPetitionId.toOptionalString());
+        final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk, parentPetitionId.toOptionalString(), diff);
 
         if (cfg != null) {
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
@@ -287,7 +293,7 @@ public abstract class DispatcherPage extends WebPage {
 
     }
 
-    protected abstract FormPageConfig buildConfig(Request r, String petitionId, FormActions formAction, String formType, Long formVersionKey, String parentPetitionId);
+    protected abstract FormPageConfig buildConfig(Request r, String petitionId, FormActions formAction, String formType, Long formVersionKey, String parentPetitionId, boolean diff);
 
     /**
      * Possibilita execução de qualquer ação antes de fazer o dispatch

@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -36,6 +37,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.wicket.component.SingularButton;
 import org.opensingular.form.wicket.component.SingularSaveButton;
@@ -55,13 +57,17 @@ import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntit
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.builder.MarkupCreator;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
+import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -292,6 +298,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (StringUtils.isNotEmpty(config.getPetitionId())) {
             trans = petitionService.listCurrentTaskTransitions(Long.valueOf(config.getPetitionId()));
         }
+
+        if (hasMultipleVersionsAndIsMainForm(config.getPetitionId())) {
+            appendButtonViewDiff(buttonContainer, config.getPetitionId(), currentInstance);
+        }
+
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
             trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {
@@ -307,6 +318,79 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         } else {
             buttonContainer.setVisible(false).setEnabled(false);
         }
+    }
+
+    /**
+     * Verifica se existe mais de uma versão do formulário principal
+     * lavando em consideração o rascunho.
+     *
+     * @param petitionId id da petição a ser verificada
+     * @return true em caso afirmativo, false caso contrário
+     */
+    protected boolean hasMultipleVersionsAndIsMainForm(String petitionId) {
+        if (StringUtils.isNotBlank(petitionId)) {
+
+            int totalVersoes = 0;
+
+            // Verifica se existe rascunho
+            PetitionEntity petition     = petitionService.findPetitionByCod(Long.valueOf(petitionId));
+            FormTypeEntity mainFormType = petition.getMainForm().getFormType();
+            DraftEntity    draftEntity  = petition.currentEntityDraftByType(mainFormType.getAbbreviation());
+            if (draftEntity != null) {
+                totalVersoes++;
+            }
+
+            // Busca o número de versões consolidadas
+            Long versoesConsolidadas = formPetitionService.countVersions(petition.getMainForm().getCod());
+            totalVersoes += versoesConsolidadas;
+
+            String formType = getFormType(config);
+
+            return totalVersoes > 1
+                    && formType.equalsIgnoreCase(mainFormType.getAbbreviation());
+        }
+        return false;
+    }
+
+    /**
+     * Adiciona o botão para visualizar o diff na barra de botões.
+     *
+     * @param buttonContainer
+     * @param petitionId
+     * @param currentInstance
+     */
+    protected void appendButtonViewDiff(BSContainer<?> buttonContainer, String petitionId, IModel<? extends SInstance> currentInstance) {
+
+        final String        markup      = "<a class='btn' wicket:id='diffLink'><span wicket:id='label'></span></a>";
+        final TemplatePanel buttonPanel = buttonContainer.newTemplateTag(tt -> markup);
+
+        WebMarkupContainer link = new WebMarkupContainer("diffLink");
+        link.add($b.attr("target", String.format("diff%s", petitionId)));
+        link.add($b.attr("href", mountUrlDiff()));
+
+        buttonPanel.add(link.add(new Label("label", "Visualizar Diferenças")));
+
+    }
+
+    protected String mountUrlDiff() {
+
+        String url = DispatcherPageUtil.getBaseURL() + "?"
+                + String.format("%s=%s", DispatcherPageParameters.ACTION, config.getFormAction().getId())
+                + String.format("&%s=%s", DispatcherPageParameters.PETITION_ID, config.getPetitionId())
+                + String.format("&%s=%s", DispatcherPageParameters.FORM_NAME, config.getFormType())
+                + String.format("&%s=%s", DispatcherPageParameters.DIFF, Boolean.TRUE.toString());
+
+        Map<String, String> additionalParams = getAdditionalParams();
+
+        for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
+            url += String.format("&%s=%s", entry.getKey(), entry.getValue());
+        }
+
+        return url;
+    }
+
+    protected Map<String,String> getAdditionalParams() {
+        return Collections.emptyMap();
     }
 
     protected Boolean isTransitionButtonVisibible(MTransition transition) {

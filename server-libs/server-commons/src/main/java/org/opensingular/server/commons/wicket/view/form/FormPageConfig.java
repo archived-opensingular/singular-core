@@ -35,6 +35,7 @@ public class FormPageConfig implements Serializable {
     private Class<? extends ProcessDefinition> processDefinition;
     private Long                               formVersionPK;
     private String                             parentPetitionId;
+    private boolean                            diff;
 
     private FormPageConfig() {
         formAction = FormActions.FORM_VIEW;
@@ -75,6 +76,18 @@ public class FormPageConfig implements Serializable {
                                            LazyFlowDefinitionResolver lazyFlowDefinitionResolver) {
         final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK, parentPetitionId);
         cfg.lazyFlowDefinitionResolver = lazyFlowDefinitionResolver;
+        return cfg;
+    }
+
+    public static FormPageConfig newConfig(String formType,
+                                           String petitionId,
+                                           FormActions formAction,
+                                           Long formVersionPK,
+                                           String parentPetitionId,
+                                           LazyFlowDefinitionResolver lazyFlowDefinitionResolver,
+                                           boolean diff) {
+        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK, parentPetitionId, lazyFlowDefinitionResolver);
+        cfg.diff = diff;
         return cfg;
     }
 
@@ -140,5 +153,13 @@ public class FormPageConfig implements Serializable {
 
     public String getParentPetitionId() {
         return parentPetitionId;
+    }
+
+    public boolean isDiff() {
+        return diff;
+    }
+
+    public void setDiff(boolean diff) {
+        this.diff = diff;
     }
 }

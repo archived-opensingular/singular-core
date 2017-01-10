@@ -32,11 +32,13 @@ import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
+import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.entity.FormAnnotationEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.server.commons.exception.PetitionConcurrentModificationException;
@@ -495,5 +497,11 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
 
     public PetitionAuthMetadataDTO findPetitionAuthMetadata(Long petitionId) {
         return petitionDAO.findPetitionAuthMetadata(petitionId);
+    }
+
+    public List<FormVersionEntity> buscarDuasUltimasVersoesForm(final Long codPetition) {
+        PetitionEntity petitionEntity = petitionDAO.find(codPetition);
+        FormEntity     mainForm       = petitionEntity.getMainForm();
+        return formPetitionService.findTwoLastFormVersions(mainForm.getCod());
     }
 }

@@ -95,6 +95,14 @@ public class FormPetitionService<P extends PetitionEntity> {
         return Optional.ofNullable(formPetitionDAO.findLastFormPetitionEntityByTypeName(petitionPK, typeName));
     }
 
+    public List<FormVersionEntity> findTwoLastFormVersions(Long codForm) {
+        return formPetitionDAO.findTwoLastFormVersions(codForm);
+    }
+
+    public Long countVersions(Long codForm) {
+        return formPetitionDAO.countVersions(codForm);
+    }
+
     public FormKey saveFormPetition(P petition,
                                     SInstance instance,
                                     boolean mainForm,
@@ -346,7 +354,34 @@ public class FormPetitionService<P extends PetitionEntity> {
 
     private void copyValuesAndAnnotations(SDocument source, SDocument target) {
         Value.copyValues(source, target);
-         target.getDocumentAnnotations().copyAnnotationsFrom(source);
+        copyIdValues(source.getRoot(), target.getRoot());
+        target.getDocumentAnnotations().copyAnnotationsFrom(source);
+    }
+
+    private void copyIdValues(SInstance source, SInstance target) {
+        target.setId(source.getId());
+
+        if (source instanceof SIComposite) {
+            SIComposite sourceComposite = (SIComposite) source;
+            SIComposite targetComposite = (SIComposite) target;
+
+            if (sourceComposite.getFields() != null) {
+                for (int i = 0; i < sourceComposite.getFields().size() ; i++) {
+                    copyIdValues(sourceComposite.getField(i), targetComposite.getField(i));
+                }
+            }
+        } else if (source instanceof SIList) {
+            SIList sourceList = (SIList) source;
+            SIList targetList = (SIList) target;
+
+            if (sourceList.getChildren() != null) {
+                for (int i = 0; i < sourceList.getChildren().size() ; i++) {
+                    SInstance sourceItem = (SInstance) sourceList.getChildren().get(i);
+                    SInstance targetItem = (SInstance) targetList.getChildren().get(i);
+                    copyIdValues(sourceItem, targetItem);
+                }
+            }
+        }
     }
 
     public SIComposite loadByCodAndType(SFormConfig config, Long cod, String type) {
