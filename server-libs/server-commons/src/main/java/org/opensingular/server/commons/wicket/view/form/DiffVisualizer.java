@@ -84,7 +84,6 @@ public class DiffVisualizer extends Panel {
             }
         } else {
             path += findIdentifier(info);
-            path += " ( " + info.getType().getNomeModificacao() + " ) ";
         }
 
         return path + " ( " + info.getType().getNomeModificacao() + " ) " ;
@@ -92,11 +91,6 @@ public class DiffVisualizer extends Panel {
 
     private String findIdentifier(DiffInfo info) {
         String identifier = "";
-//        if (info.getPrePath() != null) {
-//            for (DiffInfo diffInfo : info.getPrePath()) {
-//                identifier += findIdentifier(diffInfo) + " - ";
-//            }
-//        }
 
         if (info.getOriginalOrNewer().asAtr().getLabel() != null) {
             identifier += info.getOriginalOrNewer().asAtr().getLabel();
