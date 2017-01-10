@@ -360,7 +360,8 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         return instancia2;
     }
 
-    private static <T> T toAndFromByteArray(T obj) {
+    /** Serializa e deserializa o mesmo objeto. */
+    public static <T> T toAndFromByteArray(T obj) {
         try {
             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
             ObjectOutputStream out2 = new ObjectOutputStream(out1);

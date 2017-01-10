@@ -20,6 +20,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.view.SView;
 
 import java.util.*;
 
@@ -271,8 +272,8 @@ public final class DocumentDiffUtil {
         if (info.isUnknownState() || info.isUnchanged()) {
             return null;
         }
-        if (!info.hasChildren() || isListDeletedOrNewElement(info)) {
-            return copyWithoutChildren(info);
+        if (!info.hasChildren() || isElementOfListAndDeletedOrNew(info) || isCompositeAndShouldBeResumed(info)) {
+            return info.copyWithoutChildren();
         }
         List<DiffInfo> children = info.getChildren();
         List<DiffInfo> newList = new ArrayList<>(children.size());
@@ -283,9 +284,9 @@ public final class DocumentDiffUtil {
             }
         }
         if (newList.isEmpty()) {
-            return copyWithoutChildren(info);
+            return info.copyWithoutChildren();
         } else if (newList.size() > 1) {
-            DiffInfo newInfo = copyWithoutChildren(info);
+            DiffInfo newInfo = info.copyWithoutChildren();
             newList.stream().forEach(child -> newInfo.addChild(child));
             return newInfo;
         }
@@ -294,18 +295,21 @@ public final class DocumentDiffUtil {
         return newInfo;
     }
 
-    private static boolean isListDeletedOrNewElement(DiffInfo info) {
+    private static boolean isCompositeAndShouldBeResumed(DiffInfo info) {
+        SInstance instance = info.getNewerOrOriginal();
+        if(instance instanceof SIComposite) {
+            SView view = instance.getType().getView();
+            if (view != null) {
+                return view.getClass().getAnnotation(DiffCompositeDetailNoRetention.class) != null;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isElementOfListAndDeletedOrNew(DiffInfo info) {
         return info.isElementOfAList() && (info.isChangedDeleted() || info.isChangedNew());
     }
 
-    /** Faz uma copia do diff sem copia os filhos do mesmo para a nova copia. */
-    static DiffInfo copyWithoutChildren(DiffInfo info) {
-        DiffInfo newInfo = new DiffInfo(info.getOriginal(), info.getNewer(), info.getType());
-        newInfo.setOriginalIndex(info.getOriginalIndex());
-        newInfo.setNewerIndex(info.getNewerIndex());
-        newInfo.setDetail(info.getDetail());
-        return newInfo;
-    }
 
     /** Retorna o registro de calculadores de diff por tipo. */
     private static TypeDiffRegister getRegister() {

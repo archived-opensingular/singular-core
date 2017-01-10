@@ -16,6 +16,8 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.util.diff.DiffCompositeDetailNoRetention;
+
 /**
  * This View is used with selection types when an auto complete option should be
  * displayed.
@@ -28,6 +30,7 @@ package org.opensingular.form.view;
  *
  *  @author Fabricio Buzeto
  */
+@DiffCompositeDetailNoRetention
 public class SViewAutoComplete extends SView {
 
     public enum Mode {STATIC, DYNAMIC;}

@@ -51,7 +51,7 @@ public class DocumentDiff implements Serializable {
     /**
      * Indexa as informações de diff pelos IDs das instâncias.
      *
-     * @param info info a ser adicionado no documento
+     * @param info       info a ser adicionado no documento
      * @param compactado indica se esse é um diff compactado
      */
     private void addToMap(DiffInfo info, boolean compactado) {
@@ -143,7 +143,7 @@ public class DocumentDiff implements Serializable {
     public DocumentDiff removeUnchangedAndCompact() {
         DiffInfo compactRoot;
         if (diffRoot.isUnknownState() || diffRoot.isUnchanged()) {
-            compactRoot = DocumentDiffUtil.copyWithoutChildren(diffRoot);
+            compactRoot = diffRoot.copyWithoutChildren();
         } else {
             compactRoot = DocumentDiffUtil.removeUnchangedAndCompact(diffRoot);
         }
@@ -152,8 +152,7 @@ public class DocumentDiff implements Serializable {
 
     /**
      * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
-     * comparação
-     * de cada item da estrutura.
+     * comparação de cada item da estrutura.
      */
     public void debug() {
         if (diffRoot != null) {
@@ -163,14 +162,14 @@ public class DocumentDiff implements Serializable {
 
     /**
      * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
-     * comparação
-     * de cada item da estrutura.
+     * comparação de cada item da estrutura.
      *
-     * @param showAll Indica se exibe todos os itens (true) ou somente aqueles que tiveram alteração (false)
+     * @param showAll   Indica se exibe todos os itens (true) ou somente aqueles que tiveram alteração (false)
+     * @param showLabel Se false, usar o nome simples dos tipos. Se true, usa o label das instâncias se existir.
      */
-    public void debug(boolean showAll) {
+    public void debug(boolean showAll, boolean showLabel) {
         if (diffRoot != null) {
-            diffRoot.debug(showAll);
+            diffRoot.debug(showAll, showLabel);
         }
     }
 }

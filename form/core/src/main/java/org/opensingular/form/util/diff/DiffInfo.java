@@ -54,12 +54,32 @@ public final class DiffInfo implements Serializable {
 
     private String detail;
 
+    private String simpleName;
+
+    private String simpleLabel;
+
     private static final Logger LOGGER = Logger.getLogger(DiffInfo.class.getName());
 
     DiffInfo(SInstance original, SInstance newer, DiffType type) {
         this.original = original;
         this.newer = newer;
         this.type = type;
+
+        //Copia dados básicos para o caso do diff ser serializado
+        SInstance instance = newer == null ? original : newer;
+        this.simpleName = instance.getType().getNameSimple();
+        this.simpleLabel = instance.getType().asAtr().getLabel();
+    }
+
+    /** Faz uma copia do diff sem copiar os diffs filhos do mesmo para a nova copia. */
+    final DiffInfo copyWithoutChildren() {
+        DiffInfo newInfo = new DiffInfo(getOriginal(), getNewer(), getType());
+        newInfo.setOriginalIndex(getOriginalIndex());
+        newInfo.setNewerIndex(getNewerIndex());
+        newInfo.setDetail(getDetail());
+        newInfo.simpleName = this.simpleName;
+        newInfo.simpleLabel = this.simpleLabel;
+        return newInfo;
     }
 
     /** Tipo resultante da comparação entre as instâncias. Nunca null. */
@@ -131,6 +151,16 @@ public final class DiffInfo implements Serializable {
      */
     public SInstance getOriginalOrNewer() {
         return original != null ? original : newer;
+    }
+
+    /**
+     * Retorna SInstance envolvido na comparação. Retorna a instância nova se não nula ou a instância original se a
+     * nova for null.
+     *
+     * @return Nunca retorna null
+     */
+    public SInstance getNewerOrOriginal() {
+        return newer != null ? newer : original;
     }
 
     /** Define o tipo resultante da comparação. */
@@ -291,29 +321,128 @@ public final class DiffInfo implements Serializable {
         return detail;
     }
 
+    /** Retorna um ID único do diff dentro do {@link org.opensingular.form.util.diff.DocumentDiff} a que pertence. */
+    public Integer getId() {
+        return id;
+    }
+
+    final void setId(Integer id) {
+        this.id = id;
+    }
+
+    /**
+     * Retorna o nome simple do SType a que se refere a instância do diff. Esse método pode ser chamado mesmo depois de
+     * uma serialização, pois a informação é replicada do SType.
+     */
+    public String getSimpleName() {
+        return simpleName;
+    }
+
+    /**
+     * Retorna o label do SType a que se refere a instância do diff. Esse método pode ser chamado mesmo depois de
+     * uma serialização, pois a informação é replicada do SType.
+     * @return Pode ser null
+     */
+    public String getSimpleLabel() {
+        return simpleLabel;
+    }
+
+    /**
+     * Retorna o caminho do diff em relação ao diff pai do mesmo em um formato mais técnico.
+     */
+    public String getName() {
+        return getPath(false);
+    }
+
+    /**
+     * Retorna o caminho do diff em relação ao diff pai do mesmo, mas usando label (quando disponível) e representação
+     * de linha mais amigáveis para exibição para o usuário.
+     */
+    public String getLabel() {
+        return getPath(true);
+    }
+
+    /**
+     * Gera o path do diff, incluindo indices de linhas e diff compactados no diff atual se for o caso.
+     *
+     * @param showLabel Se true, busca usar o label de cada diff em vez do nome do mesmo. Ou seja, busca gerar o path
+     *                  mais user frendily
+     */
+    private String getPath(boolean showLabel) {
+        StringBuilder sb = new StringBuilder();
+        if (prePath == null) {
+            addPathItem(sb, this, false, showLabel);
+        } else {
+            for (int i = 0; i < prePath.size(); i++) {
+                addPathItem(sb, prePath.get(i), i != 0, showLabel);
+            }
+            addPathItem(sb, this, true, showLabel);
+        }
+        return sb.toString();
+    }
+
+    /** Gera o nome ou índice que representa o caminha do item informado. */
+    private static void addPathItem(StringBuilder sb, DiffInfo info, boolean hasPrevious, boolean showLabel) {
+        if (info.newerIndex != -1 || info.originalIndex != -1) {
+            if (showLabel) {
+                if (hasPrevious) {
+                    sb.append(" : ");
+                }
+                if (info.originalIndex != -1) {
+                    sb.append("Linha ").append(info.originalIndex + 1);
+                } else {
+                    sb.append("Linha nova");
+                }
+            } else {
+                sb.append('[');
+                if (info.newerIndex == info.originalIndex) {
+                    sb.append(info.originalIndex);
+                } else {
+                    sb.append(info.originalIndex == -1 ? " " : info.originalIndex);
+                    sb.append('>').append(info.newerIndex == -1 ? " " : info.newerIndex);
+                }
+                sb.append(']');
+            }
+        } else {
+            if (hasPrevious) {
+                if (showLabel) {
+                    sb.append(" : ");
+                } else {
+                    sb.append('.');
+                }
+            }
+            if (showLabel && info.simpleLabel != null) {
+                sb.append(info.simpleLabel);
+            } else {
+                sb.append(info.simpleName);
+            }
+        }
+    }
+
     /**
      * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
      * comparação de cada item da estrutura.
      */
     public void debug() {
-        debug(System.out, 0, true);
+        debug(System.out, 0, true, false);
     }
 
     /**
      * Imprime para o console a árvore de comparação resultante de forma indentada e indicando o resultado da
      * comparação de cada item da estrutura.
      *
-     * @param showAll Indica se exibe todos os itens (true) ou somente aqueles que tiveram alteração (false)
+     * @param showAll   Indica se exibe todos os itens (true) ou somente aqueles que tiveram alteração (false)
+     * @param showLabel Se false, usar o nome simples dos tipos. Se true, usa o label das instâncias se existir.
      */
-    public void debug(boolean showAll) {
-        debug(System.out, 0, showAll);
+    public void debug(boolean showAll, boolean showLabel) {
+        debug(System.out, 0, showAll, showLabel);
     }
 
     /**
      * Imprime para a saída informa o item atual de forma indentada e depois chama para os demais subitens se
      * existirem.
      */
-    private void debug(Appendable appendable, int level, boolean showAll) {
+    private void debug(Appendable appendable, int level, boolean showAll, boolean showLabel) {
         if (!showAll && isUnchanged()) {
             return;
         }
@@ -338,21 +467,14 @@ public final class DiffInfo implements Serializable {
                 default:
                     appendable.append('?');
             }
-            if (prePath == null) {
-                printPathItem(appendable, this, false);
-            } else {
-                for (int i = 0; i < prePath.size(); i++) {
-                    printPathItem(appendable, prePath.get(i), i != 0);
-                }
-                printPathItem(appendable, this, true);
-            }
+            appendable.append(getPath(showLabel));
             if (StringUtils.isNotBlank(detail)) {
                 appendable.append(" : ").append(detail);
             }
             appendable.append('\n');
             if (children != null) {
                 for (DiffInfo info : children) {
-                    info.debug(appendable, level + 1, showAll);
+                    info.debug(appendable, level + 1, showAll, showLabel);
                 }
             }
         } catch (IOException ex) {
@@ -360,39 +482,11 @@ public final class DiffInfo implements Serializable {
         }
     }
 
-    /** Imprime o nome ou índice que representa o caminha do item informado. */
-    private static void printPathItem(Appendable appendable, DiffInfo info, boolean hasPrevious) throws IOException {
-        if (info.newerIndex != -1 || info.originalIndex != -1) {
-            appendable.append('[');
-            if (info.newerIndex == info.originalIndex) {
-                appendable.append(Integer.toString(info.originalIndex));
-            } else {
-                appendable.append(info.originalIndex == -1 ? " " : Integer.toString(info.originalIndex));
-                appendable.append('>').append(info.newerIndex == -1 ? " " : Integer.toString(info.newerIndex));
-            }
-            appendable.append(']');
-        } else {
-            if (hasPrevious) {
-                appendable.append('.');
-            }
-            appendable.append(info.getOriginalOrNewer().getName());
-        }
-    }
-
-
     private static Appendable pad(Appendable appendable, int level) throws IOException {
         for (int i = level * 3; i > 0; i--) {
             appendable.append(' ');
         }
         return appendable;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    final void setId(Integer id) {
-        this.id = id;
     }
 }
 
