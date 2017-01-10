@@ -76,6 +76,13 @@ public class DiffVisualizer extends Panel {
 
     private String printPathItem(DiffInfo info) {
         String path = "";
+
+        if (info.getPrePath() != null) {
+            for (DiffInfo diffInfo : info.getPrePath()) {
+                path += findIdentifier(diffInfo) + " - ";
+            }
+        }
+
         if (info.getNewerIndex() != -1 || info.getOriginalIndex() != -1) {
             if (info.getType() == DiffType.CHANGED_NEW) {
                 path += "Item " + Integer.toString(info.getNewerIndex() + 1) + " da lista ";
