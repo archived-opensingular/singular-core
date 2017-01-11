@@ -27,7 +27,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.opensingular.form.util.diff.DiffInfo;
-import org.opensingular.form.util.diff.DiffType;
 import org.opensingular.form.util.diff.DocumentDiff;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -50,13 +49,14 @@ public class DiffVisualizer extends Panel {
 
     private void createTree() {
         tree = new DefaultNestedTree<DiffInfo>("tree", createProvider()) {
+
             @Override
             protected Component newContentComponent(String id, IModel node) {
                 return new Folder<DiffInfo>(id, this, node) {
                     @Override
                     protected IModel<?> newLabelModel(IModel model) {
                         DiffInfo info = (DiffInfo) model.getObject();
-                        return WicketUtils.$m.ofValue(printPathItem(info));
+                        return WicketUtils.$m.ofValue(info.getLabel());
                     }
 
                     @Override
@@ -72,39 +72,6 @@ public class DiffVisualizer extends Panel {
             }
         };
         add(tree);
-    }
-
-    private String printPathItem(DiffInfo info) {
-        String path = "";
-
-        if (info.getPrePath() != null) {
-            for (DiffInfo diffInfo : info.getPrePath()) {
-                path += findIdentifier(diffInfo) + " - ";
-            }
-        }
-
-        if (info.getNewerIndex() != -1 || info.getOriginalIndex() != -1) {
-            if (info.getType() == DiffType.CHANGED_NEW) {
-                path += "Item " + Integer.toString(info.getNewerIndex() + 1) + " da lista ";
-            } else {
-                path += "Item " + Integer.toString(info.getOriginalIndex() + 1) + " da lista ";
-            }
-        } else {
-            path += findIdentifier(info);
-        }
-
-        return path + " ( " + info.getType().getNomeModificacao() + " ) " ;
-    }
-
-    private String findIdentifier(DiffInfo info) {
-        String identifier = "";
-
-        if (info.getOriginalOrNewer().asAtr().getLabel() != null) {
-            identifier += info.getOriginalOrNewer().asAtr().getLabel();
-        } else {
-            identifier += info.getOriginalOrNewer().getName();
-        }
-        return identifier;
     }
 
     private ITreeProvider<DiffInfo> createProvider() {
