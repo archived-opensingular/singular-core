@@ -17,6 +17,7 @@
 package org.opensingular.server.module.wicket.view.util.dispatcher;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -150,7 +151,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private WebPage newDiffPage(FormPageConfig config) {
-        return new DiffFormPage(config.getPetitionId());
+        return new DiffFormPage(config);
     }
 
     private WebPage newVisualizationPage(FormPageConfig config) {
@@ -282,6 +283,8 @@ public abstract class DispatcherPage extends WebPage {
 
         final FormPageConfig cfg = buildConfig(r, pi, formAction, fn, fvk, parentPetitionId.toOptionalString(), diff);
 
+        addAdditionalParams(r, cfg);
+
         if (cfg != null) {
             if (!(cfg.containsProcessDefinition() || cfg.isWithLazyProcessResolver())) {
                 throw SingularServerException.rethrow("Nenhum fluxo está configurado");
@@ -291,6 +294,23 @@ public abstract class DispatcherPage extends WebPage {
             return null;
         }
 
+    }
+
+    private void addAdditionalParams(Request r, FormPageConfig cfg) {
+        for (String name : r.getRequestParameters().getParameterNames()) {
+            if (!isMandatoryParam(name)) {
+                cfg.addAdditionalParam(name, getParam(r, name).toString());
+            }
+        }
+    }
+
+    private boolean isMandatoryParam(String name) {
+        return Arrays.asList(ACTION,
+                PETITION_ID,
+                FORM_VERSION_KEY,
+                FORM_NAME,
+                PARENT_PETITION_ID,
+                DIFF).contains(name);
     }
 
     protected abstract FormPageConfig buildConfig(Request r, String petitionId, FormActions formAction, String formType, Long formVersionKey, String parentPetitionId, boolean diff);

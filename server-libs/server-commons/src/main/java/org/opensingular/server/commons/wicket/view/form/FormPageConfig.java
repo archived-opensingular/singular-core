@@ -23,7 +23,9 @@ import org.opensingular.server.commons.flow.LazyFlowDefinitionResolver;
 import org.opensingular.server.commons.form.FormActions;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class FormPageConfig implements Serializable {
 
@@ -36,6 +38,7 @@ public class FormPageConfig implements Serializable {
     private Long                               formVersionPK;
     private String                             parentPetitionId;
     private boolean                            diff;
+    private Map<String, String>                additionalParams = new HashMap<>();
 
     private FormPageConfig() {
         formAction = FormActions.FORM_VIEW;
@@ -162,4 +165,14 @@ public class FormPageConfig implements Serializable {
     public void setDiff(boolean diff) {
         this.diff = diff;
     }
+
+    public Map<String, String> getAdditionalParams() {
+        return Collections.unmodifiableMap(additionalParams);
+    }
+
+    public FormPageConfig addAdditionalParam(String key, String value) {
+        additionalParams.put(key, value);
+        return this;
+    }
+
 }

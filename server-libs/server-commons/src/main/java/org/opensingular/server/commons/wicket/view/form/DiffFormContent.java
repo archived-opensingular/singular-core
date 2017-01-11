@@ -19,11 +19,14 @@ package org.opensingular.server.commons.wicket.view.form;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
@@ -36,20 +39,23 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.util.diff.DocumentDiff;
 import org.opensingular.form.util.diff.DocumentDiffUtil;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
+import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.view.template.Content;
+import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class DiffFormContent<P extends PetitionEntity> extends Content {
 
@@ -66,15 +72,18 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
     @Named("formConfigWithDatabase")
     protected SFormConfig<String> singularFormConfig;
 
-    private final String petitionId;
+    private final FormPageConfig config;
 
     protected BSDataTable<DocumentDiff, String> tabela;
     protected DocumentDiff diff;
     protected BSGrid contentGrid = new BSGrid("content");
 
-    public DiffFormContent(String id, String petitionId) {
+    private FormVersionEntity newerFormVersion;
+    private FormVersionEntity originalFormVersion;
+
+    public DiffFormContent(String id, FormPageConfig config) {
         super(id);
-        this.petitionId = petitionId;
+        this.config = config;
     }
 
     @Override
@@ -85,7 +94,7 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
 
     private void build() {
 
-        PetitionEntity petition = petitionService.findPetitionByCod(Long.valueOf(petitionId));
+        PetitionEntity petition = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
         FormTypeEntity mainFormType = petition.getMainForm().getFormType();
         DraftEntity    draftEntity = petition.currentEntityDraftByType(mainFormType.getAbbreviation());
 
@@ -96,26 +105,26 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
         Date newerDate;
 
         if (draftEntity != null) {
-            FormVersionEntity currentFormVersionEntity = draftEntity.getForm().getCurrentFormVersionEntity();
             Optional<FormPetitionEntity> lastForm = formPetitionService.findLastFormPetitionEntityByTypeName(petition.getCod(), mainFormType.getAbbreviation());
-
             FormEntity originalForm = lastForm.get().getForm();
             original = loadSInstance(originalForm);
-            originalDate = originalForm.getCurrentFormVersionEntity().getInclusionDate();
+            originalFormVersion = originalForm.getCurrentFormVersionEntity();
+            originalDate = originalFormVersion.getInclusionDate();
 
-            FormEntity newerForm = currentFormVersionEntity.getFormEntity();
+            newerFormVersion = draftEntity.getForm().getCurrentFormVersionEntity();
+            FormEntity newerForm = newerFormVersion.getFormEntity();
             newer = loadSInstance(newerForm);
             newerDate = draftEntity.getEditionDate();
 
 
         } else {
-            List<FormVersionEntity> formPetitionEntities = petitionService.buscarDuasUltimasVersoesForm(Long.valueOf(petitionId));
+            List<FormVersionEntity> formPetitionEntities = petitionService.buscarDuasUltimasVersoesForm(Long.valueOf(config.getPetitionId()));
 
-            FormVersionEntity originalFormVersion = formPetitionEntities.get(1);
+            originalFormVersion = formPetitionEntities.get(1);
             original = loadSInstanceVersion(originalFormVersion);
             originalDate = originalFormVersion.getInclusionDate();
 
-            FormVersionEntity newerFormVersion = formPetitionEntities.get(0);
+            newerFormVersion = formPetitionEntities.get(0);
             newer = loadSInstanceVersion(newerFormVersion);
             newerDate = newerFormVersion.getInclusionDate();
 
@@ -129,19 +138,38 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
     }
 
     private void adicionarDatas(Date originalDate, Date newerDate) {
-        appendDate("Data da modificação anterior:", originalDate);
-        appendDate("Data da modificação atual:", newerDate);
+        BSRow container = contentGrid.newRow();
+        appendDate(container, "Data da modificação anterior:", originalDate);
+        appendDate(container, "Data da modificação atual:", newerDate);
+
+        WebMarkupContainer link = new WebMarkupContainer("oldVersionLink");
+        link.add($b.attr("target", String.format("version%s", originalFormVersion.getCod())));
+        link.add($b.attr("href", mountUrlOldVersion()));
+
+        contentGrid.newRow().newCol(2)
+                .newFormGroup()
+                .appendLabel(new BSLabel("label", $m.ofValue("")))
+                .newTemplateTag(tt -> "<a class='btn' wicket:id='oldVersionLink'><span wicket:id='label'></span></a>")
+                .add(link.add(new Label("label", "Versão anterior do formulário")));
     }
 
-    private void appendDate(String labelCampo, Date data) {
-        BSCol col = contentGrid.newRow().newCol(6);
-        final BSLabel    label     = new BSLabel("label", labelCampo);
-        final BSControls formGroup = col.newFormGroup();
+    private String mountUrlOldVersion() {
+        String url = DispatcherPageUtil.getBaseURL() + "?"
+                + String.format("%s=%s", DispatcherPageParameters.ACTION, FormActions.FORM_VIEW.getId())
+                + String.format("&%s=%s", DispatcherPageParameters.FORM_VERSION_KEY, originalFormVersion.getCod());
 
-        formGroup.appendLabel(label);
+        for (Map.Entry<String, String> entry : config.getAdditionalParams().entrySet()) {
+            url += String.format("&%s=%s", entry.getKey(), entry.getValue());
+        }
 
-        final BOutputPanel comp = new BOutputPanel("dataAntiga", $m.ofValue(new SimpleDateFormat("dd/MM/yyyy").format(data)));
-        formGroup.appendTag("div", comp);
+        return url;
+    }
+
+    private void appendDate(BSRow container, String labelCampo, Date data) {
+        container.newCol(2)
+            .newFormGroup()
+            .appendLabel(new BSLabel("label", labelCampo))
+            .appendTag("div", new BOutputPanel("data", $m.ofValue(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(data))));
     }
 
     private SInstance loadSInstance(final FormEntity form) {

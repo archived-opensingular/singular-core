@@ -34,16 +34,17 @@ public class DiffFormPage extends Template {
 
     @Inject
     private IFormService formService;
+    private FormPageConfig config;
 
-    private String petitionId;
 
-    public DiffFormPage(String petitionId) {
-        this.petitionId = petitionId;
+    public DiffFormPage(FormPageConfig config) {
+
+        this.config = config;
     }
 
     @Override
     protected Content getContent(String id) {
-        return new DiffFormContent(id, petitionId);
+        return new DiffFormContent(id, config);
     }
 
     @Override
