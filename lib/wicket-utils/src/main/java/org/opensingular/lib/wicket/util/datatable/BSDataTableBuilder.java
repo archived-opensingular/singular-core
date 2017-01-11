@@ -61,8 +61,8 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
         setDataProvider(dataProvider);
     }
 
-    public BSDataTableBuilder(ISortableTreeProvider<T, S> dataProvider) {
-        setTreeProvider(dataProvider);
+    public BSDataTableBuilder(ISortableTreeProvider<T, S> treeProvider) {
+        setTreeProvider(treeProvider);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
