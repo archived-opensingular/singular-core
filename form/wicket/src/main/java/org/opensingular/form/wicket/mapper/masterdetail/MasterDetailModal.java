@@ -31,6 +31,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.FormStateUtil;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
@@ -112,7 +113,7 @@ class MasterDetailModal extends BFModalWindow {
                 FormStateUtil.restoreState(currentInstance.getObject(), formState);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw SingularException.rethrow(e.getMessage(), e);
         }
     }
 

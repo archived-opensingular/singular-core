@@ -329,7 +329,7 @@ public final class XPathToolkit {
             try {
                 return XPathAPI.selectSingleNode(contextNode, xPath);
             } catch (TransformerException e) {
-                throw new RuntimeException(e);
+                throw SingularFormException.rethrow(e);
             }
         }
     }
@@ -448,7 +448,7 @@ public final class XPathToolkit {
         try {
             return XPathAPI.selectNodeList(contextNode, xPath);
         } catch (TransformerException e) {
-            throw new RuntimeException(e);
+            throw SingularFormException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -469,7 +469,7 @@ public final class XPathToolkit {
         try {
             return XPathAPI.selectNodeIterator(context, xPath);
         } catch (TransformerException e) {
-            throw new RuntimeException(e);
+            throw SingularFormException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -508,7 +508,7 @@ public final class XPathToolkit {
 
             if (nomeElemento.charAt(0) == '@') {
                 if ((path != null) || (resp.getNodeType() != Node.ELEMENT_NODE)) {
-                    throw new RuntimeException("O xPath '" + path + "' é inválido");
+                    throw SingularFormException.rethrow("O xPath '" + path + "' é inválido");
                 }
                 return ((Element) resp).getAttributeNode(nomeElemento.substring(1));
             }

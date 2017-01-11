@@ -24,10 +24,13 @@ import org.opensingular.form.exemplos.canabidiol.model.GrupoCID;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +70,7 @@ public class CIDDAO {
         }
     }
 
-    private static void relateEachOther(AbstractDadoCID parent, List<? extends AbstractDadoCID> candidateChilds, String childCollectionName) throws Exception {
+    private static void relateEachOther(AbstractDadoCID parent, List<? extends AbstractDadoCID> candidateChilds, String childCollectionName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<AbstractDadoCID> collection = new ArrayList<>();
         for (AbstractDadoCID candidate : candidateChilds) {
             if (parent.getLetraInicial() <= candidate.getLetraInicial()
@@ -81,7 +84,7 @@ public class CIDDAO {
         setCollection.invoke(parent, collection);
     }
 
-    private static <T extends AbstractDadoCID> List<T> readFile(String filename, Class<T> targetClass) throws Exception {
+    private static <T extends AbstractDadoCID> List<T> readFile(String filename, Class<T> targetClass) throws IOException, InstantiationException, IllegalAccessException {
         List<T> cids = new ArrayList<>();
         LineIterator lineIterator = IOUtils.lineIterator(CIDDAO.class.getClassLoader().getResource("data/cid/" + filename).openStream(), "UTF-8");
         lineIterator.next();
@@ -91,7 +94,7 @@ public class CIDDAO {
         return cids;
     }
 
-    private static <T extends AbstractDadoCID> T readCidData(Class<T> clazz, String line) throws Exception {
+    private static <T extends AbstractDadoCID> T readCidData(Class<T> clazz, String line) throws IllegalAccessException, InstantiationException {
         String[] values = line.split(";");
         T value = clazz.newInstance();
         int index = 0;

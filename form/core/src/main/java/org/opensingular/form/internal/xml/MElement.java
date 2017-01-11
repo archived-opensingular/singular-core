@@ -18,6 +18,7 @@ package org.opensingular.form.internal.xml;
 
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.util.json.JSONToolkit;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.*;
 
 import java.io.*;
@@ -374,7 +375,7 @@ public abstract class MElement implements Element, Serializable {
             try {
                 return addElement(nome, (InputStream) o);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw SingularException.rethrow(e.getMessage(), e);
             }
         } else if (o instanceof byte[]) {
             return addElement(nome, (byte[]) o);

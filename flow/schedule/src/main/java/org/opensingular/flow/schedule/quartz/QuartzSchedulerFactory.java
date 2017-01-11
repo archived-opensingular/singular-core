@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.lib.commons.base.SingularException;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -181,24 +182,28 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @throws Exception in the event of misconfiguration (such
      * as failure to set an essential property) or if initialization fails.
      */
-    public void initialize() throws Exception {
-        SchedulerFactory schedulerFactory = this.schedulerFactoryClass.newInstance();
-        initSchedulerFactory(schedulerFactory);
+    public void initialize() throws SingularException {
+        try {
+            SchedulerFactory schedulerFactory = this.schedulerFactoryClass.newInstance();
+            initSchedulerFactory(schedulerFactory);
 
-        this.scheduler = createScheduler(schedulerFactory, this.schedulerName);
+            this.scheduler = createScheduler(schedulerFactory, this.schedulerName);
 
-        if (!this.jobFactorySet && !(this.scheduler instanceof RemoteScheduler)) {
+            if (!this.jobFactorySet && !(this.scheduler instanceof RemoteScheduler)) {
             /* Use QuartzJobFactory as default for a local Scheduler, unless when
              * explicitly given a null value through the "jobFactory" property.
              */
-            this.jobFactory = new QuartzJobFactory();
-        }
-        if (this.jobFactory != null) {
-            this.scheduler.setJobFactory(this.jobFactory);
-        }
+                this.jobFactory = new QuartzJobFactory();
+            }
+            if (this.jobFactory != null) {
+                this.scheduler.setJobFactory(this.jobFactory);
+            }
 
-        registerListeners();
-        registerJobsAndTriggers();
+            registerListeners();
+            registerJobsAndTriggers();
+        } catch (Exception e){
+            throw SingularException.rethrow(e.getMessage(), e);
+        }
     }
 
     /**
@@ -346,7 +351,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
                         scheduler.start();
                     } catch (SchedulerException e) {
                         logger.error(e.getMessage(), e);
-                        throw new RuntimeException(e);
+                        throw SingularException.rethrow(e.getMessage(), e);
                     }
                 }
             };
