@@ -5,6 +5,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadR
 public class FileUploadProcessor {
 
 
-    public List<UploadResponseInfo> process(FileItem item, UploadInfo upInfo, FileUploadManager upManager) throws Exception {
+    public List<UploadResponseInfo> process(FileItem item, UploadInfo upInfo, FileUploadManager upManager) throws SingularException {
 
         final List<UploadResponseInfo> responses = new ArrayList<>();
 
@@ -37,6 +38,8 @@ public class FileUploadProcessor {
                 try (InputStream in = item.getInputStream()) {
                     final FileUploadInfo fileInfo = upManager.createFile(upInfo, originalFilename, in);
                     responses.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
+                } catch (Exception e){
+                    throw SingularException.rethrow(e.getMessage(), e);
                 }
             }
         }
