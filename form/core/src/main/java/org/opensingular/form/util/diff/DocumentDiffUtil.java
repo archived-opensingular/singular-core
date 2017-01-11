@@ -312,7 +312,7 @@ public final class DocumentDiffUtil {
 
 
     /** Retorna o registro de calculadores de diff por tipo. */
-    private static TypeDiffRegister getRegister() {
+    private static synchronized TypeDiffRegister getRegister() {
         if (register == null) {
             register = new TypeDiffRegister();
         }
