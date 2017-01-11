@@ -16,23 +16,30 @@
 
 package org.opensingular.server.commons.wicket.view.form;
 
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.tree.DefaultNestedTree;
-import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
-import org.apache.wicket.extensions.markup.html.repeater.tree.content.Folder;
+import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
+import org.apache.wicket.extensions.markup.html.repeater.util.SingleSortState;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.opensingular.form.util.diff.DiffInfo;
 import org.opensingular.form.util.diff.DocumentDiff;
-import org.opensingular.lib.wicket.util.util.WicketUtils;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BSTableTree;
+import org.opensingular.lib.wicket.util.datatable.column.BSTreeColumn;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class DiffVisualizer extends Panel {
 
-    private transient DocumentDiff documentDiff;
+    private DocumentDiff documentDiff;
     private DefaultNestedTree<DiffInfo> tree;
 
     public DiffVisualizer(String id, DocumentDiff documentDiff) {
@@ -44,38 +51,32 @@ public class DiffVisualizer extends Panel {
     protected void onConfigure() {
         super.onConfigure();
 
-        createTree();
+        createTreeTable();
     }
 
-    private void createTree() {
-        tree = new DefaultNestedTree<DiffInfo>("tree", createProvider()) {
+    private void createTreeTable() {
 
-            @Override
-            protected Component newContentComponent(String id, IModel node) {
-                return new Folder<DiffInfo>(id, this, node) {
-                    @Override
-                    protected IModel<?> newLabelModel(IModel model) {
-                        DiffInfo info = (DiffInfo) model.getObject();
-                        return WicketUtils.$m.ofValue(info.getLabel());
-                    }
+        BSTreeColumn<DiffInfo, Integer> treeColumn = new BSTreeColumn<>($m.ofValue("Nome do item"));
+        treeColumn.setContentLabelFunction(DiffInfo::getLabel);
 
-                    @Override
-                    protected boolean isClickable() {
-                        return false;
-                    }
-                };
-            }
+        BSTableTree<DiffInfo, Integer> tableTree = new BSDataTableBuilder<>(createProvider())
+                .appendColumn(treeColumn)
+                .appendPropertyColumn($m.ofValue("Tipo de Modificação"), "type.nomeModificacao")
+                .buildTree("tree");
 
-            @Override
-            public State getState(DiffInfo diffInfo) {
-                return State.EXPANDED;
-            }
-        };
-        add(tree);
+        tableTree.setModel(new DiffModel(documentDiff.getDiffRoot()));
+        queue(tableTree);
     }
 
-    private ITreeProvider<DiffInfo> createProvider() {
-        return new ITreeProvider<DiffInfo>() {
+    private ISortableTreeProvider<DiffInfo, Integer> createProvider() {
+        return new ISortableTreeProvider<DiffInfo, Integer>() {
+            private final SingleSortState<Integer> state = new SingleSortState<>();
+
+            @Override
+            public ISortState<Integer> getSortState() {
+                return state;
+            }
+
             @Override
             public Iterator<? extends DiffInfo> getRoots() {
                 return Collections.singletonList(documentDiff.getDiffRoot()).iterator();
@@ -93,7 +94,7 @@ public class DiffVisualizer extends Panel {
 
             @Override
             public IModel<DiffInfo> model(DiffInfo object) {
-                return new DiffModel(object);
+                return $m.ofValue(object);
             }
 
             @Override
@@ -103,17 +104,41 @@ public class DiffVisualizer extends Panel {
         };
     }
 
-    private class DiffModel extends LoadableDetachableModel<DiffInfo> {
+    private static class DiffModel implements IModel<Set<DiffInfo>> {
 
-        private final Integer id;
+        private Set<DiffInfo> diffs;
 
-        public DiffModel(DiffInfo object) {
-            this.id= object.getId();
+        public DiffModel(DiffInfo diffRoot) {
+            this.diffs = collectAll(diffRoot);
+        }
+
+        private Set<DiffInfo> collectAll(DiffInfo diffRoot) {
+            Set<DiffInfo> diffs = new HashSet<>();
+
+            diffs.add(diffRoot);
+
+            if (diffRoot.hasChildren()) {
+                for (DiffInfo diffInfo : diffRoot.getChildren()) {
+                    diffs.addAll(collectAll(diffInfo));
+                }
+            }
+
+            return diffs;
         }
 
         @Override
-        protected DiffInfo load() {
-            return documentDiff.getById(id);
+        public Set<DiffInfo> getObject() {
+            return diffs;
+        }
+
+        @Override
+        public void setObject(Set<DiffInfo> diffs) {
+            this.diffs = diffs;
+        }
+
+        @Override
+        public void detach() {
+
         }
     }
 }
