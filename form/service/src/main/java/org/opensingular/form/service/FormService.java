@@ -137,6 +137,20 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations) {
+        final SInstance instance =  newTransientSInstance(key, refType, documentFactory);
+        instance.asAtrAnnotation().clear();
+        return instance;
+    }
+
+    @Override
+    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations) {
+        final SInstance instance =  newTransientSInstance(key, refType, documentFactory, versionId);
+        instance.asAtrAnnotation().clear();
+        return instance;
+    }
+
+    @Override
     public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
         final FormEntity entity = loadFormEntity(key);
         return internalLoadSInstance(key, refType, documentFactory, entity.getCurrentFormVersionEntity());

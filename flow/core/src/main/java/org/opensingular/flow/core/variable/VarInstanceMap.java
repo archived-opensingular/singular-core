@@ -57,7 +57,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     }
 
     public default void setValor(String ref, Object valor) {
-        getVariavelOrException(ref).setValor(valor);
+        getVariavelOrException(ref).setValue(valor);
     }
 
     public default Stream<K> stream() {
@@ -71,12 +71,12 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
 
     @SuppressWarnings("unchecked")
     public default <T extends Object> T getValor(String ref) {
-        return (T) getVariavelOrException(ref).getValor();
+        return (T) getVariavelOrException(ref).getValue();
     }
 
     @SuppressWarnings("unchecked")
     public default <T> T getValor(String ref, T valorDefault) {
-        Object v = getVariavelOrException(ref).getValor();
+        Object v = getVariavelOrException(ref).getValue();
         if (v == null) {
             return valorDefault;
         }
@@ -89,7 +89,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
 
     public default <T> T getValorTipo(String ref, Class<T> classeTipo, T valorDefault) {
         K cp = getVariavelOrException(ref);
-        Object o = cp.getValor();
+        Object o = cp.getValue();
         if (o == null) {
             return valorDefault;
         } else if (classeTipo.isInstance(o)) {
@@ -103,11 +103,11 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
             VarInstance localVar = getVariavel(var.getRef());
             if (localVar == null) {
                 if (createMissingTypes) {
-                    localVar = addDefinicao(var.getDefinicao().copy());
-                    localVar.setValor(var.getValor());
+                    localVar = addDefinicao(var.getDefinition().copy());
+                    localVar.setValue(var.getValue());
                 }
             } else {
-                localVar.setValor(var.getValor());
+                localVar.setValue(var.getValue());
             }
         }
     }
@@ -121,7 +121,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         if (var == null) {
             var = addDefinicao(getVarService().newDefinition(ref, ref, type));
         }
-        var.setValor(value);
+        var.setValue(value);
     }
 
     public default void addValorString(String ref, String value) {
@@ -129,7 +129,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         if (var == null) {
             var = addDefinicao(getVarService().newDefinitionString(ref, ref, null));
         }
-        var.setValor(value);
+        var.setValue(value);
     }
 
     public default void addValorDate(String ref, Date value) {
@@ -137,7 +137,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         if (var == null) {
             var = addDefinicao(getVarService().newDefinitionDate(ref, ref));
         }
-        var.setValor(value);
+        var.setValue(value);
     }
 
     public default void addValorInteger(String ref, Integer value) {
@@ -145,7 +145,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         if (var == null) {
             var = addDefinicao(getVarService().newDefinitionInteger(ref, ref));
         }
-        var.setValor(value);
+        var.setValue(value);
     }
 
     public default void addValorBoolean(String ref, Boolean value) {
@@ -153,7 +153,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         if (var == null) {
             var = addDefinicao(getVarService().newDefinitionBoolean(ref, ref));
         }
-        var.setValor(value);
+        var.setValue(value);
     }
 
     // ----------------------------------------------------------
@@ -195,7 +195,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     public default ValidationResult validar() {
         ValidationResult result = new ValidationResult();
         for (VarInstance cp : this) {
-            if (cp.isObrigatorio() && cp.getValor() == null) {
+            if (cp.isRequired() && cp.getValue() == null) {
                 result.addErro(cp, "Campo  obrigatório");
             }
         }

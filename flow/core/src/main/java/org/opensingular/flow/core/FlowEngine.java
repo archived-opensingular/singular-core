@@ -188,7 +188,7 @@ class FlowEngine {
         if (paramIn != null) {
             for (VarInstance variavel : paramIn) {
                 if (instancia.getProcessDefinition().getVariables().contains(variavel.getRef())) {
-                    instancia.setVariavel(variavel.getRef(), variavel.getValor());
+                    instancia.setVariavel(variavel.getRef(), variavel.getValue());
                 }
             }
         }

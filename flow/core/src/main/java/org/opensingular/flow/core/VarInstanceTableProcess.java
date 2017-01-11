@@ -51,7 +51,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
                 if (v == null) {
                     v = addDefinicao(getVarService().newDefinitionString(dadosVariavel.getName(), dadosVariavel.getName(), null));
                 }
-                v.setValor(dadosVariavel.getValue());
+                v.setValue(dadosVariavel.getValue());
                 v.getMetaData().set(PROP_DB_COD, dadosVariavel.getCod());
             }
         }
