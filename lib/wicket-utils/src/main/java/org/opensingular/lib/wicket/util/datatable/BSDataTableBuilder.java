@@ -195,6 +195,10 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     public BSTableTree<T, S> buildTree(String id) {
         return new BSTableTree<>(id, new ArrayList<>(columns), treeProvider)
-                .setRowsPerPage(rowsPerPage);
+                .setRowsPerPage(rowsPerPage)
+                .setStripedRows(stripedRows)
+                .setHoverRows(hoverRows)
+                .setBorderedTable(borderedTable)
+                .setCondensedTable(condensedTable);
     }
 }
