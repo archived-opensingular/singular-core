@@ -78,4 +78,8 @@ public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> exte
         return (K) this;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

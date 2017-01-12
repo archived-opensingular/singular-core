@@ -23,6 +23,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.view.SView;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -335,7 +336,7 @@ public final class DocumentDiffUtil {
          * @param original Instância original (pode ser null)
          * @param newer    Nova versão da instância (pode ser null)
          */
-        public void calculateDiff(DiffInfo info, I original, I newer);
+        public void calculateDiff(@Nonnull DiffInfo info, @Nullable I original, @Nullable I newer);
     }
 
     /**

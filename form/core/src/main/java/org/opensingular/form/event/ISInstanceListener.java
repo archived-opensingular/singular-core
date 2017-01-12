@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public interface ISInstanceListener extends Serializable {
+public interface ISInstanceListener {
 
     void onInstanceEvent(SInstanceEvent evt);
 

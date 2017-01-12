@@ -106,4 +106,9 @@ public class MTaskJava extends MTask<MTaskJava> {
     public interface ImplTaskBlock<K extends ProcessInstance> {
         Object call(Collection<K> instanciasProcesso);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

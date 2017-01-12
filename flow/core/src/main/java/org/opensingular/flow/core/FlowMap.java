@@ -45,8 +45,8 @@ import org.opensingular.lib.commons.base.SingularException;
  *
  * @author Daniel Bordin
  */
-@SuppressWarnings({"serial", "rawtypes", "unchecked"})
-public class FlowMap implements Serializable {
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class FlowMap {
 
     private final ProcessDefinition<?> processDefinition;
 
@@ -338,7 +338,9 @@ public class FlowMap implements Serializable {
      * @return a tarefa inicial.
      */
     public MTask<?> getStartTask() {
-        Objects.requireNonNull(startTask);
+        if (startTask == null) {
+            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"));
+        }
         return startTask;
     }
 

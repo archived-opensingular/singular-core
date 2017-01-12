@@ -34,6 +34,7 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
@@ -96,12 +97,6 @@ public class ProcessInstance implements Serializable {
         return start(getVariaveis());
     }
 
-    /**
-     * @deprecated Esse método deve ser renomeado pois possui um comportamente
-     * implicito não evidente em comparação à outra versão sobrecarregada do
-     * mesmo: "getPersistedDescription"
-     */
-    @Deprecated
     public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
         getPersistedDescription(); // Força a geração da descrição
         return FlowEngine.start(this, varInstanceMap);
@@ -549,7 +544,8 @@ public class ProcessInstance implements Serializable {
      * @param agora o momento da transição.
      * @return a tarefa corrente depois da transição.
      */
-    protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
+    protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem,
+            @Nonnull MTask<?> task, Date agora) {
         synchronized (this) {
             if (tarefaOrigem != null) {
                 tarefaOrigem.endLastAllocation();
