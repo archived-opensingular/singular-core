@@ -373,13 +373,13 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
     }
 
     private String appendParameters(Map<String, String> additionalParams) {
-        String paramsValue = "";
+        StringBuilder paramsValue = new StringBuilder();
         if (!additionalParams.isEmpty()) {
             for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
-                paramsValue += "&" + entry.getKey() + "=" + entry.getValue();
+                paramsValue.append(String.format("&%s=%s", entry.getKey(), entry.getValue()));
             }
         }
-        return paramsValue;
+        return paramsValue.toString();
     }
 
     private IFunction<IModel<BoxItemModel>, Boolean> visibleFunction(ItemAction itemAction) {

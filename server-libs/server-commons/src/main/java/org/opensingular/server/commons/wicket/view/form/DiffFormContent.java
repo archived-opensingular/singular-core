@@ -156,15 +156,17 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
     }
 
     private String mountUrlOldVersion() {
-        String url = DispatcherPageUtil.getBaseURL() + "?"
-                + String.format("%s=%s", DispatcherPageParameters.ACTION, FormActions.FORM_VIEW.getId())
-                + String.format("&%s=%s", DispatcherPageParameters.FORM_VERSION_KEY, originalFormVersion.getCod());
+        StringBuilder url = new StringBuilder();
+        url.append(DispatcherPageUtil.getBaseURL())
+                .append("?")
+                .append(String.format("%s=%s", DispatcherPageParameters.ACTION, FormActions.FORM_VIEW.getId()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.FORM_VERSION_KEY, originalFormVersion.getCod()));
 
         for (Map.Entry<String, String> entry : config.getAdditionalParams().entrySet()) {
-            url += String.format("&%s=%s", entry.getKey(), entry.getValue());
+            url.append(String.format("&%s=%s", entry.getKey(), entry.getValue()));
         }
 
-        return url;
+        return url.toString();
     }
 
     private void appendDate(BSRow container, String labelCampo, Date data) {

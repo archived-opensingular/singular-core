@@ -152,7 +152,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
     
     public void setPort(String port) {
         if(port != null){
-            super.setPort(Integer.valueOf(port));
+            super.setPort(Integer.parseInt(port));
         }
     }
 }
