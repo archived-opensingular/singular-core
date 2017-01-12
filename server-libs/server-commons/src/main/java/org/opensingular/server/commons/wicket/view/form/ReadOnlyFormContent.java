@@ -32,13 +32,13 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.server.commons.wicket.view.template.Content;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 
 public class ReadOnlyFormContent extends Content {
 
 
     private final IModel<Long>        formVersionEntityPK;
-    private final SFormConfig<String> formConfig;
     private final IModel<Boolean>     showAnnotations;
 
     private SingularFormPanel<String> singularFormPanel;
@@ -46,10 +46,13 @@ public class ReadOnlyFormContent extends Content {
     @Inject
     private IFormService formService;
 
-    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, SFormConfig<String> formConfig, IModel<Boolean> showAnnotations) {
+    @Inject
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> formConfig;
+
+    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, IModel<Boolean> showAnnotations) {
         super(id);
         this.formVersionEntityPK = formVersionEntityPK;
-        this.formConfig = formConfig;
         this.showAnnotations = showAnnotations;
         build();
     }
