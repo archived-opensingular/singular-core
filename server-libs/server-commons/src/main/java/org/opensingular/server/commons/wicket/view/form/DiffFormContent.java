@@ -98,18 +98,20 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
         FormTypeEntity mainFormType = petition.getMainForm().getFormType();
         DraftEntity    draftEntity = petition.currentEntityDraftByType(mainFormType.getAbbreviation());
 
-        SInstance original;
+        SInstance original = null;
         SInstance newer;
 
-        Date originalDate;
+        Date originalDate = null;
         Date newerDate;
 
         if (draftEntity != null) {
             Optional<FormPetitionEntity> lastForm = formPetitionService.findLastFormPetitionEntityByTypeName(petition.getCod(), mainFormType.getAbbreviation());
-            FormEntity originalForm = lastForm.get().getForm();
-            original = loadSInstance(originalForm);
-            originalFormVersion = originalForm.getCurrentFormVersionEntity();
-            originalDate = originalFormVersion.getInclusionDate();
+            if (lastForm.isPresent()) {
+                FormEntity originalForm = lastForm.get().getForm();
+                original = loadSInstance(originalForm);
+                originalFormVersion = originalForm.getCurrentFormVersionEntity();
+                originalDate = originalFormVersion.getInclusionDate();
+            }
 
             newerFormVersion = draftEntity.getForm().getCurrentFormVersionEntity();
             FormEntity newerForm = newerFormVersion.getFormEntity();
