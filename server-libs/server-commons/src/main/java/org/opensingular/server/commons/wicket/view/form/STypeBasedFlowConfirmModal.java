@@ -32,6 +32,7 @@ import org.opensingular.form.service.IFormService;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
@@ -40,10 +41,10 @@ import org.opensingular.server.commons.wicket.builder.MarkupCreator;
 
 public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends AbstractFlowConfirmModal<T> {
 
-    private final SFormConfig<String>              formConfig;
+    private final ISupplier<SFormConfig<String>>   formConfigSupplier;
     private final RefType                          refType;
     private final FormKey                          formKey;
-    private final IFormService                     formService;
+    private final ISupplier<IFormService>          formServiceSupplier;
     private final IBiConsumer<SIComposite, String> onCreateInstance;
     private       String                           transitionName;
     private       boolean                          dirty;
@@ -52,17 +53,17 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     private       IModel<SInstance>                rootInstance;
 
     public STypeBasedFlowConfirmModal(AbstractFormPage<T> formPage,
-                                      SFormConfig<String> formConfig,
+                                      ISupplier<SFormConfig<String>> formConfigSupplier,
                                       RefType refType,
                                       FormKey formKey,
-                                      IFormService formService,
+                                      ISupplier<IFormService> formServiceSupplier,
                                       IBiConsumer<SIComposite, String> onCreateInstance, boolean validatePageForm) {
         super(formPage);
 
-        this.formConfig = formConfig;
+        this.formConfigSupplier = formConfigSupplier;
         this.refType = refType;
         this.formKey = formKey;
-        this.formService = formService;
+        this.formServiceSupplier = formServiceSupplier;
         this.onCreateInstance = onCreateInstance;
         this.dirty = false;
         this.validatePageForm = validatePageForm;
@@ -108,12 +109,12 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
     }
 
     private SingularFormPanel<String> buildSingularFormPanel() {
-        singularFormPanel = new SingularFormPanel<String>("singular-form-panel", formConfig, true) {
+        singularFormPanel = new SingularFormPanel<String>("singular-form-panel", formConfigSupplier.get(), true) {
             @Override
             protected SInstance createInstance(SFormConfig singularFormConfig) {
                 SInstance instance;
                 if (formKey != null) {
-                    instance = formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory());
+                    instance = formServiceSupplier.get().loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory());
                 } else {
                     instance = singularFormConfig.getDocumentFactory().createInstance(refType);
                 }
