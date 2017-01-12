@@ -17,6 +17,8 @@
 package org.opensingular.form.internal.xml;
 
 import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,7 +50,7 @@ public class MElementWrapper extends MElement implements EWrapper {
     /**
      * Elemento que contem realmente os dados.
      */
-    private final Element original_;
+    private final ISupplier<Element> original;
 
     /**
      * Constroi um MElement para ler e alterar o Element informado.
@@ -59,9 +61,9 @@ public class MElementWrapper extends MElement implements EWrapper {
         if (original == null) {
             throw new IllegalArgumentException("Elemento original não pode ser " + "null");
         } else if (original instanceof MElementWrapper) {
-            original_ = ((MElementWrapper) original).original_;
+            this.original = ((MElementWrapper) original).original;
         } else {
-            original_ = original;
+            this.original = SupplierUtil.serializable(original);
         }
     }
 
@@ -71,7 +73,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param nomeRaiz -
      */
     public MElementWrapper(String nomeRaiz) {
-        original_ = newRootElement(nomeRaiz);
+        original = SupplierUtil.serializable(newRootElement(nomeRaiz));
     }
 
     /**
@@ -84,7 +86,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * prefixo (ex.: "fin:ContaPagamento").
      */
     public MElementWrapper(String namespaceURI, String qualifiedName) {
-        original_ = newRootElement(namespaceURI, qualifiedName);
+        original = SupplierUtil.serializable(newRootElement(namespaceURI, qualifiedName));
     }
 
     /**
@@ -94,7 +96,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public final Element getOriginal() {
-        return original_;
+        return original.get();
     }
 
     /**
@@ -519,7 +521,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getTagName() {
-        return original_.getTagName();
+        return original.get().getTagName();
     }
 
     /**
@@ -527,7 +529,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getAttribute(String arg0) {
-        return original_.getAttribute(arg0);
+        return original.get().getAttribute(arg0);
     }
 
     /**
@@ -535,7 +537,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setAttribute(String arg0, String arg1) {
-        original_.setAttribute(arg0, arg1);
+        original.get().setAttribute(arg0, arg1);
     }
 
     /**
@@ -543,7 +545,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void removeAttribute(String arg0) {
-        original_.removeAttribute(arg0);
+        original.get().removeAttribute(arg0);
     }
 
     /**
@@ -551,7 +553,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Attr getAttributeNode(String arg0) {
-        return original_.getAttributeNode(arg0);
+        return original.get().getAttributeNode(arg0);
     }
 
     /**
@@ -559,7 +561,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Attr setAttributeNode(Attr arg0) {
-        return original_.setAttributeNode(arg0);
+        return original.get().setAttributeNode(arg0);
     }
 
     /**
@@ -567,7 +569,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Attr removeAttributeNode(Attr arg0) {
-        return original_.removeAttributeNode(arg0);
+        return original.get().removeAttributeNode(arg0);
     }
 
     /**
@@ -575,7 +577,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public NodeList getElementsByTagName(String arg0) {
-        return original_.getElementsByTagName(arg0);
+        return original.get().getElementsByTagName(arg0);
     }
 
     /**
@@ -583,7 +585,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getAttributeNS(String arg0, String arg1) {
-        return original_.getAttributeNS(arg0, arg1);
+        return original.get().getAttributeNS(arg0, arg1);
     }
 
     /**
@@ -591,7 +593,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setAttributeNS(String arg0, String arg1, String arg2) {
-        original_.setAttributeNS(arg0, arg1, arg2);
+        original.get().setAttributeNS(arg0, arg1, arg2);
     }
 
     /**
@@ -599,7 +601,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void removeAttributeNS(String arg0, String arg1) {
-        original_.removeAttributeNS(arg0, arg1);
+        original.get().removeAttributeNS(arg0, arg1);
     }
 
     /**
@@ -607,7 +609,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Attr getAttributeNodeNS(String arg0, String arg1) {
-        return original_.getAttributeNodeNS(arg0, arg1);
+        return original.get().getAttributeNodeNS(arg0, arg1);
     }
 
     /**
@@ -615,7 +617,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Attr setAttributeNodeNS(Attr arg0) {
-        return original_.setAttributeNodeNS(arg0);
+        return original.get().setAttributeNodeNS(arg0);
     }
 
     /**
@@ -623,7 +625,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public NodeList getElementsByTagNameNS(String arg0, String arg1) {
-        return original_.getElementsByTagNameNS(arg0, arg1);
+        return original.get().getElementsByTagNameNS(arg0, arg1);
     }
 
     /**
@@ -631,7 +633,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean hasAttribute(String arg0) {
-        return original_.hasAttribute(arg0);
+        return original.get().hasAttribute(arg0);
     }
 
     /**
@@ -639,7 +641,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean hasAttributeNS(String arg0, String arg1) {
-        return original_.hasAttributeNS(arg0, arg1);
+        return original.get().hasAttributeNS(arg0, arg1);
     }
 
     /**
@@ -647,7 +649,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getNodeName() {
-        return original_.getNodeName();
+        return original.get().getNodeName();
     }
 
     /**
@@ -655,7 +657,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getNodeValue() {
-        return original_.getNodeValue();
+        return original.get().getNodeValue();
     }
 
     /**
@@ -663,7 +665,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setNodeValue(String arg0) {
-        original_.setNodeValue(arg0);
+        original.get().setNodeValue(arg0);
     }
 
     /**
@@ -671,7 +673,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public short getNodeType() {
-        return original_.getNodeType();
+        return original.get().getNodeType();
     }
 
     /**
@@ -679,7 +681,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node getParentNode() {
-        return original_.getParentNode();
+        return original.get().getParentNode();
     }
 
     /**
@@ -687,7 +689,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public NodeList getChildNodes() {
-        return original_.getChildNodes();
+        return original.get().getChildNodes();
     }
 
     /**
@@ -695,7 +697,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node getFirstChild() {
-        return original_.getFirstChild();
+        return original.get().getFirstChild();
     }
 
     /**
@@ -703,7 +705,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node getLastChild() {
-        return original_.getLastChild();
+        return original.get().getLastChild();
     }
 
     /**
@@ -711,7 +713,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node getPreviousSibling() {
-        return original_.getPreviousSibling();
+        return original.get().getPreviousSibling();
     }
 
     /**
@@ -719,7 +721,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node getNextSibling() {
-        return original_.getNextSibling();
+        return original.get().getNextSibling();
     }
 
     /**
@@ -727,7 +729,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public NamedNodeMap getAttributes() {
-        return original_.getAttributes();
+        return original.get().getAttributes();
     }
 
     /**
@@ -735,7 +737,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Document getOwnerDocument() {
-        return original_.getOwnerDocument();
+        return original.get().getOwnerDocument();
     }
 
     /**
@@ -744,12 +746,12 @@ public class MElementWrapper extends MElement implements EWrapper {
     @Override
     public Node insertBefore(Node arg0, Node arg1) {
         if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original_;
+            arg0 = ((MElementWrapper) arg0).original.get();
         }
         if (arg1 instanceof MElementWrapper) {
-            arg1 = ((MElementWrapper) arg0).original_;
+            arg1 = ((MElementWrapper) arg0).original.get();
         }
-        return original_.insertBefore(arg0, arg1);
+        return original.get().insertBefore(arg0, arg1);
     }
 
     /**
@@ -758,9 +760,9 @@ public class MElementWrapper extends MElement implements EWrapper {
     @Override
     public Node replaceChild(Node arg0, Node arg1) {
         if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original_;
+            arg0 = ((MElementWrapper) arg0).original.get();
         }
-        return original_.replaceChild(arg0, arg1);
+        return original.get().replaceChild(arg0, arg1);
     }
 
     /**
@@ -769,9 +771,9 @@ public class MElementWrapper extends MElement implements EWrapper {
     @Override
     public Node removeChild(Node arg0) {
         if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original_;
+            arg0 = ((MElementWrapper) arg0).original.get();
         }
-        return original_.removeChild(arg0);
+        return original.get().removeChild(arg0);
     }
 
     /**
@@ -780,9 +782,9 @@ public class MElementWrapper extends MElement implements EWrapper {
     @Override
     public Node appendChild(Node arg0) {
         if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original_;
+            arg0 = ((MElementWrapper) arg0).original.get();
         }
-        return original_.appendChild(arg0);
+        return original.get().appendChild(arg0);
     }
 
     /**
@@ -790,7 +792,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean hasChildNodes() {
-        return original_.hasChildNodes();
+        return original.get().hasChildNodes();
     }
 
     /**
@@ -798,7 +800,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node cloneNode(boolean arg0) {
-        return original_.cloneNode(arg0);
+        return original.get().cloneNode(arg0);
     }
 
     /**
@@ -806,7 +808,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void normalize() {
-        original_.normalize();
+        original.get().normalize();
     }
 
     /**
@@ -814,7 +816,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean isSupported(String arg0, String arg1) {
-        return original_.isSupported(arg0, arg1);
+        return original.get().isSupported(arg0, arg1);
     }
 
     /**
@@ -822,7 +824,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getNamespaceURI() {
-        return original_.getNamespaceURI();
+        return original.get().getNamespaceURI();
     }
 
     /**
@@ -830,7 +832,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getPrefix() {
-        return original_.getPrefix();
+        return original.get().getPrefix();
     }
 
     /**
@@ -838,7 +840,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setPrefix(String arg0) {
-        original_.setPrefix(arg0);
+        original.get().setPrefix(arg0);
     }
 
     /**
@@ -846,7 +848,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getLocalName() {
-        return original_.getLocalName();
+        return original.get().getLocalName();
     }
 
     /**
@@ -854,7 +856,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean hasAttributes() {
-        return original_.hasAttributes();
+        return original.get().hasAttributes();
     }
 
     //-------------------------------------------
@@ -866,7 +868,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public TypeInfo getSchemaTypeInfo() {
-        return original_.getSchemaTypeInfo();
+        return original.get().getSchemaTypeInfo();
     }
 
     /**
@@ -874,7 +876,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setIdAttribute(String name, boolean isId) throws DOMException {
-        original_.setIdAttribute(name, isId);
+        original.get().setIdAttribute(name, isId);
     }
 
     /**
@@ -882,7 +884,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException {
-        original_.setIdAttributeNS(namespaceURI, localName, isId);
+        original.get().setIdAttributeNS(namespaceURI, localName, isId);
     }
 
     /**
@@ -890,7 +892,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException {
-        original_.setIdAttributeNode(idAttr, isId);
+        original.get().setIdAttributeNode(idAttr, isId);
     }
 
     /**
@@ -898,7 +900,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getBaseURI() {
-        return original_.getBaseURI();
+        return original.get().getBaseURI();
     }
 
     /**
@@ -906,7 +908,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public short compareDocumentPosition(Node other) throws DOMException {
-        return original_.compareDocumentPosition(other);
+        return original.get().compareDocumentPosition(other);
     }
 
     /**
@@ -914,7 +916,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String getTextContent() throws DOMException {
-        return original_.getTextContent();
+        return original.get().getTextContent();
     }
 
     /**
@@ -922,7 +924,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public void setTextContent(String textContent) throws DOMException {
-        original_.setTextContent(textContent);
+        original.get().setTextContent(textContent);
 
     }
 
@@ -931,7 +933,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean isSameNode(Node other) {
-        return original_.isSameNode(other);
+        return original.get().isSameNode(other);
     }
 
     /**
@@ -939,7 +941,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String lookupPrefix(String namespaceURI) {
-        return original_.lookupPrefix(namespaceURI);
+        return original.get().lookupPrefix(namespaceURI);
     }
 
     /**
@@ -947,7 +949,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean isDefaultNamespace(String namespaceURI) {
-        return original_.isDefaultNamespace(namespaceURI);
+        return original.get().isDefaultNamespace(namespaceURI);
     }
 
     /**
@@ -955,7 +957,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public String lookupNamespaceURI(String prefix) {
-        return original_.lookupNamespaceURI(prefix);
+        return original.get().lookupNamespaceURI(prefix);
     }
 
     /**
@@ -963,7 +965,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean isEqualNode(Node arg) {
-        return original_.isEqualNode(arg);
+        return original.get().isEqualNode(arg);
     }
 
     /**
@@ -971,7 +973,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Object getFeature(String feature, String version) {
-        return original_.getFeature(feature, version);
+        return original.get().getFeature(feature, version);
     }
 
     /**
@@ -979,7 +981,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Object setUserData(String key, Object data, UserDataHandler handler) {
-        return original_.setUserData(key, data, handler);
+        return original.get().setUserData(key, data, handler);
     }
 
     /**
@@ -987,7 +989,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Object getUserData(String key) {
-        return original_.getUserData(key);
+        return original.get().getUserData(key);
     }
     //-------------------------------------------
     // Fim Métodos para o Jdk 1.5

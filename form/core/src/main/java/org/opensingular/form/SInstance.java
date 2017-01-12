@@ -29,6 +29,7 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -379,10 +380,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return this.parent;
     }
 
+    @Nonnull
     public <A extends SInstance & ICompositeInstance> A getAncestor(SType<A> ancestorType) {
-        return findAncestor(ancestorType).get();
+        return SInstances.getAncestor(this, ancestorType);
     }
 
+    @Nonnull
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return SInstances.findAncestor(this, ancestorType);
     }

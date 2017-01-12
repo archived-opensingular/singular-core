@@ -52,6 +52,10 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
         this.instanceClass = instanceClass;
         this.valueClass = valueClass;
         selfReference = (typeClass == null) && (instanceClass == null) && (valueClass == null);
+        if (! selfReference && instanceClass == null) {
+            throw new SingularFormException("O Atributo " + nameSimple + " não define o tipo da instância do atributo",
+                    this);
+        }
     }
 
     public String getNameSimple() {

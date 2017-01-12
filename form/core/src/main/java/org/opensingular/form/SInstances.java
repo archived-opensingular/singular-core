@@ -32,6 +32,8 @@ import java.util.stream.StreamSupport;
 import org.opensingular.form.type.core.SIBoolean;
 import org.opensingular.form.type.core.STypeBoolean;
 
+import javax.annotation.Nonnull;
+
 /**
  * Métodos utilitários para manipulação de MInstance.
  *
@@ -198,12 +200,15 @@ public abstract class SInstances {
      * @param node instância inicial da busca
      * @param ancestorType tipo do ancestral
      * @return instância do ancestral do tipo especificado
-     * @throws NoSuchElementException se não encontrar nenhum ancestral deste tipo
+     * @throws SingularFormException se não encontrar nenhum ancestral deste tipo
      */
-    public static <P extends SInstance & ICompositeInstance> P getAncestor(SInstance node, SType<P> ancestorType) throws NoSuchElementException {
-        return findAncestor(node, ancestorType).get();
+    @Nonnull
+    public static <P extends SInstance & ICompositeInstance> P getAncestor(SInstance node, SType<P> ancestorType) {
+        return findAncestor(node, ancestorType).orElseThrow(
+                () -> new SingularFormException("Não foi encontrado " + ancestorType + " em " + node, node));
     }
 
+    @Nonnull
     public static <A extends SType<?>> Optional<SInstance> findAncestor(SInstance node, Class<A> ancestorType) {
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
             if (parent.getType().getClass().equals(ancestorType)) {
@@ -311,36 +316,8 @@ public abstract class SInstances {
      * @throws NoSuchElementException se não encontrar nenhum descendente deste tipo
      */
     public static <D extends SInstance> D getDescendant(SInstance node, SType<D> descendantType) {
-        return findDescendant(node, descendantType).get();
-    }
-
-    /**
-     * Busca descendente de <code>node</code> do tipo especificado, por id.
-     * @param node instância inicial da busca
-     * @param descendantId id do descendente
-     * @param descendantType tipo do descendente
-     * @return instância especificada
-     * @throws NoSuchElementException se não encontrar a instancia especificada
-     */
-    @Deprecated
-    public static <D extends SInstance> D getDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
-        //TODO (by Daniel) apagar esse método e passar a usar SDocumento.findInstanceById()
-        return findDescendantById(node, descendantId, descendantType).get();
-    }
-
-    /**
-     * Busca descendente de <code>node</code> do tipo especificado, por id.
-     * @param node instância inicial da busca
-     * @param descendantId id do descendente
-     * @param descendantType tipo do descendente
-     * @return Optional da instância especificada
-     */
-    @Deprecated
-    public static <D extends SInstance> Optional<D> findDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
-        //TODO (by Daniel) apagar esse método e passar a usar SDocumento.findInstanceById()
-        return streamDescendants(node, true, descendantType)
-            .filter(it -> descendantId.equals(it.getId()))
-            .findAny();
+        return findDescendant(node, descendantType).orElseThrow(
+                () -> new SingularFormException("Não foi encontrado " + descendantType + " em " + node, node));
     }
 
     /**
