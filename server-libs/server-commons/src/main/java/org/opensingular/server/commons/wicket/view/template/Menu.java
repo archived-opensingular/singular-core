@@ -73,7 +73,7 @@ public class Menu extends Panel {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(Menu.class);
 
-    protected List<ProcessGroupEntity> categorias;
+    private List<ProcessGroupEntity> categorias;
 
     private Class<? extends WebPage> boxPageClass;
 
@@ -103,7 +103,7 @@ public class Menu extends Panel {
     }
 
 
-    private void buildMenuSelecao() {
+    protected void buildMenuSelecao() {
         SelecaoMenuItem selecaoMenuItem = new SelecaoMenuItem(categorias);
         menu.addItem(selecaoMenuItem);
     }
