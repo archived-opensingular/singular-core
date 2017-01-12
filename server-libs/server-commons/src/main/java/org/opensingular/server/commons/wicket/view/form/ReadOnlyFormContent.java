@@ -41,7 +41,7 @@ public class ReadOnlyFormContent extends Content {
     private IFormService formService;
 
     private final IModel<Long>        formVersionEntityPK;
-    private final SFormConfig<String> formConfig;//NOSONAR
+    private final SFormConfig<String> formConfig;
     private final IModel<Boolean>     showAnnotations;
 
     private SingularFormPanel<String> singularFormPanel;
