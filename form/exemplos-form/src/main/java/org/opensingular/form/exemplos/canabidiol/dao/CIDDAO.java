@@ -16,6 +16,7 @@
 
 package org.opensingular.form.exemplos.canabidiol.dao;
 
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.exemplos.canabidiol.model.AbstractDadoCID;
 import org.opensingular.form.exemplos.canabidiol.model.CategoriaCID;
 import org.opensingular.form.exemplos.canabidiol.model.SubCategoriaCID;
@@ -66,7 +67,7 @@ public class CIDDAO {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw SingularFormException.rethrow(e.getMessage(), e);
         }
     }
 
