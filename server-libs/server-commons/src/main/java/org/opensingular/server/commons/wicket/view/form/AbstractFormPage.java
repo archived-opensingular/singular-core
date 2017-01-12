@@ -374,19 +374,21 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected String mountUrlDiff() {
 
-        String url = DispatcherPageUtil.getBaseURL() + "?"
-                + String.format("%s=%s", DispatcherPageParameters.ACTION, config.getFormAction().getId())
-                + String.format("&%s=%s", DispatcherPageParameters.PETITION_ID, config.getPetitionId())
-                + String.format("&%s=%s", DispatcherPageParameters.FORM_NAME, config.getFormType())
-                + String.format("&%s=%s", DispatcherPageParameters.DIFF, Boolean.TRUE.toString());
+        StringBuilder url = new StringBuilder();
+        url.append(DispatcherPageUtil.getBaseURL())
+                .append("?")
+                .append(String.format("%s=%s", DispatcherPageParameters.ACTION, config.getFormAction().getId()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.PETITION_ID, config.getPetitionId()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.FORM_NAME, config.getFormType()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.DIFF, Boolean.TRUE.toString()));
 
         Map<String, String> additionalParams = getAdditionalParams();
 
         for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
-            url += String.format("&%s=%s", entry.getKey(), entry.getValue());
+            url.append(String.format("&%s=%s", entry.getKey(), entry.getValue()));
         }
 
-        return url;
+        return url.toString();
     }
 
     protected Map<String,String> getAdditionalParams() {
