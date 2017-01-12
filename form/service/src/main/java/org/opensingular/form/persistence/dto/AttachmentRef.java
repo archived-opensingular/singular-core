@@ -97,7 +97,14 @@ public class AttachmentRef implements IAttachmentRef{
             return CompressionUtil.inflateToInputStream(new FileInputStream(file));
         } catch (Exception e) {
             if(file != null){
-                file.delete();
+                try {
+                    if(! file.delete()) {
+                        System.err.println("Não foi apagado o arquivo " + file);
+                    }
+                } catch (Exception e2) {
+                    //Ignora a Exception para não mascara a primeira
+                    e.printStackTrace();
+                }
                 file = null;
             }
             throw SingularUtil.propagate(e);

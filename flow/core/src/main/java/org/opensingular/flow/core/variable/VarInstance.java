@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.opensingular.flow.core.property.MetaData;
 
 //TODO marcar a variável quando esta for utilizada. Essa interface deve obrigar a implementacao de um metodo para essa verificacao
-public interface VarInstance extends Serializable {
+public interface VarInstance {
 
     VarInstance setValue(Object valor);
 

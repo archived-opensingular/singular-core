@@ -34,7 +34,7 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
 
     @Override
     public Collection asCollection() {
-        return map == null ? Collections.emptyList() : map.values();
+        return map.values();
     }
 
     @Override

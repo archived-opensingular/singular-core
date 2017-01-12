@@ -48,7 +48,7 @@ public abstract class SInstances {
         return (SIComposite) i;
     }
 
-    public static interface IVisit<R> extends Serializable {
+    public static interface IVisit<R> {
         void stop();
         void stop(R result);
         void dontGoDeeper();
@@ -56,16 +56,17 @@ public abstract class SInstances {
         R getPartial();
     }
 
+    @FunctionalInterface
     public interface IVisitor<I extends SInstance, R> {
         public void onInstance(I object, IVisit<R> visit);
     }
 
     public interface IVisitFilter extends Serializable {
+        public static IVisitFilter ANY = o -> true;
         boolean visitObject(Object object);
         default boolean visitChildren(Object object) {
             return true;
         }
-        public static IVisitFilter ANY = o -> true;
     }
 
     private SInstances() {}
@@ -132,26 +133,28 @@ public abstract class SInstances {
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitChildren(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
-        if (rootInstance instanceof ICompositeInstance) {
-            for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
-                if (filter.visitObject(object)) {
-                    I child = (I) object;
-                    final Visit<R> childVisit = new Visit<>(visit.getPartial());
-                    visitor.onInstance(child, childVisit);
-                    visit.setPartial(childVisit.getPartial());
+        if (! (rootInstance instanceof ICompositeInstance)) {
+            return;
+        }
+        for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
+            if (filter.visitObject(object)) {
+                I child = (I) object;
+                final Visit<R> childVisit = new Visit<>(visit.getPartial());
+                visitor.onInstance(child, childVisit);
+                visit.setPartial(childVisit.getPartial());
 
-                    if (childVisit.stopped) {
-                        visit.stop(childVisit.result);
-                        return;
-                    }
-                    if (childVisit.dontGoDeeper)
-                        continue;
+                if (childVisit.stopped) {
+                    visit.stop(childVisit.result);
+                    return;
+                } else if (childVisit.dontGoDeeper) {
+                    continue;
                 }
+            }
 
-                if (!visit.dontGoDeeper && (object instanceof ICompositeInstance) && filter.visitChildren(object)) {
-                    internalVisitChildren(object, visitor, filter, visit);
-                    if (visit.stopped)
-                        return;
+            if (!visit.dontGoDeeper && (object instanceof ICompositeInstance) && filter.visitChildren(object)) {
+                internalVisitChildren(object, visitor, filter, visit);
+                if (visit.stopped) {
+                    return;
                 }
             }
         }

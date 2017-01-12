@@ -56,6 +56,9 @@ import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.view.Lnk;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * <p>
  * Esta é a classe responsável por manter as definições de um dado processo.
@@ -399,20 +402,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
     }
 
-    final IEntityTaskVersion getEntityStartTaskVersion() {
-        return getEntityTaskVersion(getFlowMap().getStartTask());
-    }
-
-    final IEntityTaskVersion getEntityTaskVersion(MTask<?> task) {
-        if (task == null) {
-            return null;
-        }
-
-        IEntityTaskVersion situacao = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
-        if (situacao == null) {
+    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull MTask<?> task) {
+        Objects.requireNonNull(task);
+        IEntityTaskVersion version = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
+        if (version == null) {
             throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
         }
-        return situacao;
+        return version;
     }
 
     /**
@@ -724,7 +720,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     final IEntityProcessInstance createProcessInstance() {
-        return getPersistenceService().createProcessInstance(getEntityProcessVersion(), getEntityStartTaskVersion());
+        IEntityTaskVersion initialState =  getEntityTaskVersion(getFlowMap().getStartTask());
+        return getPersistenceService().createProcessInstance(getEntityProcessVersion(), initialState);
     }
 
     final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {

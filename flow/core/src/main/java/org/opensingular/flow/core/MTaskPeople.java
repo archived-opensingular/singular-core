@@ -47,4 +47,9 @@ public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
         Objects.requireNonNull(getExecutionPage(), "Não foi definida a estratégia da página para execução da tarefa.");
         Objects.requireNonNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

@@ -23,7 +23,7 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public class MetaDataValue implements Serializable {
+public class MetaDataValue {
 
     private final String name;
     private Object value;

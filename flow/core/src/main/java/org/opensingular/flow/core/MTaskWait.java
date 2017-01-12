@@ -71,4 +71,9 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
             throw new SingularFlowException(createErrorMsg("A transição default não foi definida"));
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

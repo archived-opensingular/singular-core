@@ -275,11 +275,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((flowMap == null) ? 0 : flowMap.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
+        return name.hashCode();
     }
 
     @Override
@@ -291,18 +287,11 @@ public abstract class MTask<K extends MTask<?>> {
         if (getClass() != obj.getClass())
             return false;
         MTask<?> other = (MTask<?>) obj;
-        if (flowMap == null) {
-            if (other.flowMap != null)
-                return false;
-        } else if (!flowMap.equals(other.flowMap))
+        if (! Objects.equals(flowMap, other.flowMap)) {
             return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
+        } else if (! Objects.equals(name, other.name)) {
             return false;
+        }
         return true;
     }
-
-    
 }
