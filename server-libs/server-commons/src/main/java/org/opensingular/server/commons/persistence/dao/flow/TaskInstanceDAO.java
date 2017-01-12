@@ -40,21 +40,21 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
     protected Map<String, String> getSortPropertyToAliases() {
-        return new HashMap<String, String>() {
-            {
-                put("id", "ti.cod");
-                put("creationDate", "pi.beginDate");
-                put("protocolDate", "pi.beginDate");
-                put("description", "pi.description");
-                put("state", "tv.name");
-                put("taskName", "tv.name");
-                put("user", "au.nome");
-                put("nomeUsuarioAlocado", "au.nome");
-                put("codUsuarioAlocado", "au.cod");
-                put("situationBeginDate", "ti.beginDate");
-                put("processBeginDate", "pi.beginDate");
-            }
-        };
+        Map<String, String> sortProperties = new HashMap<>();
+
+        sortProperties.put("id", "ti.cod");
+        sortProperties.put("creationDate", "pi.beginDate");
+        sortProperties.put("protocolDate", "pi.beginDate");
+        sortProperties.put("description", "pi.description");
+        sortProperties.put("state", "tv.name");
+        sortProperties.put("taskName", "tv.name");
+        sortProperties.put("user", "au.nome");
+        sortProperties.put("nomeUsuarioAlocado", "au.nome");
+        sortProperties.put("codUsuarioAlocado", "au.cod");
+        sortProperties.put("situationBeginDate", "ti.beginDate");
+        sortProperties.put("processBeginDate", "pi.beginDate");
+
+        return sortProperties;
     }
 
     protected Class<? extends PetitionEntity> getPetitionEntityClass() {

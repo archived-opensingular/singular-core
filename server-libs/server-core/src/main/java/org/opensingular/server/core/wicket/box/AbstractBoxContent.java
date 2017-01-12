@@ -327,7 +327,7 @@ public abstract class AbstractBoxContent<T extends Serializable> extends Content
         final String groupConnectionURL = getProcessGroup().getConnectionURL();
         try {
             final String path = new URL(groupConnectionURL).getPath();
-            return path.substring(0, path.indexOf("/", 1));
+            return path.substring(0, path.indexOf('/', 1));
         } catch (Exception e) {
             throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
         }

@@ -54,7 +54,7 @@ public class SingularToastrHelper extends ToastrHelper {
 
         for (StringTextValue<?> textValue : settings.asSet()) {
             String name = textValue.getName();
-            name = name.substring(name.lastIndexOf(".") + 1);
+            name = name.substring(name.lastIndexOf('.') + 1);
             Object value;
             if (textValue.getType() == StringTextType.ENUM) {
                 value = ((StringTextValue<? extends ValueEnum>) textValue).getValue().getValue();
