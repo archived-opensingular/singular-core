@@ -89,7 +89,7 @@ public class BoxPage extends ServerTemplate {
         /**
          * Fallback
          */
-        LOGGER.warn("Não existe correspondencia para o label " + String.valueOf(item));
+        LOGGER.warn("Não existe correspondencia para o label {}", String.valueOf(item));
         return new AccessDeniedContent(id);
     }
 

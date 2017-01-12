@@ -1,6 +1,15 @@
 package org.opensingular.server.commons.service;
 
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
@@ -9,7 +18,6 @@ import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
@@ -28,8 +36,6 @@ import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
-import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.server.commons.persistence.dao.form.DraftDAO;
@@ -40,14 +46,6 @@ import org.opensingular.server.commons.persistence.entity.form.FormVersionHistor
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Transactional
 public class FormPetitionService<P extends PetitionEntity> {

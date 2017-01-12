@@ -29,13 +29,13 @@ import java.util.EnumSet;
 
 public abstract class SpringSecurityInitializer {
 
-    static final String SINGULAR_SECURITY = "[SINGULAR][SECURITY] %s";
+    static final String SINGULAR_SECURITY = "[SINGULAR][SECURITY] {} {}";
     public static final Logger logger = LoggerFactory.getLogger(SpringSecurityInitializer.class);
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping, IServerContext[] serverContexts) {
         addSpringSecurityFilter(ctx, applicationContext, springMVCServletMapping);
         for (IServerContext context : serverContexts) {
-            logger.info(String.format(SINGULAR_SECURITY, "Securing (Spring Security) context: "+context.getContextPath()));
+            logger.info(SINGULAR_SECURITY, "Securing (Spring Security) context:", context.getContextPath());
             applicationContext.register(getSpringSecurityConfigClass(context));
             addLogoutFilter(ctx, applicationContext, springMVCServletMapping, context);
         }

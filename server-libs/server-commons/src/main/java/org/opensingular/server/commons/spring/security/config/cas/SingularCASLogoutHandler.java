@@ -41,13 +41,13 @@ public class SingularCASLogoutHandler implements SingularLogoutHandler, Loggable
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
         try {
-            getLogger().warn(" CAPTURADA REQUEST DE LOGOUT EM : " + request.getRequestURI() + ". A SESSAO DESSA APLICACAO SERA INVALIDADA E SERA FEITO O SINGLE SIGN OUT");
+            getLogger().warn(" CAPTURADA REQUEST DE LOGOUT EM : {}. A SESSAO DESSA APLICACAO SERA INVALIDADA E SERA FEITO O SINGLE SIGN OUT", request.getRequestURI());
             HttpSession session = request.getSession(false);
             if (session != null) {
                 session.invalidate();
             }
             String redirect = logoutURL + "?service=" + URLEncoder.encode(extractServiceParam(request), "UTF-8");
-            getLogger().warn(" REDIRECIONANDO PARA: " + redirect);
+            getLogger().warn(" REDIRECIONANDO PARA: {}", redirect);
             response.sendRedirect(redirect);
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);

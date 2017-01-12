@@ -387,7 +387,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
             BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
             boolean      visible      = boxItemModel.hasAction(itemAction);
             if (!visible) {
-                getLogger().debug(String.format("Action %s não está disponível para o item (%s: código da petição) da listagem ", itemAction.getName(), boxItemModel.getCod()));
+                getLogger().debug("Action {} não está disponível para o item ({}: código da petição) da listagem ", itemAction.getName(), boxItemModel.getCod());
             }
 
             return visible;

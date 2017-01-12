@@ -41,7 +41,7 @@ import org.opensingular.server.commons.wicket.SingularApplication;
 public abstract class WebInitializer {
 
 
-    static final        String SINGULAR_SECURITY = "[SINGULAR][WEB] %s";
+    static final        String SINGULAR_SECURITY = "[SINGULAR][WEB] {} {}";
     public static final Logger logger            = LoggerFactory.getLogger(SpringSecurityInitializer.class);
 
     public void init(ServletContext ctx) throws ServletException {
@@ -52,7 +52,7 @@ public abstract class WebInitializer {
         addSessionListener(ctx);
         addOpenSessionInView(ctx);
         for (IServerContext context : serverContexts()) {
-            logger.info(String.format(SINGULAR_SECURITY, "Setting up web context: " + context.getContextPath()));
+            logger.info(SINGULAR_SECURITY, "Setting up web context:", context.getContextPath());
             addWicketFilter(ctx, context);
         }
     }

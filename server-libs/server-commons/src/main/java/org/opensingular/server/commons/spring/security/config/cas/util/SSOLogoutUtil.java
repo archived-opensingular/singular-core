@@ -26,13 +26,13 @@ public class SSOLogoutUtil {
      */
     public static void logout(HttpServletRequest request, HttpServletResponse response, IServerContext context) {
         try {
-            logger.warn(" CAPTURADA REQUEST DE LOGOUT EM : " + request.getRequestURI() + ". A SESSAO DESSA APLICACAO SERA INVALIDADA E SERA FEITO O SINGLE SIGN OUT");
+            logger.warn(" CAPTURADA REQUEST DE LOGOUT EM : {}. A SESSAO DESSA APLICACAO SERA INVALIDADA E SERA FEITO O SINGLE SIGN OUT", request.getRequestURI());
             HttpSession session = request.getSession(false);
             if (session != null) {
                 session.invalidate();
             }
             String redirect = SingularProperties.get().getProperty(context.getServerPropertyKey(SSOFilter.SSO_LOGOUT)) + "?service=" + URLEncoder.encode(extractServiceParam(request), "UTF-8");
-            logger.warn(" REDIRECIONANDO PARA: " + redirect);
+            logger.warn(" REDIRECIONANDO PARA: {}", redirect);
             response.sendRedirect(redirect);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

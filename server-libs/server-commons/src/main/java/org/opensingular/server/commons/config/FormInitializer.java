@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class FormInitializer {
 
     public static final Logger logger        = LoggerFactory.getLogger(FormInitializer.class);
-    static final        String SINGULAR_FORM = "[SINGULAR][FORM] %s";
+    static final        String SINGULAR_FORM = "[SINGULAR][FORM] {}";
 
     protected Class<? extends SpringSDocumentFactory> documentFactory() {
         return SingularServerDocumentFactory.class;
@@ -53,19 +53,19 @@ public abstract class FormInitializer {
         if (documentFactory != null) {
             applicationContext.register(documentFactory);
         } else {
-            logger.info(String.format(SINGULAR_FORM, " Null Form Document Factory, skipping Form Document Factory configuration. "));
+            logger.info(SINGULAR_FORM, " Null Form Document Factory, skipping Form Document Factory configuration. ");
         }
         Class<?> typeLoader = typeLoader();
         if (typeLoader != null) {
             applicationContext.register(typeLoader);
         } else {
-            logger.info(String.format(SINGULAR_FORM, " Null Form Type Loader, skipping Form Type Loader configuration. "));
+            logger.info(SINGULAR_FORM, " Null Form Type Loader, skipping Form Type Loader configuration. ");
         }
         Class<?> formConfigFactory = formConfigFactory();
         if (formConfigFactory != null) {
             applicationContext.register(formConfigFactory);
         } else {
-            logger.info(String.format(SINGULAR_FORM, " Null Form Config Factory, skipping Form Config Factory configuration. "));
+            logger.info(SINGULAR_FORM, " Null Form Config Factory, skipping Form Config Factory configuration. ");
         }
     }
 

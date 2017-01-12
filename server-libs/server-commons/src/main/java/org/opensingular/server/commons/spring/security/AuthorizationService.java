@@ -222,7 +222,7 @@ public class AuthorizationService implements Loggable {
             return true;
         }
 
-        getLogger().info(String.format(" Usuário logado %s não possui a permissão %s ", idUsuario, permissionNeeded));
+        getLogger().info(" Usuário logado {} não possui a permissão {} ", idUsuario, permissionNeeded);
         return false;
     }
 
