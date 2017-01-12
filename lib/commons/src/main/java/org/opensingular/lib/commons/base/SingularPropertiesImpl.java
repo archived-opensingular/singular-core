@@ -313,8 +313,8 @@ public enum SingularPropertiesImpl implements SingularProperties {
         }
 
         private static class State implements Serializable {
-            final Properties          propertiesBackup = new Properties();
-            final Map<String, String> systemBackup     = new HashMap<>();
+            private final Properties          propertiesBackup = new Properties();
+            private final Map<String, String> systemBackup     = new HashMap<>();
         }
     }
 }
