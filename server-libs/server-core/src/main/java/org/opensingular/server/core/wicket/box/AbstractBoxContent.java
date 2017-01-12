@@ -220,7 +220,8 @@ public abstract class AbstractBoxContent<T extends Serializable> extends Content
 
     private void deleteSelected(AjaxRequestTarget target, IModel<T> model) {
         currentModel = model;
-        confirmationForm.addOrReplace((confirmationModal = construirModalDeleteBorder(this::onDelete)));
+        confirmationModal = construirModalDeleteBorder(this::onDelete);
+        confirmationForm.addOrReplace(confirmationModal);
         confirmationModal.show(target);
     }
 

@@ -69,7 +69,7 @@ public class ReadOnlyFormContent extends Content {
             }
         };
 
-        add(new Form("form").add(singularFormPanel = new SingularFormPanel<String>("singularFormPanel", formConfig) {
+        singularFormPanel = new SingularFormPanel<String>("singularFormPanel", formConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 return formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory(), formVersionEntityPK.getObject());
@@ -83,8 +83,9 @@ public class ReadOnlyFormContent extends Content {
                     return AnnotationMode.NONE;
                 }
             }
-        }));
+        };
 
+        add(new Form("form").add(singularFormPanel));
         singularFormPanel.setViewMode(ViewMode.READ_ONLY);
     }
 

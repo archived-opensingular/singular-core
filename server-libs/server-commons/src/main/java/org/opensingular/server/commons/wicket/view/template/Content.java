@@ -64,7 +64,8 @@ public abstract class Content extends Panel implements Loggable {
 
         pageHead.add(new Label("contentTitle", getContentTitleModel()));
         pageHead.add(new Label("contentSubtitle", getContentSubtitleModel()));
-        pageHead.add(toolbar = new RepeatingView("toolbarItems"));
+        toolbar = new RepeatingView("toolbarItems");
+        pageHead.add(toolbar);
 
         add(breadcrumb);
 

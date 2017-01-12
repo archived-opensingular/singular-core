@@ -21,7 +21,8 @@ public class FormAttachmentService extends AbstractFormAttachmentService<Attachm
         if (formAttachmentPK != null) {
             FormAttachmentEntity fae = formAttachmentDAO.find(formAttachmentPK);
             if (fae == null) {
-                formAttachmentDAO.save(fae = new FormAttachmentEntity(formAttachmentPK));
+                fae = new FormAttachmentEntity(formAttachmentPK);
+                formAttachmentDAO.save(fae);
             }
             return fae;
         }
