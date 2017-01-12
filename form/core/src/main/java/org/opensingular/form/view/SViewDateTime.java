@@ -22,19 +22,24 @@ import java.util.TreeMap;
 
 public class SViewDateTime extends SView {
 
-    private Map<String, Object> params = new TreeMap<>();
+    private boolean mode24hs = false;
+    private Integer minuteStep;
 
-    public SViewDateTime set24hsMode(boolean value) {
-        params.put("showMeridian", value);
+    public SViewDateTime setMode24hs(boolean value) {
+        mode24hs = value;
         return this;
     }
 
     public SViewDateTime setMinuteStep(Integer value) {
-        params.put("minuteStep", value);
+        minuteStep = value;
         return this;
     }
 
-    public Map<String, Object> getParams() {
-        return params;
+    public boolean isMode24hs() {
+        return mode24hs;
+    }
+
+    public Integer getMinuteStep() {
+        return minuteStep;
     }
 }
