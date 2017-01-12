@@ -48,7 +48,7 @@ public class SingularCASLogoutHandler implements SingularLogoutHandler, Loggable
             }
             String redirect = logoutURL + "?service=" + URLEncoder.encode(extractServiceParam(request), "UTF-8");
             getLogger().warn(" REDIRECIONANDO PARA: {}", redirect);
-            response.sendRedirect(redirect);
+            response.sendRedirect(redirect);//NOSONAR findsecbugs:UNVALIDATED_REDIRECT false positive
         } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
             throw SingularException.rethrow(e);
