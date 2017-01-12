@@ -31,20 +31,24 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import javax.inject.Inject;
+
 
 public class ReadOnlyFormContent extends Content {
 
+
+    @Inject
+    private IFormService formService;
+
     private final IModel<Long>        formVersionEntityPK;
-    private final IFormService        formService;
     private final SFormConfig<String> formConfig;
     private final IModel<Boolean>     showAnnotations;
 
     private SingularFormPanel<String> singularFormPanel;
 
-    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, IFormService formService, SFormConfig<String> formConfig, IModel<Boolean> showAnnotations) {
+    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, SFormConfig<String> formConfig, IModel<Boolean> showAnnotations) {
         super(id);
         this.formVersionEntityPK = formVersionEntityPK;
-        this.formService = formService;
         this.formConfig = formConfig;
         this.showAnnotations = showAnnotations;
         build();

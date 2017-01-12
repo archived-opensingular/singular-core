@@ -45,7 +45,7 @@ public class ReadOnlyFormPage extends Template {
 
     @Override
     protected Content getContent(String id) {
-        return new ReadOnlyFormContent(id, formVersionEntityPK, formService, singularFormConfig, showAnnotations);
+        return new ReadOnlyFormContent(id, formVersionEntityPK, singularFormConfig, showAnnotations);
     }
 
     @Override
