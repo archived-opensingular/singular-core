@@ -219,7 +219,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         buildFromClause(hql, filtro);
         buildWhereClause(hql, params, filtro, siglasProcesso, formNames, count);
 
-        final Query query = getSession().createQuery(hql.toString());
+        final Query query = getSession().createQuery(hql.toString()); //NOSONAR findsecbugs:SQL_INJECTION_HIBERNATE false positive
         setParametersQuery(query, params);
 
         return query;
