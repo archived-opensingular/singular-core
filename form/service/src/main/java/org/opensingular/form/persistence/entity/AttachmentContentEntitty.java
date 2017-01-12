@@ -58,9 +58,7 @@ public class AttachmentContentEntitty extends BaseEntity<Long> {
 
     @Lob
     @Column(name = "BL_CONTEUDO", nullable = false)
-    private transient Blob content;
-    //TODO (by Daniel Bordin) Coloquei o código acima como transient, pois da forma que a classe é utilizada não dará
-    // erro, mas é necessario pensar uma solução melhor caso a entidade sejá serialziada.
+    private Blob content;
 
     public Long getCod() {
         return cod;
