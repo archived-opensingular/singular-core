@@ -8,7 +8,35 @@
 
     <version>1.5.4</version>
     <name>[projeto-raiz :: singular]</name>
+    <description>Core do singular</description>
+    <url>http://opensingular.org</url>
     <packaging>pom</packaging>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Daniel Bordin</name>
+            <organization>Singular</organization>
+        </developer>
+        <developer>
+            <name>Danilo Mesquita</name>
+            <organization>Singular</organization>
+        </developer>
+        <developer>
+            <name>Delfino Filho</name>
+            <organization>Singular</organization>
+        </developer>
+        <developer>
+            <name>Vinicius Nunes</name>
+            <organization>Singular</organization>
+        </developer>
+    </developers>
 
     <modules>
         <module>flow</module>
@@ -17,19 +45,6 @@
         <module>resources</module>
         <module>ws</module>
     </modules>
-
-    <distributionManagement>
-        <repository>
-            <id>singular-releases</id>
-            <name>singular-releases</name>
-            <url>http://nexus.mirante.net.br/nexus/content/repositories/singular-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>singular-snapshots</id>
-            <name>singular-snapshots</name>
-            <url>http://nexus.mirante.net.br/nexus/content/repositories/singular-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -125,6 +140,19 @@
                     <buildNumberPropertyName>revisionNumber</buildNumberPropertyName>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -203,6 +231,46 @@
 
     <profiles>
         <profile>
+            <id>release</id>
+
+            <distributionManagement>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <properties>
+                <project.scm.url>https://github.com/opensingular/singular-core/tree/master</project.scm.url>
+                <project.scm.connection>scm:git:https://github.com/opensingular/singular-core.git</project.scm.connection>
+                <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-core.git</project.scm.developerConnection>
+            </properties>
+        </profile>
+
+        <profile>
             <id>test</id>
             <activation>
                 <property>
@@ -230,6 +298,5 @@
         <wicket.version>7.3.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
     </properties>
-
 
 </project>
