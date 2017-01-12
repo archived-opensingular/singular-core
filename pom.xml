@@ -137,6 +137,10 @@
     </profiles>
 
     <properties>
+        <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
+
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.connection>
         <project.scm.developerConnection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.developerConnection>
