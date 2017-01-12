@@ -22,6 +22,7 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.view.SView;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -151,7 +152,7 @@ public final class DocumentDiffUtil {
      * Calcula o Diff para uma instância do tipo {@link STypeList}. Faz chamada de diff recursiva para os subElementos
      * de cada lista.
      */
-    private static void calculateDiffList(DiffInfo info, SIList<?> original, SIList<?> newer) {
+    private static void calculateDiffList(@Nonnull DiffInfo info, SIList<?> original, SIList<?> newer) {
         List<? extends SInstance> originals = original == null ? Collections.emptyList() : new ArrayList<>(
                 original.getValues());
         List<? extends SInstance> newers = newer == null ? Collections.emptyList() : new LinkedList<>(
