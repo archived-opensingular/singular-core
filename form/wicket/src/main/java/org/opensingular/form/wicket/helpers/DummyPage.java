@@ -47,6 +47,10 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import java.io.Serializable;
 import java.util.Optional;
 
+/**
+ * Classe utilitária de teste para dar suporte ao {@link SingularFormBaseTest}
+ * Não deve ser referenciada fora do código de teste.
+ */
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
