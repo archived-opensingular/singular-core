@@ -128,7 +128,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                 .append(getOrderBy(sortProperty, ascending, count));
 
 
-        Query query = getSession().createQuery(sb.toString());//NOSONAR findsecbugs:SQL_INJECTION_HIBERNATE false positive
+        Query query = getSession().createQuery(sb.toString());
 
 
 
