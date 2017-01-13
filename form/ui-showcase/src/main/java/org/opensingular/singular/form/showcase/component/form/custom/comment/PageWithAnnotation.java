@@ -50,13 +50,13 @@ public class PageWithAnnotation {
          * Anotações são armazenadas junto a cada campo onde a mesma está habilitada.
          */
         SInstance instanciaCampoCliente = pedido.getDescendant(pacote.cliente);
-        SIAnnotation anotacaoDoCliente = instanciaCampoCliente.asAtrAnnotation().annotation();
+        instanciaCampoCliente.asAtrAnnotation().annotation();
 
         /**
-         * As anotações pordem ser persistidas separadamente ou de forma conjunta.
+         * As anotações podem ser persistidas separadamente ou de forma conjunta.
          */
         //TODO explicar melhor como funciona a persistencia de anotação
-        //SIList anotacoes = instanciaCampoCliente.getDocument().getDocumentAnnotations().persistentAnnotations();
+        instanciaCampoCliente.getDocument().getDocumentAnnotations().persistentAnnotationsClassified();
     }
 
 }

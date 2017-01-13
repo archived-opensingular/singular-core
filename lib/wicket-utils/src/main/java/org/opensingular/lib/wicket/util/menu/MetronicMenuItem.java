@@ -83,7 +83,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
 
         menuItem = new WebMarkupContainer("menu-item");
 
-        MarkupContainer anchor = null;
+        MarkupContainer anchor;
 
         if (href != null) {
             anchor = new WebMarkupContainer("anchor");
