@@ -137,7 +137,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -156,11 +156,9 @@
         <!-- Falso posistivo: hard coded credentials -->
         <sonar.issue.ignore.multicriteria.e6.ruleKey>jproperties:S2068</sonar.issue.ignore.multicriteria.e6.ruleKey>
         <sonar.issue.ignore.multicriteria.e6.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e6.resourceKey>
-
-
-
-
-
+        <!-- Falso posistivo: sha-1 vulneravel -->
+        <sonar.issue.ignore.multicriteria.e7.ruleKey>findsecbugs:WEAK_MESSAGE_DIGEST_SHA1</sonar.issue.ignore.multicriteria.e7.ruleKey>
+        <sonar.issue.ignore.multicriteria.e7.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e7.resourceKey>
 
         <!-- Falso posistivo: concatenacao de parametros  -->
         <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:SQL_INJECTION_HIBERNATE</sonar.issue.ignore.multicriteria.s1.ruleKey>
