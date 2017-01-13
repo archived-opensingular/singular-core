@@ -224,7 +224,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,s1,s2</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -234,6 +234,13 @@
         <!-- Falso posistivo: chaves duplicadas em properties  -->
         <sonar.issue.ignore.multicriteria.e3.ruleKey>jproperties:duplicated-keys</sonar.issue.ignore.multicriteria.e3.ruleKey>
         <sonar.issue.ignore.multicriteria.e3.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e3.resourceKey>
+
+        <!-- Falso posistivo: command injection  -->
+        <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:COMMAND_INJECTION</sonar.issue.ignore.multicriteria.s1.ruleKey>
+        <sonar.issue.ignore.multicriteria.s1.resourceKey>**/*PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s1.resourceKey>
+        <!-- Falso posistivo: command injection  -->
+        <sonar.issue.ignore.multicriteria.s2.ruleKey>findsecbugs:COMMAND_INJECTION</sonar.issue.ignore.multicriteria.s2.ruleKey>
+        <sonar.issue.ignore.multicriteria.s2.resourceKey>**/*PDFUtilWin.java</sonar.issue.ignore.multicriteria.s2.resourceKey>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.connection>
