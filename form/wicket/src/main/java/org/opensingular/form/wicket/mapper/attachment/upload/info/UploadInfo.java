@@ -17,11 +17,11 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class UploadInfo implements Serializable {
 
-    final AttachmentKey                                 uploadId;
-    final long                                          maxFileSize;
-    final int                                           maxFileCount;
-    final Set<String>                                   allowedFileTypes;
-    final TemporaryAttachmentPersistenceHandlerSupplier persistenceHandlerSupplier;
+    private final AttachmentKey                                 uploadId;
+    private final long                                          maxFileSize;
+    private final int                                           maxFileCount;
+    private final Set<String>                                   allowedFileTypes;
+    private final TemporaryAttachmentPersistenceHandlerSupplier persistenceHandlerSupplier;
 
     private volatile long lastAccess;
 
