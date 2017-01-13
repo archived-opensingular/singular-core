@@ -33,7 +33,7 @@ public class SSOLogoutUtil {
             }
             String redirect = SingularProperties.get().getProperty(context.getServerPropertyKey(SSOFilter.SSO_LOGOUT)) + "?service=" + URLEncoder.encode(extractServiceParam(request), "UTF-8");
             logger.warn(" REDIRECIONANDO PARA: {}", redirect);
-            response.sendRedirect(redirect);//NOSONAR findsecbugs:UNVALIDATED_REDIRECT false positive
+            response.sendRedirect(redirect);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw SingularServerException.rethrow(e.getMessage(), e);
