@@ -224,7 +224,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,s1,s2,s3,s4,s5,s6</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -256,6 +256,13 @@
         <!-- Falso posistivo: remote object deserialization  -->
         <sonar.issue.ignore.multicriteria.s4.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s4.ruleKey>
         <sonar.issue.ignore.multicriteria.s4.resourceKey>**/Base64.java</sonar.issue.ignore.multicriteria.s4.resourceKey>
+        <!-- Falso posistivo: file location specified by user  -->
+        <sonar.issue.ignore.multicriteria.s5.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s5.ruleKey>
+        <sonar.issue.ignore.multicriteria.s5.resourceKey>**/Base64.java, **/FileSystemAttachmentPersistenceHandler.java, **/FileSystemAttachmentRef.java, **/SingularPropertiesImpl.java, **/PDFUtilUnix.java, **/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s5.resourceKey>
+        <!-- Falso posistivo: file location specified by user  -->
+        <sonar.issue.ignore.multicriteria.s6.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s6.ruleKey>
+        <sonar.issue.ignore.multicriteria.s6.resourceKey>**/Base64.java, **/FileSystemAttachmentPersistenceHandler.java, **/FileSystemAttachmentRef.java, **/SingularPropertiesImpl.java, **/PDFUtilUnix.java, **/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s6.resourceKey>
+
 
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
