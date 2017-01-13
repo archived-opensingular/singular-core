@@ -2,6 +2,8 @@ package org.opensingular.server.commons.spring.security.config.cas.util;
 
 
 import com.google.common.base.Strings;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jasig.cas.client.util.HttpServletRequestWrapperFilter;
 import org.opensingular.server.commons.config.IServerContext;
 import org.slf4j.Logger;
@@ -111,7 +113,7 @@ public class SSOFilter extends SSOConfigurableFilter {
                 if (urlMatches(request, urlExcludePattern)) {
                     logger.info(
                             "Filter skipped due to regex patterns defined in urlExcludePattern properties. URL: {} ",
-                                    request.getRequestURL());
+                            StringEscapeUtils.escapeJava(request.getRequestURL().toString()));
                     return true;
                 }
             }
