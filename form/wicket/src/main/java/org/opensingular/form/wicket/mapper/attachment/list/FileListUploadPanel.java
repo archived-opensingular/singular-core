@@ -105,11 +105,12 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         add(label);
 
-        add((fileList = new WebMarkupContainer("fileList"))
-                .add(new FilesListView("fileItem", model, ctx)));
+        fileList = new WebMarkupContainer("fileList");
+        add(fileList.add(new FilesListView("fileItem", model, ctx)));
 
+        fileField = new WebMarkupContainer("fileUpload");
         add(new WebMarkupContainer("button-container")
-                .add((fileField = new WebMarkupContainer("fileUpload")))
+                .add(fileField)
                 .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
                 .add($b.visibleIf(() -> ctx.getViewMode().isEdition())));
 

@@ -77,14 +77,15 @@ class MasterDetailModal extends BFModalWindow {
         setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
 
         actionLabel = $m.ofValue("");
-        this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton = new ActionAjaxButton("btn") {
+        addButton = new ActionAjaxButton("btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(table);
                 MasterDetailModal.this.hide(target);
                 WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
             }
-        });
+        };
+        this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);
 
         if (viewMode.isEdition()) {
             this.addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
