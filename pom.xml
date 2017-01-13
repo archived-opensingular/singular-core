@@ -137,7 +137,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -162,6 +162,9 @@
         <!-- Falso posistivo: generic wildcard -->
         <sonar.issue.ignore.multicriteria.e8.ruleKey>squid:S1452</sonar.issue.ignore.multicriteria.e8.ruleKey>
         <sonar.issue.ignore.multicriteria.e8.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e8.resourceKey>
+        <!-- Falso posistivo: métodos vazios -->
+        <sonar.issue.ignore.multicriteria.e9.ruleKey>squid:S1186</sonar.issue.ignore.multicriteria.e9.ruleKey>
+        <sonar.issue.ignore.multicriteria.e9.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e9.resourceKey>
 
         <!-- Falso posistivo: concatenacao de parametros  -->
         <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:SQL_INJECTION_HIBERNATE</sonar.issue.ignore.multicriteria.s1.ruleKey>
