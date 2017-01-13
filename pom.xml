@@ -224,7 +224,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,s1,s2,s3,s4,s5,s6,s7</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,s1,s2,s3,s4,s5,s6,s7,s8,s9</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -247,8 +247,6 @@
         <sonar.issue.ignore.multicriteria.e7.ruleKey>findsecbugs:WEAK_MESSAGE_DIGEST_SHA1</sonar.issue.ignore.multicriteria.e7.ruleKey>
         <sonar.issue.ignore.multicriteria.e7.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e7.resourceKey>
 
-
-
         <!-- Falso posistivo: command injection  -->
         <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:COMMAND_INJECTION</sonar.issue.ignore.multicriteria.s1.ruleKey>
         <sonar.issue.ignore.multicriteria.s1.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s1.resourceKey>
@@ -270,8 +268,12 @@
         <!-- Falso posistivo: XSS attack  -->
         <sonar.issue.ignore.multicriteria.s7.ruleKey>findsecbugs:XSS_SERVLET </sonar.issue.ignore.multicriteria.s7.ruleKey>
         <sonar.issue.ignore.multicriteria.s7.resourceKey>**/UploadResponseWriter.java</sonar.issue.ignore.multicriteria.s7.resourceKey>
-
-
+        <!-- Falso posistivo: cookie seguro  -->
+        <sonar.issue.ignore.multicriteria.s8.ruleKey>findsecbugs:HTTPONLY_COOKIE</sonar.issue.ignore.multicriteria.s8.ruleKey>
+        <sonar.issue.ignore.multicriteria.s8.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s8.resourceKey>
+        <!-- Falso posistivo: cookie seguro  -->
+        <sonar.issue.ignore.multicriteria.s9.ruleKey>findsecbugs:INSECURE_COOKIE</sonar.issue.ignore.multicriteria.s9.ruleKey>
+        <sonar.issue.ignore.multicriteria.s9.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s9.resourceKey>
 
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
