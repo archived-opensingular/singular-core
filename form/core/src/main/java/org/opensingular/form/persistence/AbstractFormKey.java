@@ -16,6 +16,8 @@
 
 package org.opensingular.form.persistence;
 
+import java.io.Serializable;
+
 /**
  * Classe abstrata de apoio a criação de FormKey baseados em um tipo de objeto. Basta implementar o método {@link
  * #parseValuePersistenceString(String)} e que o tipo do objeto de valor tenha os métodos {@link Object#equals(Object)}
@@ -24,7 +26,7 @@ package org.opensingular.form.persistence;
  *
  * @author Daniel C. Bordin
  */
-public abstract class AbstractFormKey<T> implements FormKey {
+public abstract class AbstractFormKey<T extends Serializable> implements FormKey {
 
     private final T value;
 
