@@ -4,11 +4,12 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 
-public class UploadPathHandler implements Loggable{
+public class UploadPathHandler implements Loggable, Serializable {
 
     private volatile Path rootPath;
 

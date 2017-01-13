@@ -4,10 +4,11 @@ import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 import org.opensingular.lib.commons.util.Loggable;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class UploadInfoRepository implements Loggable {
+public class UploadInfoRepository implements Loggable, Serializable {
 
     private final ConcurrentHashSet<UploadInfo> uploadInfos;
 
