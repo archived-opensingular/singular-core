@@ -24,12 +24,14 @@ import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
+import java.io.Serializable;
+
 public class STypeElementsModel
     implements IReadOnlyModel<SType<SInstance>> {
 
-    private Object rootTarget;
+    private final Serializable rootTarget;
 
-    public STypeElementsModel(Object rootTarget) {
+    public STypeElementsModel(Serializable rootTarget) {
         this.rootTarget = rootTarget;
     }
 

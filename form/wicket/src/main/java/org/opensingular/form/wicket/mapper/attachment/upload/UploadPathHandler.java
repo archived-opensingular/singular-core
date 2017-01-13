@@ -22,7 +22,7 @@ public class UploadPathHandler implements Loggable, Serializable {
     }
 
     public synchronized Path getOrCreateRootPath() {
-        if (rootPath == null || !Files.exists(rootPath)) {
+        if (rootPath == null || !rootPath.toFile().exists()) {
             try {
                 rootPath = Files.createTempDirectory(UploadPathHandler.class.getSimpleName() + "_");
                 rootPath.toFile().deleteOnExit();
