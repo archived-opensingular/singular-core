@@ -137,7 +137,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,s1,s2,s3,s4</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -150,6 +150,15 @@
         <!-- Falso posistivo: sobrescrever equals em entidades -->
         <sonar.issue.ignore.multicriteria.e4.ruleKey>squid:S2160</sonar.issue.ignore.multicriteria.e4.ruleKey>
         <sonar.issue.ignore.multicriteria.e4.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e4.resourceKey>
+        <!-- Falso posistivo: hard coded credentials -->
+        <sonar.issue.ignore.multicriteria.e5.ruleKey>jproperties:S2068</sonar.issue.ignore.multicriteria.e5.ruleKey>
+        <sonar.issue.ignore.multicriteria.e5.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e5.resourceKey>
+        <!-- Falso posistivo: hard coded credentials -->
+        <sonar.issue.ignore.multicriteria.e6.ruleKey>jproperties:S2068</sonar.issue.ignore.multicriteria.e6.ruleKey>
+        <sonar.issue.ignore.multicriteria.e6.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e6.resourceKey>
+
+
+
 
 
 
