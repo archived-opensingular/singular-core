@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,7 @@ public class DefaultServerREST {
             IController controller = getActionController(processDefinition, actionRequest);
             return controller.run(petition, actionRequest);
         } catch (Exception e) {
-            final String msg = String.format("Erro ao executar a ação %s para o id %d.", actionRequest.getName(), id);
+            final String msg = String.format("Erro ao executar a ação %s para o id %d. ", StringEscapeUtils.escapeJava(actionRequest.getName()), id);
             LOGGER.error(msg, e);
             return new ActionResponse(msg, false);
         }
