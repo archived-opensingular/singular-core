@@ -15,21 +15,18 @@
  */
 package org.opensingular.form.persistence.dto;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.opensingular.form.persistence.service.AttachmentPersistenceService;
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.CompressionUtil;
 import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+
+import java.io.*;
+import java.util.logging.Logger;
 
 public class AttachmentRef implements IAttachmentRef{
 
@@ -44,7 +41,9 @@ public class AttachmentRef implements IAttachmentRef{
     private final String name;
 
     private File file;
-    
+
+    private static final Logger LOGGER = Logger.getLogger(AttachmentRef.class.getName());
+
     public AttachmentRef(AttachmentEntity attachmentEntity) {
         this(attachmentEntity.getCod().toString(), attachmentEntity.getCodContent(), attachmentEntity.getHashSha1(), attachmentEntity.getSize(), attachmentEntity.getName());
     }
@@ -103,7 +102,7 @@ public class AttachmentRef implements IAttachmentRef{
                     }
                 } catch (Exception e2) {
                     //Ignora a Exception para não mascara a primeira
-                    e.printStackTrace();
+                    e2.printStackTrace();
                 }
                 file = null;
             }

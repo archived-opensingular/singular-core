@@ -18,6 +18,7 @@ package org.opensingular.form.internal.xml;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +27,7 @@ import org.w3c.dom.Text;
 public abstract class MDocument implements Document {
 
     public static void toMDocument(MDocument no) {
-        throw new RuntimeException("Não deveria ser chamadado esse metodo com um parâmetro MDocument");
+        throw SingularException.rethrow("Não deveria ser chamadado esse metodo com um parâmetro MDocument");
     }
 
     public static MDocument toMDocument(Document no) {

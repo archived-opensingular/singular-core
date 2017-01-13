@@ -22,8 +22,6 @@ import java.util.Objects;
 
 public class DefaultVarInstance extends AbstractVarInstance {
 
-    private boolean historySaved = false;
-
     private Object valor;
 
     public DefaultVarInstance(VarDefinition definition) {

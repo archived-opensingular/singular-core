@@ -121,7 +121,7 @@ public class TypeaheadComponent extends Panel {
         labelField = new TextField<>("label_field", new Model<String>() {
 
             private String lastDisplay;
-            private Object lastValue;
+            private Serializable lastValue;
 
             @Override
             public String getObject() {
@@ -146,7 +146,7 @@ public class TypeaheadComponent extends Panel {
         c.add(valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
-            private Object lastValue;
+            private Serializable lastValue;
 
             @Override
             public SInstance getMInstancia() {

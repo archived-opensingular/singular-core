@@ -212,7 +212,7 @@ public abstract class MElement implements Element, Serializable {
      * @param no elemento não precisa ser convertido
      */
     public static void toMElement(MElement no) {
-        throw new RuntimeException("Não deveria ser chamadado esse metodo com um parâmetro MElement");
+        throw SingularException.rethrow("Não deveria ser chamadado esse metodo com um parâmetro MElement");
     }
 
     public static MElement toMElement(Element no) {

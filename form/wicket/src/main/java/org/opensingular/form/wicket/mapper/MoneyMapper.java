@@ -20,10 +20,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -97,7 +94,7 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
             final BigDecimal valor = (BigDecimal) mi.getValue();
             final Map<String, Object> options = withOptionsOf(model);
-            final Integer digitos = (int) options.get(PRECISION);
+            final Integer digitos = (Integer) options.get(PRECISION);
             final StringBuilder pattern = new StringBuilder();
 
             pattern.append("R$ ###,###.");

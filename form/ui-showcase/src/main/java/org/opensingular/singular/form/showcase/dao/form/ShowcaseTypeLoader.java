@@ -102,7 +102,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         }, tipo);
     }
 
-    private void add(Class<? extends SPackage> packageClass, String typeName, ShowCaseType tipo) {
+    final void add(Class<? extends SPackage> packageClass, String typeName, ShowCaseType tipo) {
         String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
         add(typeName, simpleName, () -> {
             SDictionary d = SDictionary.create();

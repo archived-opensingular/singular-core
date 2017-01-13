@@ -21,6 +21,7 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import com.google.common.base.Throwables;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.lib.commons.base.SingularException;
 import org.quartz.JobDetail;
@@ -343,6 +344,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
                         Thread.sleep(startupDelay * 1000);
                     } catch (InterruptedException e) {
                         logger.info(e.getMessage(), e);
+                        throw Throwables.propagate(e);
                     }
                     if (logger.isInfoEnabled()) {
                         logger.info("Starting Quartz Scheduler now, after delay of " + startupDelay + " seconds");
