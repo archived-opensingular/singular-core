@@ -137,7 +137,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,s1,s2</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,s1,s2</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -148,6 +148,9 @@
         <sonar.issue.ignore.multicriteria.e3.ruleKey>jproperties:duplicated-keys</sonar.issue.ignore.multicriteria.e3.ruleKey>
         <sonar.issue.ignore.multicriteria.e3.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e3.resourceKey>
 
+        <!-- Falso posistivo: sobrescrever equals em entidades -->
+        <sonar.issue.ignore.multicriteria.e4.ruleKey>squid:S2160</sonar.issue.ignore.multicriteria.e4.ruleKey>
+        <sonar.issue.ignore.multicriteria.e4.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e4.resourceKey>
 
 
 
@@ -159,11 +162,11 @@
         <sonar.issue.ignore.multicriteria.s2.ruleKey>findsecbugs:SQL_INJECTION_HIBERNATE</sonar.issue.ignore.multicriteria.s2.ruleKey>
         <sonar.issue.ignore.multicriteria.s2.resourceKey>**/TaskInstanceDAO.java</sonar.issue.ignore.multicriteria.s2.resourceKey>
 
-        <!-- Falso posistivo: redirect não validadao  -->
+        <!-- Falso posistivo: redirect não validado  -->
         <sonar.issue.ignore.multicriteria.s3.ruleKey>findsecbugs:UNVALIDATED_REDIRECT</sonar.issue.ignore.multicriteria.s3.ruleKey>
         <sonar.issue.ignore.multicriteria.s3.resourceKey>**/SingularCASLogoutHandler.java</sonar.issue.ignore.multicriteria.s3.resourceKey>
 
-        <!-- Falso posistivo: redirect não validadao  -->
+        <!-- Falso posistivo: redirect não validado  -->
         <sonar.issue.ignore.multicriteria.s4.ruleKey>findsecbugs:UNVALIDATED_REDIRECT</sonar.issue.ignore.multicriteria.s4.ruleKey>
         <sonar.issue.ignore.multicriteria.s4.resourceKey>**/SSOLogoutUtil.java</sonar.issue.ignore.multicriteria.s4.resourceKey>
 
