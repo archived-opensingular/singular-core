@@ -17,11 +17,13 @@
 package org.opensingular.form.internal.xml;
 
 import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Element;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -270,6 +272,12 @@ public final class MParser {
 
         DocumentBuilderFactory factory = MElementWrapper.getDocumentBuilderFactory(namespaceAware,
                 validating);
+        try {
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (Exception e){
+            throw SingularException.rethrow(e.getMessage(), e);
+        }
+
         DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
