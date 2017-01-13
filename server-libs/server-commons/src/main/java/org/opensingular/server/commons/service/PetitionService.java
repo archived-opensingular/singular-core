@@ -31,8 +31,6 @@ import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.flow.persistence.entity.TaskVersionEntity;
-import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.FormKey;
@@ -51,10 +49,9 @@ import org.opensingular.server.commons.persistence.dao.flow.TaskInstanceDAO;
 import org.opensingular.server.commons.persistence.dao.form.PetitionContentHistoryDAO;
 import org.opensingular.server.commons.persistence.dao.form.PetitionDAO;
 import org.opensingular.server.commons.persistence.dao.form.PetitionerDAO;
-import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
+import org.opensingular.server.commons.persistence.dto.PetitionDTO;
 import org.opensingular.server.commons.persistence.dto.PetitionHistoryDTO;
 import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
-import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionContentHistoryEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionerEntity;
@@ -77,10 +74,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.opensingular.lib.support.persistence.enums.SimNao.SIM;
 import static org.opensingular.server.commons.flow.action.DefaultActions.ACTION_ANALYSE;
 import static org.opensingular.server.commons.flow.action.DefaultActions.ACTION_ASSIGN;
 import static org.opensingular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
@@ -126,7 +121,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         return petitionDAO.findByProcessCod(cod);
     }
 
-    public void deletePetition(PeticaoDTO peticao) {
+    public void deletePetition(PetitionDTO peticao) {
         petitionDAO.delete(petitionDAO.find(peticao.getCodPeticao()));
     }
 
@@ -142,7 +137,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
         return petitionDAO.countQuickSearch(filter, siglasProcesso, formNames);
     }
 
-    public List<PeticaoDTO> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
+    public List<PetitionDTO> quickSearch(QuickFilter filter, List<String> siglasProcesso, List<String> formNames) {
         return petitionDAO.quickSearch(filter, siglasProcesso, formNames);
     }
 

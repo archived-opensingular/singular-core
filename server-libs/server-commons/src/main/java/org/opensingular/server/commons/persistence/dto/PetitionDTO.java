@@ -19,7 +19,7 @@ package org.opensingular.server.commons.persistence.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PeticaoDTO implements Serializable {
+public class PetitionDTO implements Serializable {
 
     private static final long serialVersionUID = -5971923724359749797L;
 
@@ -35,13 +35,13 @@ public class PeticaoDTO implements Serializable {
     private Date processBeginDate;
     private Date editionDate;
 
-    public PeticaoDTO() {
+    public PetitionDTO() {
     }
 
-    public PeticaoDTO(Long codPeticao, String description, String situation,
-                      String processName, Date creationDate, String type, String processType,
-                      Date situationBeginDate, Date processBeginDate,
-                      Date editionDate) {
+    public PetitionDTO(Long codPeticao, String description, String situation,
+                       String processName, Date creationDate, String type, String processType,
+                       Date situationBeginDate, Date processBeginDate,
+                       Date editionDate) {
         this.codPeticao = codPeticao;
         this.description = description;
         this.situation = situation;
