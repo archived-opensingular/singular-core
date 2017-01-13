@@ -329,7 +329,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
             @Override
             public E next() {
-                return current = it.next();
+                current = it.next();
+                return current;
             }
 
             @Override

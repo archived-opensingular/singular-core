@@ -115,16 +115,22 @@ public class FileUploadPanel extends Panel implements Loggable {
     protected void onInitialize() {
         super.onInitialize();
 
-        add(adder = new AddFileBehavior());
-        add(downloader = new DownloadSupportedBehavior(self.getModel()));
+        adder = new AddFileBehavior();
+        add(adder);
+
+        downloader = new DownloadSupportedBehavior(self.getModel());
+        add(downloader);
+
         downloadLink = new DownloadLink("downloadLink", self.getModel(), downloader);
         fileField = new FileUploadField("fileUpload", dummyModel(self.getModel()));
 
-        add((filesContainer = new WebMarkupContainer("files")).add(downloadLink));
+        filesContainer = new WebMarkupContainer("files");
+        add(filesContainer.add(downloadLink));
         add(uploadFileButton.add(fileField));
         add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
 
-        add(progressBar = new WebMarkupContainer("progress"));
+        progressBar = new WebMarkupContainer("progress");
+        add(progressBar);
 
         add(new ClassAttributeModifier() {
 

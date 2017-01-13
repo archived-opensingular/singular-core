@@ -37,10 +37,12 @@ public class STypeEmpresaPropria extends STypeComposite<SIComposite> {
                 .asAtr()
                 .label("Razão Social")
                 .enabled(false);
-        (cnpj = addField("cnpj", STypeCNPJ.class))
+        cnpj = addField("cnpj", STypeCNPJ.class);
+        cnpj
                 .asAtr()
                 .enabled(false);
-        (endereco = addFieldString("endereco"))
+        endereco = addFieldString("endereco");
+        endereco
                 .asAtr().label("Endereço")
                 .enabled(false);
     }

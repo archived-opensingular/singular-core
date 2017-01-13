@@ -98,7 +98,8 @@ public class TypeaheadComponent extends Panel {
         super(id);
         this.model = model;
         this.fetch = fetch;
-        add(container = buildContainer());
+        container = buildContainer();
+        add(container);
     }
 
     protected static String generateResultOptions(Map<String, String> options) {
@@ -117,7 +118,7 @@ public class TypeaheadComponent extends Panel {
     @SuppressWarnings("unchecked")
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        c.add(labelField = new TextField<>("label_field", new Model<String>() {
+        labelField = new TextField<>("label_field", new Model<String>() {
 
             private String lastDisplay;
             private Object lastValue;
@@ -140,7 +141,8 @@ public class TypeaheadComponent extends Panel {
                     return lastDisplay;
                 }
             }
-        }));
+        });
+        c.add(labelField);
         c.add(valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
@@ -186,7 +188,8 @@ public class TypeaheadComponent extends Panel {
             }
 
         }));
-        add(dynamicFetcher = new BloodhoundDataBehavior(model, cache));
+        dynamicFetcher = new BloodhoundDataBehavior(model, cache);
+        add(dynamicFetcher);
         return c;
     }
 

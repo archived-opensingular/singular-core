@@ -42,10 +42,10 @@ public class StringMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        FormComponent<?> comp;
+        FormComponent<?> comp = new TextField<>(model.getObject().getName(),
+                new SInstanceValueModel<>(model), String.class).setLabel(labelModel);
 
-        formGroup.appendInputText(comp = new TextField<>(model.getObject().getName(),
-                new SInstanceValueModel<>(model), String.class).setLabel(labelModel));
+        formGroup.appendInputText(comp);
 
         Optional<Integer> maxSize = Optional.ofNullable(
                 model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
