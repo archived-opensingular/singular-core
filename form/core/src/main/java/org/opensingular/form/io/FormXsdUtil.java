@@ -139,7 +139,7 @@ public class FormXsdUtil {
                 }
             } else if (minOccurs.intValue() > 1) {
                 if (newType.isList()) {
-                    ((STypeList) newType).withMiniumSizeOf(minOccurs.intValue());
+                    ((STypeList) newType).withMiniumSizeOf(minOccurs);
                 } else {
                     throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"));
                 }
@@ -239,8 +239,6 @@ public class FormXsdUtil {
 
         private final XsdContext xsdContext;
         private final MElement element;
-        private PackageBuilder pa;
-        private boolean list;
 
         private ElementReader(XsdContext xsdContext, MElement element) {
             this.xsdContext = xsdContext;

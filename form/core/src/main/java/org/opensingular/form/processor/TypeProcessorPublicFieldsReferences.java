@@ -194,20 +194,20 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         for (SType<?> field : composite.getFields()) {
             PublicFieldRef ref = info.getPublicField(field.getNameSimple());
             if (ref == null) {
-                throw new SingularFormException(erroMsg(composite, field, null, true,
+                throw new SingularFormException(errorMsg(composite, field, null, true,
                         "Não foi encontrado o campo publico esperado"));
             }
 
             if (!field.getClass().isAssignableFrom(ref.getField().getType())) {
-                throw new SingularFormException(erroMsg(composite, field, ref, true,
+                throw new SingularFormException(errorMsg(composite, field, ref, true,
                         "Foi encontrado o campo na classe mas o mesmo não é da classe " + field.getClass()));
             }
             if (Modifier.isStatic(ref.getField().getModifiers())) {
-                throw new SingularFormException(erroMsg(composite, field, ref, true,
+                throw new SingularFormException(errorMsg(composite, field, ref, true,
                         "Foi encontrado o campo na classe mas o mesmo não pode ser static"));
 
             } else if (!Modifier.isPublic(ref.getField().getModifiers())) {
-                throw new SingularFormException(erroMsg(composite, field, ref, true,
+                throw new SingularFormException(errorMsg(composite, field, ref, true,
                         "Foi encontrado o campo na classe mas o mesmo têm que ser public e não é"));
             }
         }
@@ -217,7 +217,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         for (PublicFieldRef ref : info) {
             SType<?> type = composite.getField(ref.getName());
             //if (type == null && ! isInsideChildrenTypes(composite, ref.getName())) {
-            //    throw new SingularFormException(erroMsg(composite, null, ref, true,
+            //    throw new SingularFormException(errorMsg(composite, null, ref, true,
             //            "Foi encontrado um campo na classe para o qual não existe campo na estrutura de dados do " +
             //                   "composite\n Esperado  : que existisse o campo '" + ref.getName() + "' em
             // " +
@@ -225,7 +225,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             //}
             if (!SType.class.isAssignableFrom(ref.getField().getType()) &&
                     (type == null || ref.getField().getType().isAssignableFrom(type.getClass()))) {
-                throw new SingularFormException(erroMsg(composite, type, ref, type != null,
+                throw new SingularFormException(errorMsg(composite, type, ref, type != null,
                         "Foi encontrado um campo na classe o qual se esperava que fosse de um tipo derivado de SType," +
                                 " mas em vez disso é do tipo " + ref.getField().getType()));
 
@@ -248,11 +248,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         return false;
     }
 
-    private String erroMsg(STypeComposite composite, String msg) {
-        return "Na classe " + composite.getClass().getName() + ": " + msg;
-    }
-
-    private String erroMsg(STypeComposite composite, SType<?> fieldType, PublicFieldRef ref, boolean showExpected,
+    private String errorMsg(STypeComposite composite, SType<?> fieldType, PublicFieldRef ref, boolean showExpected,
             String msg) {
         String m = "Na classe " + composite.getClass().getName();
         if (fieldType != null) {

@@ -155,7 +155,7 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
     private FileSystemAttachmentRef toRef(File file) {
         try {
             List<String> lines = IOUtil.readLines(new File(file.getAbsolutePath() + INFO_SUFFIX));
-            return newRef(file.getName(), lines.get(0), file.getAbsolutePath(), Long.valueOf(lines.get(1)), lines.get(2));
+            return newRef(file.getName(), lines.get(0), file.getAbsolutePath(), Long.parseLong(lines.get(1)), lines.get(2));
         } catch (Exception e) {
             throw SingularUtil.propagate(e);
         }

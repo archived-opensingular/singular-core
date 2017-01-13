@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import java.io.IOException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,6 +51,8 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.validation.IInstanceValidator;
+
+import javax.annotation.Nullable;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
@@ -95,6 +98,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     /**
      * Classe a  ser usada para criar as instâncias do tipo atual. Pode ser null, indicado que o tipo atual é abstrato.
      */
+    @Nullable
     private final Class<? extends I> instanceClass;
 
     /** Representa o tipo ao qual o tipo atual extende. Pode ou não ser da mesma classe do tipo atual. */
@@ -322,8 +326,21 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public <M extends SInstance> M getAttributeInstance(AtrRef<?, M, ?> atr) {
-        Class<M> instanceAttributeClass =
-                atr.isSelfReference() ? (Class<M>) getInstanceClassResolved() : atr.getInstanceClass();
+        Class<M> instanceAttributeClass;
+        if(atr.isSelfReference()) {
+            instanceAttributeClass = (Class<M>) getInstanceClassResolved();
+            if (instanceAttributeClass == null) {
+                throw new SingularFormException(
+                        "O Atributo " + atr.getNameFull() + " é uma SELF reference ao tipo, mas o tipo é abstrato",
+                        this);
+            }
+        } else {
+            instanceAttributeClass = atr.getInstanceClass();
+            if (instanceAttributeClass == null) {
+                throw new SingularFormException(
+                        "O Atributo " + atr.getNameFull() + " não define o tipo da instância do atributo", this);
+            }
+        }
         SInstance instance = getAttributeInstanceInternal(atr.getNameFull());
         return instanceAttributeClass.cast(instance);
     }

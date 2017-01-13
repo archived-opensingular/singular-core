@@ -16,6 +16,12 @@
 
 package org.opensingular.lib.commons.internal.function;
 
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.lambda.ISupplier;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
@@ -33,12 +39,22 @@ public final class SupplierUtil {
     }
 
     /**
-     * Retorna uma supplier baseado em {@link SoftReference} que faz cache do
+     * Retorna um {@link Supplier} baseado em {@link SoftReference} que faz cache do
      * valor criado pelo supplier informado, mas que permite a liberação da
      * memória se necessário.
      */
-    public static <T> Supplier<T> cached(Supplier<T> delegate) {
+    @Nonnull
+    public static <T> Supplier<T> cached(@Nonnull Supplier<T> delegate) {
         return new SoftReferenceCacheSupplier<>(delegate);
+    }
+
+    /**
+     * Criar um {@link Supplier} com valor imutável e serializável. Garante que o valor passado é serializável. Dispara
+     * exception se o valor não for serializável.
+     */
+    @Nonnull
+    public static <T> ISupplier<T> serializable(@Nullable T value) {
+        return new SerializableHolder<T>(value);
     }
 
     private static final class SoftReferenceCacheSupplier<T> implements Supplier<T> {
@@ -70,6 +86,33 @@ public final class SupplierUtil {
                 return null;
             }
             return value;
+        }
+    }
+
+    /**
+     * É um {@link Supplier} com valor imutável e serializável. Garante que o valor passado é seriável ou dispara
+     * exception.
+     *
+     * @author Daniel C. Bordin on 12/01/2017.
+     */
+    public static final class SerializableHolder<E> implements ISupplier<E> {
+
+        private final Serializable content;
+
+        SerializableHolder(@Nullable E content) {
+            if (content == null || content instanceof Serializable) {
+                this.content = (Serializable) content;
+            } else {
+                throw SingularException.rethrow(
+                        "Objeto recebido não é serializável. Classe=" + content.getClass().getName() + ". Value=" +
+                                content);
+            }
+        }
+
+        @Override
+        @Nullable
+        public E get() {
+            return (E) content;
         }
     }
 }

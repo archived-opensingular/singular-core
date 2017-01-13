@@ -157,9 +157,13 @@ public final class ConversorToolkit {
                     pontos++;
                 }
             }
-            while (pontos < 3) {
-                novaHora += ":00";
-                pontos++;
+            if (pontos < 3) {
+                StringBuilder sb = new StringBuilder(novaHora + 9);
+                sb.append(novaHora);
+                for (; pontos < 3; pontos++) {
+                    sb.append(":00");
+                }
+                novaHora = sb.toString();
             }
             return getTimeFormat().parse(novaHora);
         } catch (ParseException e) {
