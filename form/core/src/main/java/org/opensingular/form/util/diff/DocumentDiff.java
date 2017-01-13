@@ -38,24 +38,24 @@ public class DocumentDiff implements Serializable {
 
     private final DiffInfo diffRoot;
 
-    private HashMap<Integer, DiffInfo> infoForOriginal = new HashMap<>();
-    private HashMap<Integer, DiffInfo> infoForNewer = new HashMap<>();
-    private HashMap<Integer, DiffInfo> byId = new HashMap<>();
+    private final HashMap<Integer, DiffInfo> infoForOriginal = new HashMap<>();
+    private final HashMap<Integer, DiffInfo> infoForNewer = new HashMap<>();
+    private final HashMap<Integer, DiffInfo> byId = new HashMap<>();
     private Integer lastId = 0;
 
-    DocumentDiff(DiffInfo diffRoot, boolean compactado) {
+    DocumentDiff(DiffInfo diffRoot, boolean compacting) {
         this.diffRoot = diffRoot;
-        addToMap(diffRoot, compactado);
+        addToMap(diffRoot, compacting);
     }
 
     /**
      * Indexa as informações de diff pelos IDs das instâncias.
      *
      * @param info       info a ser adicionado no documento
-     * @param compactado indica se esse é um diff compactado
+     * @param compacting indica se esse é um diff compactado
      */
-    private void addToMap(DiffInfo info, boolean compactado) {
-        if (!compactado) {
+    private void addToMap(DiffInfo info, boolean compacting) {
+        if (!compacting) {
             if (info.getOriginal() != null) {
                 infoForOriginal.put(info.getOriginal().getId(), info);
             }
@@ -68,7 +68,7 @@ public class DocumentDiff implements Serializable {
         byId.put(info.getId(), info);
 
         if (info.hasChildren()) {
-            info.getChildren().forEach(c -> addToMap(c, compactado));
+            info.getChildren().forEach(c -> addToMap(c, compacting));
         }
     }
 
@@ -87,7 +87,7 @@ public class DocumentDiff implements Serializable {
 
     /** Indica se foi detectada alguma alteração como resultado da comparação. */
     public boolean hasChange() {
-        return diffRoot == null ? false : !diffRoot.isUnchanged();
+        return diffRoot != null && !diffRoot.isUnchanged();
     }
 
     /**
