@@ -32,7 +32,7 @@ import com.google.common.collect.ListMultimap;
 
 public class InstanceValidationContext {
 
-    private ListMultimap<Integer, IValidationError> contextErrors = ArrayListMultimap.create();
+    private final ListMultimap<Integer, IValidationError> contextErrors = ArrayListMultimap.create();
 
     public InstanceValidationContext() {
     }
@@ -98,9 +98,8 @@ public class InstanceValidationContext {
     }
 
     /**
-     * Chea se a instancia é obrigatoria e se a mesma foi preenchida
+     * Checa se a instancia é obrigatoria e se a mesma foi preenchida
      *
-     * @param instance
      * @return true se estiver OK
      */
     protected boolean isFilledIfRequired(SInstance instance) {

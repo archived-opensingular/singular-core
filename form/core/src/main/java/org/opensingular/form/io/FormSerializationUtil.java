@@ -88,8 +88,10 @@ public class FormSerializationUtil {
         }
 
         checkIfSerializable(root);
-        FormSerialized fs = new FormSerialized(document.getRootRefType().get(), root.getType().getName(), xml, annotations,
-            document.getDocumentFactoryRef());
+        RefType refType = document.getRootRefType().orElseThrow(
+                () -> new SingularFormException("RefTYpe null", document));
+        FormSerialized fs = new FormSerialized(refType, root.getType().getName(), xml, annotations,
+                document.getDocumentFactoryRef());
         serializeServices(document, fs);
         fs.setValidationErrors(document.getValidationErrors());
         return fs;
@@ -103,7 +105,7 @@ public class FormSerializationUtil {
      * @throws SingularFormException
      *             Se não atender os critérios
      */
-    public final static void checkIfSerializable(SInstance instance) {
+    public static void checkIfSerializable(SInstance instance) {
         SDocument document = instance.getDocument();
         if (!document.getRootRefType().isPresent()) {
             throw new SingularFormException("Não foi configurado o rootRefType no Document da instância, o que impedirá a "

@@ -38,7 +38,7 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class InMemoryAttachmentPersistenceHandler extends FileSystemAttachmentPersistenceHandler {
 
-    private Map<String, FileSystemAttachmentRef> attachments = new HashMap<>();
+    private final Map<String, FileSystemAttachmentRef> attachments = new HashMap<>();
 
     public InMemoryAttachmentPersistenceHandler() {
         super(StringUtils.isEmpty(System.getProperty("java.io.tmpdir")) ? "./tmp" : System.getProperty("java.io.tmpdir"));

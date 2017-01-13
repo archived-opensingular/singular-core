@@ -73,14 +73,10 @@ public final class FormFreemarkerUtil {
 
     private static Configuration cfg;
 
+    private FormFreemarkerUtil() {}
 
     public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
-        return new SimpleValueCalculation<String>() {
-            @Override
-            public String calculate(CalculationContext context) {
-                return merge(context.instance(), stringTemplate);
-            }
-        };
+        return context -> merge(context.instance(), stringTemplate);
     }
 
     /**
@@ -224,13 +220,17 @@ public final class FormFreemarkerUtil {
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
             if ("toStringDisplayDefault".equals(key)) {
-                return new SInstanceZeroArgumentMethodTemplate<INSTANCE>(getInstance(), key, i -> i.toStringDisplayDefault());
+                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, i -> i.toStringDisplayDefault());
             } else if ("value".equals(key) || "getValue".equals(key)) {
-                return new SInstanceZeroArgumentMethodTemplate<INSTANCE>(getInstance(), key, i -> getValue());
+                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, i -> getValue());
             } else if ("_inst".equals(key)) {
                 Optional<Constructor<?>> constructor = Arrays.stream(getClass().getConstructors())
                         .filter(c -> c.getParameterCount() == 1 && c.getParameterTypes()[0].isAssignableFrom(getInstance().getClass()))
                         .findFirst();
+                if (! constructor.isPresent()) {
+                    throw new SingularFormException(
+                            "Não foi encontrado o construtor " + getClass().getSimpleName() + "(SInstance)");
+                }
                 SInstanceTemplateModel<INSTANCE> newSelf;
                 try {
                     newSelf = (SInstanceTemplateModel<INSTANCE>) constructor.get().newInstance(getInstance());
@@ -240,7 +240,7 @@ public final class FormFreemarkerUtil {
                 newSelf.invertedPriority = true;
                 return newSelf;
             } else if ("toStringDisplay".equals(key)) {
-                return new SInstanceZeroArgumentMethodTemplate<INSTANCE>(getInstance(), key, i -> i.toStringDisplay());
+                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, i -> i.toStringDisplay());
             }
             return null;
         }
@@ -273,7 +273,7 @@ public final class FormFreemarkerUtil {
 
         @Override
         public Number getAsNumber() throws TemplateModelException {
-            return (Number) getInstance().getValue();
+            return getInstance().getValue();
         }
 
     }
@@ -388,7 +388,7 @@ public final class FormFreemarkerUtil {
             return model;
         }
 
-        private TemplateModel getTemplateFromField(String key) throws TemplateModelException {
+        private TemplateModel getTemplateFromField(String key) {
             return getInstance().getFieldOpt(key).map(instance -> toTemplateModel(instance)).orElse(null);
         }
 

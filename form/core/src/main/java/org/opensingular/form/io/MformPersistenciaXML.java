@@ -45,6 +45,8 @@ public class MformPersistenciaXML {
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
 
+    private MformPersistenciaXML() {}
+
     /**
      * Cria uma instância não passível de serialização para do tipo com o
      * conteúdo persistido no XML informado.
@@ -186,7 +188,7 @@ public class MformPersistenciaXML {
         return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).toXML(instancia);
     }
 
-    final static MElement toXML(MElement pai, String nomePai, SInstance instancia, PersistenceBuilderXML builder) {
+    static MElement toXML(MElement pai, String nomePai, SInstance instancia, PersistenceBuilderXML builder) {
 
         MDocument xmlDocument = (pai == null) ? MDocument.newInstance() : pai.getMDocument();
         ConfXMLGeneration conf = new ConfXMLGeneration(builder, xmlDocument);
@@ -211,7 +213,7 @@ public class MformPersistenciaXML {
         return xmlResultado;
     }
 
-    final static MElement parseXml(String xmlString) {
+    static MElement parseXml(String xmlString) {
         try {
             if (StringUtils.isBlank(xmlString)) {
                 return null;

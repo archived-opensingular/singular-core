@@ -163,9 +163,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      * Obtém o valor de um campo a partir do seu tipo O campo deve ser filho
      * imediato desse MTipo
      *
-     * @param field
-     *            Tipo do campo filho
-     * @return
+     * @param field Tipo do campo filho
      */
     public Object getValue(SType<?> field) {
         return getValue(field.getNameSimple());
@@ -239,12 +237,12 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    public final <T extends Object> T getValue(String fieldPath, Class<T> resultClass) {
+    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
         return getValue(new PathReader(fieldPath), resultClass);
     }
 
     @Override
-    final <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
+    final <T> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
         SInstance instance = getFieldLocalWithoutCreating(pathReader);
         if (instance != null) {
             return instance.getValueWithDefaultIfNull(pathReader.next(), resultClass);
@@ -263,17 +261,11 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         SIComposite other = (SIComposite) obj;
-        if (!getType().equals(other.getType())) {
-            return false;
-        }
-        return Objects.equals(fields, other.fields);
+        return getType().equals(other.getType()) && Objects.equals(fields, other.fields);
     }
 
     private final static class FieldMapOfRecordInstance {
@@ -321,9 +313,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
             if (getClass() != obj.getClass())
                 return false;
             FieldMapOfRecordInstance other = (FieldMapOfRecordInstance) obj;
-            if (!Arrays.equals(instances, other.instances))
-                return false;
-            return true;
+            return Arrays.equals(instances, other.instances);
         }
     }
 }

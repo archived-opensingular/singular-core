@@ -28,7 +28,7 @@ public enum DiffType {
     /** As instâncias não foram alterandas e ambas apresentem o mesmo valor não nulo atribuido. */
     UNCHANGED_WITH_VALUE("Igual"),
     /** As instâncias não foram alterandas e apresentem ambas conteúdo null */
-    UNCHANGED_EMPTY("Vazio"),
+    UNCHANGED_EMPTY("Igual Vazio"),
     /**
      * Foi alterado ou por inserção de um novo item em uma lista ou antes a instância era null e agora passou para não
      * null.
@@ -39,13 +39,13 @@ public enum DiffType {
     /** O conteúdo foi alterado, sendo que tanto antes quando depois as instâncias tinham conteudo diferente de null. */
     CHANGED_CONTENT("Alterado");
 
-    private String nomeModificacao;
+    private final String description;
 
-    DiffType(String nomeModificacao) {
-        this.nomeModificacao = nomeModificacao;
+    DiffType(String description) {
+        this.description = description;
     }
 
-    public String getNomeModificacao() {
-        return nomeModificacao;
+    public String getDescription() {
+        return description;
     }
 }

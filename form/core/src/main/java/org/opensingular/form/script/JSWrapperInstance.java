@@ -17,9 +17,7 @@
 package org.opensingular.form.script;
 
 import jdk.nashorn.api.scripting.JSObject;
-import org.opensingular.form.SISimple;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SingularFormException;
 
 import java.util.Collection;
 import java.util.Collections;

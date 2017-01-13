@@ -45,7 +45,7 @@ public final class ConversorToolkit {
 
     private static DateFormat dateTimeFormat__;
 
-    private static NumberFormat[] numberFormat__ = new NumberFormat[30];
+    private static final NumberFormat[] numberFormat__ = new NumberFormat[30];
 
     /**
      * Esconde o contrutor
@@ -60,7 +60,7 @@ public final class ConversorToolkit {
         }
     }
 
-    public static Calendar getCalendar(String data) throws ParseException {
+    public static Calendar getCalendar(String data) {
         return getCalendar(getDateFromData(data));
     }
 

@@ -185,7 +185,7 @@ public abstract class SInstance implements SAttributeEnabled {
 
     public abstract Object getValue();
 
-    <V extends Object> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
+    <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
         return convert(getValue(), resultClass);
     }
 
@@ -209,8 +209,6 @@ public abstract class SInstance implements SAttributeEnabled {
      * Para o tipo registro (composto) retorna true se todos so seus campos
      * retornarem isEmptyOfData().
      * </p>
-     *
-     * @return
      */
     public abstract boolean isEmptyOfData();
 
@@ -218,11 +216,11 @@ public abstract class SInstance implements SAttributeEnabled {
         return getValue(null);
     }
 
-    public final <T extends Object> T getValueWithDefault(Class<T> resultClass) {
+    public final <T> T getValueWithDefault(Class<T> resultClass) {
         return convert(getValueWithDefault(), resultClass);
     }
 
-    public final <T extends Object> T getValue(Class<T> resultClass) {
+    public final <T> T getValue(Class<T> resultClass) {
         return convert(getValue(), resultClass);
     }
 
@@ -235,7 +233,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return getType().convert(value, resultClass);
     }
 
-    final <T extends Object> T getValue(PathReader pathReader, Class<T> resultClass) {
+    final <T> T getValue(PathReader pathReader, Class<T> resultClass) {
         SInstance instance = this;
         while (true) {
             if (pathReader.isEmpty()) {
@@ -251,11 +249,11 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    <T extends Object> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
+    <T> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
         throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
-    <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
+    <T> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
         throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
@@ -357,7 +355,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Override
-    public final <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public final <V> V getAttributeValue(String fullName, Class<V> resultClass) {
         if (attributes != null) {
             SInstance attribute = attributes.get(fullName);
             if (attribute != null) {
@@ -414,7 +412,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Object> T as(Class<T> classeAlvo) {
+    public <T> T as(Class<T> classeAlvo) {
         if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
             return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
@@ -538,9 +536,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public void removeChildren() {
         if (this instanceof ICompositeInstance) {
-            for (SInstance child : ((ICompositeInstance) this).getChildren()) {
-                child.internalOnRemove();
-            }
+            ((ICompositeInstance) this).getChildren().stream().forEach(child -> child.internalOnRemove());
         }
     }
 

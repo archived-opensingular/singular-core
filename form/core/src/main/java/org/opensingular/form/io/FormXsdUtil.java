@@ -106,7 +106,6 @@ public class FormXsdUtil {
                     readXsd(typeContext, element);
                 } else {
                     element.checkUnexpectedNodeFor(typeContext);
-                    continue;
                 }
             } else if (element.isTagAttribute()) {
                 if (!(typeContext instanceof STypeComposite)) {
@@ -152,7 +151,7 @@ public class FormXsdUtil {
                     }
                 } else {
                     int maxOccurs = Integer.parseInt(value);
-                    if (newType.isList()) {
+                    if (newType instanceof STypeList) {
                         ((STypeList) newType).withMaximumSizeOf(maxOccurs);
                     } else if (maxOccurs != 1) {
                         throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));

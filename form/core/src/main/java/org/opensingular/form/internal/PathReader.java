@@ -83,7 +83,7 @@ public final class PathReader {
                     throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
                 }
                 token = (inicio == 0 && end == path.length()) ? path : path.substring(inicio, end);
-                if (!SFormUtil.isValidSimpleName(token)) {
+                if (SFormUtil.isNotValidSimpleName(token)) {
                     throw new SingularFormException(
                             "Path '" + path + "': inválido na posição " + inicio + " : Não é um nome de campo válido");
                 }

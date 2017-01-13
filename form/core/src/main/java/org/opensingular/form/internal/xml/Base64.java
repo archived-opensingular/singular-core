@@ -672,9 +672,9 @@ final class Base64 {
 
         byte[] b4 = new byte[4];
         int b4Posn = 0;
-        int i = 0;
-        byte sbiCrop = 0;
-        byte sbiDecode = 0;
+        int i;
+        byte sbiCrop;
+        byte sbiDecode;
         for (i = off; i < off + len; i++) {
             sbiCrop = (byte) (source[i] & 0x7f); // Only the low seven bits
             sbiDecode = DECODABET[sbiCrop];
@@ -743,7 +743,7 @@ final class Base64 {
                 java.util.zip.GZIPInputStream gzis = null;
                 java.io.ByteArrayOutputStream baos = null;
                 byte[] buffer = new byte[2048];
-                int length = 0;
+                int length;
 
                 try {
                     baos = new java.io.ByteArrayOutputStream();
@@ -941,9 +941,9 @@ final class Base64 {
         try {
             // Set up some useful variables
             java.io.File file = new java.io.File(filename);
-            byte[] buffer = null;
+            byte[] buffer;
             int length = 0;
-            int numBytes = 0;
+            int numBytes;
 
             // Check for size of file
             if (file.length() > Integer.MAX_VALUE) {
@@ -1002,7 +1002,7 @@ final class Base64 {
             java.io.File file = new java.io.File(filename);
             byte[] buffer = new byte[(int) (file.length() * 1.4)];
             int length = 0;
-            int numBytes = 0;
+            int numBytes;
 
             // Open a stream
             fis = new FileInputStream(file);
@@ -1049,7 +1049,7 @@ final class Base64 {
             // Set up some useful variables
             byte[] buffer = new byte[4096];
             int length = 0;
-            int numBytes = 0;
+            int numBytes;
 
             // Open a stream
             bis = new Base64.InputStream(new java.io.BufferedInputStream(is), Base64.ENCODE_OPTION);
@@ -1088,19 +1088,19 @@ final class Base64 {
      */
     static final class InputStream extends java.io.FilterInputStream {
 
-        private boolean encode; // Encoding or decoding
+        private final boolean encode; // Encoding or decoding
 
         private int position; // Current position in the buffer
 
-        private byte[] buffer; // Small buffer holding converted data
+        private final byte[] buffer; // Small buffer holding converted data
 
-        private int bufferLength; // Length of buffer (3 or 4)
+        private final int bufferLength; // Length of buffer (3 or 4)
 
         private int numSigBytes; // Number of meaningful bytes in the buffer
 
         private int lineLength;
 
-        private boolean breakLines; // Break lines at less than 80 characters
+        private final boolean breakLines; // Break lines at less than 80 characters
 
         /**
          * Constructs a {@link Base64.InputStream}in DECODE mode.
@@ -1191,10 +1191,10 @@ final class Base64 {
                 // Else decoding
                 else {
                     byte[] b4 = new byte[4];
-                    int i = 0;
+                    int i;
                     for (i = 0; i < 4; i++) {
                         // Read four "meaningful" bytes:
-                        int b = 0;
+                        int b;
                         do {
                             b = in.read();
                         } while (b >= 0 && DECODABET[b & 0x7f] <= WHITE_SPACE_ENC);
@@ -1297,19 +1297,19 @@ final class Base64 {
      */
     static final class OutputStream extends java.io.FilterOutputStream {
 
-        private boolean encode;
+        private final boolean encode;
 
         private int position;
 
         private byte[] buffer;
 
-        private int bufferLength;
+        private final int bufferLength;
 
         private int lineLength;
 
-        private boolean breakLines;
+        private final boolean breakLines;
 
-        private byte[] b4; // Scratch used in a few places
+        private final byte[] b4; // Scratch used in a few places
 
         private boolean suspendEncoding;
 

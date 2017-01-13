@@ -16,26 +16,21 @@
 
 package org.opensingular.form;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-
-import javax.lang.model.SourceVersion;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
-
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+
+import javax.lang.model.SourceVersion;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
@@ -46,12 +41,12 @@ public final class SFormUtil {
     private SFormUtil() {
     }
 
-    public static boolean isValidSimpleName(String name) {
-        return idPattern.matcher(name).matches();
+    public static boolean isNotValidSimpleName(String name) {
+        return !idPattern.matcher(name).matches();
     }
 
     static void validateSimpleName(String name) {
-        if (!isValidSimpleName(name)) {
+        if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para tipo ou atributo");
         }
     }
@@ -277,7 +272,7 @@ public final class SFormUtil {
     /**
      * Indica se o tipo é um definição do próprio singular (true) ou se é uma definição de terceiros ou do usuário.
      */
-    public static final boolean isSingularBuiltInType(SType<?> type) {
+    public static boolean isSingularBuiltInType(SType<?> type) {
         return type.getPackage().getName().startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX);
     }
 

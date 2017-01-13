@@ -19,7 +19,7 @@ package org.opensingular.form;
 import com.google.common.base.Preconditions;
 
 @SuppressWarnings("rawtypes")
-public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
+public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final Class<? extends SPackage> packageClass;
 
@@ -71,7 +71,7 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
     }
 
     public String getNameFull() {
-        if (!isBinded()) {
+        if (isNotBindDone()) {
             throw new SingularFormException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
         }
 
@@ -82,12 +82,12 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
         return selfReference;
     }
 
-    public final boolean isBinded() {
-        return nameScope != null;
+    final boolean isNotBindDone() {
+        return nameScope == null;
     }
 
     final void bind(String scopeName) {
-        if (!isBinded()) {
+        if (isNotBindDone()) {
             Preconditions.checkNotNull(scopeName);
             this.nameScope = scopeName;
             nameFull = scopeName + "." + nameSimple;

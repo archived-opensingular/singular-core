@@ -17,14 +17,12 @@
 package org.opensingular.form.script;
 
 import org.opensingular.form.RefService;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.script.*;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**

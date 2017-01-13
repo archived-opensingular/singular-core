@@ -16,10 +16,9 @@
 
 package org.opensingular.form.script;
 
-import com.google.common.collect.Sets;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SingularFormException;
 
+import javax.annotation.Nonnull;
 import javax.script.Bindings;
 import java.util.*;
 
@@ -57,6 +56,7 @@ class BindingsSInstance<W extends JSWrapperInstance<I>, I extends SInstance> imp
     }
 
     @Override
+    @Nonnull
     public Set<String> keySet() {
         LinkedHashSet<String> set = new LinkedHashSet<>(size());
         set.add(FormJavascriptUtil.KEY_INST);
@@ -67,6 +67,7 @@ class BindingsSInstance<W extends JSWrapperInstance<I>, I extends SInstance> imp
     }
 
     @Override
+    @Nonnull
     public Collection<Object> values() {
         ArrayList<Object> list = new ArrayList<>(size());
         list.add(wrapper);
@@ -77,6 +78,7 @@ class BindingsSInstance<W extends JSWrapperInstance<I>, I extends SInstance> imp
     }
 
     @Override
+    @Nonnull
     public Set<Entry<String, Object>> entrySet() {
         throw new UnsupportedOperationException("Método não implementado");
     }
@@ -90,7 +92,7 @@ class BindingsSInstance<W extends JSWrapperInstance<I>, I extends SInstance> imp
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends Object> toMerge) {
+    public void putAll(Map<? extends String, ?> toMerge) {
         if (values == null) {
             values = new HashMap<>();
         }

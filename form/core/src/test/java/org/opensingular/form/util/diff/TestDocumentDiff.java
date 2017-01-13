@@ -34,6 +34,7 @@ import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestComp
 import org.opensingular.form.view.SViewAutoComplete;
 
 import java.io.IOException;
+import java.util.Collections;
 
 /**
  * @author Daniel C. Bordin on 27/12/2016.
@@ -271,9 +272,8 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testCompositeResumedBecauseOfView() {
-        assertNotNull(SViewAutoComplete.class.getAnnotation(DiffCompositeDetailNoRetention.class));
         TestCompositeC typeC = createTestDictionary().getType(TestCompositeC.class);
-        typeC.getField(typeC.personB).setView(SViewAutoComplete::new);
+        typeC.getField(typeC.personB).asAtrProvider().provider(ctx -> Collections.emptyList());
 
         SIComposite c0 = typeC.newInstance();
         c0.setValue("personA.name", "Lara");

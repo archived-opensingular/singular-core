@@ -32,8 +32,8 @@ import java.util.Map;
  */
 public class FromPojoList<T> extends FromPojo<T> {
 
-    private SType   listType;
-    private List<T> pojoList;
+    private final SType   listType;
+    private final List<T> pojoList;
 
     /**
      *

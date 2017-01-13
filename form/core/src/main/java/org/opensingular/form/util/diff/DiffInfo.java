@@ -170,7 +170,7 @@ public final class DiffInfo implements Serializable {
 
     /** Indica se possui sub itens de comparação (itens comparação para as sub instâncias). */
     public boolean hasChildren() {
-        return children == null ? false : !children.isEmpty();
+        return children != null && !children.isEmpty();
     }
 
     /**
@@ -256,9 +256,9 @@ public final class DiffInfo implements Serializable {
             }
             return children.get(index).get(pathReader.next());
         } else if (children != null) {
-            String trecho = pathReader.getToken();
+            String token = pathReader.getToken();
             for (DiffInfo info : children) {
-                if (info.getOriginalOrNewer().getName().equals(trecho)) {
+                if (info.getOriginalOrNewer().getName().equals(token)) {
                     return info.get(pathReader.next());
                 }
             }
@@ -288,7 +288,7 @@ public final class DiffInfo implements Serializable {
 
     /**
      * Se a instância original estava dentro de uma lista, indica qual o índice dela dentro dessa lista. Se a instancia
-     * original for null ou senão fazia parte de uma lista, então retorna -1. <p> {@link #getOriginalIndex()} e {@link
+     * original for null ou senão fazia parte de uma lista, então retorna -1. <p> Esse método e {@link
      * #getNewerIndex()} em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido
      * ou removido.</p>
      */
@@ -298,8 +298,8 @@ public final class DiffInfo implements Serializable {
 
     /**
      * Se a instância nova estava dentro de uma lista, indica qual o índice dela dentro dessa lista. Se a instancia
-     * nova for null ou senão fazia parte de uma lista, então retorna -1. <p> {@link #getOriginalIndex()} e {@link
-     * #getNewerIndex()} em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido
+     * nova for null ou senão fazia parte de uma lista, então retorna -1. <p> {@link #getOriginalIndex()} e esse
+     * método em conjunto permitem verificar de onde para onde um item de uma lista foi movido ou incluido
      * ou removido.</p>
      */
     public int getNewerIndex() {
@@ -482,17 +482,10 @@ public final class DiffInfo implements Serializable {
         }
     }
 
-    private static Appendable pad(Appendable appendable, int level) throws IOException {
+    private static void pad(Appendable appendable, int level) throws IOException {
         for (int i = level * 3; i > 0; i--) {
             appendable.append(' ');
         }
-        return appendable;
-    }
-
-    public List<DiffInfo> getPrePath() {
-        return prePath == null
-                ? prePath
-                : Collections.unmodifiableList(prePath);
     }
 }
 

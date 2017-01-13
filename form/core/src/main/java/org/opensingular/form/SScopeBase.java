@@ -161,10 +161,10 @@ public abstract class SScopeBase implements SScope {
                 c.getDeclaredMethod("onLoadType", TypeBuilder.class);
                 break; //Então deve chamar onLoadType, pois há uma implementação específica para a classe
             } catch (NoSuchMethodException e) {
-            }
-            c = c.getSuperclass();
-            if (c == newType.getSuperType().getClass()) {
-                return; //Não é necessário chamar onLoadType, pois já foi chamado no tipo pai
+                c = c.getSuperclass();
+                if (c == newType.getSuperType().getClass()) {
+                    return; //Não é necessário chamar onLoadType, pois já foi chamado no tipo pai
+                }
             }
         }
         newType.onLoadType(new TypeBuilder(newType));

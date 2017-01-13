@@ -20,7 +20,6 @@ import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.form.view.SView;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -130,7 +129,7 @@ public final class DocumentDiffUtil {
     private static void calculateDiffComposite(DiffInfo info, SIComposite original, SIComposite newer) {
         Set<String> names = new HashSet<>();
         if (newer != null) {
-            for (SType<?> newerTypeField : ((STypeComposite<?>) newer.getType()).getFields()) {
+            for (SType<?> newerTypeField : newer.getType().getFields()) {
                 SInstance newerField = newer.getField(newerTypeField);
                 SInstance originalField = null;
                 if (original != null) {
@@ -141,7 +140,8 @@ public final class DocumentDiffUtil {
             }
         }
         if (original != null) {
-            for (SType<?> originalTypeField : ((STypeComposite<?>) original.getType()).getFields()) {
+            //noinspection Convert2streamapi
+            for (SType<?> originalTypeField : original.getType().getFields()) {
                 if (!names.contains(originalTypeField.getNameSimple())) {
                     calculateDiff(info, original.getField(originalTypeField), null);
                 }
@@ -156,28 +156,28 @@ public final class DocumentDiffUtil {
     private static void calculateDiffList(@Nonnull DiffInfo info, SIList<?> original, SIList<?> newer) {
         List<? extends SInstance> originals = original == null ? Collections.emptyList() : new ArrayList<>(
                 original.getValues());
-        List<? extends SInstance> newers = newer == null ? Collections.emptyList() : new LinkedList<>(
+        List<? extends SInstance> newerList = newer == null ? Collections.emptyList() : new LinkedList<>(
                 newer.getValues());
-        boolean[] consumed = new boolean[newers.size()];
+        boolean[] consumed = new boolean[newerList.size()];
         int posNotConsumed = 0;
         for (int posO = 0; posO < originals.size(); posO++) {
             SInstance iO = originals.get(posO);
-            int posN = findById(iO.getId(), newers);
+            int posN = findById(iO.getId(), newerList);
             if (posN == -1) {
-                posNotConsumed = diffLinha(info, iO, posO, newers, consumed, posN, posNotConsumed);
+                posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
             } else {
                 for (int posD = posNotConsumed; posD < posN; posD++) {
                     if (!consumed[posD]) {
-                        posNotConsumed = diffLinha(info, null, -1, newers, consumed, posD, posNotConsumed);
+                        posNotConsumed = diffLine(info, null, -1, newerList, consumed, posD, posNotConsumed);
                     }
                 }
-                posNotConsumed = diffLinha(info, iO, posO, newers, consumed, posN, posNotConsumed);
+                posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
             }
         }
 
-        for (int posN = posNotConsumed; posN < newers.size(); posN++) {
+        for (int posN = posNotConsumed; posN < newerList.size(); posN++) {
             if (!consumed[posN]) {
-                calculateDiff(info, null, newers.get(posN)).setNewerIndex(posN);
+                calculateDiff(info, null, newerList.get(posN)).setNewerIndex(posN);
             }
         }
         if (info.isUnknownState()) {
@@ -186,9 +186,9 @@ public final class DocumentDiffUtil {
     }
 
     /** Calcula o diff entre dois elementos de lista diferentes, sem fazer chamada recursiva. */
-    private static int diffLinha(DiffInfo parent, SInstance instanceOriginal, int posO,
-            List<? extends SInstance> newers, boolean[] consumed, int posN, int posNotConsumed) {
-        SInstance instanceNewer = posN == -1 ? null : newers.get(posN);
+    private static int diffLine(DiffInfo parent, SInstance instanceOriginal, int posO,
+            List<? extends SInstance> newerList, boolean[] consumed, int posN, int posNotConsumed) {
+        SInstance instanceNewer = posN == -1 ? null : newerList.get(posN);
         DiffInfo info = calculateDiff(parent, instanceOriginal, instanceNewer);
         info.setOriginalIndex(posO);
         if (posN != -1) {
@@ -289,7 +289,7 @@ public final class DocumentDiffUtil {
             return info.copyWithoutChildren();
         } else if (newList.size() > 1) {
             DiffInfo newInfo = info.copyWithoutChildren();
-            newList.stream().forEach(child -> newInfo.addChild(child));
+            newList.stream().forEach(newInfo::addChild);
             return newInfo;
         }
         DiffInfo newInfo = newList.get(0);
@@ -299,13 +299,7 @@ public final class DocumentDiffUtil {
 
     private static boolean isCompositeAndShouldBeResumed(DiffInfo info) {
         SInstance instance = info.getNewerOrOriginal();
-        if(instance instanceof SIComposite) {
-            SView view = instance.getType().getView();
-            if (view != null) {
-                return view.getClass().getAnnotation(DiffCompositeDetailNoRetention.class) != null;
-            }
-        }
-        return false;
+        return (instance instanceof SIComposite) && (instance.asAtrProvider().getProvider() != null);
     }
 
     private static boolean isElementOfListAndDeletedOrNew(DiffInfo info) {
@@ -325,7 +319,7 @@ public final class DocumentDiffUtil {
      * Preenche o diff informado de acordo com a diferença de duas instâncias.
      */
     @FunctionalInterface
-    private static interface TypeDiffCalculator<I extends SInstance> {
+    private interface TypeDiffCalculator<I extends SInstance> {
         /**
          * Chamado para fazer o cálculo do diff para duas instâncias. Se necessário, o método deve fazer o diff
          * recursivo para as sub informações de cada instância.
@@ -336,7 +330,7 @@ public final class DocumentDiffUtil {
          * @param original Instância original (pode ser null)
          * @param newer    Nova versão da instância (pode ser null)
          */
-        public void calculateDiff(@Nonnull DiffInfo info, @Nullable I original, @Nullable I newer);
+        void calculateDiff(@Nonnull DiffInfo info, @Nullable I original, @Nullable I newer);
     }
 
     /**
@@ -402,6 +396,7 @@ public final class DocumentDiffUtil {
         }
 
         /** Retorna a implementação do calculador de diff para a classe atual. */
+        @SuppressWarnings("unchecked")
         public TypeDiffCalculator<SInstance> getCalculator() {
             return (TypeDiffCalculator<SInstance>) calculator;
         }
@@ -436,7 +431,7 @@ public final class DocumentDiffUtil {
         public CalculatorEntry get(Class<?> typeClassTarget) {
             if (this.typeClass.isAssignableFrom(typeClassTarget)) {
                 if (subEntries != null) {
-                    CalculatorEntry result = null;
+                    CalculatorEntry result;
                     for (CalculatorEntry e : subEntries) {
                         result = e.get(typeClassTarget);
                         if (result != null) {

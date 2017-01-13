@@ -16,43 +16,32 @@
 
 package org.opensingular.form;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.builder.selection.SelectionBuilder;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.function.IBehavior;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.provider.SimpleProvider;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.validation.IInstanceValidator;
+import org.opensingular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.lib.commons.lambda.IConsumer;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.security.SignatureException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-
-import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.context.UIComponentMapper;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.function.IBehavior;
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.provider.SimpleProvider;
-import org.opensingular.form.validation.ValidationErrorLevel;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.validation.IInstanceValidator;
-
-import javax.annotation.Nullable;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
@@ -75,9 +64,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private SScope scope;
 
-    private AttributeMap attributesDefined = new AttributeMap();
+    private final AttributeMap attributesDefined = new AttributeMap();
 
-    private MapAttributeDefinitionResolver attributesResolved;
+    private final MapAttributeDefinitionResolver attributesResolved;
 
     private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
 
@@ -616,16 +605,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     public final boolean isDependentType(SType<?> type) {
         if (dependentTypes != null) {
-            for(SType<?> d : dependentTypes ) {
+            for (SType<?> d : dependentTypes) {
                 if (type.isTypeOf(d)) {
                     return true;
                 }
             }
         }
-        if (superType != null) {
-            return superType.isDependentType(type);
-        }
-        return false;
+        return superType != null && superType.isDependentType(type);
     }
 
     public boolean hasDependentTypes() {
@@ -795,7 +781,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         try {
             SType<?> at = this.isAttribute() ? this : null;
             pad(appendable, level).append(at == null ? "def " : "defAtt ");
-            appendable.append(getNameSimple()).append("@" + getTypeId());
+            appendable.append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
             if (at != null) {
                 SType<?> owner = at.getAttributeDefinitionInfo().getOwner();
                 if (owner != null && owner != at.getParentScope()) {
@@ -871,7 +857,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     private void appendNameAndId(Appendable appendable, SType<?> type) throws IOException {
-        appendable.append(suppressPackage(type.getName())).append("@" + type.getTypeId());
+        appendable.append(suppressPackage(type.getName())).append('@').append(Integer.toString(type.getTypeId()));
     }
 
     private String suppressPackage(String name) {

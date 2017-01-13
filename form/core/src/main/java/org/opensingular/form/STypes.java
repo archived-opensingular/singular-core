@@ -50,13 +50,7 @@ public abstract class STypes {
     public static void visitAllContainedTypes(SType<?> parent, boolean containedTypesFirst, Consumer<SType<?>> consumer) {
         if (parent instanceof ICompositeType) {
             for (SType<?> child : ((ICompositeType) parent).getContainedTypes()) {
-                if (containedTypesFirst) {
-                    visitAllContainedTypes(child, containedTypesFirst, consumer);
-                    consumer.accept(child);
-                } else {
-                    consumer.accept(child);
-                    visitAllContainedTypes(child, containedTypesFirst, consumer);
-                }
+                visitAll(child, containedTypesFirst, consumer);
             }
         }
     }
@@ -88,7 +82,7 @@ public abstract class STypes {
 
     /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     * @param root instância inicial da busca
      * @return Stream das instâncias de descendentes
      */
     public static Stream<SType<?>> streamDescendants(SType<?> root, boolean includeRoot) {

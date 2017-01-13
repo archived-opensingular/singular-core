@@ -103,7 +103,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Object> T convert(Object value, Class<T> resultClass) {
+    public <T> T convert(Object value, Class<T> resultClass) {
         if (value == null) {
             return null;
         } else if (resultClass.isAssignableFrom(valueClass)) {

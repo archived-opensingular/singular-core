@@ -128,10 +128,6 @@ public abstract class SInstances {
 
     /**
      * Implements the prefixed traversal logic.
-     * @param rootInstance
-     * @param visitor
-     * @param filter
-     * @param visit
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitChildren(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
@@ -164,10 +160,6 @@ public abstract class SInstances {
 
     /**
      * Implements the postfixed traversal logic.
-     * @param rootInstance
-     * @param visitor
-     * @param filter
-     * @param visit
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitPostOrder(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {

@@ -16,14 +16,13 @@
 
 package org.opensingular.form.type.core.annotation;
 
-import org.opensingular.form.*;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.type.basic.SPackageBasic;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -33,15 +32,15 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public class AtrAnnotation extends STranslatorForAttribute {
 
-    public static enum DefaultAnnotationClassifier implements AnnotationClassifier {
-        DEFAULT_ANNOTATION;
+    public enum DefaultAnnotationClassifier implements AnnotationClassifier {
+        DEFAULT_ANNOTATION
     }
 
     public AtrAnnotation() {
     }
 
-    public AtrAnnotation(SAttributeEnabled alvo) {
-        super(alvo);
+    public AtrAnnotation(SAttributeEnabled target) {
+        super(target);
     }
 
     private SInstance target() {

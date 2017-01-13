@@ -109,7 +109,7 @@ public class CIDDAO {
         value.setLetraInicial(catinicial.charAt(0));
         value.setNumInicial(Integer.parseInt(catinicial.substring(1)));
 
-        String catfinal = null;
+        String catfinal;
         if (clazz.isAssignableFrom(SubCategoriaCID.class)) {
             catfinal = catinicial;
             index += 3;
@@ -125,7 +125,7 @@ public class CIDDAO {
 
         value.setDescricao(StringUtils.trim(values[index++]));
 
-        value.setDescricaoAbreviada(StringUtils.trim(values[index++]));
+        value.setDescricaoAbreviada(StringUtils.trim(values[index]));
 
         return value;
     }

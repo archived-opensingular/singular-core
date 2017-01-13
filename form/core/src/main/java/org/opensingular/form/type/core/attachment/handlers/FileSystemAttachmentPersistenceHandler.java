@@ -61,7 +61,7 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
 
     protected static final String INFO_SUFFIX = ".INFO";
 
-    private File folder;
+    private final File folder;
 
     public FileSystemAttachmentPersistenceHandler(String folder) {
         this(new File(folder));
@@ -97,9 +97,9 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
     private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name) {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
-        try (OutputStream fos = IOUtil.newBuffredOutputStream(temp);
+        try (OutputStream fos = IOUtil.newBufferedOutputStream(temp);
              DigestInputStream inHash = HashUtil.toSHA1InputStream(IOUtil.newBuffredInputStream(origin));
-             OutputStream infoFOS = IOUtil.newBuffredOutputStream(infoFileFromId(id))) {
+             OutputStream infoFOS = IOUtil.newBufferedOutputStream(infoFileFromId(id))) {
             IOUtils.copy(inHash, fos);
             String sha1 = HashUtil.bytesToBase16(inHash.getMessageDigest().digest());
             IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength), name);

@@ -34,6 +34,8 @@ import org.opensingular.lib.commons.base.SingularUtil;
  */
 public class HashUtil {
 
+    private HashUtil() {}
+
     /** Localiza o algorítmo de hash SHA1. */
     public static MessageDigest getMessageDigestSHA1() {
         try {

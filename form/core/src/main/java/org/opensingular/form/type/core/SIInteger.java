@@ -22,6 +22,6 @@ public class SIInteger extends SINumber<Integer> implements SIComparable<Integer
     }
 
     public Integer getInteger() {
-        return (Integer) getValue();
+        return getValue();
     }
 }

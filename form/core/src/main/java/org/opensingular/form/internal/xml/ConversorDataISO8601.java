@@ -51,7 +51,9 @@ public final class ConversorDataISO8601 {
     private static final byte MILI = 7;
     private static final byte NANO = 8;
 
-    public static final String format(java.sql.Date d) {
+    private ConversorDataISO8601() {}
+
+    public static String format(java.sql.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
 
@@ -78,12 +80,12 @@ public final class ConversorDataISO8601 {
                 prescisao);
     }
 
-    public static final java.sql.Date getDateSQL(String s) {
+    public static java.sql.Date getDateSQL(String s) {
         GregorianCalendar gc = getCalendar(s);
         return new java.sql.Date(gc.getTime().getTime());
     }
 
-    public static final String format(java.util.Date d) {
+    public static String format(java.util.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
 
@@ -105,11 +107,11 @@ public final class ConversorDataISO8601 {
                 prescisao);
     }
 
-    public static final java.util.Date getDate(String s) {
+    public static java.util.Date getDate(String s) {
         return getCalendar(s).getTime();
     }
 
-    public static final String format(Timestamp t) {
+    public static String format(Timestamp t) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(t);
         return format(
@@ -124,7 +126,7 @@ public final class ConversorDataISO8601 {
                 NANO);
     }
 
-    public static final Timestamp getTimestamp(String s) {
+    public static Timestamp getTimestamp(String s) {
         int[] t = valueOf(s);
         GregorianCalendar gc =
                 new GregorianCalendar(t[ANO], t[MES] - 1, t[DIA], t[HORA], t[MINUTO], t[SEGUNDO]);
@@ -135,7 +137,7 @@ public final class ConversorDataISO8601 {
         return ts;
     }
 
-    public static final String format(Calendar gc) {
+    public static String format(Calendar gc) {
         return format(
                 gc.get(Calendar.YEAR),
                 gc.get(Calendar.MONTH) + 1,
@@ -148,7 +150,7 @@ public final class ConversorDataISO8601 {
                 MILI);
     }
 
-    public static final GregorianCalendar getCalendar(String s) {
+    public static GregorianCalendar getCalendar(String s) {
         int[] t = valueOf(s);
         GregorianCalendar gc =
                 new GregorianCalendar(t[ANO], t[MES] - 1, t[DIA], t[HORA], t[MINUTO], t[SEGUNDO]);
@@ -169,8 +171,8 @@ public final class ConversorDataISO8601 {
             texto_ = texto;
         }
 
-        public boolean isFim() {
-            return pos_ == texto_.length();
+        public boolean isNotEnd() {
+            return pos_ != texto_.length();
         }
 
         public int lerNumero(int digitosMinimos, int digitosMaximos, boolean shiftMaximo) {
@@ -248,7 +250,7 @@ public final class ConversorDataISO8601 {
 
     }
 
-    private static final int[] valueOf(String s) {
+    private static int[] valueOf(String s) {
 
         if (s == null) {
             throw new java.lang.IllegalArgumentException("string null");
@@ -264,13 +266,13 @@ public final class ConversorDataISO8601 {
         t[DIA] = leitor.lerNumero(1, 2, false);
 
         // hora opcional
-        if (!leitor.isFim()) {
+        if (leitor.isNotEnd()) {
             leitor.lerSeparadorDataHora();
             t[HORA] = leitor.lerNumero(1, 2, false);
             leitor.lerCaracter(':');
             t[MINUTO] = leitor.lerNumero(1, 2, false);
             //segundos opcionais
-            if (!leitor.isFim()) {
+            if (leitor.isNotEnd()) {
                 leitor.lerCaracter(':');
                 t[SEGUNDO] = leitor.lerNumero(1, 2, false);
                 // nanos/milis opcionais
@@ -287,14 +289,14 @@ public final class ConversorDataISO8601 {
             //}
         }
 
-        if (!leitor.isFim()) {
+        if (leitor.isNotEnd()) {
             throw leitor.erroFormato();
         }
 
         return t;
     }
 
-    private static final String format(
+    private static String format(
             int year,
             int month,
             int day,
@@ -379,7 +381,7 @@ public final class ConversorDataISO8601 {
         return buffer.toString();
     }
 
-    private static final void format2(StringBuilder buffer, int valor) {
+    private static void format2(StringBuilder buffer, int valor) {
         if (valor < 0) {
             throw new IllegalArgumentException("valor negativo");
         } else if (valor < 10) {
@@ -390,7 +392,7 @@ public final class ConversorDataISO8601 {
         buffer.append(valor);
     }
 
-    private static final void format3(StringBuilder buffer, int valor) {
+    private static void format3(StringBuilder buffer, int valor) {
         if (valor < 0) {
             throw new IllegalArgumentException("valor negativo");
         } else if (valor < 10) {
@@ -407,7 +409,7 @@ public final class ConversorDataISO8601 {
      * @param valor a ser verificado
      * @return true se atender ao formato
      */
-    public static final boolean isISO8601(String valor) {
+    public static boolean isISO8601(String valor) {
         if ((valor == null) || valor.length() < 10) {
             return false;
         }

@@ -21,15 +21,16 @@ import org.opensingular.form.SingularFormException;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 public final class DefaultServiceRegistry implements ServiceRegistry {
 
-    private Map<String, Pair>                  servicesByName  = newHashMap();
-    private Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
-    private List<ServiceRegistry>              registries      = newArrayList();
+    private final Map<String, Pair>                  servicesByName  = newHashMap();
+    private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
+    private final List<ServiceRegistry>              registries      = newArrayList();
 
     public void addRegistry(ServiceRegistry r) {
         registries.add(r);
@@ -114,7 +115,7 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     private <T> T lookupChainedService(String name, Class<T> targetClass) {
         for(ServiceRegistry r : registries){
-            T provider = r.lookupService(name, targetClass);;
+            T provider = r.lookupService(name, targetClass);
             if(provider != null) return provider;
         }
         return null;

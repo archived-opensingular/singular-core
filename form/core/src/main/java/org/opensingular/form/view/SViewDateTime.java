@@ -17,9 +17,6 @@
 package org.opensingular.form.view;
 
 
-import java.util.Map;
-import java.util.TreeMap;
-
 public class SViewDateTime extends SView {
 
     private boolean mode24hs = false;

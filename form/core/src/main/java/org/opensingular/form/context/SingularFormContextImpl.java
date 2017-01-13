@@ -20,7 +20,7 @@ import org.opensingular.form.document.ServiceRegistry;
 
 public abstract class SingularFormContextImpl implements SingularFormContext {
 
-    private InternalSingularFormConfig config;
+    private final InternalSingularFormConfig config;
 
 
     public SingularFormContextImpl(InternalSingularFormConfig config) {

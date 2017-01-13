@@ -42,7 +42,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
     @Override
     public void processTypePreOnLoadTypeCall(SType<?> type) {
-        if (! isDerivedClassOfSTypeComposite(type)) {
+        if (isNotDerivedClassOfSTypeComposite(type)) {
             return;
         }
         STypeComposite composite = (STypeComposite) type;
@@ -52,19 +52,19 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
 
     @Override
     public void processTypePosRegister(SType<?> type, boolean onLoadCalled) {
-        if (! isDerivedClassOfSTypeComposite(type)) {
+        if (isNotDerivedClassOfSTypeComposite(type)) {
             return;
         }
         STypeComposite composite = (STypeComposite) type;
         CompositePublicInfo info = getPublicInfo(composite.getClass());
-        if (! info.isEmpty()) {
+        if (info.isNotEmpty()) {
             if (onLoadCalled) {
                 if (!info.isPublicFieldsMatched()) {
                     verifyIfAllCompositeFieldsArePublicJavaFields(composite, info);
                     verifyIfAllPublicFieldsAreValid(composite, info);
                     info.setPublicFieldsMatched();
                 }
-                if (!info.isEmpty()) {
+                if (info.isNotEmpty()) {
                     verifyAllFieldsCorrectedFilled(composite, info);
                 }
             } else {
@@ -73,8 +73,8 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         }
     }
 
-    private boolean isDerivedClassOfSTypeComposite(SType<?> type) {
-        return (type instanceof STypeComposite) && type.getClass() != STypeComposite.class;
+    private boolean isNotDerivedClassOfSTypeComposite(SType<?> type) {
+        return (!(type instanceof STypeComposite)) || type.getClass() == STypeComposite.class;
     }
 
     private void propagatePublicFieldsToExtendedComposite(STypeComposite composite, CompositePublicInfo info,
@@ -86,7 +86,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                 boolean shouldCopyFromSuperType = false;
                 if(composite.getSuperType().getClass() == composite.getClass()) {
                     shouldCopyFromSuperType = true;
-                } else if(ref.isFieldCameFromSuperType() && ! isCoreClass(composite.getSuperType().getClass())) {
+                } else if(ref.isFieldCameFromSuperType() && isNotCoreClass(composite.getSuperType().getClass())) {
                     //Precisa verificar de novo pois ref.isFieldCameFromSuperType() pode se referencia uma classe pai
                     // intermediária que não chegou a virar um Type
                     if (infoSuper == null) {
@@ -310,9 +310,9 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         }
         info.finisheLoad();
 
-        if (! info.isEmpty()) {
+        if (info.isNotEmpty()) {
             Class<?> superClass = aClass.getSuperclass();
-            if (! isCoreClass(superClass)) {
+            if (isNotCoreClass(superClass)) {
                 CompositePublicInfo superInfo = getPublicInfo(superClass);
                 for(PublicFieldRef refSuper : superInfo) {
                     info.getPublicField(refSuper.getName()).setFieldCameFromSuperType(true);
@@ -323,10 +323,10 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     }
 
     /** Verifica se a classe é do usuário ou da implementação core. */
-    private static boolean isCoreClass(Class<?> aClass) {
-        return aClass.getPackage() == SType.class.getPackage() &&
-                (aClass == STypeComposite.class || aClass == STypeSimple.class || aClass == STypeList.class ||
-                        aClass == SType.class);
+    private static boolean isNotCoreClass(Class<?> aClass) {
+        return aClass.getPackage() != SType.class.getPackage() ||
+                (aClass != STypeComposite.class && aClass != STypeSimple.class && aClass != STypeList.class &&
+                        aClass != SType.class);
     }
 
     private static class CompositePublicInfo implements Iterable<PublicFieldRef> {
@@ -364,8 +364,8 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             return refs == null ? null : refs.get(nameSimple);
         }
 
-        public boolean isEmpty() {
-            return refs.isEmpty();
+        public boolean isNotEmpty() {
+            return !refs.isEmpty();
         }
     }
 

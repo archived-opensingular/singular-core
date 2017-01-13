@@ -38,7 +38,7 @@ import org.opensingular.form.io.FormSerializationUtil;
  * O método {@link #setupDocument(SDocument)} deve ser implementando com as
  * configurações necessárias pela aplicação. Na maior parte dos casos
  * provavelmente será utilizada a classe
- * {@link org.opensingular.singular.form.spring.SpringSDocumentFactory}.
+ * {@link org.opensingular.form.spring.SpringSDocumentFactory}.
  * </p>
  *
  * @author Daniel C. Bordin
@@ -101,7 +101,7 @@ public abstract class SDocumentFactory {
      * Fábrica de conveniência que não faz nenhuma configuração na instância ou
      * documento ao criá-los.
      */
-    public static final SDocumentFactory empty() {
+    public static SDocumentFactory empty() {
         return SDocumentFactoryEmpty.getEmptyInstance();
     }
 

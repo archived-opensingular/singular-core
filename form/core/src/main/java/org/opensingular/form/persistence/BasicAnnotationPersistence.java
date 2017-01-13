@@ -41,8 +41,6 @@ public interface BasicAnnotationPersistence {
     /**
      * Atualiza as anotações na base de dados, com base no atributo AnnotationKey.
      * O form ao qual a anotação está associada deve estar previamente persistido
-     * @param instance
-     * @param annotationKey
      */
     public void updateAnnotation(AnnotationKey annotationKey, SIAnnotation instance);
 
@@ -56,8 +54,6 @@ public interface BasicAnnotationPersistence {
     /**
      * Salva as alterações na versão atual e incrementa versão da anotação.
      * O form ao qual a anotação está associada deve estar previamente persistido
-     * @param instance
-     * @return
      */
     public AnnotationKey newAnnotationVersion(AnnotationKey key, SIAnnotation instance);
 
@@ -65,9 +61,6 @@ public interface BasicAnnotationPersistence {
     /**
      * Obtém a chave da anotação a partir da chave do formulário e do classificador
      * da anotação
-     * @param formKey
-     * @param classifier
-     * @return
      */
     public AnnotationKey keyFromClassifier(FormKey formKey, String classifier);
 

@@ -211,17 +211,17 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param no elemento não precisa ser convertido
      */
-    public static final void toMElement(MElement no) {
-        //Não faz nada
+    public static void toMElement(MElement no) {
+        throw new RuntimeException("Não deveria ser chamadado esse metodo com um parâmetro MElement");
     }
 
-    public static final MElement toMElement(Element no) {
+    public static MElement toMElement(Element no) {
         if (no == null) {
             return null;
         } else if (no instanceof MElement) {
             return (MElement) no;
         }
-        return new MElementWrapper((Element) no);
+        return new MElementWrapper(no);
     }
 
     /**
@@ -230,7 +230,7 @@ public abstract class MElement implements Element, Serializable {
      * @param no Element original.
      * @return Null se no for null. O próprio se esse já for MElement.
      */
-    public static final MElement toMElement(Node no) {
+    public static MElement toMElement(Node no) {
         if (no == null) {
             return null;
         } else if (no instanceof MElement) {
@@ -248,7 +248,7 @@ public abstract class MElement implements Element, Serializable {
      * @param toCall Classe cujo nome sera o nome da tag
      * @return MElement wrapper.
      */
-    public static final MElement newInstance(Class<?> toCall) {
+    public static MElement newInstance(Class<?> toCall) {
         return newInstance(toCall.getName().replace('.', '-'));
     }
 
@@ -259,7 +259,7 @@ public abstract class MElement implements Element, Serializable {
      * @param nomeRaiz nome da tag raiz
      * @return MElement wrapper.
      */
-    public static final MElement newInstance(String nomeRaiz) {
+    public static MElement newInstance(String nomeRaiz) {
         return new MElementWrapper(nomeRaiz);
     }
 
@@ -274,7 +274,7 @@ public abstract class MElement implements Element, Serializable {
      * (ex.: "fi:ContaPagamento").
      * @return -
      */
-    public static final MElement newInstance(String nameSpaceURI, String nomeRaiz) {
+    public static MElement newInstance(String nameSpaceURI, String nomeRaiz) {
         return new MElementWrapper(nameSpaceURI, nomeRaiz);
     }
 
@@ -554,7 +554,7 @@ public abstract class MElement implements Element, Serializable {
                     return addElement(nome, v);
                 }
             } else if (valorDefault instanceof Integer) {
-                return addElement(nome, (Integer) valorDefault);
+                return addElement(nome, valorDefault);
             } else {
                 throw new SingularFormException("Tipo default inválido ("
                         + valorDefault.getClass().getName()
@@ -1074,7 +1074,7 @@ public abstract class MElement implements Element, Serializable {
      * @param no do qual será extraido o texto
      * @return pdoe ser null
      */
-    static final String getValorTexto(Node no) {
+    static String getValorTexto(Node no) {
         //Não é private, pois a classe XMLToolkit também utiliza
         if (no == null) {
             return null;
@@ -1813,7 +1813,7 @@ public abstract class MElement implements Element, Serializable {
      * primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private final MElement procurarElementAnterior(Node no, String nome) {
+    private MElement procurarElementAnterior(Node no, String nome) {
         while (no != null) {
             if (no.getNodeType() == Node.ELEMENT_NODE) {
                 if ((nome == null) || nome.equals(no.getNodeName())) {
@@ -1833,7 +1833,7 @@ public abstract class MElement implements Element, Serializable {
      * primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private final MElement procurarProximoElement(Node no, String nome) {
+    private MElement procurarProximoElement(Node no, String nome) {
         while (no != null) {
             if (no.getNodeType() == Node.ELEMENT_NODE) {
                 if ((nome == null) || nome.equals(no.getNodeName())) {

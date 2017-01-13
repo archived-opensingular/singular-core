@@ -17,7 +17,6 @@
 package org.opensingular.form.persistence;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 
 /**
  * Representa um identificador que é único para um formulário dentro de um mesmo ambiente de persitência. As instâncias
