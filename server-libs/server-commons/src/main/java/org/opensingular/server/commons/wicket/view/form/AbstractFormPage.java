@@ -79,8 +79,6 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
 
-    protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
-
     @Inject
     protected PetitionService<T> petitionService;
 
@@ -547,12 +545,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected void onAfterSend(AjaxRequestTarget target, BSModalBorder enviarModal) {
         atualizarContentWorklist(target);
-        if (getIdentifier() == null) {
-            addToastrSuccessMessageWorklist("message.send.success", getUrlPathAcompanhamento());
-        } else {
-            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), getUrlPathAcompanhamento());
-        }
+        addAfterSendSuccessMessage();
         target.appendJavaScript("; window.close();");
+    }
+
+    protected void addAfterSendSuccessMessage() {
+        if (getIdentifier() == null) {
+            addToastrSuccessMessageWorklist("message.send.success");
+        } else {
+            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier());
+        }
     }
 
     protected void onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget,
@@ -710,15 +712,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 .map(FormEntity::getCod)
                 .map(cod -> formService.keyFromObject(cod))
                 .orElse(null);
-    }
-
-    /**
-     * @return
-     * @deprecated prq esse método está na estrutura base? Todas as petições terão listas de acompanhamento?
-     */
-    @Deprecated
-    public String getUrlPathAcompanhamento() {
-        return URL_PATH_ACOMPANHAMENTO;
     }
 
 }
