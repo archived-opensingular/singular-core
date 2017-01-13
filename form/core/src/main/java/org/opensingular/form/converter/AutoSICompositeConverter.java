@@ -50,9 +50,7 @@ public class AutoSICompositeConverter<T extends Serializable> implements SInstan
         }
         final SIComposite   cins          = (SIComposite) ins;
         final GetterHandler getterHandler = new Mirror().on(obj).get();
-        cins.getType().getFields().forEach(f -> {
-            cins.setValue(f, getterHandler.field(f.getNameSimple()));
-        });
+        cins.getType().getFields().forEach(f -> cins.setValue(f, getterHandler.field(f.getNameSimple())));
     }
 
     @Override

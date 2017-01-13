@@ -63,7 +63,7 @@ public class SDocument {
 
     private SInstanceListeners instanceListeners;
 
-    private DefaultServiceRegistry registry = new DefaultServiceRegistry();
+    private final DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
     private RefType rootRefType;
 

@@ -16,11 +16,10 @@
 
 package org.opensingular.form.type.core.annotation;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.document.SDocument;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Instance class form the MTipoAnnotation type.

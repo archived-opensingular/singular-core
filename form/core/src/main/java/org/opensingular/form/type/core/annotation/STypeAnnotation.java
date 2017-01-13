@@ -52,7 +52,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Object> T convert(Object valor, Class<T> classeDestino) {
+    public <T> T convert(Object valor, Class<T> classeDestino) {
         return (T) valor;
     }
 }

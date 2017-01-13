@@ -217,7 +217,7 @@ public final class XPathToolkit {
      * @param n No alvo
      * @return String Retorna o nome por extenso ou null se N for null.
      */
-    public static final String getNomeTipo(Node n) {
+    public static String getNomeTipo(Node n) {
         if (n == null) {
             return null;
         }
@@ -291,7 +291,7 @@ public final class XPathToolkit {
      * @param xPath consulta a ser verificada a complexidadde
      * @return false Para indica necessidade da API XPath
      */
-    static final boolean isSelectSimples(String xPath) {
+    static boolean isSelectSimples(String xPath) {
         if (xPath == null) {
             return true;
         }
@@ -427,7 +427,7 @@ public final class XPathToolkit {
         if (lista == null) {
             return LISTA_VAZIA;
         }
-        return (String[]) lista.toArray(new String[lista.size()]);
+        return lista.toArray(new String[lista.size()]);
     }
 
     /**
@@ -481,7 +481,7 @@ public final class XPathToolkit {
      * @param path Caminho a ser pesquisa deve conter apenas nomes e /
      * @return O elemento se for encontrado.
      */
-    private static final Node findSimples(Node pai, String path) {
+    private static Node findSimples(Node pai, String path) {
 
         Node resp = pai;
         String nomeElemento;
@@ -519,7 +519,7 @@ public final class XPathToolkit {
                     || (!n.getNodeName().equals(nomeElemento)))) {
                 n = n.getNextSibling();
             }
-            resp = (Element) n;
+            resp = n;
         }
         return resp;
     }

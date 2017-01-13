@@ -89,7 +89,7 @@ public class SIAttachment extends SIComposite {
      * arquivo.
      */
     public long getFileSize() {
-        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1l);
+        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1L);
     }
 
     public void setFileSize(long size) {

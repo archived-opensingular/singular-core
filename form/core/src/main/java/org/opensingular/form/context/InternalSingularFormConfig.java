@@ -20,8 +20,6 @@ import org.opensingular.form.document.ServiceRegistry;
 
 /**
  * Interface de uso interno para acessar os valores configurados no SingularFormConfig
- * @param <T>
- * @param <K>
  */
 public interface InternalSingularFormConfig extends SingularFormConfig {
 

@@ -28,8 +28,6 @@ import org.opensingular.form.util.transformer.Value;
 
 import java.util.*;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 /**
  * Gerencia as anotações associadas a um {@link SDocument}.
  *
@@ -59,7 +57,7 @@ public class DocumentAnnotations {
             annotations = newAnnotationList(document);
             annotationsMap = ArrayListMultimap.create();
         }
-        return (SIAnnotation) annotations.addNew();
+        return annotations.addNew();
     }
 
     final SIAnnotation getAnnotationOrCreate(SInstance instance) {
@@ -244,7 +242,7 @@ public class DocumentAnnotations {
                 source.findInstanceById(sourceAnnotation.getTargetId()).ifPresent(si -> {
                     String pathFromRoot = si.getPathFromRoot();
                     //localiza a instancia correspondente no formulario destino
-                    SInstance targetInstance = ((SIComposite) document.getRoot());
+                    SInstance targetInstance = document.getRoot();
                     if (pathFromRoot != null){
                         targetInstance = ((SIComposite) document.getRoot()).getField(pathFromRoot);
                     }

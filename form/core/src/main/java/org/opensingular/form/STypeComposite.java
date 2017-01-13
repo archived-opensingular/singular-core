@@ -137,7 +137,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return getFieldsConsolidated().findIndex(fieldSimpleName);
     }
 
-    private final FieldMapOfRecordType getFieldsConsolidated() {
+    private FieldMapOfRecordType getFieldsConsolidated() {
         if(isRecursiveReference()) {
             return ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
         }
@@ -219,7 +219,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
      * @param fieldSimpleName - nome do campo
      * @param required - se o campo é obrigatório
-     * @return
      */
     public STypeAttachment addFieldAttachment(String fieldSimpleName, boolean required) {
         return addField(fieldSimpleName, STypeAttachment.class, required);
@@ -227,7 +226,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     /**
      * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
      * @param fieldSimpleName - nome do campo
-     * @return
      */
     public STypeAttachment addFieldAttachment(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeAttachment.class);

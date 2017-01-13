@@ -44,10 +44,10 @@ import java.util.stream.Collectors;
  */
 public class Value {
 
-    private SInstance instancia;
+    private final SInstance instance;
 
-    public Value(SInstance instancia) {
-        this.instancia = instancia;
+    public Value(SInstance instance) {
+        this.instance = instance;
     }
 
     private static SInstance getInstance(SInstance instancia, SType target) {
@@ -58,7 +58,6 @@ public class Value {
      * @param current instancia a partir da qual será buscada a instancia mais
      *                proxima do tipo simples tipo
      * @param tipo    um tipo simples
-     * @param <T>
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
      * encontrado a partir da instancia current informada
      */
@@ -97,10 +96,6 @@ public class Value {
 
     /**
      * Retorna o valor de uma instancia simples
-     *
-     * @param instanciaSimples
-     * @param <T>
-     * @return
      */
     public static <T> T of(SISimple<?> instanciaSimples) {
         if (instanciaSimples != null) {
@@ -131,10 +126,6 @@ public class Value {
     /**
      * Retorna o valor de uma instancia filha simples a partir da instancia
      * composta informada
-     *
-     * @param instanciaComposta
-     * @param path
-     * @return
      */
     public static <T extends Serializable> T of(SInstance instanciaComposta, String...path) {
         if (instanciaComposta instanceof SIComposite) {
@@ -183,12 +174,7 @@ public class Value {
 
     /**
      * Retorna o valor de uma instancia de um tipo simples que pode ser
-     * alcançada a partir do {@paramref instancia} fornecido
-     *
-     * @param instancia
-     * @param tipo
-     * @param <T>
-     * @return
+     * alcançada a partir do {@param instancia} fornecido
      */
     public static <T extends Serializable> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
         if (instancia != null && tipo != null) {
@@ -204,9 +190,6 @@ public class Value {
      * Configura os valores contidos em value na MInstancia passara como
      * parametro recursivamente. Usualmente content é o retorno do metodo
      * dehydrate.
-     *
-     * @param instancia
-     * @param content
      */
     public static void hydrate(SInstance instancia, Content content) {
         if (instancia != null) {
@@ -283,11 +266,11 @@ public class Value {
     }
 
     public <T extends Serializable> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.of(instancia, tipo);
+        return Value.of(instance, tipo);
     }
 
     public <T extends Serializable> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.notNull(instancia, tipo);
+        return Value.notNull(instance, tipo);
     }
 
     /** Copia os valores de um formulário para outro. Presupõem que os formulários são do mesmo tipo. */

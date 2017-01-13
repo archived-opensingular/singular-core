@@ -37,7 +37,7 @@ public class STypeFormula extends STypeComposite<SIFormula> {
         tipo.selectionOfEnum(TipoScript.class);
     }
 
-    public static enum TipoScript {
-        JS;
+    public enum TipoScript {
+        JS
     }
 }

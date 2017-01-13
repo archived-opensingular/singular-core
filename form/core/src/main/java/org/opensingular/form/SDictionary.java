@@ -27,9 +27,9 @@ import org.opensingular.form.type.core.SPackageCore;
 
 public class SDictionary {
 
-    private MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
+    private final MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
 
-    private MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
+    private final MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
 
     private final SDocument internalDocument = new SDocument();
 
@@ -38,7 +38,7 @@ public class SDictionary {
     public static final String SINGULAR_PACKAGES_PREFIX = "singular.form.";
 
     /** Configurações globais do dicionário. */
-    private SDictionaryConfig dictionaryConfig = new SDictionaryConfig(this);
+    private final SDictionaryConfig dictionaryConfig = new SDictionaryConfig(this);
 
     /** Identficador único e sequencial do tipo dentro do dicionário. */
     private int idCount;
@@ -219,9 +219,7 @@ public class SDictionary {
             if(pendingTypeProcessorExecution.isEmpty()) {
                 pendingTypeProcessorExecution = null;
             }
-            for(Runnable task: tasks) {
-                task.run();
-            }
+            tasks.forEach(Runnable::run);
         }
     }
 

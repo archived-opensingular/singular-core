@@ -25,11 +25,11 @@ import org.w3c.dom.Text;
 
 public abstract class MDocument implements Document {
 
-    public static final void toMDocument(MDocument no) {
-        //Não faz nada
+    public static void toMDocument(MDocument no) {
+        throw new RuntimeException("Não deveria ser chamadado esse metodo com um parâmetro MDocument");
     }
 
-    public static final MDocument toMDocument(Document no) {
+    public static MDocument toMDocument(Document no) {
         if (no == null) {
             return null;
         } else if (no instanceof MDocument) {
@@ -38,7 +38,7 @@ public abstract class MDocument implements Document {
         return new MDocumentWrapper(no);
     }
 
-    public static final MDocument toMDocument(Node no) {
+    public static MDocument toMDocument(Node no) {
         if (no == null) {
             return null;
         } else if (no instanceof MDocument) {
@@ -49,7 +49,7 @@ public abstract class MDocument implements Document {
         return new MDocumentWrapper((Document) no);
     }
 
-    public static final MDocument newInstance() {
+    public static MDocument newInstance() {
         return toMDocument(MElementWrapper.newDocument());
     }
 

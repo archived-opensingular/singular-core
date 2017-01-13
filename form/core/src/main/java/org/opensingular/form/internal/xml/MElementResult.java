@@ -355,7 +355,7 @@ public final class MElementResult extends MElement implements EWrapper {
 
         atualList_++;
         if (raiz != null) {
-            Node no = null;
+            Node no;
             if (estadoAtual_ == INICIO_BLOCO) {
                 no = raiz.get().getFirstChild();
             } else {

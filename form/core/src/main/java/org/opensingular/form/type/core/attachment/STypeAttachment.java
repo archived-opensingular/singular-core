@@ -16,9 +16,6 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;

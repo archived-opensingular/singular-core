@@ -38,7 +38,7 @@ public enum MEmailValidator implements IInstanceValueValidator<SIString, String>
     /**
      * @param allowLocal Should local addresses be considered valid?
      */
-    private MEmailValidator(boolean allowLocal) {
+    MEmailValidator(boolean allowLocal) {
         this.allowLocal = allowLocal;
     }
 

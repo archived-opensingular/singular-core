@@ -69,10 +69,7 @@ public abstract class AbstractFormKey<T> implements FormKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == getClass()) {
-            return value.equals(((AbstractFormKey<T>) obj).getValue());
-        }
-        return false;
+        return obj != null && obj.getClass() == getClass() && value.equals(((AbstractFormKey<T>) obj).getValue());
     }
 
     @Override

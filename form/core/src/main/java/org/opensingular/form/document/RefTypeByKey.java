@@ -42,7 +42,7 @@ public abstract class RefTypeByKey<KEY extends Serializable> extends RefType {
     }
 
     /**
-     * Implementando baseado em {@link #retrieveByKey()}.
+     * Implementando baseado em {@link #retrieveByKey(Serializable)}.
      */
     @Override
     public final SType<?> retrieve() {

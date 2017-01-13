@@ -53,7 +53,6 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      *               File.length não retorna o tamanho do arquivo de maneira confiável em qualquer sistema operacional
      * @param name Nome do arquivo original
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
-     * @throws IOException
      */
     T addAttachment(File file, long length, String name);
 

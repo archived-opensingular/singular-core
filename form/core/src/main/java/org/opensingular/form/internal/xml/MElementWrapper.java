@@ -40,7 +40,7 @@ public class MElementWrapper extends MElement implements EWrapper {
     /**
      * Cache do builderFactory de acordo com a configuração desejada.
      */
-    private static DocumentBuilderFactory[] buiderFactory__ = new DocumentBuilderFactory[4];
+    private final static DocumentBuilderFactory[] buiderFactory__ = new DocumentBuilderFactory[4];
 
     /**
      * Representa o factory de Document.
@@ -124,7 +124,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param elementName o nome do elemento que será criado
      * @return o elemento que foi criado
      */
-    static final Element newRootElement(String elementName) {
+    static Element newRootElement(String elementName) {
         Document d = newDocument();
         Element newElement = d.createElementNS(null, elementName);
         d.appendChild(newElement);
@@ -171,7 +171,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * Aplicavel apenas quando for fazer parse.
      * @return sempre diferente de null.
      */
-    static final DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware,
+    static DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware,
             boolean validating) {
         // Utiliza cache de DocumentBuilderFactory para evitar que o algorítmo
         // de localização do factory execute toda vez. O problema é que quando
@@ -198,7 +198,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param pai elemento que o conteúdo do outro elemento
      * @param no elemento cujo conteúdo será colocado dentro do elemento pai
      */
-    static final void copyElement(Element pai, Element no) {
+    static void copyElement(Element pai, Element no) {
         if ((pai == null) || (no == null)) {
             throw new IllegalArgumentException("Null não permitido");
         }
@@ -233,7 +233,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param original Elemento a sercopiado
      * @return Sempre diferente de null
      */
-    private static final Element newElement(Document owner, Element original) {
+    private static Element newElement(Document owner, Element original) {
         Element novo = owner.createElementNS(original.getNamespaceURI(), original.getTagName());
 
         if (original.hasAttributes()) {
@@ -271,7 +271,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * <code>no</code>
      * @return O novo no criado no novo pai
      */
-    static final Element copyElement(Element pai, Element no, String novoNome) {
+    static Element copyElement(Element pai, Element no, String novoNome) {
         if ((pai == null) || (no == null)) {
             throw new IllegalArgumentException("Null não permitido");
         }
@@ -302,7 +302,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * BASE64)
      * @return o elemento que foi adicionado
      */
-    static final String toBASE64(byte[] value) {
+    static String toBASE64(byte[] value) {
         if (value == null) {
             return null;
         }
@@ -336,7 +336,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param stringValue String a ser convertida
      * @return null se a string for null
      */
-    static final byte[] fromBASE64(String stringValue) {
+    static byte[] fromBASE64(String stringValue) {
         if (stringValue == null) {
             return null;
         }
@@ -351,7 +351,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param out Destino do bytes decodificados.
      * @throws IOException Se problema com a stream de output.
      */
-    static final void fromBASE64(String stringValue, OutputStream out) throws IOException {
+    static void fromBASE64(String stringValue, OutputStream out) throws IOException {
         if (stringValue == null || out == null) {
             throw new IllegalArgumentException("parametro null");
         }
@@ -367,7 +367,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param qualifiedName o nome do elemento que será inserido
      * @return o elemento que foi adicionado
      */
-    static final Element addElementNS(Node parent, String namespaceURI, String qualifiedName) {
+    static Element addElementNS(Node parent, String namespaceURI, String qualifiedName) {
         Document d = parent.getOwnerDocument();
 
         int pos = qualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
@@ -416,7 +416,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param value o valor <code>String</code> do elemento adicionado
      * @return o elemento que foi adicionado
      */
-    static final Element addElement(Element pai, String nome, String value) {
+    static Element addElement(Element pai, String nome, String value) {
         if (value == null) {
             throw new IllegalArgumentException("O set do valor de "
                     + XPathToolkit.getFullPath(pai)
@@ -457,7 +457,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         return novo;
     }
 
-    private static final Element getElementCriando(Document d, Node pai, String namespaceURI,
+    private static Element getElementCriando(Document d, Node pai, String namespaceURI,
             String qualifiedName) {
 
         String subTrecho = null;
@@ -749,7 +749,7 @@ public class MElementWrapper extends MElement implements EWrapper {
             arg0 = ((MElementWrapper) arg0).original.get();
         }
         if (arg1 instanceof MElementWrapper) {
-            arg1 = ((MElementWrapper) arg0).original.get();
+            arg1 = ((MElementWrapper) arg1).original.get();
         }
         return original.get().insertBefore(arg0, arg1);
     }

@@ -91,7 +91,7 @@ public class SPackageBootstrap extends SPackage {
         pb.getType(STypeYearMonth.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(3));
     }
 
-    private <T extends SType<I>, I extends SInstance, V extends Object> void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {
+    private <T extends SType<I>, I extends SInstance, V> void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {
         pb.createAttributeType(atrRef);
         pb.addAttribute(SType.class, atrRef);
         pb.getAttribute(atrRef)

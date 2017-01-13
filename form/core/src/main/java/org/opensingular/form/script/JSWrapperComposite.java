@@ -72,7 +72,7 @@ public class JSWrapperComposite extends JSWrapperInstance<SIComposite> {
 
     @Override
     public boolean hasMember(String name) {
-        return findIndexOf(name) != -1 ? true : super.hasMember(name);
+        return findIndexOf(name) != -1 || super.hasMember(name);
     }
 
     @Override

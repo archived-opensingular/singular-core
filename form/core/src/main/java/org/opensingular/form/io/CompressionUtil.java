@@ -29,6 +29,8 @@ import java.util.zip.InflaterInputStream;
  */
 public final class CompressionUtil {
 
+    private CompressionUtil() {}
+
     public static InputStream inflateToInputStream(InputStream source) {
         return new InflaterInputStream(source);
     }

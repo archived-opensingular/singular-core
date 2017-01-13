@@ -72,8 +72,10 @@ public class STypeYearMonth extends STypeSimple<SIYearMonth, YearMonth> {
 
     @Override
     public YearMonth fromString(String value) {
-        if (StringUtils.isBlank(value)) {    return null;    }
-        return YearMonth.parse((String)value, formatter());
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        return YearMonth.parse(value, formatter());
     }
 
     @Override

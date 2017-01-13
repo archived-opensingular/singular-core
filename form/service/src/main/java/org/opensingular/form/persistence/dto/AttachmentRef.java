@@ -90,7 +90,7 @@ public class AttachmentRef implements IAttachmentRef{
                 file = File.createTempFile(name, hashSha1 + "."+id);
                 file.deleteOnExit();
 
-                try (OutputStream fos = IOUtil.newBuffredOutputStream(file)) {
+                try (OutputStream fos = IOUtil.newBufferedOutputStream(file)) {
                     persistenceHandler.loadAttachmentContent(codContent, fos);
                 }
             }
