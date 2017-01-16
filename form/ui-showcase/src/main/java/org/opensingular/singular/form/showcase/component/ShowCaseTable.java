@@ -16,26 +16,18 @@
 
 package org.opensingular.singular.form.showcase.component;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-
+import com.google.common.base.Throwables;
 import org.apache.wicket.util.string.StringValue;
+import org.opensingular.form.SPackage;
+import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
+import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
-import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.SPackage;
-import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
-import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import java.io.Serializable;
+import java.util.*;
 
 @Service
 public class ShowCaseTable {
@@ -43,7 +35,7 @@ public class ShowCaseTable {
     private final Map<String, ShowCaseGroup> formGroups = new LinkedHashMap<>();
     private final Map<String, ShowCaseGroup> studioGroups = new LinkedHashMap<>();
 
-    private final Map<Group, List<Class<?>>> casePorGrupo = new LinkedHashMap<>();
+    private final Map<Group, List<Class<?>>> casePorGrupo = new EnumMap<>(Group.class);
 
     public ShowCaseTable() {
 
@@ -130,13 +122,9 @@ public class ShowCaseTable {
     private CaseCustomizer createInstance(CaseItem caseItem) {
         try {
             return caseItem.customizer().newInstance();
-        } catch (InstantiationException e) {
-
-        } catch (IllegalAccessException e) {
-
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw Throwables.propagate(e);
         }
-
-        return null;
     }
 
     private ShowCaseGroup addGroup(String groupName, Icone icon, ShowCaseType tipo) {

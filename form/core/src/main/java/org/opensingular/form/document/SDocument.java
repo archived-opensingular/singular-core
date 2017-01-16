@@ -16,29 +16,23 @@
 
 package org.opensingular.form.document;
 
-import java.util.*;
-import java.util.function.Supplier;
-
-import org.opensingular.form.SInstance;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SInstances;
-import org.opensingular.form.SType;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.type.core.annotation.DocumentAnnotations;
-import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.form.validation.IValidationError;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
-
-import org.opensingular.form.STypes;
+import org.opensingular.form.*;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
+import org.opensingular.form.validation.IValidationError;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * <p>
@@ -187,7 +181,7 @@ public class SDocument {
      * USO INTERNO. Retorna a fábrica reponsável pela criação do documento atual
      * (se tiver sido utilizada uma fábrica ao criar o documento).
      */
-    public RefSDocumentFactory getDocumentFactoryRef() {
+    public @Nullable RefSDocumentFactory getDocumentFactoryRef() {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
 

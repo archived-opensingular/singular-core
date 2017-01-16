@@ -48,4 +48,17 @@
 
     </dependencies>
 
+    <properties>
+        <sonar.issue.ignore.multicriteria>s1,s2,s3</sonar.issue.ignore.multicriteria>
+
+        <!-- Falso positivo: Remove this useless assignment to local variable  -->
+        <sonar.issue.ignore.multicriteria.s1.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s1.ruleKey>
+        <sonar.issue.ignore.multicriteria.s1.resourceKey>**/STypeNotificacaoSimplificadaDinamizado.java</sonar.issue.ignore.multicriteria.s1.resourceKey>
+        <sonar.issue.ignore.multicriteria.s2.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s2.ruleKey>
+        <sonar.issue.ignore.multicriteria.s2.resourceKey>**/CaseInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s2.resourceKey>
+        <sonar.issue.ignore.multicriteria.s3.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s3.ruleKey>
+        <sonar.issue.ignore.multicriteria.s3.resourceKey>**/CaseLazyInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s3.resourceKey>
+
+    </properties>
+
 </project>

@@ -18,16 +18,10 @@ package org.opensingular.flow.test.dsl;
 
 public class JavaBuilder1 {
 
-    TaskBuilder taskBuilder;
-    TaskBuilder2 taskBuilder2;
-
     public JavaBuilder1(TaskBuilder taskBuilder) {
-        this.taskBuilder = taskBuilder;
-
     }
 
     public JavaBuilder1(TaskBuilder2 taskBuilder2) {
-        this.taskBuilder2 = taskBuilder2;
     }
 
 

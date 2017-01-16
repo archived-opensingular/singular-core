@@ -22,13 +22,15 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
+import java.io.Serializable;
+
 public abstract class AbstractSInstanceCampoModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 
-    private Object rootTarget;
+    private Serializable rootTarget;
 
-    public AbstractSInstanceCampoModel(Object rootTarget) {
+    public AbstractSInstanceCampoModel(Serializable rootTarget) {
         this.rootTarget = rootTarget;
     }
 

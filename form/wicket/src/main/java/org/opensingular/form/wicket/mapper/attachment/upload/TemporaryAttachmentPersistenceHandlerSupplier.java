@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.exemplos.notificacaosimplificada.domain.enums;
+package org.opensingular.form.wicket.mapper.attachment.upload;
 
-public enum EnumXmlType {
-    CHAR(Character.class),
-    STRING(String.class),
-    FLOAT(Float.class),
-    DOUBLE(Double.class),
-    INTEGER(Integer.class),
-    SHORT(Short.class),
-    BOOLEAN(Boolean.class),
-    BYTE(Byte.class),
-    LONG(Long.class);
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
-    @SuppressWarnings("rawtypes")
-    private EnumXmlType(Class clazz) {
-        this.type = clazz;
-    }
+public interface TemporaryAttachmentPersistenceHandlerSupplier extends ISupplier<IAttachmentPersistenceHandler> {
 
-    @SuppressWarnings("rawtypes")
-    public Class type;
 }

@@ -20,12 +20,14 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.*;
+import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.util.transformer.Value;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -98,20 +100,37 @@ public class DocumentAnnotations {
         }
     }
 
+
+    private static SIList<SIAnnotation> newAnnotationList(@Nonnull SDocument docRef) {
+        return  newAnnotationList(docRef, true);
+    }
+
     /**
-     * Cria um nova lista de anotações em um novo SDocument, tendo como base as informações de definição do documento
-     * informado.
+     * USO INTERNO: Cria um nova lista de anotações em um novo SDocument, tendo como base as informações de definição
+     * do documento informado.
      * Cria uma nova lista de anotações utilizando as configurações de registry do document passado por
      * parâmetro. Essa método tem por objetivo evitar que a nova lista criada fique sem os serviços locais e service
-     * registry já configurados na lista original
+     * registry já configurados na lista original.
+     * @param executeInitTypeSetup Se true, dispara as inicializações automáticas implementadas em
+     * {@link SInstance#init()}. Usar como false quando a instância está sendo recuperada da persistência. Ver
+     * {@link SDocumentFactory#createInstance(RefType, boolean)}.
      */
-    private static SIList<SIAnnotation> newAnnotationList(SDocument docRef) {
-        if (docRef.getRootRefType().isPresent()) {
-            RefType refTypeAnnotation = docRef.getRootRefType().get().createSubReference(STypeAnnotationList.class);
-            if (docRef.getDocumentFactoryRef() != null) {
-                return (SIList<SIAnnotation>) docRef.getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+    public static SIList<SIAnnotation> newAnnotationList(@Nonnull SDocument docRef, boolean executeInitTypeSetup) {
+        Optional<RefType> rootRefType = docRef.getRootRefType();
+        if (rootRefType.isPresent()) {
+            RefType refTypeAnnotation = rootRefType.get().createSubReference(STypeAnnotationList.class);
+            SDocumentFactory documentFactory;
+            RefSDocumentFactory refSDocumentFactory = docRef.getDocumentFactoryRef();
+            if (refSDocumentFactory != null) {
+                documentFactory = refSDocumentFactory.get();
+                if (documentFactory == null) {
+                    throw new SingularFormException(
+                            "A documentFactory " + RefSDocumentFactory.class.getName() + ".get() retornou null");
+                }
+            } else {
+                documentFactory = SDocumentFactory.empty();
             }
-            return (SIList<SIAnnotation>) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+            return (SIList<SIAnnotation>) documentFactory.createInstance(refTypeAnnotation, executeInitTypeSetup);
         }
         return docRef.getRoot().getDictionary().newInstance(STypeAnnotationList.class);
     }

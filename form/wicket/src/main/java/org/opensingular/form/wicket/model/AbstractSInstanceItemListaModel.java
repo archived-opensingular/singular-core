@@ -23,13 +23,15 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 
+import java.io.Serializable;
+
 public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 
-    private Object rootTarget;
+    private Serializable rootTarget;
 
-    public AbstractSInstanceItemListaModel(Object rootTarget) {
+    public AbstractSInstanceItemListaModel(Serializable rootTarget) {
         this.rootTarget = rootTarget;
     }
 

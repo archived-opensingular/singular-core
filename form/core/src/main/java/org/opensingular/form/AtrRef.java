@@ -31,8 +31,6 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final Class<V>                 valueClass;
 
-    private Class<? extends SType<?>>      ownerClass;
-
     private String                         nameScope;
 
     private String                         nameFull;

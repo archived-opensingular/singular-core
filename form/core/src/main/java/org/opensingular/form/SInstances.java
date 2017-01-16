@@ -16,23 +16,16 @@
 
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.opensingular.form.type.core.SIBoolean;
 import org.opensingular.form.type.core.STypeBoolean;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Métodos utilitários para manipulação de MInstance.
@@ -64,10 +57,13 @@ public abstract class SInstances {
     }
 
     public interface IVisitFilter extends Serializable {
-        public static IVisitFilter ANY = o -> true;
         boolean visitObject(Object object);
         default boolean visitChildren(Object object) {
             return true;
+        }
+
+        public static IVisitFilter visitAll() {
+            return o -> true;
         }
     }
 
@@ -77,21 +73,21 @@ public abstract class SInstances {
      * Faz um pecorrimento em profundidade de parent e seus filhos.
      */
     public static <I extends SInstance, R> Optional<R> visit(SInstance instance, IVisitor<I, R> visitor) {
-        return visit(instance, IVisitFilter.ANY, visitor);
+        return visit(instance, IVisitFilter.visitAll(), visitor);
     }
 
     /**
      * Faz um pecorrimento em profundidade dos filhos de parent.
      */
     public static <R> Optional<R> visitChildren(SInstance parent, IVisitor<SInstance, R> visitor) {
-        return visitChildren(parent, IVisitFilter.ANY, visitor);
+        return visitChildren(parent, IVisitFilter.visitAll(), visitor);
     }
 
     /**
      * Faz um pecorrimento em profundidade da instância e seus filhos, em ordem pós-fixada (primeiro filhos, depois pais).
      */
     public static <R> Optional<R> visitPostOrder(SInstance parent, IVisitor<SInstance, R> visitor) {
-        return visitPostOrder(parent, IVisitFilter.ANY, visitor);
+        return visitPostOrder(parent, IVisitFilter.visitAll(), visitor);
     }
 
     /**

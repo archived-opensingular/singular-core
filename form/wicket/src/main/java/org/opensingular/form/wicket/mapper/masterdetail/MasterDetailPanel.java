@@ -281,7 +281,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
-        Integer count = IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
+        IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
                 .styleClasses(Model.of("red"))

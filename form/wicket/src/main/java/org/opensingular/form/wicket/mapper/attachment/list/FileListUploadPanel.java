@@ -16,16 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.attachment.list;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -51,18 +41,29 @@ import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.mapper.attachment.*;
+import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
+import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
+import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
-import org.opensingular.form.wicket.mapper.attachment.upload.writer.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.Icone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 /**
  * Lista  os uploads múltiplos.

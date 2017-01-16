@@ -16,12 +16,8 @@
 
 package org.opensingular.form.exemplos.notificacaosimplificada.form.gas;
 
+import org.opensingular.form.*;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByMasterDetail;
 
@@ -68,7 +64,7 @@ public class STypeNotificacaoSimplificadaGasMedicinal extends STypeComposite<SIC
         informacoesFarmacopeicas = addFieldComposite("informacoesFarmacopeicas");
         informacoesFarmacopeicas.asAtr().label("Informações farmacopeicas");
 
-        STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
+        informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
     }
 
     private void addAcondicionamentos() {

@@ -16,16 +16,10 @@
 
 package org.opensingular.form.exemplos.notificacaosimplificada.form.vegetal;
 
+import org.opensingular.form.*;
+import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.SPackageNotificacaoSimplificada;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.STypeFarmacopeiaReferencia;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeAttachmentList;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
@@ -103,7 +97,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                     .dependsOn(tipoReferencia)
                     .visible(i -> TipoReferencia.FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
-            STypeFarmacopeiaReferencia farmacopeia = informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
+            informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
 
         }
 

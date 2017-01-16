@@ -18,12 +18,14 @@ package org.opensingular.form.wicket.model;
 
 import org.opensingular.form.SInstance;
 
+import java.io.Serializable;
+
 public class SInstanceFieldModel<I extends SInstance>
     extends AbstractSInstanceCampoModel<I> {
 
     private String propertyExpression;
 
-    public SInstanceFieldModel(Object rootTarget, String propertyExpression) {
+    public SInstanceFieldModel(Serializable rootTarget, String propertyExpression) {
         super(rootTarget);
         this.propertyExpression = propertyExpression;
     }

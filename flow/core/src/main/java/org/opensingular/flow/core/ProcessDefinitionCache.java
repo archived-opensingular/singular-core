@@ -107,15 +107,14 @@ public final class ProcessDefinitionCache {
     public ProcessDefinition<?> getDefinition(String key) {
         ProcessDefinition<?> processDefinition = definitionsByKey.get(key);
         if(processDefinition == null){
-            throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " + packagesNames);
+            throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " +
+                    Arrays.toString(packagesNames));
         }
         return processDefinition;
     }
 
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
-     * @param key
-     * @return
      */
     public ProcessDefinition<?> getDefinitionUnchecked(String key) {
         return definitionsByKey.get(key);

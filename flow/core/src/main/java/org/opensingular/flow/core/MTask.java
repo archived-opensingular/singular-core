@@ -16,21 +16,14 @@
 
 package org.opensingular.flow.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-
+import com.google.common.base.MoreObjects;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 
-import com.google.common.base.MoreObjects;
+import java.util.*;
+import java.util.function.Consumer;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class MTask<K extends MTask<?>> {
@@ -287,11 +280,6 @@ public abstract class MTask<K extends MTask<?>> {
         if (getClass() != obj.getClass())
             return false;
         MTask<?> other = (MTask<?>) obj;
-        if (! Objects.equals(flowMap, other.flowMap)) {
-            return false;
-        } else if (! Objects.equals(name, other.name)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(flowMap, other.flowMap) && Objects.equals(name, other.name);
     }
 }

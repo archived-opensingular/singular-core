@@ -30,6 +30,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
@@ -58,7 +60,7 @@ public class AttachmentContentEntitty extends BaseEntity<Long> {
 
     @Lob
     @Column(name = "BL_CONTEUDO", nullable = false)
-    private Blob content;
+    private Blob content; //NOSONAR
 
     public Long getCod() {
         return cod;

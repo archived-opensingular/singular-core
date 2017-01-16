@@ -15,21 +15,18 @@
  */
 package org.opensingular.form.persistence.dto;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.opensingular.form.persistence.service.AttachmentPersistenceService;
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.CompressionUtil;
 import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.commons.util.TempFileUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+
+import java.io.*;
 
 public class AttachmentRef implements IAttachmentRef{
 
@@ -44,7 +41,7 @@ public class AttachmentRef implements IAttachmentRef{
     private final String name;
 
     private File file;
-    
+
     public AttachmentRef(AttachmentEntity attachmentEntity) {
         this(attachmentEntity.getCod().toString(), attachmentEntity.getCodContent(), attachmentEntity.getHashSha1(), attachmentEntity.getSize(), attachmentEntity.getName());
     }
@@ -97,14 +94,7 @@ public class AttachmentRef implements IAttachmentRef{
             return CompressionUtil.inflateToInputStream(new FileInputStream(file));
         } catch (Exception e) {
             if(file != null){
-                try {
-                    if(! file.delete()) {
-                        System.err.println("Não foi apagado o arquivo " + file);
-                    }
-                } catch (Exception e2) {
-                    //Ignora a Exception para não mascara a primeira
-                    e.printStackTrace();
-                }
+                TempFileUtils.deleteAndFailQuietily(file, getClass());
                 file = null;
             }
             throw SingularUtil.propagate(e);
