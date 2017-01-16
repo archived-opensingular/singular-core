@@ -16,8 +16,12 @@
 
 package org.opensingular.lib.support.persistence.util;
 
-public interface Constants {
+public class Constants {
 
-    String SCHEMA = "DBSINGULAR";
+    public static  final String SCHEMA = "DBSINGULAR";
+
+    private Constants(){
+        //constants class must not be inherited or instantiated.
+    }
 
 }
