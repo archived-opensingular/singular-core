@@ -22,8 +22,6 @@ import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.schedule.IScheduleData;
 
-import java.io.Serializable;
-
 public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, MTaskJava> {
 
     default SELF call(MTaskJava.ImplTaskJava impl) {
@@ -85,42 +83,42 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaVoidInstanciaExecucao<K extends ProcessInstance> extends Serializable {
+    interface ImplTaskJavaVoidInstanciaExecucao<K extends ProcessInstance> {
         void executar(K processInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaReturnInstanciaExecucao<K extends ProcessInstance> extends Serializable {
+    interface ImplTaskJavaReturnInstanciaExecucao<K extends ProcessInstance> {
         Object executar(K processInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaVoidInstanciaTarefaExecucao extends Serializable {
+    interface ImplTaskJavaVoidInstanciaTarefaExecucao {
         void executar(TaskInstance taskInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaReturnInstanciaTarefaExecucao extends Serializable {
+    interface ImplTaskJavaReturnInstanciaTarefaExecucao {
         Object executar(TaskInstance taskInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaVoidInstancia<K extends ProcessInstance> extends Serializable {
+    interface ImplTaskJavaVoidInstancia<K extends ProcessInstance> {
         void executar(K processInstance);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaReturnInstancia<K extends ProcessInstance> extends Serializable {
+    interface ImplTaskJavaReturnInstancia<K extends ProcessInstance> {
         Object executar(K processInstance);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaVoidInstanciaTarefa extends Serializable {
+    interface ImplTaskJavaVoidInstanciaTarefa {
         void executar(TaskInstance taskInstance);
     }
 
     @FunctionalInterface
-    interface ImplTaskJavaReturnInstanciaTarefa extends Serializable {
+    interface ImplTaskJavaReturnInstanciaTarefa {
         Object executar(TaskInstance taskInstance);
     }
 }
