@@ -342,9 +342,9 @@
         <sonar.issue.ignore.multicriteria.s22.resourceKey>**/CaseLazyInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s22.resourceKey>
 
         <!-- Falso positivo: Security - Potential CRLF Injection for logs  -->
-        <sonar.issue.ignore.multicriteria.s23.ruleKey>CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s23.ruleKey>
+        <sonar.issue.ignore.multicriteria.s23.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s23.ruleKey>
         <sonar.issue.ignore.multicriteria.s23.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s23.resourceKey>
-        <sonar.issue.ignore.multicriteria.s24.ruleKey>CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s24.ruleKey>
+        <sonar.issue.ignore.multicriteria.s24.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s24.ruleKey>
         <sonar.issue.ignore.multicriteria.s24.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s24.resourceKey>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
