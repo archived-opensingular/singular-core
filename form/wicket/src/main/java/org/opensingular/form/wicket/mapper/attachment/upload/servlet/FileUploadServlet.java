@@ -108,6 +108,7 @@ public class FileUploadServlet extends HttpServlet {
                 }
             } else {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
+                return;
             }
         } catch (Exception e) {
             dealWithException(e);

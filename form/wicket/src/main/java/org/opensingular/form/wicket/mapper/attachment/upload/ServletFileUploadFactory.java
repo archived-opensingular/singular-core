@@ -28,13 +28,13 @@ public class ServletFileUploadFactory  implements Serializable {
         final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
 
         servletFileUpload.setFileSizeMax(
-                resolveMax(uploadInfo.getMaxFileSize(), config.defaultMaxFileSize, config.globalMaxFileSize)
+                resolveMax(uploadInfo.getMaxFileSize(), config.getDefaultMaxFileSize(), config.getGlobalMaxFileSize())
         );
 
         servletFileUpload.setSizeMax(
                 resolveMax(uploadInfo.getMaxFileSize() * uploadInfo.getMaxFileCount(),
-                        config.defaultMaxRequestSize,
-                        config.globalMaxRequestSize
+                        config.getDefaultMaxRequestSize(),
+                        config.getGlobalMaxRequestSize()
                 )
         );
 
