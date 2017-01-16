@@ -76,7 +76,7 @@ public abstract class PWebInitializer extends WebInitializer {
      *
      * @return
      */
-    private String getExcludeUrlRegex() {
+    protected String getExcludeUrlRegex() {
         return Joiner.on(",").join(getDefaultPublicUrls()).replaceAll("\\*", ".*");
     }
 
