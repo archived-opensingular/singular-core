@@ -7,33 +7,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.config.FileUploadConfig;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.AttachmentKeyFactory;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.ServletFileUploadFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
-import org.opensingular.form.wicket.mapper.attachment.upload.processor.FileUploadProcessor;
-import org.opensingular.form.wicket.mapper.attachment.upload.writer.UploadResponseWriter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileUploadServletTest {

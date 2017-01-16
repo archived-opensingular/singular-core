@@ -16,7 +16,6 @@
 
 package org.opensingular.lib.wicket.util.model;
 
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IObjectClassAwareModel;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -54,11 +53,6 @@ public final class ValueModel<T extends Serializable> implements IMappingModel<T
      */
     @Override
     public void setObject(final T object) {
-        if (object != null) {
-            if (!(object instanceof Serializable)) {
-                throw new WicketRuntimeException("Model object must be Serializable");
-            }
-        }
         this.object = object;
     }
 

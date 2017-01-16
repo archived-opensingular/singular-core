@@ -19,16 +19,9 @@ package org.opensingular.form.wicket.mapper.attachment.upload.servlet;
 import com.google.common.base.Throwables;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.config.FileUploadConfig;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.AttachmentKeyFactory;
-import org.opensingular.form.wicket.mapper.attachment.upload.factory.ServletFileUploadFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManager;
-import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
-import org.opensingular.form.wicket.mapper.attachment.upload.processor.FileUploadProcessor;
-import org.opensingular.form.wicket.mapper.attachment.upload.writer.UploadResponseWriter;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 import javax.servlet.ServletException;

@@ -5,7 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONWriter;
 import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.supplier.TemporaryAttachmentPersistenceHandlerSupplier;
+import org.opensingular.form.wicket.mapper.attachment.upload.TemporaryAttachmentPersistenceHandlerSupplier;
 
 import java.io.Serializable;
 import java.io.StringWriter;

@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.util;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IBiConsumerEx;
 import org.opensingular.lib.commons.lambda.IConsumerEx;
 import org.opensingular.lib.commons.lambda.ISupplierEx;
@@ -138,7 +139,7 @@ public abstract class TempFileUtils {
         Logger logger = Logger.getLogger(requester.getName());
         logger.log(Level.SEVERE, msg, e);
         if (!failQuietily) {
-            throw new RuntimeException(msg, e);
+            throw SingularException.rethrow(msg, e);
         }
     }
 }
