@@ -52,9 +52,13 @@ public class FormVersionHistoryPK implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         FormVersionHistoryPK that = (FormVersionHistoryPK) o;
 

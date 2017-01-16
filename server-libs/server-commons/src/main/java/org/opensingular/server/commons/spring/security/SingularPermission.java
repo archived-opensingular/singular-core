@@ -57,8 +57,12 @@ public class SingularPermission implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SingularPermission that = (SingularPermission) o;
         return Objects.equals(singularId, that.singularId) &&
                 Objects.equals(internalId, that.internalId);
