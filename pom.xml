@@ -237,7 +237,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22</sonar.issue.ignore.multicriteria>
         <!-- Falso posistivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -333,6 +333,13 @@
         <!-- Falso posistivo: cookie seguro  -->
         <sonar.issue.ignore.multicriteria.s19.ruleKey>findsecbugs:INSECURE_COOKIE</sonar.issue.ignore.multicriteria.s19.ruleKey>
         <sonar.issue.ignore.multicriteria.s19.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s19.resourceKey>
+        <!-- Falso positivo: Remove this useless assignment to local variable  -->
+        <sonar.issue.ignore.multicriteria.s20.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s20.ruleKey>
+        <sonar.issue.ignore.multicriteria.s20.resourceKey>**/STypeNotificacaoSimplificadaDinamizado.java</sonar.issue.ignore.multicriteria.s20.resourceKey>
+        <sonar.issue.ignore.multicriteria.s21.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s21.ruleKey>
+        <sonar.issue.ignore.multicriteria.s21.resourceKey>**/CaseInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s21.resourceKey>
+        <sonar.issue.ignore.multicriteria.s22.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s22.ruleKey>
+        <sonar.issue.ignore.multicriteria.s22.resourceKey>**/CaseLazyInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s22.resourceKey>
 
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>

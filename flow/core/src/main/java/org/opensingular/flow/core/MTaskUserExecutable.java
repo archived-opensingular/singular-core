@@ -77,9 +77,4 @@ public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> exte
         this.executionPage = executionPage;
         return (K) this;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
 }
