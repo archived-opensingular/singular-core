@@ -173,7 +173,7 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
             tryConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
         } catch (SingularException e) {
 
-            getLogger().error(e.getMessage());
+            getLogger().error(e.getMessage(), e);
         }
 
         final ActionConfig actionConfig = tryConfig;

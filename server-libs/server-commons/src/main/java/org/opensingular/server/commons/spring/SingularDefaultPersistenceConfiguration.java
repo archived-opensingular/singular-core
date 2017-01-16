@@ -130,7 +130,7 @@ public class SingularDefaultPersistenceConfiguration {
             try {
                 dataSource = (DataSource) jndi.lookup(dataSourceName);
             } catch (NamingException e) {
-                LOGGER.error(String.format("Datasource %s not found.", dataSourceName));
+                LOGGER.error(String.format("Datasource %s not found.", dataSourceName), e);
             }
             return dataSource;
         }

@@ -48,7 +48,7 @@ public class SingularLogoutFilter implements Filter, Loggable {
             SingularLogoutHandler singularLogoutHandler = WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext()).getBean(SingularLogoutHandler.class);
             singularLogoutHandler.handleLogout((HttpServletRequest) req, (HttpServletResponse) resp);
         } catch (NoSuchBeanDefinitionException e) {
-            getLogger().info("Não há  bean "+SingularLogoutHandler.class.getSimpleName()+" disponível no cotexto ignorando singular logout ");
+            getLogger().info("Não há  bean "+SingularLogoutHandler.class.getSimpleName()+" disponível no cotexto ignorando singular logout ", e);
             chain.doFilter(req, resp);
         }
     }
