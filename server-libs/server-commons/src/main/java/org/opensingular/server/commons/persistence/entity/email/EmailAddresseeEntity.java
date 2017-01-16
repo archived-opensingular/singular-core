@@ -64,6 +64,7 @@ public class EmailAddresseeEntity extends BaseEntity<Long> {
     @Column(name = "DT_ENVIO")
     private Date sentDate;
 
+    @Override
     public Long getCod() {
         return cod;
     }

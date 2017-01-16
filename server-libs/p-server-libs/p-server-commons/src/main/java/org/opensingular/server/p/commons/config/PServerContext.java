@@ -66,6 +66,7 @@ public enum PServerContext implements IServerContext {
      *
      * @return
      */
+    @Override
     public String getContextPath() {
         return contextPath;
     }
@@ -75,6 +76,7 @@ public enum PServerContext implements IServerContext {
      *
      * @return
      */
+    @Override
     public String getPathRegex() {
         return getContextPath().replaceAll("\\*", ".*");
     }
@@ -85,6 +87,7 @@ public enum PServerContext implements IServerContext {
      *
      * @return
      */
+    @Override
     public String getUrlPath() {
         String path = getContextPath().replace("*", "").replace(".", "").trim();
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;

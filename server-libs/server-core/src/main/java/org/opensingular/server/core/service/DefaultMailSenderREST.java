@@ -36,6 +36,7 @@ public class DefaultMailSenderREST implements IMailSenderREST{
     @Inject
     private EmailSenderScheduledJob emailSenderScheduledJob;
     
+    @Override
     @RequestMapping(value = PATH_SEND_ALL, method = RequestMethod.GET)
     public boolean sendAll() {
         try {

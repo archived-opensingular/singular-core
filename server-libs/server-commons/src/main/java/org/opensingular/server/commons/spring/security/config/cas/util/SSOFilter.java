@@ -149,6 +149,7 @@ public class SSOFilter extends SSOConfigurableFilter {
             this.additionalFilters = Arrays.asList(additionalFilters);
         }
 
+        @Override
         public void doFilter(final ServletRequest request, final ServletResponse response) throws IOException,
                 ServletException {
             if (currentPosition == additionalFilters.size()) {

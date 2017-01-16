@@ -478,6 +478,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
         return link;
     }
 
+    @Override
     protected Map<String, String> getCriarLinkParameters(BoxItemModel item) {
         final Map<String, String> linkParameters = new HashMap<>();
         linkParameters.putAll(getLinkParams());

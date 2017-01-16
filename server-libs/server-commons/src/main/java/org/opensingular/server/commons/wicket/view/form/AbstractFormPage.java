@@ -463,6 +463,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 })
                 .addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
 
+                    @Override
                     protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                         AbstractFormPage.this.send(instanceModel, target, enviarModal);
                     }
