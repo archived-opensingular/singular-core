@@ -16,12 +16,11 @@
 
 package org.opensingular.flow.core.view;
 
-import java.util.Map;
-import java.util.Objects;
-
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class WebRefImpl implements WebRef {
@@ -230,13 +229,13 @@ public class WebRefImpl implements WebRef {
 
     @Override
     public String gerarHtml(String urlApp) {
+        if (!isPossuiDireitoAcesso()) {
+            return "";
+        }
         return gerarHtmlIntero(urlApp, this);
     }
 
     private static String gerarHtmlIntero(String pathApp, WebRef ref) {
-        if (!ref.isPossuiDireitoAcesso()) {
-            return "";
-        }
         StringBuilder href = new StringBuilder("<a ");
         print(href, "value", "");
         if (!StringUtils.isEmpty(ref.getPathIconePequeno())) {
@@ -274,12 +273,9 @@ public class WebRefImpl implements WebRef {
             print(href, "target", "_blank");
         }
         print(href, "title", ref.getNome());
-        if (ref instanceof WebRefImpl) {
-            WebRefImpl ref2 = (WebRefImpl) ref;
-            if (ref2.atributosExtras != null) {
-                for (Map.Entry<String, String> e : ref2.atributosExtras.entrySet()) {
-                    print(href, e.getKey(), e.getValue(), pathApp);
-                }
+        if (ref instanceof WebRefImpl && ((WebRefImpl) ref).atributosExtras != null) {
+            for (Map.Entry<String, String> e : ((WebRefImpl) ref).atributosExtras.entrySet()) {
+                print(href, e.getKey(), e.getValue(), pathApp);
             }
         }
         href.append(">");
@@ -304,7 +300,7 @@ public class WebRefImpl implements WebRef {
         }
     }
 
-    private static void print(StringBuilder builder, String nome, String valor) {
+    private static void print(StringBuilder builder, String nome, CharSequence valor) {
         if (valor != null) {
             builder.append(' ').append(nome).append("=\"").append(valor).append('"');
         }

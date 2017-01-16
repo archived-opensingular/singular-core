@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
+
 /**
  * Percorredor de uma lista especifica de elementos da um XML (aceita filtro
  * xPath). É ao mesmo tempo um iterador e é um MElement com o valores do
@@ -202,7 +204,7 @@ public final class MElementResult extends MElement implements EWrapper {
             Node no = nodeList.item(i);
             if (no == null) {
                 throw new SingularFormException("O result da consulta na posição " + atualList_ + " está null");
-            } else if (no.getNodeType() != ELEMENT_NODE) {
+            } else if (!isNodeTypeElement(no)) {
                 throw new SingularFormException(
                         "O result da consulta na posição " + atualList_ + " não é um Element. É um no do tipo " +
                                 XPathToolkit.getNomeTipo(no));
@@ -328,10 +330,8 @@ public final class MElementResult extends MElement implements EWrapper {
                 no = atual.get().getNextSibling();
             }
             while (no != null) {
-                if (no.getNodeType() == ELEMENT_NODE) {
-                    if ((nomeElemento_ == null) || nomeElemento_.equals(no.getNodeName())) {
-                        return true;
-                    }
+                if (isNodeTypeElement(no, nomeElemento_)) {
+                    return true;
                 }
                 no = no.getNextSibling();
             }
@@ -362,10 +362,8 @@ public final class MElementResult extends MElement implements EWrapper {
                 no = atual.get().getNextSibling();
             }
             while (no != null) {
-                if (no.getNodeType() == ELEMENT_NODE) {
-                    if ((nomeElemento_ == null) || nomeElemento_.equals(no.getNodeName())) {
-                        break;
-                    }
+                if (isNodeTypeElement(no, nomeElemento_)) {
+                    break;
                 }
                 no = no.getNextSibling();
             }

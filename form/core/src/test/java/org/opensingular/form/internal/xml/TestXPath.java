@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * JUnit para testar a class XPathToolkit.
@@ -90,7 +91,7 @@ public class TestXPath {
     @Test
     public void testSingleFind() throws Exception {
         Node cd = raiz_.getFirstChild();
-        while (cd.getNodeType() != Node.ELEMENT_NODE) {
+        while (!isNodeTypeElement(cd)) {
             cd = cd.getNextSibling();
         }
 

@@ -17,7 +17,6 @@
 package org.opensingular.form.internal.xml;
 
 import com.sun.org.apache.xpath.internal.XPathAPI;
-
 import org.opensingular.form.SingularFormException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -28,6 +27,8 @@ import org.w3c.dom.traversal.NodeIterator;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Métodos utilitários para trabalhar com XPath. Para um bom tutorial em
@@ -348,12 +349,10 @@ public final class XPathToolkit {
         if (result == null) {
             return null;
         }
-        if (result.getNodeType() != Node.ELEMENT_NODE) {
+        if (!isNodeTypeElement(result)) {
             throw new SingularFormException(
-                    "O elemento resultante ("
-                            + getFullPath(result)
-                            + ") não é um Element, mas um "
-                            + getNomeTipo(result));
+                    "O elemento resultante (" + getFullPath(result) + ") não é um Element, mas um " +
+                            getNomeTipo(result));
         }
         return (Element) result;
     }
@@ -507,16 +506,14 @@ public final class XPathToolkit {
             }
 
             if (nomeElemento.charAt(0) == '@') {
-                if ((path != null) || (resp.getNodeType() != Node.ELEMENT_NODE)) {
+                if ((path != null) || !isNodeTypeElement(resp)) {
                     throw SingularFormException.rethrow("O xPath '" + path + "' é inválido");
                 }
                 return ((Element) resp).getAttributeNode(nomeElemento.substring(1));
             }
 
             Node n = resp.getFirstChild();
-            while ((n != null)
-                    && ((n.getNodeType() != Node.ELEMENT_NODE)
-                    || (!n.getNodeName().equals(nomeElemento)))) {
+            while ((n != null) && ! isNodeTypeElement(n, nomeElemento)) {
                 n = n.getNextSibling();
             }
             resp = n;

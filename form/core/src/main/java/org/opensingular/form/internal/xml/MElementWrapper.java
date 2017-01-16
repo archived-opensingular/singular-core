@@ -478,9 +478,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         }
 
         Node n = pai.getFirstChild();
-        while ((n != null)
-                && ((n.getNodeType() != ELEMENT_NODE) || (!n.getNodeName().equals(
-                qualifiedName)))) {
+        while ((n != null) && !XmlUtil.isNodeTypeElement(n, qualifiedName)) {
             n = n.getNextSibling();
         }
 
