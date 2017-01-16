@@ -25,12 +25,12 @@ import static org.opensingular.lib.commons.util.ConversionUtils.toLongHumane;
 
 public class FileUploadConfig implements Serializable {
 
-    public long globalMaxFileAge;
-    public long globalMaxFileCount;
-    public long globalMaxFileSize;
-    public long globalMaxRequestSize;
-    public long defaultMaxFileSize;
-    public long defaultMaxRequestSize;
+    private final long globalMaxFileAge;
+    private final long globalMaxFileCount;
+    private final long globalMaxFileSize;
+    private final long globalMaxRequestSize;
+    private final long defaultMaxFileSize;
+    private final long defaultMaxRequestSize;
 
     public FileUploadConfig(SingularProperties sp) {
         //@formatter:off
@@ -44,4 +44,27 @@ public class FileUploadConfig implements Serializable {
         //@formatter:on
     }
 
+    public long getGlobalMaxFileAge() {
+        return globalMaxFileAge;
+    }
+
+    public long getGlobalMaxFileCount() {
+        return globalMaxFileCount;
+    }
+
+    public long getGlobalMaxFileSize() {
+        return globalMaxFileSize;
+    }
+
+    public long getGlobalMaxRequestSize() {
+        return globalMaxRequestSize;
+    }
+
+    public long getDefaultMaxFileSize() {
+        return defaultMaxFileSize;
+    }
+
+    public long getDefaultMaxRequestSize() {
+        return defaultMaxRequestSize;
+    }
 }

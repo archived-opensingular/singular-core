@@ -94,20 +94,20 @@ public class FileUploadServlet extends HttpServlet {
             FileUploadManager upManager = upManagerFactory.get(req.getSession());
             Optional<UploadInfo> upInfo = upManager.findUploadInfo(uploadID);
 
-            if (upInfo.isPresent()) {
-                UploadInfo info = upInfo.get();
-                List<UploadResponseInfo> allResponses = new ArrayList<>();
-
-                try {
-                    Map<String, List<FileItem>> params = servletFileUploadFactory.get(fupConfig, info).parseParameterMap(req);
-                    for (FileItem item : params.get(PARAM_NAME)) {
-                        allResponses.addAll(upProcessor.process(item, info, upManager));
-                    }
-                } finally {
-                    upResponseWriter.writeJsonArrayResponseTo(resp, allResponses);
-                }
-            } else {
+            if (! upInfo.isPresent()) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
+                return;
+            }
+            UploadInfo info = upInfo.get();
+            List<UploadResponseInfo> allResponses = new ArrayList<>();
+
+            try {
+                Map<String, List<FileItem>> params = servletFileUploadFactory.get(fupConfig, info).parseParameterMap(req);
+                for (FileItem item : params.get(PARAM_NAME)) {
+                    allResponses.addAll(upProcessor.process(item, info, upManager));
+                }
+            } finally {
+                upResponseWriter.writeJsonArrayResponseTo(resp, allResponses);
             }
         } catch (Exception e) {
             dealWithException(e);

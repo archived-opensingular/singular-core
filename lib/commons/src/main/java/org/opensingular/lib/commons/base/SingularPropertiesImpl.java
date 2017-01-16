@@ -16,33 +16,24 @@
 
 package org.opensingular.lib.commons.base;
 
-import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.lambda.IConsumerEx;
+import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public enum SingularPropertiesImpl implements SingularProperties {
-    INSTANCE;
+public final class SingularPropertiesImpl implements SingularProperties {
+
+    private static final SingularPropertiesImpl INSTANCE = new SingularPropertiesImpl();
 
     private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularProperties.class);
     private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";

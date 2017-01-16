@@ -16,23 +16,14 @@
 
 package org.opensingular.flow.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.flow.core.service.IPersistenceService;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -432,36 +423,26 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Recupera a lista de papeis da entidade persistente correspondente a esta
      * instância.
-     * </p>
-     *
-     * @return os papeis.
      */
     // TODO Daniel deveria retornar um objeto que isolasse da persistência
-    @Deprecated
-    public final List<? extends IEntityRoleInstance> getUserRoles() {
+    final List<? extends IEntityRoleInstance> getUserRoles() {
         return getEntity().getRoles();
     }
 
     /**
-     * <p>
      * Recupera a lista de papeis com a sigla especificada da entidade
      * persistente correspondente a esta instância.
-     * </p>
      *
      * @param roleAbbreviation a sigla especificada.
-     * @return os papeis.
      */
     public final IEntityRoleInstance getRoleUserByAbbreviation(String roleAbbreviation) {
         return getEntity().getRoleUserByAbbreviation(roleAbbreviation);
     }
 
     /**
-     * <p>
      * Verifica se há papeis definidos.
-     * </p>
      *
      * @return {@code true} caso haja pelo menos um papel definido;
      * {@code false} caso contrário.
@@ -471,20 +452,14 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Retorna o usuário que criou esta instância de processo.
-     * </p>
-     *
-     * @return o usuário criador.
      */
     public final MUser getUserCreator() {
         return getInternalEntity().getUserCreator();
     }
 
     /**
-     * <p>
      * Altera a descrição desta instância de processo.
-     * </p>
      * <p>
      * A descrição será truncada para um tamanho máximo de 250 caracteres.
      * </p>
@@ -496,9 +471,7 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Persiste esta instância de processo.
-     * </p>
      *
      * @param <K> o tipo da entidade desta instância.
      * @return a entidade persistida.
@@ -509,9 +482,7 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Realiza uma transição manual da tarefa atual para a tarefa especificada.
-     * </p>
      *
      * @param task a tarefa especificada.
      */
