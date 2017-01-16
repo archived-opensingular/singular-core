@@ -173,6 +173,10 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         appendCustomWhereClauses(hql, params, filtro);
 
+        appendSort(hql, filtro, count);
+    }
+
+    private void appendSort(StringBuilder hql, QuickFilter filtro, boolean count) {
         if (filtro.getSortProperty() != null) {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
         } else if (!count) {
