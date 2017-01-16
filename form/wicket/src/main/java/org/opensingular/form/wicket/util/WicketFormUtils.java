@@ -16,26 +16,13 @@
 
 package org.opensingular.form.wicket.util;
 
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.model.IModel;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.validation.IValidationError;
@@ -43,6 +30,11 @@ import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class WicketFormUtils {
     private static final MetaDataKey<Integer>         KEY_INSTANCE_ID       = new MetaDataKey<Integer>() {};
@@ -105,12 +97,14 @@ public abstract class WicketFormUtils {
             .findAny();
     }
     public static Stream<Component> streamComponentsByInstance(Component anyComponent, BiPredicate<Component, SInstance> predicate) {
-        MarkupContainer rootContainer = streamAscendants(anyComponent)
-            .map(c -> getRootContainer(c))
-            .filter(c -> c != null)
-            .findAny()
-            .get();
-        return streamDescendants(rootContainer)
+        Optional<MarkupContainer> rootContainer = streamAscendants(anyComponent)
+                .map(c -> getRootContainer(c))
+                .filter(c -> c != null)
+                .findAny();
+        if (! rootContainer.isPresent()) {
+            return null;
+        }
+        return streamDescendants(rootContainer.get())
             .filter(c -> c.getDefaultModel() instanceof ISInstanceAwareModel<?>)
             .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
     }

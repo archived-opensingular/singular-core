@@ -15,26 +15,20 @@
  */
 package org.opensingular.flow.schedule.quartz;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
-import com.google.common.base.Throwables;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.lib.commons.base.SingularException;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.RemoteScheduler;
 import org.quartz.impl.SchedulerRepository;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.simpl.SimpleThreadPool;
 import org.quartz.spi.JobFactory;
+
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Factory that creates and configures a Quartz {@link org.quartz.Scheduler}.
@@ -341,10 +335,10 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(startupDelay * 1000);
+                        Thread.sleep(startupDelay * 1000L);
                     } catch (InterruptedException e) {
                         logger.info(e.getMessage(), e);
-                        throw Throwables.propagate(e);
+                        Thread.currentThread().interrupt();
                     }
                     if (logger.isInfoEnabled()) {
                         logger.info("Starting Quartz Scheduler now, after delay of " + startupDelay + " seconds");

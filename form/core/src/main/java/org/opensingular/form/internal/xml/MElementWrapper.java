@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 /**
  * @author Daniel C. Bordin
@@ -393,7 +394,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         } else {
             novo = d.createElementNS(namespaceURI, qualifiedName);
 
-            if (namespaceURI != null && !namespaceURI.equals(parent.getNamespaceURI())) {
+            if (!Objects.equals(namespaceURI, parent.getNamespaceURI())) {
                 int posPrefixo = qualifiedName.indexOf(':');
                 if ((posPrefixo == -1)) {
                     novo.setAttribute("xmlns", namespaceURI);

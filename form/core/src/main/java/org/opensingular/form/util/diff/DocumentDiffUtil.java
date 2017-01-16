@@ -154,6 +154,7 @@ public final class DocumentDiffUtil {
      * de cada lista.
      */
     private static void calculateDiffList(@Nonnull DiffInfo info, SIList<?> original, SIList<?> newer) {
+        Objects.requireNonNull(info);
         List<? extends SInstance> originals = original == null ? Collections.emptyList() : new ArrayList<>(
                 original.getValues());
         List<? extends SInstance> newerList = newer == null ? Collections.emptyList() : new LinkedList<>(

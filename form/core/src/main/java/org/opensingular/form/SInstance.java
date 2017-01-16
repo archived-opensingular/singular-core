@@ -30,13 +30,7 @@ import org.opensingular.form.validation.IValidationError;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class SInstance implements SAttributeEnabled {
@@ -115,17 +109,17 @@ public abstract class SInstance implements SAttributeEnabled {
      * retornam true.
      */
     public boolean isAttribute() {
-        return getFlag(InstanceFlags.IsAtributo);
+        return getFlag(InstanceFlags.IS_ATRIBUTO);
     }
 
     final void setAsAttribute(String fullName, SType<?> attributeOwner) {
-        setFlag(InstanceFlags.IsAtributo, true);
+        setFlag(InstanceFlags.IS_ATRIBUTO, true);
         attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
 
     }
 
     final void setAsAttribute(String fullName, SInstance attributeOwner) {
-        setFlag(InstanceFlags.IsAtributo, true);
+        setFlag(InstanceFlags.IS_ATRIBUTO, true);
         attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
     }
 
@@ -159,7 +153,7 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
-            setFlag(InstanceFlags.IsAtributo, true);
+            setFlag(InstanceFlags.IS_ATRIBUTO, true);
             attributeInstanceInfo = pai.attributeInstanceInfo;
         }
     }
@@ -521,9 +515,9 @@ public abstract class SInstance implements SAttributeEnabled {
      * Signals this Component that it is removed from the Component hierarchy.
      */
     final void internalOnRemove() {
-        setFlag(InstanceFlags.RemovendoInstancia, true);
+        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, true);
         onRemove();
-        if (getFlag(InstanceFlags.RemovendoInstancia)) {
+        if (getFlag(InstanceFlags.REMOVENDO_INSTANCIA)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                     + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
@@ -550,7 +544,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * </p>
      */
     protected void onRemove() {
-        setFlag(InstanceFlags.RemovendoInstancia, false);
+        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, false);
     }
 
     final void setFlag(InstanceFlags flag, boolean value) {

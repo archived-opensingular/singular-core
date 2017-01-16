@@ -31,7 +31,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
         super(ProcessVersoes.class);
     }
 
-    public static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;
+    private static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;
 
     @Override
     protected FlowMap createFlowMap() {

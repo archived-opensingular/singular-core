@@ -16,11 +16,8 @@
 
 package org.opensingular.lib.wicket.util.menu;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-
-import java.util.regex.Pattern;
-
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -28,8 +25,11 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import org.opensingular.lib.wicket.util.resource.Icone;
+
+import java.util.regex.Pattern;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class MetronicMenuItem extends AbstractMenuItem {
 
@@ -93,11 +93,8 @@ public class MetronicMenuItem extends AbstractMenuItem {
             }
             this.menuItemUrl = href;
         } else if (responsePageClass != null) {
-            anchor = new BookmarkablePageLink("anchor", responsePageClass, parameters) {
-                {
-                    menuItemUrl = getURL().toString();
-                }
-            };
+            anchor = new BookmarkablePageLink("anchor", responsePageClass, parameters);
+            menuItemUrl = anchor.urlFor((Class<Page>) responsePageClass, parameters).toString();
         } else if (page != null) {
             anchor = new Link("anchor") {
                 @Override

@@ -5,7 +5,6 @@ import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -18,7 +17,7 @@ public class AttachmentKeyFactory  implements Serializable {
         return new AttachmentKey(UUID.randomUUID().toString());
     }
 
-    public AttachmentKey get(HttpServletRequest req) throws IOException {
+    public AttachmentKey get(HttpServletRequest req) {
         String rawKey = substringAfterLast(defaultString(req.getPathTranslated()), File.separator);
         if(!StringUtils.isBlank(rawKey)){
             return new AttachmentKey(rawKey);

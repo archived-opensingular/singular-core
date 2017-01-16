@@ -16,20 +16,21 @@
 
 package org.opensingular.form.io;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.*;
+import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MDocument;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
-import org.opensingular.form.type.core.annotation.STypeAnnotationList;
-import org.opensingular.form.document.RefType;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -67,7 +68,8 @@ public class MformPersistenciaXML {
      * Cria uma instância passível de serialização para o tipo referenciado e a
      * factory de documento informada.
      */
-    public static <T extends SInstance> T fromXML(RefType refType, String xmlString, SDocumentFactory documentFactory) {
+    public static <T extends SInstance> T fromXML(RefType refType, @Nonnull String xmlString,
+            @Nonnull SDocumentFactory documentFactory) {
         return fromXML(refType, parseXml(xmlString), documentFactory);
     }
 
@@ -75,13 +77,14 @@ public class MformPersistenciaXML {
      * Cria uma instância passível de serialização para o tipo referenciado e a
      * factory de documento informada.
      */
-    public static <T extends SInstance> T fromXML(RefType refType, MElement xml, SDocumentFactory documentFactory) {
+    public static <T extends SInstance> T fromXML(@Nonnull RefType refType, @Nullable MElement xml,
+            @Nonnull SDocumentFactory documentFactory) {
         SInstance novo = documentFactory.createInstance(refType, false);
         return (T) fromXMLInterno(novo, xml);
     }
 
     /** Preenche a instância criada com o xml fornecido. */
-    private static <T extends SInstance> T fromXMLInterno(T novo, MElement xml) {
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T novo, @Nullable MElement xml) {
         Integer lastId = 0;
         if(xml !=  null) {  lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID); }
 
@@ -116,7 +119,7 @@ public class MformPersistenciaXML {
         return id;
     }
 
-    private static void fromXML(SInstance instance, MElement xml) {
+    private static void fromXML(@Nonnull SInstance instance, @Nullable MElement xml) {
         if (xml == null)
             return; // Não precisa fazer nada
         instance.clearInstance();
@@ -252,7 +255,7 @@ public class MformPersistenciaXML {
      *
      * @param xmlString Se nulo ou em branco, não faz carga
      */
-    public static void annotationLoadFromXml(SDocument document, String xmlString) {
+    public static void annotationLoadFromXml(@Nonnull SDocument document, @Nullable String xmlString) {
         annotationLoadFromXml(document, parseXml(xmlString));
     }
 
@@ -262,20 +265,12 @@ public class MformPersistenciaXML {
      *
      * @param xmlAnnotations Se nulo, não faz carga
      */
-    public static void annotationLoadFromXml(SDocument document, MElement xmlAnnotations) {
+    public static void annotationLoadFromXml(@Nonnull SDocument document, @Nullable MElement xmlAnnotations) {
         if (xmlAnnotations == null) {
             return;
         }
-        SIList<SIAnnotation> iAnnotations;
-        if (document.getRootRefType().isPresent()) {
-            RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
-            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
-                    document.getDocumentFactoryRef().get());
-        } else {
-            //Carrega a informações se as referências de persistência
-            STypeAnnotationList typeAnnotation = document.getRoot().getDictionary().getType(STypeAnnotationList.class);
-            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(typeAnnotation, xmlAnnotations);
-        }
+        SIList<SIAnnotation> iAnnotations = DocumentAnnotations.newAnnotationList(document, false);
+        fromXMLInterno(iAnnotations, xmlAnnotations);
         document.getDocumentAnnotations().loadAnnotations(iAnnotations);
     }
 

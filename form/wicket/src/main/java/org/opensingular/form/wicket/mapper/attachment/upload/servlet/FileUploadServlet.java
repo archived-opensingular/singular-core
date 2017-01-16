@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
@@ -28,7 +29,6 @@ import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadM
 import org.opensingular.form.wicket.mapper.attachment.upload.manager.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.processor.FileUploadProcessor;
 import org.opensingular.form.wicket.mapper.attachment.upload.writer.UploadResponseWriter;
-import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 import javax.servlet.ServletException;
@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
@@ -83,42 +85,45 @@ public class FileUploadServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        if (!ServletFileUpload.isMultipartContent(req)) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request is not multipart, please 'multipart/form-data' enctype for your form.");
-            return;
-        }
-
-        final AttachmentKey uploadID = keyFactory.get(req);
-
-        if (uploadID == null) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
-            return;
-        }
-
-        final FileUploadManager    upManager = upManagerFactory.get(req.getSession());
-        final Optional<UploadInfo> upInfo    = upManager.findUploadInfo(uploadID);
-
-        if (upInfo.isPresent()) {
-
-            final UploadInfo               info         = upInfo.get();
-            final List<UploadResponseInfo> allResponses = new ArrayList<>();
-
-            try {
-                Map<String, List<FileItem>> params = servletFileUploadFactory.get(fupConfig, info).parseParameterMap(req);
-                for (FileItem item : params.get(PARAM_NAME)) {
-                    allResponses.addAll(upProcessor.process(item, info, upManager));
-                }
-            } catch (Exception e) {
-                throw SingularException.rethrow(e);
-            } finally {
-                upResponseWriter.writeJsonArrayResponseTo(resp, allResponses);
+        try {
+            if (!ServletFileUpload.isMultipartContent(req)) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        "Request is not multipart, please 'multipart/form-data' enctype for your form.");
+                return;
             }
 
-        } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
-        }
+            AttachmentKey uploadID = keyFactory.get(req);
+            if (uploadID == null) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
+                return;
+            }
 
+            FileUploadManager upManager = upManagerFactory.get(req.getSession());
+            Optional<UploadInfo> upInfo = upManager.findUploadInfo(uploadID);
+
+            if (upInfo.isPresent()) {
+                UploadInfo info = upInfo.get();
+                List<UploadResponseInfo> allResponses = new ArrayList<>();
+
+                try {
+                    Map<String, List<FileItem>> params = servletFileUploadFactory.get(fupConfig, info).parseParameterMap(req);
+                    for (FileItem item : params.get(PARAM_NAME)) {
+                        allResponses.addAll(upProcessor.process(item, info, upManager));
+                    }
+                } finally {
+                    upResponseWriter.writeJsonArrayResponseTo(resp, allResponses);
+                }
+            } else {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
+            }
+        } catch (Exception e) {
+            dealWithException(e);
+        }
+    }
+
+    private void dealWithException(Exception e) {
+        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Erro processando upload", e);
+        throw Throwables.propagate(e);
     }
 
 }

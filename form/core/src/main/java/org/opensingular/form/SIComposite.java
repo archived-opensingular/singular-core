@@ -16,16 +16,12 @@
 
 package org.opensingular.form;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.util.transformer.Value;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SIComposite extends SInstance implements ICompositeInstance {
 
@@ -261,9 +257,13 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (getClass() != obj.getClass()) {
+            return false;
+        }
         SIComposite other = (SIComposite) obj;
         return getType().equals(other.getType()) && Objects.equals(fields, other.fields);
     }

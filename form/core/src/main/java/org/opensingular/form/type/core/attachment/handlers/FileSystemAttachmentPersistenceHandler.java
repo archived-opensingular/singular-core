@@ -16,29 +16,26 @@
 
 package org.opensingular.form.type.core.attachment.handlers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.commons.io.IOUtils;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.io.HashUtil;
+import org.opensingular.form.io.IOUtil;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.commons.util.TempFileUtils;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.io.IOUtil;
-import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
-import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
-import org.apache.commons.io.IOUtils;
-
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.io.HashUtil;
+import java.util.logging.Logger;
 
 /**
  * This handler persists uploaded files in the filesystem. You mus inform which
@@ -62,6 +59,8 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
     protected static final String INFO_SUFFIX = ".INFO";
 
     private final File folder;
+
+    private static final Logger LOGGER = Logger.getLogger(FileSystemAttachmentPersistenceHandler.class.getName());
 
     public FileSystemAttachmentPersistenceHandler(String folder) {
         this(new File(folder));
@@ -167,10 +166,9 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
 
     @Override
     public void deleteAttachment(String key, SDocument document) {
-        if (key == null) return;
-        File file = findFileFromId(key);
-        file.delete();
-        File infoFile = infoFileFromId(key);
-        infoFile.delete();
+        if (key != null) {
+            TempFileUtils.deleteOrException(findFileFromId(key), getClass());
+            TempFileUtils.deleteOrException(infoFileFromId(key), getClass());
+        }
     }
 }

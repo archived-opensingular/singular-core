@@ -500,9 +500,9 @@ public abstract class MElement implements Element, Serializable {
      */
     public final MElement addBoolean(String nome, boolean valor) {
         if (valor) {
-            return addElement(nome, "true");
+            return addElement(nome, Boolean.TRUE.toString());
         } else {
-            return addElement(nome, "false");
+            return addElement(nome, Boolean.FALSE.toString());
         }
     }
 
@@ -1239,9 +1239,9 @@ public abstract class MElement implements Element, Serializable {
      */
     public final boolean getBoolean(String xPath) {
         String s = getValorNotNull(xPath);
-        if ("true".equals(s)) {
+        if (Boolean.TRUE.toString().equals(s)) {
             return true;
-        } else if ("false".equals(s)) {
+        } else if (Boolean.FALSE.toString().equals(s)) {
             return false;
         }
         throw new SingularFormException("O valor em " + xPath + " não é boolean = " + s);
@@ -1259,9 +1259,9 @@ public abstract class MElement implements Element, Serializable {
         String s = getValor(xPath);
         if (s == null) {
             return valorDefault;
-        } else if ("true".equals(s)) {
+        } else if (Boolean.TRUE.toString().equals(s)) {
             return true;
-        } else if ("false".equals(s)) {
+        } else if (Boolean.FALSE.toString().equals(s)) {
             return false;
         }
         throw new SingularFormException("O valor em " + xPath + " não é boolean = " + s);
