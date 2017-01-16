@@ -141,25 +141,25 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
         }
 
-        defineParentPetition(petition);
+        if (StringUtils.isNotBlank(config.getParentPetitionId())) {
+            defineParentPetition(petition);
+        }
         return petition;
     }
 
     private void defineParentPetition(T petition) {
     /* carrega a chave do form da petição pai para posterior clonagem */
-        if (StringUtils.isNotBlank(config.getParentPetitionId())) {
-            T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
-            if (parentPetition != null && parentPetition.getMainForm() != null) {
-                parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
-            }
-            if (petition != null) {
-                petition.setParentPetition(parentPetition);
-                if (parentPetition != null) {
-                    if (parentPetition.getRootPetition() != null) {
-                        petition.setRootPetition(parentPetition.getRootPetition());
-                    } else {
-                        petition.setRootPetition(parentPetition);
-                    }
+        T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
+        if (parentPetition != null && parentPetition.getMainForm() != null) {
+            parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
+        }
+        if (petition != null) {
+            petition.setParentPetition(parentPetition);
+            if (parentPetition != null) {
+                if (parentPetition.getRootPetition() != null) {
+                    petition.setRootPetition(parentPetition.getRootPetition());
+                } else {
+                    petition.setRootPetition(parentPetition);
                 }
             }
         }
