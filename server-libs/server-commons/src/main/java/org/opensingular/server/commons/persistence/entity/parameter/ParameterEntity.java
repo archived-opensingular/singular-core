@@ -49,6 +49,7 @@ public class ParameterEntity extends BaseEntity<Long> {
     @Column(name = "VL_PARAMETRO", nullable = false)
     private String value;
     
+    @Override
     public Long getCod() {
         return cod;
     }

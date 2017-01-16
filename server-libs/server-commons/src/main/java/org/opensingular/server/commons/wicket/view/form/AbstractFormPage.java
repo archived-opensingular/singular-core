@@ -119,6 +119,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Override
     protected void onInitialize() {
         final T petition;
+        petition = loadPetition();
+
+        currentModel = $m.loadable(() -> petition != null && petition.getCod() != null ? petitionService.findPetitionByCod(petition.getCod()) : petition);
+        currentModel.setObject(petition);
+
+        super.onInitialize();
+    }
+
+    private T loadPetition() {
+        T petition;
         if (StringUtils.isNotBlank(config.getPetitionId())) {
             petition = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
             if (petition != null && petition.getCod() != null) {
@@ -130,27 +140,29 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         } else {
             petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
         }
-        /* carrega a chave do form da petição pai para posterior clonagem */
+
         if (StringUtils.isNotBlank(config.getParentPetitionId())) {
-            T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
-            if (parentPetition != null && parentPetition.getMainForm() != null) {
-                parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
-            }
-            if (petition != null) {
-                petition.setParentPetition(parentPetition);
-                if (parentPetition != null) {
-                    if (parentPetition.getRootPetition() != null) {
-                        petition.setRootPetition(parentPetition.getRootPetition());
-                    } else {
-                        petition.setRootPetition(parentPetition);
-                    }
+            defineParentPetition(petition);
+        }
+        return petition;
+    }
+
+    private void defineParentPetition(T petition) {
+    /* carrega a chave do form da petição pai para posterior clonagem */
+        T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
+        if (parentPetition != null && parentPetition.getMainForm() != null) {
+            parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
+        }
+        if (petition != null) {
+            petition.setParentPetition(parentPetition);
+            if (parentPetition != null) {
+                if (parentPetition.getRootPetition() != null) {
+                    petition.setRootPetition(parentPetition.getRootPetition());
+                } else {
+                    petition.setRootPetition(parentPetition);
                 }
             }
         }
-        currentModel = $m.loadable(() -> petition != null && petition.getCod() != null ? petitionService.findPetitionByCod(petition.getCod()) : petition);
-        currentModel.setObject(petition);
-
-        super.onInitialize();
     }
 
 
@@ -451,6 +463,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 })
                 .addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
 
+                    @Override
                     protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                         AbstractFormPage.this.send(instanceModel, target, enviarModal);
                     }

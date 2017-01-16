@@ -40,6 +40,7 @@ import static org.opensingular.server.commons.flow.rest.DefaultServerREST.SEARCH
 @RestController
 public class DefaultPServerMetadataREST extends DefaultServerMetadataREST {
 
+    @Override
     protected void customizeMenu(List<MenuGroup> groupDTOs, IServerContext menuContext, String user) {
         super.customizeMenu(groupDTOs, menuContext, user);
         if (Objects.equals(PServerContext.PETITION.getName(), menuContext.getName())) {
