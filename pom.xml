@@ -325,7 +325,7 @@
         <sonar.issue.ignore.multicriteria.s16.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s16.ruleKey>
         <sonar.issue.ignore.multicriteria.s16.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s16.resourceKey>
         <!-- Falso posistivo: XSS attack  -->
-        <sonar.issue.ignore.multicriteria.s17.ruleKey>findsecbugs:XSS_SERVLET </sonar.issue.ignore.multicriteria.s17.ruleKey>
+        <sonar.issue.ignore.multicriteria.s17.ruleKey>findsecbugs:XSS_SERVLET</sonar.issue.ignore.multicriteria.s17.ruleKey>
         <sonar.issue.ignore.multicriteria.s17.resourceKey>**/UploadResponseWriter.java</sonar.issue.ignore.multicriteria.s17.resourceKey>
         <!-- Falso posistivo: cookie seguro  -->
         <sonar.issue.ignore.multicriteria.s18.ruleKey>findsecbugs:HTTPONLY_COOKIE</sonar.issue.ignore.multicriteria.s18.ruleKey>
