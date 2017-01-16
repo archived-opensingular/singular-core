@@ -16,15 +16,18 @@
 
 package org.opensingular.form.processor;
 
-import org.opensingular.form.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import org.opensingular.form.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Garante que os campos publicos nas classes derivadas de {@link STypeComposite} são corretamente configurados e
@@ -83,56 +86,61 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         for (PublicFieldRef ref : info) {
             SType<?> newFieldValue = composite.getField(ref.getName());
             if (newFieldValue == null) {
-                boolean shouldCopyFromSuperType = false;
                 if(composite.getSuperType().getClass() == composite.getClass()) {
-                    shouldCopyFromSuperType = true;
+                    newFieldValue = copyFieldValueFromSuperType(composite, ref);
                 } else if(ref.isFieldCameFromSuperType() && isNotCoreClass(composite.getSuperType().getClass())) {
                     //Precisa verificar de novo pois ref.isFieldCameFromSuperType() pode se referencia uma classe pai
                     // intermediária que não chegou a virar um Type
                     if (infoSuper == null) {
                         infoSuper = getPublicInfo(composite.getSuperType().getClass());
                     }
-                    shouldCopyFromSuperType = (infoSuper.getPublicField(ref.getName()) != null);
-                }
-                if (shouldCopyFromSuperType) {
-                    SType<?> parentValue;
-                    try {
-                        parentValue = (SType<?>) ref.getField().get(composite.getSuperType());
-                    } catch (IllegalAccessException e) {
-                        throw new SingularFormException(erroValue(composite, null, ref, null,
-                                "Erro tentando ler valor do campo Java " + ref.getName() + " em " +
-                                        composite.getSuperType() + ", que é a instância pai de " + composite), e);
-                    }
-                    if (parentValue == null) {
-                        throw new SingularFormException(erroValue(composite, null, ref, null,
-                                "O valor do campo Java " + ref.getName() + " está null em " +
-                                        composite.getSuperType() + ", que é a instância pai de " + composite + ""));
-                    }
-                    newFieldValue = tryToFindInHierarchy(composite, parentValue.getParentScope(),
-                            parentValue.getNameSimple());
-                    if (newFieldValue != null) {
-                        //Verificação de sanidade do resultado
-                        if (newFieldValue.getSuperType() != parentValue) {
-                            throw new SingularFormException(erroValue(composite, null, ref, null,
-                                    "O valor encontrado para atribuir ao campo Java '" + ref.getName() +
-                                            "' em " + composite + " foi\n       encontrado: " + newFieldValue +
-                                            "\ne esse não é uma extensão da referência do pai\n             pai: " +
-                                            parentValue));
-                        }
+                    if (infoSuper.getPublicField(ref.getName()) != null) {
+                        newFieldValue = copyFieldValueFromSuperType(composite, ref);
                     }
                 }
             }
 
-            if (newFieldValue == null) {
-                if (! preOnLoad) {
-                    throw new SingularFormException(erroValue(composite, null, ref, null,
-                            "Erro tentando setar valor na instância extendida de " + composite +
-                                    " pois não foi encontrado o valor para atribuir ao campo " + ref.getName()));
-                }
-            } else {
+            if (newFieldValue != null) {
                 setJavaField(composite, ref, newFieldValue);
+            } else if (! preOnLoad) {
+                throw new SingularFormException(erroValue(composite, null, ref, null,
+                        "Erro tentando setar valor na instância extendida de " + composite +
+                                " pois não foi encontrado o valor para atribuir ao campo " + ref.getName()));
             }
         }
+    }
+
+    /**
+     * Copia o valor de um field public do tipo pai do composite para o composite atual já fazendo a devida correção de
+     * apontamento para o subtipo. Tipicamente copia um campo que foi declarado no pai para não deixar o field no tipo
+     * extendido null.
+     */
+    private SType<?> copyFieldValueFromSuperType(STypeComposite composite, PublicFieldRef ref) {
+        SType<?> parentValue;
+        try {
+            parentValue = (SType<?>) ref.getField().get(composite.getSuperType());
+        } catch (IllegalAccessException e) {
+            throw new SingularFormException(erroValue(composite, null, ref, null,
+                    "Erro tentando ler valor do campo Java " + ref.getName() + " em " +
+                            composite.getSuperType() + ", que é a instância pai de " + composite), e);
+        }
+        if (parentValue == null) {
+            throw new SingularFormException(erroValue(composite, null, ref, null,
+                    "O valor do campo Java " + ref.getName() + " está null em " +
+                            composite.getSuperType() + ", que é a instância pai de " + composite + ""));
+        }
+        SType<?> newFieldValue = tryToFindInHierarchy(composite, parentValue.getParentScope(),parentValue.getNameSimple());
+        if (newFieldValue != null) {
+            //Verificação de sanidade do resultado
+            if (newFieldValue.getSuperType() != parentValue) {
+                throw new SingularFormException(erroValue(composite, null, ref, null,
+                        "O valor encontrado para atribuir ao campo Java '" + ref.getName() +
+                                "' em " + composite + " foi\n       encontrado: " + newFieldValue +
+                                "\ne esse não é uma extensão da referência do pai\n             pai: " +
+                                parentValue));
+            }
+        }
+        return newFieldValue;
     }
 
     /** Seta o valor do field Java com o valor informado. */

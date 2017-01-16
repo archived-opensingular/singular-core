@@ -314,30 +314,42 @@ public class MformPersistenciaXML {
                 newElement = conf.createMElement(instance);
             }
         } else if (instance instanceof SIComposite) {
-            for (SInstance child : ((SIComposite) instance).getFields()) {
-                MElement xmlChild = toXML(conf, child);
-                if (xmlChild != null) {
-                    if (newElement == null) {
-                        newElement = conf.createMElement(instance);
-                    }
-                    newElement.appendChild(xmlChild);
-                }
-            }
+            newElement = toXMLChildren(conf, instance, newElement, ((SIComposite) instance).getFields());
         } else if (instance instanceof SIList) {
-            for (SInstance child : (SIList<?>) instance) {
-                MElement xmlChild = toXML(conf, child);
-                if (xmlChild != null) {
-                    if (newElement == null) {
-                        newElement = conf.createMElement(instance);
-                    }
-                    newElement.appendChild(xmlChild);
-                }
-            }
+            newElement = toXMLChildren(conf, instance, newElement, ((SIList<?>) instance).getValues());
         } else {
             throw new SingularFormException("Instancia da classe " + instance.getClass().getName() + " não suportada",
                     instance);
         }
         //Verifica se há alguma informação lida anteriormente que deva ser grava novamente
+        newElement = toXMLOldElementWithoutType(conf, instance, newElement);
+
+        return newElement;
+    }
+
+    /**
+     * Gera no XML a os elemento filhos (senão existirem).
+     */
+    private static MElement toXMLChildren(ConfXMLGeneration conf, SInstance instance, MElement newElement,
+            List<? extends SInstance> children) {
+        for (SInstance child : children) {
+            MElement xmlChild = toXML(conf, child);
+            if (xmlChild != null) {
+                if (newElement == null) {
+                    newElement = conf.createMElement(instance);
+                }
+                newElement.appendChild(xmlChild);
+            }
+        }
+        return newElement;
+    }
+
+    /**
+     * Escreve para o XML os elemento que foram lidos do XML anterior e foram preservados apesar de não terem um type
+     * correspondente. Ou seja, mantêm campo "fantasmas" entre leituras e gravações.
+     */
+    private static MElement toXMLOldElementWithoutType(ConfXMLGeneration conf, SInstance instance,
+            MElement newElement) {
         List<MElement> unreadInfo = InternalAccess.internal(instance).getUnreadInfo();
         if (! unreadInfo.isEmpty()) {
             if (newElement == null) {
