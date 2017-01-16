@@ -154,7 +154,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     }
 
 
-    private void criarItemCaixaEntrada(List<ItemBox> itemBoxes) {
+    protected void criarItemCaixaEntrada(List<ItemBox> itemBoxes) {
         final ItemBox caixaEntrada = new ItemBox();
         caixaEntrada.setName("Caixa de Entrada");
         caixaEntrada.setDescription("Petições aguardando ação do usuário");
@@ -170,7 +170,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         itemBoxes.add(caixaEntrada);
     }
 
-    private LinkedHashMap<String, String> criarFieldsDatatableWorklist() {
+    protected LinkedHashMap<String, String> criarFieldsDatatableWorklist() {
         LinkedHashMap<String, String> fields = new LinkedHashMap<>(7);
         fields.put("Número", "codPeticao");
         fields.put("Dt. de Entrada", "creationDate");
@@ -182,7 +182,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         return fields;
     }
 
-    private void criarItemConcluidas(List<ItemBox> itemBoxes) {
+    protected void criarItemConcluidas(List<ItemBox> itemBoxes) {
         final ItemBox concluidas = new ItemBox();
         concluidas.setName("Concluídas");
         concluidas.setDescription("Petições concluídas");
@@ -196,7 +196,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
     }
 
 
-    private LinkedHashMap<String, String> criarFieldsDatatableWorklistConcluidas() {
+    protected LinkedHashMap<String, String> criarFieldsDatatableWorklistConcluidas() {
         LinkedHashMap<String, String> fields = new LinkedHashMap<>(6);
         fields.put("Número", "codPeticao");
         fields.put("Dt. de Entrada", "creationDate");
