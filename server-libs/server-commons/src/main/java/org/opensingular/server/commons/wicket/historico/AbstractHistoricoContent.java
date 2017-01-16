@@ -57,7 +57,6 @@ public abstract class AbstractHistoricoContent extends Content {
     @Inject
     private PetitionService<?> petitionService;
 
-    private int    instancePK;
     private long   petitionPK;
     private String processGroupPK;
     private String menu;
@@ -80,7 +79,6 @@ public abstract class AbstractHistoricoContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         petitionPK = getPage().getPageParameters().get(DispatcherPageParameters.PETITION_ID).toLong();
-        instancePK = getPage().getPageParameters().get(DispatcherPageParameters.INSTANCE_ID).toInt();
         processGroupPK = getPage().getPageParameters().get(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME).toString();
         menu = getPage().getPageParameters().get(DispatcherPageParameters.MENU_PARAM_NAME).toString();
         queue(setupDataTable(createDataProvider()));

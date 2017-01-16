@@ -49,6 +49,14 @@ public class PetitionAuthMetadataDTO implements Serializable {
         this.formTypeAbbreviation = formTypeAbbreviation;
     }
 
+    public Integer getTaskInstanceCod() {
+        return taskInstanceCod;
+    }
+
+    public void setTaskInstanceCod(Integer taskInstanceCod) {
+        this.taskInstanceCod = taskInstanceCod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

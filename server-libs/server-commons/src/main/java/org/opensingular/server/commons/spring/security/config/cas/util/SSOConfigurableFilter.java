@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 public abstract class SSOConfigurableFilter implements Filter {
 
     public static final String SINGULAR_CONTEXT_ATTRIBUTE      = "SSOFilterSingularContextAttribute";
-    private static       Logger logger                    = LoggerFactory.getLogger(SSOConfigurableFilter.class);
     private IServerContext serverContext;
 
     protected IServerContext getSingularContext(){

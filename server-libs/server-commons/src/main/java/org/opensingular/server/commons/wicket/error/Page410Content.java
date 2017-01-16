@@ -25,8 +25,6 @@ import java.util.logging.Logger;
 
 public class Page410Content extends Content {
 
-    private final static Logger LOGGER = Logger.getLogger("GENERAL_LOGGER");
-
     public Page410Content(String id) {
         super(id);
     }

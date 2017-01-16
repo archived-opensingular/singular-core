@@ -22,8 +22,6 @@ import java.util.Map;
  */
 public class SingleSingOutFilterWrapper extends SSOConfigurableFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SingleSingOutFilterWrapper.class);
-
     /**
      * Constante DELEGATE_CLASS_NAME.
      */
