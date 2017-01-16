@@ -45,7 +45,7 @@ public class FileUploadProcessor implements Serializable {
         if (!item.isFormField()) {
 
             // Garante que virar apenas o nome do arquivo sem path
-            final String originalFilename = (new File(item.getName())).getName();
+            final String originalFilename = item.getName() == null ? null : (new File(item.getName())).getName();
             final String contentType      = lowerCase(item.getContentType());
             final String extension        = lowerCase(substringAfterLast(originalFilename, "."));
 

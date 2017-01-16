@@ -16,27 +16,17 @@
 
 package org.opensingular.flow.core;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.function.BiFunction;
-
 import com.google.common.base.Joiner;
-
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.*;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarDefinition;
+import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
+
+import java.util.Date;
+import java.util.Objects;
+import java.util.function.BiFunction;
 
 class FlowEngine {
 
@@ -105,36 +95,45 @@ class FlowEngine {
         }
     }
 
-    public static <P extends ProcessInstance> void initTask(P instancia, MTask<?> taskDestino, final TaskInstance instanciaTarefa) {
-        if (taskDestino.isWait()) {
-            final MTaskWait mTaskWait = (MTaskWait) taskDestino;
-            if (mTaskWait.hasExecutionDateStrategy()) {
-                final Date dataExecucao = mTaskWait.getExecutionDate(instancia, instanciaTarefa);
-                instanciaTarefa.setTargetEndDate(dataExecucao);
-                if (dataExecucao.before(new Date())) {
-                    instancia.executeTransition();
-                }
-            } else if (mTaskWait.getTargetDateExecutionStrategy() != null) {
-                Date alvo = mTaskWait.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
-                if (alvo != null) {
-                    instanciaTarefa.setTargetEndDate(alvo);
-                }
+    public static <P extends ProcessInstance> void initTask(P instance, MTask<?> taskDestiny, TaskInstance taskInstance) {
+        if (taskDestiny.isWait()) {
+            initTaskWait(instance, (MTaskWait) taskDestiny, taskInstance);
+        } else if (taskDestiny.isPeople()) {
+            initTaskPeople(instance, (MTaskPeople) taskDestiny, taskInstance);
+        }
+    }
+
+    private static <P extends ProcessInstance> void initTaskPeople(P instance, MTaskPeople taskDestiny,
+            TaskInstance taskInstance) {
+        TaskAccessStrategy<ProcessInstance> strategy = taskDestiny.getAccessStrategy();
+        if (strategy != null) {
+            MUser person = strategy.getAutomaticAllocatedUser(instance, taskInstance);
+            if (person != null && Flow.canBeAllocated(person)) {
+                taskInstance.relocateTask(null, person,
+                        strategy.isNotifyAutomaticAllocation(instance, taskInstance), null);
             }
-        } else if (taskDestino.isPeople()) {
-            final MTaskPeople taskPessoa = (MTaskPeople) taskDestino;
-            final TaskAccessStrategy<ProcessInstance> estrategia = taskPessoa.getAccessStrategy();
-            if (estrategia != null) {
-                MUser pessoa = estrategia.getAutomaticAllocatedUser(instancia, instanciaTarefa);
-                if (pessoa != null && Flow.canBeAllocated(pessoa)) {
-                    instanciaTarefa.relocateTask(null, pessoa, estrategia.isNotifyAutomaticAllocation(instancia, instanciaTarefa), null);
-                }
+        }
+        BiFunction<ProcessInstance, TaskInstance, Date> strategyDate = taskDestiny.getTargetDateExecutionStrategy();
+        if (strategyDate != null) {
+            Date targetDate = strategyDate.apply(instance, taskInstance);
+            if (targetDate != null) {
+                taskInstance.setTargetEndDate(targetDate);
             }
-            final BiFunction<ProcessInstance, TaskInstance, Date> estrategiaData = taskPessoa.getTargetDateExecutionStrategy();
-            if (estrategiaData != null) {
-                Date alvo = estrategiaData.apply(instancia, instanciaTarefa);
-                if (alvo != null) {
-                    instanciaTarefa.setTargetEndDate(alvo);
-                }
+        }
+    }
+
+    private static <P extends ProcessInstance> void initTaskWait(P instance, MTaskWait taskDestiny,
+            TaskInstance taskInstance) {
+        if (taskDestiny.hasExecutionDateStrategy()) {
+            Date targetDate = taskDestiny.getExecutionDate(instance, taskInstance);
+            taskInstance.setTargetEndDate(targetDate);
+            if (targetDate.before(new Date())) {
+                instance.executeTransition();
+            }
+        } else if (taskDestiny.getTargetDateExecutionStrategy() != null) {
+            Date targetDate = taskDestiny.getTargetDateExecutionStrategy().apply(instance, taskInstance);
+            if (targetDate != null) {
+                taskInstance.setTargetEndDate(targetDate);
             }
         }
     }
