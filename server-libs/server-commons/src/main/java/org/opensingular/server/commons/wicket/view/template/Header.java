@@ -26,18 +26,18 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 public class Header extends Panel {
 
     private boolean withTogglerButton;
+    private boolean withTopAction;
     private boolean withSideBar;
     private SkinOptions option;
 
     public Header(String id) {
-        super(id);
-        this.withTogglerButton = false;
-        this.withSideBar = false;
+        this(id, false, true, false, null);
     }
 
     public Header(String id, boolean withTogglerButton, boolean withTopAction, boolean withSideBar, SkinOptions option) {
         super(id);
         this.withTogglerButton = withTogglerButton;
+        this.withTopAction = withTopAction;
         this.withSideBar = withSideBar;
         this.option = option;
     }
@@ -47,7 +47,8 @@ public class Header extends Panel {
         super.onInitialize();
         add(new WebMarkupContainer("togglerButton")
                 .add($b.attrAppender("class", "hide", " ", $m.ofValue(!withTogglerButton))));
-        add(new WebMarkupContainer("_TopAction"));
+        add(new WebMarkupContainer("_TopAction")
+                .add($b.attrAppender("class", "hide", " ", $m.ofValue(!withTopAction))));
         add(configureTopMenu("_TopMenu"));
         add(new WebMarkupContainer("brandLogo"));
     }
