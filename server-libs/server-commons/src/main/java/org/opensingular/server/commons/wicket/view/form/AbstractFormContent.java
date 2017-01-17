@@ -135,10 +135,8 @@ public abstract class AbstractFormContent extends Content {
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
 
                 SDocumentFactory extendedFactory = singularFormConfig.getDocumentFactory().extendAddingSetupStep(
-                        document -> {
-                            document.bindLocalService("processService", AbstractFormContent.ProcessFormService.class,
-                                    RefService.of((AbstractFormContent.ProcessFormService) () -> getProcessInstance()));
-                        });
+                        document -> document.bindLocalService("processService", ProcessFormService.class,
+                                RefService.of((ProcessFormService) () -> getProcessInstance())));
                 return AbstractFormContent.this.createInstance(extendedFactory, refType);
             }
 

@@ -158,9 +158,7 @@ public class FormPetitionService<P extends PetitionEntity> {
             return false;
         };
 
-        final Predicate<FormPetitionEntity> byTask = x -> {
-            return x.getTaskDefinitionEntity().equals(getCurrentTaskDefinition(petition).orElse(null));
-        };
+        final Predicate<FormPetitionEntity> byTask = x -> x.getTaskDefinitionEntity().equals(getCurrentTaskDefinition(petition).orElse(null));
 
         if (mainForm) {
             formPetitionEntity = petition.getFormPetitionEntities().stream()

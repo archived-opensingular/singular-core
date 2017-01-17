@@ -514,9 +514,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             cfg
                     .getLazyFlowDefinitionResolver()
                     .resolve(cfg, (SIComposite) currentInstance.getObject())
-                    .ifPresent(clazz -> {
-                        petition.setProcessDefinitionEntity(petitionService.findEntityProcessDefinitionByClass(clazz));
-                    });
+                    .ifPresent(clazz -> petition.setProcessDefinitionEntity(petitionService.findEntityProcessDefinitionByClass(clazz)));
         }
     }
 

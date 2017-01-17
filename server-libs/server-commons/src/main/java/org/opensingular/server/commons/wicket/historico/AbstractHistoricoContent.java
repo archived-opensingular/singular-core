@@ -128,12 +128,8 @@ public abstract class AbstractHistoricoContent extends Content {
                             Optional.of(model.getObject())
                                     .map(PetitionHistoryDTO::getPetitionContentHistory)
                                     .map(PetitionContentHistoryEntity::getFormVersionHistoryEntities)
-                                    .ifPresent(list -> {
-                                        list.forEach(fvh -> {
-                                            dropDownButtonPanel
-                                                    .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()));
-                                        });
-                                    });
+                                    .ifPresent(list -> list.forEach(fvh -> dropDownButtonPanel
+                                            .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()))));
 
                             return dropDownButtonPanel;
                         })

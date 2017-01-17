@@ -93,9 +93,7 @@ public class Menu extends Panel {
         this.loadMenuGroups();
         this.menu = new MetronicMenu("menu");
         this.buildMenuSelecao();
-        this.getCategorias().forEach((processGroup) -> {
-            this.buildMenuGroup(this.menu, processGroup);
-        });
+        this.getCategorias().forEach((processGroup) -> this.buildMenuGroup(this.menu, processGroup));
         return this.menu;
     }
 
