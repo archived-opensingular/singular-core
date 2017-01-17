@@ -209,6 +209,17 @@
         <!-- Falso positivo: redirect não validado  -->
         <sonar.issue.ignore.multicriteria.s4.ruleKey>findsecbugs:UNVALIDATED_REDIRECT</sonar.issue.ignore.multicriteria.s4.ruleKey>
         <sonar.issue.ignore.multicriteria.s4.resourceKey>**/SSOLogoutUtil.java</sonar.issue.ignore.multicriteria.s4.resourceKey>
+        <!-- Falso positivo: log injection  -->
+        <sonar.issue.ignore.multicriteria.s5.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s5.ruleKey>
+        <sonar.issue.ignore.multicriteria.s5.resourceKey>**/SSOLogoutUtil.java</sonar.issue.ignore.multicriteria.s5.resourceKey>
+        <sonar.issue.ignore.multicriteria.s6.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s6.ruleKey>
+        <sonar.issue.ignore.multicriteria.s6.resourceKey>**/SingularCASLogoutHandler.java</sonar.issue.ignore.multicriteria.s6.resourceKey>
+        <sonar.issue.ignore.multicriteria.s7.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s7.ruleKey>
+        <sonar.issue.ignore.multicriteria.s7.resourceKey>**/SSOFilter.java</sonar.issue.ignore.multicriteria.s7.resourceKey>
+        <sonar.issue.ignore.multicriteria.s8.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s8.ruleKey>
+        <sonar.issue.ignore.multicriteria.s8.resourceKey>**/DefaultServerREST.java</sonar.issue.ignore.multicriteria.s8.resourceKey>
+
+
 
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.url>
