@@ -68,7 +68,7 @@ public class BSModalBorder extends Border {
         LINK("btn-link"),
         DANGER("btn-danger"),
         BLUE("blue"),
-        CANCEl("cancel-btn"),
+        CANCEL("cancel-btn"),
         CONFIRM("confirm-btn");
         //@formatter:on
 

@@ -265,7 +265,7 @@ public class AnnotationComponent extends Panel {
                                             + ".find('a:visible:first').each(function(){this.focus();});");
                                 }
                             })
-                    .addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"),
+                    .addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"),
                             new ActionAjaxLink<Void>("cancelDeleteBtn") {
                                 @Override
                                 protected void onAction(AjaxRequestTarget target) {

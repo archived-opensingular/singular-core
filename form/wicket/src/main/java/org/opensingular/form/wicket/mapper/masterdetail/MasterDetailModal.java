@@ -88,7 +88,7 @@ class MasterDetailModal extends BFModalWindow {
         this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);
 
         if (viewMode.isEdition()) {
-            this.addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+            this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     if (closeCallback != null) {
