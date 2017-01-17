@@ -237,7 +237,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -340,12 +340,15 @@
         <sonar.issue.ignore.multicriteria.s21.resourceKey>**/CaseInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s21.resourceKey>
         <sonar.issue.ignore.multicriteria.s22.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s22.ruleKey>
         <sonar.issue.ignore.multicriteria.s22.resourceKey>**/CaseLazyInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s22.resourceKey>
-
         <!-- Falso positivo: Security - Potential CRLF Injection for logs  -->
         <sonar.issue.ignore.multicriteria.s23.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s23.ruleKey>
         <sonar.issue.ignore.multicriteria.s23.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s23.resourceKey>
         <sonar.issue.ignore.multicriteria.s24.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s24.ruleKey>
         <sonar.issue.ignore.multicriteria.s24.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s24.resourceKey>
+        <!-- Falso positivo: Nome do arquivo pode ser adulterado pelo cliente -->
+        <sonar.issue.ignore.multicriteria.s25.ruleKey>findsecbugs:FILE_UPLOAD_FILENAME</sonar.issue.ignore.multicriteria.s25.ruleKey>
+        <sonar.issue.ignore.multicriteria.s25.resourceKey>**/FileUploadProcessor.java</sonar.issue.ignore.multicriteria.s25.resourceKey>
+
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.connection>
