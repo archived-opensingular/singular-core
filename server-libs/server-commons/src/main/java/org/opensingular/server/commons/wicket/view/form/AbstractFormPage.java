@@ -315,7 +315,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
-            trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {
+            trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {//NOSONAR
                 if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
                     String btnId = "flow-btn" + index;
                     buildFlowTransitionButton(
