@@ -525,7 +525,7 @@ public abstract class MElement implements Element, Serializable {
             if (s.length() == 0) {
                 return addElement(nome, (String) null);
             }
-            Integer.parseInt(s); //Testa se é um inteiro
+            Integer.parseInt(s); //NOSONAR Testa se é um inteiro
             return addElement(nome, s);
         }
     }
@@ -546,7 +546,7 @@ public abstract class MElement implements Element, Serializable {
         if (valor != null) {
             String v = valor.trim();
             if (v.length() > 0) {
-                Integer.parseInt(v); //Testa se é um inteiro
+                Integer.parseInt(v); //NOSONAR Testa se é um inteiro
                 return addElement(nome, v);
             }
         }
@@ -554,7 +554,7 @@ public abstract class MElement implements Element, Serializable {
             if (valorDefault instanceof String) {
                 String v = ((String) valorDefault).trim();
                 if (v.length() > 0) {
-                    Integer.parseInt(v); //Testa se é um inteiro
+                    Integer.parseInt(v); //NOSONAR Testa se é um inteiro
                     return addElement(nome, v);
                 }
             } else if (valorDefault instanceof Integer) {
@@ -584,7 +584,7 @@ public abstract class MElement implements Element, Serializable {
         if (valor != null) {
             String v = valor.trim();
             if (v.length() > 0) {
-                Integer.parseInt(v); //Testa se é um inteiro
+                Integer.parseInt(v); //NOSONAR Testa se é um inteiro
                 return addElement(nome, v);
             }
         }
