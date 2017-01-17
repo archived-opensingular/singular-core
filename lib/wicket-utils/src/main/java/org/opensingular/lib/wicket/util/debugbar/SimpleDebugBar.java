@@ -23,17 +23,18 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.devutils.debugbar.IDebugBarContributor;
 import org.apache.wicket.event.IEvent;
 
 @SuppressWarnings("serial")
-public class DebugBar extends org.apache.wicket.devutils.debugbar.DebugBar {
+public class SimpleDebugBar extends DebugBar {
 
-    public DebugBar(String id) {
+    public SimpleDebugBar(String id) {
         super(id);
     }
 
-    public DebugBar(String id, boolean initiallyExpanded) {
+    public SimpleDebugBar(String id, boolean initiallyExpanded) {
         super(id, initiallyExpanded);
     }
 
