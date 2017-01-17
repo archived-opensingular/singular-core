@@ -57,18 +57,18 @@ public class AttachmentGCJob implements IScheduledJob, Loggable {
     @Override
     public Object run() {
 
-        List<AttachmentContentEntitty> orphanContents = persistenceHandler.listOldOrphanAttachments();
+        List<AttachmentEntity> orphanAttachments = persistenceHandler.listOldOrphanAttachments();
         long failed = 0;
 
-        for (AttachmentContentEntitty content : orphanContents) {
+        for (AttachmentEntity attachment : orphanAttachments) {
             try {
-                persistenceHandler.deleteAttachmentContent(content.getCod());
+                persistenceHandler.deleteAttachmentAndContent(attachment);
             } catch (Exception e) {
-                getLogger().error(String.format("Failed to delete attachment with id: %s", content.getCod()));
+                getLogger().error(String.format("Failed to delete attachment with id: %s", attachment.getCod()), e);
                 failed++;
             }
         }
-        String msg = String.format("Removed %d old orphan attachments from %d total.", orphanContents.size() - failed, orphanContents.size());
+        String msg = String.format("Removed %d old orphan attachments from %d total.", orphanAttachments.size() - failed, orphanAttachments.size());
         getLogger().info(msg);
         return msg;
 
