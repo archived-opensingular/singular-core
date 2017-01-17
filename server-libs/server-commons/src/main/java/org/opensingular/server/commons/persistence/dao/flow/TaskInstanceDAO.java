@@ -135,7 +135,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         query.setParameter("sim", SimNao.SIM);
 
         if (concluidas == null || concluidas) {
-            query.setParameter("tipoEnd", TaskType.End);
+            query.setParameter("tipoEnd", TaskType.END);
         }
 
         return addFilterParameter(query,
@@ -193,7 +193,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
         final Query query = getSession().createQuery(sb.toString());
         query.setParameter("petitionId", petitionId);
-        query.setParameter("tipoEnd", TaskType.End);
+        query.setParameter("tipoEnd", TaskType.END);
         return query.list();
     }
 }

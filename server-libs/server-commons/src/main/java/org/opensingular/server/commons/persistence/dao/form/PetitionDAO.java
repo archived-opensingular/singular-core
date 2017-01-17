@@ -168,7 +168,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         } else {
             hql.append(" AND p.processInstanceEntity is not null ");
             hql.append(" AND (ta.endDate is null OR task.type = :tipoEnd) ");
-            params.put("tipoEnd", TaskType.End);
+            params.put("tipoEnd", TaskType.END);
         }
 
         appendCustomWhereClauses(hql, params, filtro);
@@ -278,7 +278,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         query.append(" order by ct.cod DESC ");
         return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString())
                 .setParameter("sim", SimNao.SIM)
-                .setParameter("fim", TaskType.End)
+                .setParameter("fim", TaskType.END)
                 .setParameter("petitionId", petitionId)
                 .setMaxResults(1)
                 .list())

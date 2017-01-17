@@ -367,11 +367,11 @@ public class PetitionService<P extends PetitionEntity> implements Loggable {
     protected void checkTaskActions(TaskInstanceDTO task, QuickFilter filter) {
         List<BoxItemAction> actions = new ArrayList<>();
         if (task.getCodUsuarioAlocado() == null
-                && task.getTaskType() == TaskType.People) {
+                && task.getTaskType() == TaskType.PEOPLE) {
             actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_ASSIGN.getName()));
         }
 
-        if (task.getTaskType() == TaskType.People) {
+        if (task.getTaskType() == TaskType.PEOPLE) {
             actions.add(BoxItemAction.newExecuteInstante(task.getCodPeticao(), ACTION_RELOCATE.getName()));
         }
 
