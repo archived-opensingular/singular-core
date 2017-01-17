@@ -42,7 +42,6 @@ public class FormPageConfig implements Serializable {
 
     private FormPageConfig() {
         formAction = FormActions.FORM_VIEW;
-        contextParams = new HashMap<>();
     }
 
     private static FormPageConfig newConfig(String formType,
