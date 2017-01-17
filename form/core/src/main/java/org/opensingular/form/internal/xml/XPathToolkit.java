@@ -168,6 +168,7 @@ public final class XPathToolkit {
                     buffer.append('@');
                     buffer.append(no.getNodeName());
                     break;
+                default:
             }
         }
 
@@ -280,6 +281,7 @@ public final class XPathToolkit {
                 case ']':
                 case '.':
                     return false;
+                default:
             }
         }
         return true;
@@ -305,6 +307,7 @@ public final class XPathToolkit {
                 case ']':
                 case '.':
                     return false;
+                default:
             }
         }
         return true;
