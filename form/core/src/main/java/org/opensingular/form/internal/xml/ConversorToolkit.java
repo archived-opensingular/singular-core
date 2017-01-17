@@ -133,6 +133,7 @@ public final class ConversorToolkit {
                     case '.':
                     case ' ':
                         novo[i] = (byte) '/';
+                    default:
                 }
             }
             if (data.length() > 8) {
