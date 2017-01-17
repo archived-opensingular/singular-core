@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ public class FlowMap {
 
     /**
      * <p>Retorna as tarefas definidas neste mapa. Apenas tarefas que não são do tipo fim
-     * ({@link TaskType#End}) são retornadas.</p>
+     * ({@link TaskType#END}) são retornadas.</p>
      *
      * @return as tarefas definidas.
      */
@@ -107,30 +106,30 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#People}.</p>
+     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#PEOPLE}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#People}.
+     * @return as tarefas definidas do tipo {@link TaskType#PEOPLE}.
      */
     public Collection<MTaskPeople> getPeopleTasks() {
-        return (Collection<MTaskPeople>) getTasks(TaskType.People);
+        return (Collection<MTaskPeople>) getTasks(TaskType.PEOPLE);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#Java}.</p>
+     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#Java}.
+     * @return as tarefas definidas do tipo {@link TaskType#JAVA}.
      */
     public Collection<MTaskJava> getJavaTasks() {
-        return (Collection<MTaskJava>) getTasks(TaskType.Java);
+        return (Collection<MTaskJava>) getTasks(TaskType.JAVA);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#Wait}.</p>
+     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#WAIT}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#Wait}.
+     * @return as tarefas definidas do tipo {@link TaskType#WAIT}.
      */
     public Collection<MTaskWait> getWaitTasks() {
-        return (Collection<MTaskWait>) getTasks(TaskType.Wait);
+        return (Collection<MTaskWait>) getTasks(TaskType.WAIT);
     }
 
     /**
@@ -150,7 +149,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo fim ({@link TaskType#End}).</p>
+     * <p>Retorna as tarefas definidas neste mapa do tipo fim ({@link TaskType#END}).</p>
      *
      * @return as tarefas definidas do tipo fim.
      */
@@ -252,7 +251,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#People}.</p>
+     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#PEOPLE}.</p>
      *
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
@@ -262,7 +261,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#Java}.</p>
+     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#JAVA}.</p>
      *
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
@@ -272,7 +271,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#Wait}.</p>
+     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#WAIT}.</p>
      *
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
@@ -282,7 +281,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#Wait}.</p>
+     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#WAIT}.</p>
      *
      * <p>Configura a estratégia de execução conforme a especificada ({@link IExecutionDateStrategy}).
      * Isso define a data alvo de uma instância desta tarefa.</p>
@@ -323,9 +322,9 @@ public class FlowMap {
     }
 
     /**
-     * <p>Verifica se há pelo menos duas tarefas do tipo {@link TaskType#People} neste mapa.</p>
+     * <p>Verifica se há pelo menos duas tarefas do tipo {@link TaskType#PEOPLE} neste mapa.</p>
      *
-     * @return {@code true} caso haja pelo menos duas tarefas do tipo {@link TaskType#People};
+     * @return {@code true} caso haja pelo menos duas tarefas do tipo {@link TaskType#PEOPLE};
      * {@code false} caso contrário.
      */
     public boolean hasMultiplePeopleTasks() {
@@ -354,7 +353,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Cria e adiciona uma nova tarefa do tipo fim ({@link TaskType#End}).</p>
+     * <p>Cria e adiciona uma nova tarefa do tipo fim ({@link TaskType#END}).</p>
      *
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
@@ -397,7 +396,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna a tarefa do tipo {@link TaskType#People} deste mapa com a sigla especificada.</p>
+     * <p>Retorna a tarefa do tipo {@link TaskType#PEOPLE} deste mapa com a sigla especificada.</p>
      *
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
@@ -407,7 +406,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna a tarefa do tipo {@link TaskType#People} deste mapa com a sigla especificada.</p>
+     * <p>Retorna a tarefa do tipo {@link TaskType#PEOPLE} deste mapa com a sigla especificada.</p>
      *
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada.

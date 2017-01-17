@@ -84,19 +84,19 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public final boolean isEnd() {
-        return getTaskType() == TaskType.End;
+        return getTaskType() == TaskType.END;
     }
 
     public final boolean isJava() {
-        return getTaskType() == TaskType.Java;
+        return getTaskType() == TaskType.JAVA;
     }
 
     public final boolean isPeople() {
-        return getTaskType() == TaskType.People;
+        return getTaskType() == TaskType.PEOPLE;
     }
 
     public final boolean isWait() {
-        return getTaskType() == TaskType.Wait;
+        return getTaskType() == TaskType.WAIT;
     }
 
     public final boolean is(ITaskDefinition taskDefinition) {
@@ -105,8 +105,8 @@ public abstract class MTask<K extends MTask<?>> {
 
     public IEntityTaskType getEffectiveTaskType() {
         IEntityTaskType tipo = getTaskType();
-        if (tipo != TaskType.Wait && (this instanceof MTaskJava) && ((MTaskJava) this).getScheduleData() != null) {
-            tipo = TaskType.Wait;
+        if (tipo != TaskType.WAIT && (this instanceof MTaskJava) && ((MTaskJava) this).getScheduleData() != null) {
+            tipo = TaskType.WAIT;
         }
         return tipo;
     }

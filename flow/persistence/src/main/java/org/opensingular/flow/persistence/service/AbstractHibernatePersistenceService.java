@@ -419,9 +419,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
             sub.add(Restrictions.isNull("T.endDate"));
             if (active) {
-                sub.add(Restrictions.ne("TA.type", TaskType.End));
+                sub.add(Restrictions.ne("TA.type", TaskType.END));
             } else {
-                sub.add(Restrictions.eq("TA.type", TaskType.End));
+                sub.add(Restrictions.eq("TA.type", TaskType.END));
             }
             sub.setProjection(Projections.id());
             
