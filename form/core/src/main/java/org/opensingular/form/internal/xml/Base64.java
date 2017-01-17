@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.logging.Level;
@@ -372,22 +373,10 @@ final class Base64 {
             Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
             return null;
         } finally {
-            try {
-                if (oos != null) {
-                    oos.close();
-                }
-                if (gzos != null) {
-                    gzos.close();
-                }
-                if (b64os != null) {
-                    b64os.close();
-                }
-                if (baos != null) {
-                    baos.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(oos);
+            tryCloseQuitely(gzos);
+            tryCloseQuitely(b64os);
+            tryCloseQuitely(baos);
         } // end finally
 
         // Return value according to relevant encoding.
@@ -497,19 +486,9 @@ final class Base64 {
                 Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
                 return null;
             } finally {
-                try {
-                    if (gzos != null) {
-                        gzos.close();
-                    }
-                    if (b64os != null) {
-                        b64os.close();
-                    }
-                    if (baos != null) {
-                        baos.close();
-                    }
-                } catch (Exception e) {
-                    Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-                }
+                tryCloseQuitely(gzos);
+                tryCloseQuitely(b64os);
+                tryCloseQuitely(baos);
             } // end finally
 
             // Return value according to relevant encoding.
@@ -562,6 +541,18 @@ final class Base64 {
         } // end else: don't compress
 
     } // end encodeBytes
+
+    /** Fecha o objeto e caso ocorra exception, apenas faz log sem disparar a exception. */
+    private static void tryCloseQuitely(Closeable target) {
+        try {
+            if (target != null) {
+                target.close();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
+        }
+
+    }
 
     /* ******** D E C O D I N G M E T H O D S ******** */
 
@@ -760,19 +751,9 @@ final class Base64 {
                 } catch (java.io.IOException e) {
                     // Just return originally-decoded bytes
                 } finally {
-                    try {
-                        if (gzis != null) {
-                            gzis.close();
-                        }
-                        if (bais != null) {
-                            bais.close();
-                        }
-                        if (baos != null) {
-                            baos.close();
-                        }
-                    } catch (Exception e) {
-                        Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-                    }
+                    tryCloseQuitely(gzis);
+                    tryCloseQuitely(bais);
+                    tryCloseQuitely(baos);
                 } // end finally
 
             } // end if: gzipped
@@ -807,16 +788,8 @@ final class Base64 {
             Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
             obj = null;
         } finally {
-            try {
-                if (ois != null) {
-                    ois.close();
-                }
-                if (bais != null) {
-                    bais.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(ois);
+            tryCloseQuitely(bais);
         } // end finally
 
         return obj;
@@ -844,17 +817,8 @@ final class Base64 {
 
             success = false;
         } finally {
-            try {
-                if (bos != null) {
-                    bos.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(bos);
+            tryCloseQuitely(fos);
         } // end finally
 
         return success;
@@ -881,16 +845,8 @@ final class Base64 {
         } catch (java.io.IOException e) {
             success = false;
         } finally {
-            try {
-                if (bos != null) {
-                    bos.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(bos);
+            tryCloseQuitely(fos);
         } // end finally
 
         return success;
@@ -914,13 +870,7 @@ final class Base64 {
         } catch (java.io.IOException e) {
             success = false;
         } finally {
-            try {
-                if (bos != null) {
-                    bos.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(bos);
         } // end finally
 
         return success;
@@ -970,16 +920,8 @@ final class Base64 {
         } catch (java.io.IOException e) {
             System.err.println("Error decoding from file " + filename);
         } finally {
-            try {
-                if (bis != null) {
-                    bis.close();
-                }
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(bis);
+            tryCloseQuitely(fis);
         } // end finally
 
         return decodedData;
@@ -1019,16 +961,8 @@ final class Base64 {
         } catch (java.io.IOException e) {
             System.err.println("Error encoding from file " + filename);
         } finally {
-            try {
-                if (bis != null) {
-                    bis.close();
-                }
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(bis);
+            tryCloseQuitely(fis);
         } // end finally
 
         return encodedData;
@@ -1064,13 +998,7 @@ final class Base64 {
         } catch (java.io.IOException e) {
             System.err.println("Error encoding from the input stream");
         } finally {
-            try {
-                if (bis != null) {
-                    bis.close();
-                }
-            } catch (Exception e) {
-                Logger.getLogger(Base64.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
+            tryCloseQuitely(bis);
         } // end finally
 
         return encodedData;

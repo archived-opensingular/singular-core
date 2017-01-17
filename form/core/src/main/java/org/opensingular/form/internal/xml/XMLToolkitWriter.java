@@ -21,6 +21,8 @@ import org.w3c.dom.*;
 
 import java.io.PrintWriter;
 
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeText;
+
 /**
  * Creation date: (24/04/2000 10:34:52)
  *
@@ -198,7 +200,7 @@ final class XMLToolkitWriter {
         int tam = nList.getLength();
 
         if (tam != 0) {
-            boolean pulaLinha = (tam > 1) || (nList.item(0).getNodeType() != Node.TEXT_NODE);
+            boolean pulaLinha = (tam > 1) || !isNodeTypeText( nList.item(0));
             if (pulaLinha) {
                 out.println();
             }

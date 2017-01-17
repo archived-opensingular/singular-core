@@ -225,15 +225,8 @@ public final class DocumentDiffUtil {
 
     /** Calcula o Diff para uma instância do tipo {@link STypeAttachment}. Não faz diff recursivos nos sub campos. */
     private static void calculateDiffAttachment(DiffInfo info, SIAttachment original, SIAttachment newer) {
-        String originalFileId = original == null ? null : original.getFileId();
-        String originalName = original == null ? null : original.getFileName();
-        String originalSHA1 = original == null ? null : original.getFileHashSHA1();
-        boolean originalEmpty = (originalFileId == null);
-
-        String newerFileId = newer == null ? null : newer.getFileId();
-        String newerName = newer == null ? null : newer.getFileName();
-        String newerSHA1 = newer == null ? null : newer.getFileHashSHA1();
-        boolean newerEmpty = (newerFileId == null);
+        boolean originalEmpty = original == null || original.getFileId() == null;
+        boolean newerEmpty = newer == null || newer.getFileId() == null;
 
         if (originalEmpty) {
             if (newerEmpty) {
@@ -245,16 +238,16 @@ public final class DocumentDiffUtil {
         } else if (newerEmpty) {
             info.setType(DiffType.CHANGED_DELETED);
         } else {
-            if (!Objects.equals(originalName, newerName)) {
-                if (Objects.equals(originalSHA1, newerSHA1)) {
-                    info.setDetail("Nome alterado de '" + originalName + "' para '" + newerName +
+            if (!Objects.equals(original.getFileName(), newer.getFileName())) {
+                if (Objects.equals(original.getFileHashSHA1(), newer.getFileHashSHA1())) {
+                    info.setDetail("Nome alterado de '" + original.getFileName() + "' para '" + newer.getFileName() +
                             "', mas conteúdo identico (" + original.fileSizeToString() + ')');
                 } else {
                     info.setDetail("Conteúdo alterado e nome alterado de '" + original.toStringDisplay() + "' para '" +
                             newer.toStringDisplay() + "'");
                 }
                 info.setType(DiffType.CHANGED_CONTENT);
-            } else if (!Objects.equals(originalSHA1, newerSHA1)) {
+            } else if (!Objects.equals(original.getFileHashSHA1(), newer.getFileHashSHA1())) {
                 info.setDetail("Nome do arquivo o mesmo, mas conteúdo alterado (tamanho anterior " +
                         original.fileSizeToString() + ", novo tamanho " + newer.fileSizeToString() + ')');
                 info.setType(DiffType.CHANGED_CONTENT);

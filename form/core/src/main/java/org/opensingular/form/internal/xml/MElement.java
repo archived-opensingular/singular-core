@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.util.json.JSONToolkit;
 import org.opensingular.lib.commons.base.SingularException;
@@ -26,6 +27,9 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeText;
 
 /**
  * Representa um Element com diversos métodos utilitários para
@@ -235,7 +239,7 @@ public abstract class MElement implements Element, Serializable {
             return null;
         } else if (no instanceof MElement) {
             return (MElement) no;
-        } else if (no.getNodeType() != Node.ELEMENT_NODE) {
+        } else if (!isNodeTypeElement(no)) {
             throw new SingularFormException("no " + XPathToolkit.getFullPath(no) + " não é Element");
         }
         return new MElementWrapper((Element) no);
@@ -737,18 +741,18 @@ public abstract class MElement implements Element, Serializable {
      */
     public final Node updateNode(String xPath, String value) {
         Node n = getNode(xPath);
-        if ((n == null) && (value != null) && (value.length() != 0)) {
+        if ((n == null) && !StringUtils.isEmpty(value)) {
             return addElement(xPath, value);
         } else if (n instanceof Element) {
             Node filho = n.getFirstChild();
             if (filho == null) {
-                if ((value != null) && (value.length() != 0)) {
+                if (!StringUtils.isEmpty(value)) {
                     Document d = n.getOwnerDocument();
                     Text txt = d.createTextNode(value);
                     n.appendChild(txt);
                 }
-            } else if (filho.getNodeType() == Node.TEXT_NODE) {
-                if ((value != null) && (value.length() != 0)) {
+            } else if (isNodeTypeText(filho)) {
+                if (!StringUtils.isEmpty(value)) {
                     filho.setNodeValue(value);
                 } else {
                     n.removeChild(filho);
@@ -1049,8 +1053,7 @@ public abstract class MElement implements Element, Serializable {
         int qtd = 0;
         Node node = getFirstChild();
         while (node != null) {
-            if ((node.getNodeType() == Node.ELEMENT_NODE)
-                    && (nome == null || node.getNodeName().equals(nome))) {
+            if (isNodeTypeElement(node, nome)) {
                 qtd++;
             }
             node = node.getNextSibling();
@@ -1082,14 +1085,14 @@ public abstract class MElement implements Element, Serializable {
         switch (no.getNodeType()) {
             case Node.ELEMENT_NODE:
                 Node n = no.getFirstChild();
-                if ((n != null) && (n.getNodeType() == Node.TEXT_NODE)) {
+                if (isNodeTypeText(n)) {
                     return n.getNodeValue();
                 }
                 break;
             case Node.ATTRIBUTE_NODE:
             case Node.TEXT_NODE:
                 String valor = no.getNodeValue();
-                if ((valor != null) && (valor.length() != 0)) {
+                if (!StringUtils.isEmpty(valor)) {
                     return valor;
                 }
                 break;
@@ -1815,10 +1818,8 @@ public abstract class MElement implements Element, Serializable {
      */
     private MElement procurarElementAnterior(Node no, String nome) {
         while (no != null) {
-            if (no.getNodeType() == Node.ELEMENT_NODE) {
-                if ((nome == null) || nome.equals(no.getNodeName())) {
-                    return toMElement(no);
-                }
+            if (isNodeTypeElement(no, nome)) {
+                return toMElement(no);
             }
             no = no.getPreviousSibling();
         }
@@ -1835,10 +1836,8 @@ public abstract class MElement implements Element, Serializable {
      */
     private MElement procurarProximoElement(Node no, String nome) {
         while (no != null) {
-            if (no.getNodeType() == Node.ELEMENT_NODE) {
-                if ((nome == null) || nome.equals(no.getNodeName())) {
-                    return toMElement(no);
-                }
+            if (isNodeTypeElement(no, nome)) {
+                return toMElement(no);
             }
             no = no.getNextSibling();
         }

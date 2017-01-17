@@ -383,7 +383,7 @@ public final class DiffInfo implements Serializable {
 
     /** Gera o nome ou índice que representa o caminha do item informado. */
     private static void addPathItem(StringBuilder sb, DiffInfo info, boolean hasPrevious, boolean showLabel) {
-        if (info.newerIndex != -1 || info.originalIndex != -1) {
+        if (info.isElementOfAList()) {
             if (showLabel) {
                 if (hasPrevious) {
                     sb.append(" : ");
