@@ -150,7 +150,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,s1,s2,s3,s4,s5,s6,s7,s8</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,s1,s2,s3,s4,s5,s6,s7,s8</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -203,15 +203,6 @@
         <!-- Falso positivo: redirect não validado  -->
         <sonar.issue.ignore.multicriteria.s4.ruleKey>findsecbugs:UNVALIDATED_REDIRECT</sonar.issue.ignore.multicriteria.s4.ruleKey>
         <sonar.issue.ignore.multicriteria.s4.resourceKey>**/SSOLogoutUtil.java</sonar.issue.ignore.multicriteria.s4.resourceKey>
-        <!-- Falso positivo: log injection  -->
-        <sonar.issue.ignore.multicriteria.s5.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s5.ruleKey>
-        <sonar.issue.ignore.multicriteria.s5.resourceKey>**/SSOLogoutUtil.java</sonar.issue.ignore.multicriteria.s5.resourceKey>
-        <sonar.issue.ignore.multicriteria.s6.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s6.ruleKey>
-        <sonar.issue.ignore.multicriteria.s6.resourceKey>**/SingularCASLogoutHandler.java</sonar.issue.ignore.multicriteria.s6.resourceKey>
-        <sonar.issue.ignore.multicriteria.s7.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s7.ruleKey>
-        <sonar.issue.ignore.multicriteria.s7.resourceKey>**/SSOFilter.java</sonar.issue.ignore.multicriteria.s7.resourceKey>
-        <sonar.issue.ignore.multicriteria.s8.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s8.ruleKey>
-        <sonar.issue.ignore.multicriteria.s8.resourceKey>**/DefaultServerREST.java</sonar.issue.ignore.multicriteria.s8.resourceKey>
 
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.url>
