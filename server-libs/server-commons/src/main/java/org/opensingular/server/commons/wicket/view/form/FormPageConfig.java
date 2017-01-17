@@ -32,7 +32,7 @@ public class FormPageConfig implements Serializable {
     private FormActions                        formAction;
     private String                             petitionId;
     private String                             formType;
-    private Map<String, Object>                contextParams;
+    private Map<String, Object>                contextParams = new HashMap<>();
     private LazyFlowDefinitionResolver         lazyFlowDefinitionResolver;
     private Class<? extends ProcessDefinition> processDefinition;
     private Long                               formVersionPK;
@@ -42,7 +42,6 @@ public class FormPageConfig implements Serializable {
 
     private FormPageConfig() {
         formAction = FormActions.FORM_VIEW;
-        contextParams = new HashMap<>();
     }
 
     private static FormPageConfig newConfig(String formType,
