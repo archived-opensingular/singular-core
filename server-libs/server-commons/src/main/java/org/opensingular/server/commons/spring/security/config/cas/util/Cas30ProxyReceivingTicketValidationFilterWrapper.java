@@ -72,7 +72,7 @@ public class Cas30ProxyReceivingTicketValidationFilterWrapper extends SSOConfigu
         params.put(CAS_SERVER_URL_PREFIX_PARAM, SingularProperties.get().getProperty(getSingularContext().getServerPropertyKey(SSOFilter.SSO_URL_PREFIX)));
         params.put(EXCEPTION_ON_TICKET_INVALID, "true");
         Enumeration enumeration = filterConfig.getInitParameterNames();
-        for (; enumeration.hasMoreElements(); ) {
+        while (enumeration.hasMoreElements()) {
             String s = (String) enumeration.nextElement();
             params.put(s, filterConfig.getInitParameter(s));
         }

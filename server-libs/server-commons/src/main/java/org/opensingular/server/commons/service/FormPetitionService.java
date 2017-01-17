@@ -298,7 +298,7 @@ public class FormPetitionService<P extends PetitionEntity> {
             List<FormVersionEntity> fves = formVersionDAO.findVersions(form);
             if (!CollectionUtils.isEmpty(fves)) {
                 Iterator<FormVersionEntity> it = fves.iterator();
-                for (; it.hasNext(); ) {
+                while (it.hasNext()) {
                     FormVersionEntity fve = it.next();
                     deleteFormVersion(fve);
                 }
@@ -310,7 +310,7 @@ public class FormPetitionService<P extends PetitionEntity> {
         if (fve != null) {
             if (!CollectionUtils.isEmpty(fve.getFormAnnotations())) {
                 Iterator<FormAnnotationEntity> it = fve.getFormAnnotations().iterator();
-                for (; it.hasNext(); ) {
+                while (it.hasNext()) {
                     FormAnnotationEntity fae = it.next();
                     deleteAnnotation(fae);
                     it.remove();
@@ -334,7 +334,7 @@ public class FormPetitionService<P extends PetitionEntity> {
             deleteAnnotationVersion(formAnnotationVersionEntity);
             if (!CollectionUtils.isEmpty(fae.getAnnotationVersions())) {
                 Iterator<FormAnnotationVersionEntity> it = fae.getAnnotationVersions().iterator();
-                for (; it.hasNext(); ) {
+                while (it.hasNext()) {
                     FormAnnotationVersionEntity fave = it.next();
                     deleteAnnotationVersion(fave);
                     it.remove();

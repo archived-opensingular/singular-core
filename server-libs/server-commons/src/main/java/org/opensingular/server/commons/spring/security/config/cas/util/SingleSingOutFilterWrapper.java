@@ -47,7 +47,7 @@ public class SingleSingOutFilterWrapper extends SSOConfigurableFilter {
         final Map<String, String> params = new HashMap<String, String>();
         params.put(CAS_SERVER_URL_PREFIX_PARAM, SingularProperties.get().getProperty(getSingularContext().getServerPropertyKey(SSOFilter.SSO_URL_PREFIX)));
         Enumeration enumeration = filterConfig.getInitParameterNames();
-        for (; enumeration.hasMoreElements(); ) {
+        while (enumeration.hasMoreElements()) {
             String s = (String) enumeration.nextElement();
             params.put(s, filterConfig.getInitParameter(s));
         }
