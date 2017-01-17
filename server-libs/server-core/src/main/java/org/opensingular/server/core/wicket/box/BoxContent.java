@@ -307,7 +307,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
         dropDownChoice.setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
         confirmationModal.addOrReplace(dropDownChoice);
 
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;

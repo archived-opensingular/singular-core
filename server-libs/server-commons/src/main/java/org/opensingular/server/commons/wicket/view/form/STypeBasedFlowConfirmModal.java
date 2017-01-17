@@ -97,7 +97,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
 
     private void addCloseButton(BSModalBorder modal) {
         modal.addButton(
-                BSModalBorder.ButtonStyle.CANCEl,
+                BSModalBorder.ButtonStyle.CANCEL,
                 Model.of("Fechar"),
                 new AjaxButton("cancel-btn") {
                     @Override

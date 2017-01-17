@@ -455,7 +455,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                         + "</div>\n");
         BSModalBorder enviarModal = new BSModalBorder("send-modal", getMessage("label.title.send"));
         enviarModal
-                .addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.close", new AjaxButton("cancel-btn") {
+                .addButton(BSModalBorder.ButtonStyle.CANCEL, "label.button.close", new AjaxButton("cancel-btn") {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         enviarModal.hide(target);

@@ -198,7 +198,7 @@ public abstract class AbstractBoxContent<T extends Serializable> extends Content
     protected BSModalBorder construirModalDeleteBorder(IConsumer<T> action) {
         BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", getMessage("label.title.delete.draft"));
         confirmationModal.addToBorder(new Label("message", getMessage("label.delete.message")));
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEL, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;
