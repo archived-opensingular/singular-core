@@ -49,15 +49,14 @@ public class SingularServerSpringTypeLoader extends SpringTypeLoader<String> {
 
     private void add(Class<? extends SType<?>> type) {
         String typeName   = SFormUtil.getTypeName(type);
-        String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
-        add(typeName, simpleName, () -> {
+        add(typeName, () -> {
             SDictionary d = SDictionary.create();
             d.loadPackage(SFormUtil.getTypePackage(type));
             return d.getType(type);
         });
     }
 
-    private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier) {
+    private void add(String typeName, Supplier<SType<?>> typeSupplier) {
         entries.put(typeName, typeSupplier);
     }
 
