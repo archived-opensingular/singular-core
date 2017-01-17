@@ -23,7 +23,19 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.form.context.SFormConfig;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
+import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.persistence.filter.QuickFilter;
+import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.spring.security.AuthorizationService;
+import org.opensingular.server.commons.spring.security.PermissionResolverService;
+import org.opensingular.server.commons.spring.security.SingularPermission;
+import org.opensingular.server.commons.util.PetitionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,20 +46,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.opensingular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.spring.SpringServiceRegistry;
-import org.opensingular.flow.persistence.entity.Actor;
-import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
-import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
-import org.opensingular.server.commons.persistence.filter.QuickFilter;
-import org.opensingular.server.commons.service.PetitionService;
-import org.opensingular.server.commons.spring.security.AuthorizationService;
-import org.opensingular.server.commons.spring.security.PermissionResolverService;
-import org.opensingular.server.commons.spring.security.SingularPermission;
-import org.opensingular.server.commons.util.PetitionUtil;
-import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 
 /**
  * Essa interface deve ser protegida de forma que apenas o próprio servidor possa
