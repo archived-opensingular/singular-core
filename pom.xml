@@ -189,7 +189,7 @@
         <sonar.issue.ignore.multicriteria.e12.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e12.resourceKey>
         <!-- Falso positivo: different keys with same value -->
         <sonar.issue.ignore.multicriteria.e13.ruleKey>jproperties:duplicated-values</sonar.issue.ignore.multicriteria.e13.ruleKey>
-        <sonar.issue.ignore.multicriteria.e13.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e13.resourceKey>
+        <sonar.issue.ignore.multicriteria.e13.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e13.resourceKey>
 
         <!-- Falso positivo: concatenacao de parametros  -->
         <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:SQL_INJECTION_HIBERNATE</sonar.issue.ignore.multicriteria.s1.ruleKey>
