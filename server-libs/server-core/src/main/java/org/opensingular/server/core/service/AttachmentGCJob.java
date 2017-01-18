@@ -24,7 +24,7 @@ import javax.inject.Named;
 import org.opensingular.flow.schedule.IScheduleData;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.lib.commons.util.Loggable;
@@ -40,7 +40,7 @@ import org.opensingular.lib.commons.util.Loggable;
 public class AttachmentGCJob implements IScheduledJob, Loggable {
 
     @Inject @Named(SDocument.FILE_PERSISTENCE_SERVICE)
-    private AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntitty> persistenceHandler;
+    private AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntity> persistenceHandler;
 
     private IScheduleData scheduleData;
 

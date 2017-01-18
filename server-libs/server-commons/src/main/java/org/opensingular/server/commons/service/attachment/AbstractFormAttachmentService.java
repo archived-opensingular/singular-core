@@ -1,12 +1,12 @@
 package org.opensingular.server.commons.service.attachment;
 
 import org.opensingular.form.persistence.entity.AbstractFormAttachmentEntity;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.entity.FormAttachmentEntityId;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 
-public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, C extends AttachmentContentEntitty, F extends AbstractFormAttachmentEntity<T>> implements IFormAttachmentService {
+public abstract class AbstractFormAttachmentService<T extends AttachmentEntity, C extends AttachmentContentEntity, F extends AbstractFormAttachmentEntity<T>> implements IFormAttachmentService {
 
     /**
      * cria a chave utilizando a ref e o documento
