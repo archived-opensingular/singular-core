@@ -35,8 +35,7 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
     @Override
     public AttachmentCopyContext<AttachmentRef> copy(IAttachmentRef ref, SDocument sdoc) {
         if (!(ref instanceof AttachmentRef)) {
-            throw new SingularFormPersistenceException("A service ServerAttachmentPersistenceService suporta apenas" +
-                    " anexos persistidos em banco de dados e referencias do tipo " + AttachmentRef.class.getName());
+            return super.copy(ref, sdoc);
         }
         if (sdoc != null && sdoc.getRoot() != null) {
             formAttachmentService.saveNewFormAttachmentEntity(getAttachmentEntity(ref), formService.findCurrentFormVersion(sdoc));
