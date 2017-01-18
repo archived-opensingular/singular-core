@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -45,5 +46,32 @@ final class XmlUtil {
     public static boolean isNodeTypeElement(Node node, String expectedElementName) {
         return isNodeTypeElement(node) && (expectedElementName == null || expectedElementName.equals(
                 node.getNodeName()));
+    }
+
+    /**
+     * Retorna o nó raiz do nó informado, ou seja, sobre na hierarquia até encontrar um nó sem pai.
+     *
+     * @return O próprio nó se o mesmo já for o raiz.
+     */
+    public static Node getRootParent(Node node) {
+        Node root = node;
+        while (root.getParentNode() != null) {
+            root = root.getParentNode();
+        }
+        return root;
+    }
+
+    /**
+     * Localiza o próximo nó irmão do nó informado que atenda ao nome informado.
+     *
+     * @param elementName Se null, não verificar se o nome é igual e retorna true (basta ser um Element)
+     */
+    public static Element nextSiblingOfTypeElement(Node node, String elementName) {
+        for (Node n = node; n != null; n = n.getNextSibling()) {
+            if (isNodeTypeElement(n, elementName)) {
+                return (Element) n;
+            }
+        }
+        return null;
     }
 }

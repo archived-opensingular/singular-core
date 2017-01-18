@@ -57,43 +57,53 @@ public final class PathReader {
         } else {
             aListIndex = (path.charAt(inicio) == '[');
             if (aListIndex) {
-                end = path.indexOf(']', inicio + 1) + 1;
-                if (end == 0 || inicio + 2 == end) {
-                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
-                }
-                for (int i = inicio + 1; i < end - 1; i++) {
-                    if (!Character.isDigit(path.charAt(i))) {
-                        throw new SingularFormException("Path '" + path + "': caracter inválido na posição " + i);
-                    }
-                }
+                end = findListIndexTokenEndOrException(path, inicio);;
                 token = path.substring(inicio + 1, end - 1);
             } else {
                 if (path.charAt(inicio) == '.') {
                     if (inicio == 0) {
-                        throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
+                        throw newInvalidPathInPosition(path, inicio, null);
                     } else {
                         inicio++;
                     }
                 } else if (inicio != 0) {
-                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
+                    throw newInvalidPathInPosition(path, inicio, null);
                 }
 
-                end = findEnd(path, inicio);
-                if (inicio == end) {
-                    throw new SingularFormException("Path '" + path + "': inválido na posição " + inicio);
-                }
-                token = (inicio == 0 && end == path.length()) ? path : path.substring(inicio, end);
+                end = findTokenEndOrException(path, inicio);
+                token = path.substring(inicio, end);
                 if (SFormUtil.isNotValidSimpleName(token)) {
-                    throw new SingularFormException(
-                            "Path '" + path + "': inválido na posição " + inicio + " : Não é um nome de campo válido");
+                    throw newInvalidPathInPosition(path, inicio, "Não é um nome de campo válido");
                 }
             }
         }
     }
 
-    private static int findEnd(String s, int pos) {
+    private int findListIndexTokenEndOrException(String path, int inicio) {
+        int posEnd = path.indexOf(']', inicio + 1) + 1;
+        if (posEnd == 0 || inicio + 2 == posEnd) {
+            throw newInvalidPathInPosition(path, inicio, null);
+        }
+        for (int i = inicio + 1; i < posEnd - 1; i++) {
+            if (!Character.isDigit(path.charAt(i))) {
+                throw newInvalidPathInPosition(path, i, "caracter inválido");
+            }
+        }
+        return posEnd;
+    }
+
+    private SingularFormException newInvalidPathInPosition(String path, int pos, String complement) {
+        return new SingularFormException(
+                "Path '" + path + "': inválido na posição " + pos + (complement != null ? " : " + complement : ""));
+    }
+
+    private int findTokenEndOrException(String s, int inicio) {
+        int pos = inicio;
         for (; pos < s.length() && s.charAt(pos) != '.' && s.charAt(pos) != '['; pos++)
             ;
+        if (inicio == pos) {
+            throw newInvalidPathInPosition(s, inicio, null);
+        }
         return pos;
     }
 

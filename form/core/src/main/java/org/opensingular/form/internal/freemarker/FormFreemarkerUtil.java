@@ -16,49 +16,18 @@
 
 package org.opensingular.form.internal.freemarker;
 
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.type.core.SIDate;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SISimple;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.calculation.CalculationContext;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.type.core.SIBoolean;
-import org.opensingular.form.type.core.SIDateTime;
-import org.opensingular.form.type.core.SINumber;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.SITime;
-import freemarker.template.Configuration;
-import freemarker.template.ObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateBooleanModel;
-import freemarker.template.TemplateCollectionModel;
-import freemarker.template.TemplateDateModel;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateHashModel;
-import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateModelIterator;
-import freemarker.template.TemplateNumberModel;
-import freemarker.template.TemplateScalarModel;
-import freemarker.template.TemplateSequenceModel;
+import freemarker.template.*;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.*;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -126,20 +95,7 @@ public final class FormFreemarkerUtil {
         if (obj == null) {
             return null;
         } else if (obj instanceof SISimple) {
-            if (obj instanceof SIString) {
-                return new SSimpleTemplateModel((SISimple<?>) obj);
-            } else if (obj instanceof SINumber) {
-                return new SNumberTemplateModel<>((SINumber<?>) obj);
-            } else if (obj instanceof SIBoolean) {
-                return new SIBooleanTemplateModel((SIBoolean) obj);
-            } else if (obj instanceof SIDate) {
-                return new SIDateTemplateModel((SIDate) obj);
-            } else if (obj instanceof SIDateTime) {
-                return new SIDateTimeTemplateModel((SIDateTime) obj);
-            } else if (obj instanceof SITime) {
-                return new SITimeTemplateModel((SITime) obj);
-            }
-            return new SSimpleTemplateModel((SISimple<?>) obj);
+            return toTemplateModelSimple((SISimple) obj);
         } else if (obj instanceof SIComposite) {
             return new SICompositeTemplateModel((SIComposite) obj);
         } else if (obj instanceof SIList) {
@@ -150,6 +106,23 @@ public final class FormFreemarkerUtil {
             throw new SingularFormException(msg, (SInstance) obj);
         }
         throw new SingularFormException(msg);
+    }
+
+    private static TemplateModel toTemplateModelSimple(SISimple obj) {
+        if (obj instanceof SIString) {
+            return new SSimpleTemplateModel(obj);
+        } else if (obj instanceof SINumber) {
+            return new SNumberTemplateModel<>((SINumber<?>) obj);
+        } else if (obj instanceof SIBoolean) {
+            return new SIBooleanTemplateModel((SIBoolean) obj);
+        } else if (obj instanceof SIDate) {
+            return new SIDateTemplateModel((SIDate) obj);
+        } else if (obj instanceof SIDateTime) {
+            return new SIDateTimeTemplateModel((SIDateTime) obj);
+        } else if (obj instanceof SITime) {
+            return new SITimeTemplateModel((SITime) obj);
+        }
+        return new SSimpleTemplateModel(obj);
     }
 
     private static class FormObjectWrapper implements ObjectWrapper {

@@ -486,18 +486,16 @@ public final class XPathToolkit {
     private static Node findSimples(Node pai, String path) {
 
         Node resp = pai;
-        String nomeElemento;
 
         if (path.charAt(0) == '/') {
-            while (resp.getParentNode() != null) {
-                resp = resp.getParentNode();
-            }
+            resp = XmlUtil.getRootParent(resp);
             if (path.length() == 1) {
                 return resp;
             }
             path = path.substring(1);
         }
 
+        String nomeElemento;
         while ((resp != null) && (path != null)) {
             int pos = path.indexOf('/');
             if (pos == -1) {
@@ -515,11 +513,7 @@ public final class XPathToolkit {
                 return ((Element) resp).getAttributeNode(nomeElemento.substring(1));
             }
 
-            Node n = resp.getFirstChild();
-            while ((n != null) && ! isNodeTypeElement(n, nomeElemento)) {
-                n = n.getNextSibling();
-            }
-            resp = n;
+            resp = XmlUtil.nextSiblingOfTypeElement(resp.getFirstChild(), nomeElemento);
         }
         return resp;
     }

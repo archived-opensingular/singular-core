@@ -798,17 +798,18 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     private void debugTypeHeader(Appendable appendable) throws IOException {
-        SType<?> at = this.isAttribute() ? this : null;
-        appendable.append(at == null ? "def " : "defAtt ");
-        appendable.append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
-        if (at != null) {
-            SType<?> owner = at.getAttributeDefinitionInfo().getOwner();
-            if (owner != null && owner != at.getParentScope()) {
+        if (isAttribute()) {
+            appendable.append("defAtt ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
+            SType<?> owner = getAttributeDefinitionInfo().getOwner();
+            if (owner != null && owner != getParentScope()) {
                 appendable.append(" for ");
                 appendNameAndId(appendable, owner);
             }
-        }
-        if (at == null) {
+            if (isSelfReference()) {
+                appendable.append(" (SELF)");
+            }
+        } else {
+            appendable.append("def ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
             if (superType == null || superType.getClass() != getClass()) {
                 appendable.append(" (").append(getClass().getSimpleName());
                 if (instanceClass != null && (superType == null || !instanceClass.equals(superType.instanceClass))) {
@@ -816,10 +817,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 }
                 appendable.append(")");
             }
-        } else if (at.isSelfReference()) {
-            appendable.append(" (SELF)");
         }
-        if (superType != null && (at == null || !at.isSelfReference())) {
+        if (superType != null && (! isAttribute() || !isSelfReference())) {
             appendable.append(" extend ");
             appendNameAndId(appendable, superType);
             if (this instanceof STypeList) {

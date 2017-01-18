@@ -1835,13 +1835,7 @@ public abstract class MElement implements Element, Serializable {
      * @return Um Element ou null se não encontrar.
      */
     private MElement procurarProximoElement(Node no, String nome) {
-        while (no != null) {
-            if (isNodeTypeElement(no, nome)) {
-                return toMElement(no);
-            }
-            no = no.getNextSibling();
-        }
-        return null;
+        return toMElement(XmlUtil.nextSiblingOfTypeElement(no, nome));
     }
 
     /**

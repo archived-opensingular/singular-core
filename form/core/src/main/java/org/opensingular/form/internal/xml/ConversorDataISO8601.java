@@ -309,20 +309,7 @@ public final class ConversorDataISO8601 {
 
         StringBuilder buffer = new StringBuilder(40);
 
-        if (year < 0) {
-            throw new IllegalArgumentException("Ano Negativo");
-        } else if (year < 10) {
-            buffer.append("000");
-        } else if (year < 100) {
-            buffer.append("00");
-        } else if (year < 1000) {
-            buffer.append('0');
-        }
-        buffer.append(year);
-        buffer.append('-');
-        format2(buffer, month);
-        buffer.append('-');
-        format2(buffer, day);
+        formatYearMonthDay(buffer, year, month, day);
 
         if ((prescisao == DIA)
                 || ((hour == 0) && (minute == 0) && (second == 0) && (mili == 0) && (nano == 0))) {
@@ -337,48 +324,60 @@ public final class ConversorDataISO8601 {
         format2(buffer, second);
 
         if (nano == 0) {
-            if ((mili < 0) || (mili > 999)) {
-                throw new IllegalArgumentException("Milisegundos <0 ou >999");
-            }
-            if ((prescisao == MILI) || (prescisao == NANO)) {
-                buffer.append('.');
-                format3(buffer, mili);
-            }
+            formatMiliIfNecessary(buffer, mili, prescisao);
+        } else if (mili != 0) {
+            throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
         } else {
-            if (mili != 0) {
-                throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
-            }
-            if ((nano < 0) || (nano > 999999999)) {
-                throw new IllegalArgumentException("Nanos <0 ou >999999999");
-            }
-            // Geralmente so tem precisão de mili segundos
-            // Se forem apenas milisegundos fica .999
-            // Se realm
-            mili = nano / 1000000;
-            if ((prescisao == MILI) || (prescisao == NANO)) {
-                buffer.append('.');
-                format3(buffer, mili);
-            }
-            if (prescisao == NANO) {
-                nano = nano % 1000000;
-                if (nano != 0) {
-                    String nanoS = Integer.toString(nano);
-                    for (int i = 6 - nanoS.length(); i != 0; i--) {
-                        buffer.append('0');
-                    }
-                    //Trunca zeros restantes
-                    int ultimo = nanoS.length() - 1;
-                    while ((ultimo != -1) && (nanoS.charAt(ultimo) == '0')) {
-                        ultimo--;
-                    }
-                    for (int i = 0; i <= ultimo; i++) {
-                        buffer.append(nanoS.charAt(i));
-                    }
-                }
-            }
+            formatMiliAndNanoIfNecessary(buffer, nano, prescisao);
         }
 
         return buffer.toString();
+    }
+
+    private static void formatYearMonthDay(StringBuilder buffer, int year, int month, int day) {
+        if (year < 0) {
+            throw new IllegalArgumentException("Ano Negativo");
+        } else if (year < 10) {
+            buffer.append("000");
+        } else if (year < 100) {
+            buffer.append("00");
+        } else if (year < 1000) {
+            buffer.append('0');
+        }
+        buffer.append(year);
+        buffer.append('-');
+        format2(buffer, month);
+        buffer.append('-');
+        format2(buffer, day);
+    }
+
+    private static void formatMiliAndNanoIfNecessary(StringBuilder buffer, int nano, byte prescisao) {
+        int mili;
+        if ((nano < 0) || (nano > 999999999)) {
+            throw new IllegalArgumentException("Nanos <0 ou >999999999");
+        }
+        // Geralmente so tem precisão de mili segundos
+        // Se forem apenas milisegundos fica .999
+        // Se realm
+        mili = nano / 1000000;
+        formatMiliIfNecessary(buffer, mili, prescisao);
+        if (prescisao == NANO) {
+            nano = nano % 1000000;
+            if (nano != 0) {
+                String nanoS = Integer.toString(nano);
+                for (int i = 6 - nanoS.length(); i != 0; i--) {
+                    buffer.append('0');
+                }
+                //Trunca zeros restantes
+                int ultimo = nanoS.length() - 1;
+                while ((ultimo != -1) && (nanoS.charAt(ultimo) == '0')) {
+                    ultimo--;
+                }
+                for (int i = 0; i <= ultimo; i++) {
+                    buffer.append(nanoS.charAt(i));
+                }
+            }
+        }
     }
 
     private static void format2(StringBuilder buffer, int valor) {
@@ -392,15 +391,21 @@ public final class ConversorDataISO8601 {
         buffer.append(valor);
     }
 
-    private static void format3(StringBuilder buffer, int valor) {
-        if (valor < 0) {
-            throw new IllegalArgumentException("valor negativo");
-        } else if (valor < 10) {
-            buffer.append("00");
-        } else if (valor < 100) {
-            buffer.append('0');
+    private static void formatMiliIfNecessary(StringBuilder buffer, int mili, byte prescisao) {
+        if ((mili < 0) || (mili > 999)) {
+            throw new IllegalArgumentException("Milisegundos <0 ou >999");
         }
-        buffer.append(valor);
+        if ((prescisao == MILI) || (prescisao == NANO)) {
+            buffer.append('.');
+            if (mili < 0) {
+                throw new IllegalArgumentException("valor negativo");
+            } else if (mili < 10) {
+                buffer.append("00");
+            } else if (mili < 100) {
+                buffer.append('0');
+            }
+            buffer.append(mili);
+        }
     }
 
     /**
@@ -410,42 +415,23 @@ public final class ConversorDataISO8601 {
      * @return true se atender ao formato
      */
     public static boolean isISO8601(String valor) {
-        if ((valor == null) || valor.length() < 10) {
+        //                01234567890123456789012345678
+        //                1999-05-31T13:20:00.000-05:00
+        String mascara = "????-??-??T??:??:??.?????????";
+        if ((valor == null) || valor.length() < 10 || valor.length() > mascara.length()) {
             return false;
         }
-        //01234567890123456789012345678
-        //1999-05-31T13:20:00.000-05:00<p>
-
         int tam = valor.length();
         for (int i = 0; i < tam; i++) {
-            switch (i) {
-                case 4:
-                case 7:
-                    if (valor.charAt(i) != '-') {
-                        return false;
-                    }
-                    break;
-                case 10:
-                    if (valor.charAt(i) != 'T' && valor.charAt(i) != ' ') {
-                        return false;
-                    }
-                    break;
-                case 13:
-                case 16:
-                    if (valor.charAt(i) != ':') {
-                        return false;
-                    }
-                    break;
-                case 19:
-                    if (valor.charAt(i) != '.') {
-                        return false;
-                    }
-                    break;
-                default:
-                    if (!Character.isDigit(valor.charAt(i))) {
-                        return false;
-                    }
-                    break;
+            char m = mascara.charAt(i);
+            if (m == '?') {
+                if (!Character.isDigit(valor.charAt(i))) {
+                    return false;
+                }
+            } else if (m != valor.charAt(i)) {
+                if (i != 10 || valor.charAt(i) != ' ') {
+                    return false;
+                }
             }
         }
         return true;

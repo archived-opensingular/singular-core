@@ -329,13 +329,7 @@ public final class MElementResult extends MElement implements EWrapper {
             } else {
                 no = atual.get().getNextSibling();
             }
-            while (no != null) {
-                if (isNodeTypeElement(no, nomeElemento_)) {
-                    return true;
-                }
-                no = no.getNextSibling();
-            }
-            return false;
+            return XmlUtil.nextSiblingOfTypeElement(no, nomeElemento_) != null;
         } else {
             return atualList_ < list.size();
         }
@@ -361,12 +355,7 @@ public final class MElementResult extends MElement implements EWrapper {
             } else {
                 no = atual.get().getNextSibling();
             }
-            while (no != null) {
-                if (isNodeTypeElement(no, nomeElemento_)) {
-                    break;
-                }
-                no = no.getNextSibling();
-            }
+            no = XmlUtil.nextSiblingOfTypeElement(no, nomeElemento_);
             atual = no == null ? null : SupplierUtil.serializable((Element) no);
         } else {
             atual = null;
