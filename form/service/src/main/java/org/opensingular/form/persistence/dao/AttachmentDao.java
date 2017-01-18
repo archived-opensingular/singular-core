@@ -28,14 +28,14 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.opensingular.form.persistence.entity.AbstractFormAttachmentEntity;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
-public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentContentEntitty> extends BaseDAO<T, Long> {
+public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentContentEntity> extends BaseDAO<T, Long> {
 
     @Inject
     private AttachmentContentDao<C> attachmentContentDao;

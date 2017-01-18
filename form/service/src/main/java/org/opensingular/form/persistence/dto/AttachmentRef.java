@@ -18,7 +18,7 @@ package org.opensingular.form.persistence.dto;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.CompressionUtil;
 import org.opensingular.form.io.IOUtil;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
@@ -81,7 +81,7 @@ public class AttachmentRef implements IAttachmentRef{
         try {
             if (file == null || !file.exists()) {
                 
-                AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntitty> persistenceHandler =
+                AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntity> persistenceHandler =
                     ApplicationContextProvider.get().getBean(SDocument.FILE_PERSISTENCE_SERVICE, AttachmentPersistenceService.class);
 
                 file = File.createTempFile(name, hashSha1 + "."+id);

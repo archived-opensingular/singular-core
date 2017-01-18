@@ -22,7 +22,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dto.AttachmentRef;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
-public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
+public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntity> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
     protected AttachmentDao<T, C> attachmentDao;
