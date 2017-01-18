@@ -799,24 +799,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private void debugTypeHeader(Appendable appendable) throws IOException {
         if (isAttribute()) {
-            appendable.append("defAtt ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
-            SType<?> owner = getAttributeDefinitionInfo().getOwner();
-            if (owner != null && owner != getParentScope()) {
-                appendable.append(" for ");
-                appendNameAndId(appendable, owner);
-            }
-            if (isSelfReference()) {
-                appendable.append(" (SELF)");
-            }
+            debugTypeHeaderAttribute(appendable);
         } else {
-            appendable.append("def ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
-            if (superType == null || superType.getClass() != getClass()) {
-                appendable.append(" (").append(getClass().getSimpleName());
-                if (instanceClass != null && (superType == null || !instanceClass.equals(superType.instanceClass))) {
-                    appendable.append(":").append(instanceClass.getSimpleName());
-                }
-                appendable.append(")");
-            }
+            debugTypeHeaderNormalType(appendable);
         }
         if (superType != null && (! isAttribute() || !isSelfReference())) {
             appendable.append(" extend ");
@@ -828,6 +813,29 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                     appendNameAndId(appendable, lista.getElementsType());
                 }
             }
+        }
+    }
+
+    private void debugTypeHeaderAttribute(Appendable appendable) throws IOException {
+        appendable.append("defAtt ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
+        SType<?> owner = getAttributeDefinitionInfo().getOwner();
+        if (owner != null && owner != getParentScope()) {
+            appendable.append(" for ");
+            appendNameAndId(appendable, owner);
+        }
+        if (isSelfReference()) {
+            appendable.append(" (SELF)");
+        }
+    }
+
+    private void debugTypeHeaderNormalType(Appendable appendable) throws IOException {
+        appendable.append("def ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
+        if (superType == null || superType.getClass() != getClass()) {
+            appendable.append(" (").append(getClass().getSimpleName());
+            if (instanceClass != null && (superType == null || !instanceClass.equals(superType.instanceClass))) {
+                appendable.append(":").append(instanceClass.getSimpleName());
+            }
+            appendable.append(")");
         }
     }
 

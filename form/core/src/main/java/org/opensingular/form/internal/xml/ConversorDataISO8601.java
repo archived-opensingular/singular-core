@@ -392,14 +392,14 @@ public final class ConversorDataISO8601 {
     }
 
     private static void formatMiliIfNecessary(StringBuilder buffer, int mili, byte prescisao) {
-        if ((mili < 0) || (mili > 999)) {
-            throw new IllegalArgumentException("Milisegundos <0 ou >999");
+        if (mili < 0) {
+            throw new IllegalArgumentException("Milisegundos <0");
+        } else if (mili > 999){
+            throw new IllegalArgumentException("Milisegundos >999");
         }
         if ((prescisao == MILI) || (prescisao == NANO)) {
             buffer.append('.');
-            if (mili < 0) {
-                throw new IllegalArgumentException("valor negativo");
-            } else if (mili < 10) {
+            if (mili < 10) {
                 buffer.append("00");
             } else if (mili < 100) {
                 buffer.append('0');
