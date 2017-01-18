@@ -57,7 +57,7 @@ public final class PathReader {
         } else {
             aListIndex = (path.charAt(inicio) == '[');
             if (aListIndex) {
-                end = findListIndexTokenEndOrException(path, inicio);;
+                end = findListIndexTokenEndOrException(path, inicio);
                 token = path.substring(inicio + 1, end - 1);
             } else {
                 if (path.charAt(inicio) == '.') {
