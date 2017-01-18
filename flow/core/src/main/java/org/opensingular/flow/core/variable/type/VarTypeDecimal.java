@@ -31,7 +31,7 @@ public class VarTypeDecimal implements VarType {
 
     @Override
     public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValor(), varInstance.getDefinicao());
+        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class VarTypeDecimal implements VarType {
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        BigDecimal  valor = (BigDecimal) varInstance.getValor();
+        BigDecimal  valor = (BigDecimal) varInstance.getValue();
         if (valor == null){
             return null;
         }

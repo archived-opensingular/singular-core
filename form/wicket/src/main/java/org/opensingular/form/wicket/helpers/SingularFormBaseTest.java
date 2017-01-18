@@ -93,7 +93,7 @@ public abstract class SingularFormBaseTest {
     }
 
     protected static String formField(FormTester form, String leafName) {
-        return "form:" + TestFinders.findId(form.getForm(), leafName).get();
+        return "form:" + TestFinders.findId(form.getForm(), leafName).orElse(null);
     }
 
     protected SIComposite createInstance(final SType x) {

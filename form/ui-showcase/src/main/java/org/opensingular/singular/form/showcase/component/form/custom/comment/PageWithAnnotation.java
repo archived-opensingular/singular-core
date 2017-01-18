@@ -40,7 +40,7 @@ public class PageWithAnnotation {
          * Como as anotações são armazenadas de forma separada da instancia a qual faz referencia
          * esta deve ser carregada em conjunto para a exibição das anotações para edição.
          */
-        pedido.asAtrAnnotation().loadAnnotations(annotations);
+        pedido.getDocument().getDocumentAnnotations().loadAnnotations(annotations);
     }
 
     public void saveAnnotations(SIComposite pedido){
@@ -50,12 +50,13 @@ public class PageWithAnnotation {
          * Anotações são armazenadas junto a cada campo onde a mesma está habilitada.
          */
         SInstance instanciaCampoCliente = pedido.getDescendant(pacote.cliente);
-        SIAnnotation anotacaoDoCliente = instanciaCampoCliente.asAtrAnnotation().annotation();
+        instanciaCampoCliente.asAtrAnnotation().annotation();
 
         /**
-         * As anotações pordem ser persistidas separadamente ou de forma conjunta.
+         * As anotações podem ser persistidas separadamente ou de forma conjunta.
          */
-        SIList anotacoes = instanciaCampoCliente.asAtrAnnotation().persistentAnnotations();
+        //TODO explicar melhor como funciona a persistencia de anotação
+        instanciaCampoCliente.getDocument().getDocumentAnnotations().persistentAnnotationsClassified();
     }
 
 }

@@ -25,7 +25,6 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -42,8 +41,8 @@ public class AtrBasic extends STranslatorForAttribute {
     public AtrBasic() {
     }
 
-    public AtrBasic(SAttributeEnabled alvo) {
-        super(alvo);
+    public AtrBasic(SAttributeEnabled target) {
+        super(target);
     }
 
     public AtrBasic label(String value) {

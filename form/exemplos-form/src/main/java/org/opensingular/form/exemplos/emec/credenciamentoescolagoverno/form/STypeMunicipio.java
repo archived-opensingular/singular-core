@@ -34,14 +34,12 @@ public class STypeMunicipio extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         asAtr().label("Município");
         
         addFieldInteger(FIELD_ID, true);
         addFieldString(FIELD_UF, true);
         addFieldString(FIELD_NOME, true);
-        
     }
     
     public STypeInteger getFieldId(){

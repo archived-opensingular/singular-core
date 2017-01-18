@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper.selection;
 
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewAutoComplete;
@@ -55,7 +56,7 @@ public class AutocompleteMapper extends AbstractControlsFieldComponentMapper {
 
     private void validateView(SView view) {
         if (!isAValidView(view)) {
-            throw new RuntimeException("AutocompleteMapper only accepts SViewAutoComplete as its view");
+            throw new SingularFormException("AutocompleteMapper only accepts SViewAutoComplete as its view");
         }
     }
 

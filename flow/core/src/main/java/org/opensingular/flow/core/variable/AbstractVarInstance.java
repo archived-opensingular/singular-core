@@ -32,18 +32,18 @@ public abstract class AbstractVarInstance implements VarInstance {
 
 
     @Override
-    public VarDefinition getDefinicao() {
+    public VarDefinition getDefinition() {
         return definition;
     }
 
     @Override
     public String getStringDisplay() {
-        return getDefinicao().toDisplayString(this);
+        return getDefinition().toDisplayString(this);
     }
 
     @Override
-    public String getStringPersistencia() {
-        return getDefinicao().toPersistenceString(this);
+    public String getPersistentString() {
+        return getDefinition().toPersistenceString(this);
     }
 
     @Override
@@ -69,6 +69,6 @@ public abstract class AbstractVarInstance implements VarInstance {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [definicao=" + getRef() + ", codigo=" + getValor() + "]";
+        return getClass().getSimpleName() + " [definicao=" + getRef() + ", codigo=" + getValue() + "]";
     }
 }

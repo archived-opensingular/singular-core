@@ -22,8 +22,6 @@ import java.util.Objects;
 
 public class DefaultVarInstance extends AbstractVarInstance {
 
-    private boolean historySaved = false;
-
     private Object valor;
 
     public DefaultVarInstance(VarDefinition definition) {
@@ -31,7 +29,7 @@ public class DefaultVarInstance extends AbstractVarInstance {
     }
 
     @Override
-    public VarInstance setValor(Object valor) {
+    public VarInstance setValue(Object valor) {
         try {
             Object antes = this.valor;
             this.valor = valor;
@@ -40,12 +38,12 @@ public class DefaultVarInstance extends AbstractVarInstance {
             }
             return this;
         } catch (RuntimeException e) {
-            throw SingularException.rethrow("Erro setando valor '" + valor + "' em " + getRef() + " (" + getNome() + ")", e);
+            throw SingularException.rethrow("Erro setando valor '" + valor + "' em " + getRef() + " (" + getName() + ")", e);
         }
     }
 
     @Override
-    public Object getValor() {
+    public Object getValue() {
         return valor;
     }
 }

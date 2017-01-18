@@ -58,7 +58,7 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
 
     @Override
     public IEntityTaskType getTaskType() {
-        return TaskType.Wait;
+        return TaskType.WAIT;
     }
 
     @Override

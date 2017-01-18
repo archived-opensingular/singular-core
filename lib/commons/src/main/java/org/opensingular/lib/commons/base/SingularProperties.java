@@ -47,6 +47,7 @@ public interface SingularProperties {
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
     String USE_INMEMORY_DATABASE = "singular.use.inmemory.database";
+    String JNDI_DATASOURCE = "singular.jndi.name.datasource";
 
     // Identifica o nome do schema que deve ser utilizado
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";

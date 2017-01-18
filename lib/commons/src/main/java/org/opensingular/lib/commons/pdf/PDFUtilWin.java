@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.commons.pdf;
 
+import org.opensingular.lib.commons.util.TempFileUtils;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -120,9 +122,9 @@ public class PDFUtilWin extends PDFUtil {
     /**
      * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
      *
-     * @param unsafeHtml       o código HTML.
-     * @param header           o código HTML do cabeçalho.
-     * @param footer           o código HTML do rodapé.
+     * @param rawHtml       o código HTML.
+     * @param rawHeader     o código HTML do cabeçalho.
+     * @param rawFooter     o código HTML do rodapé.
      * @param additionalConfig configurações adicionais.
      * @return O arquivo PDF gerado.
      * @throws IOException          Caso ocorra um problema de IO.
@@ -153,20 +155,23 @@ public class PDFUtilWin extends PDFUtil {
         File pdfFile  = new File(tempFolder, "temp.pdf");
         File jarFile  = new File(tempFolder, "temp.jar");
 
-        if (htmlFile.exists() && !htmlFile.delete()) {
-            getLogger().error("convertHTML2PDF: HTML file not found");
-            return null;
-        }
+        TempFileUtils.deleteOrException(htmlFile, getClass());
 
         if (htmlFile.createNewFile()) {
             Writer fw = null;
+            FileOutputStream fos = null;
             try {
-                fw = new OutputStreamWriter(new FileOutputStream(htmlFile), Charset.forName("UTF-8").newEncoder());
+                fos = new FileOutputStream(htmlFile);
+                fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder());
                 fw.write(html);
             } finally {
                 if (fw != null) {
                     fw.close();
                     fw = null;
+                }
+                if (fos != null) {
+                    fos.close();
+                    fos = null;
                 }
             }
 
@@ -182,7 +187,8 @@ public class PDFUtilWin extends PDFUtil {
             if (header != null) {
                 try {
                     File headerFile = new File(tempFolder, "header.html");
-                    fw = new OutputStreamWriter(new FileOutputStream(headerFile),
+                    fos = new FileOutputStream(headerFile);
+                    fw = new OutputStreamWriter(fos,
                             Charset.forName("UTF-8").newEncoder());
                     fw.write(header);
                     commandAndArgs.add("--header-html");
@@ -193,13 +199,18 @@ public class PDFUtilWin extends PDFUtil {
                         fw.close();
                         fw = null;
                     }
+                    if (fos != null) {
+                        fos.close();
+                        fos = null;
+                    }
                 }
             }
 
             if (footer != null) {
                 try {
                     File footerFile = new File(tempFolder, "footer.html");
-                    fw = new OutputStreamWriter(new FileOutputStream(footerFile),
+                    fos = new FileOutputStream(footerFile);
+                    fw = new OutputStreamWriter(fos,
                             Charset.forName("UTF-8").newEncoder());
                     fw.write(footer);
                     commandAndArgs.add("--footer-html");
@@ -208,6 +219,9 @@ public class PDFUtilWin extends PDFUtil {
                 } finally {
                     if (fw != null) {
                         fw.close();
+                    }
+                    if (fos != null) {
+                        fos.close();
                     }
                 }
             }
@@ -266,19 +280,21 @@ public class PDFUtilWin extends PDFUtil {
         File pngFile  = new File(tempFolder, "temp.png");
         File jarFile  = new File(tempFolder, "temp.jar");
 
-        if (htmlFile.exists() && !htmlFile.delete()) {
-            getLogger().error("convertHTML2PNG: HTML file not found");
-            return null;
-        }
+        TempFileUtils.deleteOrException(htmlFile, getClass());
 
         if (htmlFile.createNewFile()) {
             Writer fw = null;
+            FileOutputStream fos = null;
             try {
-                fw = new OutputStreamWriter(new FileOutputStream(htmlFile), Charset.forName("UTF-8").newEncoder());
+                fos = new FileOutputStream(htmlFile);
+                fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder());
                 fw.write(html);
             } finally {
                 if (fw != null) {
                     fw.close();
+                }
+                if (fos != null) {
+                    fos.close();
                 }
             }
 

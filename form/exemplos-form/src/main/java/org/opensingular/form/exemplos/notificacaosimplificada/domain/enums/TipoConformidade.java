@@ -25,8 +25,8 @@ public enum TipoConformidade {
 
     public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoConformidade";
 
-    private String codigo;
-    private String descricao;
+    private final String codigo;
+    private final String descricao;
 
     private TipoConformidade(String codigo, String descricao) {
         this.codigo = codigo;
@@ -41,24 +41,10 @@ public enum TipoConformidade {
     }
 
     /**
-     * @param codigo codigo a ser atribuído
-     */
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    /**
      * @return descricao
      */
     public String getDescricao() {
         return descricao;
-    }
-
-    /**
-     * @param descricao descricao a ser atribuído
-     */
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
     }
 
     public static TipoConformidade valueOfEnum(String codigo) {

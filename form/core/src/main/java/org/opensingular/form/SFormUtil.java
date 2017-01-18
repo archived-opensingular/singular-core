@@ -16,25 +16,21 @@
 
 package org.opensingular.form;
 
-import static java.util.stream.Collectors.joining;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
+import org.opensingular.form.type.util.SPackageUtil;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
+import javax.lang.model.SourceVersion;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-
-import javax.lang.model.SourceVersion;
-
-import org.opensingular.form.type.core.SPackageBootstrap;
-import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
-import org.opensingular.form.type.util.SPackageUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
-
-import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import static java.util.stream.Collectors.joining;
 
@@ -45,12 +41,12 @@ public final class SFormUtil {
     private SFormUtil() {
     }
 
-    static boolean isValidSimpleName(String name) {
-        return idPattern.matcher(name).matches();
+    public static boolean isNotValidSimpleName(String name) {
+        return !idPattern.matcher(name).matches();
     }
 
     static void validateSimpleName(String name) {
-        if (!isValidSimpleName(name)) {
+        if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para tipo ou atributo");
         }
     }
@@ -72,22 +68,22 @@ public final class SFormUtil {
     private static SType<?> resolveFieldTypeInternal(SType<?> type, PathReader pathReader) {
         if (type instanceof STypeComposite) {
             if (pathReader.isIndex()) {
-                throw new SingularFormException(pathReader.getTextoErro(type, "Índice de lista não se aplica a um tipo composto"));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"));
             }
-            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getTrecho());
+            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getToken());
             if (campo == null) {
-                throw new SingularFormException(pathReader.getTextoErro(type, "Não existe o campo '" + pathReader.getTrecho() + '\''));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + pathReader.getToken() + '\''));
             }
             return campo;
         } else if (type instanceof STypeList) {
             if (pathReader.isIndex()) {
                 return ((STypeList<?, ?>) type).getElementsType();
             }
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não se aplica a um tipo lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica a um tipo lista"));
         } else if (type instanceof STypeSimple) {
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não se aplica um path a um tipo simples"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica um path a um tipo simples"));
         } else {
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não implementado para " + type.getClass()));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não implementado para " + type.getClass()));
         }
     }
 
@@ -232,20 +228,16 @@ public final class SFormUtil {
 
     private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
-    private static Map<String, Class<? extends SPackage>> getSingularPackages() {
+    private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
-            synchronized (SFormUtil.class) {
-                if (singularPackages == null) {
-                    singularPackages = SupplierUtil.cached(() -> {
-                        Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
-                        // addPackage(builder, SPackageBasic.class);
-                        addPackage(builder, SPackageUtil.class);
-                        addPackage(builder, SPackageBootstrap.class);
-                        addPackage(builder, SPackageCountryBrazil.class);
-                        return builder.build();
-                    });
-                }
-            }
+            singularPackages = SupplierUtil.cached(() -> {
+                Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
+                // addPackage(builder, SPackageBasic.class);
+                addPackage(builder, SPackageUtil.class);
+                addPackage(builder, SPackageBootstrap.class);
+                addPackage(builder, SPackageCountryBrazil.class);
+                return builder.build();
+            });
         }
         return singularPackages.get();
     }
@@ -280,7 +272,7 @@ public final class SFormUtil {
     /**
      * Indica se o tipo é um definição do próprio singular (true) ou se é uma definição de terceiros ou do usuário.
      */
-    public static final boolean isSingularBuiltInType(SType<?> type) {
+    public static boolean isSingularBuiltInType(SType<?> type) {
         return type.getPackage().getName().startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX);
     }
 

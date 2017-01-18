@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.lambda;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
+@FunctionalInterface
 public interface ISupplier<T> extends Supplier<T>, Serializable {
 
 }

@@ -16,6 +16,7 @@
 
 package org.opensingular.form.exemplos.canabidiol.dao;
 
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.exemplos.canabidiol.model.AbstractDadoCID;
 import org.opensingular.form.exemplos.canabidiol.model.CategoriaCID;
 import org.opensingular.form.exemplos.canabidiol.model.SubCategoriaCID;
@@ -24,10 +25,13 @@ import org.opensingular.form.exemplos.canabidiol.model.GrupoCID;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,11 +67,11 @@ public class CIDDAO {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw SingularFormException.rethrow(e.getMessage(), e);
         }
     }
 
-    private static void relateEachOther(AbstractDadoCID parent, List<? extends AbstractDadoCID> candidateChilds, String childCollectionName) throws Exception {
+    private static void relateEachOther(AbstractDadoCID parent, List<? extends AbstractDadoCID> candidateChilds, String childCollectionName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<AbstractDadoCID> collection = new ArrayList<>();
         for (AbstractDadoCID candidate : candidateChilds) {
             if (parent.getLetraInicial() <= candidate.getLetraInicial()
@@ -81,7 +85,7 @@ public class CIDDAO {
         setCollection.invoke(parent, collection);
     }
 
-    private static <T extends AbstractDadoCID> List<T> readFile(String filename, Class<T> targetClass) throws Exception {
+    private static <T extends AbstractDadoCID> List<T> readFile(String filename, Class<T> targetClass) throws IOException, InstantiationException, IllegalAccessException {
         List<T> cids = new ArrayList<>();
         LineIterator lineIterator = IOUtils.lineIterator(CIDDAO.class.getClassLoader().getResource("data/cid/" + filename).openStream(), "UTF-8");
         lineIterator.next();
@@ -91,7 +95,7 @@ public class CIDDAO {
         return cids;
     }
 
-    private static <T extends AbstractDadoCID> T readCidData(Class<T> clazz, String line) throws Exception {
+    private static <T extends AbstractDadoCID> T readCidData(Class<T> clazz, String line) throws IllegalAccessException, InstantiationException {
         String[] values = line.split(";");
         T value = clazz.newInstance();
         int index = 0;
@@ -105,7 +109,7 @@ public class CIDDAO {
         value.setLetraInicial(catinicial.charAt(0));
         value.setNumInicial(Integer.parseInt(catinicial.substring(1)));
 
-        String catfinal = null;
+        String catfinal;
         if (clazz.isAssignableFrom(SubCategoriaCID.class)) {
             catfinal = catinicial;
             index += 3;
@@ -121,7 +125,7 @@ public class CIDDAO {
 
         value.setDescricao(StringUtils.trim(values[index++]));
 
-        value.setDescricaoAbreviada(StringUtils.trim(values[index++]));
+        value.setDescricaoAbreviada(StringUtils.trim(values[index]));
 
         return value;
     }

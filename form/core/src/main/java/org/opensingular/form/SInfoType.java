@@ -32,7 +32,7 @@ public @interface SInfoType {
     /**
      * Permite informar o nome simples do tipo. Senão for informado, será
      * utilizado o nome simples da classe que define o tipo (ver
-     * {@link java.lang.Class.getSimpleName()}).
+     * {@link java.lang.Class#getSimpleName()}).
      */
     String name() default "";
 

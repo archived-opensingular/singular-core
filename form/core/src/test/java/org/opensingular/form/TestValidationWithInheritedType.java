@@ -1,14 +1,11 @@
 package org.opensingular.form;
 
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.InstanceValidationContext;
 
-@Ignore
 @RunWith(Parameterized.class)
 public class TestValidationWithInheritedType extends TestCaseForm {
 
@@ -19,21 +16,13 @@ public class TestValidationWithInheritedType extends TestCaseForm {
     @Test
     public void testOriginalType() {
         SPackageTest pckg = createTestDictionary().loadPackage(SPackageTest.class);
-        try {
-            new InstanceValidationContext().validateSingle(pckg.getDictionary().newInstance(A.class));
-        } catch (Exception ex) {
-            Assert.fail(ex.getMessage());
-        }
+        new InstanceValidationContext().validateSingle(pckg.getDictionary().newInstance(A.class));
     }
 
     @Test
     public void testInheritedType() {
         SPackageTest pckg = createTestDictionary().loadPackage(SPackageTest.class);
-        try {
-            new InstanceValidationContext().validateSingle(pckg.getDictionary().newInstance(APlus.class));
-        } catch (Exception ex) {
-            Assert.fail(ex.getMessage());
-        }
+        new InstanceValidationContext().validateSingle(pckg.getDictionary().newInstance(APlus.class));
     }
 
     @SInfoPackage(name = "br.com.spackagetest")
@@ -53,13 +42,15 @@ public class TestValidationWithInheritedType extends TestCaseForm {
 
         public STypeString fieldOne;
         public STypeString fieldTwo;
+        public STypeComposite<SIComposite> compositeOne;
+        public STypeString compositeOneFieldOne;
 
         @Override
         protected void onLoadType(TypeBuilder tb) {
-            super.onLoadType(tb);
-
             fieldOne = addField("fieldOne", STypeString.class);
             fieldTwo = addField("fieldTwo", STypeString.class);
+            compositeOne = addFieldComposite("compositeOne");
+            compositeOneFieldOne = compositeOne.addField("compositeOneFieldOne", STypeString.class);
 
             this.addInstanceValidator(validatable -> {
 //                if ("x".equals(validatable.getInstance().getField(fieldOne.getNameSimple()).getValue())) {  //funciona utilizando o nome
@@ -78,7 +69,7 @@ public class TestValidationWithInheritedType extends TestCaseForm {
 
         @Override
         protected void onLoadType(TypeBuilder tb) {
-            super.onLoadType(tb);
+            fieldOne.asAtr().visible(true);
             fieldThree = addField("fieldThree", STypeString.class);
         }
 

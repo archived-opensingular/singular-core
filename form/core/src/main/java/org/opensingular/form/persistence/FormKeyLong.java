@@ -24,7 +24,7 @@ package org.opensingular.form.persistence;
 public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber {
 
     public FormKeyLong(long value) {
-        super(Long.valueOf(value));
+        super(value);
     }
 
     public FormKeyLong(Long value) {
@@ -72,6 +72,6 @@ public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber 
 
     @Override
     public Integer intValue() {
-        return Integer.valueOf(getValue().intValue());
+        return getValue().intValue();
     }
 }

@@ -32,9 +32,9 @@ public enum TipoAnexo {
     DESPACHO("D", "Despacho"),
     ATA("A", "Ata");
 
-    private String codigo;
+    private final String codigo;
 
-    private String descricao;
+    private final String descricao;
 
     private TipoAnexo(String codigo, String descricao) {
         this.codigo = codigo;
@@ -49,24 +49,10 @@ public enum TipoAnexo {
     }
 
     /**
-     * @param codigo the codigo to set
-     */
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    /**
      * @return the descricao
      */
     public String getDescricao() {
         return descricao;
-    }
-
-    /**
-     * @param descricao the descricao to set
-     */
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
     }
 
     public static TipoAnexo valueOfEnum(String codigo) {

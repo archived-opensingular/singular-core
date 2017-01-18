@@ -14,10 +14,6 @@ import org.opensingular.form.type.core.STypeString;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
-import org.opensingular.form.type.core.annotation.SIAnnotation;
-import org.opensingular.form.type.core.annotation.STypeAnnotation;
-import org.opensingular.form.type.core.annotation.STypeAnnotationList;
 
 import java.util.List;
 
@@ -59,7 +55,7 @@ public class STypeAnnotationTest {
     @Test
     public void aNewInstanceHasNoAnnotations() {
         SIComposite instance = baseCompositeField.newInstance();
-        Assertions.assertThat(instance.asAtrAnnotation().allAnnotations()).isEmpty();
+        Assertions.assertThat(instance.getDocument().getDocumentAnnotations().getAnnotationsAsList()).isEmpty();
     }
 
     @Test
@@ -70,7 +66,7 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated2).annotation().setText("Avocado");
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
-        List<SIAnnotation> all = instance.asAtrAnnotation().allAnnotations();
+        List<SIAnnotation> all = instance.getDocument().getDocumentAnnotations().getAnnotationsAsList();
         assertThat(extractProperty("text").from(all)).containsOnly("Abacate","Avocado","ukwatapheya");
     }
 
@@ -81,7 +77,7 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated2).annotation();
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
-        List<SIAnnotation> all = instance.asAtrAnnotation().allAnnotations();
+        List<SIAnnotation> all = instance.getDocument().getDocumentAnnotations().getAnnotationsAsList();
         assertThat(extractProperty("text").from(all))
                 .containsOnly("Abacate",null, "ukwatapheya");
     }
@@ -92,7 +88,7 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
         asAnnotation(instance, annotated2).annotation().setApproved(true);
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
-        SIList persistent = instance.asAtrAnnotation().persistentAnnotations();
+        SIList persistent = instance.getDocument().getDocumentAnnotations().getAnnotations();
         assertThat(persistent.getType()).isInstanceOf(STypeAnnotationList.class);
         assertThat(persistent.getElementsType()).isInstanceOf(STypeAnnotation.class);
         assertThat(extractProperty("text").from(persistent.getValues()))
@@ -112,14 +108,14 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-        SIList         persistent   = instance.asAtrAnnotation().persistentAnnotations();
+        SIList         persistent   = instance.getDocument().getDocumentAnnotations().getAnnotations();
         FormSerialized serialized   = FormSerializationUtil.toSerializedObject(persistent);
         SIList         deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
 
         SIComposite justCreated = baseCompositeField.newInstance();
 
-        justCreated.asAtrAnnotation().loadAnnotations(deserialized);
-        SIList anotherPersistent = justCreated.asAtrAnnotation().persistentAnnotations();
+        justCreated.getDocument().getDocumentAnnotations().loadAnnotations(deserialized);
+        SIList anotherPersistent = justCreated.getDocument().getDocumentAnnotations().getAnnotations();
         assertThat(extractProperty("text").from(anotherPersistent.getValues()))
                 .containsOnly("Abacate");
     }
@@ -136,12 +132,12 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-        SIList persistent = instance.asAtrAnnotation().persistentAnnotations();
+        SIList persistent = instance.getDocument().getDocumentAnnotations().getAnnotations();
         FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
         SIList deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
-        asAnnotation(instance, annotated1).clear();
-        instance.asAtrAnnotation().loadAnnotations(deserialized);
-        SIList anotherPersistent = instance.asAtrAnnotation().persistentAnnotations();
+        instance.getDocument().getDocumentAnnotations().clear();
+        instance.getDocument().getDocumentAnnotations().loadAnnotations(deserialized);
+        SIList anotherPersistent = instance.getDocument().getDocumentAnnotations().getAnnotations();
         assertThat(extractProperty("text").from(anotherPersistent.getValues())).containsOnly("Abacate");
     }
 
@@ -162,28 +158,28 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-        asAnnotation(instance, annotated1).clear();
+        instance.getDocument().getDocumentAnnotations().clear();
 
-        List<SIAnnotation> all = instance.asAtrAnnotation().allAnnotations();
+        List<SIAnnotation> all = instance.getDocument().getDocumentAnnotations().getAnnotationsAsList();
         assertThat(asAnnotation(instance, annotated1).annotation().getText()).isNullOrEmpty();
         assertThat(asAnnotation(instance, annotated1).annotation().getApproved()).isNull();
     }
 
     @Test public void aNewInstanceHasNoAnnotationsOrChilds(){
         SIComposite instance = baseCompositeField.newInstance();
-        Assertions.assertThat(instance.asAtrAnnotation().hasAnnotationOnTree()).isFalse();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyAnnotationOnTree()).isFalse();
     }
 
     @Test public void itsOwnAnnotationCountsAsChild(){
         SIComposite instance = baseCompositeField.newInstance();
         instance.asAtrAnnotation().annotation().setText("anything");
-        Assertions.assertThat(instance.asAtrAnnotation().hasAnnotationOnTree()).isTrue();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyAnnotationOnTree()).isTrue();
     }
 
     @Test public void returnsIfAnyOfItsChildHasAnnotations(){
         SIComposite instance = baseCompositeField.newInstance();
         asAnnotation(instance, annotated1).annotation().setText("anything");
-        Assertions.assertThat(instance.asAtrAnnotation().hasAnnotationOnTree()).isTrue();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyAnnotationOnTree()).isTrue();
     }
 
     @Test public void anEmptyInstanceHasNoRefusals(){
@@ -211,7 +207,7 @@ public class STypeAnnotationTest {
 
     @Test public void returnsIfHasAnAnnotatedChild(){
         SIComposite instance = baseCompositeField.newInstance();
-        Assertions.assertThat(instance.asAtrAnnotation().isOrHasAnnotatedChild()).isTrue();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyAnnotable()).isTrue();
     }
 
     private AtrAnnotation asAnnotation(SIComposite instance, STypeComposite<? extends SIComposite> field) {

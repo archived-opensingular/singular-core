@@ -29,7 +29,7 @@ public class VarTypeLong implements VarType {
 
     @Override
     public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValor(), varInstance.getDefinicao());
+        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
     }
 
     @Override
@@ -39,6 +39,6 @@ public class VarTypeLong implements VarType {
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Long.toString((Long) varInstance.getValor());
+        return Long.toString((Long) varInstance.getValue());
     }
 }

@@ -115,7 +115,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         add(new SingularForm<>("optionsForm").add(setUpTemplatesOptions()));
         add(new SingularForm<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
-        add(listTable = setupDataTable());
+        listTable = setupDataTable();
+        add(listTable);
         add(viewXmlModal);
         add(new SFeedbackPanel("feedback", this));
 

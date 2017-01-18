@@ -43,7 +43,10 @@ import org.opensingular.lib.commons.internal.function.SupplierUtil;
  */
 public class SFormDefinitionPersistenceUtil {
 
-    private static Supplier<STypePersistenceArchive> typePresistenceArchive = SupplierUtil.cached(() -> createTypePersistence());
+    private final static Supplier<STypePersistenceArchive> typePresistenceArchive = SupplierUtil.cached(
+            () -> createTypePersistence());
+
+    private SFormDefinitionPersistenceUtil() {}
 
     public static SIPersistenceArchive toArchive(SType<?> type) {
         ContextArchive ctx = new ContextArchive(type.getDictionary());
@@ -83,9 +86,8 @@ public class SFormDefinitionPersistenceUtil {
 
     public static SType<?> fromArchive(SIPersistenceArchive persistenceArchive) {
         ContextUnarchive ctx = new ContextUnarchive(persistenceArchive);
-        for (SIPersistencePackage pPackage : Lists.reverse(persistenceArchive.getPackages().getChildren())) {
-            ctx.createNewPackage(pPackage);
-        }
+        Lists.reverse(persistenceArchive.getPackages().getChildren()).forEach(ctx::createNewPackage);
+
         for (SIPersistencePackage pPackage : Lists.reverse(persistenceArchive.getPackages().getChildren())) {
             PackageBuilder pkg = ctx.getPackage(pPackage.getPackageName());
             for (SIPersistenceType pType : Lists.reverse(pPackage.getTypes().getChildren())) {
@@ -144,9 +146,7 @@ public class SFormDefinitionPersistenceUtil {
         }
 
         private void prepareDefaultImports(SDictionary dictionary) {
-            for (SType<?> type : dictionary.getType(SType.class).getPackage().getLocalTypes()) {
-                imports.add(type.getName());
-            }
+            dictionary.getType(SType.class).getPackage().getLocalTypes().forEach(type -> imports.add(type.getName()));
         }
 
         public SIPersistenceArchive getArchive() {
@@ -180,7 +180,7 @@ public class SFormDefinitionPersistenceUtil {
 
     private static class ContextUnarchive {
 
-        private SDictionary dictionary = SDictionary.create();
+        private final SDictionary dictionary = SDictionary.create();
         private final Map<String, PackageBuilder> pkgs = new HashMap<>();
         private final Map<String, String> imports = new HashMap<>();
 

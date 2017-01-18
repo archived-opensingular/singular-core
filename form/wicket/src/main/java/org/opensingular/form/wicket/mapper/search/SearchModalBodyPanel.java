@@ -96,9 +96,13 @@ class SearchModalBodyPanel extends Panel {
 
         final AjaxButton filterButton;
 
-        add(innerSingularFormPanel = buildInnerSingularFormPanel());
-        add(filterButton = buildFilterButton());
-        add(resultTable = buildResultTable(getConfig()));
+        innerSingularFormPanel = buildInnerSingularFormPanel();
+        filterButton = buildFilterButton();
+        resultTable = buildResultTable(getConfig());
+
+        add(innerSingularFormPanel);
+        add(filterButton);
+        add(resultTable);
 
         innerSingularFormPanel.add($b.onEnterDelegate(filterButton, SINGULAR_PROCESS_EVENT));
 

@@ -30,14 +30,12 @@ import java.util.Optional;
  */
 public class SCompositeListBuilder {
 
-    private List<SIComposite>           list;
-    private STypeComposite<SIComposite> type;
-    private SInstance currentInstance;
+    private final List<SIComposite>           list;
+    private final STypeComposite<SIComposite> type;
+    private final SInstance currentInstance;
 
     /**
      * Instancia do tipo dos elementos da lista
-     *
-     * @param type
      */
     public SCompositeListBuilder(STypeComposite<SIComposite> type, SInstance currentInstance) {
         this.type = type;
@@ -47,8 +45,6 @@ public class SCompositeListBuilder {
 
     /**
      * Cria uma nova instancia do MTipo T na lista
-     *
-     * @return
      */
     public SCompositeValueSetter add() {
         SIComposite newInstance = type.newInstance();
@@ -66,8 +62,8 @@ public class SCompositeListBuilder {
 
     public static class SCompositeValueSetter {
 
-        private SCompositeListBuilder _lb;
-        private SIComposite           instancia;
+        private final SCompositeListBuilder _lb;
+        private final SIComposite           instancia;
 
         SCompositeValueSetter(SIComposite instancia, SCompositeListBuilder lb) {
             this._lb = lb;

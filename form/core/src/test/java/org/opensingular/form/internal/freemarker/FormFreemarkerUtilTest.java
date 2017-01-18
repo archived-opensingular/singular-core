@@ -31,7 +31,7 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
         curriculoType = pkt.createCompositeType("curriculo");
 

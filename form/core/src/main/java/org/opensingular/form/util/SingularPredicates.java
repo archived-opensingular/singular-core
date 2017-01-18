@@ -31,6 +31,8 @@ import java.util.function.Predicate;
 
 public class SingularPredicates {
 
+    private SingularPredicates() {}
+
     @SafeVarargs
     public static Predicate<SInstance> allMatches(Predicate<SInstance>... predicates) {
         return i -> Arrays.asList(predicates).stream().allMatch(p -> p.test(i));

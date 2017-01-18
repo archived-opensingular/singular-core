@@ -50,7 +50,6 @@ public class STypeNotificacaoSimplificadaFitoterapico extends STypeComposite<SIC
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         asAtr().displayString("${nomenclaturaBotanica.descricao} - ${nomeComercial}");
         asAtr().label("Produto Tradicional Fitoterápico");

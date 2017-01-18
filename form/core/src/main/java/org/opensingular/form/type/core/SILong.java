@@ -22,6 +22,6 @@ public class SILong extends SINumber<Long> implements SIComparable<Long> {
     }
 
     public Long getLong() {
-        return (Long) getValue();
+        return getValue();
     }
 }

@@ -53,7 +53,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
     public Boolean fromString(String valor) {
         valor = StringUtils.trimToNull(valor);
         if (valor == null) {
-            return null;
+            return null;//NOSONAR falso positivo o retorno nulo é esperado
         } else if (valor.equalsIgnoreCase("true") || valor.equals("1") || valor.equals("Sim")) {
             return Boolean.TRUE;
         } else if (valor.equalsIgnoreCase("false") || valor.equals("0") || valor.equals("Não")) {

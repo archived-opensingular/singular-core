@@ -27,6 +27,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import org.opensingular.form.SingularFormException;
+
 /**
  * @author Expedito Júnior
  */
@@ -43,7 +45,7 @@ public final class ConversorToolkit {
 
     private static DateFormat dateTimeFormat__;
 
-    private static NumberFormat[] numberFormat__ = new NumberFormat[30];
+    private static final NumberFormat[] numberFormat__ = new NumberFormat[30];
 
     /**
      * Esconde o contrutor
@@ -58,7 +60,7 @@ public final class ConversorToolkit {
         }
     }
 
-    public static Calendar getCalendar(String data) throws ParseException {
+    public static Calendar getCalendar(String data) {
         return getCalendar(getDateFromData(data));
     }
 
@@ -131,6 +133,8 @@ public final class ConversorToolkit {
                     case '.':
                     case ' ':
                         novo[i] = (byte) '/';
+                        break;
+                    default:
                 }
             }
             if (data.length() > 8) {
@@ -139,7 +143,7 @@ public final class ConversorToolkit {
                 return getDateFormat("dd/MM/yy").parse(new String(novo));
             }
         } catch (ParseException e) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                     "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset());
         }
     }
@@ -155,9 +159,13 @@ public final class ConversorToolkit {
                     pontos++;
                 }
             }
-            while (pontos < 3) {
-                novaHora += ":00";
-                pontos++;
+            if (pontos < 3) {
+                StringBuilder sb = new StringBuilder(novaHora + 9);
+                sb.append(novaHora);
+                for (; pontos < 3; pontos++) {
+                    sb.append(":00");
+                }
+                novaHora = sb.toString();
             }
             return getTimeFormat().parse(novaHora);
         } catch (ParseException e) {

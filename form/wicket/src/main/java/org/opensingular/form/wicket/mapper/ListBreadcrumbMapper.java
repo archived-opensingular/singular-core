@@ -44,6 +44,7 @@ import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -176,7 +177,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw SingularException.rethrow(e.getMessage(), e);
             }
         }
 

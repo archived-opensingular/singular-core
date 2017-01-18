@@ -30,8 +30,6 @@ public class STypeChecklist extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
         final STypeString acao = this.addFieldString("acao", true);
         acao.selectionOfEnum(AcaoGestaoObras.class)
             .asAtr().label("Ação").asAtrBootstrap().colPreference(3);

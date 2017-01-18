@@ -16,21 +16,16 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.type.core.STypeBoolean;
+
+import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import org.opensingular.form.type.core.SIBoolean;
-import org.opensingular.form.type.core.STypeBoolean;
 
 /**
  * Métodos utilitários para manipulação de MInstance.
@@ -40,13 +35,15 @@ import org.opensingular.form.type.core.STypeBoolean;
 public abstract class SInstances {
 
     public static SIComposite getRootInstance(SInstance instance) {
-        if (instance.getParent() == null){
-            return (SIComposite) instance;
+        //TODO (by Daniel) Deveria retornar SInstance. Refatorar.
+        SInstance i = instance;
+        while (i.getParent() != null) {
+            i = i.getParent();
         }
-        return getRootInstance(instance.getParent());
+        return (SIComposite) i;
     }
 
-    public static interface IVisit<R> extends Serializable {
+    public static interface IVisit<R> {
         void stop();
         void stop(R result);
         void dontGoDeeper();
@@ -54,6 +51,7 @@ public abstract class SInstances {
         R getPartial();
     }
 
+    @FunctionalInterface
     public interface IVisitor<I extends SInstance, R> {
         public void onInstance(I object, IVisit<R> visit);
     }
@@ -63,7 +61,10 @@ public abstract class SInstances {
         default boolean visitChildren(Object object) {
             return true;
         }
-        public static IVisitFilter ANY = o -> true;
+
+        public static IVisitFilter visitAll() {
+            return o -> true;
+        }
     }
 
     private SInstances() {}
@@ -72,21 +73,21 @@ public abstract class SInstances {
      * Faz um pecorrimento em profundidade de parent e seus filhos.
      */
     public static <I extends SInstance, R> Optional<R> visit(SInstance instance, IVisitor<I, R> visitor) {
-        return visit(instance, IVisitFilter.ANY, visitor);
+        return visit(instance, IVisitFilter.visitAll(), visitor);
     }
 
     /**
      * Faz um pecorrimento em profundidade dos filhos de parent.
      */
     public static <R> Optional<R> visitChildren(SInstance parent, IVisitor<SInstance, R> visitor) {
-        return visitChildren(parent, IVisitFilter.ANY, visitor);
+        return visitChildren(parent, IVisitFilter.visitAll(), visitor);
     }
 
     /**
      * Faz um pecorrimento em profundidade da instância e seus filhos, em ordem pós-fixada (primeiro filhos, depois pais).
      */
     public static <R> Optional<R> visitPostOrder(SInstance parent, IVisitor<SInstance, R> visitor) {
-        return visitPostOrder(parent, IVisitFilter.ANY, visitor);
+        return visitPostOrder(parent, IVisitFilter.visitAll(), visitor);
     }
 
     /**
@@ -123,33 +124,31 @@ public abstract class SInstances {
 
     /**
      * Implements the prefixed traversal logic.
-     * @param rootInstance
-     * @param visitor
-     * @param filter
-     * @param visit
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitChildren(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
-        if (rootInstance instanceof ICompositeInstance) {
-            for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
-                if (filter.visitObject(object)) {
-                    I child = (I) object;
-                    final Visit<R> childVisit = new Visit<>(visit.getPartial());
-                    visitor.onInstance(child, childVisit);
-                    visit.setPartial(childVisit.getPartial());
+        if (! (rootInstance instanceof ICompositeInstance)) {
+            return;
+        }
+        for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
+            if (filter.visitObject(object)) {
+                I child = (I) object;
+                final Visit<R> childVisit = new Visit<>(visit.getPartial());
+                visitor.onInstance(child, childVisit);
+                visit.setPartial(childVisit.getPartial());
 
-                    if (childVisit.stopped) {
-                        visit.stop(childVisit.result);
-                        return;
-                    }
-                    if (childVisit.dontGoDeeper)
-                        continue;
+                if (childVisit.stopped) {
+                    visit.stop(childVisit.result);
+                    return;
+                } else if (childVisit.dontGoDeeper) {
+                    continue;
                 }
+            }
 
-                if (!visit.dontGoDeeper && (object instanceof ICompositeInstance) && filter.visitChildren(object)) {
-                    internalVisitChildren(object, visitor, filter, visit);
-                    if (visit.stopped)
-                        return;
+            if (!visit.dontGoDeeper && (object instanceof ICompositeInstance) && filter.visitChildren(object)) {
+                internalVisitChildren(object, visitor, filter, visit);
+                if (visit.stopped) {
+                    return;
                 }
             }
         }
@@ -157,10 +156,6 @@ public abstract class SInstances {
 
     /**
      * Implements the postfixed traversal logic.
-     * @param rootInstance
-     * @param visitor
-     * @param filter
-     * @param visit
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitPostOrder(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
@@ -193,12 +188,15 @@ public abstract class SInstances {
      * @param node instância inicial da busca
      * @param ancestorType tipo do ancestral
      * @return instância do ancestral do tipo especificado
-     * @throws NoSuchElementException se não encontrar nenhum ancestral deste tipo
+     * @throws SingularFormException se não encontrar nenhum ancestral deste tipo
      */
-    public static <P extends SInstance & ICompositeInstance> P getAncestor(SInstance node, SType<P> ancestorType) throws NoSuchElementException {
-        return findAncestor(node, ancestorType).get();
+    @Nonnull
+    public static <P extends SInstance & ICompositeInstance> P getAncestor(SInstance node, SType<P> ancestorType) {
+        return findAncestor(node, ancestorType).orElseThrow(
+                () -> new SingularFormException("Não foi encontrado " + ancestorType + " em " + node, node));
     }
 
+    @Nonnull
     public static <A extends SType<?>> Optional<SInstance> findAncestor(SInstance node, Class<A> ancestorType) {
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
             if (parent.getType().getClass().equals(ancestorType)) {
@@ -306,44 +304,8 @@ public abstract class SInstances {
      * @throws NoSuchElementException se não encontrar nenhum descendente deste tipo
      */
     public static <D extends SInstance> D getDescendant(SInstance node, SType<D> descendantType) {
-        return findDescendant(node, descendantType).get();
-    }
-
-    /**
-     * Busca descendente de <code>node</code> do tipo especificado, por id.
-     * @param node instância inicial da busca
-     * @param descendantId id do descendente
-     * @param descendantType tipo do descendente
-     * @return instância especificada
-     * @throws NoSuchElementException se não encontrar a instancia especificada
-     */
-    public static <D extends SInstance> D getDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
-        return findDescendantById(node, descendantId, descendantType).get();
-    }
-
-    /**
-     * Busca descendente de <code>node</code> do tipo especificado, por id.
-     * @param node instância inicial da busca
-     * @param descendantId id do descendente
-     * @param descendantType tipo do descendente
-     * @return Optional da instância especificada
-     */
-    public static <D extends SInstance> Optional<D> findDescendantById(SInstance node, Integer descendantId, SType<D> descendantType) {
-        return streamDescendants(node, true, descendantType)
-            .filter(it -> descendantId.equals(it.getId()))
-            .findAny();
-    }
-
-    /**
-     * Busca descendente de <code>node</code> do tipo especificado, por id.
-     * @param node instância inicial da busca
-     * @param descendantId id do descendente
-     * @return Optional da instância especificada
-     */
-    public static Optional<SInstance> findDescendantById(SInstance node, Integer descendantId) {
-        return streamDescendants(node, true)
-            .filter(it -> descendantId.equals(it.getId()))
-            .findAny();
+        return findDescendant(node, descendantType).orElseThrow(
+                () -> new SingularFormException("Não foi encontrado " + descendantType + " em " + node, node));
     }
 
     /**
@@ -421,6 +383,29 @@ public abstract class SInstances {
         return StreamSupport.stream(new SInstanceRecursiveSpliterator(root, includeRoot), false);
     }
 
+    /**
+     * Verifica se a instância ou algum filho atende a condição informada ou não.
+     */
+    public static boolean hasAny(SInstance instance, Predicate<SInstance> predicate) {
+        return hasAny(instance, true, predicate);
+    }
+
+    /**
+     * Verifica se a instância ou algum filho atende a condição informada ou não.
+     * @param checkRoot Indica se a condição deve ser verificada ao nó raiz informado ou somente a partir dos filhos.
+     */
+    private static boolean hasAny(SInstance instance, boolean checkRoot, Predicate<SInstance> predicate) {
+        if (checkRoot && predicate.test(instance)) {
+            return true;
+        } else if (instance instanceof ICompositeInstance) {
+            for (SInstance si : ((ICompositeInstance) instance).getAllChildren()) {
+                if( hasAny(si, true, predicate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */

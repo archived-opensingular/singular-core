@@ -16,6 +16,10 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
+import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,7 +53,6 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      *               File.length não retorna o tamanho do arquivo de maneira confiável em qualquer sistema operacional
      * @param name Nome do arquivo original
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
-     * @throws IOException
      */
     T addAttachment(File file, long length, String name);
 
@@ -57,7 +60,7 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      * Copia o conteúdo de um IAttachmentRef para esse persistence handler e retorna
      * o novo IAttachmentRef criado.
      */
-    T copy(IAttachmentRef toBeCopied);
+    AttachmentCopyContext<T> copy(IAttachmentRef attachmentRef, SDocument document);
 
     /**
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
@@ -65,7 +68,22 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends
      */
     Collection<T> getAttachments();
 
-    IAttachmentRef getAttachment(String fileId);
+    /**
+     * Deve retornar o attachment baseado no seu ID
+     * @param fileId o id do attachment
+     * @return referencia
+     */
+    T getAttachment(String fileId);
 
-    void deleteAttachment(String fileId);
+    /**
+     * Deleta o attachment a partir do id e do documento
+     * @param id id do anexo
+     * @param document documento
+     */
+    void deleteAttachment(String id, SDocument document);
+
+    default IAttachmentPersistenceHelper getAttachmentPersistenceHelper(){
+        return new DefaultAttachmentPersistenceHelper();
+    }
+
 }

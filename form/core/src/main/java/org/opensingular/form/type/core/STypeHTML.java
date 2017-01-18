@@ -33,7 +33,6 @@ public class STypeHTML extends STypeSimple<SIHTML, String> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         asAtrBootstrap().colPreference(12);
     }
 

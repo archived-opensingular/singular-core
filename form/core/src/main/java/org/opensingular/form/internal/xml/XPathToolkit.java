@@ -17,6 +17,7 @@
 package org.opensingular.form.internal.xml;
 
 import com.sun.org.apache.xpath.internal.XPathAPI;
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,6 +27,8 @@ import org.w3c.dom.traversal.NodeIterator;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Métodos utilitários para trabalhar com XPath. Para um bom tutorial em
@@ -99,7 +102,7 @@ public final class XPathToolkit {
      * @see #getFullPath(Node, Node)
      */
     public static String getFullPath(Node no) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         getFullPath(buffer, no, null);
         return buffer.toString();
     }
@@ -115,7 +118,7 @@ public final class XPathToolkit {
      * @return path completo
      */
     public static String getFullPath(Node no, Node topo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         getFullPath(buffer, no, topo);
         return buffer.toString();
     }
@@ -131,7 +134,7 @@ public final class XPathToolkit {
      * @param topo Nó até onde será montado o path. O path incluirá esse nó.
      * Pode ser null para indicar até o topo.
      */
-    private static void getFullPath(StringBuffer buffer, Node no, Node topo) {
+    private static void getFullPath(StringBuilder buffer, Node no, Node topo) {
 
         Node parent = no.getParentNode();
         if (parent == null) {
@@ -165,6 +168,7 @@ public final class XPathToolkit {
                     buffer.append('@');
                     buffer.append(no.getNodeName());
                     break;
+                default:
             }
         }
 
@@ -178,7 +182,7 @@ public final class XPathToolkit {
      * @param buffer Destino do texto
      * @param e Node a ser pesquisado o nível
      */
-    private static void getIndiceElemento(StringBuffer buffer, Node e) {
+    private static void getIndiceElemento(StringBuilder buffer, Node e) {
         int pos = -1;
         // Verifica se possui no com mesmo nome antes
         Node cursor = e.getPreviousSibling();
@@ -215,7 +219,7 @@ public final class XPathToolkit {
      * @param n No alvo
      * @return String Retorna o nome por extenso ou null se N for null.
      */
-    public static final String getNomeTipo(Node n) {
+    public static String getNomeTipo(Node n) {
         if (n == null) {
             return null;
         }
@@ -277,6 +281,7 @@ public final class XPathToolkit {
                 case ']':
                 case '.':
                     return false;
+                default:
             }
         }
         return true;
@@ -289,7 +294,7 @@ public final class XPathToolkit {
      * @param xPath consulta a ser verificada a complexidadde
      * @return false Para indica necessidade da API XPath
      */
-    static final boolean isSelectSimples(String xPath) {
+    static boolean isSelectSimples(String xPath) {
         if (xPath == null) {
             return true;
         }
@@ -302,6 +307,7 @@ public final class XPathToolkit {
                 case ']':
                 case '.':
                     return false;
+                default:
             }
         }
         return true;
@@ -327,7 +333,7 @@ public final class XPathToolkit {
             try {
                 return XPathAPI.selectSingleNode(contextNode, xPath);
             } catch (TransformerException e) {
-                throw new RuntimeException(e);
+                throw SingularFormException.rethrow(e);
             }
         }
     }
@@ -346,12 +352,10 @@ public final class XPathToolkit {
         if (result == null) {
             return null;
         }
-        if (result.getNodeType() != Node.ELEMENT_NODE) {
-            throw new RuntimeException(
-                    "O elemento resultante ("
-                            + getFullPath(result)
-                            + ") não é um Element, mas um "
-                            + getNomeTipo(result));
+        if (!isNodeTypeElement(result)) {
+            throw new SingularFormException(
+                    "O elemento resultante (" + getFullPath(result) + ") não é um Element, mas um " +
+                            getNomeTipo(result));
         }
         return (Element) result;
     }
@@ -425,7 +429,7 @@ public final class XPathToolkit {
         if (lista == null) {
             return LISTA_VAZIA;
         }
-        return (String[]) lista.toArray(new String[lista.size()]);
+        return lista.toArray(new String[lista.size()]);
     }
 
     /**
@@ -446,7 +450,7 @@ public final class XPathToolkit {
         try {
             return XPathAPI.selectNodeList(contextNode, xPath);
         } catch (TransformerException e) {
-            throw new RuntimeException(e);
+            throw SingularFormException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -467,7 +471,7 @@ public final class XPathToolkit {
         try {
             return XPathAPI.selectNodeIterator(context, xPath);
         } catch (TransformerException e) {
-            throw new RuntimeException(e);
+            throw SingularFormException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -479,21 +483,19 @@ public final class XPathToolkit {
      * @param path Caminho a ser pesquisa deve conter apenas nomes e /
      * @return O elemento se for encontrado.
      */
-    private static final Node findSimples(Node pai, String path) {
+    private static Node findSimples(Node pai, String path) {
 
         Node resp = pai;
-        String nomeElemento;
 
         if (path.charAt(0) == '/') {
-            while (resp.getParentNode() != null) {
-                resp = resp.getParentNode();
-            }
+            resp = XmlUtil.getRootParent(resp);
             if (path.length() == 1) {
                 return resp;
             }
             path = path.substring(1);
         }
 
+        String nomeElemento;
         while ((resp != null) && (path != null)) {
             int pos = path.indexOf('/');
             if (pos == -1) {
@@ -505,19 +507,13 @@ public final class XPathToolkit {
             }
 
             if (nomeElemento.charAt(0) == '@') {
-                if ((path != null) || (resp.getNodeType() != Node.ELEMENT_NODE)) {
-                    throw new RuntimeException("O xPath '" + path + "' é inválido");
+                if ((path != null) || !isNodeTypeElement(resp)) {
+                    throw SingularFormException.rethrow("O xPath '" + path + "' é inválido");
                 }
                 return ((Element) resp).getAttributeNode(nomeElemento.substring(1));
             }
 
-            Node n = resp.getFirstChild();
-            while ((n != null)
-                    && ((n.getNodeType() != Node.ELEMENT_NODE)
-                    || (!n.getNodeName().equals(nomeElemento)))) {
-                n = n.getNextSibling();
-            }
-            resp = (Element) n;
+            resp = XmlUtil.nextSiblingOfTypeElement(resp.getFirstChild(), nomeElemento);
         }
         return resp;
     }

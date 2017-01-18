@@ -79,28 +79,28 @@ class AttachmentDocumentService {
         return service;
     }
 
-    public IAttachmentRef addContent(String currentReferenceId, File content, long length, String name) {
-        return addContent(currentReferenceId, getTemporaryAttachmentHandler().addAttachment(content, length, name));
+    public IAttachmentRef addContent(String currentReferenceId, File content, long length, String name, SDocument document) {
+        return addContent(currentReferenceId, getTemporaryAttachmentHandler().addAttachment(content, length, name), document);
     }
 
-    private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef) {
+    private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef, SDocument document) {
         if (newRef.getSize() <= 0) {
             throw new SingularFormException("O tamanho (em bytes) da nova referência a deve ser preenchido.");
         }
         if (oldReferenceId == null) {
             contador.add(newRef.getId());
         } else if (!newRef.getId().equals(oldReferenceId)) {
-            deleteReference(oldReferenceId);
+            deleteReference(oldReferenceId, document);
             contador.add(newRef.getId());
         }
         return newRef;
     }
 
-    public void deleteReference(String fileId) {
+    public void deleteReference(String fileId, SDocument document) {
         if (fileId != null) {
             contador.remove(fileId);
             if (contador.count(fileId) == 0) {
-                getTemporaryAttachmentHandler().deleteAttachment(fileId);
+                getTemporaryAttachmentHandler().deleteAttachment(fileId, document);
             }
         }
     }

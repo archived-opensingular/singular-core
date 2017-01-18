@@ -38,7 +38,7 @@ public class TaskPredicates {
             return false;
         });
         taskPredicateImpl.setFullDescription("Prazo Extrapolado em " + numberOfDays + " dias");
-        taskPredicateImpl.setEventType(EventType.Timer);
+        taskPredicateImpl.setEventType(EventType.TIMER);
         return taskPredicateImpl;
     }
 
@@ -47,7 +47,7 @@ public class TaskPredicates {
         private final String name;
         private final Predicate<TaskInstance> predicate;
 
-        private EventType eventType = EventType.Conditional;
+        private EventType eventType = EventType.CONDITIONAL;
 
         private String description;
 

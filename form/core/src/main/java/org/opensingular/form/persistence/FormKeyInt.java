@@ -24,7 +24,7 @@ package org.opensingular.form.persistence;
 public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumber {
 
     public FormKeyInt(int value) {
-        super(Integer.valueOf(value));
+        super(value);
     }
 
     public FormKeyInt(Integer value) {

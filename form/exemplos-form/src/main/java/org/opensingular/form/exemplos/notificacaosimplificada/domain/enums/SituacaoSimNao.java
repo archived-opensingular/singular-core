@@ -22,8 +22,8 @@ public enum SituacaoSimNao {
     NAO("Não", "N"),
     NAO_SE_APLICA("NÃO SE APLICA", "X");
 
-    private String descricao;
-    private String codigo;
+    private final String descricao;
+    private final String codigo;
 
 
     private SituacaoSimNao(String descricao, String codigo) {
@@ -36,20 +36,10 @@ public enum SituacaoSimNao {
         return descricao;
     }
 
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-
     public String getCodigo() {
         return codigo;
     }
 
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
 
     public static SituacaoSimNao valueOfEnum(String codigo) {
         SituacaoSimNao status[] = SituacaoSimNao.values();

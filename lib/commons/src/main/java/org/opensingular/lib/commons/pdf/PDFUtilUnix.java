@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.commons.pdf;
 
+import org.opensingular.lib.commons.util.TempFileUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -178,10 +180,7 @@ public class PDFUtilUnix extends PDFUtil {
         File pdfFile  = new File(tempFolder, "temp.pdf");
         File jarFile  = new File(tempFolder, "temp.jar");
 
-        if (htmlFile.exists() && !htmlFile.delete()) {
-            getLogger().error("convertHTML2PDF: HTML file not found");
-            return null;
-        }
+        TempFileUtils.deleteOrException(htmlFile, getClass());
 
         if (htmlFile.createNewFile()) {
             FileWriter fw = null;
@@ -280,10 +279,7 @@ public class PDFUtilUnix extends PDFUtil {
         File pngFile  = new File(tempFolder, "temp.png");
         File jarFile  = new File(tempFolder, "temp.jar");
 
-        if (htmlFile.exists() && !htmlFile.delete()) {
-            getLogger().error("convertHTML2PNG: HTML file not found");
-            return null;
-        }
+        TempFileUtils.deleteOrException(htmlFile, getClass());
 
         if (htmlFile.createNewFile()) {
             FileWriter fw = null;

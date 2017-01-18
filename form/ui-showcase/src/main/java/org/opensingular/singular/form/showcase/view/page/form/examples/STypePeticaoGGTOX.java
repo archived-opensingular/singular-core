@@ -329,8 +329,8 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
             final STypeComposite<SIComposite>                         type;
             final STypeString                                         produtoExterior;
             final STypeString                                         tipo;
-            STypeString material;
-            final STypeString  unidadeMedida;
+            final STypeString material;
+            final STypeString unidadeMedida;
             final STypeInteger capacidade;
             private final String[]
                     tiposDisponiveis     = new String[]{

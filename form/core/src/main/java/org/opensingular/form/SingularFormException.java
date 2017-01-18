@@ -78,17 +78,6 @@ public class SingularFormException extends SingularException {
         add(instance);
     }
 
-    public SingularFormException add(SScope scope) {
-        if (scope instanceof SType) {
-            add((SType<?>) scope);
-        } else if (scope instanceof SInstance) {
-            add((SInstance) scope);
-        } else {
-            super.add(scope);
-        }
-        return this ;
-    }
-
     public SingularFormException add(SInstance instance) {
         if (instance != null) {
             add("instancia path", instance.getPathFull());

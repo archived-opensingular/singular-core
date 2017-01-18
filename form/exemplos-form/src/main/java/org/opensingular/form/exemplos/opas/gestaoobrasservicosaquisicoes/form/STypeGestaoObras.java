@@ -26,8 +26,6 @@ public class STypeGestaoObras extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
         this.asAtr().label("Gestão de Obras");
         
         

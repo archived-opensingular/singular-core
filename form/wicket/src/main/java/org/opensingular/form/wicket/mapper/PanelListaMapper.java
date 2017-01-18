@@ -64,7 +64,6 @@ public class PanelListaMapper extends AbstractListaMapper {
         final IModel<String>            label      = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         final SViewListByForm           view       = (SViewListByForm) ctx.getView();
 
-        final ViewMode viewMode    = ctx.getViewMode();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
         addMinimumSize(currentType, iLista);

@@ -34,8 +34,7 @@ import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
 
-@SuppressWarnings("serial")
-public class MTransition implements Serializable {
+public class MTransition {
 
     private final MTask<?> origin;
     private final String name;
