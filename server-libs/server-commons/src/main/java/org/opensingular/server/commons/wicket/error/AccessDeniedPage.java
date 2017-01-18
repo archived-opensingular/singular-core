@@ -16,12 +16,9 @@
 
 package org.opensingular.server.commons.wicket.error;
 
-import org.apache.wicket.markup.html.WebPage;
-import org.opensingular.server.commons.wicket.view.template.Menu;
-import org.wicketstuff.annotation.mount.MountPath;
-
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
+import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("acesso/negado")
 public class AccessDeniedPage extends Template {

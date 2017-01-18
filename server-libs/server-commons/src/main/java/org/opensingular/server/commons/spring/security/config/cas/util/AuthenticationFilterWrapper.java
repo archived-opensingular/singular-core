@@ -86,7 +86,7 @@ public class AuthenticationFilterWrapper extends SSOConfigurableFilter {
         }
 
         Enumeration enumeration = filterConfig.getInitParameterNames();
-        for (; enumeration.hasMoreElements(); ) {
+        while (enumeration.hasMoreElements()) {
             String s = (String) enumeration.nextElement();
             params.put(s, filterConfig.getInitParameter(s));
         }

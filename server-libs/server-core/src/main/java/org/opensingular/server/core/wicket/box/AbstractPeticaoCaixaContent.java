@@ -22,25 +22,19 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 import org.opensingular.server.commons.form.FormActions;
-import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
-import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.persistence.dto.PetitionDTO;
 import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 /**
  * Classe base para construição de caixas do servidor de petições
  */
-public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends AbstractBoxContent<T> {
+public abstract class AbstractPeticaoCaixaContent<T extends PetitionDTO> extends AbstractBoxContent<T> {
 
     private static final long serialVersionUID = -3611649597709058163L;
-
-    @Inject
-    private PetitionService<?> petitionService;
 
     public AbstractPeticaoCaixaContent(String id, String processGroupCod, String menu) {
         super(id, processGroupCod, menu);
@@ -70,7 +64,7 @@ public abstract class AbstractPeticaoCaixaContent<T extends PeticaoDTO> extends 
     }
 
     @Override
-    protected void onDelete(PeticaoDTO peticao) {
+    protected void onDelete(PetitionDTO peticao) {
         petitionService.deletePetition(peticao);
     }
 }

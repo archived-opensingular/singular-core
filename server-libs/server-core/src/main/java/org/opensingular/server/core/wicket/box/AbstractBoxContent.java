@@ -198,7 +198,7 @@ public abstract class AbstractBoxContent<T extends Serializable> extends Content
     protected BSModalBorder construirModalDeleteBorder(IConsumer<T> action) {
         BSModalBorder confirmationModal = new BSModalBorder("confirmationModal", getMessage("label.title.delete.draft"));
         confirmationModal.addToBorder(new Label("message", getMessage("label.delete.message")));
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEL, "label.button.cancel", new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;
@@ -220,7 +220,8 @@ public abstract class AbstractBoxContent<T extends Serializable> extends Content
 
     private void deleteSelected(AjaxRequestTarget target, IModel<T> model) {
         currentModel = model;
-        confirmationForm.addOrReplace((confirmationModal = construirModalDeleteBorder(this::onDelete)));
+        confirmationModal = construirModalDeleteBorder(this::onDelete);
+        confirmationForm.addOrReplace(confirmationModal);
         confirmationModal.show(target);
     }
 
@@ -326,7 +327,7 @@ public abstract class AbstractBoxContent<T extends Serializable> extends Content
         final String groupConnectionURL = getProcessGroup().getConnectionURL();
         try {
             final String path = new URL(groupConnectionURL).getPath();
-            return path.substring(0, path.indexOf("/", 1));
+            return path.substring(0, path.indexOf('/', 1));
         } catch (Exception e) {
             throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
         }

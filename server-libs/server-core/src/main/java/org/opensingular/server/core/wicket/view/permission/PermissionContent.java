@@ -58,7 +58,8 @@ public class PermissionContent extends Content implements Loggable {
     protected void onInitialize() {
         super.onInitialize();
         carregarPermissoes();
-        queue(listTable = setupDataTable());
+        listTable = setupDataTable();
+        queue(listTable);
     }
 
     private void carregarPermissoes() {

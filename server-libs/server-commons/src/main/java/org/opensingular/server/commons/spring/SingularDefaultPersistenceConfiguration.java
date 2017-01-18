@@ -38,6 +38,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
+import static org.opensingular.lib.commons.base.SingularProperties.JNDI_DATASOURCE;
 import static org.opensingular.lib.commons.base.SingularProperties.USE_INMEMORY_DATABASE;
 
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -125,11 +126,11 @@ public class SingularDefaultPersistenceConfiguration {
             LOGGER.info("Usando datasource configurado via JNDI");
             DataSource dataSource = null;
             JndiTemplate jndi = new JndiTemplate();
-            String dataSourceName = "java:jboss/datasources/singular";
+            String dataSourceName = SingularProperties.get().getProperty(JNDI_DATASOURCE, "java:jboss/datasources/singular");
             try {
                 dataSource = (DataSource) jndi.lookup(dataSourceName);
             } catch (NamingException e) {
-                LOGGER.error(String.format("Datasource %s not found.", dataSourceName));
+                LOGGER.error(String.format("Datasource %s not found.", dataSourceName), e);
             }
             return dataSource;
         }

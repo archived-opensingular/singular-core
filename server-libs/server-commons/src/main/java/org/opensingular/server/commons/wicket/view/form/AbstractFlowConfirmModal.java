@@ -62,7 +62,7 @@ public abstract class AbstractFlowConfirmModal<T extends PetitionEntity> impleme
 
     protected void addDefaultCancelButton(final BSModalBorder modal) {
         modal.addButton(
-                BSModalBorder.ButtonStyle.CANCEl,
+                BSModalBorder.ButtonStyle.CANCEL,
                 "label.button.cancel",
                 new AjaxButton("cancel-btn") {
                     @Override

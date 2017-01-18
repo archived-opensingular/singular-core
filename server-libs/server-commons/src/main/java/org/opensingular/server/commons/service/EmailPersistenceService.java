@@ -24,7 +24,7 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
@@ -47,7 +47,7 @@ public class EmailPersistenceService implements IEmailService<Email>{
     private EmailAddresseeDao<EmailAddresseeEntity> emailAddresseeDao;
     
     @Inject @Named(SDocument.FILE_PERSISTENCE_SERVICE)
-    private AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntitty> persistenceHandler;
+    private AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntity> persistenceHandler;
     
     @Override
     public boolean send(Email email) {
@@ -60,7 +60,7 @@ public class EmailPersistenceService implements IEmailService<Email>{
         emailEntity.setReplyTo(email.getReplyToJoining());
         
         for (IAttachmentRef attachmentRef : email.getAttachments()) {
-            IAttachmentRef attachment = persistenceHandler.copy(attachmentRef);
+            IAttachmentRef attachment = persistenceHandler.copy(attachmentRef, null).getNewAttachmentRef();
             emailEntity.getAttachments().add(persistenceHandler.getAttachmentEntity(attachment));
         }
         emailEntity.setCreationDate(new Date());

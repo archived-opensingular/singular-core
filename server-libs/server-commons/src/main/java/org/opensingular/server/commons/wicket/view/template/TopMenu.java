@@ -84,6 +84,7 @@ public class TopMenu extends Panel {
 
     private StatelessLink buildSelectSkinLink(final Skin skin) {
         return new StatelessLink("change_action") {
+            @Override
             public void onClick() {
                 option.selectSkin(skin);
                 refreshPage();

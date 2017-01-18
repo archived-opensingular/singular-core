@@ -60,7 +60,7 @@ public class EmailSenderScheduledJob implements IScheduledJob, Loggable {
             pending -= emailsPerPage;
             page++;
         }
-        getLogger().info(sent + " sent from total of "+totalPendingRecipients);
+        getLogger().info("{} sent from total of {}", sent, totalPendingRecipients);
         return sent + " sent from total of "+totalPendingRecipients;
     }
 

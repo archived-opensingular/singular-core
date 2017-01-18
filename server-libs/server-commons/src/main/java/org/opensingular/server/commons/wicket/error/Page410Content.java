@@ -20,12 +20,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.server.commons.wicket.view.template.Content;
 
-import java.util.logging.Logger;
-
 
 public class Page410Content extends Content {
-
-    private final static Logger LOGGER = Logger.getLogger("GENERAL_LOGGER");
 
     public Page410Content(String id) {
         super(id);

@@ -97,7 +97,7 @@ public class ActionConfig implements Loggable {
     public boolean containsAction(String name) {
         boolean contains = customActions.keySet().stream().anyMatch(actionDefinition -> actionDefinition.getName().equals(name)) || defaultActions.stream().anyMatch(actionDefinition -> actionDefinition.getName().equals(name));
         if (!contains) {
-            getLogger().debug(String.format("Action '%s' foi removido pois não está definida para esse fluxo.", name));
+            getLogger().debug("Action '{}' foi removido pois não está definida para esse fluxo.", name);
         }
         return contains;
     }

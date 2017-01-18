@@ -17,12 +17,16 @@
 package org.opensingular.server.commons.config;
 
 
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.form.SType;
-import org.springframework.web.context.ServletContextAware;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletContext;
-import java.util.*;
+
+import org.opensingular.form.SType;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * Spring Bean para guardar parametros de configuração reutilizáveis

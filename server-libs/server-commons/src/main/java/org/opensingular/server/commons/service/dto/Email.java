@@ -162,9 +162,7 @@ public class Email {
     }
 
     protected Email addRecipients(AddresseType addresseType, Stream<String> addresses){
-        addresses.filter(StringUtils::isNotBlank).forEach(address -> {
-            recipients.put(addresseType, new Addressee(null, this, addresseType, address, null));
-        });
+        addresses.filter(StringUtils::isNotBlank).forEach(address -> recipients.put(addresseType, new Addressee(null, this, addresseType, address, null)));
         return this;
     }
     

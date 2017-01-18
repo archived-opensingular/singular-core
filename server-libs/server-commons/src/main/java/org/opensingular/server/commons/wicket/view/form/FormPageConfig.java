@@ -23,22 +23,25 @@ import org.opensingular.server.commons.flow.LazyFlowDefinitionResolver;
 import org.opensingular.server.commons.form.FormActions;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class FormPageConfig implements Serializable {
 
     private FormActions                        formAction;
     private String                             petitionId;
     private String                             formType;
-    private HashMap<String, Object>            contextParams;
+    private Map<String, Serializable>          contextParams = new HashMap<>();
     private LazyFlowDefinitionResolver         lazyFlowDefinitionResolver;
     private Class<? extends ProcessDefinition> processDefinition;
     private Long                               formVersionPK;
     private String                             parentPetitionId;
+    private boolean                            diff;
+    private Map<String, String>                additionalParams = new HashMap<>();
 
     private FormPageConfig() {
         formAction = FormActions.FORM_VIEW;
-        contextParams = new HashMap<>();
     }
 
     private static FormPageConfig newConfig(String formType,
@@ -78,6 +81,18 @@ public class FormPageConfig implements Serializable {
         return cfg;
     }
 
+    public static FormPageConfig newConfig(String formType,
+                                           String petitionId,
+                                           FormActions formAction,
+                                           Long formVersionPK,
+                                           String parentPetitionId,
+                                           LazyFlowDefinitionResolver lazyFlowDefinitionResolver,
+                                           boolean diff) {
+        final FormPageConfig cfg = newConfig(formType, petitionId, formAction, formVersionPK, parentPetitionId, lazyFlowDefinitionResolver);
+        cfg.diff = diff;
+        return cfg;
+    }
+
     public ViewMode getViewMode() {
         return formAction.getViewMode();
     }
@@ -102,7 +117,7 @@ public class FormPageConfig implements Serializable {
         this.formType = formType;
     }
 
-    public HashMap<String, Object> getContextParams() {
+    public Map<String, Serializable> getContextParams() {
         return contextParams;
     }
 
@@ -141,4 +156,22 @@ public class FormPageConfig implements Serializable {
     public String getParentPetitionId() {
         return parentPetitionId;
     }
+
+    public boolean isDiff() {
+        return diff;
+    }
+
+    public void setDiff(boolean diff) {
+        this.diff = diff;
+    }
+
+    public Map<String, String> getAdditionalParams() {
+        return Collections.unmodifiableMap(additionalParams);
+    }
+
+    public FormPageConfig addAdditionalParam(String key, String value) {
+        additionalParams.put(key, value);
+        return this;
+    }
+
 }

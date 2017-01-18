@@ -16,26 +16,14 @@
 
 package org.opensingular.server.commons.flow.metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opensingular.flow.core.property.MetaDataRef;
-import org.opensingular.server.commons.config.IServerContext;
 
 public class PetitionHistoryTaskMetaDataValue {
 
     public static final PetitionHistoryTaskMetaDataKey KEY = new PetitionHistoryTaskMetaDataKey(PetitionHistoryTaskMetaDataKey.class.getName(), PetitionHistoryTaskMetaDataValue.class);
-    public static final PetitionHistoryTaskMetaDataValue ON = new PetitionHistoryTaskMetaDataValue(KEY);
+    public static final PetitionHistoryTaskMetaDataValue ON = new PetitionHistoryTaskMetaDataValue();
 
-    private List<IServerContext> contexts = new ArrayList<>(2);
-    private PetitionHistoryTaskMetaDataKey key;
-
-    PetitionHistoryTaskMetaDataValue(PetitionHistoryTaskMetaDataKey key) {
-        this.key = key;
-    }
-
-    public PetitionHistoryTaskMetaDataKey getKey() {
-        return key;
+    PetitionHistoryTaskMetaDataValue() {
     }
 
     public static class PetitionHistoryTaskMetaDataKey extends MetaDataRef<PetitionHistoryTaskMetaDataValue> {

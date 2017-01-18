@@ -134,12 +134,9 @@ public abstract class AbstractFormContent extends Content {
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
 
-                ProcessInstanceEntity processInstance = getProcessInstance();
                 SDocumentFactory extendedFactory = singularFormConfig.getDocumentFactory().extendAddingSetupStep(
-                        document -> {
-                            document.bindLocalService("processService", AbstractFormContent.ProcessFormService.class,
-                                    RefService.of((AbstractFormContent.ProcessFormService) () -> processInstance));
-                        });
+                        document -> document.bindLocalService("processService", ProcessFormService.class,
+                                RefService.of((ProcessFormService) () -> getProcessInstance())));
                 return AbstractFormContent.this.createInstance(extendedFactory, refType);
             }
 
@@ -241,7 +238,7 @@ public abstract class AbstractFormContent extends Content {
 
     protected BSModalBorder construirCloseModal() {
         BSModalBorder closeModal = new BSModalBorder("close-modal", getMessage("label.title.close.draft"));
-        closeModal.addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.cancel", new AjaxButton("cancel-close-btn") {
+        closeModal.addButton(BSModalBorder.ButtonStyle.CANCEL, "label.button.cancel", new AjaxButton("cancel-close-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 closeModal.hide(target);

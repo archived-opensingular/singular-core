@@ -201,7 +201,7 @@ public class AuthorizationService implements Loggable {
     }
 
     private String removeTask(String permissionId) {
-        int idx = permissionId.lastIndexOf("_");
+        int idx = permissionId.lastIndexOf('_');
         if (idx > -1) {
             return permissionId.substring(0, idx);
         }
@@ -222,7 +222,7 @@ public class AuthorizationService implements Loggable {
             return true;
         }
 
-        getLogger().info(String.format(" Usuário logado %s não possui a permissão %s ", idUsuario, permissionNeeded));
+        getLogger().info(" Usuário logado {} não possui a permissão {} ", idUsuario, permissionNeeded);
         return false;
     }
 
@@ -238,8 +238,11 @@ public class AuthorizationService implements Loggable {
         if (StringUtils.isBlank(formTypeName)) {
             return null;
         }
-        SType<?> sType = singularFormConfig.get().getTypeLoader().loadType(formTypeName).get();
-        return SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.getClass()).toUpperCase();
+
+        return singularFormConfig
+                .map(formConfig -> formConfig.getTypeLoader().loadType(formTypeName))
+                .map(sType -> SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) sType.get().getClass()).toUpperCase())
+                .orElse(null);
     }
 
 }

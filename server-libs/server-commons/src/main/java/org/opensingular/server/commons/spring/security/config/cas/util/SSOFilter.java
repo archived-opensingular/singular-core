@@ -1,11 +1,9 @@
 package org.opensingular.server.commons.spring.security.config.cas.util;
 
 
-import com.google.common.base.Strings;
-import org.jasig.cas.client.util.HttpServletRequestWrapperFilter;
-import org.opensingular.server.commons.config.IServerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,9 +13,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.jasig.cas.client.util.HttpServletRequestWrapperFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Filtro unificado para configuração do SSO
@@ -110,8 +112,8 @@ public class SSOFilter extends SSOConfigurableFilter {
             for (String urlExcludePattern : urlExcludePatterns) {
                 if (urlMatches(request, urlExcludePattern)) {
                     logger.info(
-                            String.format("Filter skipped due to regex patterns defined in urlExcludePattern properties ",
-                                    request.getRequestURL()));
+                            "Filter skipped due to regex patterns defined in urlExcludePattern properties. URL: {} ",
+                            StringEscapeUtils.escapeJava(request.getRequestURL().toString()));
                     return true;
                 }
             }
@@ -147,6 +149,7 @@ public class SSOFilter extends SSOConfigurableFilter {
             this.additionalFilters = Arrays.asList(additionalFilters);
         }
 
+        @Override
         public void doFilter(final ServletRequest request, final ServletResponse response) throws IOException,
                 ServletException {
             if (currentPosition == additionalFilters.size()) {

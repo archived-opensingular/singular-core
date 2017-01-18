@@ -40,4 +40,6 @@ public class DispatcherPageParameters {
 
     public final static String FORM_VERSION_KEY = "fvk";
 
+    public final static String DIFF = "diff";
+
 }

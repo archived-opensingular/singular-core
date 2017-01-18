@@ -29,7 +29,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 public interface SingularInitializer extends WebApplicationInitializer {
 
     public static final Logger logger = LoggerFactory.getLogger(SingularInitializer.class);
-    static final String SINGULAR = "[SINGULAR] %s";
+    static final String SINGULAR = "[SINGULAR] {}";
     static final String SERVLET_ATTRIBUTE_WEB_CONFIGURATION = "Singular-webInitializer";
     static final String SERVLET_ATTRIBUTE_SPRING_HIBERNATE_CONFIGURATION = "Singular-springHibernateInitializer";
     static final String SERVLET_ATTRIBUTE_FORM_CONFIGURATION_CONFIGURATION = "Singular-formInitializer";
@@ -38,24 +38,24 @@ public interface SingularInitializer extends WebApplicationInitializer {
 
     @Override
     default void onStartup(ServletContext ctx) throws ServletException {
-        logger.info(String.format(SINGULAR, " Initializing Singular.... "));
-        logger.info(String.format(SINGULAR, " Initializing WebConfiguration "));
+        logger.info(SINGULAR, " Initializing Singular.... ");
+        logger.info(SINGULAR, " Initializing WebConfiguration ");
         WebInitializer webInitializer = webConfiguration();
         if (webInitializer != null) {
             webConfiguration().init(ctx);
         } else {
-            logger.info(String.format(SINGULAR, " Null webInitializer, skipping web configuration"));
+            logger.info(SINGULAR, " Null webInitializer, skipping web configuration");
         }
 
-        logger.info(String.format(SINGULAR, " Initializing SpringHibernateConfiguration "));
+        logger.info(SINGULAR, " Initializing SpringHibernateConfiguration ");
         SpringHibernateInitializer springHibernateInitializer = springHibernateConfiguration();
         AnnotationConfigWebApplicationContext applicationContext = null;
         if (springHibernateInitializer != null) {
             applicationContext = springHibernateInitializer.init(ctx);
         } else {
-            logger.info(String.format(SINGULAR, " Null springHibernateInitializer, skipping Spring configuration"));
+            logger.info(SINGULAR, " Null springHibernateInitializer, skipping Spring configuration");
         }
-        logger.info(String.format(SINGULAR, " Initializing SpringSecurity "));
+        logger.info(SINGULAR, " Initializing SpringSecurity ");
         SpringSecurityInitializer springSecurityInitializer = springSecurityConfiguration();
         if (springSecurityInitializer != null) {
             springSecurityConfiguration().init(ctx, applicationContext,
@@ -68,31 +68,31 @@ public interface SingularInitializer extends WebApplicationInitializer {
                             .map(WebInitializer::serverContexts)
                             .orElse(ServerContext.values()));
         } else {
-            logger.info(String.format(SINGULAR, " Null springSecurityInitializer, skipping Spring Security configuration"));
+            logger.info(SINGULAR, " Null springSecurityInitializer, skipping Spring Security configuration");
         }
 
-        logger.info(String.format(SINGULAR, " Initializing FormConfiguration "));
+        logger.info(SINGULAR, " Initializing FormConfiguration ");
         FormInitializer formInitializer = formConfiguration();
         if (formInitializer != null) {
             formInitializer.init(ctx, applicationContext);
         } else {
-            logger.info(String.format(SINGULAR, " Null formInitializer, skipping Singular Form configuration"));
+            logger.info(SINGULAR, " Null formInitializer, skipping Singular Form configuration");
         }
 
-        logger.info(String.format(SINGULAR, " Initializing FlowConfiguration "));
+        logger.info(SINGULAR, " Initializing FlowConfiguration ");
         FlowInitializer flowInitializer = flowConfiguration();
         if (flowInitializer != null) {
             flowInitializer.init(ctx, applicationContext);
         } else {
-            logger.info(String.format(SINGULAR, " Null flowInitializer, skipping Singular Flow configuration"));
+            logger.info(SINGULAR, " Null flowInitializer, skipping Singular Flow configuration");
         }
 
-        logger.info(String.format(SINGULAR, " Initializing SchedulerConfiguration "));
+        logger.info(SINGULAR, " Initializing SchedulerConfiguration ");
         SchedulerInitializer schedulerInitializer = schedulerConfiguration();
         if (schedulerInitializer != null) {
             schedulerInitializer.init(ctx, applicationContext);
         } else {
-            logger.info(String.format(SINGULAR, " Null SchedulerInitializer, skipping Singular Scheduler configuration"));
+            logger.info(SINGULAR, " Null SchedulerInitializer, skipping Singular Scheduler configuration");
         }
 
         if (applicationContext != null){

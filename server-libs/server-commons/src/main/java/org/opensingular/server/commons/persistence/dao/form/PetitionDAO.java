@@ -18,10 +18,10 @@ package org.opensingular.server.commons.persistence.dao.form;
 
 
 import org.opensingular.flow.core.TaskType;
-import org.opensingular.form.persistence.dao.FormVersionDAO;
+import org.opensingular.form.persistence.entity.FormAttachmentEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
-import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
+import org.opensingular.server.commons.persistence.dto.PetitionDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.spring.security.PetitionAuthMetadataDTO;
@@ -29,7 +29,6 @@ import org.opensingular.server.commons.util.JPAQueryUtil;
 import org.opensingular.lib.support.persistence.BaseDAO;
 import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -63,7 +62,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         return (Long) createQuery(filtro, siglasProcesso, true, formNames).uniqueResult();
     }
 
-    public List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
+    public List<PetitionDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
         final Query query = createQuery(filtro, siglasProcesso, false, formNames);
         query.setFirstResult(filtro.getFirst());
         query.setMaxResults(filtro.getCount());
@@ -71,8 +70,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         return query.list();
     }
 
-    protected Class<? extends PeticaoDTO> getResultClass() {
-        return PeticaoDTO.class;
+    protected Class<? extends PetitionDTO> getResultClass() {
+        return PetitionDTO.class;
     }
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter, List<String> processesAbbreviation, List<String> formNames) {
@@ -148,7 +147,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
         if (!filtro.isRascunho() && siglasProcesso != null && !siglasProcesso.isEmpty()) {
             hql.append(" AND ( processDefinitionEntity.key  in (:siglasProcesso) ");
-                params.put("siglasProcesso", siglasProcesso);
+            params.put("siglasProcesso", siglasProcesso);
             if (formNames != null && !formNames.isEmpty()) {
                 hql.append(" OR formType.abbreviation in (:formNames)) ");
                 params.put("formNames", formNames);
@@ -169,15 +168,19 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         } else {
             hql.append(" AND p.processInstanceEntity is not null ");
             hql.append(" AND (ta.endDate is null OR task.type = :tipoEnd) ");
-            params.put("tipoEnd", TaskType.End);
+            params.put("tipoEnd", TaskType.END);
         }
 
         appendCustomWhereClauses(hql, params, filtro);
 
+        appendSort(hql, filtro, count);
+    }
+
+    private void appendSort(StringBuilder hql, QuickFilter filtro, boolean count) {
         if (filtro.getSortProperty() != null) {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
-        } else if (!count){
-            if (filtro.isRascunho()){
+        } else if (!count) {
+            if (filtro.isRascunho()) {
                 hql.append(mountSort("creationDate", false));
             } else {
                 hql.append(mountSort("processBeginDate", false));
@@ -190,6 +193,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
      */
     protected void appendCustomWhereClauses(StringBuilder hql, Map<String, Object> params, QuickFilter filter) {
     }
+
     /**
      * Append Custom Quick Filter
      */
@@ -247,6 +251,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     @Override
     public void delete(T obj) {
+        findFormAttachmentByPetitionCod(obj.getCod()).forEach(getSession()::delete);
         FormVersionEntity formVersionEntity = obj.getMainForm().getCurrentFormVersionEntity();
         getSession().delete(formVersionEntity);
         obj.getMainForm().setCurrentFormVersionEntity(null);
@@ -256,7 +261,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     public PetitionAuthMetadataDTO findPetitionAuthMetadata(Long petitionId) {
         StringBuilder query = new StringBuilder();
-        query.append(" select distinct new "+PetitionAuthMetadataDTO.class.getName()+"(ft.abbreviation, ftm.abbreviation, td.abbreviation, pd.key, ct.cod) from ");
+        query.append(" select distinct new " + PetitionAuthMetadataDTO.class.getName() + "(ft.abbreviation, ftm.abbreviation, td.abbreviation, pd.key, ct.cod) from ");
         query.append(" " + PetitionEntity.class.getName() + " pe ");
         query.append(" left join pe.processDefinitionEntity pd  ");
         query.append(" left join pe.processInstanceEntity pi  ");
@@ -272,12 +277,12 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         query.append(" where pe.cod = :petitionId and (ftm is null or fpe.mainForm = :sim ) AND (ct.endDate is null or t.type = :fim )");
         query.append(" order by ct.cod DESC ");
         return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString())
-                .setParameter("sim",SimNao.SIM)
-                .setParameter("fim", TaskType.End)
+                .setParameter("sim", SimNao.SIM)
+                .setParameter("fim", TaskType.END)
                 .setParameter("petitionId", petitionId)
                 .setMaxResults(1)
                 .list())
-                .filter(l -> l.size() > 0)
+                .filter(l -> !l.isEmpty())
                 .map(l -> l.get(0))
                 .orElse(null);
     }
@@ -285,10 +290,27 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
     @SuppressWarnings("unchecked")
     public List<PetitionEntity> findByRootPetition(T rootPetition) {
         String hql = "FROM " + PetitionEntity.class.getName() + " pe "
-               + " WHERE pe.rootPetition = :rootPetition ";
+                + " WHERE pe.rootPetition = :rootPetition ";
 
         Query query = getSession().createQuery(hql);
         query.setParameter("rootPetition", rootPetition);
         return query.list();
     }
+
+    public List<FormAttachmentEntity> findFormAttachmentByPetitionCod(Long petitionCod) {
+        return getSession()
+                .createQuery(" select distinct(fa) from PetitionEntity p " +
+                        " inner join p.formPetitionEntities fp " +
+                        " left join fp.form f " +
+                        " left join fp.currentDraftEntity cd " +
+                        " left join cd.form cdf, " +
+                        " FormVersionEntity fv," +
+                        " FormAttachmentEntity fa  " +
+                        " where (fv.formEntity.cod = f.cod or fv.formEntity.cod = cdf.cod) " +
+                        " and fa.formVersionEntity.cod = fv.cod " +
+                        " and p.cod = :petitionCod ")
+                .setParameter("petitionCod", petitionCod)
+                .list();
+    }
+
 }

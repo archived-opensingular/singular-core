@@ -307,7 +307,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
         dropDownChoice.setVisible(StringUtils.isNotBlank(confirmation.getSelectEndpoint()));
         confirmationModal.addOrReplace(dropDownChoice);
 
-        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
+        confirmationModal.addButton(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue(confirmation.getCancelButtonLabel()), new AjaxButton("cancel-delete-btn", confirmationForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 currentModel = null;
@@ -373,13 +373,13 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
     }
 
     private String appendParameters(Map<String, String> additionalParams) {
-        String paramsValue = "";
+        StringBuilder paramsValue = new StringBuilder();
         if (!additionalParams.isEmpty()) {
             for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
-                paramsValue += "&" + entry.getKey() + "=" + entry.getValue();
+                paramsValue.append(String.format("&%s=%s", entry.getKey(), entry.getValue()));
             }
         }
-        return paramsValue;
+        return paramsValue.toString();
     }
 
     private IFunction<IModel<BoxItemModel>, Boolean> visibleFunction(ItemAction itemAction) {
@@ -387,7 +387,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
             BoxItemModel boxItemModel = (BoxItemModel) model.getObject();
             boolean      visible      = boxItemModel.hasAction(itemAction);
             if (!visible) {
-                getLogger().debug(String.format("Action %s não está disponível para o item (%s: código da petição) da listagem ", itemAction.getName(), boxItemModel.getCod()));
+                getLogger().debug("Action {} não está disponível para o item ({}: código da petição) da listagem ", itemAction.getName(), boxItemModel.getCod());
             }
 
             return visible;
@@ -478,6 +478,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
         return link;
     }
 
+    @Override
     protected Map<String, String> getCriarLinkParameters(BoxItemModel item) {
         final Map<String, String> linkParameters = new HashMap<>();
         linkParameters.putAll(getLinkParams());

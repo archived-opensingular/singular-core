@@ -57,9 +57,7 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
 
         petitionHistoryDTOs = new ArrayList<>();
 
-        histories.forEach(history -> {
-            petitionHistoryDTOs.add(new PetitionHistoryDTO().setPetitionContentHistory(history).setTask(history.getTaskInstanceEntity()));
-        });
+        histories.forEach(history -> petitionHistoryDTOs.add(new PetitionHistoryDTO().setPetitionContentHistory(history).setTask(history.getTaskInstanceEntity())));
 
         petitionHistoryTaskCods = histories
                 .stream()
@@ -70,9 +68,7 @@ public class PetitionContentHistoryDAO extends BaseDAO<PetitionContentHistoryEnt
         tasks
                 .stream()
                 .filter(task -> !petitionHistoryTaskCods.contains(task.getCod()))
-                .forEach(task -> {
-                    petitionHistoryDTOs.add(new PetitionHistoryDTO().setTask(task));
-                });
+                .forEach(task -> petitionHistoryDTOs.add(new PetitionHistoryDTO().setTask(task)));
 
         MenuSessionConfig menuSessionConfig = SingularSession.get().getMenuSessionConfig();
         MenuGroup         menuGroup         = menuSessionConfig.getMenuPorLabel(menu);

@@ -16,11 +16,14 @@
 
 package org.opensingular.server.commons.persistence.dao.form;
 
-import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
-import org.opensingular.lib.support.persistence.BaseDAO;
+import java.util.List;
 
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.opensingular.lib.support.persistence.BaseDAO;
+import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 
 public class FormPetitionDAO extends BaseDAO<FormPetitionEntity, Long> {
 
@@ -60,6 +63,27 @@ public class FormPetitionDAO extends BaseDAO<FormPetitionEntity, Long> {
                 .add(Restrictions.eq("petition.cod", petitionPK))
                 .add(Restrictions.eq("formType.abbreviation", typeName))
                 .addOrder(Order.desc("currentFormVersion.inclusionDate"))
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FormVersionEntity> findTwoLastFormVersions(Long codForm) {
+        return getSession()
+                .createCriteria(FormVersionEntity.class)
+                .createAlias("formEntity", "formEntity")
+                .add(Restrictions.eq("formEntity.cod", codForm))
+                .addOrder(Order.desc("inclusionDate"))
+                .setMaxResults(2)
+                .list();
+    }
+
+    public Long countVersions(Long codForm) {
+        return (Long) getSession()
+                .createCriteria(FormVersionEntity.class)
+                .createAlias("formEntity", "formEntity")
+                .add(Restrictions.eq("formEntity.cod", codForm))
+                .setProjection(Projections.countDistinct("cod"))
                 .setMaxResults(1)
                 .uniqueResult();
     }
