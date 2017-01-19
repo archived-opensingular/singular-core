@@ -219,14 +219,14 @@ public abstract class DispatcherPage extends WebPage {
         // para os modos de visualização basta a permissão.
         if (ViewMode.EDIT == config.getFormAction().getViewMode()
                 || AnnotationMode.EDIT == config.getFormAction().getAnnotationMode()) {
-            return hasPermission && isUserAssignedToTask(config);
+            return hasPermission && !isTaskAssignedToAnotherUser(config);
         } else {
             return hasPermission;
         }
 
     }
 
-    private boolean isUserAssignedToTask(FormPageConfig config) {
+    private boolean isTaskAssignedToAnotherUser(FormPageConfig config) {
         String username   = SingularSession.get().getUsername();
         Long   petitionId = NumberUtils.toLong(config.getPetitionId(), -1);
         if (petitionId < 0) {
@@ -235,11 +235,12 @@ public abstract class DispatcherPage extends WebPage {
 
         TaskInstanceEntity currentTask = petitionService.findCurrentTaskByPetitionId(petitionId);
 
-        if (!currentTask.getTaskHistory().isEmpty()) {
+        if (currentTask != null
+                && !currentTask.getTaskHistory().isEmpty()) {
             TaskInstanceHistoryEntity taskInstanceHistory = currentTask.getTaskHistory().get(currentTask.getTaskHistory().size() - 1);
 
             return taskInstanceHistory.getEndDateAllocation() == null
-                    && username.equalsIgnoreCase(taskInstanceHistory.getAllocatedUser().getCodUsuario());
+                    && !username.equalsIgnoreCase(taskInstanceHistory.getAllocatedUser().getCodUsuario());
         }
 
         return false;
