@@ -99,14 +99,14 @@ public abstract class WicketFormUtils {
             .findAny();
     }
     public static Stream<Component> streamComponentsByInstance(Component anyComponent, BiPredicate<Component, SInstance> predicate) {
-        Optional<MarkupContainer> rootContainer = streamAscendants(anyComponent)
+        MarkupContainer rootContainer = streamAscendants(anyComponent)
                 .map(c -> getRootContainer(c))
                 .filter(c -> c != null)
-                .findAny();
-        if (! rootContainer.isPresent()) {
+                .findAny().orElse(null);
+        if (rootContainer == null) {
             return null;
         }
-        return streamDescendants(rootContainer.get())
+        return streamDescendants(rootContainer)
             .filter(c -> c.getDefaultModel() instanceof ISInstanceAwareModel<?>)
             .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
     }
@@ -190,20 +190,9 @@ public abstract class WicketFormUtils {
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
             String title = findTitle(comp);
-            if (title != null) {
-                if (Objects.equal(title, lastTitle)) {
-                    continue;
-                }
+            if (title != null && ! Objects.equal(title, lastTitle)) {
                 lastTitle = title;
-
-                if ((lastInstance != null) && (instance instanceof SIList<?>)) {
-                    int pos = findPos((SIList<SInstance>) instance, lastInstance);
-                    if (pos != -1) {
-                        titles.addFirst(title + " [" + pos + "]");
-                    }
-                } else {
-                    titles.addFirst(title);
-                }
+                addTitle(titles, title, instance, lastInstance);
             }
             lastInstance = instance;
         }
@@ -212,6 +201,17 @@ public abstract class WicketFormUtils {
             return titles.stream().collect(Collectors.joining(" > "));
         }
         return null;
+    }
+
+    private static void addTitle(Deque<String> titles, String title, SInstance instance, SInstance lastInstance) {
+        if ((lastInstance != null) && (instance instanceof SIList<?>)) {
+            int pos = findPos((SIList<SInstance>) instance, lastInstance);
+            if (pos != -1) {
+                titles.addFirst(title + " [" + pos + "]");
+            }
+        } else {
+            titles.addFirst(title);
+        }
     }
 
     private static int findPos(@Nonnull SIList<SInstance> instance, @Nonnull SInstance lastInstance) {
@@ -226,9 +226,9 @@ public abstract class WicketFormUtils {
     }
 
     private static @Nullable String findTitle(Component comp) {
-        Optional<WicketBuildContext> wbc = WicketBuildContext.find(comp);
-        if (wbc.isPresent()) {
-            return wbc.get().resolveContainerTitle().map(it -> StringUtils.trimToNull(it.getObject())).orElse(null);
+        WicketBuildContext wbc = WicketBuildContext.find(comp).orElse(null);
+        if (wbc != null) {
+            return wbc.resolveContainerTitle().map(it -> StringUtils.trimToNull(it.getObject())).orElse(null);
         }
         return null;
 

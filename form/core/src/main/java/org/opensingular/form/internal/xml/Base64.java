@@ -141,7 +141,7 @@ final class Base64 {
                     (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) '+',
                     (byte) '/'};
 
-    /** Determine which ALPHABET to use. */
+    // Determine which ALPHABET to use.
     static {
         byte[] __bytes;
         try {
@@ -755,16 +755,16 @@ final class Base64 {
             } // end while: reading input
 
             // No error? Get new bytes.
-            bytes = baos.toByteArray();
+            return baos.toByteArray();
 
         } catch (java.io.IOException e) {
             // Just return originally-decoded bytes
+            return bytes;
         } finally {
             tryCloseQuitely(gzis);
             tryCloseQuitely(bais);
             tryCloseQuitely(baos);
-        } // end finally
-        return bytes;
+        }
     }
 
     /**

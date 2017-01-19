@@ -16,11 +16,7 @@
 
 package org.opensingular.form.view;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
+import org.opensingular.form.*;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -101,7 +97,9 @@ public class ViewResolver {
         SView view = null;
         while (type != null) {
             view = type.getView();
-            if (view != null) { return view;    }
+            if (view != null) {
+                return view;
+            }
             type = type.getSuperType();
         }
         Class<?> classType = instance.getType().getClass();

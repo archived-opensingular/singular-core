@@ -139,15 +139,17 @@ public class ProcessInstance implements Serializable {
         return getCurrentTask().prepareTransition(transitionName);
     }
 
-    final IEntityProcessInstance getInternalEntity() {
-        if (entity == null && codEntity != null) {
-            IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
-            if (newfromDB != null) {
-                if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcessVersion().getProcessDefinition())) {
-                    throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity
-                        + " se refere a definição de processo " + newfromDB.getProcessVersion().getProcessDefinition().getKey()
-                        + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
-
+    final @Nonnull IEntityProcessInstance getInternalEntity() {
+        if (entity == null) {
+            if(codEntity != null) {
+                IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
+                if (newfromDB != null && !getProcessDefinition().getEntityProcessDefinition().equals(
+                        newfromDB.getProcessVersion().getProcessDefinition())) {
+                    throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity +
+                            " se refere a definição de processo " +
+                            newfromDB.getProcessVersion().getProcessDefinition().getKey() +
+                            " mas era esperado que referenciasse " +
+                            getProcessDefinition().getEntityProcessDefinition());
                 }
                 entity = newfromDB;
             }
@@ -159,7 +161,7 @@ public class ProcessInstance implements Serializable {
         return entity;
     }
 
-    private TaskInstance getCurrentTaskOrException() {
+    private @Nonnull TaskInstance getCurrentTaskOrException() {
         TaskInstance current = getCurrentTask();
         if (current == null) {
             throw SingularException.rethrow(createErrorMsg("Não há um task atual para essa instancia"));

@@ -73,7 +73,7 @@ public class FormXsdUtil {
             if (element.isTagXsdElement()) {
                 readXsdElementDefinition(typeContext, parent, element);
             } else if (element.isTagComplexType() || element.isTagSequence()) {
-                if (typeContext.isComposite()) {
+                if (typeContext instanceof STypeComposite) {
                     readXsd(typeContext, element);
                 } else {
                     element.checkUnexpectedNodeFor(typeContext);
@@ -135,11 +135,12 @@ public class FormXsdUtil {
                 newType.asAtr().required("required".equals(value));
             }
         } else {
-            readXsdOwnAttributesOfCardinality(element, newType);
+            readXsdOwnAttributeMinOccurs(element, newType);
+            readXsdOwnAttributeMaxOccurs(element, newType);
         }
     }
 
-    private static void readXsdOwnAttributesOfCardinality(ElementReader element, SType<?> newType) {
+    private static void readXsdOwnAttributeMinOccurs(ElementReader element, SType<?> newType) {
         Integer minOccurs = element.getAttrInteger("minOccurs");
         if (minOccurs == null || minOccurs.intValue() == 1) {
             newType.asAtr().required();
@@ -153,6 +154,9 @@ public class FormXsdUtil {
                 throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"));
             }
         }
+    }
+
+    private static void readXsdOwnAttributeMaxOccurs(ElementReader element, SType<?> newType) {
         String value = element.getAttr("maxOccurs");
         if ("unbounded".equalsIgnoreCase(value)) {
             if (!newType.isList()) {

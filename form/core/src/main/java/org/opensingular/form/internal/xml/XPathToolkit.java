@@ -415,13 +415,14 @@ public final class XPathToolkit {
     }
 
     private static List<String> addToList(List<String> lista, String valor) {
+        List<String> nova = lista;
         if (valor != null) {
             if (lista == null) {
-                lista = new ArrayList<>();
+                nova = new ArrayList<>();
             }
-            lista.add(valor);
+            nova.add(valor);
         }
-        return lista;
+        return nova;
     }
 
     /**
