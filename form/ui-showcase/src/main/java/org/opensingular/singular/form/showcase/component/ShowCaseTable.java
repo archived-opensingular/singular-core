@@ -85,38 +85,38 @@ public class ShowCaseTable {
         final ShowCaseGroup group = addGroup(groupEnum.getName(), groupEnum.getIcone(), groupEnum.getTipo());
 
         final List<Class<?>> classes = casePorGrupo.get(groupEnum);
-        if (classes != null) {
-            for (Class<?> caseClass : classes) {
-                final CaseItem caseItem = caseClass.getAnnotation(CaseItem.class);
-                CaseBase caseBase = null;
-                if (SPackage.class.isAssignableFrom(caseClass)) {
-                    caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+        if (classes == null) {
+            return;
+        }
+        for (Class<?> caseClass : classes) {
+            final CaseItem caseItem = caseClass.getAnnotation(CaseItem.class);
+            CaseBase caseBase = null;
+            if (SPackage.class.isAssignableFrom(caseClass)) {
+                caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
 //                } else if (CollectionDefinition.class.isAssignableFrom(caseClass)) {
 //                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.getAnnotation());
 //                } else {
 //                    throw new RuntimeException("Apenas classes do tipo " + SPackage.class.getName() + " e " + CollectionDefinition.class.getName() + " podem ser anotadas com @" + CaseItem.class.getName());
-                }
+            }
 
-                if (!caseItem.customizer().isInterface()) {
-                    createInstance(caseItem).customize(caseBase);
+            if (!caseItem.customizer().isInterface()) {
+                createInstance(caseItem).customize(caseBase);
+            }
+            for (Resource resource : caseItem.resources()) {
+                Optional<ResourceRef> resourceRef;
+                if (resource.extension().isEmpty()) {
+                    resourceRef = ResourceRef.forSource(resource.value());
+                } else {
+                    resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
                 }
-                for (Resource resource : caseItem.resources()) {
-                    Optional<ResourceRef> resourceRef;
-                    if (resource.extension().isEmpty()) {
-                        resourceRef = ResourceRef.forSource(resource.value());
-                    } else {
-                        resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
-                    }
-                    if (caseBase != null && resourceRef.isPresent()) {
-                        caseBase.getAditionalSources().add(resourceRef.get());
-                    }
-                }
-                if (caseBase != null) {
-                    group.addCase(caseBase);
+                if (caseBase != null && resourceRef.isPresent()) {
+                    caseBase.getAditionalSources().add(resourceRef.get());
                 }
             }
+            if (caseBase != null) {
+                group.addCase(caseBase);
+            }
         }
-
     }
 
     private CaseCustomizer createInstance(CaseItem caseItem) {

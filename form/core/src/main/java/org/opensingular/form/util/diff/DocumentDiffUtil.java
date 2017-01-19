@@ -164,16 +164,10 @@ public final class DocumentDiffUtil {
         for (int posO = 0; posO < originals.size(); posO++) {
             SInstance iO = originals.get(posO);
             int posN = findById(iO.getId(), newerList);
-            if (posN == -1) {
-                posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
-            } else {
-                for (int posD = posNotConsumed; posD < posN; posD++) {
-                    if (!consumed[posD]) {
-                        posNotConsumed = diffLine(info, null, -1, newerList, consumed, posD, posNotConsumed);
-                    }
-                }
-                posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
+            if (posN != -1) {
+                posNotConsumed = calculateDiffNewListElement(info, newerList, posN, consumed, posNotConsumed);
             }
+            posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
         }
 
         for (int posN = posNotConsumed; posN < newerList.size(); posN++) {
@@ -184,6 +178,17 @@ public final class DocumentDiffUtil {
         if (info.isUnknownState()) {
             info.setType(DiffType.UNCHANGED_EMPTY);
         }
+    }
+
+    private static int calculateDiffNewListElement(@Nonnull DiffInfo info, List<? extends SInstance> newerList,
+            int posN, boolean[] consumed, int posNotConsumed) {
+        int newPosNotConsumed = posNotConsumed;
+        for (int posD = posNotConsumed; posD < posN; posD++) {
+            if (!consumed[posD]) {
+                newPosNotConsumed = diffLine(info, null, -1, newerList, consumed, posD, posNotConsumed);
+            }
+        }
+        return newPosNotConsumed;
     }
 
     /** Calcula o diff entre dois elementos de lista diferentes, sem fazer chamada recursiva. */
@@ -283,7 +288,7 @@ public final class DocumentDiffUtil {
             return info.copyWithoutChildren();
         } else if (newList.size() > 1) {
             DiffInfo newInfo = info.copyWithoutChildren();
-            newList.stream().forEach(newInfo::addChild);
+            newList.forEach(newInfo::addChild);
             return newInfo;
         }
         DiffInfo newInfo = newList.get(0);
@@ -423,19 +428,18 @@ public final class DocumentDiffUtil {
          * tiver nenhum match.
          */
         public CalculatorEntry get(Class<?> typeClassTarget) {
-            if (this.typeClass.isAssignableFrom(typeClassTarget)) {
-                if (subEntries != null) {
-                    CalculatorEntry result;
-                    for (CalculatorEntry e : subEntries) {
-                        result = e.get(typeClassTarget);
-                        if (result != null) {
-                            return result;
-                        }
+            if (! this.typeClass.isAssignableFrom(typeClassTarget)) {
+                return null;
+            } else if (subEntries != null) {
+                CalculatorEntry result;
+                for (CalculatorEntry e : subEntries) {
+                    result = e.get(typeClassTarget);
+                    if (result != null) {
+                        return result;
                     }
                 }
-                return this;
             }
-            return null;
+            return this;
         }
     }
 }

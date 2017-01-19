@@ -212,22 +212,24 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             }
 
             if (task.getAccessStrategy() != null) {
-                final List<String> roles = task.getAccessStrategy().getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
-                for (String roleName : roles) {
-
-                    PROCESS_ROLE_DEF roleDefinition = null;
-                    for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
-                        if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
-                            roleDefinition = (PROCESS_ROLE_DEF) rd;
-                            break;
-                        }
-                    }
-
-                    addRoleToTask(roleDefinition, taskDefinition);
-                }
+                List<String> roles = task.getAccessStrategy().getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
+                addRolesToTaks(process, taskDefinition, roles);
             }
         }
         return taskDefinition;
+    }
+
+    private void addRolesToTaks(PROCESS_DEF process, TASK_DEF taskDefinition, List<String> roles) {
+        for (String roleName : roles) {
+            PROCESS_ROLE_DEF roleDefinition = null;
+            for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
+                if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
+                    roleDefinition = (PROCESS_ROLE_DEF) rd;
+                    break;
+                }
+            }
+            addRoleToTask(roleDefinition, taskDefinition);
+        }
     }
 
     protected abstract ROLE_TASK addRoleToTask(PROCESS_ROLE_DEF roleDefinition, TASK_DEF taskDefinition);

@@ -55,9 +55,8 @@ public class ProcessadorCodigoFonte {
                 if (linha.startsWith("/**")) {
                     javadoc = true;
                     continue;
-                } else if (linha.contains("public class ")) {
-                    classeIniciada = true;
                 }
+                classeIniciada = linha.contains("public class ");
             }
 
             if(isLixo(linha)){

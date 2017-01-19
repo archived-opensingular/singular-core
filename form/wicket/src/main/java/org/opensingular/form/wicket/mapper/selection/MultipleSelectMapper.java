@@ -34,8 +34,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("serial")
@@ -54,9 +52,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
             }
         }
 
-        /**
-         * Dangling values
-         */
+        //Dangling values
         if (!model.getObject().isEmptyOfData()) {
             final SIList list = (SIList) model.getObject();
             for (int i = 0; i < list.size(); i += 1) {
@@ -92,32 +88,27 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
-        final StringBuilder output = new StringBuilder();
-        final SInstance mi = model.getObject();
-        if (mi instanceof SIList) {
-            final Collection children = ((SIList) mi).getChildren();
-            final Iterator iterator = children.iterator();
-            boolean first = true;
-            while (iterator.hasNext()) {
-                final SInstance val = (SInstance) iterator.next();
-                final Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
-                final String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
-                if (first) {
-                    output.append(label);
-                    first = false;
-                } else {
-                    //TODO implementar logica de auto detecção
-                    final PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
-                    switch (phraseBreak) {
-                        case BREAK_LINE:
-                            output.append("\n");
-                            break;
-                        case COMMA:
-                            output.append(", ");
-                            break;
-                    }
-                    output.append(label);
+        SInstance mi = model.getObject();
+        if (! (mi instanceof SIList)) {
+            return "";
+        }
+        StringBuilder output = new StringBuilder();
+        boolean first = true;
+        for (SInstance val : ((SIList<?>) mi).getChildren()) {
+            Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
+            String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
+            if (first) {
+                output.append(label);
+                first = false;
+            } else {
+                //TODO implementar logica de auto detecção
+                PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
+                if (phraseBreak == PhraseBreak.BREAK_LINE) {
+                    output.append("\n");
+                } else if (phraseBreak == PhraseBreak.COMMA) {
+                    output.append(", ");
                 }
+                output.append(label);
             }
         }
         return output.toString();
