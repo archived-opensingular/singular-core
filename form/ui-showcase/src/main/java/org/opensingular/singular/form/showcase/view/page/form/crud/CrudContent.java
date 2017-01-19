@@ -16,21 +16,6 @@
 
 package org.opensingular.singular.form.showcase.view.page.form.crud;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -46,14 +31,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
-import org.opensingular.singular.form.showcase.dao.form.ExampleDataDAO;
-import org.opensingular.singular.form.showcase.dao.form.ExampleDataDTO;
-import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
-import org.opensingular.singular.form.showcase.view.page.form.FormVO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.internal.xml.MElement;
@@ -63,8 +40,6 @@ import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
-import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
-import org.opensingular.singular.form.showcase.view.template.Content;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
@@ -74,6 +49,29 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder.Size;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.tab.BSTabPanel;
+import org.opensingular.singular.form.showcase.dao.form.ExampleDataDAO;
+import org.opensingular.singular.form.showcase.dao.form.ExampleDataDTO;
+import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
+import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
+import org.opensingular.singular.form.showcase.view.page.form.FormVO;
+import org.opensingular.singular.form.showcase.view.template.Content;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -234,7 +232,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     private boolean hasAnnotations() {
         boolean hasAnntations = false;
-        if (selectedTemplate.getObject().getType() != null && selectedTemplate.getObject().getType() instanceof STypeComposite) {
+        if (selectedTemplate.getObject().getType() != null && selectedTemplate.getObject().getType().isComposite()) {
             STypeComposite<?> type = (STypeComposite<?>) selectedTemplate.getObject().getType();
             for (SType<?> i : type.getFields()) {
                 hasAnntations |= i.asAtrAnnotation().isAnnotated();

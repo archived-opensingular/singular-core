@@ -94,7 +94,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
      */
     public AssertionsSType isExtensionCorrect() {
         SType<?> superType = getTarget().getSuperType();
-        if (! (getTarget() instanceof STypeComposite || getTarget() instanceof STypeList)) {
+        if (! (getTarget().isComposite() || getTarget().isList())) {
             throw new AssertionError(errorMsg("O tipo deve ser um composite"));
         }
         return isExtensionCorrect(superType);
@@ -114,14 +114,14 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
      */
     public AssertionsSType isExtensionCorrect(SType<?> expectedSuperType) {
         isDirectExtensionOf(expectedSuperType);
-        if (getTarget() instanceof STypeComposite) {
+        if (getTarget().isComposite()) {
             assertThat(expectedSuperType).isInstanceOf(STypeComposite.class);
             if(! (getTarget().isRecursiveReference() && getTarget().getSuperType() == expectedSuperType)) {
                 for (SType<?> fieldSuper : ((STypeComposite<?>) expectedSuperType).getFields()) {
                     field(fieldSuper.getNameSimple()).isExtensionCorrect(fieldSuper);
                 }
             }
-        } else if (getTarget() instanceof STypeList) {
+        } else if (getTarget().isList()) {
             assertThat(expectedSuperType).isInstanceOf(STypeList.class);
             listElementType().isExtensionCorrect(((STypeList<?,?>) expectedSuperType).getElementsType());
         }

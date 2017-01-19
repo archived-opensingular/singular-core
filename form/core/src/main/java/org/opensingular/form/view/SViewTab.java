@@ -16,12 +16,11 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.SType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
 
 public class SViewTab extends SView {
 
@@ -36,7 +35,7 @@ public class SViewTab extends SView {
     
     @Override
     public boolean isApplicableFor(SType<?> type) {
-        return type instanceof STypeComposite;
+        return type.isComposite();
     }
 
     public List<STab> getTabs() {

@@ -261,10 +261,13 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return false;
     }
 
-    private boolean isNewVersion(IEntityTaskTransitionVersion oldEntityTaskTransition, IEntityTaskTransitionVersion newEntityTaskTransition) {
-        return oldEntityTaskTransition == null || !oldEntityTaskTransition.getName().equalsIgnoreCase(newEntityTaskTransition.getName())
-                || !oldEntityTaskTransition.getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getAbbreviation())
-                || oldEntityTaskTransition.getType() != newEntityTaskTransition.getType() || !oldEntityTaskTransition.getDestinationTask()
-                        .getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getDestinationTask().getAbbreviation());
+    private static boolean isNewVersion(IEntityTaskTransitionVersion oldTaskTransition, IEntityTaskTransitionVersion newTaskTransition) {
+        //@formatter:off
+        return oldTaskTransition == null ||
+                !oldTaskTransition.getName().equalsIgnoreCase(newTaskTransition.getName()) ||
+                !oldTaskTransition.getAbbreviation().equalsIgnoreCase(newTaskTransition.getAbbreviation()) ||
+                oldTaskTransition.getType() != newTaskTransition.getType() ||
+                !oldTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newTaskTransition.getDestinationTask().getAbbreviation());
+        //@formatter:on
     }
 }

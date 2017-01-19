@@ -730,37 +730,42 @@ final class Base64 {
 
             int head = (bytes[0] & 0xff) | ((bytes[1] << 8) & 0xff00);
             if (java.util.zip.GZIPInputStream.GZIP_MAGIC == head) {
-                java.io.ByteArrayInputStream bais = null;
-                java.util.zip.GZIPInputStream gzis = null;
-                java.io.ByteArrayOutputStream baos = null;
-                byte[] buffer = new byte[2048];
-                int length;
-
-                try {
-                    baos = new java.io.ByteArrayOutputStream();
-                    bais = new java.io.ByteArrayInputStream(bytes);
-                    gzis = new java.util.zip.GZIPInputStream(bais);
-
-                    while ((length = gzis.read(buffer)) >= 0) {
-                        baos.write(buffer, 0, length);
-                    } // end while: reading input
-
-                    // No error? Get new bytes.
-                    bytes = baos.toByteArray();
-
-                } catch (java.io.IOException e) {
-                    // Just return originally-decoded bytes
-                } finally {
-                    tryCloseQuitely(gzis);
-                    tryCloseQuitely(bais);
-                    tryCloseQuitely(baos);
-                } // end finally
+                bytes = decompress(bytes);
 
             } // end if: gzipped
         } // end if: bytes.length >= 2
 
         return bytes;
     } // end decode
+
+    private static byte[] decompress(byte[] bytes) {
+        java.io.ByteArrayInputStream bais = null;
+        java.util.zip.GZIPInputStream gzis = null;
+        java.io.ByteArrayOutputStream baos = null;
+        byte[] buffer = new byte[2048];
+        int length;
+
+        try {
+            baos = new java.io.ByteArrayOutputStream();
+            bais = new java.io.ByteArrayInputStream(bytes);
+            gzis = new java.util.zip.GZIPInputStream(bais);
+
+            while ((length = gzis.read(buffer)) >= 0) {
+                baos.write(buffer, 0, length);
+            } // end while: reading input
+
+            // No error? Get new bytes.
+            bytes = baos.toByteArray();
+
+        } catch (java.io.IOException e) {
+            // Just return originally-decoded bytes
+        } finally {
+            tryCloseQuitely(gzis);
+            tryCloseQuitely(bais);
+            tryCloseQuitely(baos);
+        } // end finally
+        return bytes;
+    }
 
     /**
      * Attempts to decode Base64 data and deserialize a Java Object within.

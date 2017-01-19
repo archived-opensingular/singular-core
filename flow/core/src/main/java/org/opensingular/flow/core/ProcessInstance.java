@@ -140,18 +140,16 @@ public class ProcessInstance implements Serializable {
     }
 
     final IEntityProcessInstance getInternalEntity() {
-        if (entity == null) {
-            if (codEntity != null) {
-                IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
-                if (newfromDB != null) {
-                    if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcessVersion().getProcessDefinition())) {
-                        throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity
-                            + " se refere a definição de processo " + newfromDB.getProcessVersion().getProcessDefinition().getKey()
-                            + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
+        if (entity == null && codEntity != null) {
+            IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
+            if (newfromDB != null) {
+                if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcessVersion().getProcessDefinition())) {
+                    throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity
+                        + " se refere a definição de processo " + newfromDB.getProcessVersion().getProcessDefinition().getKey()
+                        + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
 
-                    }
-                    entity = newfromDB;
                 }
+                entity = newfromDB;
             }
             if (entity == null) {
                 throw SingularException.rethrow(

@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.core;
 
-import java.util.function.Function;
-
 import org.opensingular.flow.core.TransitionAccess.TransitionAccessLevel;
+
+import java.util.function.Function;
 
 public class TransitionAccessStrategyImpl<X extends TaskInstance> implements TransitionAccessStrategy<X>{
 
@@ -51,15 +51,18 @@ public class TransitionAccessStrategyImpl<X extends TaskInstance> implements Tra
     public static <T extends TaskInstance> TransitionAccessStrategy<T> sameStrategyOf(final MTask<?> task, boolean visible) {
         return (instance) -> {
             MUser user = Flow.getUserIfAvailable();
-            boolean canExecute = user != null && task.getAccessStrategy().canExecute(instance, user);
-            if (canExecute && visible) {
-                return new TransitionAccess(TransitionAccessLevel.ENABLED, null);
-            } else if (canExecute && !visible) {
-                return new TransitionAccess(TransitionAccessLevel.ENABLED_BUT_HIDDEN, null);
-            } else if (!canExecute && visible) {
-                return new TransitionAccess(TransitionAccessLevel.DISABLED_BUT_VISIBLE, "Unauthorized action");
+            if (user != null && task.getAccessStrategy().canExecute(instance, user)) {
+                if (visible) {
+                    return new TransitionAccess(TransitionAccessLevel.ENABLED, null);
+                } else {
+                    return new TransitionAccess(TransitionAccessLevel.ENABLED_BUT_HIDDEN, null);
+                }
             } else {
-                return new TransitionAccess(TransitionAccessLevel.DISABLED_AND_HIDDEN, "Unauthorized action");
+                if (visible) {
+                    return new TransitionAccess(TransitionAccessLevel.DISABLED_BUT_VISIBLE, "Unauthorized action");
+                } else {
+                    return new TransitionAccess(TransitionAccessLevel.DISABLED_AND_HIDDEN, "Unauthorized action");
+                }
             }
         };
     }

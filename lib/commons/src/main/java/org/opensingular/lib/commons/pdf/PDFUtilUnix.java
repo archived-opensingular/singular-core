@@ -105,13 +105,10 @@ public class PDFUtilUnix extends PDFUtil {
         Process        process = pb.start();
         process.waitFor();
 
-        BufferedReader outReader = null;
-        BufferedReader errReader = null;
-        try {
-            outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String  line    = outReader.readLine();
+        try (BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+             BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
             boolean success = true;
+            String  line    = outReader.readLine();
             while (line != null) {
                 if (!line.isEmpty()) {
                     success = false;
@@ -131,16 +128,7 @@ public class PDFUtilUnix extends PDFUtil {
             if (success && pdfFile.exists()) {
                 return pdfFile;
             }
-        } finally {
-            if (outReader != null) {
-                outReader.close();
-            }
-
-            if (errReader != null) {
-                errReader.close();
-            }
         }
-
         return null;
     }
 
@@ -325,12 +313,9 @@ public class PDFUtilUnix extends PDFUtil {
      * @throws IOException
      */
     private File generateFile(Process process, File file) throws IOException {
-        BufferedReader outReader = null;
-        BufferedReader errReader = null;
 
-        try {
-            outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        try(BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
             String line = outReader.readLine();
             while (line != null) {
                 getLogger().info(line);
@@ -357,14 +342,6 @@ public class PDFUtilUnix extends PDFUtil {
                 return file;
             } else {
                 getLogger().error(String.format("done:%b success:%b file.exists():%b", done, success, file.exists()));
-            }
-        } finally {
-            if (outReader != null) {
-                outReader.close();
-            }
-
-            if (errReader != null) {
-                errReader.close();
             }
         }
 

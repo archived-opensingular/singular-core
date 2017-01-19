@@ -31,6 +31,8 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -182,45 +184,53 @@ public abstract class WicketFormUtils {
 
         Deque<String> titles = new LinkedList<>();
         SInstance lastInstance = null;
-        String lastBaseTitle = null;
+        String lastTitle = null;
         for (Component comp : components) {
 
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
-            Optional<WicketBuildContext> wbc = WicketBuildContext.find(comp);
-            if (wbc.isPresent()) {
+            String title = findTitle(comp);
+            if (title != null) {
+                if (Objects.equal(title, lastTitle)) {
+                    continue;
+                }
+                lastTitle = title;
 
-                Optional<String> title = wbc.get().resolveContainerTitle()
-                    .map(it -> StringUtils.trimToNull(it.getObject()));
-                if (title.isPresent()) {
-                    final String baseTitle = title.get();
-                    if (Objects.equal(baseTitle, lastBaseTitle)) {
-                        continue;
-                    } else {
-                        lastBaseTitle = baseTitle;
+                if ((lastInstance != null) && (instance instanceof SIList<?>)) {
+                    int pos = findPos((SIList<SInstance>) instance, lastInstance);
+                    if (pos != -1) {
+                        titles.addFirst(title + " [" + pos + "]");
                     }
-
-                    if ((lastInstance != null) && (instance instanceof SIList<?>)) {
-                        SIList<SInstance> lista = (SIList<SInstance>) instance;
-                        Iterator<SInstance> iter = lista.iterator();
-                        for (int i = 1; iter.hasNext(); i++) {
-                            SInstance itemInstance = iter.next();
-                            if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
-                                titles.addFirst(baseTitle + " [" + i + "]");
-                                break;
-                            }
-                        }
-                    } else {
-                        titles.addFirst(baseTitle);
-                    }
+                } else {
+                    titles.addFirst(title);
                 }
             }
             lastInstance = instance;
         }
 
-        if (!titles.isEmpty())
+        if (!titles.isEmpty()) {
             return titles.stream().collect(Collectors.joining(" > "));
-        else
-            return null;
+        }
+        return null;
+    }
+
+    private static int findPos(@Nonnull SIList<SInstance> instance, @Nonnull SInstance lastInstance) {
+        int pos = 1;
+        for(SInstance itemInstance : instance) {
+            if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
+                return pos;
+            }
+            pos++;
+        }
+        return -1;
+    }
+
+    private static @Nullable String findTitle(Component comp) {
+        Optional<WicketBuildContext> wbc = WicketBuildContext.find(comp);
+        if (wbc.isPresent()) {
+            return wbc.get().resolveContainerTitle().map(it -> StringUtils.trimToNull(it.getObject())).orElse(null);
+        }
+        return null;
+
     }
 }

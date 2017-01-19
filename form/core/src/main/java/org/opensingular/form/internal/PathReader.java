@@ -51,30 +51,29 @@ public final class PathReader {
         }
         this.path = path;
         if (inicio >= path.length()) {
+            aListIndex = false;
             end = inicio;
             token = null;
-            aListIndex = false;
+        } else if(path.charAt(inicio) == '[') {
+            aListIndex = true;
+            end = findListIndexTokenEndOrException(path, inicio);
+            token = path.substring(inicio + 1, end - 1);
         } else {
-            aListIndex = (path.charAt(inicio) == '[');
-            if (aListIndex) {
-                end = findListIndexTokenEndOrException(path, inicio);
-                token = path.substring(inicio + 1, end - 1);
-            } else {
-                if (path.charAt(inicio) == '.') {
-                    if (inicio == 0) {
-                        throw newInvalidPathInPosition(path, inicio, null);
-                    } else {
-                        inicio++;
-                    }
-                } else if (inicio != 0) {
+            aListIndex = false;
+            if (path.charAt(inicio) == '.') {
+                if (inicio == 0) {
                     throw newInvalidPathInPosition(path, inicio, null);
+                } else {
+                    inicio++;
                 }
+            } else if (inicio != 0) {
+                throw newInvalidPathInPosition(path, inicio, null);
+            }
 
-                end = findTokenEndOrException(path, inicio);
-                token = path.substring(inicio, end);
-                if (SFormUtil.isNotValidSimpleName(token)) {
-                    throw newInvalidPathInPosition(path, inicio, "Não é um nome de campo válido");
-                }
+            end = findTokenEndOrException(path, inicio);
+            token = path.substring(inicio, end);
+            if (SFormUtil.isNotValidSimpleName(token)) {
+                throw newInvalidPathInPosition(path, inicio, "Não é um nome de campo válido");
             }
         }
     }

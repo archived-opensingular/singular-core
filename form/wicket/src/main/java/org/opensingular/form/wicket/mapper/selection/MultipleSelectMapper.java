@@ -16,29 +16,27 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.provider.Provider;
 import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
-import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
 import org.opensingular.form.wicket.model.MultipleSelectSInstanceAwareModel;
+import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
@@ -49,7 +47,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
         final List<Serializable> opcoesValue = new ArrayList<>();
 
-        if (model.getObject().getType() instanceof STypeList) {
+        if (model.getObject().getType().isList()) {
             final Provider provider = model.getObject().asAtrProvider().getProvider();
             if (provider != null) {
                 opcoesValue.addAll(provider.load(ProviderContext.of(ctx.getCurrentInstance())));

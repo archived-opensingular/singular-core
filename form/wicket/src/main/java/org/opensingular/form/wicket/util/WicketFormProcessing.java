@@ -216,7 +216,7 @@ public class WicketFormProcessing implements Loggable {
                     .collect(toSet());
 
             final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
-            final Predicate<SType<?>> isElementsDependent = (type) -> (type instanceof STypeList) && isDependent.test(((STypeList<?, ?>) type).getElementsType());
+            final Predicate<SType<?>> isElementsDependent = (type) -> type.isList() && isDependent.test(((STypeList<?, ?>) type).getElementsType());
 
             final Predicate<SInstance> shouldRefreshPredicate = childInstance -> {
 

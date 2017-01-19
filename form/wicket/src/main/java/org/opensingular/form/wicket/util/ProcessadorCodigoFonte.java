@@ -45,27 +45,23 @@ public class ProcessadorCodigoFonte {
             final String linha = linhas[i];
 
             if (!classeIniciada) {
-                if (javadoc && !linha.contains("*/")) {
-                    javadocDeClasse.add(linha.replace(" *", ""));
-                }
-                if (linha.startsWith("/**")) {
+                if (javadoc) {
+                    if (linha.contains("*/")) {
+                        javadoc = false;
+                    } else {
+                        javadocDeClasse.add(linha.replace(" *", ""));
+                    }
+                    continue;
+                } else if (linha.startsWith("/**")) {
                     javadoc = true;
-                }
-
-                if (linha.contains("public class ")) {
+                } else if (linha.contains("public class ")) {
                     classeIniciada = true;
                 }
             }
 
-            if (javadoc && linha.contains("*/")) {
-                javadoc = false;
+            if(isLixo(linha)){
                 continue;
-            }
-
-            if(isLixo(linha) || javadoc){
-                continue;
-            }
-            if (isBloco(linha)) {
+            } else if (isBloco(linha)) {
                 while (!isFimBloco(linhas[++i])) {
                     fonteFinal.add(linha);
                     linhasParaDestacar.add(fonteFinal.size());

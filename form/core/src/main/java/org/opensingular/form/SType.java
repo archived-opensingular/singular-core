@@ -806,7 +806,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         if (superType != null && (! isAttribute() || !isSelfReference())) {
             appendable.append(" extend ");
             appendNameAndId(appendable, superType);
-            if (this instanceof STypeList) {
+            if (this.isList()) {
                 STypeList<?, ?> lista = (STypeList<?, ?>) this;
                 if (lista.getElementsType() != null) {
                     appendable.append(" of ");
