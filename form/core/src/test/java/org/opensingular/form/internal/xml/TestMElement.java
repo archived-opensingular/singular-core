@@ -16,27 +16,19 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
-
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * JUnit para test do da classe MElement.
@@ -108,20 +100,16 @@ public class TestMElement {
      */
     @Test
     public void testGetValores() {
-        String[] s = raiz_.getValores("cd");
-        for (int i = 0; i < s.length; i++) {
-            System.out.println("\"" + s[i] + '"');
-        }
-        assertEquals(3, raiz_.getValores("cd").length);
-        assertEquals(0, raiz_.getValores("none").length);
-        assertEquals(0, raiz_.getValores("cd/none").length);
-        assertEquals(9, raiz_.getValores("cd/faixa").length);
-        assertEquals(3, raiz_.getValores("cd/@cod").length);
-        assertEquals(3, raiz_.getValores("cd[2]/faixa").length);
-        assertEquals(3, raiz_.getElement("cd").getValores("faixa").length);
-        assertEquals(7, raiz_.getElement("cd").getValores(null).length);
-        assertEquals(3, raiz_.getValores("cd/grupo").length);
-        assertEquals(0, raiz_.getValores("cd/presente").length);
+        assertEquals(3, raiz_.getValores("cd").size());
+        assertEquals(0, raiz_.getValores("none").size());
+        assertEquals(0, raiz_.getValores("cd/none").size());
+        assertEquals(9, raiz_.getValores("cd/faixa").size());
+        assertEquals(3, raiz_.getValores("cd/@cod").size());
+        assertEquals(3, raiz_.getValores("cd[2]/faixa").size());
+        assertEquals(3, raiz_.getElement("cd").getValores("faixa").size());
+        assertEquals(7, raiz_.getElement("cd").getValores(null).size());
+        assertEquals(3, raiz_.getValores("cd/grupo").size());
+        assertEquals(0, raiz_.getValores("cd/presente").size());
     }
 
     @Test

@@ -16,31 +16,19 @@
 
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
+import org.opensingular.form.builder.selection.SSelectionBuilder;
 import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.type.core.STypeDate;
-import org.opensingular.form.type.core.STypeDateTime;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.*;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.builder.selection.SSelectionBuilder;
-import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.type.core.STypeBoolean;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.type.util.STypeEMail;
-import org.opensingular.form.view.SViewAttachmentList;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Supplier;
 
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
 public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INSTANCE_TYPE> implements ICompositeType {
@@ -59,7 +47,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     protected void extendSubReference() {
-        if (getSuperType() instanceof STypeComposite) {
+        if (getSuperType().isComposite()) {
             Map<String, SType<?>> fieldsSuper = ((STypeComposite<?>) getSuperType()).fieldsLocal;
             if (fieldsSuper != null) {
                 for (Map.Entry<String,SType<?>> entry: fieldsSuper.entrySet()) {
@@ -143,7 +131,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         }
         if (fieldsConsolidated == null) {
             if (fieldsLocal == null) {
-                if (getSuperType() instanceof STypeComposite) {
+                if (getSuperType().isComposite()) {
                     // Busca reaproveitar, pois muitas extensões são locais e
                     // não acrescentam campso
                     fieldsConsolidated = ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
@@ -152,7 +140,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
                 }
             } else {
                 fieldsConsolidated = new FieldMapOfRecordType();
-                if (getSuperType() != null && getSuperType() instanceof STypeComposite) {
+                if (getSuperType().isComposite()) {
                     fieldsConsolidated.addAll(((STypeComposite<?>) getSuperType()).getFieldsConsolidated());
                 }
                 fieldsConsolidated.addAll(fieldsLocal);

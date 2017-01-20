@@ -16,23 +16,15 @@
 
 package org.opensingular.form.io.definition;
 
+import com.google.common.collect.Lists;
+import org.opensingular.form.*;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import org.opensingular.form.SIList;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SScopeBase;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.SingularFormException;
-import com.google.common.collect.Lists;
-
-import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 /**
  * Transforma a definição de um tipo ou mesmo de um pacote inteiro em uma
@@ -74,7 +66,7 @@ public class SFormDefinitionPersistenceUtil {
         
         ensureType(ctx, type.getSuperType());
 
-        if (type instanceof STypeComposite) {
+        if (type.isComposite()) {
             //TODO (por Daniel Bordin) O código abaixo ainda precisa resolver a questão de field que foram extendido
             // e tiveram apenas uma atributo alterado
             for (SType<?> localField : ((STypeComposite<?>) type).getFieldsLocal()) {
@@ -101,7 +93,7 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void readType(ContextUnarchive ctx, SType<?> newType, SIPersistenceType pType) {
-        if (newType instanceof STypeComposite) {
+        if (newType.isComposite()) {
             readMembers(ctx, (STypeComposite<?>) newType, pType.getMembers());
         }
     }

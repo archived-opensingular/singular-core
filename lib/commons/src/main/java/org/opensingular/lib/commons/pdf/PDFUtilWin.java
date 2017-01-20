@@ -158,95 +158,63 @@ public class PDFUtilWin extends PDFUtil {
         TempFileUtils.deleteOrException(htmlFile, getClass());
 
         if (htmlFile.createNewFile()) {
-            Writer fw = null;
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(htmlFile);
-                fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder());
-                fw.write(html);
-            } finally {
-                if (fw != null) {
-                    fw.close();
-                    fw = null;
-                }
-                if (fos != null) {
-                    fos.close();
-                    fos = null;
-                }
-            }
+            return null;
+        }
+        try (FileOutputStream fos = new FileOutputStream(htmlFile);
+             Writer fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder())){
+            fw.write(html);
+        }
 
-            List<String> commandAndArgs = new ArrayList<>(0);
-            commandAndArgs.add(exeFile.getAbsolutePath());
+        List<String> commandAndArgs = new ArrayList<>(0);
+        commandAndArgs.add(exeFile.getAbsolutePath());
 
-            if (additionalConfig != null) {
-                commandAndArgs.addAll(additionalConfig);
-            } else {
-                addDefaultPDFCommandArgs(commandAndArgs);
-            }
+        if (additionalConfig != null) {
+            commandAndArgs.addAll(additionalConfig);
+        } else {
+            addDefaultPDFCommandArgs(commandAndArgs);
+        }
 
-            if (header != null) {
-                try {
-                    File headerFile = new File(tempFolder, "header.html");
-                    fos = new FileOutputStream(headerFile);
-                    fw = new OutputStreamWriter(fos,
-                            Charset.forName("UTF-8").newEncoder());
-                    fw.write(header);
-                    commandAndArgs.add("--header-html");
-                    commandAndArgs.add(headerFile.getAbsolutePath());
-                    addDefaultHeaderCommandArgs(commandAndArgs);
-                } finally {
-                    if (fw != null) {
-                        fw.close();
-                        fw = null;
-                    }
-                    if (fos != null) {
-                        fos.close();
-                        fos = null;
-                    }
-                }
-            }
-
-            if (footer != null) {
-                try {
-                    File footerFile = new File(tempFolder, "footer.html");
-                    fos = new FileOutputStream(footerFile);
-                    fw = new OutputStreamWriter(fos,
-                            Charset.forName("UTF-8").newEncoder());
-                    fw.write(footer);
-                    commandAndArgs.add("--footer-html");
-                    commandAndArgs.add(footerFile.getAbsolutePath());
-                    addDefaultFooterCommandArgs(commandAndArgs);
-                } finally {
-                    if (fw != null) {
-                        fw.close();
-                    }
-                    if (fos != null) {
-                        fos.close();
-                    }
-                }
-            }
-
-            commandAndArgs.add("--cookie-jar");
-            commandAndArgs.add(jarFile.getAbsolutePath());
-            commandAndArgs.add(htmlFile.getAbsolutePath());
-            commandAndArgs.add(pdfFile.getAbsolutePath());
-
-            ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
-            pb.environment().put("LD_LIBRARY_PATH", libFolder.getAbsolutePath());
-            Process process = pb.start();
-
-            StreamGobbler outReader = new StreamGobbler(process.getInputStream(), false);
-            StreamGobbler errReader = new StreamGobbler(process.getErrorStream(), true);
-
-            outReader.start();
-            errReader.start();
-
-            boolean success = process.waitFor() == 0;
-            if (success && pdfFile.exists()) {
-                return pdfFile;
+        if (header != null) {
+            File headerFile = new File(tempFolder, "header.html");
+            try(FileOutputStream fos = new FileOutputStream(headerFile);
+                Writer fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder())) {
+                fw.write(header);
+                commandAndArgs.add("--header-html");
+                commandAndArgs.add(headerFile.getAbsolutePath());
+                addDefaultHeaderCommandArgs(commandAndArgs);
             }
         }
 
+        if (footer != null) {
+            File footerFile = new File(tempFolder, "footer.html");
+            try(FileOutputStream fos = new FileOutputStream(footerFile);
+                Writer fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder())) {
+                fw.write(footer);
+                commandAndArgs.add("--footer-html");
+                commandAndArgs.add(footerFile.getAbsolutePath());
+                addDefaultFooterCommandArgs(commandAndArgs);
+            }
+        }
+
+        commandAndArgs.add("--cookie-jar");
+        commandAndArgs.add(jarFile.getAbsolutePath());
+        commandAndArgs.add(htmlFile.getAbsolutePath());
+        commandAndArgs.add(pdfFile.getAbsolutePath());
+
+        ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
+        pb.environment().put("LD_LIBRARY_PATH", libFolder.getAbsolutePath());
+        Process process = pb.start();
+
+        StreamGobbler outReader = new StreamGobbler(process.getInputStream(), false);
+        StreamGobbler errReader = new StreamGobbler(process.getErrorStream(), true);
+
+        outReader.start();
+        errReader.start();
+
+        boolean success = process.waitFor() == 0;
+        if (success && pdfFile.exists()) {
+            return pdfFile;
+        }
         return null;
     }
 

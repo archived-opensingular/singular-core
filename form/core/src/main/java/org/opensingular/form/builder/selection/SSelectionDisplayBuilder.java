@@ -16,20 +16,20 @@
 
 package org.opensingular.form.builder.selection;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IFunction;
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.util.transformer.Value.Content;
-import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.lambda.IFunction;
 
-import static org.opensingular.form.util.transformer.Value.hydrate;
 import static java.lang.String.valueOf;
-import static java.util.Optional.*;
+import static java.util.Optional.ofNullable;
+import static org.opensingular.form.util.transformer.Value.hydrate;
 
 
 public class SSelectionDisplayBuilder extends AbstractBuilder {
@@ -47,7 +47,7 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
             @Override
             public String apply(Content content) {
                 final SType elementsType;
-                if (type instanceof STypeList) {
+                if (type.isList()) {
                     elementsType = ((STypeList) type).getElementsType();
                 } else {
                     elementsType = type;
@@ -69,7 +69,7 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
             @Override
             public String apply(Content content) {
                 final SType elementsType;
-                if (type instanceof STypeList) {
+                if (type.isList()) {
                     elementsType = ((STypeList) type).getElementsType();
                 } else {
                     elementsType = type;

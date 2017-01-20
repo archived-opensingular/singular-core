@@ -77,7 +77,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     }
 
     private boolean isNotDerivedClassOfSTypeComposite(SType<?> type) {
-        return (!(type instanceof STypeComposite)) || type.getClass() == STypeComposite.class;
+        return !type.isComposite() || type.getClass() == STypeComposite.class;
     }
 
     private void propagatePublicFieldsToExtendedComposite(STypeComposite composite, CompositePublicInfo info,
@@ -244,13 +244,13 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     private boolean isInsideChildrenTypes(SType<?> type, String typeName) {
         if (type.getNameSimple().equals(typeName)) {
             return true;
-        } else if (type instanceof STypeComposite) {
+        } else if (type.isComposite()) {
             for (SType<?> children : ((STypeComposite<?>) type).getFields()) {
                 if (isInsideChildrenTypes(children, typeName)) {
                     return true;
                 }
             }
-        } else if (type instanceof STypeList) {
+        } else if (type.isList()) {
             return isInsideChildrenTypes(((STypeList<?, ?>) type).getElementsType(), typeName);
         }
         return false;

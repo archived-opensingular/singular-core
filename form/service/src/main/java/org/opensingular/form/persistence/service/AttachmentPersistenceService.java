@@ -22,7 +22,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dto.AttachmentRef;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
-public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> implements IAttachmentPersistenceHandler<AttachmentRef> {
+public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntity> implements IAttachmentPersistenceHandler<AttachmentRef> {
 
     @Inject
     protected AttachmentDao<T, C> attachmentDao;
@@ -88,8 +88,8 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         attachmentDao.delete(Long.valueOf(id));
     }
 
-    public void deleteAttachmentContent(Long id) {
-        attachmentContentDao.delete(id);
+    public void deleteAttachmentAndContent(AttachmentEntity attachment) {
+        attachmentDao.delete(attachment.getCod());
     }
 
     public AttachmentRef createRef(T attachmentEntity) {
@@ -116,7 +116,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         }
     }
 
-    public List<AttachmentContentEntitty> listOldOrphanAttachments() {
+    public List<AttachmentEntity> listOldOrphanAttachments() {
         return attachmentDao.listOldOrphanAttachments();
     }
 }

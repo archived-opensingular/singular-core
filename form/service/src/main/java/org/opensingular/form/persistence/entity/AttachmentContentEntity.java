@@ -29,17 +29,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.lib.commons.internal.function.SupplierUtil;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
-@GenericGenerator(name = AttachmentContentEntitty.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@GenericGenerator(name = AttachmentContentEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_CONTEUDO_ARQUIVO", schema = Constants.SCHEMA)
-public class AttachmentContentEntitty extends BaseEntity<Long> {
+public class AttachmentContentEntity extends BaseEntity<Long> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_CONTEUDO_ARQUIVO";
 

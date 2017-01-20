@@ -374,9 +374,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         int pos = qualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
         if (pos != -1) {
             if (pos == 0) {
-                while (parent.getParentNode() != null) {
-                    parent = parent.getParentNode();
-                }
+                parent = XmlUtil.getRootParent(parent);
             } else {
                 parent = getElementCriando(d, parent, namespaceURI, qualifiedName.substring(0, pos));
             }
@@ -465,9 +463,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         int pos = qualifiedName.indexOf(SEPARADOR_ELEMENT);
         if (pos != -1) {
             if (pos == 0) {
-                while (pai.getParentNode() != null) {
-                    pai = pai.getParentNode();
-                }
+                pai = XmlUtil.getRootParent(pai);
                 qualifiedName = qualifiedName.substring(1);
                 pos = qualifiedName.indexOf(SEPARADOR_ELEMENT);
             }
@@ -477,10 +473,7 @@ public class MElementWrapper extends MElement implements EWrapper {
             }
         }
 
-        Node n = pai.getFirstChild();
-        while ((n != null) && !XmlUtil.isNodeTypeElement(n, qualifiedName)) {
-            n = n.getNextSibling();
-        }
+        Node n = XmlUtil.nextSiblingOfTypeElement(pai.getFirstChild(), qualifiedName);
 
         Element e = (Element) n;
         if (e == null) {

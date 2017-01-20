@@ -27,6 +27,7 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
 import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeText;
@@ -1208,7 +1209,7 @@ public abstract class MElement implements Element, Serializable {
      * @param xPath dos elementos a terem os valores retornados
      * @return sempre diferente de null
      */
-    public final String[] getValores(String xPath) {
+    public final List<String> getValores(String xPath) {
         return XPathToolkit.getValores(this, xPath);
     }
 
@@ -1835,13 +1836,7 @@ public abstract class MElement implements Element, Serializable {
      * @return Um Element ou null se não encontrar.
      */
     private MElement procurarProximoElement(Node no, String nome) {
-        while (no != null) {
-            if (isNodeTypeElement(no, nome)) {
-                return toMElement(no);
-            }
-            no = no.getNextSibling();
-        }
-        return null;
+        return toMElement(XmlUtil.nextSiblingOfTypeElement(no, nome));
     }
 
     /**

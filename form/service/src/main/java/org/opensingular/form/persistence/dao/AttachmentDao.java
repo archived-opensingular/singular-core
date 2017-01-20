@@ -16,9 +16,7 @@
 
 package org.opensingular.form.persistence.dao;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -26,18 +24,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
-
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AbstractFormAttachmentEntity;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
-public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentContentEntitty> extends BaseDAO<T, Long> {
+public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentContentEntity> extends BaseDAO<T, Long> {
 
     @Inject
     private AttachmentContentDao<C> attachmentContentDao;
@@ -98,22 +96,21 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         }
     }
 
-    public List<AttachmentContentEntitty> listOldOrphanAttachments() {
+    @SuppressWarnings("unchecked")
+    public List<AttachmentEntity> listOldOrphanAttachments() {
         StringBuilder hql = new StringBuilder();
-        hql.append(" SELECT c FROM " + AttachmentContentEntitty.class.getName() + " as c ");
-        hql.append(" WHERE c.inclusionDate < :ontem ");
-        //TODO criar exists com a RL quando for criada.
-//        hql.append(" AND NOT EXISTS ( ");
-//        hql.append("    SELECT 1 FROM " + AttachmentEntity.class.getName() + " as a ");
-//        hql.append("    WHERE a.codContent = c.cod ");
-//        hql.append(" ) ");
+        hql.append(" SELECT a FROM " + AttachmentEntity.class.getName() + " as a ");
+        hql.append(" WHERE a.creationDate < :ontem ");
+        hql.append(" AND NOT EXISTS ( ");
+        hql.append("    SELECT 1 FROM " + AbstractFormAttachmentEntity.class.getName() + " as fa ");
+        hql.append("    WHERE fa.cod.attachmentCod = a.cod ");
+        hql.append(" ) ");
 
         Query query = getSession().createQuery(hql.toString());
         Date ontem = new DateTime().minusDays(1).toDate();
         query.setParameter("ontem", ontem);
 
-//        return query.list();
-        return Collections.emptyList();
+        return query.list();
     }
 
     @Override

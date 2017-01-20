@@ -1,27 +1,19 @@
 package org.opensingular.form.io.definition;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import com.google.common.collect.Lists;
-
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.*;
 import org.opensingular.form.io.FormAssert;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
+
+import java.util.List;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
@@ -200,7 +192,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
                     assertEquivalence(localTypesOriginal.get(i), localTypesRecovered.get(i));
                 }
             }
-            if (original instanceof STypeList) {
+            if (original.isList()) {
                 assertEquivalence(((STypeList) original).getElementsType(), ((STypeList) recovered).getElementsType());
             }
 

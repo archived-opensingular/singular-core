@@ -17,8 +17,8 @@
 package org.opensingular.form.view;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SType;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import java.io.Serializable;
 import java.util.*;
@@ -98,27 +98,32 @@ public class ViewMapperRegistry<T> implements Serializable {
     }
 
     private T getMapper(Class<?> type, SView view) {
-        RegisterEntry<T> selected = null;
-        int score = -1;
         while (type != SType.class) {
             List<RegisterEntry<T>> list = registry.get(type);
             if (list != null) {
-                for (RegisterEntry<T> entry : list) {
-                    if (entry.isCompatible(view)) {
-                        int newScore = entry.scoreFor(view);
-                        if (selected == null || newScore > score) {
-                            selected = entry;
-                            score = newScore;
-                        }
-                    }
-                }
+                T selected = findEntryMoreRelevant(list, view);
                 if (selected != null) {
-                    return selected.factory.get();
+                    return selected;
                 }
             }
             type = type.getSuperclass();
         }
         return null;
+    }
+
+    private T findEntryMoreRelevant(List<RegisterEntry<T>> list, SView view) {
+        int score = -1;
+        RegisterEntry<T> selected = null;
+        for (RegisterEntry<T> entry : list) {
+            if (entry.isCompatible(view)) {
+                int newScore = entry.scoreFor(view);
+                if (selected == null || newScore > score) {
+                    selected = entry;
+                    score = newScore;
+                }
+            }
+        }
+        return selected == null ? null : selected.factory.get();
     }
 
     /**

@@ -218,7 +218,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
-        if (currentType instanceof STypeList && list.isEmpty()) {
+        if (currentType.isList() && list.isEmpty()) {
             final STypeList<?, ?> tl = (STypeList<?, ?>) currentType;
             if (tl.getMinimumSize() != null) {
                 for (int i = 0; i < tl.getMinimumSize(); i++) {

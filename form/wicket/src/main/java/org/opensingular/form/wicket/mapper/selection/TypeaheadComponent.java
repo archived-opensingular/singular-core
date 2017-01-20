@@ -127,19 +127,17 @@ public class TypeaheadComponent extends Panel {
             public String getObject() {
                 if (instance().isEmptyOfData()) {
                     return null;
-                } else {
-                    if (!Value.dehydrate(instance()).equals(lastValue)) {
-                        lastValue = Value.dehydrate(instance());
-                        final SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
-                        if (converter != null) {
-                            final Serializable converted = converter.toObject(instance());
-                            if (converted != null) {
-                                lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
-                            }
+                } else if (!Value.dehydrate(instance()).equals(lastValue)) {
+                    lastValue = Value.dehydrate(instance());
+                    SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        Serializable converted = converter.toObject(instance());
+                        if (converted != null) {
+                            lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
                         }
                     }
-                    return lastDisplay;
                 }
+                return lastDisplay;
             }
         });
         c.add(labelField);

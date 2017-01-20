@@ -31,6 +31,8 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -97,14 +99,14 @@ public abstract class WicketFormUtils {
             .findAny();
     }
     public static Stream<Component> streamComponentsByInstance(Component anyComponent, BiPredicate<Component, SInstance> predicate) {
-        Optional<MarkupContainer> rootContainer = streamAscendants(anyComponent)
+        MarkupContainer rootContainer = streamAscendants(anyComponent)
                 .map(c -> getRootContainer(c))
                 .filter(c -> c != null)
-                .findAny();
-        if (! rootContainer.isPresent()) {
+                .findAny().orElse(null);
+        if (rootContainer == null) {
             return null;
         }
-        return streamDescendants(rootContainer.get())
+        return streamDescendants(rootContainer)
             .filter(c -> c.getDefaultModel() instanceof ISInstanceAwareModel<?>)
             .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
     }
@@ -182,45 +184,53 @@ public abstract class WicketFormUtils {
 
         Deque<String> titles = new LinkedList<>();
         SInstance lastInstance = null;
-        String lastBaseTitle = null;
+        String lastTitle = null;
         for (Component comp : components) {
 
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
-            Optional<WicketBuildContext> wbc = WicketBuildContext.find(comp);
-            if (wbc.isPresent()) {
-
-                Optional<String> title = wbc.get().resolveContainerTitle()
-                    .map(it -> StringUtils.trimToNull(it.getObject()));
-                if (title.isPresent()) {
-                    final String baseTitle = title.get();
-                    if (Objects.equal(baseTitle, lastBaseTitle)) {
-                        continue;
-                    } else {
-                        lastBaseTitle = baseTitle;
-                    }
-
-                    if ((lastInstance != null) && (instance instanceof SIList<?>)) {
-                        SIList<SInstance> lista = (SIList<SInstance>) instance;
-                        Iterator<SInstance> iter = lista.iterator();
-                        for (int i = 1; iter.hasNext(); i++) {
-                            SInstance itemInstance = iter.next();
-                            if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
-                                titles.addFirst(baseTitle + " [" + i + "]");
-                                break;
-                            }
-                        }
-                    } else {
-                        titles.addFirst(baseTitle);
-                    }
-                }
+            String title = findTitle(comp);
+            if (title != null && ! Objects.equal(title, lastTitle)) {
+                lastTitle = title;
+                addTitle(titles, title, instance, lastInstance);
             }
             lastInstance = instance;
         }
 
-        if (!titles.isEmpty())
+        if (!titles.isEmpty()) {
             return titles.stream().collect(Collectors.joining(" > "));
-        else
-            return null;
+        }
+        return null;
+    }
+
+    private static void addTitle(Deque<String> titles, String title, SInstance instance, SInstance lastInstance) {
+        if ((lastInstance != null) && (instance instanceof SIList<?>)) {
+            int pos = findPos((SIList<SInstance>) instance, lastInstance);
+            if (pos != -1) {
+                titles.addFirst(title + " [" + pos + "]");
+            }
+        } else {
+            titles.addFirst(title);
+        }
+    }
+
+    private static int findPos(@Nonnull SIList<SInstance> instance, @Nonnull SInstance lastInstance) {
+        int pos = 1;
+        for(SInstance itemInstance : instance) {
+            if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
+                return pos;
+            }
+            pos++;
+        }
+        return -1;
+    }
+
+    private static @Nullable String findTitle(Component comp) {
+        WicketBuildContext wbc = WicketBuildContext.find(comp).orElse(null);
+        if (wbc != null) {
+            return wbc.resolveContainerTitle().map(it -> StringUtils.trimToNull(it.getObject())).orElse(null);
+        }
+        return null;
+
     }
 }

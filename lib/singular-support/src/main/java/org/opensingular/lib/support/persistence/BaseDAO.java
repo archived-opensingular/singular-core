@@ -104,10 +104,12 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
 
             for (Field f : properties) {
                 f.setAccessible(true);
-                if (!(Modifier.isTransient(f.getModifiers()) || Modifier.isStatic(f.getModifiers()) || f.isAnnotationPresent(Transient.class))) {
-                    if (f.get(filter) != null) {
-                        criteria.add(Restrictions.eq(f.getName(), f.get(filter)));
-                    }
+                if (Modifier.isTransient(f.getModifiers()) || Modifier.isStatic(f.getModifiers()) || f.isAnnotationPresent(Transient.class)) {
+                    continue;
+                }
+                Object value = f.get(filter);
+                if (value != null) {
+                    criteria.add(Restrictions.eq(f.getName(), value));
                 }
             }
             if (maxResults != null) {

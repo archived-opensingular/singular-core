@@ -16,7 +16,7 @@
 
 package org.opensingular.form.persistence.dao;
 
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
@@ -28,10 +28,10 @@ import java.util.zip.DeflaterInputStream;
 
 @SuppressWarnings({"serial", "unchecked"})
 @Transactional(Transactional.TxType.MANDATORY)
-public class AttachmentContentDao<T extends AttachmentContentEntitty> extends BaseDAO<T, Long> {
+public class AttachmentContentDao<T extends AttachmentContentEntity> extends BaseDAO<T, Long> {
 
     public AttachmentContentDao() {
-        super((Class<T>) AttachmentContentEntitty.class);
+        super((Class<T>) AttachmentContentEntity.class);
     }
 
     protected AttachmentContentDao(Class<T> tipo) {
@@ -51,8 +51,8 @@ public class AttachmentContentDao<T extends AttachmentContentEntitty> extends Ba
     }
 
     public void delete(Long codContent) {
-        T contentEntitty = find(codContent);
-        delete(contentEntitty);
+        T contentEntity = find(codContent);
+        delete(contentEntity);
     }
 
     protected T createContent(InputStream in, long length, String hashSha1) {

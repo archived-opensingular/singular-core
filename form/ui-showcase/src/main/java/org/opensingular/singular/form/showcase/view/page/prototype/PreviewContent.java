@@ -16,27 +16,20 @@
 
 package org.opensingular.singular.form.showcase.view.page.prototype;
 
-import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.lang.Bytes;
+import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.lang.Bytes;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -156,7 +149,7 @@ class TypeBuilder {
     }
 
     private STypeList addAppropriateListFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String genName) {
-        if (typeOfField instanceof STypeComposite) {
+        if (typeOfField.isComposite()) {
             return root.addFieldListOfComposite(genName, "sub_" + genName);
         } else {
             return root.addFieldListOf(genName, typeOfField);
@@ -203,7 +196,7 @@ class TypeBuilder {
     private void addCompositeFieldsIfNeeded(SIComposite descriptor,
                                             SType<?> typeOfField,
                                             SType<?> fieldType) {
-        if (typeOfField instanceof STypeComposite) {
+        if (typeOfField.isComposite()) {
             SIList children = (SIList) descriptor.getField(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
         }

@@ -16,9 +16,9 @@
 
 package org.opensingular.form.view;
 
-import org.opensingular.form.STypeSimple;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
 
 /**
  * View para os tipos: {@link STypeSimple}, {@link STypeComposite}
@@ -28,6 +28,6 @@ public class SViewSelectionBySelect extends SView {
 
     @Override
     public boolean isApplicableFor(SType<?> type) {
-        return type instanceof STypeSimple || type instanceof STypeComposite;
+        return type instanceof STypeSimple || type.isComposite();
     }
 }
