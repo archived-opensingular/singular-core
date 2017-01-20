@@ -37,13 +37,13 @@ public interface ICompositeInstance {
         return getValue(fieldPath, null);
     }
 
-    public <T extends Object> T getValue(String fieldPath, Class<T> resultClass);
+    public <T> T getValue(String fieldPath, Class<T> resultClass);
 
     public default Optional<Object> getValueOpt(String fieldPath) {
         return getValueOpt(fieldPath, null);
     }
 
-    public default <T extends Object> Optional<T> getValueOpt(String fieldPath, Class<T> resultClass) {
+    public default <T> Optional<T> getValueOpt(String fieldPath, Class<T> resultClass) {
         return Optional.ofNullable(getValue(fieldPath, resultClass));
     }
 

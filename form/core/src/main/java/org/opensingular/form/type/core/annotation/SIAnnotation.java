@@ -16,11 +16,10 @@
 
 package org.opensingular.form.type.core.annotation;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.document.SDocument;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Instance class form the MTipoAnnotation type.
@@ -42,7 +41,7 @@ public class SIAnnotation extends SIComposite {
         return getValueInteger(STypeAnnotation.FIELD_TARGET_ID);
     }
 
-    public void setTargetId(Integer id) {
+    private void setTargetId(Integer id) {
         setValue(STypeAnnotation.FIELD_TARGET_ID, id);
     }
 
@@ -50,7 +49,7 @@ public class SIAnnotation extends SIComposite {
         return getValueString(STypeAnnotation.FIELD_TARGET_PATH);
     }
 
-    public void setTargetPath(String path) {
+    private void setTargetPath(String path) {
         setValue(STypeAnnotation.FIELD_TARGET_PATH, path);
     }
 
@@ -73,7 +72,7 @@ public class SIAnnotation extends SIComposite {
     /**
      * Associa a anotação a instância informada de forma a anotação aponte para o ID e XPath do mesmo.
      */
-    public void setTarget(SInstance target) {
+    final void setTarget(SInstance target) {
         setTargetId(target.getId());
         setTargetPath(buildXPath(target, new StringBuilder()).toString());
     }

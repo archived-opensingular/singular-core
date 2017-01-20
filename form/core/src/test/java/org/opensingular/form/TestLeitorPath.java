@@ -3,6 +3,7 @@ package org.opensingular.form;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.internal.PathReader;
 
 @RunWith(Parameterized.class)
 public class TestLeitorPath extends TestCaseForm {
@@ -60,17 +61,17 @@ public class TestLeitorPath extends TestCaseForm {
                 assertEquals(esperado, leitor.getIndex());
             } else {
                 assertFalse(leitor.isIndex());
-                assertEquals(esperado, leitor.getTrecho());
+                assertEquals(esperado, leitor.getToken());
             }
             assertEquals((i + 1 == resultadoEsperado.length), leitor.isLast());
             leitor = leitor.next();
         }
         if (!leitor.isEmpty()) {
-            fail("Ainda há item no leitor para ler: " + leitor.getTrecho());
+            fail("Ainda há item no leitor para ler: " + leitor.getToken());
         }
         final PathReader leitor2 = leitor;
         assertException(() -> leitor2.isIndex(), "Leitura já está no fim");
-        assertException(() -> leitor2.getTrecho(), "Leitura já está no fim");
+        assertException(() -> leitor2.getToken(), "Leitura já está no fim");
         assertException(() -> leitor2.next(), "Leitura já está no fim");
 
     }

@@ -48,6 +48,8 @@ public final class IDUtil {
      */
     private static final char SEPARADOR = '-';
 
+    private IDUtil() {}
+
     /**
      * Classe para auxilio na geração do ID, a medida que os componentes são
      * adicionados, coloca os separadores adequados.
@@ -58,7 +60,7 @@ public final class IDUtil {
         /**
          * Espaço temporário para gerar o ID.
          */
-        private final StringBuffer buffer_ = new StringBuffer(32);
+        private final StringBuilder buffer_ = new StringBuilder(32);
 
         /**
          * Permite a construção apenas a partir da IDUtil.
@@ -351,7 +353,7 @@ public final class IDUtil {
      *
      * @param id String onde será localizado o fim do componente
      * @param posi posição no ID onde começa o componente a ser buscado o fim
-     * @return (posição do fim do componente + 1) ou (-1) se vai até o final.
+     * @return (posição do fim do componente +1) ou (-1) se vai até o final.
      */
     private static int getPosFim(String id, int posi) {
         //Não faz nenhuma verificação, pois o getPosInicio já fez

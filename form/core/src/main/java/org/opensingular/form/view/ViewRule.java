@@ -36,7 +36,7 @@ public abstract class ViewRule implements Function<SInstance, SView> {
     public abstract SView apply(SInstance instance);
 
     /** Método de apoio. Cria uma instância a partir da classe. */
-    protected final static SView newInstance(Class<? extends SView> view) {
+    protected static SView newInstance(Class<? extends SView> view) {
         try {
             return view.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

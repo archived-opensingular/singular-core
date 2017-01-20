@@ -27,7 +27,7 @@ public class SIDateTime extends SISimple<Date> implements SIComparable<Date> {
     }
 
     public Date getDate() {
-        return (Date) getValue();
+        return getValue();
     }
 
     public YearMonth getJavaYearMonth() {

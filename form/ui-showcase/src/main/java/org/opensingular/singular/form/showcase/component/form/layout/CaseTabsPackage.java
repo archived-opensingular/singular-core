@@ -43,11 +43,14 @@ public class CaseTabsPackage extends SPackage {
         STypeString nome;
         STypeInteger idade;
         STypeEMail email;
-        (nome = testForm.addFieldString("nome"))
+        nome = testForm.addFieldString("nome");
+        nome
                 .asAtr().label("Nome");
-        (idade = testForm.addFieldInteger("idade"))
+        idade = testForm.addFieldInteger("idade");
+        idade
                 .asAtr().label("Idade");
-        (email = testForm.addFieldEmail("email"))
+        email = testForm.addFieldEmail("email");
+        email
                 .asAtr().label("E-mail");
 
         STypeList<STypeComposite<SIComposite>, SIComposite> experiencias        = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");

@@ -79,6 +79,11 @@ public interface SAttributeEnabled {
         return getAttributeValue(atr.getNameFull(), atr.getValueClass());
     }
 
+    default <V> boolean hasAttribute(AtrRef<?, ?, V> atr) {
+        getDictionary().loadPackage(atr.getPackageClass());
+        return getAttribute(atr.getNameFull()).isPresent();
+    }
+
     default Object getAttributeValue(String attributeFullName) {
         return getAttributeValue(attributeFullName, null);
     }

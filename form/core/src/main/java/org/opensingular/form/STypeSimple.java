@@ -98,12 +98,12 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
     }
 
     public VALUE fromString(String value) {
-        throw new RuntimeException("Não implementado");
+        throw new UnsupportedOperationException("Não implementado");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Object> T convert(Object value, Class<T> resultClass) {
+    public <T> T convert(Object value, Class<T> resultClass) {
         if (value == null) {
             return null;
         } else if (resultClass.isAssignableFrom(valueClass)) {

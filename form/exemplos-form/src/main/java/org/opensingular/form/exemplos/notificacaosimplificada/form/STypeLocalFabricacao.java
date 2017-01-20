@@ -52,7 +52,6 @@ public class STypeLocalFabricacao extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         this.asAtr().label("Local de Fabricação");
 

@@ -25,7 +25,7 @@ public class MTaskEnd extends MTask<MTaskEnd> {
 
     @Override
     public IEntityTaskType getTaskType() {
-        return TaskType.End;
+        return TaskType.END;
     }
 
     @Override

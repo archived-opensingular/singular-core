@@ -69,9 +69,9 @@ public interface SIDateTimeModel {
 
                 final Calendar c = new GregorianCalendar();
                 final String[] date = rawTime.split("/");
-                final int day = Integer.valueOf(date[0]);
-                final int month = Integer.valueOf(date[1]);
-                final int year = Integer.valueOf(date[2]);
+                final int day = Integer.parseInt(date[0]);
+                final int month = Integer.parseInt(date[1]);
+                final int year = Integer.parseInt(date[2]);
 
                 if (getDate() != null) {
                     c.setTime(getDate());
@@ -108,8 +108,8 @@ public interface SIDateTimeModel {
 
                 final Calendar c = new GregorianCalendar();
                 final String[] hourMinute = rawTime.split(":");
-                final int hour = Integer.valueOf(hourMinute[0]);
-                final int minute = Integer.valueOf(hourMinute[1]);
+                final int hour = Integer.parseInt(hourMinute[0]);
+                final int minute = Integer.parseInt(hourMinute[1]);
 
                 if (getDate() != null) {
                     c.setTime(getDate());

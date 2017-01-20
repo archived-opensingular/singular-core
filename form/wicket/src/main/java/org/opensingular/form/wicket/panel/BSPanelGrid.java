@@ -210,7 +210,7 @@ public abstract class BSPanelGrid extends Panel {
         }
     }
     
-    protected class BSTabCol extends WebMarkupContainer implements IBSGridCol<BSTabCol> {
+    protected static class BSTabCol extends WebMarkupContainer implements IBSGridCol<BSTabCol> {
 
         public BSTabCol(String id) {
             super(id);

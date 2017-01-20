@@ -68,7 +68,7 @@ public class BSModalBorder extends Border {
         LINK("btn-link"),
         DANGER("btn-danger"),
         BLUE("blue"),
-        CANCEl("cancel-btn"),
+        CANCEL("cancel-btn"),
         CONFIRM("confirm-btn");
         //@formatter:on
 
@@ -107,7 +107,6 @@ public class BSModalBorder extends Border {
     private static final String EXPAND_ICON   = "expandIcon";
     private static final String TITLE         = "title";
     private static final String HEADER        = "header";
-    private static final String BODY          = "body";
     private static final String FOOTER        = "footer";
 
     private Size    size          = Size.NORMAL;

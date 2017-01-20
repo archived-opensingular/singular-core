@@ -42,7 +42,7 @@ public abstract class PeticaoTest extends TestSupport {
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void setup() {
+    public void setUp() {
         Flow.setConf(mbpmBean, true);
     }
 

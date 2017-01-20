@@ -16,8 +16,8 @@
 
 package org.opensingular.form.spring;
 
-import org.opensingular.form.SingularFormException;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SingularFormException;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 
@@ -64,6 +64,6 @@ class SpringFormUtil {
             sb.append("bean=").append(bean.getBeanName()).append("; ");
         }
         sb.append("class=").append(bean.getClass()).append("]: ").append(msg);
-        return msg.toString();
+        return sb.toString();
     }
 }

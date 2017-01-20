@@ -27,7 +27,7 @@ public class SViewTab extends SView {
 
     private STab defaultTab;
 
-    private List<STab> tabs = new ArrayList<>();
+    private final List<STab> tabs = new ArrayList<>();
 
     private Integer navColXs;
     private Integer navColSm;
@@ -67,14 +67,12 @@ public class SViewTab extends SView {
     }
     /**
      * Configura o tamanho geral da coluna de navegação das abas
-     * @param valor
      */
     public SViewTab navColPreference(Integer valor) {
         return navColLg(valor).navColMd(valor).navColSm(valor).navColXs(valor);
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Smallest
-     * @param valor
      */
     public SViewTab navColXs(Integer valor) {
         this.navColXs = valor;
@@ -82,7 +80,6 @@ public class SViewTab extends SView {
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Small
-     * @param valor
      */
     public SViewTab navColSm(Integer valor) {
         this.navColSm = valor;
@@ -90,7 +87,6 @@ public class SViewTab extends SView {
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Medium
-     * @param valor
      */
     public SViewTab navColMd(Integer valor) {
         this.navColMd = valor;
@@ -98,7 +94,6 @@ public class SViewTab extends SView {
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Large
-     * @param valor
      */
     public SViewTab navColLg(Integer valor) {
         this.navColLg = valor;

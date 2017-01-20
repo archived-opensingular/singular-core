@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class CalculationContext {
 
-    private SInstance instanceContext;
+    private final SInstance instanceContext;
 
     public CalculationContext(SInstance instanceContext) {
         this.instanceContext = Objects.requireNonNull(instanceContext);

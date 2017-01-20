@@ -59,7 +59,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     protected void extendSubReference() {
-        super.extendSubReference();
         if (getSuperType() instanceof STypeComposite) {
             Map<String, SType<?>> fieldsSuper = ((STypeComposite<?>) getSuperType()).fieldsLocal;
             if (fieldsSuper != null) {
@@ -82,9 +81,32 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
                 localName = type.getNameSimple();
             }
             if(fieldsLocal.containsKey(localName)) {
-                throw new SingularFormException("Já existe um campo criado com o nome '" + localName + "' em " + this);
+                String msg = "Tentativa de criar um segundo campo com o nome '" + localName + "' em " + this;
+                SingularFormException e = new SingularFormException(msg, this);
+                String probableWrongCall = detectIfProbableOnLoadTypeSuperCall(e);
+                if (probableWrongCall != null) {
+                    e = new SingularFormException(msg +
+                            ". Verifique se não ocorreu uma chamada indevida de super.onLoadType() (nao dever haver " +
+                            "essa chamada) na linha\n   " + probableWrongCall);
+                }
+                throw e;
             }
         }
+    }
+
+    private String detectIfProbableOnLoadTypeSuperCall(SingularFormException e) {
+        boolean foundFirst = false;
+        for(StackTraceElement element: e.getStackTrace()) {
+            if ("onLoadType".equals(element.getMethodName())) {
+                if (foundFirst) {
+                    return element.toString();
+                }
+                foundFirst = true;
+            } else if (foundFirst) {
+                return null;
+            }
+        }
+        return null;
     }
 
     private <I extends SInstance, T extends SType<I>> T addInternal(String localName, T type) {
@@ -115,7 +137,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return getFieldsConsolidated().findIndex(fieldSimpleName);
     }
 
-    private final FieldMapOfRecordType getFieldsConsolidated() {
+    private FieldMapOfRecordType getFieldsConsolidated() {
         if(isRecursiveReference()) {
             return ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
         }
@@ -197,7 +219,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
      * @param fieldSimpleName - nome do campo
      * @param required - se o campo é obrigatório
-     * @return
      */
     public STypeAttachment addFieldAttachment(String fieldSimpleName, boolean required) {
         return addField(fieldSimpleName, STypeAttachment.class, required);
@@ -205,7 +226,6 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     /**
      * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
      * @param fieldSimpleName - nome do campo
-     * @return
      */
     public STypeAttachment addFieldAttachment(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeAttachment.class);

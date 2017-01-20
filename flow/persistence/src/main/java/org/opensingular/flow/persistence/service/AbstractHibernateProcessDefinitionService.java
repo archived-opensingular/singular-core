@@ -16,39 +16,19 @@
 
 package org.opensingular.flow.persistence.service;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.MProcessRole;
-import org.opensingular.flow.core.MTask;
-import org.opensingular.flow.core.MTransition;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.SingularFlowException;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessGroup;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.entity.*;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
-import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
+import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+
+import java.util.*;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityRoleDefinition, PROCESS_ROLE extends IEntityRoleInstance, ROLE_TASK extends IEntityRoleTask>
         extends AbstractHibernateService
@@ -139,7 +119,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
                 def.setCategory(retrieveOrCreateCategoryWith(definicao.getCategory()));
                 mudou = true;
             }
-            if (!definicao.getClass().getName().equals(def.getDefinitionClassName())) {
+            if (!Objects.equals(def.getDefinitionClassName(), definicao.getClass().getName())) {
                 def.setDefinitionClassName(definicao.getClass().getName());
                 mudou = true;
             }

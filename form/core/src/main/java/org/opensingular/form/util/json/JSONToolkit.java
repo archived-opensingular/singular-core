@@ -25,6 +25,8 @@ import java.io.PrintWriter;
 
 public class JSONToolkit {
 
+    private JSONToolkit() {}
+
     public static void printJSON(PrintWriter out, Element e) {
         final JSONWriter jsonWriter = new JSONWriter(out);
         jsonWriter.object();

@@ -38,12 +38,12 @@ public enum TipoAnalise {
     DICOL(8, "DICOL"),
     COMUM_RETRATACAO_GERENTE(9, "Comum Retratação Gerente");
 
-    private Integer codigo;
-    private String  descricao;
+    private final Integer codigo;
+    private final String  descricao;
 
     private TipoAnalise(Integer codigo, String descricao) {
-        this.setCodigo(codigo);
-        this.setDescricao(descricao);
+        this.codigo = codigo;
+        this.descricao = descricao;
     }
 
     public Integer getCodigo() {
@@ -51,15 +51,10 @@ public enum TipoAnalise {
     }
 
     public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
     }
 
     public String getDescricao() {
         return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
     }
 
     public static TipoAnalise valueOfEnum(Integer codigo) {

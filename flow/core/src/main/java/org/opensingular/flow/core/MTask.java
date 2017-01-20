@@ -16,21 +16,14 @@
 
 package org.opensingular.flow.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-
+import com.google.common.base.MoreObjects;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 
-import com.google.common.base.MoreObjects;
+import java.util.*;
+import java.util.function.Consumer;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class MTask<K extends MTask<?>> {
@@ -91,19 +84,19 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public final boolean isEnd() {
-        return getTaskType() == TaskType.End;
+        return getTaskType() == TaskType.END;
     }
 
     public final boolean isJava() {
-        return getTaskType() == TaskType.Java;
+        return getTaskType() == TaskType.JAVA;
     }
 
     public final boolean isPeople() {
-        return getTaskType() == TaskType.People;
+        return getTaskType() == TaskType.PEOPLE;
     }
 
     public final boolean isWait() {
-        return getTaskType() == TaskType.Wait;
+        return getTaskType() == TaskType.WAIT;
     }
 
     public final boolean is(ITaskDefinition taskDefinition) {
@@ -112,8 +105,8 @@ public abstract class MTask<K extends MTask<?>> {
 
     public IEntityTaskType getEffectiveTaskType() {
         IEntityTaskType tipo = getTaskType();
-        if (tipo != TaskType.Wait && (this instanceof MTaskJava) && ((MTaskJava) this).getScheduleData() != null) {
-            tipo = TaskType.Wait;
+        if (tipo != TaskType.WAIT && (this instanceof MTaskJava) && ((MTaskJava) this).getScheduleData() != null) {
+            tipo = TaskType.WAIT;
         }
         return tipo;
     }
@@ -275,11 +268,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((flowMap == null) ? 0 : flowMap.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
+        return name.hashCode();
     }
 
     @Override
@@ -291,18 +280,6 @@ public abstract class MTask<K extends MTask<?>> {
         if (getClass() != obj.getClass())
             return false;
         MTask<?> other = (MTask<?>) obj;
-        if (flowMap == null) {
-            if (other.flowMap != null)
-                return false;
-        } else if (!flowMap.equals(other.flowMap))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
+        return Objects.equals(flowMap, other.flowMap) && Objects.equals(name, other.name);
     }
-
-    
 }

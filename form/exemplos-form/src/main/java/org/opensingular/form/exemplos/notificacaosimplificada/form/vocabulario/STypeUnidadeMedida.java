@@ -36,7 +36,6 @@ public class STypeUnidadeMedida extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         id = this.addFieldInteger("id");
         sigla = this.addFieldString("sigla");
         descricao = this.addFieldString("descricao");

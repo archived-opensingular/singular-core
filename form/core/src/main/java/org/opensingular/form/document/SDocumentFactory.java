@@ -16,12 +16,13 @@
 
 package org.opensingular.form.document;
 
-import java.util.Objects;
-
 import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SType;
 import org.opensingular.form.io.FormSerializationUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * <p>
@@ -38,7 +39,7 @@ import org.opensingular.form.io.FormSerializationUtil;
  * O método {@link #setupDocument(SDocument)} deve ser implementando com as
  * configurações necessárias pela aplicação. Na maior parte dos casos
  * provavelmente será utilizada a classe
- * {@link org.opensingular.singular.form.spring.SpringSDocumentFactory}.
+ * {@link org.opensingular.form.spring.SpringSDocumentFactory}.
  * </p>
  *
  * @author Daniel C. Bordin
@@ -55,10 +56,11 @@ public abstract class SDocumentFactory {
     }
 
     /**
-     * USO INTERNO: cria uma instancia sem disparar as inicializações
-     * automáticas.
+     * USO INTERNO: cria uma instancia usando a factory atual
+     * @param executeInitTypeSetup Se true, dispara as inicializações automáticas implementadas em
+     * {@link SInstance#init()}. Usar como false quando a instância está sendo recuperada da persistência.
      */
-    public final SInstance createInstance(RefType rootType, boolean executeInitTypeSetup) {
+    public final SInstance createInstance(@Nonnull RefType rootType, boolean executeInitTypeSetup) {
         SType type = Objects.requireNonNull(rootType).get();
         SInstance instance = type.newInstance(false);
         instance.getDocument().setRootRefType(rootType);
@@ -101,7 +103,7 @@ public abstract class SDocumentFactory {
      * Fábrica de conveniência que não faz nenhuma configuração na instância ou
      * documento ao criá-los.
      */
-    public static final SDocumentFactory empty() {
+    public static SDocumentFactory empty() {
         return SDocumentFactoryEmpty.getEmptyInstance();
     }
 

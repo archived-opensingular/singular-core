@@ -63,7 +63,7 @@ public class RelocationTest  {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         Flow.setConf(mbpmBean, true);
 
         session = sessionFactory.openSession();

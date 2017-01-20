@@ -35,7 +35,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
     public AbstractVarInstanceMap(VarInstanceMap<?> instances) {
         varService = VarService.getVarService(instances);
         for (VarInstance var : instances) {
-            addDefinicao(var.getDefinicao()).setValor(var.getValor());
+            addDefinicao(var.getDefinition()).setValue(var.getValue());
         }
     }
 

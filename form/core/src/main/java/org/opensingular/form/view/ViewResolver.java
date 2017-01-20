@@ -184,11 +184,7 @@ public class ViewResolver {
             if (getClass() != obj.getClass())
                 return false;
             ViewRuleRef other = (ViewRuleRef) obj;
-            if (order != other.order)
-                return false;
-            return true;
+            return order == other.order;
         }
-
     }
-
 }

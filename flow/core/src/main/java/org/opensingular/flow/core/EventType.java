@@ -18,6 +18,6 @@ package org.opensingular.flow.core;
 
 public enum EventType {
 
-    Conditional, Timer, Message, Signal, Error
+    CONDITIONAL, TIMER, MESSAGE, SIGNAL, ERROR
 
 }

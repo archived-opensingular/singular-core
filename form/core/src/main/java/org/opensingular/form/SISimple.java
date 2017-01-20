@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.opensingular.form.calculation.CalculationContext;
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.internal.PathReader;
 
 public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
 
@@ -39,7 +40,7 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
     }
 
     @Override
-    <V extends Object> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
+    <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
         if (valueCalculation != null) {
             return convert(valueCalculation.calculate(new CalculationContext(contextInstance)), resultClass);
         }
@@ -69,9 +70,9 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
     }
 
     @Override
-    final <T extends Object> T getValueWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
+    final <T> T getValueWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         if (!leitor.isEmpty()) {
-            throw new RuntimeException("Não ser aplica path a um tipo simples");
+            throw new SingularFormException("Não ser aplica path a um tipo simples");
         }
         return getValueWithDefault(classeDestino);
     }

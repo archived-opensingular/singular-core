@@ -16,11 +16,16 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.w3c.dom.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Percorredor de uma lista especifica de elementos da um XML (aceita filtro
@@ -117,7 +122,7 @@ public final class MElementResult extends MElement implements EWrapper {
     /**
      * Elemento que terá os dados retornados
      */
-    private Element atual_;
+    private ISupplier<Element> atual;
     /**
      * Estado em que o elemento atual se encontra.
      */
@@ -126,7 +131,7 @@ public final class MElementResult extends MElement implements EWrapper {
     /**
      * Elemento pai no percorrimento simples de filhos.
      */
-    private final Element raiz_;
+    private final ISupplier<Element> raiz;
     /**
      * Nome dos elementos filhos a serem percorridos.
      */
@@ -135,7 +140,7 @@ public final class MElementResult extends MElement implements EWrapper {
     /**
      * Lista de todos os nos a serem retornados
      */
-    private final NodeList list_;
+    private final List<ISupplier<Element>> list;
     /**
      * Indice do atual da lista
      */
@@ -151,9 +156,9 @@ public final class MElementResult extends MElement implements EWrapper {
         if (list == null) {
             throw new IllegalArgumentException("list nula");
         }
-        raiz_ = null;
-        nomeElemento_ = null;
-        list_ = list;
+        this.raiz = null;
+        this.nomeElemento_ = null;
+        this.list = convert(list);
     }
 
     /**
@@ -166,31 +171,47 @@ public final class MElementResult extends MElement implements EWrapper {
         if (raiz == null) {
             throw new IllegalArgumentException("Elemento raiz nulo");
         }
-        raiz_ = raiz;
-        nomeElemento_ = null;
-        list_ = null;
+        this.raiz = SupplierUtil.serializable(raiz);
+        this.nomeElemento_ = null;
+        this.list = null;
     }
 
     /**
      * Percorredor para o resultado da consulta xPath informada.
      *
-     * @param raiz a ter os filhos percorridos
+     * @param raiz  a ter os filhos percorridos
      * @param xPath consulta de filtro a partir da raiz informada. Se null
-     * retorna todos os filhos imediatos
+     *              retorna todos os filhos imediatos
      */
     public MElementResult(Element raiz, String xPath) {
         if (raiz == null) {
             throw new IllegalArgumentException("Elemento raiz nulo");
         }
         if ((xPath == null) || XPathToolkit.isSelectSimples(xPath)) {
-            raiz_ = raiz;
-            nomeElemento_ = xPath;
-            list_ = null;
+            this.raiz = SupplierUtil.serializable(raiz);
+            this.nomeElemento_ = xPath;
+            this.list = null;
         } else {
-            raiz_ = null;
-            nomeElemento_ = null;
-            list_ = XPathToolkit.selectNodeList(raiz, xPath);
+            this.raiz = null;
+            this.nomeElemento_ = null;
+            this.list = convert(XPathToolkit.selectNodeList(raiz, xPath));
         }
+    }
+
+    private List<ISupplier<Element>> convert(NodeList nodeList) {
+        List<ISupplier<Element>> list = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node no = nodeList.item(i);
+            if (no == null) {
+                throw new SingularFormException("O result da consulta na posição " + atualList_ + " está null");
+            } else if (!isNodeTypeElement(no)) {
+                throw new SingularFormException(
+                        "O result da consulta na posição " + atualList_ + " não é um Element. É um no do tipo " +
+                                XPathToolkit.getNomeTipo(no));
+            }
+            list.add(SupplierUtil.serializable((Element) no));
+        }
+        return list;
     }
 
     /**
@@ -242,11 +263,9 @@ public final class MElementResult extends MElement implements EWrapper {
     private Element getAtualInterno() {
         if (estadoAtual_ != VALIDO) {
             throw new IllegalStateException(
-                    "O elemento atual está no "
-                            + ((estadoAtual_ == INICIO_BLOCO) ? "início" : "final")
-                            + " da lista");
+                    "O elemento atual está no " + ((estadoAtual_ == INICIO_BLOCO) ? "início" : "final") + " da lista");
         }
-        return atual_;
+        return atual.get();
     }
 
     /**
@@ -286,10 +305,10 @@ public final class MElementResult extends MElement implements EWrapper {
      * @return -
      */
     public final int count() {
-        if (raiz_ == null) {
-            return list_.getLength();
+        if (raiz == null) {
+            return list.size();
         } else {
-            return toMElement(raiz_).count(nomeElemento_);
+            return toMElement(raiz.get()).count(nomeElemento_);
         }
     }
 
@@ -303,24 +322,16 @@ public final class MElementResult extends MElement implements EWrapper {
             return false;
         }
 
-        if (raiz_ != null) {
+        if (raiz != null) {
             Node no;
             if (estadoAtual_ == INICIO_BLOCO) {
-                no = raiz_.getFirstChild();
+                no = raiz.get().getFirstChild();
             } else {
-                no = atual_.getNextSibling();
+                no = atual.get().getNextSibling();
             }
-            while (no != null) {
-                if (no.getNodeType() == ELEMENT_NODE) {
-                    if ((nomeElemento_ == null) || nomeElemento_.equals(no.getNodeName())) {
-                        return true;
-                    }
-                }
-                no = no.getNextSibling();
-            }
-            return false;
+            return XmlUtil.nextSiblingOfTypeElement(no, nomeElemento_) != null;
         } else {
-            return atualList_ < list_.getLength();
+            return atualList_ < list.size();
         }
     }
 
@@ -336,41 +347,24 @@ public final class MElementResult extends MElement implements EWrapper {
             return false;
         }
 
-        Node no = null;
         atualList_++;
-        if (raiz_ != null) {
+        if (raiz != null) {
+            Node no;
             if (estadoAtual_ == INICIO_BLOCO) {
-                no = raiz_.getFirstChild();
+                no = raiz.get().getFirstChild();
             } else {
-                no = atual_.getNextSibling();
+                no = atual.get().getNextSibling();
             }
-            while (no != null) {
-                if (no.getNodeType() == ELEMENT_NODE) {
-                    if ((nomeElemento_ == null) || nomeElemento_.equals(no.getNodeName())) {
-                        break;
-                    }
-                }
-                no = no.getNextSibling();
-            }
+            no = XmlUtil.nextSiblingOfTypeElement(no, nomeElemento_);
+            atual = no == null ? null : SupplierUtil.serializable((Element) no);
         } else {
-            atual_ = null;
-            if (atualList_ < list_.getLength()) {
-                no = list_.item(atualList_);
-                if (no == null) {
-                    throw new RuntimeException(
-                            "O result da consulta na posição " + atualList_ + " está null");
-                } else if (no.getNodeType() != ELEMENT_NODE) {
-                    throw new RuntimeException(
-                            "O result da consulta na posição "
-                                    + atualList_
-                                    + " não é um Element. É um no do tipo "
-                                    + XPathToolkit.getNomeTipo(no));
-                }
+            atual = null;
+            if (atualList_ < list.size()) {
+                atual = list.get(atualList_);
             }
         }
-        atual_ = (Element) no;
 
-        if (atual_ == null) {
+        if (atual == null) {
             estadoAtual_ = FIM_BLOCO;
         } else {
             estadoAtual_ = VALIDO;

@@ -28,7 +28,6 @@ public class STypePersistentComposite extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
     }
 

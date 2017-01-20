@@ -79,7 +79,8 @@ public class SearchModalPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         buildAndAppendModalToRootContainer();
-        add(valueField = new TextField<>(VALUE_FIELD_ID, valueModel), buildModelTrigger());
+        valueField = new TextField<>(VALUE_FIELD_ID, valueModel);
+        add(valueField, buildModelTrigger());
     }
 
     private void buildAndAppendModalToRootContainer() {

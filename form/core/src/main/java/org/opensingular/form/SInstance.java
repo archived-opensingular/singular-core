@@ -22,19 +22,15 @@ import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class SInstance implements SAttributeEnabled {
@@ -113,17 +109,17 @@ public abstract class SInstance implements SAttributeEnabled {
      * retornam true.
      */
     public boolean isAttribute() {
-        return getFlag(InstanceFlags.IsAtributo);
+        return getFlag(InstanceFlags.IS_ATRIBUTO);
     }
 
     final void setAsAttribute(String fullName, SType<?> attributeOwner) {
-        setFlag(InstanceFlags.IsAtributo, true);
+        setFlag(InstanceFlags.IS_ATRIBUTO, true);
         attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
 
     }
 
     final void setAsAttribute(String fullName, SInstance attributeOwner) {
-        setFlag(InstanceFlags.IsAtributo, true);
+        setFlag(InstanceFlags.IS_ATRIBUTO, true);
         attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
     }
 
@@ -157,7 +153,7 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
-            setFlag(InstanceFlags.IsAtributo, true);
+            setFlag(InstanceFlags.IS_ATRIBUTO, true);
             attributeInstanceInfo = pai.attributeInstanceInfo;
         }
     }
@@ -178,15 +174,16 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public void setValue(Object value) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     public abstract Object getValue();
 
-    <V extends Object> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
+    <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
         return convert(getValue(), resultClass);
     }
 
+    /** Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade. */
     public abstract void clearInstance();
 
     /**
@@ -206,8 +203,6 @@ public abstract class SInstance implements SAttributeEnabled {
      * Para o tipo registro (composto) retorna true se todos so seus campos
      * retornarem isEmptyOfData().
      * </p>
-     *
-     * @return
      */
     public abstract boolean isEmptyOfData();
 
@@ -215,11 +210,11 @@ public abstract class SInstance implements SAttributeEnabled {
         return getValue(null);
     }
 
-    public final <T extends Object> T getValueWithDefault(Class<T> resultClass) {
+    public final <T> T getValueWithDefault(Class<T> resultClass) {
         return convert(getValueWithDefault(), resultClass);
     }
 
-    public final <T extends Object> T getValue(Class<T> resultClass) {
+    public final <T> T getValue(Class<T> resultClass) {
         return convert(getValue(), resultClass);
     }
 
@@ -232,7 +227,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return getType().convert(value, resultClass);
     }
 
-    final <T extends Object> T getValue(PathReader pathReader, Class<T> resultClass) {
+    final <T> T getValue(PathReader pathReader, Class<T> resultClass) {
         SInstance instance = this;
         while (true) {
             if (pathReader.isEmpty()) {
@@ -248,16 +243,16 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    <T extends Object> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+    <T> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
-    <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+    <T> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     void setValue(PathReader pathReader, Object value) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     final SInstance getField(PathReader pathReader) {
@@ -267,14 +262,14 @@ public abstract class SInstance implements SAttributeEnabled {
             if (pathReader.isLast()) {
                 return instance;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             pathReader = pathReader.next();
         }
     }
 
     SInstance getFieldLocal(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     final Optional<SInstance> getFieldOpt(PathReader pathReader) {
@@ -284,7 +279,7 @@ public abstract class SInstance implements SAttributeEnabled {
             if (!result.isPresent() || pathReader.isLast()) {
                 return result;
             } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"), instance);
+                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             instance = result.get();
             pathReader = pathReader.next();
@@ -292,7 +287,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
-        throw new RuntimeException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
     public String toStringDisplayDefault() {
@@ -354,7 +349,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Override
-    public final <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public final <V> V getAttributeValue(String fullName, Class<V> resultClass) {
         if (attributes != null) {
             SInstance attribute = attributes.get(fullName);
             if (attribute != null) {
@@ -377,10 +372,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return this.parent;
     }
 
+    @Nonnull
     public <A extends SInstance & ICompositeInstance> A getAncestor(SType<A> ancestorType) {
-        return findAncestor(ancestorType).get();
+        return SInstances.getAncestor(this, ancestorType);
     }
 
+    @Nonnull
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return SInstances.findAncestor(this, ancestorType);
     }
@@ -409,11 +406,11 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Object> T as(Class<T> classeAlvo) {
+    public <T> T as(Class<T> classeAlvo) {
         if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
             return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
-        throw new RuntimeException(
+        throw new SingularFormException(
                 "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
 
@@ -518,9 +515,9 @@ public abstract class SInstance implements SAttributeEnabled {
      * Signals this Component that it is removed from the Component hierarchy.
      */
     final void internalOnRemove() {
-        setFlag(InstanceFlags.RemovendoInstancia, true);
+        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, true);
         onRemove();
-        if (getFlag(InstanceFlags.RemovendoInstancia)) {
+        if (getFlag(InstanceFlags.REMOVENDO_INSTANCIA)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                     + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
@@ -533,9 +530,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public void removeChildren() {
         if (this instanceof ICompositeInstance) {
-            for (SInstance child : ((ICompositeInstance) this).getChildren()) {
-                child.internalOnRemove();
-            }
+            ((ICompositeInstance) this).getChildren().stream().forEach(child -> child.internalOnRemove());
         }
     }
 
@@ -549,7 +544,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * </p>
      */
     protected void onRemove() {
-        setFlag(InstanceFlags.RemovendoInstancia, false);
+        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, false);
     }
 
     final void setFlag(InstanceFlags flag, boolean value) {
@@ -569,10 +564,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean hasNestedValidationErrors() {
-        return SInstances.visit(this, (i, v) -> {
-            if (i.hasValidationErrors())
-                v.stop(true);
-        }).isPresent();
+        return SInstances.hasAny(this, i -> hasValidationErrors());
     }
 
     public Collection<IValidationError> getValidationErrors() {

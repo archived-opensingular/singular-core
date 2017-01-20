@@ -29,7 +29,6 @@ public class STypeAttachmentList extends STypeList<STypeAttachment, SIAttachment
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         asAtr().displayString(context -> {
             final StringBuilder displayString = new StringBuilder();
             if (context.instance() instanceof SIList) {
