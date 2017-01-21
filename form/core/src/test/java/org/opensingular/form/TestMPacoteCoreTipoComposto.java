@@ -1,8 +1,10 @@
 package org.opensingular.form;
 
+import org.junit.Ignore;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaC;
+import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaE;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -496,6 +498,23 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertType(c.bloco3).isExtensionCorrect(a);
     }
 
+    @Test
+    @Ignore("Por em quanto ainda não suporta uma classe de tipo extender uma classe intermediária que também não é um tipo")
+    public void testCorrectExtensionWhenCompositeClassExtendsOtherCompositeClassWithAIntermediatyClass() {
+        SDictionary dictionary = createTestDictionary();
+        TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
+        //Descomentar o registro do tipo E no pacote para a linha abaixo funcionar
+        TestTipoCompositeComCargaInternaE e = dictionary.getType(TestTipoCompositeComCargaInternaE.class);
+
+        assertType(e).isExtensionCorrect(b);
+        assertType(e.info2).isExtensionCorrect(STypeString.class);
+        assertType(e.descricao).isExtensionCorrect(b.descricao);
+        assertType(e.bloco1).isExtensionCorrect(b.bloco1);
+        assertType(e.bloco2).isExtensionCorrect(b.bloco2);
+        assertType(e.bloco4).isExtensionCorrect(a);
+    }
+
     @SInfoPackage(name = "teste.pacoteCompostoA")
     public static final class TestPacoteCompostoA extends SPackage {
 
@@ -504,6 +523,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
             pb.createType(TestTipoCompositeComCargaInterna.class);
             pb.createType(TestTipoCompositeComCargaInternaB.class);
             pb.createType(TestTipoCompositeComCargaInternaC.class);
+            //pb.createType(TestTipoCompositeComCargaInternaE.class);
         }
 
         @SInfoType(name = "TestTipoCompostoComCargaInterna", spackage = TestPacoteCompostoA.class)
@@ -545,6 +565,25 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
             protected void onLoadType(TypeBuilder tb) {
                 info = addFieldString("info");
                 bloco3 = addField("bloco3", TestTipoCompositeComCargaInterna.class);
+            }
+        }
+
+        //Classe abstrata intermediária para teste
+        public static abstract class TestTipoCompositeComCargaInternaD extends TestTipoCompositeComCargaInternaB  {
+
+        }
+
+        //Classe extendendo um classe intermediária não tipo
+        @SInfoType(name = "TestTipoCompostoComCargaInternaE", spackage = TestPacoteCompostoA.class)
+        public static class TestTipoCompositeComCargaInternaE extends TestTipoCompositeComCargaInternaD  {
+
+            public STypeString info2;
+            public TestTipoCompositeComCargaInterna bloco4;
+
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                info2 = addFieldString("info2");
+                bloco4 = addField("bloco4", TestTipoCompositeComCargaInterna.class);
             }
         }
     }
