@@ -33,9 +33,7 @@ public class PDFUtilUnix extends PDFUtil {
     /**
      * Instancia um novo objeto do tipo PDFUtilUnix.
      */
-    private PDFUtilUnix() {
-        /* MÉTODO VAZIO */
-    }
+    private PDFUtilUnix() {}
 
     /**
      * Retorna o valor atual do atributo {@link #instance}.
@@ -46,25 +44,7 @@ public class PDFUtilUnix extends PDFUtil {
         if (instance == null) {
             instance = new PDFUtilUnix();
         }
-
         return instance;
-    }
-
-    /**
-     * Retorna um arquivo pdf vazio.
-     *
-     * @return O pdf criado.
-     * @throws IOException
-     */
-    public File createEmptyPdf() throws IOException {
-        File tempLock   = File.createTempFile("SINGULAR-", UUID.randomUUID().toString());
-        File tempFolder = new File(tempLock.getParentFile(), tempLock.getName().concat("-DIR"));
-        if (!tempFolder.mkdir()) {
-            getLogger().error("convertHTML2PDF: temp folder not found");
-            return null;
-        }
-        File pdfFile = new File(tempFolder, "temp.pdf");
-        return pdfFile;
     }
 
     /**
@@ -77,37 +57,40 @@ public class PDFUtilUnix extends PDFUtil {
      */
     @Override
     public File splitPDF(File pdf) throws IOException, InterruptedException {
-        if (wkhtml2pdfHome == null) {
-            getLogger().error("splitPDF: 'singular.wkhtml2pdf.home' not set");
+        if (getWkhtml2pdfHomeOpt() == null) {
             return null;
-        }
-
-        if (pdf == null || !pdf.exists()) {
+        } else if (pdf == null || !pdf.exists()) {
             getLogger().error("splitPDF: PDF file not found");
             return null;
         }
 
         File tempFolder = pdf.getParentFile();
-        File libFolder  = new File(wkhtml2pdfHome);
-        File exeFile    = new File(libFolder, "runner");
-        File pysFile    = new File(libFolder, "pdfsplit");
         File pdfFile    = new File(tempFolder, "splited.pdf");
 
         List<String> commandAndArgs = new ArrayList<>(0);
-        commandAndArgs.add(exeFile.getAbsolutePath());
-        commandAndArgs.add(pysFile.getAbsolutePath());
+        commandAndArgs.add(getExecFile(null, "runner"));
+        commandAndArgs.add(getExecFile(null, "pdfsplit"));
         commandAndArgs.add("-p2x1a4");
         commandAndArgs.add(pdf.getAbsolutePath());
         commandAndArgs.add(pdfFile.getAbsolutePath());
 
         getLogger().info(commandAndArgs.toString());
+
         ProcessBuilder pb      = new ProcessBuilder(commandAndArgs);
         Process        process = pb.start();
+        boolean success = runProcess(process);
+        if (success && pdfFile.exists()) {
+            return pdfFile;
+        }
+        return null;
+    }
+
+    private boolean runProcess(Process process) throws InterruptedException, IOException {
         process.waitFor();
 
+        boolean success = true;
         try (BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
              BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-            boolean success = true;
             String  line    = outReader.readLine();
             while (line != null) {
                 if (!line.isEmpty()) {
@@ -124,12 +107,8 @@ public class PDFUtilUnix extends PDFUtil {
                 }
                 line = errReader.readLine();
             }
-
-            if (success && pdfFile.exists()) {
-                return pdfFile;
-            }
         }
-        return null;
+        return success;
     }
 
     /**
@@ -146,13 +125,13 @@ public class PDFUtilUnix extends PDFUtil {
     @Override
     public File convertHTML2PDF(String rawHtml, String rawHeader, String rawFooter, List<String> additionalConfig)
             throws IOException, InterruptedException {
+        if (getWkhtml2pdfHomeOpt() == null) {
+            return null;
+        }
+
         final String html   = safeWrapHtml(rawHtml);
         final String header = safeWrapHtml(rawHeader);
         final String footer = safeWrapHtml(rawFooter);
-        if (wkhtml2pdfHome == null) {
-            getLogger().error("convertHTML2PDF: 'singular.wkhtml2pdf.home' not set");
-            return null;
-        }
 
         File tempLock   = File.createTempFile("SINGULAR-", UUID.randomUUID().toString());
         File tempFolder = new File(tempLock.getParentFile(), tempLock.getName().concat("-DIR"));
@@ -161,80 +140,58 @@ public class PDFUtilUnix extends PDFUtil {
             return null;
         }
 
-        File libFolder = new File(wkhtml2pdfHome);
-        File exeFile   = new File(libFolder, "bin" + File.separator + "wkhtmltopdf");
-
         File htmlFile = new File(tempFolder, "temp.html");
         File pdfFile  = new File(tempFolder, "temp.pdf");
         File jarFile  = new File(tempFolder, "temp.jar");
 
         TempFileUtils.deleteOrException(htmlFile, getClass());
 
-        if (htmlFile.createNewFile()) {
-            FileWriter fw = null;
-            try {
-                fw = new FileWriter(htmlFile);
-                fw.write(html);
-            } finally {
-                if (fw != null) {
-                    fw.close();
-                    fw = null;
-                }
-            }
+        if (! htmlFile.createNewFile()) {
+            return null;
+        }
+        writeToFile(htmlFile, html);
 
-            List<String> commandAndArgs = new ArrayList<>(0);
-            commandAndArgs.add(exeFile.getAbsolutePath());
+        List<String> commandAndArgs = new ArrayList<>(0);
+        commandAndArgs.add(getExecFile("bin", "wkhtmltopdf"));
 
-            if (additionalConfig != null) {
-                commandAndArgs.addAll(additionalConfig);
-            } else {
-                addDefaultPDFCommandArgs(commandAndArgs);
-            }
-
-            if (header != null) {
-                try {
-                    File headerFile = new File(tempFolder, "header.html");
-                    fw = new FileWriter(headerFile);
-                    fw.write(header);
-                    commandAndArgs.add("--header-html");
-                    commandAndArgs.add("file://".concat(headerFile.getAbsolutePath()));
-                    addDefaultHeaderCommandArgs(commandAndArgs);
-                } finally {
-                    if (fw != null) {
-                        fw.close();
-                        fw = null;
-                    }
-                }
-            }
-
-            if (footer != null) {
-                try {
-                    File footerFile = new File(tempFolder, "footer.html");
-                    fw = new FileWriter(footerFile);
-                    fw.write(footer);
-                    commandAndArgs.add("--footer-html");
-                    commandAndArgs.add("file://".concat(footerFile.getAbsolutePath()));
-                    addDefaultFooterCommandArgs(commandAndArgs);
-                } finally {
-                    if (fw != null) {
-                        fw.close();
-                    }
-                }
-            }
-
-            commandAndArgs.add("--cookie-jar");
-            commandAndArgs.add(jarFile.getAbsolutePath());
-            commandAndArgs.add("file://".concat(htmlFile.getAbsolutePath()));
-            commandAndArgs.add(pdfFile.getAbsolutePath());
-
-            ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
-            pb.environment().put("LD_LIBRARY_PATH", libFolder.getAbsolutePath());
-            Process process = pb.start();
-            process.waitFor();
-            return generateFile(process, pdfFile);
+        if (additionalConfig != null) {
+            commandAndArgs.addAll(additionalConfig);
+        } else {
+            addDefaultPDFCommandArgs(commandAndArgs);
         }
 
-        return null;
+        if (header != null) {
+            File headerFile = new File(tempFolder, "header.html");
+            writeToFile(headerFile, header);
+            commandAndArgs.add("--header-html");
+            commandAndArgs.add("file://".concat(headerFile.getAbsolutePath()));
+            addDefaultHeaderCommandArgs(commandAndArgs);
+        }
+
+        if (footer != null) {
+            File footerFile = new File(tempFolder, "footer.html");
+            writeToFile(footerFile, footer);
+            commandAndArgs.add("--footer-html");
+            commandAndArgs.add("file://".concat(footerFile.getAbsolutePath()));
+            addDefaultFooterCommandArgs(commandAndArgs);
+        }
+
+        commandAndArgs.add("--cookie-jar");
+        commandAndArgs.add(jarFile.getAbsolutePath());
+        commandAndArgs.add("file://".concat(htmlFile.getAbsolutePath()));
+        commandAndArgs.add(pdfFile.getAbsolutePath());
+
+        ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
+        pb.environment().put("LD_LIBRARY_PATH", getWkhtml2pdfHomeOpt().getAbsolutePath());
+        Process process = pb.start();
+        process.waitFor();
+        return generateFile(process, pdfFile);
+    }
+
+    private void writeToFile(File destination, String content) throws IOException {
+        try(FileWriter fw = new FileWriter(destination)) {
+             fw.write(content);
+        }
     }
 
     /**
@@ -248,8 +205,7 @@ public class PDFUtilUnix extends PDFUtil {
      */
     @Override
     public File convertHTML2PNG(String html, List<String> additionalConfig) throws IOException, InterruptedException {
-        if (wkhtml2pdfHome == null) {
-            getLogger().error("convertHTML2PNG: 'singular.wkhtml2pdf.home' not set");
+        if (getWkhtml2pdfHomeOpt() == null) {
             return null;
         }
 
@@ -260,9 +216,6 @@ public class PDFUtilUnix extends PDFUtil {
             return null;
         }
 
-        File libFolder = new File(wkhtml2pdfHome);
-        File exeFile   = new File(libFolder, "bin" + File.separator + "wkhtmltoimage");
-
         File htmlFile = new File(tempFolder, "temp.html");
         File pngFile  = new File(tempFolder, "temp.png");
         File jarFile  = new File(tempFolder, "temp.jar");
@@ -270,18 +223,10 @@ public class PDFUtilUnix extends PDFUtil {
         TempFileUtils.deleteOrException(htmlFile, getClass());
 
         if (htmlFile.createNewFile()) {
-            FileWriter fw = null;
-            try {
-                fw = new FileWriter(htmlFile);
-                fw.write(html);
-            } finally {
-                if (fw != null) {
-                    fw.close();
-                }
-            }
+            writeToFile(htmlFile, html);
 
             List<String> commandAndArgs = new ArrayList<>(0);
-            commandAndArgs.add(exeFile.getAbsolutePath());
+            commandAndArgs.add(getExecFile("bin", "wkhtmltoimage"));
 
             if (additionalConfig != null) {
                 commandAndArgs.addAll(additionalConfig);
@@ -295,7 +240,7 @@ public class PDFUtilUnix extends PDFUtil {
             commandAndArgs.add(pngFile.getAbsolutePath());
 
             ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
-            pb.environment().put("LD_LIBRARY_PATH", libFolder.getAbsolutePath());
+            pb.environment().put("LD_LIBRARY_PATH", getWkhtml2pdfHome().getAbsolutePath());
             Process process = pb.start();
             process.waitFor();
             return generateFile(process, pngFile);
@@ -314,6 +259,8 @@ public class PDFUtilUnix extends PDFUtil {
      */
     private File generateFile(Process process, File file) throws IOException {
 
+        boolean done    = false;
+        boolean success = true;
         try(BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
             String line = outReader.readLine();
@@ -322,8 +269,6 @@ public class PDFUtilUnix extends PDFUtil {
                 line = outReader.readLine();
             }
             line = errReader.readLine();
-            boolean done    = false;
-            boolean success = true;
             while (line != null) {
                 if (line.startsWith("Done")) {
                     done = true;
@@ -337,12 +282,11 @@ public class PDFUtilUnix extends PDFUtil {
                 }
                 line = errReader.readLine();
             }
-
-            if (done && success && file.exists()) {
-                return file;
-            } else {
-                getLogger().error(String.format("done:%b success:%b file.exists():%b", done, success, file.exists()));
-            }
+        }
+        if (done && success && file.exists()) {
+            return file;
+        } else {
+            getLogger().error(String.format("done:%b success:%b file.exists():%b", done, success, file.exists()));
         }
 
         return null;

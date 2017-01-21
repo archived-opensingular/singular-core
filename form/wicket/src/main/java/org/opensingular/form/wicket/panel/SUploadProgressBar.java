@@ -39,8 +39,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.*;
 import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Formatter;
@@ -202,21 +200,10 @@ public abstract class SUploadProgressBar extends Panel {
      */
     private Form<?> getCallbackForm()
     {
-        Boolean insideModal = getForm().visitParents(ModalWindow.class,
-                new IVisitor<ModalWindow, Boolean>()
-                {
-                    @Override
-                    public void component(final ModalWindow object, final IVisit<Boolean> visit)
-                    {
-                        visit.stop(true);
-                    }
-                });
-        if ((insideModal != null) && insideModal)
-        {
+        Boolean insideModal = getForm().visitParents(ModalWindow.class, (object, visit) -> visit.stop(true));
+        if (insideModal != null && insideModal) {
             return getForm();
-        }
-        else
-        {
+        } else {
             return getForm().getRootForm();
         }
     }

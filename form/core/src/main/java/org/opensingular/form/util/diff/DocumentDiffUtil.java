@@ -406,7 +406,7 @@ public final class DocumentDiffUtil {
          *
          * @return True se adicionou como entrada ou False a entrada não pertecer com sub entrada da atual.
          */
-        final <I extends SInstance> boolean register(CalculatorEntry newEntry) {
+        final boolean register(CalculatorEntry newEntry) {
             if (!this.typeClass.isAssignableFrom(newEntry.getTypeClass())) {
                 return false;
             }

@@ -16,15 +16,15 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.provider.AtrProvider;
+import org.opensingular.form.type.basic.AtrBasic;
+import org.opensingular.form.type.basic.AtrBootstrap;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
-
-import org.opensingular.form.type.basic.AtrBasic;
-import org.opensingular.form.type.basic.AtrBootstrap;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.provider.AtrProvider;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
 
 /**
  * Representa um entidade habilitada para ter atributos lidos ou alterados.
@@ -46,7 +46,7 @@ public interface SAttributeEnabled {
         setAttributeValue(atr.getNameFull(), null, value);
     }
 
-    default <V> void setAttributeValue(SType<?> defAttribute, Object value) {
+    default void setAttributeValue(SType<?> defAttribute, Object value) {
         defAttribute.checkIfIsAttribute();
         setAttributeValue(defAttribute.getName(), null, value);
     }

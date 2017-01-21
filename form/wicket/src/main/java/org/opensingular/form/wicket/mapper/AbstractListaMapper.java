@@ -116,13 +116,10 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         @Override
         protected IItemFactory<SInstance> newItemFactory() {
             IItemFactory<SInstance> factory = super.newItemFactory();
-            return new IItemFactory<SInstance>() {
-                @Override
-                public Item<SInstance> newItem(int index, IModel<SInstance> model) {
-                    Item<SInstance> item = factory.newItem(index, model);
-                    WicketFormProcessing.onFormPrepare(item, model, false);
-                    return item;
-                }
+            return (index, model) -> {
+                Item<SInstance> item = factory.newItem(index, model);
+                WicketFormProcessing.onFormPrepare(item, model, false);
+                return item;
             };
         }
     }

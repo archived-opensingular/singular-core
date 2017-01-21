@@ -87,11 +87,6 @@ import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
 public final class XPathToolkit {
 
     /**
-     * Para ao retornar resultado vazio não criar novo objeto.
-     */
-    private static final String[] LISTA_VAZIA = new String[0];
-
-    /**
      * Esconde o construtor pro ser uma classe utiliária.
      */
     private XPathToolkit() {

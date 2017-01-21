@@ -23,8 +23,6 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-import static org.opensingular.form.util.transformer.Value.Content;
-
 public class SSelectionBuilder extends AbstractBuilder {
 
     public SSelectionBuilder(SType type) {
@@ -40,22 +38,19 @@ public class SSelectionBuilder extends AbstractBuilder {
     }
 
     public SSelectionDisplayBuilder id(SType id) {
-        type.asAtrProvider().asAtrProvider().idFunction(new IFunction<Value.Content, String>() {
-            @Override
-            public String apply(Content content) {
-                final SType elementsType;
+        type.asAtrProvider().asAtrProvider().idFunction((IFunction<Value.Content, String>) (content) -> {
+                SType elementsType;
                 if (type.isList()) {
                     elementsType = ((STypeList) type).getElementsType();
                 } else {
                     elementsType = type;
                 }
-                final SInstance ins = elementsType.newInstance();
+                SInstance ins = elementsType.newInstance();
                 Value.hydrate(ins, content);
                 if (ins instanceof SIComposite) {
                     return String.valueOf(((SIComposite) ins).getValue(id));
                 }
                 return String.valueOf(ins.getValue());
-            }
         });
         return new SSelectionDisplayBuilder(super.type);
     }

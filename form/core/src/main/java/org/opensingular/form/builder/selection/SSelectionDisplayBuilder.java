@@ -27,8 +27,6 @@ import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.util.transformer.Value.Content;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-import static java.lang.String.valueOf;
-import static java.util.Optional.ofNullable;
 import static org.opensingular.form.util.transformer.Value.hydrate;
 
 
@@ -43,42 +41,39 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
     }
 
     public SProviderBuilder display(final SType display) {
-        type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
-            @Override
-            public String apply(Content content) {
-                final SType elementsType;
-                if (type.isList()) {
-                    elementsType = ((STypeList) type).getElementsType();
-                } else {
-                    elementsType = type;
-                }
-                final SInstance ins = elementsType.newInstance();
-                Value.hydrate(ins, content);
-                if (ins instanceof SIComposite) {
-                    return valueOf(ofNullable(((SIComposite) ins).getValue(display)).orElse(StringUtils.EMPTY));
-                }
-                return valueOf(ofNullable(ins.getValue()).orElse(StringUtils.EMPTY));
+        type.asAtrProvider().asAtrProvider().displayFunction((IFunction<Content, String>) (content) -> {
+            SType elementsType;
+            if (type.isList()) {
+                elementsType = ((STypeList) type).getElementsType();
+            } else {
+                elementsType = type;
             }
+            SInstance ins = elementsType.newInstance();
+            Value.hydrate(ins, content);
+            Object v;
+            if (ins instanceof SIComposite) {
+                v = ((SIComposite) ins).getValue(display);
+            } else {
+                v = ins.getValue();
+            }
+            return v == null ? StringUtils.EMPTY : v.toString();
         });
         addConverter();
         return new SProviderBuilder(super.type);
     }
 
     public SProviderBuilder display(String freemakerTemplate) {
-        type.asAtrProvider().asAtrProvider().displayFunction(new IFunction<Content, String>() {
-            @Override
-            public String apply(Content content) {
-                final SType elementsType;
-                if (type.isList()) {
-                    elementsType = ((STypeList) type).getElementsType();
-                } else {
-                    elementsType = type;
-                }
-                final SInstance dummy = elementsType.newInstance();
-                Value.hydrate(dummy, content);
-                hydrate(dummy, content);
-                return FormFreemarkerUtil.merge(dummy, freemakerTemplate);
+        type.asAtrProvider().asAtrProvider().displayFunction((IFunction<Content, String>) (content) -> {
+            SType elementsType;
+            if (type.isList()) {
+                elementsType = ((STypeList) type).getElementsType();
+            } else {
+                elementsType = type;
             }
+            SInstance dummy = elementsType.newInstance();
+            Value.hydrate(dummy, content);
+            hydrate(dummy, content);
+            return FormFreemarkerUtil.merge(dummy, freemakerTemplate);
         });
         addConverter();
         return new SProviderBuilder(super.type);

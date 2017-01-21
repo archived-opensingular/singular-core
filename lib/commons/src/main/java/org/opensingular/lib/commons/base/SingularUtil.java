@@ -25,6 +25,8 @@ import java.text.Normalizer;
 
 public final class SingularUtil {
 
+    private SingularUtil() {}
+
     public static RuntimeException propagate(Throwable throwable) {
         Throwables.propagateIfPossible(throwable, SingularException.class);
         throw SingularException.rethrow(throwable);

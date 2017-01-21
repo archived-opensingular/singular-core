@@ -18,12 +18,17 @@ package org.opensingular.lib.commons.pdf;
 
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.io.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 /**
  * Classe utilitária para a manipulação de PDF's.
@@ -70,7 +75,7 @@ public abstract class PDFUtil implements Loggable {
      * O caminho no sistema de arquivos para o local onde se encontram as bibliotecas nativas utilizadas
      * por este utilitário de manipulação de PDF's.
      */
-    protected static String wkhtml2pdfHome = System.getProperty("singular.wkhtml2pdf.home", "native");
+    private static String wkhtml2pdfHome = System.getProperty("singular.wkhtml2pdf.home", "native");
 
     /**
      * O tamanho da página. O valor padrão é {@link PageSize#PAGE_A4}.
@@ -120,7 +125,16 @@ public abstract class PDFUtil implements Loggable {
      * @return O pdf criado.
      * @throws IOException
      */
-    public abstract File createEmptyPdf() throws IOException;
+    public final File createEmptyPdf() throws IOException {
+        File tempLock   = File.createTempFile("SINGULAR-", UUID.randomUUID().toString());
+        File tempFolder = new File(tempLock.getParentFile(), tempLock.getName().concat("-DIR"));
+        if (!tempFolder.mkdir()) {
+            getLogger().error("convertHTML2PDF: temp folder not found");
+            return null;
+        }
+        File pdfFile = new File(tempFolder, "temp.pdf");
+        return pdfFile;
+    }
 
     /**
      * Dividi as páginas de um PDF ao meio, gerando duas páginas para cada.
@@ -435,6 +449,33 @@ public abstract class PDFUtil implements Loggable {
             wraped = "<!DOCTYPE HTML><html>" + wraped + "</html>";
         }
         return wraped;
+    }
+
+    protected final @Nullable File getWkhtml2pdfHomeOpt() {
+        if (wkhtml2pdfHome == null) {
+            getLogger().error("splitPDF: 'singular.wkhtml2pdf.home' not set");
+        }
+        return new File(wkhtml2pdfHome);
+    }
+
+    protected final @Nonnull File getWkhtml2pdfHome() {
+        File home = getWkhtml2pdfHomeOpt();
+        if (home == null) {
+            throw SingularException.rethrow("splitPDF: 'singular.wkhtml2pdf.home' not set");
+        }
+        return home;
+    }
+
+    protected final @Nonnull String getExecFile(@Nullable String subDir, @Nonnull String executableName) {
+        File arq  = getWkhtml2pdfHome();
+        if (subDir != null) {
+            arq = new File(arq, subDir + File.separator + executableName);
+        }
+        arq = new File(arq, executableName);
+        if (!arq.exists()) {
+            throw SingularException.rethrow("Arquivo '" + arq + "' não encontrado.");
+        }
+        return arq.getAbsolutePath();
     }
 
 }

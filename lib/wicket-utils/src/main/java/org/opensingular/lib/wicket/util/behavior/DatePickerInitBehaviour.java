@@ -19,9 +19,7 @@ package org.opensingular.lib.wicket.util.behavior;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
-
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 
 public class DatePickerInitBehaviour extends InitScriptBehaviour {
@@ -33,13 +31,8 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
         String idInput = component.getMarkupId();
 
         if (component instanceof MarkupContainer) {
-            FormComponent<?> fc = ((MarkupContainer) component)
-                .visitChildren(FormComponent.class, new IVisitor<FormComponent<?>, FormComponent<?>>() {
-                    @Override
-                    public void component(FormComponent<?> object, IVisit<FormComponent<?>> visit) {
-                        visit.stop(object);
-                    }
-                });
+            FormComponent<?> fc = ((MarkupContainer) component).visitChildren(FormComponent.class,
+                    (IVisitor<FormComponent<?>, FormComponent<?>>) (object, visit) -> visit.stop(object));
             if (fc != null) {
                 idInput = fc.getMarkupId();
             }

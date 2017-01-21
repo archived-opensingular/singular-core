@@ -21,6 +21,8 @@ import org.opensingular.flow.persistence.entity.Actor;
 
 public class ActorWrapper {
 
+    private ActorWrapper() {}
+
     public static MUser wrap(final Actor actor) {
         return new MUser() {
 

@@ -152,13 +152,12 @@ public class MasterDetailPanel extends Panel {
 
         ctx.configureContainer(labelModel);
 
-        final Label headLabel = new Label("headLabel", labelModel);
+        Label label = new Label("headLabel", labelModel);
 
         if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
-            headLabel.add(new RequiredListLabelClassAppender(ctx.getModel()));
+            label.add(new RequiredListLabelClassAppender(ctx.getModel()));
         }
-
-        return headLabel;
+        return label;
     }
 
     private AjaxLink<String> newAddAjaxLink() {

@@ -428,10 +428,8 @@ public final class ConversorDataISO8601 {
                 if (!Character.isDigit(valor.charAt(i))) {
                     return false;
                 }
-            } else if (m != valor.charAt(i)) {
-                if (i != 10 || valor.charAt(i) != ' ') {
-                    return false;
-                }
+            } else if (m != valor.charAt(i) && (i != 10 || valor.charAt(i) != ' ')) {
+                return false;
             }
         }
         return true;

@@ -88,9 +88,9 @@ public class DummyPage extends WebPage {
     }
 
     private SInstance createCurrentInstance(Optional<SType<?>> baseType) {
-        Optional.of(instanceCreator).ifPresent((x) -> {
+        if (instanceCreator != null) {
             currentInstance = instanceCreator.apply(baseType.get());
-        });
+        }
         return currentInstance;
     }
 
@@ -154,12 +154,7 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     private final transient SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
-        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, new RefService<SingularFormContextWicket>() {
-            @Override
-            public SingularFormContextWicket get() {
-                return singularFormContextWicket;
-            }
-        });
+        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, () -> singularFormContextWicket);
     }
 
     @Override
