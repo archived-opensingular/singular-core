@@ -54,7 +54,16 @@ public class DummyPage extends WebPage {
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            return createCurrentInstance(buildBaseType());
+            if (instanceCreator != null) {
+                Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
+                if (baseType.isPresent()) {
+                    if (baseType.get().isComposite()) {
+                        typeBuilder.accept((STypeComposite) baseType.get());
+                    }
+                    currentInstance = instanceCreator.apply(baseType.get());
+                }
+            }
+            return currentInstance;
         }
 
         @Override
@@ -75,23 +84,6 @@ public class DummyPage extends WebPage {
 
     public DummyPage() {
         add(form.add(singularFormPanel, singularValidationButton));
-    }
-
-    private Optional<SType<?>> buildBaseType() {
-        Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
-        baseType.ifPresent((x) -> {
-            if (baseType.get().isComposite()) {
-                typeBuilder.accept((STypeComposite) baseType.get());
-            }
-        });
-        return baseType;
-    }
-
-    private SInstance createCurrentInstance(Optional<SType<?>> baseType) {
-        if (instanceCreator != null) {
-            currentInstance = instanceCreator.apply(baseType.get());
-        }
-        return currentInstance;
     }
 
     public Form<?> getForm() {

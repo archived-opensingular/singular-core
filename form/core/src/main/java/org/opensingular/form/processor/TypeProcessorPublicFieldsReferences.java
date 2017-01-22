@@ -86,9 +86,8 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         for (PublicFieldRef ref : info) {
             SType<?> newFieldValue = composite.getField(ref.getName());
             if (newFieldValue == null) {
-                if (composite.getSuperType().getClass() == composite.getClass()) {
-                    newFieldValue = copyFieldValueFromSuperType(composite, ref);
-                } else if (info.isFieldFromSuperType(composite, ref)) {
+                if (composite.getSuperType().getClass() == composite.getClass() || info.isFieldFromSuperType(composite,
+                        ref)) {
                     newFieldValue = copyFieldValueFromSuperType(composite, ref);
                 }
             }
