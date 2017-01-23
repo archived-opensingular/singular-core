@@ -237,7 +237,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -359,9 +359,11 @@
         <sonar.issue.ignore.multicriteria.s25.resourceKey>**/FileUploadProcessor.java</sonar.issue.ignore.multicriteria.s25.resourceKey>
         <sonar.issue.ignore.multicriteria.s26.ruleKey>squid:S2095</sonar.issue.ignore.multicriteria.s26.ruleKey>
         <sonar.issue.ignore.multicriteria.s26.resourceKey>**/PDFUtil.java</sonar.issue.ignore.multicriteria.s26.resourceKey>
+        <sonar.issue.ignore.multicriteria.s27.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s27.ruleKey>
+        <sonar.issue.ignore.multicriteria.s27.resourceKey>**/PDFUtil.java</sonar.issue.ignore.multicriteria.s27.resourceKey>
         <!-- Falso positivo: parametro reutilizado como variavel -->
-        <sonar.issue.ignore.multicriteria.s27.ruleKey>squid:S1226</sonar.issue.ignore.multicriteria.s27.ruleKey>
-        <sonar.issue.ignore.multicriteria.s27.resourceKey>**/MformPersistenciaXML.java</sonar.issue.ignore.multicriteria.s27.resourceKey>
+        <sonar.issue.ignore.multicriteria.s28.ruleKey>squid:S1226</sonar.issue.ignore.multicriteria.s28.ruleKey>
+        <sonar.issue.ignore.multicriteria.s28.resourceKey>**/MformPersistenciaXML.java</sonar.issue.ignore.multicriteria.s28.resourceKey>
 
 
 

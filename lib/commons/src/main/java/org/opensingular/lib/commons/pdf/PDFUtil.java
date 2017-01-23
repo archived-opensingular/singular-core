@@ -537,7 +537,7 @@ public abstract class PDFUtil implements Loggable {
         return wraped;
     }
 
-    protected final @Nonnull File getWkhtml2pdfHome() {
+    protected static final @Nonnull File getWkhtml2pdfHome() {
         if (wkhtml2pdfHome == null) {
             String prop = System.getProperty(SINGULAR_WKHTML2PDF_HOME);
 
@@ -560,7 +560,7 @@ public abstract class PDFUtil implements Loggable {
     }
 
     @Nonnull
-    private final String getHomeAbsolutePath(@Nullable String subDir, @Nonnull String file)
+    private static final String getHomeAbsolutePath(@Nullable String subDir, @Nonnull String file)
             throws SingularPDFException {
         File arq = getWkhtml2pdfHome();
         if (subDir == null) {
