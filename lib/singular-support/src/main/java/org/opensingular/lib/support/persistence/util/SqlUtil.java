@@ -6,6 +6,8 @@ import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA
 
 public class SqlUtil {
 
+    private SqlUtil() {}
+
     public static String replaceSchemaName(String sql) {
         if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
             String customSchema = SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME);

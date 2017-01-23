@@ -243,7 +243,7 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    <T> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
+    SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
         throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
@@ -398,10 +398,11 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean isDescendantOf(SInstance ancestor) {
-        SInstance node = this;
-        for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent())
-            if (parent == ancestor)
+        for (SInstance current = getParent(); current != null; current = current.getParent()) {
+            if (current == ancestor) {
                 return true;
+            }
+        }
         return false;
     }
 

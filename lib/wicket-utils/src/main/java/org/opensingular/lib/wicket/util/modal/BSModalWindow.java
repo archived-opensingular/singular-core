@@ -24,7 +24,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
@@ -155,7 +154,7 @@ public class BSModalWindow extends Panel {
         return this;
     }
 
-    public <T> BSModalWindow setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallback) {
+    public BSModalWindow setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallback) {
         getModalBorder().setCloseIconCallback(closeIconCallback);
         return this;
     }

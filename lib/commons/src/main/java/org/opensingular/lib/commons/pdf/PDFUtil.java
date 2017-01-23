@@ -19,11 +19,13 @@ package org.opensingular.lib.commons.pdf;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.commons.util.TempFileUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 /**
  * Classe utilitária para a manipulação de PDF's.
@@ -46,6 +48,8 @@ public abstract class PDFUtil implements Loggable {
      */
     private static final int SPACE = 32;
 
+    public static final String SINGULAR_WKHTML2PDF_HOME = "singular.wkhtml2pdf.home";
+
     /**
      * A constante "username".
      */
@@ -61,16 +65,12 @@ public abstract class PDFUtil implements Loggable {
      */
     protected static String proxy = null;
 
-    /**
-     * A constante instance.
-     */
-    protected static volatile PDFUtil instance = null;
 
     /**
      * O caminho no sistema de arquivos para o local onde se encontram as bibliotecas nativas utilizadas
      * por este utilitário de manipulação de PDF's.
      */
-    protected static String wkhtml2pdfHome = System.getProperty("singular.wkhtml2pdf.home", "native");
+    private static File wkhtml2pdfHome;
 
     /**
      * O tamanho da página. O valor padrão é {@link PageSize#PAGE_A4}.
@@ -88,49 +88,64 @@ public abstract class PDFUtil implements Loggable {
     private int javascriptDelay = 0;
 
     /**
-     * Método Fabric.
-     *
-     * @return Um PDFUtil.
+     * Localiza a implementação correta para o Sistema operacional atual.
      */
+    @Nonnull
     private static PDFUtil fabric() {
+        if (isWindows()) {
+            return new PDFUtilWin();
+        }
+        return new PDFUtilUnix();
+    }
+
+    final static boolean isWindows() {
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            return PDFUtilWin.getInstance();
-        } else {
-            return PDFUtilUnix.getInstance();
-        }
+        return os.contains("win");
     }
 
     /**
-     * Retorna o valor atual do atributo {@link #instance}.
-     *
-     * @return O valor atual do atributo.
+     * Cria a versão correspondente ao sistema operacional atual.
      */
+    @Nonnull
     public static PDFUtil getInstance() {
-        if (instance == null) {
-            return fabric();
-        }
-
-        return instance;
+        return fabric();
     }
 
     /**
-     * Retorna um arquivo pdf vazio.
-     *
-     * @return O pdf criado.
-     * @throws IOException
+     * Gerencia os arquivos temporarios criados e apaga-os na chamada do método close(). O objetivo é não deixar lixo
+     * para trás.
      */
-    public abstract File createEmptyPdf() throws IOException;
+    private static class TempFileProvider implements Closeable {
+        private final List<File> tempFiles = new ArrayList<>();
 
-    /**
-     * Dividi as páginas de um PDF ao meio, gerando duas páginas para cada.
-     *
-     * @param pdf o PDF.
-     * @return O arquivo PDF gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
-     */
-    public abstract File splitPDF(File pdf) throws IOException, InterruptedException;
+        /**
+         * Criar um arquivo temporário garantindo a exclusão do mesmo na saída.
+         *
+         * @param deleteOnMethodExit Se true, apaga o arquivo temporário na chamada de close(). Se false, apaga-o na
+         *                           saída da aplicação.
+         */
+        public final @Nonnull File createTempFile(String extension, boolean deleteOnMethodExit) {
+            try {
+                File f = File.createTempFile("SINGULAR-PDFUTIL-", extension);
+                if (deleteOnMethodExit) {
+                    tempFiles.add(f);
+                } else {
+                    f.deleteOnExit();
+                }
+                return f;
+            } catch (IOException e) {
+                throw new SingularPDFException(
+                        "Erro criando arquivo temporário na geração de pdf: '" + extension + "'", e);
+            }
+        }
+
+        @Override
+        public void close()  {
+            for(File f : tempFiles) {
+                TempFileUtils.deleteOrException(f, PDFUtil.class);
+            }
+        }
+    }
 
     /**
      * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
@@ -138,12 +153,11 @@ public abstract class PDFUtil implements Loggable {
      * @param html   o código HTML.
      * @param header o código HTML do cabeçalho.
      * @param footer o código HTML do rodapé.
-     * @return O arquivo PDF gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
+     * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
-    public File convertHTML2PDF(String html, String header, String footer)
-            throws IOException, InterruptedException {
+    @Nonnull
+    public File convertHTML2PDF(@Nonnull String html, @Nullable String header, @Nullable String footer)
+            throws SingularPDFException {
         return convertHTML2PDF(html, header, footer, null);
     }
 
@@ -154,34 +168,105 @@ public abstract class PDFUtil implements Loggable {
      * @param header           o código HTML do cabeçalho.
      * @param footer           o código HTML do rodapé.
      * @param additionalConfig configurações adicionais.
-     * @return O arquivo PDF gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
+     * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
-    public abstract File convertHTML2PDF(String html, String header, String footer, List<String> additionalConfig)
-            throws IOException, InterruptedException;
+    @Nonnull
+    public final File convertHTML2PDF(@Nonnull String rawHtml, @Nullable String rawHeader, @Nullable String rawFooter,
+            @Nullable List<String> additionalConfig) throws SingularPDFException {
+        getWkhtml2pdfHome(); // Força verifica se o Home está configurado corretamente
+
+        final String html   = safeWrapHtml(rawHtml);
+        final String header = safeWrapHtml(rawHeader);
+        final String footer = safeWrapHtml(rawFooter);
+
+        try (TempFileProvider tmp = new TempFileProvider()){
+
+            File htmlFile = tmp.createTempFile( "content.html", true);
+            writeToFile(htmlFile, html);
+
+            List<String> commandAndArgs = new ArrayList<>(0);
+            commandAndArgs.add(getHomeAbsolutePath("bin", fixExecutableName("wkhtmltopdf")));
+
+            if (additionalConfig != null) {
+                commandAndArgs.addAll(additionalConfig);
+            } else {
+                addDefaultPDFCommandArgs(commandAndArgs);
+            }
+
+            if (header != null) {
+                File headerFile = tmp.createTempFile( "header.html", true);
+                writeToFile(headerFile, header);
+                commandAndArgs.add("--header-html");
+                commandAndArgs.add(fixPathArg(headerFile));
+                addDefaultHeaderCommandArgs(commandAndArgs);
+            }
+
+            if (footer != null) {
+                File footerFile = tmp.createTempFile( "footer.html",true);
+                writeToFile(footerFile, footer);
+                commandAndArgs.add("--footer-html");
+                commandAndArgs.add(fixPathArg(footerFile));
+                addDefaultFooterCommandArgs(commandAndArgs);
+            }
+
+            File pdfFile  = tmp.createTempFile( "result.pdf", false);
+            //File jarFile  = tmp.createTempFile( "cookie.txt", true);
+            //commandAndArgs.add("--cookie-jar");
+            //commandAndArgs.add(jarFile.getAbsolutePath());
+            commandAndArgs.add(fixPathArg(htmlFile));
+            commandAndArgs.add(pdfFile.getAbsolutePath());
+
+            return runProcess(commandAndArgs, pdfFile);
+        }
+    }
 
     /**
      * Converte o código HTML em um arquivo PNG.
      *
      * @param html             o código HTML.
      * @param additionalConfig configurações adicionais.
-     * @return O arquivo PNG gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
+     * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
-    public abstract File convertHTML2PNG(String html, List<String> additionalConfig)
-            throws IOException, InterruptedException;
+    @Nonnull
+    public final File convertHTML2PNG(@Nonnull String html, @Nullable List<String> additionalConfig)
+            throws SingularPDFException {
+        getWkhtml2pdfHome(); // Força verifica se o Home está configurado corretamente
+
+        try (TempFileProvider tmp = new TempFileProvider()) {
+
+            File htmlFile = tmp.createTempFile("content.html", true);
+            writeToFile(htmlFile, html);
+
+            List<String> commandAndArgs = new ArrayList<>();
+            commandAndArgs.add(getHomeAbsolutePath("bin", fixExecutableName("wkhtmltoimage")));
+
+            if (additionalConfig != null) {
+                commandAndArgs.addAll(additionalConfig);
+            } else {
+                addDefaultPNGCommandArgs(commandAndArgs);
+            }
+
+            File pngFile = tmp.createTempFile("result.png", false);
+
+            //File jarFile = tmp.createTempFile("cookie.txt", true);
+            //commandAndArgs.add("--cookie-jar");
+            //commandAndArgs.add(jarFile.getAbsolutePath());
+
+            commandAndArgs.add(fixPathArg(htmlFile));
+            commandAndArgs.add(pngFile.getAbsolutePath());
+
+            return runProcess(commandAndArgs, pngFile);
+        }
+    }
 
     /**
      * Converte o código HTML em um arquivo PDF.
      *
      * @param html o código HTML.
-     * @return O arquivo PDF gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
+     * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
-    public File convertHTML2PDF(String html) throws IOException, InterruptedException {
+    @Nonnull
+    public File convertHTML2PDF(@Nonnull String html) throws SingularPDFException {
         return convertHTML2PDF(html, null);
     }
 
@@ -189,11 +274,10 @@ public abstract class PDFUtil implements Loggable {
      * Converte o código HTML em um arquivo PNG.
      *
      * @param html o código HTML.
-     * @return O arquivo PNG gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
+     * @return O arquivo PNG retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
-    public File convertHTML2PNG(String html) throws IOException, InterruptedException {
+    @Nonnull
+    public File convertHTML2PNG(@Nonnull String html) throws SingularPDFException {
         return convertHTML2PNG(html, null);
     }
 
@@ -202,11 +286,10 @@ public abstract class PDFUtil implements Loggable {
      *
      * @param html   o código HTML.
      * @param header o código HTML do cabeçalho.
-     * @return O arquivo PDF gerado.
-     * @throws IOException          Caso ocorra um problema de IO.
-     * @throws InterruptedException Caso ocorra um problema de sincronismo.
+     * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
-    public File convertHTML2PDF(String html, String header) throws IOException, InterruptedException {
+    @Nonnull
+    public File convertHTML2PDF(@Nonnull String html, @Nullable String header) throws SingularPDFException {
         return convertHTML2PDF(html, header, null);
     }
 
@@ -215,7 +298,7 @@ public abstract class PDFUtil implements Loggable {
      *
      * @param commandArgs o vetor com os argumentos.
      */
-    protected void addDefaultPDFCommandArgs(List<String> commandArgs) {
+    private void addDefaultPDFCommandArgs(List<String> commandArgs) {
         commandArgs.add("--print-media-type");
         commandArgs.add("--load-error-handling");
         commandArgs.add("ignore");
@@ -294,7 +377,7 @@ public abstract class PDFUtil implements Loggable {
      *
      * @param commandArgs o vetor com os argumentos.
      */
-    protected void addDefaultPNGCommandArgs(List<String> commandArgs) {
+    private void addDefaultPNGCommandArgs(List<String> commandArgs) {
         commandArgs.add("--format");
         commandArgs.add("png");
         commandArgs.add("--load-error-handling");
@@ -323,7 +406,7 @@ public abstract class PDFUtil implements Loggable {
      *
      * @param commandArgs o vetor com os argumentos.
      */
-    protected void addDefaultHeaderCommandArgs(List<String> commandArgs) {
+    private void addDefaultHeaderCommandArgs(List<String> commandArgs) {
         commandArgs.add("--header-spacing");
         commandArgs.add("5");
     }
@@ -333,7 +416,7 @@ public abstract class PDFUtil implements Loggable {
      *
      * @param commandArgs o vetor com os argumentos.
      */
-    protected void addDefaultFooterCommandArgs(List<String> commandArgs) {
+    private void addDefaultFooterCommandArgs(List<String> commandArgs) {
         commandArgs.add("--footer-spacing");
         commandArgs.add("5");
     }
@@ -402,26 +485,39 @@ public abstract class PDFUtil implements Loggable {
         }
     }
 
-    public File merge(List<InputStream> pdfs) {
-
-        final PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
-
+    /**
+     * Concatena os pdf em um único PDF.
+     * @param pdfs
+     * @return O arquivo retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
+     */
+    @Nonnull
+    public File merge(@Nonnull List<InputStream> pdfs) throws SingularPDFException {
         try {
+            PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
             pdfs.forEach(pdfMergerUtility::addSource);
-            File tempMergedFile = File.createTempFile("merged-" + UUID.randomUUID().toString(), ".pdf");
+
+            TempFileProvider tmp = new TempFileProvider();
+            File tempMergedFile = tmp.createTempFile("merge.pdf", false);
+
             try (FileOutputStream output = new FileOutputStream(tempMergedFile)) {
                 pdfMergerUtility.setDestinationStream(output);
                 pdfMergerUtility.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
                 return tempMergedFile;
             }
-        } catch (IOException e) {
-            getLogger().error(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new SingularPDFException("Erro realizando merge de arquivos PDF", e);
+        } finally {
+            for(InputStream in : pdfs) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    getLogger().error("Erro fechando inputStrem", e);
+                }
+            }
         }
-
-        return null;
     }
 
-    protected String safeWrapHtml(String html) {
+    private String safeWrapHtml(String html) {
         if (html == null || html.startsWith(("<!DOCTYPE"))) {
             return html;
         }
@@ -437,4 +533,66 @@ public abstract class PDFUtil implements Loggable {
         return wraped;
     }
 
+    protected final @Nonnull File getWkhtml2pdfHome() {
+        if (wkhtml2pdfHome == null) {
+            String prop = System.getProperty(SINGULAR_WKHTML2PDF_HOME);
+
+            if (prop == null) {
+                throw new SingularPDFException("property 'singular.wkhtml2pdf.home' not set");
+            }
+            File file = new File(prop);
+            if (! file.exists()) {
+                throw new SingularPDFException(
+                        "property '" + SINGULAR_WKHTML2PDF_HOME + "' configured for a directory that nos exists: " +
+                                file.getAbsolutePath());
+            }
+            wkhtml2pdfHome = file;
+        }
+        return wkhtml2pdfHome;
+    }
+
+    final static void clearHome() {
+        wkhtml2pdfHome = null;
+    }
+
+    private final
+    @Nonnull
+    String getHomeAbsolutePath(@Nullable String subDir, @Nonnull String file) throws SingularPDFException {
+        File arq = getWkhtml2pdfHome();
+        if (subDir == null) {
+            arq = new File(arq, file);
+        } else {
+            arq = new File(arq, subDir + File.separator + file);
+        }
+        if (!arq.exists()) {
+            throw new SingularPDFException("Arquivo ou diretório '" + arq.getAbsolutePath() + "' não encontrado.");
+        }
+        return arq.getAbsolutePath();
+    }
+
+    // -------------------------------------------------------------------
+    // Método para customização de acordo com o sistema operacional
+    // -------------------------------------------------------------------
+
+    /** Permite ajustar o nome do executável se necessário no sistema operacional em questão. */
+    protected String fixExecutableName(String executable) {
+        return executable;
+    }
+
+
+    /** Permite ajustar o path do arquivo se necessário no sistema operacional em questão. */
+    protected @Nonnull String fixPathArg(@Nonnull File arq) {
+        return arq.getAbsolutePath();
+    }
+
+    /**
+     * Executa o comando inforamdo e verifica se o arquivo esperado foi de fato gerado. Dispara exception se houver erro
+     * na execução ou se o arquivo não for gerado.
+     */
+    protected abstract
+    @Nonnull
+    File runProcess(@Nonnull List<String> commandAndArgs, @Nonnull File expectedFile) throws SingularPDFException;
+
+    /** Escreve o conteúdo informado no arquivo indicado. */
+    protected abstract void writeToFile(File destination, String content) throws SingularPDFException;
 }

@@ -199,7 +199,7 @@ public final class MElementResult extends MElement implements EWrapper {
     }
 
     private List<ISupplier<Element>> convert(NodeList nodeList) {
-        List<ISupplier<Element>> list = new ArrayList<>();
+        List<ISupplier<Element>> newList = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node no = nodeList.item(i);
             if (no == null) {
@@ -209,9 +209,9 @@ public final class MElementResult extends MElement implements EWrapper {
                         "O result da consulta na posição " + atualList_ + " não é um Element. É um no do tipo " +
                                 XPathToolkit.getNomeTipo(no));
             }
-            list.add(SupplierUtil.serializable((Element) no));
+            newList.add(SupplierUtil.serializable((Element) no));
         }
-        return list;
+        return newList;
     }
 
     /**

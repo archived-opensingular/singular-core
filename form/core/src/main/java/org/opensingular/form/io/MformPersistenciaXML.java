@@ -86,7 +86,9 @@ public class MformPersistenciaXML {
     /** Preenche a instância criada com o xml fornecido. */
     private static <T extends SInstance> T fromXMLInterno(@Nonnull T novo, @Nullable MElement xml) {
         Integer lastId = 0;
-        if(xml !=  null) {  lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID); }
+        if (xml != null) {
+            lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID);
+        }
 
         // Colocar em modo de não geraçao de IDs
         novo.getDocument().setLastId(-1);

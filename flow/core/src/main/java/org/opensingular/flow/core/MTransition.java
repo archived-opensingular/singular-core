@@ -16,14 +16,7 @@
 
 package org.opensingular.flow.core;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 import com.google.common.base.MoreObjects;
-
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
@@ -33,6 +26,12 @@ import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class MTransition {
 
@@ -197,19 +196,19 @@ public class MTransition {
     }
 
     final VarInstanceMap<?> newTransationParameters(TransitionRef transitionRef) {
-        VarInstanceMap<?> parameters = getParameters().newInstanceMap();
+        VarInstanceMap<?> params = getParameters().newInstanceMap();
         if (parametersInitializer != null) {
-            parametersInitializer.init(transitionRef, parameters);
+            parametersInitializer.init(transitionRef, params);
         }
-        return parameters;
+        return params;
     }
 
     public VarInstanceMap<?> newTransationParameters(ProcessInstance processInstance) {
-        VarInstanceMap<?> parametros = getParameters().newInstanceMap();
+        VarInstanceMap<?> params = getParameters().newInstanceMap();
         if (parametersInitializer != null) {
-            parametersInitializer.init(new TransitionRef(processInstance, this), parametros);
+            parametersInitializer.init(new TransitionRef(processInstance, this), params);
         }
-        return parametros;
+        return params;
     }
 
     final ValidationResult validate(TransitionRef transitionRef, VarInstanceMap<?> parameters) {

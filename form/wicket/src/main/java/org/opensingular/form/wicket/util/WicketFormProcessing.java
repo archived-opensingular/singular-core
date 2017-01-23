@@ -65,6 +65,8 @@ public class WicketFormProcessing implements Loggable {
     public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
 
+    private WicketFormProcessing() {}
+
     public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
             if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage()) {

@@ -16,16 +16,17 @@
 
 package org.opensingular.lib.wicket.util.jquery;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-
-import org.opensingular.lib.wicket.util.util.WicketUtils;
-import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
-
 public class JQuery {
+
+    private JQuery() {}
 
 //    public static StringBuilder $(Component component) {
 //        if (component instanceof Page) {

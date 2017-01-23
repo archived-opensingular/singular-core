@@ -16,11 +16,12 @@
 
 package org.opensingular.singular.form.showcase.view.page.form;
 
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.SType;
 import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
-import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class FormVO implements Serializable, IModel<String> {
@@ -31,7 +32,9 @@ public class FormVO implements Serializable, IModel<String> {
     public FormVO(String key, SType<?> value) {
         this.key = key;
         this.value = value;
-        if(value != null) this.typeName = value.getName();
+        if (value != null) {
+            this.typeName = value.getName();
+        }
     }
 
     public FormVO(ShowcaseTypeLoader.TemplateEntry t) {
@@ -83,18 +86,12 @@ public class FormVO implements Serializable, IModel<String> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)    return true;
-        if (obj == null)    return false;
-        if (getClass() != obj.getClass())   return false;
+        if (this == obj) {
+            return true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
         FormVO other = (FormVO) obj;
-        if (key == null) {
-            if (other.key != null)  return false;
-        } else if (!key.equals(other.key))  return false;
-        if (typeName == null) {
-            if (other.typeName != null) return false;
-        } else if (!typeName.equals(other.typeName))    return false;
-        return true;
+        return Objects.equals(key, other.key) && Objects.equals(typeName, other.typeName);
     }
-    
-    
 }

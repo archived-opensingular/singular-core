@@ -32,6 +32,8 @@ class SpringFormUtil {
 
     private static volatile ApplicationContext applicationContext;
 
+    private SpringFormUtil() {}
+
     public static void setApplicationContext(ApplicationContext ctx) {
         if (ctx != null) {
             applicationContext = ctx;

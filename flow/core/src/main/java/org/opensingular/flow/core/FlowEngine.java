@@ -30,6 +30,8 @@ import java.util.function.BiFunction;
 
 class FlowEngine {
 
+    private FlowEngine() {}
+
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();
         return updateState(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);

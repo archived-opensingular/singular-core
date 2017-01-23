@@ -16,15 +16,14 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class SingularEventBehavior extends Behavior {
 
@@ -58,11 +57,31 @@ public class SingularEventBehavior extends Behavior {
     protected Component[]  getSupportComponents()      { return supportComponents;   }
     protected String       getValidateSourceEvent()    { return validateSourceEvent; }
     protected String       getProcessSourceEvent()     { return processSourceEvent;  }
-    protected SingularEventBehavior setValidateComponent   (Component      obj) { this.validateComponent   = obj; return this; }
-    protected SingularEventBehavior setProcessComponent    (Component      obj) { this.processComponent    = obj; return this; }
-    public    SingularEventBehavior setSupportComponents   (Component...   obj) { this.supportComponents   = obj; return this; }
-    protected SingularEventBehavior setValidateSourceEvent (String         obj) { this.validateSourceEvent = obj; return this; }
-    protected SingularEventBehavior setProcessSourceEvent  (String         obj) { this.processSourceEvent  = obj; return this; }
+
+    protected SingularEventBehavior setValidateComponent(Component obj) {
+        this.validateComponent = obj;
+        return this;
+    }
+
+    protected SingularEventBehavior setProcessComponent(Component obj) {
+        this.processComponent = obj;
+        return this;
+    }
+
+    public SingularEventBehavior setSupportComponents(Component... obj) {
+        this.supportComponents = obj;
+        return this;
+    }
+
+    protected SingularEventBehavior setValidateSourceEvent(String obj) {
+        this.validateSourceEvent = obj;
+        return this;
+    }
+
+    protected SingularEventBehavior setProcessSourceEvent(String obj) {
+        this.processSourceEvent = obj;
+        return this;
+    }
     //@formatter:on
 
     @Override

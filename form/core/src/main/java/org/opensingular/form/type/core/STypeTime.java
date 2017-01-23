@@ -16,10 +16,10 @@
 
 package org.opensingular.form.type.core;
 
+import com.google.common.base.Strings;
+import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.SInfoType;
-import com.google.common.base.Strings;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +45,9 @@ public class STypeTime extends STypeSimple<SITime, Date> {
     @Override
     public Date fromString(String value) {
         try {
-            if (Strings.isNullOrEmpty(value)) return null;
+            if (Strings.isNullOrEmpty(value)) {
+                return null;
+            }
             return (new SimpleDateFormat(FORMAT)).parse(value);
         } catch (ParseException e) {
             String msg = String.format("Can't parse value '%s' with format '%s'.", value, FORMAT);
