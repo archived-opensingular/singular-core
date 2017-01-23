@@ -103,6 +103,11 @@ public abstract class PDFUtil implements Loggable {
         return os.contains("win");
     }
 
+    final static boolean isMac() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("mac os");
+    }
+
     /**
      * Cria a versão correspondente ao sistema operacional atual.
      */

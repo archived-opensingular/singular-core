@@ -30,3 +30,9 @@
 *.dll binary
 *.exe binary
 *.so binary
+*.so.0 binary
+*.so.12 binary
+*.so.0.12.4 binary
+*.dylib binary
+*/wkhtmltopdf binary
+*/wkhtmltoimage binary

@@ -44,8 +44,12 @@ public class TestPDFUtil {
         if (PDFUtil.isWindows()) {
             File dir = new File("src\\test\\wkhtmltopdf\\windows");
             System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
+        } else if (PDFUtil.isMac()){
+            File dir = new File("src/test/wkhtmltopdf/mac");
+            System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
         } else {
-            fail("Teste não preparado para executar nesse sistema operacional: " + System.getProperty("os.name"));
+            File dir = new File("src/test/wkhtmltopdf/unix");
+            System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
         }
     }
 
