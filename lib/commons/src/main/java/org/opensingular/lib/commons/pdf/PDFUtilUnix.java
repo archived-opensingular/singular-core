@@ -68,7 +68,7 @@ final class PDFUtilUnix extends PDFUtil {
      */
     private File generateFile(Process process, File expectedFile) throws SingularPDFException {
 
-        boolean done    = true; // Deveria ser false
+        boolean done    = false;
         boolean success = true;
         try(BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
@@ -79,10 +79,9 @@ final class PDFUtilUnix extends PDFUtil {
             }
             line = errReader.readLine();
             while (line != null) {
-//                if (line.startsWith("Done")) {
-//                    done = true;
-//                }
-                if (line.startsWith("Warning:")) {
+                if (line.startsWith("Done")) {
+                    done = true;
+                } else if (line.startsWith("Warning:")) {
                     getLogger().warn(line);
                 } else if (line.startsWith("Error:")) {
                     success = false;
