@@ -44,5 +44,5 @@
 *.so.6.0.0 binary
 *.so.0.12.4 binary
 *.dylib binary
-*/wkhtmltopdf binary
-*/wkhtmltoimage binary
+wkhtmltopdf binary
+wkhtmltoimage binary
