@@ -27,3 +27,6 @@
 *.woff2 binary
 *.zip binary
 *.jar binary
+*.dll binary
+*.exe binary
+*.so binary
