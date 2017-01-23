@@ -40,17 +40,15 @@ public class TestPDFUtil {
     @Before
     public void setupEnviroment() {
         PDFUtil.clearHome();
-        String subDir;
+        File dir;
         if (PDFUtil.isWindows()) {
-            File dir = new File("src\\test\\wkhtmltopdf\\windows");
-            System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
+            dir = new File("src\\test\\wkhtmltopdf\\windows");
         } else if (PDFUtil.isMac()){
-            File dir = new File("src/test/wkhtmltopdf/mac");
-            System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
+            dir = new File("src/test/wkhtmltopdf/mac");
         } else {
-            File dir = new File("src/test/wkhtmltopdf/unix");
-            System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
+            dir = new File("src/test/wkhtmltopdf/unix");
         }
+        System.setProperty(PDFUtil.SINGULAR_WKHTML2PDF_HOME, dir.getAbsolutePath());
     }
 
     @Test

@@ -497,11 +497,10 @@ public abstract class PDFUtil implements Loggable {
      */
     @Nonnull
     public File merge(@Nonnull List<InputStream> pdfs) throws SingularPDFException {
-        try {
+        try(TempFileProvider tmp = new TempFileProvider()) {
             PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
             pdfs.forEach(pdfMergerUtility::addSource);
 
-            TempFileProvider tmp = new TempFileProvider();
             File tempMergedFile = tmp.createTempFile("merge.pdf", false);
 
             try (FileOutputStream output = new FileOutputStream(tempMergedFile)) {
@@ -538,7 +537,7 @@ public abstract class PDFUtil implements Loggable {
         return wraped;
     }
 
-    protected final @Nonnull File getWkhtml2pdfHome() {
+    protected static final @Nonnull File getWkhtml2pdfHome() {
         if (wkhtml2pdfHome == null) {
             String prop = System.getProperty(SINGULAR_WKHTML2PDF_HOME);
 
@@ -560,9 +559,9 @@ public abstract class PDFUtil implements Loggable {
         wkhtml2pdfHome = null;
     }
 
-    private final
     @Nonnull
-    String getHomeAbsolutePath(@Nullable String subDir, @Nonnull String file) throws SingularPDFException {
+    private static final String getHomeAbsolutePath(@Nullable String subDir, @Nonnull String file)
+            throws SingularPDFException {
         File arq = getWkhtml2pdfHome();
         if (subDir == null) {
             arq = new File(arq, file);

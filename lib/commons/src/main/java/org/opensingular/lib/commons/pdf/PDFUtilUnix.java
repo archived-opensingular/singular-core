@@ -37,7 +37,7 @@ final class PDFUtilUnix extends PDFUtil {
         try(FileWriter fw = new FileWriter(destination)) {
             fw.write(content);
         } catch (IOException e) {
-            throw new SingularPDFException("Erro escrevendo conteúdo para o arquivo " + destination.getAbsolutePath());
+            throw new SingularPDFException("Erro escrevendo conteúdo para arquivo " + destination.getAbsolutePath(), e);
         }
     }
 
