@@ -357,7 +357,7 @@
         <!-- Falso positivo: Nome do arquivo pode ser adulterado pelo cliente -->
         <sonar.issue.ignore.multicriteria.s25.ruleKey>findsecbugs:FILE_UPLOAD_FILENAME</sonar.issue.ignore.multicriteria.s25.ruleKey>
         <sonar.issue.ignore.multicriteria.s25.resourceKey>**/FileUploadProcessor.java</sonar.issue.ignore.multicriteria.s25.resourceKey>
-        <sonar.issue.ignore.multicriteria.s26.ruleKey>findsecbugs:FILE_UPLOAD_FILENAME</sonar.issue.ignore.multicriteria.s26.ruleKey>
+        <sonar.issue.ignore.multicriteria.s26.ruleKey>squid:S2095</sonar.issue.ignore.multicriteria.s26.ruleKey>
         <sonar.issue.ignore.multicriteria.s26.resourceKey>**/PDFUtil.java</sonar.issue.ignore.multicriteria.s26.resourceKey>
         <!-- Falso positivo: parametro reutilizado como variavel -->
         <sonar.issue.ignore.multicriteria.s27.ruleKey>squid:S1226</sonar.issue.ignore.multicriteria.s27.ruleKey>
