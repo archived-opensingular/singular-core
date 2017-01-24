@@ -16,14 +16,14 @@
 
 package org.opensingular.form;
 
-import java.util.Collection;
-
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.view.ViewResolver;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.view.ViewResolver;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public class SDictionary {
 
@@ -119,7 +119,8 @@ public class SDictionary {
      *
      * @return Nunca Null.
      */
-    public <T extends SType<?>> T getType(Class<T> typeClass) {
+    @Nonnull
+    public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
         T typeRef = getTypeOptional(typeClass);
         if (typeRef == null) {
             throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
