@@ -18,16 +18,13 @@ import java.util.Collection;
 @Named("wicketSessionCacheManager")
 public class WicketSessionCacheManager implements CacheManager {
 
-    public static final String WICKET_SESSION_CACHE_NAME = "wicketSession";
-
     @Inject
     private CacheManager cacheManager;
-
 
     @Override
     public Cache getCache(String name) {
         if (cacheEnabled()) {
-            return cacheManager.getCache(WICKET_SESSION_CACHE_NAME);
+            return cacheManager.getCache(SingularSessionCache.SINGULAR_CACHE_SESSION_CACHE);
         } else {
             return cacheManager.getCache(SingularCache.SINGULAR_CACHE_NAME);
         }
@@ -43,6 +40,6 @@ public class WicketSessionCacheManager implements CacheManager {
     }
 
     public void clearCache() {
-        cacheManager.getCache(WICKET_SESSION_CACHE_NAME).clear();
+        cacheManager.getCache(SingularSessionCache.SINGULAR_CACHE_SESSION_CACHE).clear();
     }
 }

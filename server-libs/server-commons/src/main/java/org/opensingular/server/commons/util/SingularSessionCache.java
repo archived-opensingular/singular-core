@@ -20,5 +20,5 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface SingularSessionCache {
-    public static final String SINGULAR_CACHE_SESSION_CACHE = "sessionCache";
+    public static final String SINGULAR_CACHE_SESSION_CACHE = "wicketSession";
 }
