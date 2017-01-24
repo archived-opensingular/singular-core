@@ -35,7 +35,7 @@ public class TaskInstanceDTO implements Serializable {
     private Integer taskId;
     private String taskName;
     private Date creationDate;
-    private String descricao;
+    private String description;
     private String codUsuarioAlocado;
     private String nomeUsuarioAlocado;
     private String type;
@@ -59,7 +59,7 @@ public class TaskInstanceDTO implements Serializable {
         this.taskId = taskId;
         this.versionStamp = versionStamp;
         this.creationDate = creationDate;
-        this.descricao = descricao;
+        this.description = descricao;
         this.codUsuarioAlocado = usuarioAlocado == null ? null : usuarioAlocado.getCodUsuario();
         this.nomeUsuarioAlocado = usuarioAlocado == null ? null : usuarioAlocado.getSimpleName();
         this.taskName = taskName;
@@ -72,7 +72,7 @@ public class TaskInstanceDTO implements Serializable {
         this.processGroupCod = processGroupCod;
         try {
             final String path = new URL(processGroupContext).getPath();
-            this.processGroupContext  = path.substring(0, path.indexOf("/", 1));
+            this.processGroupContext  = path.substring(0, path.indexOf('/', 1));
         } catch (Exception e) {
             throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", processGroupContext), e);
         }
@@ -107,13 +107,12 @@ public class TaskInstanceDTO implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCodUsuarioAlocado() {

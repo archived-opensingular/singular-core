@@ -18,22 +18,22 @@
     </defaultCache>
 
     <cache name="defaultCache"
-           timeToIdleSeconds="300"
-           timeToLiveSeconds="600"
-           eternal="false"
-           maxEntriesLocalHeap="10000000"
-           maxEntriesLocalDisk="10000000"
-           diskExpiryThreadIntervalSeconds="120"
-           transactionalMode="off"
-           memoryStoreEvictionPolicy="LRU">
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="600"
+        eternal="false"
+        maxEntriesLocalHeap="10000000"
+        maxEntriesLocalDisk="10000000"
+        diskExpiryThreadIntervalSeconds="120"
+        transactionalMode="off"
+        memoryStoreEvictionPolicy="LRU">
         <persistence strategy="none"/>
     </cache>
 
     <cache name="forever" eternal="true"
-           maxEntriesLocalHeap="10000000"
-           maxEntriesLocalDisk="10000000"
-           transactionalMode="off"
-           memoryStoreEvictionPolicy="LRU">
+        maxEntriesLocalHeap="10000000"
+        maxEntriesLocalDisk="10000000"
+        transactionalMode="off"
+        memoryStoreEvictionPolicy="LRU">
         <persistence strategy="none"/>
     </cache>
 

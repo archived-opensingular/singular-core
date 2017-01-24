@@ -22,6 +22,20 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
+import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
+import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
+import org.opensingular.server.commons.persistence.filter.QuickFilter;
+import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.spring.security.AuthorizationService;
+import org.opensingular.server.commons.spring.security.PermissionResolverService;
+import org.opensingular.server.commons.spring.security.SingularPermission;
+import org.opensingular.server.commons.util.PetitionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,20 +46,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.opensingular.server.commons.flow.action.DefaultActions.ACTION_DELETE;
 import static org.opensingular.server.commons.service.IServerMetadataREST.PATH_BOX_SEARCH;
-
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.spring.SpringServiceRegistry;
-import org.opensingular.flow.persistence.entity.Actor;
-import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
-import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
-import org.opensingular.server.commons.persistence.filter.QuickFilter;
-import org.opensingular.server.commons.service.PetitionService;
-import org.opensingular.server.commons.spring.security.AuthorizationService;
-import org.opensingular.server.commons.spring.security.PermissionResolverService;
-import org.opensingular.server.commons.spring.security.SingularPermission;
-import org.opensingular.server.commons.util.PetitionUtil;
-import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 
 /**
  * Essa interface deve ser protegida de forma que apenas o próprio servidor possa
@@ -58,7 +58,7 @@ public class DefaultServerREST {
 
     public static final String PATH_BOX_ACTION  = "/box/action";
     public static final String DELETE           = "/delete";
-    public static final String EXECUTE          = "/execute";
+    public static final String EXECUTE          = "/executar";
     public static final String SEARCH_PETITIONS = "/searchPetitions";
     public static final String COUNT_PETITIONS  = "/countPetitions";
     public static final String SEARCH_TASKS     = "/searchTasks";
@@ -76,8 +76,6 @@ public class DefaultServerREST {
     @Inject
     protected AuthorizationService authorizationService;
 
-    @Inject
-    protected SpringServiceRegistry springServiceRegistry;
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -102,7 +100,7 @@ public class DefaultServerREST {
     }
 
     @RequestMapping(value = PATH_BOX_ACTION + EXECUTE, method = RequestMethod.POST)
-    public ActionResponse execute(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
+    public ActionResponse executar(@RequestParam Long id, @RequestBody ActionRequest actionRequest) {
         try {
             final PetitionEntity petition = petitionService.findPetitionByCod(id);
             final ProcessDefinition<?> processDefinition = PetitionUtil.getProcessDefinition(petition);
@@ -110,7 +108,7 @@ public class DefaultServerREST {
             IController controller = getActionController(processDefinition, actionRequest);
             return controller.run(petition, actionRequest);
         } catch (Exception e) {
-            final String msg = String.format("Erro ao executar a ação %s para o id %d.", actionRequest.getName(), id);
+            final String msg = String.format("Erro ao executar a ação %s para o id %d. ", StringEscapeUtils.escapeJava(actionRequest.getName()), id);
             LOGGER.error(msg, e);
             return new ActionResponse(msg, false);
         }
@@ -120,7 +118,11 @@ public class DefaultServerREST {
     private IController getActionController(ProcessDefinition<?> processDefinition, ActionRequest actionRequest) {
         final ActionConfig actionConfig = processDefinition.getMetaDataValue(ActionConfig.KEY);
         Class<? extends IController> controllerClass = actionConfig.getAction(actionRequest.getName());
-        return springServiceRegistry.lookupService(controllerClass);
+        if (ApplicationContextProvider.get().containsBean(controllerClass.getName())){
+            return ApplicationContextProvider.get().getBean(controllerClass);
+        } else {
+            return ApplicationContextProvider.get().getAutowireCapableBeanFactory().createBean(controllerClass);
+        }
     }
 
 

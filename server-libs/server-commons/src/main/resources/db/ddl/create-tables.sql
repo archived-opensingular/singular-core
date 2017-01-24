@@ -351,16 +351,16 @@ CREATE TABLE DBSINGULAR.TB_RASCUNHO (
 /*==============================================================*/
 /* Table: TB_REQUISICAO                                         */
 /*==============================================================*/
-
-
-
-CREATE TABLE DBSINGULAR.TB_REQUISICAO (
-   CO_REQUISICAO                BIGINT  NOT NULL,
-   CO_INSTANCIA_PROCESSO        BIGINT  NULL,
-   CO_DEFINICAO_PROCESSO        BIGINT  NULL,
-   CO_REQUISITANTE              BIGINT  NULL,
-   DS_REQUISICAO                VARCHAR(200)  NULL,
-   CONSTRAINT PK_TB_REQUISICAO PRIMARY KEY (CO_REQUISICAO)
+CREATE TABLE DBSINGULAR.TB_REQUISICAO
+(
+   CO_REQUISICAO        NUMBER               NOT NULL,
+   CO_INSTANCIA_PROCESSO NUMBER               NULL,
+   CO_DEFINICAO_PROCESSO NUMBER               NULL,
+   CO_REQUISITANTE      NUMBER                NULL,
+   DS_REQUISICAO        VARCHAR2(200),
+   CO_REQUISICAO_RAIZ   NUMBER,
+   CO_REQUISICAO_PAI    NUMBER,
+   CONSTRAINT PK_REQUISICAO PRIMARY KEY (CO_REQUISICAO)
 );
 
 

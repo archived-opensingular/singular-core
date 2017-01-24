@@ -64,7 +64,8 @@ public abstract class Content extends Panel implements Loggable {
 
         pageHead.add(new Label("contentTitle", getContentTitleModel()));
         pageHead.add(new Label("contentSubtitle", getContentSubtitleModel()));
-        pageHead.add(toolbar = new RepeatingView("toolbarItems"));
+        toolbar = new RepeatingView("toolbarItems");
+        pageHead.add(toolbar);
 
         add(breadcrumb);
 
@@ -144,4 +145,12 @@ public abstract class Content extends Panel implements Loggable {
     protected abstract IModel<?> getContentTitleModel();
 
     protected abstract IModel<?> getContentSubtitleModel();
+
+    public boolean isWithBreadcrumb() {
+        return withBreadcrumb;
+    }
+
+    public boolean isWithInfoLink() {
+        return withInfoLink;
+    }
 }

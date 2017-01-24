@@ -34,17 +34,10 @@ public class WSClientSafeWrapper {
      */
     @SuppressWarnings("unchecked")
     public static <T> T wrap(final Class<T> wsIface, final String humanName, final WSClientFactory<T> factory) {
-        return wrap(wsIface, humanName, factory, false);
-    }
-
-
-
-    @SuppressWarnings("unchecked")
-    public static <T> T wrap(final Class<T> wsIface, final String humanName, final WSClientFactory<T> factory, boolean enableMTOM) {
         return (T) Proxy.newProxyInstance(wsIface.getClassLoader(), new Class[]{wsIface}, new InvocationHandler() {
 
             private final Logger log = Logger.getLogger(getClass());
-            private T ref = factory.getReference(enableMTOM);
+            private T ref = factory.getReference();
 
             @Override
             public Object invoke(Object proxy, Method method, Object[] args)
@@ -53,6 +46,7 @@ public class WSClientSafeWrapper {
                     log.warn(String.format("CHAMADA A WEB-SERVICE: %s OPERACAO: %s ", wsIface.getName(), method.getName()));
                     ExecutorService executor = Executors.newCachedThreadPool();
                     Callable<Object> task = new Callable<Object>() {
+                        @Override
                         public Object call() throws InvocationTargetException, IllegalAccessException {
                             return method.invoke(ref, args);
                         }
@@ -69,7 +63,7 @@ public class WSClientSafeWrapper {
                 } catch (SingularException e) {
                     throw e;
                 } catch (Exception e) {
-                    ref = factory.getReference(enableMTOM);
+                    ref = factory.getReference();
                     log.fatal(e.getMessage(), e);
                     throw SingularServerIntegrationException.rethrow(humanName, e);
                 } finally {
@@ -91,6 +85,6 @@ public class WSClientSafeWrapper {
          *
          * @return uma referência de reference
          */
-        public T getReference(boolean enableMTOM);
+        public T getReference();
     }
 }

@@ -60,13 +60,21 @@ public class FeaturePermissionEntityPK implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         FeaturePermissionEntityPK that = (FeaturePermissionEntityPK) o;
 
-        if (!feature.equals(that.feature)) return false;
-        if (!permission.equals(that.permission)) return false;
+        if (!feature.equals(that.feature)) {
+            return false;
+        }
+        if (!permission.equals(that.permission)) {
+            return false;
+        }
         return module.equals(that.module);
 
     }

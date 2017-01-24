@@ -22,6 +22,19 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 public abstract class SchedulerInitializer {
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
-        applicationContext.register(getClass());
+        applicationContext.register(mailConfiguration());
+        applicationContext.register(attachmentGCConfiguration());
     }
+
+    public abstract Class<?> mailConfiguration();
+
+    /**
+     * @deprecated
+     * Deveria ter implementação padrão.
+     * A implementação padrão deve vir para esse módulo ou o método deve ser removido
+     * //TODO danilo.mesquita
+     * @return
+     */
+    @Deprecated
+    public abstract Class<?> attachmentGCConfiguration();
 }

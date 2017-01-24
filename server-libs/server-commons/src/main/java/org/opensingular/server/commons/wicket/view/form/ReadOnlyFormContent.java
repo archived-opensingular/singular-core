@@ -16,6 +16,9 @@
 
 package org.opensingular.server.commons.wicket.view.form;
 
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
@@ -27,25 +30,29 @@ import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.server.commons.wicket.view.template.Content;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 
 public class ReadOnlyFormContent extends Content {
 
+
     private final IModel<Long>        formVersionEntityPK;
-    private final IFormService        formService;
-    private final SFormConfig<String> formConfig;
     private final IModel<Boolean>     showAnnotations;
 
     private SingularFormPanel<String> singularFormPanel;
 
-    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, IFormService formService, SFormConfig<String> formConfig, IModel<Boolean> showAnnotations) {
+    @Inject
+    private IFormService formService;
+
+    @Inject
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> formConfig;
+
+    public ReadOnlyFormContent(String id, IModel<Long> formVersionEntityPK, IModel<Boolean> showAnnotations) {
         super(id);
         this.formVersionEntityPK = formVersionEntityPK;
-        this.formService = formService;
-        this.formConfig = formConfig;
         this.showAnnotations = showAnnotations;
         build();
     }
@@ -62,7 +69,7 @@ public class ReadOnlyFormContent extends Content {
             }
         };
 
-        add(new Form("form").add(singularFormPanel = new SingularFormPanel<String>("singularFormPanel", formConfig) {
+        singularFormPanel = new SingularFormPanel<String>("singularFormPanel", formConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 return formService.loadSInstance(formKey, refType, singularFormConfig.getDocumentFactory(), formVersionEntityPK.getObject());
@@ -70,14 +77,15 @@ public class ReadOnlyFormContent extends Content {
 
             @Override
             public AnnotationMode getAnnotationMode() {
-                if(showAnnotations.getObject()){
+                if (showAnnotations.getObject()) {
                     return AnnotationMode.READ_ONLY;
                 } else {
                     return AnnotationMode.NONE;
                 }
             }
-        }));
+        };
 
+        add(new Form("form").add(singularFormPanel));
         singularFormPanel.setViewMode(ViewMode.READ_ONLY);
     }
 

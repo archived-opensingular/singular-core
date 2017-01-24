@@ -17,29 +17,35 @@ package org.opensingular.server.core.service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 import javax.annotation.PostConstruct;
+import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.server.commons.service.dto.Email;
 import org.opensingular.server.commons.service.dto.Email.Addressee;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class EmailSender extends JavaMailSenderImpl implements Loggable {
 
     private static final String EMAIL_DEVELOPMENT = "mirante.teste@gmail.com";
 
-    private String from;
+    private String                from;
+    private Cache<Class, Boolean> errorCache;
 
     @PostConstruct
     public void init(){
@@ -68,6 +74,12 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
         } else {
             getLogger().warn("SMTP mail sender Disabled.");
         }
+
+        errorCache = CacheBuilder.newBuilder()
+                .concurrencyLevel(4)
+                .maximumSize(100)
+                .expireAfterWrite(1, TimeUnit.DAYS)
+                .build();
     }
     
     public boolean send(Addressee addressee){
@@ -88,10 +100,11 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 msg.setSentDate(Optional.ofNullable(e.getCreationDate()).orElseGet(Date::new));
                 msg.setFrom(new InternetAddress(Optional.ofNullable(from).orElseGet(this::getUsername)));
                 // destinatários
+                Message.RecipientType recipientType = addressee.getType().getRecipientType();
                 if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_SEND_EMAIL)) {
-                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(addressee.getAddress()));
+                    msg.addRecipient(recipientType, new InternetAddress(addressee.getAddress()));
                 } else {
-                    msg.addRecipient(addressee.getType().getRecipientType(), new InternetAddress(EMAIL_DEVELOPMENT));
+                    msg.addRecipient(recipientType, new InternetAddress(EMAIL_DEVELOPMENT));
                 }
                 
                 // Cria o "contêiner" das várias partes do e-mail
@@ -121,7 +134,16 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 getLogger().info("Email enviado para o destinatário(cod="+addressee.getCod()+")="+addressee.getAddress());
             } catch (Exception ex) {
                 addressee.setSentDate(null);
-                getLogger().error("ERRO ao enviar email para o destinatário(cod="+addressee.getCod()+")="+addressee.getAddress(), ex);
+                String msg = "ERRO ao enviar email para o destinatário(cod=" + addressee.getCod() + ")=" + addressee.getAddress();
+
+                // Esse errorCache evita que a stack completa da exceção seja
+                // impressa no log mais do que uma vez ao dia.
+                if (BooleanUtils.isTrue(errorCache.getIfPresent(ex.getClass()))) {
+                    getLogger().error(msg);
+                } else {
+                    getLogger().error(msg, ex);
+                    errorCache.put(ex.getClass(), true);
+                }
                 return false;
             }
         }
@@ -130,7 +152,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
     
     public void setPort(String port) {
         if(port != null){
-            super.setPort(Integer.valueOf(port));
+            super.setPort(Integer.parseInt(port));
         }
     }
 }

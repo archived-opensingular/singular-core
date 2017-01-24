@@ -17,12 +17,16 @@
 package org.opensingular.server.commons.config;
 
 
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.form.SType;
-import org.springframework.web.context.ServletContextAware;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletContext;
-import java.util.*;
+
+import org.opensingular.form.SType;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * Spring Bean para guardar parametros de configuração reutilizáveis
@@ -37,7 +41,6 @@ public class SingularServerConfiguration implements ServletContextAware {
     private List<Class<? extends SType<?>>> formTypes;
     private String                          processGroupCod;
     private String[]                        definitionsPackages;
-    private Map<Class<? extends ProcessDefinition>, String> processDefinitionFormNameMap = new HashMap<>(0);
     private String[] defaultPublicUrls;
 
     public String[] getDefaultPublicUrls() {
@@ -61,7 +64,11 @@ public class SingularServerConfiguration implements ServletContextAware {
     }
 
     public List<Class<? extends SType<?>>> getFormTypes() {
-        return Collections.unmodifiableList(formTypes);
+        if (formTypes == null){
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(formTypes);
+        }
     }
 
     public String getProcessGroupCod() {
@@ -70,11 +77,6 @@ public class SingularServerConfiguration implements ServletContextAware {
 
     public String[] getDefinitionsPackages() {
         return definitionsPackages;
-    }
-
-    public Map<Class<? extends
-            ProcessDefinition>, String> getProcessDefinitionFormNameMap() {
-        return Collections.unmodifiableMap(processDefinitionFormNameMap);
     }
 
     @Override
@@ -90,8 +92,6 @@ public class SingularServerConfiguration implements ServletContextAware {
                 .ifPresent(fi -> this.formTypes = fi.getTypes());
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi -> this.processGroupCod = fi.processGroupCod());
-        Optional.ofNullable(flowInitializer)
-                .ifPresent(fi -> this.processDefinitionFormNameMap = fi.processDefinitionFormNameMap());
         Optional.ofNullable(flowInitializer)
                 .ifPresent(fi -> this.definitionsPackages = fi.definitionsBasePackage());
     }

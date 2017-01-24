@@ -20,14 +20,21 @@ import org.opensingular.server.commons.config.SingularInitializer;
 
 public interface PSingularInitializer extends SingularInitializer {
 
+    @Override
     public PWebInitializer webConfiguration();
 
+    @Override
     public PSpringHibernateInitializer springHibernateConfiguration();
 
+    @Override
     public PFormInitializer formConfiguration();
 
+    @Override
     public PFlowInitializer flowConfiguration();
 
-    public PSpringSecurityInitializer springSecurityConfiguration();
+    @Override
+    default PSpringSecurityInitializer springSecurityConfiguration() {
+        return new PSpringSecurityInitializer();
+    }
 
 }

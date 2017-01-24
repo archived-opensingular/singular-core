@@ -36,12 +36,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @EnableWebSecurity
 @ComponentScan(
-        basePackages = {"org.opensingular.singular", "org.opensingular.server"},
+        basePackages = {"org.opensingular"},
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ANNOTATION,
                         value = AutoScanDisabled.class)
         })
-
 public class SingularServerSpringAppConfig  {
 
     @Bean

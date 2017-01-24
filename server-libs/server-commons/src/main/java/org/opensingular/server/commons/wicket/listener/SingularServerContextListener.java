@@ -22,6 +22,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.wicket.core.request.handler.IPageClassRequestHandler;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
@@ -36,6 +37,7 @@ import org.opensingular.server.commons.exception.SingularServerIntegrationExcept
 import org.opensingular.server.commons.spring.security.SecurityUtil;
 import org.opensingular.server.commons.wicket.SingularApplication;
 import org.opensingular.server.commons.wicket.SingularSession;
+import org.opensingular.server.commons.wicket.error.Page410;
 import org.opensingular.server.commons.wicket.error.Page500;
 
 /**
@@ -49,7 +51,7 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
         SingularServerConfiguration singularServerConfiguration = SingularApplication.get().getApplicationContext().getBean(SingularServerConfiguration.class);
         if (SingularSession.get().isAuthtenticated() && isPageRequest(handler)) {
             HttpServletRequest request = (HttpServletRequest) cycle.getRequest().getContainerRequest();
-            IServerContext context = IServerContext.getContextFromRequest(request, singularServerConfiguration.getContexts());
+            IServerContext     context = IServerContext.getContextFromRequest(request, singularServerConfiguration.getContexts());
             if (!SingularSession.get().getServerContext().equals(context)) {
                 resetLogin(cycle);
             }
@@ -57,7 +59,7 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
     }
 
     private void resetLogin(RequestCycle cycle) {
-        final Url url = cycle.getUrlRenderer().getBaseUrl();
+        final Url    url         = cycle.getUrlRenderer().getBaseUrl();
         final String redirectURL = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + SecurityUtil.getLogoutPath();
         throw new RedirectToUrlException(redirectURL);
     }
@@ -73,6 +75,8 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
         if (singularException instanceof SingularServerIntegrationException
                 && ((WebRequest) RequestCycle.get().getRequest()).isAjax()) {
             return new AjaxErrorRequestHandler(singularException);
+        } else if (ex instanceof PageExpiredException) {
+            return new RenderPageRequestHandler(new PageProvider(new Page410()));
         } else {
             return new RenderPageRequestHandler(new PageProvider(new Page500(ex)));
         }

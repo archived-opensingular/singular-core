@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -36,6 +37,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.wicket.component.SingularButton;
 import org.opensingular.form.wicket.component.SingularSaveButton;
@@ -47,6 +49,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.exception.SingularServerFormValidationError;
 import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
@@ -54,24 +57,27 @@ import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntit
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.util.DispatcherPageParameters;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.server.commons.wicket.builder.MarkupCreator;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
+import org.opensingular.server.commons.wicket.view.util.DispatcherPageUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class AbstractFormPage<T extends PetitionEntity> extends Template implements Loggable {
-
-    protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
 
     @Inject
     protected PetitionService<T> petitionService;
@@ -88,9 +94,11 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
-    protected IModel<T>           currentModel;
+    protected       IModel<T>           currentModel;
     protected final IModel<FormKey>     formModel;
+    protected final IModel<FormKey>     parentPetitionformModel;
     protected       AbstractFormContent content;
+
 
     public AbstractFormPage(Class<T> petitionClass, FormPageConfig config) {
         if (config == null) {
@@ -99,6 +107,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         this.petitionClass = Objects.requireNonNull(petitionClass);
         this.config = Objects.requireNonNull(config);
         this.formModel = $m.ofValue();
+        this.parentPetitionformModel = $m.ofValue();
         Objects.requireNonNull(getFormType(config));
     }
 
@@ -110,22 +119,52 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Override
     protected void onInitialize() {
         final T petition;
-        if (StringUtils.isBlank(config.getPetitionId())) {
-            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
-        } else {
-            petition = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
-        }
-        if (petition.getCod() != null) {
-            final FormEntity formEntityDraftOrPetition = getDraftOrFormEntity(petition);
-            if (formEntityDraftOrPetition != null) {
-                formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
-            }
-        }
+        petition = loadPetition();
+
         currentModel = $m.loadable(() -> petition != null && petition.getCod() != null ? petitionService.findPetitionByCod(petition.getCod()) : petition);
         currentModel.setObject(petition);
 
         super.onInitialize();
     }
+
+    private T loadPetition() {
+        T petition;
+        if (StringUtils.isNotBlank(config.getPetitionId())) {
+            petition = petitionService.findPetitionByCod(Long.valueOf(config.getPetitionId()));
+            if (petition != null && petition.getCod() != null) {
+                final FormEntity formEntityDraftOrPetition = getDraftOrFormEntity(petition);
+                if (formEntityDraftOrPetition != null) {
+                    formModel.setObject(formService.keyFromObject(formEntityDraftOrPetition.getCod()));
+                }
+            }
+        } else {
+            petition = petitionService.createNewPetitionWithoutSave(petitionClass, config, this::onNewPetitionCreation);
+        }
+
+        if (StringUtils.isNotBlank(config.getParentPetitionId())) {
+            defineParentPetition(petition);
+        }
+        return petition;
+    }
+
+    private void defineParentPetition(T petition) {
+    /* carrega a chave do form da petição pai para posterior clonagem */
+        T parentPetition = petitionService.findPetitionByCod(Long.valueOf(config.getParentPetitionId()));
+        if (parentPetition != null && parentPetition.getMainForm() != null) {
+            parentPetitionformModel.setObject(formService.keyFromObject(parentPetition.getMainForm().getCod()));
+        }
+        if (petition != null) {
+            petition.setParentPetition(parentPetition);
+            if (parentPetition != null) {
+                if (parentPetition.getRootPetition() != null) {
+                    petition.setRootPetition(parentPetition.getRootPetition());
+                } else {
+                    petition.setRootPetition(parentPetition);
+                }
+            }
+        }
+    }
+
 
     private FormEntity getDraftOrFormEntity(T petition) {
         return Optional
@@ -138,7 +177,8 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (isMainForm()) {
             return formPetitionService.findFormPetitionEntityByTypeName(petition.getCod(), getFormType(config));
         } else {
-            return formPetitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config), getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
+            return formPetitionService.findFormPetitionEntityByTypeNameAndTask(petition.getCod(), getFormType(config),
+                    getCurrentTaskDefinition(petition).map(TaskDefinitionEntity::getCod).orElse(null));
         }
     }
 
@@ -176,12 +216,16 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             }
 
             @Override
-            protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer, ViewMode viewMode, AnnotationMode annotationMode, IModel<? extends SInstance> currentInstance) {
-                AbstractFormPage.this.configureCustomButtons(buttonContainer, modalContainer, viewMode, annotationMode, currentInstance);
+            protected void configureCustomButtons(BSContainer<?> buttonContainer, BSContainer<?> modalContainer,
+                                                  ViewMode viewMode, AnnotationMode annotationMode,
+                                                  IModel<? extends SInstance> currentInstance) {
+                AbstractFormPage.this.configureCustomButtons(buttonContainer, modalContainer, viewMode,
+                        annotationMode, currentInstance);
             }
 
             @Override
-            protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer, IModel<? extends SInstance> instanceModel) {
+            protected BSModalBorder buildConfirmationModal(BSContainer<?> modalContainer,
+                                                           IModel<? extends SInstance> instanceModel) {
                 return AbstractFormPage.this.buildConfirmationModal(modalContainer, instanceModel);
             }
 
@@ -189,11 +233,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             protected ProcessInstanceEntity getProcessInstance() {
                 return AbstractFormPage.this.getProcessInstance();
             }
-
-//            @Override
-//            protected void setProcessInstance(ProcessInstanceEntity pie) {
-//                AbstractFormPage.this.setProcessInstance(pie);
-//            }
 
             @Override
             protected void saveForm(IModel<? extends SInstance> currentInstance) {
@@ -269,9 +308,14 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         if (StringUtils.isNotEmpty(config.getPetitionId())) {
             trans = petitionService.listCurrentTaskTransitions(Long.valueOf(config.getPetitionId()));
         }
+
+        if (hasMultipleVersionsAndIsMainForm(config.getPetitionId())) {
+            appendButtonViewDiff(buttonContainer, config.getPetitionId(), currentInstance);
+        }
+
         if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
-            for (MTransition t : trans) {
+            trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {//NOSONAR
                 if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
                     String btnId = "flow-btn" + index;
                     buildFlowTransitionButton(
@@ -279,16 +323,101 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                             modalContainer, t.getName(),
                             currentInstance, viewMode);
                 }
-            }
+            });
+
         } else {
             buttonContainer.setVisible(false).setEnabled(false);
         }
     }
 
+    /**
+     * Verifica se existe mais de uma versão do formulário principal
+     * lavando em consideração o rascunho.
+     *
+     * @param petitionId id da petição a ser verificada
+     * @return true em caso afirmativo, false caso contrário
+     */
+    protected boolean hasMultipleVersionsAndIsMainForm(String petitionId) {
+        if (StringUtils.isNotBlank(petitionId)) {
+
+            int totalVersoes = 0;
+
+            // Verifica se existe rascunho
+            PetitionEntity petition     = petitionService.findPetitionByCod(Long.valueOf(petitionId));
+            FormTypeEntity mainFormType = petition.getMainForm().getFormType();
+            DraftEntity    draftEntity  = petition.currentEntityDraftByType(mainFormType.getAbbreviation());
+            if (draftEntity != null) {
+                totalVersoes++;
+            }
+
+            // Busca o número de versões consolidadas
+            Long versoesConsolidadas = formPetitionService.countVersions(petition.getMainForm().getCod());
+            totalVersoes += versoesConsolidadas;
+
+            String formType = getFormType(config);
+
+            return totalVersoes > 1
+                    && formType.equalsIgnoreCase(mainFormType.getAbbreviation());
+        }
+        return false;
+    }
+
+    /**
+     * Adiciona o botão para visualizar o diff na barra de botões.
+     *
+     * @param buttonContainer
+     * @param petitionId
+     * @param currentInstance
+     */
+    protected void appendButtonViewDiff(BSContainer<?> buttonContainer, String petitionId, IModel<? extends SInstance> currentInstance) {
+
+        final String        markup      = "<a class='btn' wicket:id='diffLink'><span wicket:id='label'></span></a>";
+        final TemplatePanel buttonPanel = buttonContainer.newTemplateTag(tt -> markup);
+
+        WebMarkupContainer link = new WebMarkupContainer("diffLink");
+        link.add($b.attr("target", String.format("diff%s", petitionId)));
+        link.add($b.attr("href", mountUrlDiff()));
+
+        buttonPanel.add(link.add(new Label("label", "Visualizar Diferenças")));
+
+    }
+
+    protected String mountUrlDiff() {
+
+        StringBuilder url = new StringBuilder();
+        url.append(DispatcherPageUtil.getBaseURL())
+                .append("?")
+                .append(String.format("%s=%s", DispatcherPageParameters.ACTION, config.getFormAction().getId()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.PETITION_ID, config.getPetitionId()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.FORM_NAME, config.getFormType()))
+                .append(String.format("&%s=%s", DispatcherPageParameters.DIFF, Boolean.TRUE.toString()));
+
+        Map<String, String> additionalParams = getAdditionalParams();
+
+        for (Map.Entry<String, String> entry : additionalParams.entrySet()) {
+            url.append(String.format("&%s=%s", entry.getKey(), entry.getValue()));
+        }
+
+        return url.toString();
+    }
+
+    protected Map<String,String> getAdditionalParams() {
+        return Collections.emptyMap();
+    }
+
+    protected Boolean isTransitionButtonVisibible(MTransition transition) {
+        return true;
+    }
+
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance, boolean mainForm) {
         T petition = currentModel.getObject();
         if (currentInstance.getObject() instanceof SIComposite && mainForm) {
-            petition.setDescription(createPetitionDescriptionFromForm(currentInstance.getObject()));
+            String description = createPetitionDescriptionFromForm(currentInstance.getObject());
+            if (description != null && description.length() > 200) {
+                getLogger().error("Descrição do formulário muito extensa. A descrição foi cortada.");
+                description = description.substring(0, 197) + "...";
+            }
+            petition.setDescription(description);
         }
         return petition;
     }
@@ -297,9 +426,14 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         return instance.toStringDisplay();
     }
 
-    protected final SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
+    protected SInstance createInstance(SDocumentFactory documentFactory, RefType refType) {
         if (formModel.getObject() == null) {
-            return documentFactory.createInstance(refType);
+            /* clonagem do ultimo formulário da petição */
+            if (parentPetitionformModel.getObject() != null) {
+                return formService.newTransientSInstance(parentPetitionformModel.getObject(), refType, documentFactory, false);
+            } else {
+                return documentFactory.createInstance(refType);
+            }
         } else {
             return formService.loadSInstance(formModel.getObject(), refType, documentFactory);
         }
@@ -321,7 +455,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                         + "</div>\n");
         BSModalBorder enviarModal = new BSModalBorder("send-modal", getMessage("label.title.send"));
         enviarModal
-                .addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.close", new AjaxButton("cancel-btn") {
+                .addButton(BSModalBorder.ButtonStyle.CANCEL, "label.button.close", new AjaxButton("cancel-btn") {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         enviarModal.hide(target);
@@ -329,6 +463,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 })
                 .addButton(BSModalBorder.ButtonStyle.CONFIRM, "label.button.confirm", new SingularSaveButton("confirm-btn", instanceModel) {
 
+                    @Override
                     protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                         AbstractFormPage.this.send(instanceModel, target, enviarModal);
                     }
@@ -379,27 +514,58 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             cfg
                     .getLazyFlowDefinitionResolver()
                     .resolve(cfg, (SIComposite) currentInstance.getObject())
-                    .ifPresent(clazz -> {
-                        petition.setProcessDefinitionEntity(petitionService.findEntityProcessDefinitionByClass(clazz));
-                    });
+                    .ifPresent(clazz -> petition.setProcessDefinitionEntity(petitionService.findEntityProcessDefinitionByClass(clazz)));
         }
     }
 
-    protected void send(IModel<? extends SInstance> currentInstance, AjaxRequestTarget target, BSModalBorder enviarModal) {
-        if (onBeforeSend(currentInstance)) {
-            petitionService.send(getUpdatedPetitionFromInstance(currentInstance, isMainForm()), currentInstance.getObject(), SingularSession.get().getUsername(), singularFormConfig);
-            onAfterSend(target, enviarModal);
+    /**
+     * Inicia o fluxo da petição, consolidando os formularios de rascunho e criando o historico
+     *
+     * @param mi    modal da instancia atual do formulario
+     * @param ajxrt ajax request target do wicket
+     * @param sm    modal que disparou a confirmação
+     */
+    protected void send(IModel<? extends SInstance> mi, AjaxRequestTarget ajxrt, BSModalBorder sm) {
+        //executa antes de enviar, chance para fazer validações, salvar o formulario e alterar dados na peticao
+        if (onBeforeSend(mi)) {
+
+            //peticao atual, atualizações devem ser feitas em before send
+            T petition = currentModel.getObject();
+
+            //instancia atual do formulario
+            SInstance instance = mi.getObject();
+
+            //usuario para persistencia
+            String username = SingularSession.get().getUsername();
+
+            //executa em block try, caso exita rollback deve recarregar a peticao, para que a mesma não
+            //tenha dados que sofreram rollback
+            try {
+                //executa o envio, iniciando o fluxo informado
+                petitionService.send(petition, instance, username, singularFormConfig);
+                //janela de oportunidade para executar ações apos o envio, normalmente utilizado para mostrar mensagens
+                onAfterSend(ajxrt, sm);
+            } catch (Exception ex) {
+                //recarrega a petição novamente
+                currentModel.setObject(petitionService.findPetitionByCod(petition.getCod()));
+                //faz o rethrow da exeção, algumas são tratadas e exibidas na tela como mensagens informativas
+                throw SingularServerException.rethrow(ex.getMessage(), ex);
+            }
         }
     }
 
     protected void onAfterSend(AjaxRequestTarget target, BSModalBorder enviarModal) {
         atualizarContentWorklist(target);
-        if (getIdentifier() == null) {
-            addToastrSuccessMessageWorklist("message.send.success", getUrlPathAcompanhamento());
-        } else {
-            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), getUrlPathAcompanhamento());
-        }
+        addAfterSendSuccessMessage();
         target.appendJavaScript("; window.close();");
+    }
+
+    protected void addAfterSendSuccessMessage() {
+        if (getIdentifier() == null) {
+            addToastrSuccessMessageWorklist("message.send.success");
+        } else {
+            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier());
+        }
     }
 
     protected void onBeforeExecuteTransition(AjaxRequestTarget ajaxRequestTarget,
@@ -410,17 +576,46 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
         saveForm(currentInstance, transitionName);
     }
 
-    protected void executeTransition(AjaxRequestTarget ajaxRequestTarget,
-                                     Form<?> form,
-                                     String transitionName,
-                                     IModel<? extends SInstance> currentInstance)
-            throws SingularServerFormValidationError {
-        onBeforeExecuteTransition(ajaxRequestTarget, form, transitionName, currentInstance);
-        petitionService.executeTransition(transitionName, currentModel.getObject(), singularFormConfig, this::onTransition, getTransitionParameters(transitionName));
-        onTransitionExecuted(ajaxRequestTarget, transitionName);
+    /**
+     * Executa a transição da tarefa para a transição informada
+     * @param ajxrt target do wicket
+     * @param form form atual
+     * @param tn transição a ser executada
+     * @param mi model contendo a instancia atual
+     * @throws SingularServerFormValidationError caso exista erros de validação
+     * @see AbstractFormPage#onBeforeExecuteTransition
+     * @see PetitionService#executeTransition(String, PetitionEntity, SFormConfig, BiConsumer, Map)
+     * @see AbstractFormPage#onTransitionExecuted(AjaxRequestTarget, String)
+     */
+    protected void executeTransition(AjaxRequestTarget ajxrt, Form<?> form, String tn, IModel<? extends SInstance> mi)
+            throws SingularServerFormValidationError
+    {
+
+        //relizada a chamada, abrindo janela de oportunidade para salvar e alteradas dados da petição
+        onBeforeExecuteTransition(ajxrt, form, tn, mi);
+
+        //petição atual, qualuer alteracao deve ser feita em onBeforeExecuteTransition
+        T petition = currentModel.getObject();
+
+        //busca os parametros de transicao do FLOW
+        Map<String, String> transitionParams = getTransitionParameters(tn);
+
+        //Executa em bloco try, executa rollback da petição caso exista erro
+        try {
+            //executa a transicao informada
+            petitionService.executeTransition(tn, petition, singularFormConfig, this::onTransition, transitionParams);
+
+            //executa chamada, abrindo janela de oportunidade de executar ações apos execução da transicao
+            onTransitionExecuted(ajxrt, tn);
+        } catch (Exception ex) {
+            //recarrega a petição novamente
+            currentModel.setObject(petitionService.findPetitionByCod(petition.getCod()));
+            //faz o rethrow da exeção, algumas são tratadas e exibidas na tela como mensagens informativas
+            throw SingularServerException.rethrow(ex.getMessage(), ex);
+        }
     }
 
-    protected Map<String, String> getTransitionParameters(String transition){
+    protected Map<String, String> getTransitionParameters(String transition) {
         return null;
     }
 
@@ -528,10 +723,6 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
                 .map(FormEntity::getCod)
                 .map(cod -> formService.keyFromObject(cod))
                 .orElse(null);
-    }
-
-    public String getUrlPathAcompanhamento() {
-        return URL_PATH_ACOMPANHAMENTO;
     }
 
 }

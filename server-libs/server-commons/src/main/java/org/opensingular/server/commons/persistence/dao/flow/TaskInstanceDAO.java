@@ -16,15 +16,16 @@
 
 package org.opensingular.server.commons.persistence.dao.flow;
 
+import org.hibernate.Query;
 import org.opensingular.flow.core.TaskType;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.lib.support.persistence.BaseDAO;
+import org.opensingular.lib.support.persistence.enums.SimNao;
 import org.opensingular.server.commons.persistence.dto.TaskInstanceDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.spring.security.SingularPermission;
 import org.opensingular.server.commons.util.JPAQueryUtil;
-import org.opensingular.lib.support.persistence.BaseDAO;
-import org.hibernate.Query;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,17 +40,21 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
     }
 
     protected Map<String, String> getSortPropertyToAliases() {
-        return new HashMap<String, String>() {
-            {
-                put("id", "ti.cod");
-                put("protocolDate", "p.creationDate");
-                put("description", "pi.description");
-                put("state", "tv.name");
-                put("user", "au.nome");
-                put("situationBeginDate", "ti.beginDate");
-                put("processBeginDate", "pi.beginDate");
-            }
-        };
+        Map<String, String> sortProperties = new HashMap<>();
+
+        sortProperties.put("id", "ti.cod");
+        sortProperties.put("creationDate", "pi.beginDate");
+        sortProperties.put("protocolDate", "pi.beginDate");
+        sortProperties.put("description", "pi.description");
+        sortProperties.put("state", "tv.name");
+        sortProperties.put("taskName", "tv.name");
+        sortProperties.put("user", "au.nome");
+        sortProperties.put("nomeUsuarioAlocado", "au.nome");
+        sortProperties.put("codUsuarioAlocado", "au.cod");
+        sortProperties.put("situationBeginDate", "ti.beginDate");
+        sortProperties.put("processBeginDate", "pi.beginDate");
+
+        return sortProperties;
     }
 
     protected Class<? extends PetitionEntity> getPetitionEntityClass() {
@@ -77,11 +82,11 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
                         " count( distinct ti )" :
                         " new " + TaskInstanceDTO.class.getName() + " (pi.cod," +
                                 " ti.cod, td.cod, ti.versionStamp, " +
-                                " p.creationDate," +
+                                " pi.beginDate," +
                                 " pi.description, " +
                                 " au , " +
                                 " tv.name, " +
-                                " p.type, " +
+                                " form.formType.abbreviation as type, " +
                                 " pd.key, " +
                                 " p.cod," +
                                 " ti.beginDate,  " +
@@ -101,26 +106,36 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
             condition = " and ti.endDate is null ";
         }
 
-        Query query = getSession().createQuery(
-                " select " +
-                        selectClause +
-                        " from " +
-                        getPetitionEntityClass().getName() + " p " +
-                        " inner join p.processInstanceEntity pi " +
-                        " inner join pi.processVersion pv " +
-                        " inner join pv.processDefinition pd " +
-                        " inner join pd.processGroup pg " +
-                        " left join pi.tasks ti " +
-                        " left join ti.allocatedUser au " +
-                        " left join ti.task tv " +
-                        " left join tv.taskDefinition td  " +
-                        " where 1 = 1" +
-                        condition +
-                        addQuickFilter(filtroRapido) +
-                        getOrderBy(sortProperty, ascending, count));
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(" select ")
+                .append(selectClause)
+                .append(" from ")
+                .append(getPetitionEntityClass().getName()).append(" p ")
+                .append(" inner join p.processInstanceEntity pi ")
+                .append(" inner join pi.processVersion pv ")
+                .append(" inner join pv.processDefinition pd ")
+                .append(" inner join pd.processGroup pg ")
+                .append(" left join pi.tasks ti ")
+                .append(" left join ti.allocatedUser au ")
+                .append(" left join ti.task tv ")
+                .append(" left join tv.taskDefinition td  ")
+                .append(" left join p.formPetitionEntities formPetitionEntity on formPetitionEntity.mainForm = :sim ")
+                .append(" left join formPetitionEntity.form form ")
+                .append(" where 1 = 1")
+                .append(condition)
+                .append(addQuickFilter(filtroRapido))
+                .append(getOrderBy(sortProperty, ascending, count));
+
+
+        Query query = getSession().createQuery(sb.toString());
+
+
+
+        query.setParameter("sim", SimNao.SIM);
 
         if (concluidas == null || concluidas) {
-            query.setParameter("tipoEnd", TaskType.End);
+            query.setParameter("tipoEnd", TaskType.END);
         }
 
         return addFilterParameter(query,
@@ -178,7 +193,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
 
         final Query query = getSession().createQuery(sb.toString());
         query.setParameter("petitionId", petitionId);
-        query.setParameter("tipoEnd", TaskType.End);
+        query.setParameter("tipoEnd", TaskType.END);
         return query.list();
     }
 }

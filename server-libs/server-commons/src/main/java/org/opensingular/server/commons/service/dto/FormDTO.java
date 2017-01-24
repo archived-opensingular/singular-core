@@ -26,13 +26,16 @@ public class FormDTO implements Serializable {
 
     private String description;
 
+    private boolean newable;
+
     public FormDTO() {
     }
 
-    public FormDTO(String name, String abbreviation, String description) {
+    public FormDTO(String name, String abbreviation, String description, boolean newable) {
         this.name = name;
         this.abbreviation = abbreviation;
         this.description = description;
+        this.newable = newable;
     }
 
     public String getName() {
@@ -57,5 +60,13 @@ public class FormDTO implements Serializable {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    public boolean isNewable() {
+        return newable;
+    }
+
+    public void setNewable(boolean newable) {
+        this.newable = newable;
     }
 }

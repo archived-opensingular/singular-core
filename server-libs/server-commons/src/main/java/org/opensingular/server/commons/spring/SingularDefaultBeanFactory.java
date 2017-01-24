@@ -24,16 +24,16 @@ import org.opensingular.form.persistence.dao.AttachmentContentDao;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
+import org.opensingular.form.persistence.dao.FormAttachmentDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
 import org.opensingular.form.persistence.dao.FormTypeDAO;
 import org.opensingular.form.persistence.dao.FormVersionDAO;
-import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.service.FormService;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
-import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
 import org.opensingular.server.commons.cache.SingularKeyGenerator;
+import org.opensingular.server.commons.file.FileInputStreamAndHashFactory;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
 import org.opensingular.server.commons.persistence.dao.EmailAddresseeDao;
 import org.opensingular.server.commons.persistence.dao.EmailDao;
@@ -53,6 +53,11 @@ import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.IEmailService;
 import org.opensingular.server.commons.service.ParameterService;
 import org.opensingular.server.commons.service.PetitionService;
+import org.opensingular.server.commons.service.attachment.FormAttachmentService;
+import org.opensingular.server.commons.service.attachment.IFormAttachmentService;
+import org.opensingular.server.commons.service.attachment.ServerAttachmentPersistenceHelper;
+import org.opensingular.server.commons.service.attachment.ServerAttachmentPersistenceService;
+import org.opensingular.server.commons.service.attachment.ServerTemporaryAttachmentPersistenceService;
 import org.opensingular.server.commons.spring.security.AuthorizationService;
 import org.opensingular.server.commons.spring.security.DefaultUserDetailService;
 import org.opensingular.server.commons.spring.security.PermissionResolverService;
@@ -121,17 +126,12 @@ public class SingularDefaultBeanFactory {
 
     @Bean(name = SDocument.FILE_PERSISTENCE_SERVICE)
     public IAttachmentPersistenceHandler attachmentPersistenceService() {
-        return new AttachmentPersistenceService();
+        return new ServerAttachmentPersistenceService();
     }
 
     @Bean(name = SDocument.FILE_TEMPORARY_SERVICE)
     public IAttachmentPersistenceHandler attachmentTemporaryService() {
-        try {
-            return FileSystemAttachmentHandler.newTemporaryHandler();
-        } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
-            return new InMemoryAttachmentPersitenceHandler();
-        }
+        return new ServerTemporaryAttachmentPersistenceService();
     }
 
     @Bean
@@ -232,7 +232,7 @@ public class SingularDefaultBeanFactory {
 
     @Bean
     public <T extends PetitionEntity> FormPetitionService<T> formPetitionService() {
-        return new FormPetitionService<T>();
+        return new FormPetitionService<>();
     }
 
     @Bean
@@ -253,4 +253,26 @@ public class SingularDefaultBeanFactory {
     public KeyGenerator singularKeyGenerator() {
         return new SingularKeyGenerator();
     }
+
+    @Bean
+    public FormAttachmentDAO formAttachmentDAO() {
+        return new FormAttachmentDAO();
+    }
+
+
+    @Bean
+    public IFormAttachmentService formAttachmentService() {
+        return new FormAttachmentService();
+    }
+
+    @Bean
+    public FileInputStreamAndHashFactory fileInputStreamAndHashFactory() {
+        return new FileInputStreamAndHashFactory();
+    }
+
+    @Bean
+    public IAttachmentPersistenceHelper serverAttachmentPersistenceHelper(IFormService formService, IFormAttachmentService attachmentService) {
+        return new ServerAttachmentPersistenceHelper(formService, attachmentService);
+    }
+
 }

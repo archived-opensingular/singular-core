@@ -63,12 +63,12 @@ public class TopMenu extends Panel {
         logout.add($b.attr("href", SecurityUtil.getLogoutPath()));
         queue(logout);
 
-        final WebMarkupContainer opcoesVisuais = new WebMarkupContainer("opcoes-visuais");
-        opcoesVisuais.setRenderBodyOnly(true);
-        opcoesVisuais.setVisible(option.options().size() > 1);
-        opcoesVisuais.queue(buildSkinOptions());
 
-        queue(opcoesVisuais);
+//        final WebMarkupContainer opcoesVisuais = new WebMarkupContainer("opcoes-visuais");
+//        opcoesVisuais.setRenderBodyOnly(true);
+//        opcoesVisuais.setVisible(option.options().size() > 1);
+//        opcoesVisuais.queue(buildSkinOptions());
+//        queue(opcoesVisuais);
     }
 
     protected ListView buildSkinOptions() {
@@ -84,6 +84,7 @@ public class TopMenu extends Panel {
 
     private StatelessLink buildSelectSkinLink(final Skin skin) {
         return new StatelessLink("change_action") {
+            @Override
             public void onClick() {
                 option.selectSkin(skin);
                 refreshPage();

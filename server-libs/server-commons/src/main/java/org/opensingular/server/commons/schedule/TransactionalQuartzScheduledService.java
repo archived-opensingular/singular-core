@@ -33,6 +33,6 @@ public class TransactionalQuartzScheduledService extends QuartzScheduleService i
     public void schedule(IScheduledJob scheduledJob) {
         super.schedule(new TransactionalScheduledJobProxy(scheduledJob, transactionManager));
         
-        getLogger().info("Job("+scheduledJob+") scheduled.");
+        getLogger().info("Job({}) scheduled.", scheduledJob);
     }
 }

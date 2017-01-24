@@ -17,23 +17,11 @@
 package org.opensingular.server.commons.wicket.view.form;
 
 
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.service.IFormService;
+import org.apache.wicket.model.IModel;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
-import org.apache.wicket.model.IModel;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 public class ReadOnlyFormPage extends Template {
-
-    @Inject
-    @Named("formConfigWithDatabase")
-    private SFormConfig<String> singularFormConfig;
-
-    @Inject
-    private IFormService formService;
 
     private final IModel<Long>    formVersionEntityPK;
     private final IModel<Boolean> showAnnotations;
@@ -45,7 +33,7 @@ public class ReadOnlyFormPage extends Template {
 
     @Override
     protected Content getContent(String id) {
-        return new ReadOnlyFormContent(id, formVersionEntityPK, formService, singularFormConfig, showAnnotations);
+        return new ReadOnlyFormContent(id, formVersionEntityPK, showAnnotations);
     }
 
     @Override
