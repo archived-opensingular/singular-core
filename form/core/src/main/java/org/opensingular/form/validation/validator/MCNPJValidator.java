@@ -30,7 +30,7 @@ public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> 
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");
-    private List<String> invalidPatterns = Arrays.asList(
+    private final List<String> invalidPatterns = Arrays.asList(
             "00000000000000", "11111111111111", "22222222222222", "33333333333333", "44444444444444",
             "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999");
 
@@ -69,7 +69,7 @@ public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> 
         return false;
     }
 
-    private String unmask(String cnpj) {
+    static String unmask(String cnpj) {
         StringBuilder sb = new StringBuilder();
         Pattern p = Pattern.compile("[0-9]?");
         Matcher m = p.matcher(cnpj);

@@ -16,18 +16,19 @@
 
 package org.opensingular.flow.core.renderer;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessDefinition;
-
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinition;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class FlowRendererFactory {
+
+    private FlowRendererFactory() {}
 
     @SuppressWarnings("rawtypes")
     private static final LoadingCache<Class<? extends ProcessDefinition>, byte[]> cache =

@@ -63,7 +63,7 @@ public class RelocationTest  {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         Flow.setConf(mbpmBean, true);
 
         session = sessionFactory.openSession();
@@ -120,7 +120,7 @@ public class RelocationTest  {
 
         Actor u1 = testDAO.getSomeUser(1);
         TaskInstance t = id.getCurrentTask();
-        t.relocateTask(u1, u1, false, "Just for fun", null);
+        t.relocateTask(u1, u1, false, "Just for fun");
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
 
         session.flush();
@@ -143,7 +143,7 @@ public class RelocationTest  {
 
         Actor u1 = testDAO.getSomeUser(1);
         TaskInstance t = id.getCurrentTask();
-        t.relocateTask(u1, u1, false, "Just for fun", null);
+        t.relocateTask(u1, u1, false, "Just for fun");
         assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
 
         Actor u2 = testDAO.getSomeUser(2);
@@ -167,6 +167,19 @@ public class RelocationTest  {
         o1.setVersionStamp(o.getVersionStamp()-1);
 
         save(o1);
+    }
+
+    @Test public void endAllocation(){
+        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+
+        Actor u1 = testDAO.getSomeUser(1);
+        TaskInstance t = id.getCurrentTask();
+        t.relocateTask(u1, u1, false, "Just for fun");
+        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+
+        t.endLastAllocation();
+
+        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
     }
 
     private void save(TaskInstanceEntity o) {

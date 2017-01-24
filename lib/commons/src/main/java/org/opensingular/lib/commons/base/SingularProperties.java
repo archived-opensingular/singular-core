@@ -32,24 +32,29 @@ public interface SingularProperties {
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
     String SINGULAR_SEND_EMAIL                  = "singular.send.email";
 
-    String SINGULAR_DEV_MODE                    = "singular.development";
-    String SINGULAR_SERVER_ADDR                 = "singular.server.address";
+    String SINGULAR_DEV_MODE    = "singular.development";
+    String SINGULAR_SERVER_ADDR = "singular.server.address";
 
     // Limites globais são limites máximos, não configuráveis por arquivo.
-    String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE   = "singular.fileupload.global_max_request_size";
-    String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE      = "singular.fileupload.global_max_file_size";
-    String FILEUPLOAD_GLOBAL_MAX_FILE_COUNT     = "singular.fileupload.global_max_file_count";
-    String FILEUPLOAD_GLOBAL_MAX_FILE_AGE       = "singular.fileupload.global_max_file_age";
+    String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE = "singular.fileupload.global_max_request_size";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE    = "singular.fileupload.global_max_file_size";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_COUNT   = "singular.fileupload.global_max_file_count";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_AGE     = "singular.fileupload.global_max_file_age";
 
     // Limites default são limites configuráveis por arquivo. Não podem exceder os limites globais.
-    String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE  = "singular.fileupload.default_max_request_size";
-    String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE     = "singular.fileupload.default_max_file_size";
+    String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE = "singular.fileupload.default_max_request_size";
+    String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE    = "singular.fileupload.default_max_file_size";
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
-    String USE_INMEMORY_DATABASE     = "singular.use.inmemory.database";
+    String USE_INMEMORY_DATABASE = "singular.use.inmemory.database";
+    String JNDI_DATASOURCE = "singular.jndi.name.datasource";
 
     // Identifica o nome do schema que deve ser utilizado
-    String CUSTOM_SCHEMA_NAME     = "singular.custom.schema.name";
+    String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";
+
+    String DEFAULT_CAS_ENABLED = "singular.cas.default.enabled";
+    String DISABLE_AUTHORIZATION = "singular.auth.disable";
+
 
     static SingularProperties get() {
         return SingularPropertiesImpl.get();
@@ -64,6 +69,20 @@ public interface SingularProperties {
      * Retorna o valor da propriedade solicitada. Pode retornar null.
      */
     String getProperty(String key);
+
+
+    /**
+     * Retorna o valor da propriedade solicitada. Retornar {@param defaultValue} se
+     * a propriedade retornar null;
+     */
+    default String getProperty(String key, String defaultValue) {
+        String value = getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
 
     boolean isTrue(String key);
 

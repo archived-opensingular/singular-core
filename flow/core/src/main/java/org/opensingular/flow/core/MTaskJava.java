@@ -16,11 +16,11 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.schedule.IScheduleData;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
-
-import org.opensingular.flow.schedule.IScheduleData;
 
 @SuppressWarnings("unchecked")
 public class MTaskJava extends MTask<MTaskJava> {
@@ -38,7 +38,7 @@ public class MTaskJava extends MTask<MTaskJava> {
 
     @Override
     public IEntityTaskType getTaskType() {
-        return TaskType.Java;
+        return TaskType.JAVA;
     }
 
     @Override

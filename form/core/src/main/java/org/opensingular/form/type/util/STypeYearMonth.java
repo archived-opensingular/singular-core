@@ -16,9 +16,9 @@
 
 package org.opensingular.form.type.util;
 
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SInfoType;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -72,14 +72,12 @@ public class STypeYearMonth extends STypeSimple<SIYearMonth, YearMonth> {
 
     @Override
     public YearMonth fromString(String value) {
-        if (StringUtils.isBlank(value)) {    return null;    }
-        return YearMonth.parse((String)value, formatter());
+        return StringUtils.isBlank(value) ? null : YearMonth.parse(value, formatter());
     }
 
     @Override
     protected String toStringPersistence(YearMonth originalValue) {
-        if (originalValue == null) {    return null;    }
-        return originalValue.format(formatter());
+        return originalValue == null ? null : originalValue.format(formatter());
     }
 
     @Override

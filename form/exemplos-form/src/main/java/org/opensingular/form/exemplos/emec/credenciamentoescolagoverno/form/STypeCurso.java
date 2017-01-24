@@ -27,8 +27,7 @@ public class STypeCurso extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
+
         addFieldString("grau", true)
             .selectionOf("Sequencial", "Bacharelado", "Licenciatura", "Curso Superior de Tecnologia")
             .withRadioView()

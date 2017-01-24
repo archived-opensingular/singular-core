@@ -16,10 +16,16 @@
 
 package org.opensingular.flow.core;
 
-import java.io.Serializable;
-
 @FunctionalInterface
-public interface StartedTaskListener extends Serializable {
+public interface StartedTaskListener  {
 
     public void onTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask);
+
+    default boolean isEmptyTransition(ExecutionContext execucaoTask) {
+        return execucaoTask.getTransition() == null;
+    }
+
+    default boolean isTransition(ExecutionContext execucaoTask, String transitionName) {
+        return transitionName.equalsIgnoreCase(execucaoTask.getTransition());
+    }
 }

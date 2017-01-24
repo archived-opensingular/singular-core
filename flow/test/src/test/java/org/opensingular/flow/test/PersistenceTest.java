@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 public abstract class PersistenceTest extends TestSupport {
 
     @Before
-    public void setup() {
+    public void setUp() {
         assertNotNull(mbpmBean);
         Flow.setConf(mbpmBean, true);
     }

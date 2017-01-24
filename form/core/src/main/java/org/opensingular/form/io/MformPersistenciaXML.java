@@ -16,20 +16,21 @@
 
 package org.opensingular.form.io;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.*;
+import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.internal.xml.MDocument;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
-import org.opensingular.form.type.core.annotation.STypeAnnotationList;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,8 @@ public class MformPersistenciaXML {
 
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
+
+    private MformPersistenciaXML() {}
 
     /**
      * Cria uma instância não passível de serialização para do tipo com o
@@ -65,7 +68,8 @@ public class MformPersistenciaXML {
      * Cria uma instância passível de serialização para o tipo referenciado e a
      * factory de documento informada.
      */
-    public static <T extends SInstance> T fromXML(RefType refType, String xmlString, SDocumentFactory documentFactory) {
+    public static <T extends SInstance> T fromXML(RefType refType, @Nonnull String xmlString,
+            @Nonnull SDocumentFactory documentFactory) {
         return fromXML(refType, parseXml(xmlString), documentFactory);
     }
 
@@ -73,15 +77,18 @@ public class MformPersistenciaXML {
      * Cria uma instância passível de serialização para o tipo referenciado e a
      * factory de documento informada.
      */
-    public static <T extends SInstance> T fromXML(RefType refType, MElement xml, SDocumentFactory documentFactory) {
+    public static <T extends SInstance> T fromXML(@Nonnull RefType refType, @Nullable MElement xml,
+            @Nonnull SDocumentFactory documentFactory) {
         SInstance novo = documentFactory.createInstance(refType, false);
         return (T) fromXMLInterno(novo, xml);
     }
 
     /** Preenche a instância criada com o xml fornecido. */
-    private static <T extends SInstance> T fromXMLInterno(T novo, MElement xml) {
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T novo, @Nullable MElement xml) {
         Integer lastId = 0;
-        if(xml !=  null) {  lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID); }
+        if (xml != null) {
+            lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID);
+        }
 
         // Colocar em modo de não geraçao de IDs
         novo.getDocument().setLastId(-1);
@@ -114,7 +121,7 @@ public class MformPersistenciaXML {
         return id;
     }
 
-    private static void fromXML(SInstance instance, MElement xml) {
+    private static void fromXML(@Nonnull SInstance instance, @Nullable MElement xml) {
         if (xml == null)
             return; // Não precisa fazer nada
         instance.clearInstance();
@@ -186,7 +193,7 @@ public class MformPersistenciaXML {
         return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).toXML(instancia);
     }
 
-    final static MElement toXML(MElement pai, String nomePai, SInstance instancia, PersistenceBuilderXML builder) {
+    static MElement toXML(MElement pai, String nomePai, SInstance instancia, PersistenceBuilderXML builder) {
 
         MDocument xmlDocument = (pai == null) ? MDocument.newInstance() : pai.getMDocument();
         ConfXMLGeneration conf = new ConfXMLGeneration(builder, xmlDocument);
@@ -211,7 +218,7 @@ public class MformPersistenciaXML {
         return xmlResultado;
     }
 
-    final static MElement parseXml(String xmlString) {
+    static MElement parseXml(String xmlString) {
         try {
             if (StringUtils.isBlank(xmlString)) {
                 return null;
@@ -226,36 +233,47 @@ public class MformPersistenciaXML {
      * Carrega na instance informada as anotação contidas no xml, fazendo
      * parser do mesmo antes.
      *
-     * @param xmlString
-     *            Se nulo ou em branco, não faz carga
+     * @param xmlString Se nulo ou em branco, não faz carga
      */
+    @Deprecated
     public static void annotationLoadFromXml(SInstance instance, String xmlString) {
-        annotationLoadFromXml(instance, parseXml(xmlString));
+        annotationLoadFromXml(instance.getDocument(), xmlString);
     }
 
     /**
      * Carrega na instance informada as anotação contidas no xml, fazendo
      * parser do mesmo antes.
      *
-     * @param xmlAnnotations
-     *            Se nulo, não faz carga
+     * @param xmlAnnotations Se nulo, não faz carga
      */
+    @Deprecated
     public static void annotationLoadFromXml(SInstance instance, MElement xmlAnnotations) {
+        annotationLoadFromXml(instance.getDocument(), xmlAnnotations);
+    }
+
+    /**
+     * Carrega na instance informada as anotação contidas no xml, fazendo
+     * parser do mesmo antes.
+     *
+     * @param xmlString Se nulo ou em branco, não faz carga
+     */
+    public static void annotationLoadFromXml(@Nonnull SDocument document, @Nullable String xmlString) {
+        annotationLoadFromXml(document, parseXml(xmlString));
+    }
+
+    /**
+     * Carrega na instance informada as anotação contidas no xml, fazendo
+     * parser do mesmo antes.
+     *
+     * @param xmlAnnotations Se nulo, não faz carga
+     */
+    public static void annotationLoadFromXml(@Nonnull SDocument document, @Nullable MElement xmlAnnotations) {
         if (xmlAnnotations == null) {
             return;
         }
-        SDocument document = instance.getDocument();
-        SIList<SIAnnotation> iAnnotations;
-        if (document.getRootRefType().isPresent()) {
-            RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
-            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
-                    document.getDocumentFactoryRef().get());
-        } else {
-            //Carrega a informações se as referências de persistência
-            STypeAnnotationList typeAnnotation = document.getRoot().getDictionary().getType(STypeAnnotationList.class);
-            iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(typeAnnotation, xmlAnnotations);
-        }
-        instance.asAtrAnnotation().loadAnnotations(iAnnotations);
+        SIList<SIAnnotation> iAnnotations = DocumentAnnotations.newAnnotationList(document, false);
+        fromXMLInterno(iAnnotations, xmlAnnotations);
+        document.getDocumentAnnotations().loadAnnotations(iAnnotations);
     }
 
     /** Gera um XML representando as anotações se existirem. */
@@ -270,12 +288,17 @@ public class MformPersistenciaXML {
 
     /** Gera um XML representando as anotações se existirem. */
     public static Optional<MElement> annotationToXml(SInstance instance, String classifier) {
-        AtrAnnotation annotatedInstance = instance.asAtrAnnotation();
-        if (instance.getDocument().hasAnnotations()) {
+        return annotationToXml(instance.getDocument(), classifier);
+    }
+
+    /** Gera um XML representando as anotações se existirem. */
+    public static Optional<MElement> annotationToXml(SDocument document, String classifier) {
+        DocumentAnnotations documentAnnotations = document.getDocumentAnnotations();
+        if (documentAnnotations.hasAnnotations()) {
             if (classifier != null) {
-                return Optional.of(toXML(annotatedInstance.persistentAnnotationsClassified(classifier)));
+                return Optional.of(toXML(documentAnnotations.persistentAnnotationsClassified(classifier)));
             } else {
-                return Optional.of(toXML(annotatedInstance.persistentAnnotations()));
+                return Optional.of(toXML(documentAnnotations.getAnnotations()));
             }
         }
         return Optional.empty();
@@ -293,30 +316,42 @@ public class MformPersistenciaXML {
                 newElement = conf.createMElement(instance);
             }
         } else if (instance instanceof SIComposite) {
-            for (SInstance child : ((SIComposite) instance).getFields()) {
-                MElement xmlChild = toXML(conf, child);
-                if (xmlChild != null) {
-                    if (newElement == null) {
-                        newElement = conf.createMElement(instance);
-                    }
-                    newElement.appendChild(xmlChild);
-                }
-            }
+            newElement = toXMLChildren(conf, instance, newElement, ((SIComposite) instance).getFields());
         } else if (instance instanceof SIList) {
-            for (SInstance child : (SIList<?>) instance) {
-                MElement xmlChild = toXML(conf, child);
-                if (xmlChild != null) {
-                    if (newElement == null) {
-                        newElement = conf.createMElement(instance);
-                    }
-                    newElement.appendChild(xmlChild);
-                }
-            }
+            newElement = toXMLChildren(conf, instance, newElement, ((SIList<?>) instance).getValues());
         } else {
             throw new SingularFormException("Instancia da classe " + instance.getClass().getName() + " não suportada",
                     instance);
         }
         //Verifica se há alguma informação lida anteriormente que deva ser grava novamente
+        newElement = toXMLOldElementWithoutType(conf, instance, newElement);
+
+        return newElement;
+    }
+
+    /**
+     * Gera no XML a os elemento filhos (senão existirem).
+     */
+    private static MElement toXMLChildren(ConfXMLGeneration conf, SInstance instance, MElement newElement,
+            List<? extends SInstance> children) {
+        for (SInstance child : children) {
+            MElement xmlChild = toXML(conf, child);
+            if (xmlChild != null) {
+                if (newElement == null) {
+                    newElement = conf.createMElement(instance);
+                }
+                newElement.appendChild(xmlChild);
+            }
+        }
+        return newElement;
+    }
+
+    /**
+     * Escreve para o XML os elemento que foram lidos do XML anterior e foram preservados apesar de não terem um type
+     * correspondente. Ou seja, mantêm campo "fantasmas" entre leituras e gravações.
+     */
+    private static MElement toXMLOldElementWithoutType(ConfXMLGeneration conf, SInstance instance,
+            MElement newElement) {
         List<MElement> unreadInfo = InternalAccess.internal(instance).getUnreadInfo();
         if (! unreadInfo.isEmpty()) {
             if (newElement == null) {

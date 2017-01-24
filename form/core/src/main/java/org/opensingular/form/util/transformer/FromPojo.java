@@ -26,9 +26,9 @@ import java.util.Map;
 
 public class FromPojo<T> {
 
-    protected STypeComposite<? extends SIComposite> target;
+    protected final STypeComposite<? extends SIComposite> target;
     private   T                                     pojo;
-    protected Map<SType, FromPojoFiedlBuilder> mappings = new LinkedHashMap<>();
+    protected final Map<SType, FromPojoFiedlBuilder> mappings = new LinkedHashMap<>();
 
     public FromPojo(STypeComposite<? extends SIComposite> target, T pojo) {
         this.target = target;

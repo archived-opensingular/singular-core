@@ -26,7 +26,6 @@ public interface AnnotationKey extends Serializable {
      * Constante textual que indentifica a anotação
      * O valor deve ser representativo do ponto de vista
      * do negócio
-     * @return
      */
     public String getClassifier();
 

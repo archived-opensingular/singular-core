@@ -17,12 +17,9 @@
 package org.opensingular.form.view;
 
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.SingularFormException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ import java.util.List;
  */
 public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSViewList> extends AbstractSViewListWithControls<SELF> {
 
-    private List<Column> columns = new ArrayList<>();
+    private final List<Column> columns = new ArrayList<>();
 
     /**
      * Adiciona uma coluna cujo conteúdo será o subcampo informado. O label da
@@ -89,9 +86,6 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * Adiciona uma coluna cujo o conteúdo será calculado dinamicamente para
      * cada instância de cada linha mediante o template do FreeMarker informado.
      * A função recebe a instância da linha inteira (o tipo da lista)
-     * 
-     * @param customLabel
-     * @param freeMarkerTemplateString
      * @see FormFreemarkerUtil
      */
     public final SELF col(String customLabel, String freeMarkerTemplateString) {

@@ -16,25 +16,14 @@
 
 package org.opensingular.form.util.transformer;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SISimple;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SingularFormException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.opensingular.form.*;
+import org.opensingular.form.document.SDocument;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,10 +31,10 @@ import java.util.stream.Collectors;
  */
 public class Value {
 
-    private SInstance instancia;
+    private final SInstance instance;
 
-    public Value(SInstance instancia) {
-        this.instancia = instancia;
+    public Value(SInstance instance) {
+        this.instance = instance;
     }
 
     private static SInstance getInstance(SInstance instancia, SType target) {
@@ -56,7 +45,6 @@ public class Value {
      * @param current instancia a partir da qual será buscada a instancia mais
      *                proxima do tipo simples tipo
      * @param tipo    um tipo simples
-     * @param <T>
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
      * encontrado a partir da instancia current informada
      */
@@ -64,7 +52,7 @@ public class Value {
         return Value.of(current, tipo) != null;
     }
 
-    public static <T> boolean notNull(SInstance current, STypeComposite tipo) {
+    public static boolean notNull(SInstance current, STypeComposite tipo) {
         if (current != null && tipo != null) {
             SIComposite targetInstance = (SIComposite) getInstance(current, tipo);
             return Value.notNull(targetInstance);
@@ -73,7 +61,7 @@ public class Value {
     }
 
 
-    public static <T> boolean notNull(SInstance current, STypeList tipo) {
+    public static boolean notNull(SInstance current, STypeList tipo) {
         if (current != null && tipo != null) {
             SIList instanciaLista = (SIList) getInstance(current, tipo);
             return Value.notNull(instanciaLista);
@@ -81,24 +69,20 @@ public class Value {
         return false;
     }
 
-    public static <T> boolean notNull(SIList instanciaLista) {
+    public static boolean notNull(SIList instanciaLista) {
         return instanciaLista != null && !instanciaLista.isEmpty();
     }
 
-    public static <T> boolean notNull(SIComposite instanciaComposta) {
+    public static boolean notNull(SIComposite instanciaComposta) {
         return instanciaComposta != null && !instanciaComposta.isEmptyOfData();
     }
 
-    public static <T> boolean notNull(SISimple instanciaSimples) {
+    public static boolean notNull(SISimple instanciaSimples) {
         return instanciaSimples != null && !instanciaSimples.isEmptyOfData();
     }
 
     /**
      * Retorna o valor de uma instancia simples
-     *
-     * @param instanciaSimples
-     * @param <T>
-     * @return
      */
     public static <T> T of(SISimple<?> instanciaSimples) {
         if (instanciaSimples != null) {
@@ -114,7 +98,7 @@ public class Value {
         return null;
     }
 
-    public static <T> boolean notNull(SInstance instancia) {
+    public static boolean notNull(SInstance instancia) {
         if (instancia instanceof SIComposite) {
             return Value.notNull((SIComposite) instancia);
         } else if (instancia instanceof SISimple) {
@@ -129,10 +113,6 @@ public class Value {
     /**
      * Retorna o valor de uma instancia filha simples a partir da instancia
      * composta informada
-     *
-     * @param instanciaComposta
-     * @param path
-     * @return
      */
     public static <T extends Serializable> T of(SInstance instanciaComposta, String...path) {
         if (instanciaComposta instanceof SIComposite) {
@@ -144,6 +124,21 @@ public class Value {
             }
         }
         return null;
+    }
+
+    public static <T extends Serializable> Optional<T> ofOpt(SInstance instanciaComposta, String...path) {
+        if (instanciaComposta instanceof SIComposite) {
+            Optional<SInstance> campoOpt = ((SIComposite) instanciaComposta).getFieldOpt(Arrays.stream(path).collect(Collectors.joining(".")));
+            if (campoOpt.isPresent()) {
+                SInstance campo = campoOpt.get();
+                if (campo instanceof SISimple) {
+                    return Optional.ofNullable(Value.of((SISimple<T>) campo));
+                } else if (campo instanceof SIList) {
+                    return Optional.ofNullable((T) ofList((SIList) campo));
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     public static String stringValueOf(SInstance instanciaComposta, String path) {
@@ -166,12 +161,7 @@ public class Value {
 
     /**
      * Retorna o valor de uma instancia de um tipo simples que pode ser
-     * alcançada a partir do {@paramref instancia} fornecido
-     *
-     * @param instancia
-     * @param tipo
-     * @param <T>
-     * @return
+     * alcançada a partir do {@param instancia} fornecido
      */
     public static <T extends Serializable> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
         if (instancia != null && tipo != null) {
@@ -185,11 +175,8 @@ public class Value {
 
     /**
      * Configura os valores contidos em value na MInstancia passara como
-     * parametro recursivamente. Usualmente value é o retorno do metodo
+     * parametro recursivamente. Usualmente content é o retorno do metodo
      * dehydrate.
-     *
-     * @param instancia
-     * @param content
      */
     public static void hydrate(SInstance instancia, Content content) {
         if (instancia != null) {
@@ -266,13 +253,19 @@ public class Value {
     }
 
     public <T extends Serializable> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.of(instancia, tipo);
+        return Value.of(instance, tipo);
     }
 
     public <T extends Serializable> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.notNull(instancia, tipo);
+        return Value.notNull(instance, tipo);
     }
 
+    /** Copia os valores de um formulário para outro. Presupõem que os formulários são do mesmo tipo. */
+    public static void copyValues(SDocument origin, SDocument destiny) {
+        copyValues(origin.getRoot(), destiny.getRoot());
+    }
+
+    /** Copia os valores de uma instância para outra. Presupõem que as instâncias são do mesmo tipo. */
     public static void copyValues(SInstance origin, SInstance target) {
         target.clearInstance();
         hydrate(target, dehydrate(origin));
@@ -298,10 +291,11 @@ public class Value {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-
-            if (o == null || getClass() != o.getClass()) return false;
-
+            if (this == o) {
+                return true;
+            } else if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Content content = (Content) o;
 
             return new EqualsBuilder()

@@ -111,7 +111,7 @@ public class TaskInstance {
         IEntityTaskInstance e = getEntityTaskInstance();
         if(versionStamp != null){
             if(versionStamp < e.getVersionStamp()){
-                throw new RuntimeException("Your Task Version Number is Outdated.");
+                throw new SingularFlowException("Your Task Version Number is Outdated.");
             }
         }
         return (X) e;
@@ -210,9 +210,11 @@ public class TaskInstance {
             return;
         }
 
+        IEntityTaskInstance entityTaskInstance = getEntityTaskInstance(versionStamp);
+
         endLastAllocation();
 
-        getPersistenceService().relocateTask(getEntityTaskInstance(versionStamp), user);
+        getPersistenceService().relocateTask(entityTaskInstance, user);
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 

@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SISimple;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
@@ -44,7 +45,7 @@ public class STypeFormKey extends STypeSimple<SISimple<FormKey>, FormKey> {
 
     @Override
     public FormKey fromStringPersistence(String originalValue) {
-        if (originalValue == null) {
+        if (StringUtils.isEmpty(originalValue)) {
             return null;
         }
         int pos = originalValue.indexOf(SEPARATOR);

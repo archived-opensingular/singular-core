@@ -16,26 +16,18 @@
 
 package org.opensingular.singular.form.showcase.component;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-
+import com.google.common.base.Throwables;
 import org.apache.wicket.util.string.StringValue;
+import org.opensingular.form.SPackage;
+import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
+import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
-import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.SPackage;
-import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple;
-import org.opensingular.singular.form.showcase.component.form.xsd.XsdCaseSimple2;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import java.io.Serializable;
+import java.util.*;
 
 @Service
 public class ShowCaseTable {
@@ -43,7 +35,7 @@ public class ShowCaseTable {
     private final Map<String, ShowCaseGroup> formGroups = new LinkedHashMap<>();
     private final Map<String, ShowCaseGroup> studioGroups = new LinkedHashMap<>();
 
-    private final Map<Group, List<Class<?>>> casePorGrupo = new LinkedHashMap<>();
+    private final Map<Group, List<Class<?>>> casePorGrupo = new EnumMap<>(Group.class);
 
     public ShowCaseTable() {
 
@@ -93,50 +85,46 @@ public class ShowCaseTable {
         final ShowCaseGroup group = addGroup(groupEnum.getName(), groupEnum.getIcone(), groupEnum.getTipo());
 
         final List<Class<?>> classes = casePorGrupo.get(groupEnum);
-        if (classes != null) {
-            for (Class<?> caseClass : classes) {
-                final CaseItem caseItem = caseClass.getAnnotation(CaseItem.class);
-                CaseBase caseBase = null;
-                if (SPackage.class.isAssignableFrom(caseClass)) {
-                    caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+        if (classes == null) {
+            return;
+        }
+        for (Class<?> caseClass : classes) {
+            final CaseItem caseItem = caseClass.getAnnotation(CaseItem.class);
+            CaseBase caseBase = null;
+            if (SPackage.class.isAssignableFrom(caseClass)) {
+                caseBase = new CaseBaseForm(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
 //                } else if (CollectionDefinition.class.isAssignableFrom(caseClass)) {
-//                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.annotation());
+//                    caseBase = new CaseBaseStudio(caseClass, caseItem.componentName(), caseItem.subCaseName(), caseItem.getAnnotation());
 //                } else {
 //                    throw new RuntimeException("Apenas classes do tipo " + SPackage.class.getName() + " e " + CollectionDefinition.class.getName() + " podem ser anotadas com @" + CaseItem.class.getName());
-                }
+            }
 
-                if (!caseItem.customizer().isInterface()) {
-                    createInstance(caseItem).customize(caseBase);
+            if (!caseItem.customizer().isInterface()) {
+                createInstance(caseItem).customize(caseBase);
+            }
+            for (Resource resource : caseItem.resources()) {
+                Optional<ResourceRef> resourceRef;
+                if (resource.extension().isEmpty()) {
+                    resourceRef = ResourceRef.forSource(resource.value());
+                } else {
+                    resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
                 }
-                for (Resource resource : caseItem.resources()) {
-                    Optional<ResourceRef> resourceRef;
-                    if (resource.extension().isEmpty()) {
-                        resourceRef = ResourceRef.forSource(resource.value());
-                    } else {
-                        resourceRef = ResourceRef.forClassWithExtension(resource.value(), resource.extension());
-                    }
-                    if (caseBase != null && resourceRef.isPresent()) {
-                        caseBase.getAditionalSources().add(resourceRef.get());
-                    }
-                }
-                if (caseBase != null) {
-                    group.addCase(caseBase);
+                if (caseBase != null && resourceRef.isPresent()) {
+                    caseBase.getAditionalSources().add(resourceRef.get());
                 }
             }
+            if (caseBase != null) {
+                group.addCase(caseBase);
+            }
         }
-
     }
 
     private CaseCustomizer createInstance(CaseItem caseItem) {
         try {
             return caseItem.customizer().newInstance();
-        } catch (InstantiationException e) {
-
-        } catch (IllegalAccessException e) {
-
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw Throwables.propagate(e);
         }
-
-        return null;
     }
 
     private ShowCaseGroup addGroup(String groupName, Icone icon, ShowCaseType tipo) {

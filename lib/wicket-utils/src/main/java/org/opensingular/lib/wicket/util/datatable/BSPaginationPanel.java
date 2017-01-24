@@ -16,12 +16,6 @@
 
 package org.opensingular.lib.wicket.util.datatable;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -31,6 +25,12 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageableItems;
 import org.apache.wicket.markup.html.panel.Panel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class BSPaginationPanel extends Panel {
 
@@ -82,7 +82,7 @@ public class BSPaginationPanel extends Panel {
         return 2;
     }
     private List<Long> getMiddlePagesRange() {
-        long rangeLength = Math.min(1 + (getMiddlePagesRadius() * 2), getPageCount());
+        long rangeLength = Math.min(1 + (getMiddlePagesRadius() * 2L), getPageCount());
         List<Long> list = new ArrayList<>();
         long start = Math.min(Math.max(0, getCurrentPage() - getMiddlePagesRadius()), getPageCount() - rangeLength);
         for (long i = 0; i < rangeLength; i++)
@@ -137,7 +137,7 @@ public class BSPaginationPanel extends Panel {
         }
         @Override
         protected long getTargetPage() {
-            return getPageable().getCurrentPage() + pageDelta;
+            return getPageable().getCurrentPage() + ((long) pageDelta);
         }
         @Override
         public boolean isEnabledInHierarchy() {

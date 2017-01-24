@@ -16,15 +16,14 @@
 
 package org.opensingular.lib.wicket.util.util;
 
-import java.io.Serializable;
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
-
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.wicket.util.validator.BaseValidator;
 import org.opensingular.lib.wicket.util.validator.NotFutureDateValidator;
+
+import java.io.Serializable;
 
 @SuppressWarnings({ "serial" })
 public interface IValidatorsMixin extends Serializable {
@@ -34,7 +33,7 @@ public interface IValidatorsMixin extends Serializable {
             @Override
             public void validate(IValidatable<T> validatable) {
                 if (isInvalidTest.test(validatable.getValue())) {
-                    validatable.error(validationError(errorMessage));
+                    validatable.error(BaseValidator.validationError(errorMessage));
                 }
             }
         };

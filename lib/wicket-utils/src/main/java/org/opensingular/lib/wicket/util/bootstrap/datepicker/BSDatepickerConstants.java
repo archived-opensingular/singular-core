@@ -24,6 +24,8 @@ import org.apache.wicket.MetaDataKey;
  * @author ronaldtm
  */
 public class BSDatepickerConstants {
+
+    private BSDatepickerConstants() {}
     
     public static final MetaDataKey<MarkupContainer> KEY_CONTAINER = new MetaDataKey<MarkupContainer>() {};
     public static final String JS_CHANGE_EVENT = "singularChangeDate";

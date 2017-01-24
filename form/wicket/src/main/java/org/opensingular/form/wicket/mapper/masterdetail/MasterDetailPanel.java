@@ -25,13 +25,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeSimple;
+import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.validation.IValidationError;
@@ -45,8 +39,9 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.mapper.AbstractListaMapper;
-import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.MapperCommons;
+import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
+import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
@@ -65,12 +60,7 @@ import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -156,10 +146,18 @@ public class MasterDetailPanel extends Panel {
     }
 
     private Label newHeadLabel() {
-        AtrBasic       attr       = lista.getObject().asAtr();
-        IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
+
+        final AtrBasic       attr       = lista.getObject().asAtr();
+        final IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
+
         ctx.configureContainer(labelModel);
-        return new Label("headLabel", labelModel);
+
+        Label label = new Label("headLabel", labelModel);
+
+        if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
+            label.add(new RequiredListLabelClassAppender(ctx.getModel()));
+        }
+        return label;
     }
 
     private AjaxLink<String> newAddAjaxLink() {
@@ -197,8 +195,7 @@ public class MasterDetailPanel extends Panel {
             final SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
             if (tipo instanceof STypeSimple) {
                 columnTypes.add(new ColumnType(tipo.getName(), null));
-            }
-            if (tipo instanceof STypeComposite) {
+            } else if (tipo.isComposite()) {
                 ((STypeComposite<?>) tipo)
                         .getFields()
                         .stream()
@@ -215,7 +212,7 @@ public class MasterDetailPanel extends Panel {
 
         for (ColumnType columnType : columnTypes) {
             final String         label      = columnType.getCustomLabel(model.getObject());
-            final String         typeName = columnType.getTypeName();
+            final String         typeName   = columnType.getTypeName();
             final IModel<String> labelModel = $m.ofValue(label);
             propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnType.getDisplayFunction());
         }
@@ -271,7 +268,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
-        Integer count = IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
+        IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
                 .styleClasses(Model.of("red"))
@@ -313,7 +310,7 @@ public class MasterDetailPanel extends Panel {
 
             @Override
             public boolean isVisible(IModel<SInstance> model) {
-                return model.getObject().hasNestedValidationErrors();
+                return model != null && model.getObject() != null && model.getObject().hasNestedValidationErrors();
             }
         };
     }
@@ -356,7 +353,7 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getMInstancia() {
-                                return toInstance.apply((SIComposite) rowModel.getObject());
+                        return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };
             }

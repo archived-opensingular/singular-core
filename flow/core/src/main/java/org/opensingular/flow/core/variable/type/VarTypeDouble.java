@@ -31,7 +31,7 @@ public class VarTypeDouble implements VarType {
 
     @Override
     public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValor(), varInstance.getDefinicao());
+        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
     }
 
     @Override
@@ -41,6 +41,6 @@ public class VarTypeDouble implements VarType {
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Double.toString((Double) varInstance.getValor());
+        return Double.toString((Double) varInstance.getValue());
     }
 }

@@ -19,7 +19,7 @@ package org.opensingular.form.view;
 @SuppressWarnings("serial")
 public class SViewSelectionByRadio extends SViewSelectionBySelect {
 
-    public static enum Layout {
+    public enum Layout {
         VERTICAL,
         HORIZONTAL
     }

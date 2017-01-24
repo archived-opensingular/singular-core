@@ -101,110 +101,110 @@ public interface IBSGridCol<THIS extends Component> {
 
     default THIS xs(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, XS, colspan);
+        return BS.set(this, XS, colspan);
     }
 
     default THIS sm(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, SM, colspan);
+        return BS.set(this, SM, colspan);
     }
 
     default THIS md(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, MD, colspan);
+        return BS.set(this, MD, colspan);
     }
 
     default THIS lg(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, LG, colspan);
+        return BS.set(this, LG, colspan);
     }
 
     default int xs() {
-        return $.get(this, XS);
+        return BS.get(this, XS);
     }
 
     default int sm() {
-        return $.get(this, SM);
+        return BS.get(this, SM);
     }
 
     default int md() {
-        return $.get(this, MD);
+        return BS.get(this, MD);
     }
 
     default int lg() {
-        return $.get(this, LG);
+        return BS.get(this, LG);
     }
 
     default THIS xsOffset(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, XS_OFFSET, colspan);
+        return BS.set(this, XS_OFFSET, colspan);
     }
 
     default THIS smOffset(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, SM_OFFSET, colspan);
+        return BS.set(this, SM_OFFSET, colspan);
     }
 
     default THIS mdOffset(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, MD_OFFSET, colspan);
+        return BS.set(this, MD_OFFSET, colspan);
     }
 
     default THIS lgOffset(int colspan) {
         assert colspan <= MAX_COLS;
-        return $.set(this, LG_OFFSET, colspan);
+        return BS.set(this, LG_OFFSET, colspan);
     }
 
     default int xsOffset() {
-        return $.get(this, XS_OFFSET);
+        return BS.get(this, XS_OFFSET);
     }
 
     default int smOffset() {
-        return $.get(this, SM_OFFSET);
+        return BS.get(this, SM_OFFSET);
     }
 
     default int mdOffset() {
-        return $.get(this, MD_OFFSET);
+        return BS.get(this, MD_OFFSET);
     }
 
     default int lgOffset() {
-        return $.get(this, LG_OFFSET);
+        return BS.get(this, LG_OFFSET);
     }
 
     default THIS xsHidden(boolean hidden) {
-        return $.set(this, XS_HIDDEN, hidden ? 1 : null);
+        return BS.set(this, XS_HIDDEN, hidden ? 1 : null);
     }
 
     default THIS smHidden(boolean hidden) {
-        return $.set(this, SM_HIDDEN, hidden ? 1 : null);
+        return BS.set(this, SM_HIDDEN, hidden ? 1 : null);
     }
 
     default THIS mdHidden(boolean hidden) {
-        return $.set(this, MD_HIDDEN, hidden ? 1 : null);
+        return BS.set(this, MD_HIDDEN, hidden ? 1 : null);
     }
 
     default THIS lgHidden(boolean hidden) {
-        return $.set(this, LG_HIDDEN, hidden ? 1 : null);
+        return BS.set(this, LG_HIDDEN, hidden ? 1 : null);
     }
 
     default boolean xsHidden() {
-        return $.get(this, XS_HIDDEN) == 1;
+        return BS.get(this, XS_HIDDEN) == 1;
     }
 
     default boolean smHidden() {
-        return $.get(this, SM_HIDDEN) == 1;
+        return BS.get(this, SM_HIDDEN) == 1;
     }
 
     default boolean mdHidden() {
-        return $.get(this, MD_HIDDEN) == 1;
+        return BS.get(this, MD_HIDDEN) == 1;
     }
 
     default boolean lgHidden() {
-        return $.get(this, LG_HIDDEN) == 1;
+        return BS.get(this, LG_HIDDEN) == 1;
     }
 
     enum InternoNaoUse {
-        $;
+        BS;
         static final String LG = "lg";
         static final String MD = "md";
         static final String SM = "sm";
@@ -221,10 +221,10 @@ public interface IBSGridCol<THIS extends Component> {
         final MetaDataKey<HashMap<String, Integer>> COL_DATA = new MetaDataKey<HashMap<String, Integer>>() {
         };
         HashMap<String, Integer> getColData(Component comp) {
-            HashMap<String, Integer> colData = comp.getMetaData(InternoNaoUse.$.COL_DATA);
+            HashMap<String, Integer> colData = comp.getMetaData(InternoNaoUse.BS.COL_DATA);
             if (colData == null) {
                 colData = new HashMap<>(1);
-                comp.setMetaData(InternoNaoUse.$.COL_DATA, colData);
+                comp.setMetaData(InternoNaoUse.BS.COL_DATA, colData);
             }
             return colData;
         }

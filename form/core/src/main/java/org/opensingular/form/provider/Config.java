@@ -73,8 +73,8 @@ public class Config {
 
     public static class Column implements Serializable {
 
-        private String property;
-        private String label;
+        private final String property;
+        private final String label;
 
         public static Column of(String property, String label) {
             return new Column(property, label);

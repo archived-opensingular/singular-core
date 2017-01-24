@@ -16,17 +16,13 @@
 
 package org.opensingular.form.io;
 
-import org.opensingular.form.STypeList;
-import org.opensingular.form.SingularFormException;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.*;
 import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.STypeComposite;
 import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SType;
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
 
 import java.io.InputStream;
@@ -75,48 +71,16 @@ public class FormXsdUtil {
     private static void readXsd(SType<?> typeContext, ElementReader parent) {
         for (ElementReader element : parent) {
             if (element.isTagXsdElement()) {
-                String name = element.getAttrRequired("name");
-                SType<?> typeOfNewType = detectType(element);
-                SType<?> newType;
-                if (typeContext == null) {
-                    if (element.isList()) {
-                        throw new SingularFormException(element.errorMsg("Tipo raiz não esperado como lista"));
-                    }
-                    newType = parent.getPkg().createType(name, typeOfNewType);
-                    readXsd(newType, element);
-                } else if (typeContext instanceof STypeComposite) {
-                    if (element.isList()) {
-                        if (typeOfNewType.getClass() == STypeComposite.class) {
-                            newType = ((STypeComposite) typeContext).addFieldListOfComposite(name + "List", name);
-                        } else {
-                            newType = ((STypeComposite) typeContext).addFieldListOf(name, typeOfNewType);
-                        }
-                        readXsd(((STypeList) newType).getElementsType(), element);
-                    } else {
-                        newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
-                        readXsd(newType, element);
-                    }
-                } else {
-                    element.checkUnexpectedNodeFor(typeContext);
-                    continue;
-                }
-                readXsdAttributes(element, newType);
+                readXsdElementDefinition(typeContext, parent, element);
             } else if (element.isTagComplexType() || element.isTagSequence()) {
                 if (typeContext instanceof STypeComposite) {
                     readXsd(typeContext, element);
                 } else {
                     element.checkUnexpectedNodeFor(typeContext);
-                    continue;
                 }
             } else if (element.isTagAttribute()) {
-                if (!(typeContext instanceof STypeComposite)) {
-                    element.checkUnexpectedNodeFor(typeContext);
-                    continue;
-                }
-                String name = element.getAttrRequired("name");
-                SType<?> typeOfNewType = detectType(element, element.getAttrRequired("type"));
-                SType<?> newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
-                readXsdAttributes(element, newType);
+                readXsdAtributeDefinition(element, typeContext);
+                continue;
 
             } else {
                 element.checkUnknownNodeTreatment();
@@ -124,40 +88,86 @@ public class FormXsdUtil {
         }
     }
 
-    private static void readXsdAttributes(ElementReader element, SType<?> newType) {
+    private static void readXsdElementDefinition(SType<?> typeContext, ElementReader parent, ElementReader element) {
+        String name = element.getAttrRequired("name");
+        SType<?> typeOfNewType = detectType(element);
+        SType<?> newType;
+        if (typeContext == null) {
+            if (element.isList()) {
+                throw new SingularFormException(element.errorMsg("Tipo raiz não esperado como lista"));
+            }
+            newType = parent.getPkg().createType(name, typeOfNewType);
+            readXsd(newType, element);
+        } else if (typeContext.isComposite()) {
+            if (element.isList()) {
+                if (typeOfNewType.getClass() == STypeComposite.class) {
+                    newType = ((STypeComposite) typeContext).addFieldListOfComposite(name + "List", name);
+                } else {
+                    newType = ((STypeComposite) typeContext).addFieldListOf(name, typeOfNewType);
+                }
+                readXsd(((STypeList) newType).getElementsType(), element);
+            } else {
+                newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
+                readXsd(newType, element);
+            }
+        } else {
+            element.checkUnexpectedNodeFor(typeContext);
+            return;
+        }
+        readXsdOwnAttributes(element, newType);
+    }
+
+    private static void readXsdAtributeDefinition(ElementReader element, SType<?> typeContext) {
+        if (!typeContext.isComposite()) {
+            element.checkUnexpectedNodeFor(typeContext);
+            return;
+        }
+        String name = element.getAttrRequired("name");
+        SType<?> typeOfNewType = detectType(element, element.getAttrRequired("type"));
+        SType<?> newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
+        readXsdOwnAttributes(element, newType);
+    }
+
+    private static void readXsdOwnAttributes(ElementReader element, SType<?> newType) {
         if (element.isTagAttribute() ) {
             String value = element.getAttr("use");
             if (value != null) {
                 newType.asAtr().required("required".equals(value));
             }
         } else {
-            Integer minOccurs = element.getAttrInteger("minOccurs");
-            if (minOccurs == null || minOccurs.intValue() == 1) {
-                newType.asAtr().required();
-                if (newType instanceof STypeList) {
-                    ((STypeList) newType).withMiniumSizeOf(1);
-                }
-            } else if (minOccurs.intValue() > 1) {
-                if (newType.isList()) {
-                    ((STypeList) newType).withMiniumSizeOf(minOccurs.intValue());
-                } else {
-                    throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"));
-                }
+            readXsdOwnAttributeMinOccurs(element, newType);
+            readXsdOwnAttributeMaxOccurs(element, newType);
+        }
+    }
+
+    private static void readXsdOwnAttributeMinOccurs(ElementReader element, SType<?> newType) {
+        Integer minOccurs = element.getAttrInteger("minOccurs");
+        if (minOccurs == null || minOccurs.intValue() == 1) {
+            newType.asAtr().required();
+            if (newType.isList()) {
+                ((STypeList) newType).withMiniumSizeOf(1);
             }
-            String value = element.getAttr("maxOccurs");
-            if (value != null) {
-                if ("unbounded".equalsIgnoreCase(value)) {
-                    if (!newType.isList()) {
-                        throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
-                    }
-                } else {
-                    int maxOccurs = Integer.parseInt(value);
-                    if (newType.isList()) {
-                        ((STypeList) newType).withMaximumSizeOf(maxOccurs);
-                    } else if (maxOccurs != 1) {
-                        throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
-                    }
-                }
+        } else if (minOccurs.intValue() > 1) {
+            if (newType.isList()) {
+                ((STypeList) newType).withMiniumSizeOf(minOccurs);
+            } else {
+                throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"));
+            }
+        }
+    }
+
+    private static void readXsdOwnAttributeMaxOccurs(ElementReader element, SType<?> newType) {
+        String value = element.getAttr("maxOccurs");
+        if ("unbounded".equalsIgnoreCase(value)) {
+            if (!newType.isList()) {
+                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
+            }
+        } else if (value != null) {
+            int maxOccurs = Integer.parseInt(value);
+            if (newType.isList()) {
+                ((STypeList) newType).withMaximumSizeOf(maxOccurs);
+            } else if (maxOccurs != 1) {
+                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
             }
         }
     }
@@ -239,8 +249,6 @@ public class FormXsdUtil {
 
         private final XsdContext xsdContext;
         private final MElement element;
-        private PackageBuilder pa;
-        private boolean list;
 
         private ElementReader(XsdContext xsdContext, MElement element) {
             this.xsdContext = xsdContext;

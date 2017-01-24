@@ -30,12 +30,12 @@ package org.opensingular.form.view;
  */
 public class SViewAutoComplete extends SView {
 
-    public enum Mode {STATIC, DYNAMIC;}
+    public enum Mode {STATIC, DYNAMIC}
     protected Mode fetch = Mode.STATIC;
 
     public Mode fetch() {   return fetch;}
 
-    public SViewAutoComplete(){};
+    public SViewAutoComplete(){}
 
     public SViewAutoComplete(Mode fetch){
         this.fetch = fetch;

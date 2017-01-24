@@ -34,7 +34,6 @@ public class STypeEmpresaInternacional extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         final STypeComposite<SIComposite> id = addFieldComposite("id");
 

@@ -68,7 +68,7 @@ public class CaseCustomTabbedPanelMapperPackage extends SPackage {
         tab3.addFieldInteger("int2").asAtr().label("Inteiro 2");
 
         //@destacar
-        form.withCustomMapper(() -> new CustomTabMapper());
+        form.withCustomMapper(new CustomTabMapper());
     }
 
     // Mapper recursivo

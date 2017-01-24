@@ -30,7 +30,8 @@ public class BSPaginationToolbar extends AbstractToolbar {
 
     public BSPaginationToolbar(DataTable<?, ?> table) {
         super(table);
-        add(paginator = new WebMarkupContainer("paginator"));
+        paginator = new WebMarkupContainer("paginator");
+        add(paginator);
         paginator.add(new BSPaginationPanel("pagination", table));
         itensPerPageSelector = $b.addAjaxUpdate(
                 new BSItemsPerPageDropDown("itemsPerPage", getTable()),

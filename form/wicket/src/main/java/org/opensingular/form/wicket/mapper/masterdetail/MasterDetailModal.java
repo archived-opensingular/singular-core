@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.masterdetail;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
@@ -30,6 +31,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.FormStateUtil;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
@@ -75,18 +77,18 @@ class MasterDetailModal extends BFModalWindow {
         setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
 
         actionLabel = $m.ofValue("");
-        this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton = new ActionAjaxButton("btn") {
+        addButton = new ActionAjaxButton("btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(table);
                 MasterDetailModal.this.hide(target);
-                WicketFormProcessing.onFieldProcess(table, target, model);
+                WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
             }
-
-        });
+        };
+        this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);
 
         if (viewMode.isEdition()) {
-            this.addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+            this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     if (closeCallback != null) {
@@ -112,7 +114,7 @@ class MasterDetailModal extends BFModalWindow {
                 FormStateUtil.restoreState(currentInstance.getObject(), formState);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw SingularException.rethrow(e.getMessage(), e);
         }
     }
 

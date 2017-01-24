@@ -21,7 +21,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.spring.SpringSDocumentFactory;
 import org.opensingular.form.spring.SpringServiceRegistry;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.opensingular.form.RefService.of;
-import static org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler.newTemporaryHandler;
+import static org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentPersistenceHandler.newTemporaryHandler;
 
 @Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
@@ -47,7 +47,7 @@ public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
             document.setAttachmentPersistenceTemporaryHandler(of(newTemporaryHandler()));
         } catch (IOException e) {
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
-            document.setAttachmentPersistenceTemporaryHandler(of(new InMemoryAttachmentPersitenceHandler()));
+            document.setAttachmentPersistenceTemporaryHandler(of(new InMemoryAttachmentPersistenceHandler()));
         }
         document.setAttachmentPersistencePermanentHandler(
                 of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));

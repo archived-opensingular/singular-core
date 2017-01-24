@@ -40,6 +40,7 @@ import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.AbstractResource;
+import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
@@ -58,13 +59,19 @@ import org.opensingular.lib.commons.util.Loggable;
  * @author vinicius
  */
 public class DownloadSupportedBehavior extends Behavior implements IResourceListener, Loggable {
-    
-    private static final String         DOWNLOAD_PATH        = "/download";
+
+    private static final String DOWNLOAD_PATH = "/download";
     private Component                   component;
     private IModel<? extends SInstance> model;
+    private ContentDisposition contentDisposition;
+
+    public DownloadSupportedBehavior(IModel<? extends SInstance> model, ContentDisposition contentDisposition) {
+        this.model = model;
+        this.contentDisposition = contentDisposition;
+    }
 
     public DownloadSupportedBehavior(IModel<? extends SInstance> model) {
-        this.model = model;
+        this(model, ContentDisposition.INLINE);
     }
 
     private List<IAttachmentPersistenceHandler<?>> getHandlers() {
@@ -111,10 +118,10 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     }
 
     private void handleRequest() throws IOException {
-        WebRequest request = (WebRequest) RequestCycle.get().getRequest();
+        WebRequest         request    = (WebRequest) RequestCycle.get().getRequest();
         IRequestParameters parameters = request.getRequestParameters();
-        StringValue id = parameters.getParameterValue("fileId");
-        StringValue name = parameters.getParameterValue("fileName");
+        StringValue        id         = parameters.getParameterValue("fileId");
+        StringValue        name       = parameters.getParameterValue("fileName");
         writeResponse(getDownloadURL(id.toString(), name.toString()));
     }
 
@@ -143,7 +150,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
      * @return
      */
     private String getDownloadURL(String id, String filename) {
-        String url = DOWNLOAD_PATH + "/" + id + "/" + new Date().getTime();
+        String                  url = DOWNLOAD_PATH + "/" + id + "/" + new Date().getTime();
         SharedResourceReference ref = new SharedResourceReference(String.valueOf(id));
         AbstractResource resource = new AbstractResource() {
             @Override
@@ -158,6 +165,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                 }
                 resourceResponse.setFileName(filename);
                 try {
+                    resourceResponse.setContentDisposition(contentDisposition);
                     resourceResponse.setContentType(fileRef.getContentType());
                     resourceResponse.setWriteCallback(new WriteCallback() {
                         @Override

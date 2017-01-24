@@ -16,6 +16,8 @@
 
 package org.opensingular.form.wicket;
 
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
@@ -38,6 +40,8 @@ import org.opensingular.form.wicket.mapper.YearMonthMapper;
 import org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper;
 import org.opensingular.form.wicket.mapper.composite.BlocksCompositeMapper;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import org.opensingular.form.wicket.mapper.country.brazil.CNPJMapper;
+import org.opensingular.form.wicket.mapper.country.brazil.CPFMapper;
 import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
 import org.opensingular.form.wicket.mapper.selection.AutocompleteMapper;
 import org.opensingular.form.wicket.mapper.selection.BooleanRadioMapper;
@@ -48,7 +52,6 @@ import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
 import org.opensingular.form.wicket.mapper.selection.RadioMapper;
 import org.opensingular.form.wicket.mapper.selection.SelectMapper;
 import org.opensingular.form.wicket.panel.BreadPanel;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
@@ -113,7 +116,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
                 @Override
                 public boolean isVisible() {
-                    return !breads.isEmpty();
+                    return !isEmpty();
                 }
             };
 
@@ -127,8 +130,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
-        final ISupplier<? extends UIComponentMapper> customMapperFactory = instancia.getType().getCustomMapperFactory();
-        final UIComponentMapper                      customMapper        = (customMapperFactory != null) ? customMapperFactory.get() : null;
+
+        final UIComponentMapper customMapper = instancia.getType().getComponentMapper();
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {
@@ -186,8 +189,10 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeTime.class,                                              TimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new)
                 .register(STypeHTML.class,                                              RichTextMapper::new)
-                .register(STypeAttachmentList.class, SViewAttachmentList.class, AttachmentListMapper::new)
-                .register(STypeHTML.class, SViewByPortletRichText.class, PortletRichTextMapper::new);
+                .register(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new)
+                .register(STypeCNPJ.class,                                              CNPJMapper::new)
+                .register(STypeCPF.class,                                               CPFMapper::new)
+                .register(STypeHTML.class,            SViewByPortletRichText.class,     PortletRichTextMapper::new);
         //@formatter:on
     }
 }

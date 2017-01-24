@@ -16,9 +16,9 @@
 
 package org.opensingular.form.document;
 
+import com.google.common.collect.ImmutableMap;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SingularFormException;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.*;
 
@@ -27,9 +27,9 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public final class DefaultServiceRegistry implements ServiceRegistry {
 
-    private Map<String, Pair>                  servicesByName  = newHashMap();
-    private Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
-    private List<ServiceRegistry>              registries      = newArrayList();
+    private final Map<String, Pair>                  servicesByName  = newHashMap();
+    private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
+    private final List<ServiceRegistry>              registries      = newArrayList();
 
     public void addRegistry(ServiceRegistry r) {
         registries.add(r);
@@ -44,14 +44,18 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
     @Override
     public <T> T lookupService(Class<T> targetClass) {
         T provider = lookupLocalService(targetClass);
-        if (provider != null) return provider;
+        if (provider != null) {
+            return provider;
+        }
         return lookupChainedService(targetClass);
     }
 
     private <T> T lookupChainedService(Class<T> targetClass) {
         for (ServiceRegistry r : registries) {
             T provider = r.lookupService(targetClass);
-            if (provider != null) return provider;
+            if (provider != null) {
+                return provider;
+            }
         }
         return null;
     }
@@ -91,7 +95,9 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
     @Override
     public <T> T lookupService(String name, Class<T> targetClass) {
         T provider = lookupLocalService(name, targetClass);
-        if(provider !=  null)   return provider;
+        if(provider !=  null) {
+            return provider;
+        }
         return lookupChainedService(name, targetClass);
     }
 
@@ -114,8 +120,10 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     private <T> T lookupChainedService(String name, Class<T> targetClass) {
         for(ServiceRegistry r : registries){
-            T provider = r.lookupService(name, targetClass);;
-            if(provider != null) return provider;
+            T provider = r.lookupService(name, targetClass);
+            if(provider != null) {
+                return provider;
+            }
         }
         return null;
     }

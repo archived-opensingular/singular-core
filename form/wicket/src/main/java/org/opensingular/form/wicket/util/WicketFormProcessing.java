@@ -31,7 +31,6 @@ import org.apache.wicket.util.visit.Visits;
 import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
-import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -65,6 +64,8 @@ public class WicketFormProcessing implements Loggable {
     };
     public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
+
+    private WicketFormProcessing() {}
 
     public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
@@ -212,21 +213,18 @@ public class WicketFormProcessing implements Loggable {
 
         if (target != null) {
 
-            final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                    .map(SInstanceEvent::getSource)
-                    .map(SInstance::getId)
+            final Set<Integer> updatedInstanceIds = eventCollector.streamEvents()
+                    .map(event -> event.getSource().getId())
                     .collect(toSet());
 
             final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
-            final Predicate<SType<?>> isElementsDependent = (type) -> (type instanceof STypeList) && isDependent.test(((STypeList<?, ?>) type).getElementsType());
+            final Predicate<SType<?>> isElementsDependent = (type) -> type.isList() && isDependent.test(((STypeList<?, ?>) type).getElementsType());
 
             final Predicate<SInstance> shouldRefreshPredicate = childInstance -> {
 
                 if (childInstance == null) {
                     return false;
-                }
-
-                if (updatedInstanceIds.contains(childInstance.getId())) {
+                } else if (updatedInstanceIds.contains(childInstance.getId())) {
                     return true;
                 }
 
@@ -284,7 +282,7 @@ public class WicketFormProcessing implements Loggable {
 
 
     private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
-        if (!isSkipValidationOnRequest()) {
+            if (!isSkipValidationOnRequest()) {
 
             final InstanceValidationContext validationContext;
 

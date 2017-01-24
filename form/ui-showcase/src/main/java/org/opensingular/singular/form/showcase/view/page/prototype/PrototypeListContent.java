@@ -104,7 +104,8 @@ public class PrototypeListContent extends Content
 
         add(new SingularForm<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
-        add(listTable = setupDataTable());
+        listTable = setupDataTable();
+        add(listTable);
         add(viewXmlModal);
         add(new SFeedbackPanel("feedback", this));
 

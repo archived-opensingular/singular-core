@@ -18,6 +18,8 @@ package org.opensingular.ws.wkhtmltopdf.constains;
 
 public class WkHtmlToPdfConstants {
 
+    private WkHtmlToPdfConstants() {}
+
     public static final String CONVERT_HTML_TO_PDF_PATH = "/converthtmltopdf";
     public static final String ENDPOINT_WS_WKHTMLTOPDF  = "singular.ws.wkhtmltopdf.url";
 

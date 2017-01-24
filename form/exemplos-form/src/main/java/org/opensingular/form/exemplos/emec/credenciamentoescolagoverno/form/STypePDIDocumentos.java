@@ -26,8 +26,7 @@ public class STypePDIDocumentos extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
+
         addSituacaoLegal();
         addRegularidadeFiscal();
         addDemonstracaoPatrimonio();

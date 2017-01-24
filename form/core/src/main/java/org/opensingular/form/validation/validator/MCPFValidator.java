@@ -31,7 +31,7 @@ public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
     
     private static final Logger LOGGER = Logger.getLogger("MCPFValidator");
 
-    private List<String> invalidPatterns = Arrays.asList(
+    private final List<String> invalidPatterns = Arrays.asList(
             "00000000000", "11111111111", "22222222222", "33333333333", "44444444444",
             "55555555555", "66666666666", "77777777777", "88888888888", "99999999999");
 
@@ -44,7 +44,7 @@ public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
 
     private boolean isValid(String cpf) {
         try {
-            cpf = unmask(cpf);
+            cpf = MCNPJValidator.unmask(cpf);
             if (invalidPatterns.contains(cpf)) {
                 return false;
             }
@@ -87,21 +87,5 @@ public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
         }
 
         return false;
-    }
-
-
-    private String unmask(String cnpj) {
-        StringBuilder sb = new StringBuilder();
-        Pattern p = Pattern.compile("[0-9]?");
-        Matcher m = p.matcher(cnpj);
-        while (m.find()) {
-            if (m.groupCount() > 0) {
-                for (int i = 0; i < m.groupCount(); i++) {
-                    sb.append(m.group(i));
-                }
-            }
-            sb.append(m.group());
-        }
-        return sb.toString();
     }
 }

@@ -16,8 +16,9 @@
 
 package org.opensingular.form;
 
-import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 import com.google.common.base.Preconditions;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
 import java.io.IOException;
 import java.util.*;
@@ -78,7 +79,7 @@ public abstract class SScopeBase implements SScope {
     }
 
     final Optional<SType<?>> getLocalTypeOptional(PathReader pathReader) {
-        SType<?> type = getLocalTypesMap().get(pathReader.getTrecho());
+        SType<?> type = getLocalTypesMap().get(pathReader.getToken());
         if (type == null) {
             return Optional.empty();
         } else if (pathReader.isLast()) {
@@ -96,14 +97,15 @@ public abstract class SScopeBase implements SScope {
     }
 
     final SType<?> getLocalType(PathReader pathReader) {
-        SType<?> type = getLocalTypesMap().get(pathReader.getTrecho());
+        SType<?> type = getLocalTypesMap().get(pathReader.getToken());
         if (type != null) {
             if (pathReader.isLast()) {
                 return type;
             }
             return type.getLocalType(pathReader.next());
         }
-        throw new SingularFormException(pathReader.getTextoErro(this, "Não foi encontrado o tipo '" + pathReader.getTrecho() + "' em '"  + getName() + "'"));
+        throw new SingularFormException(pathReader.getErrorMsg(this,
+                "Não foi encontrado o tipo '" + pathReader.getToken() + "' em '" + getName() + "'"), this);
     }
 
     final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {
@@ -116,17 +118,19 @@ public abstract class SScopeBase implements SScope {
         */
         newType.setRecursiveReference(isRecursiveReference(newType));
         if (newType.getSuperType() == null || newType.getSuperType().getClass() != newType.getClass()) {
+            newType.extendSubReference();
+            TypeProcessorPublicFieldsReferences.INSTANCE.processTypePreOnLoadTypeCall(newType);
             newType.setCallingOnLoadType(true);
-            newType.onLoadType(new TypeBuilder(newType));
+            callOnLoadTypeIfNecessary(newType);
             newType.setCallingOnLoadType(false);
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, true);
             getDictionary().runPendingTypeProcessorExecution(newType);
-        } else{
+        } else {
             if (newType.isRecursiveReference()) {
                 if(isSuperTypeCallingOnLoadType(newType)) {
                     //Não pode rodar os processadores em quanto nao tiver terminado o onLoadType do tipo pai
                     newType.setCallingOnLoadType(true);
-                    getDictionary().addTypeProcessorForLatterExecutuion(newType, () -> {
+                    getDictionary().addTypeProcessorForLatterExecutuion(newType.getSuperType(), () -> {
                         TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, false);
                         getDictionary().runPendingTypeProcessorExecution(newType);
                         newType.setCallingOnLoadType(false);
@@ -140,6 +144,30 @@ public abstract class SScopeBase implements SScope {
             }
         }
         return newType;
+    }
+
+    /**
+     * Chama o método onLoadType somente se o tipo for um classe que implementa o método de forma específica, ou seja,
+     * não chama o onLoadType se a classe apenas derivar de um classe que implementou o onLoadType e cuja a chamada
+     * já foi executada uma vez na carga do tipo pai.
+     */
+    private <T extends SType<?>> void callOnLoadTypeIfNecessary(T newType) {
+        if (newType.getSuperType() == null) {
+            return; //Não precisa chamar onLoadType no SType
+        }
+        Class<?> c = newType.getClass();
+        while (true) {
+            try {
+                c.getDeclaredMethod("onLoadType", TypeBuilder.class);
+                break; //Então deve chamar onLoadType, pois há uma implementação específica para a classe
+            } catch (NoSuchMethodException e) {
+                c = c.getSuperclass();
+                if (c == newType.getSuperType().getClass()) {
+                    return; //Não é necessário chamar onLoadType, pois já foi chamado no tipo pai
+                }
+            }
+        }
+        newType.onLoadType(new TypeBuilder(newType));
     }
 
     /** Verificar se o tipo super já terminiu a chamada do onLoadType ou se está no meio da execução do mesmo. */
@@ -235,7 +263,7 @@ public abstract class SScopeBase implements SScope {
         debug(appendable, 0);
     }
 
-    protected void debug(Appendable appendable, int level) {
+    void debug(Appendable appendable, int level) {
         Collection<SType<?>> local = getLocalTypes();
         if (!isRecursiveReference() && !local.isEmpty()) {
             local.stream().filter(t -> t.isAttribute()).forEach(t -> t.debug(appendable, level));

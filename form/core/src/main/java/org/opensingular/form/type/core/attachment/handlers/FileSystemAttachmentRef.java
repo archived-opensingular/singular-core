@@ -27,7 +27,7 @@ import org.opensingular.form.type.core.attachment.IAttachmentRef;
 public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
 
     private final String id, hashSHA1, path, name;
-    private long size;
+    private final long size;
 
     public FileSystemAttachmentRef(String id, String hashSHA1, String path, long size, String name) {
         this.id = id;

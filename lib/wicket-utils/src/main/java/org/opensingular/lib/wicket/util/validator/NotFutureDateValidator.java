@@ -16,10 +16,10 @@
 
 package org.opensingular.lib.wicket.util.validator;
 
-import java.time.LocalDate;
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidatable;
+
+import java.time.LocalDate;
 
 public class NotFutureDateValidator implements BaseValidator<LocalDate> {
 
@@ -33,7 +33,7 @@ public class NotFutureDateValidator implements BaseValidator<LocalDate> {
     public void validate(IValidatable<LocalDate> validatable) {
 
         if (validatable.getValue().isAfter(LocalDate.now())) {
-            validatable.error(validationError(errorMessageModel));
+            validatable.error(BaseValidator.validationError(errorMessageModel));
         }
     }
 }

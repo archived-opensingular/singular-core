@@ -11,7 +11,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.ServiceRegistry;
-import org.opensingular.form.service.FormService;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;

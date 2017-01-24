@@ -16,13 +16,14 @@
 
 package org.opensingular.lib.support.spring.util;
 
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
+@Component
 public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
@@ -40,7 +41,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return applicationContext;
     }
 
-    public static <T> Supplier<T> supplierOf(Function<ApplicationContext, T> factory) {
+    public static <T> ISupplier<T> supplierOf(IFunction<ApplicationContext, T> factory) {
         return () -> factory.apply(ApplicationContextProvider.get());
     }
 

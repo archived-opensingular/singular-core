@@ -29,7 +29,7 @@ public class VarTypeBoolean implements VarType {
 
     @Override
     public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValor(), varInstance.getDefinicao());
+        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
     }
 
     @Override
@@ -39,6 +39,6 @@ public class VarTypeBoolean implements VarType {
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Boolean.toString((Boolean) varInstance.getValor());
+        return Boolean.toString((Boolean) varInstance.getValue());
     }
 }

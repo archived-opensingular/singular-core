@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core.builder;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -23,6 +24,7 @@ import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.MProcessRole;
 import org.opensingular.flow.core.MTaskEnd;
 import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.DashboardView;
 import org.opensingular.flow.core.FlowMap;
@@ -177,6 +179,10 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return getFlowMap().getTask(taskRef);
     }
 
+    public boolean hasTask(TASK_DEF taskRef) {
+        return getFlowMap().getTaskWithName(taskRef.getName()) != null;
+    }
+
     protected BUILDER_TRANSITION addTransition(BTask origin, String actionName, TASK_DEF destination) {
         return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
@@ -197,4 +203,12 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         getFlowMap().addDashboardView(dashboardView);
         return this;
     }
+
+    /**
+     * Adiciona um StartedTaskListener para todas as tasks
+     * incluídas no flow
+     *
+     * @param listener - listener a ser adicionado
+     */
+    public abstract void addListenerToAllTasks(StartedTaskListener listener);
 }

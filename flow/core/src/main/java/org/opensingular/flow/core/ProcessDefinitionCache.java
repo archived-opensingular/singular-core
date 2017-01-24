@@ -24,10 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class ProcessDefinitionCache {
 
@@ -46,15 +43,17 @@ public final class ProcessDefinitionCache {
     private static ProcessDefinitionCache cache;
 
     private final String[] packagesNames;
-    
+
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String[] packagesNames) {
         this.packagesNames = packagesNames;
-        ImmutableList.Builder<ProcessDefinition<?>> cache = ImmutableList.builder();
+        ImmutableList.Builder<ProcessDefinition<?>> newCache = ImmutableList.builder();
         Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
         Map<Class<? extends ProcessInstance>, ProcessDefinition<?>> cacheByInstanceType = new HashMap<>();
 
-        Reflections reflections = new Reflections(packagesNames);
+        String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 1);
+        packagesToScan[packagesToScan.length -1] = "org.opensingular";
+        Reflections reflections = new Reflections(packagesToScan);
 
         Set<Class<? extends ProcessDefinition>> subTypes = reflections.getSubTypesOf(ProcessDefinition.class);
 
@@ -63,24 +62,20 @@ public final class ProcessDefinitionCache {
                 continue;
             }
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
-            cache.add(def);
+            newCache.add(def);
             if (cacheByKey.containsKey(def.getKey())) {
                 throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getKey());
             }
             cacheByKey.put(def.getKey(), def);
             cacheByInstanceType.put(def.getProcessInstanceClass(), def);
         }
-        definitions = cache.build();
+        definitions = newCache.build();
         definitionsByKey = ImmutableMap.copyOf(cacheByKey);
     }
 
-    public static ProcessDefinitionCache get(String[] packagesNames) {
+    public synchronized static ProcessDefinitionCache get(String[] packagesNames) {
         if (cache == null) {
-            synchronized (ProcessDefinitionCache.class) {
-                if (cache == null) {
-                    cache = new ProcessDefinitionCache(packagesNames);
-                }
-            }
+            cache = new ProcessDefinitionCache(packagesNames);
         }
         return cache;
     }
@@ -106,15 +101,14 @@ public final class ProcessDefinitionCache {
     public ProcessDefinition<?> getDefinition(String key) {
         ProcessDefinition<?> processDefinition = definitionsByKey.get(key);
         if(processDefinition == null){
-            throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " + packagesNames);
+            throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " +
+                    Arrays.toString(packagesNames));
         }
         return processDefinition;
     }
 
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
-     * @param key
-     * @return
      */
     public ProcessDefinition<?> getDefinitionUnchecked(String key) {
         return definitionsByKey.get(key);

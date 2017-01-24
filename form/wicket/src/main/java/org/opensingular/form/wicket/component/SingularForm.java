@@ -16,18 +16,19 @@
 
 package org.opensingular.form.wicket.component;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.ClassVisitFilter;
-import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class SingularForm<T> extends Form<T> {
+    //TODO (by Daniel Bordin) Entender por que esse método copia vários método da classe Form do Wicket. Isso pode
+    // dar problema com novas versões do wicket. Entender o racional e verificar senão há uma solução melhor.
 
     public SingularForm(String id, IModel<T> model) {
         super(id, model);
@@ -96,7 +97,7 @@ public class SingularForm<T> extends Form<T> {
             updateFormComponentModels();
 
             // validate model objects after input values have been bound
-            internalOnValidateModelObjects();
+            internalOnValidateModelObjects2();
             if (!ignoreErrors && hasError())
             {
                 callOnError(submittingComponent);
@@ -110,23 +111,13 @@ public class SingularForm<T> extends Form<T> {
 
     private void convertWithoutValidateNestedForms()
     {
-        Visits.visitPostOrder(this, new IVisitor<SingularForm<?>, Void>()
-        {
-            @Override
-            public void component(final SingularForm<?> form, final IVisit<Void> visit)
-            {
-                if (SingularForm.this.equals(form))
-                {
-                    // skip self, only process children
-                    visit.stop();
-                    return;
-                }
-
-                if (form.isSubmitted())
-                {
-                    form.convertWithoutValidateComponents();
-                    form.onValidate();
-                }
+        Visits.visitPostOrder(this, (IVisitor<SingularForm<?>, Void>) (form, visit) -> {
+            if (SingularForm.this.equals(form)) {
+                // skip self, only process children
+                visit.stop();
+            } else if (form.isSubmitted()) {
+                form.convertWithoutValidateComponents();
+                form.onValidate();
             }
         }, new ClassVisitFilter(SingularForm.class));
     }
@@ -154,22 +145,14 @@ public class SingularForm<T> extends Form<T> {
      * Calls {@linkplain #onValidateModelObjects()} on this form and all nested forms that are
      * visible and enabled
      */
-    private void internalOnValidateModelObjects()
-    {
+    private void internalOnValidateModelObjects2()
+    {   //Esse método é a mesma implementação no super. O nome foi alterado para o sonar não reclamar
         onValidateModelObjects();
-        visitChildren(Form.class, new IVisitor<Form<?>, Void>()
-        {
-            @Override
-            public void component(Form<?> form, IVisit<Void> visit)
-            {
-                if (form.isSubmitted())
-                {
-                    invokeOnValidateModelObjects(form);
-                }
-                else
-                {
-                    visit.dontGoDeeper();
-                }
+        visitChildren(Form.class, (IVisitor<Form<?>, Void>) (form, visit) -> {
+            if (form.isSubmitted()) {
+                invokeOnValidateModelObjects(form);
+            } else {
+                visit.dontGoDeeper();
             }
         });
     }

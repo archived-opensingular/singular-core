@@ -16,19 +16,20 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.builder.selection.SSelectionBuilder;
+import org.opensingular.form.builder.selection.SelectionBuilder;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.form.view.SView;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-
-import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.view.SMultiSelectionByPicklistView;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.builder.selection.SSelectionBuilder;
-import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.view.SMultiSelectionBySelectView;
 
 /**
  * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
@@ -114,7 +115,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     @Override
     protected void extendSubReference() {
-        if (getSuperType() instanceof STypeList) {
+        if (getSuperType().isList()) {
             E type = (E) ((STypeList) getSuperType()).elementsType;
             if (type != null) {
                 setElementsType(type);
@@ -134,6 +135,11 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return this;
     }
 
+    public STypeList<E, I> withMiniumSizeOf(SimpleValueCalculation<Integer> valueCalculation) {
+        setAttributeCalculation(SPackageBasic.ATR_MINIMUM_SIZE, valueCalculation);
+        return this;
+    }
+
     public STypeList<E, I> withMaximumSizeOf(Integer size) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE, size);
         return this;
@@ -141,15 +147,14 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addInstanceValidator(validatable -> {
-            final Integer minimumSize = validatable.getInstance().getType().asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
+            final Integer minimumSize = validatable.getInstance().asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
             if (minimumSize != null && validatable.getInstance().getValue().size() < minimumSize) {
                 validatable.error("A Quantidade mínima de " + getLabel(validatable.getInstance()) + " é " + minimumSize);
             }
         });
         addInstanceValidator(validatable -> {
-            final Integer maximumSize = validatable.getInstance().getType().asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
+            final Integer maximumSize = validatable.getInstance().asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
             if (maximumSize != null && validatable.getInstance().getValue().size() > maximumSize) {
                 validatable.error("A Quantidade máxima " + getLabel(validatable.getInstance()) + " é " + maximumSize);
             }

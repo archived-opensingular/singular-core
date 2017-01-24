@@ -29,7 +29,7 @@ public class BreadPanel extends Panel {
 
     private   SingularForm<?> form      = new SingularForm<>("panel-form");
     private   BSGrid          container = new BSGrid("grid");
-    protected List<String>    breads    = new ArrayList<>();
+    private final List<String>    breads;
 
     public BreadPanel(String id) {
         this(id, new ArrayList<>());
@@ -38,6 +38,10 @@ public class BreadPanel extends Panel {
     public BreadPanel(String id, List<String> breads) {
         super(id);
         this.breads = breads;
+    }
+
+    public boolean isEmpty() {
+        return breads.isEmpty();
     }
 
     @Override

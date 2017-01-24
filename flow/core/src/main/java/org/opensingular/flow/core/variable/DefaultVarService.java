@@ -23,7 +23,7 @@ import org.opensingular.flow.core.variable.type.VarTypeString;
 
 public class DefaultVarService implements VarService {
 
-    public static DefaultVarService DEFAULT_VAR_SERVICE = new DefaultVarService();
+    public final static DefaultVarService DEFAULT_VAR_SERVICE = new DefaultVarService();
 
     @Override
     public VarService deserialize() {

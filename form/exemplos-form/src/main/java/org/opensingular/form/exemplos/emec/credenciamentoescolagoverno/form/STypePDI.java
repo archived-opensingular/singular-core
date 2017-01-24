@@ -53,8 +53,7 @@ public class STypePDI extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
+
         addPerfilInstitucional();
         addProjetoPedagogico();
         addImplantacaoInstituicao();

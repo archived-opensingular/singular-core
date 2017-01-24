@@ -17,25 +17,26 @@
 package org.opensingular.flow.core;
 
 import net.vidageek.mirror.dsl.Mirror;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.flow.core.defaults.NullViewLocator;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
+import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
+import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.flow.core.defaults.NullViewLocator;
-import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.flow.schedule.ScheduledJob;
 import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
-import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     final void start() {
         for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
-            for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
+            for (final MTaskJava task : Optional.ofNullable(processDefinition.getFlowMap()).map(FlowMap::getJavaTasks).orElse(new ArrayList<>(0))) {
                 if (!task.isImmediateExecution()) {
                     getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }
@@ -88,7 +89,6 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
     
     public final String getProcessGroupCod() {
-//        Objects.requireNonNull(processGroupCod);
         if (processGroupCod == null) {
             throw new SingularFlowException("Não foi definido o ProcessGroupCod");
         }
@@ -123,7 +123,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         return getDefinitionCache().getDefinitionUnchecked(key);
     }
 
-    protected List<ProcessDefinition<?>> getDefinitions() {
+    public List<ProcessDefinition<?>> getDefinitions() {
         return getDefinitionCache().getDefinitions();
     }
 

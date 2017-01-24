@@ -16,9 +16,12 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.opensingular.form.SingularFormException;
 import org.w3c.dom.*;
 
 import java.io.PrintWriter;
+
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeText;
 
 /**
  * Creation date: (24/04/2000 10:34:52)
@@ -197,7 +200,7 @@ final class XMLToolkitWriter {
         int tam = nList.getLength();
 
         if (tam != 0) {
-            boolean pulaLinha = (tam > 1) || (nList.item(0).getNodeType() != Node.TEXT_NODE);
+            boolean pulaLinha = (tam > 1) || !isNodeTypeText( nList.item(0));
             if (pulaLinha) {
                 out.println();
             }
@@ -223,7 +226,7 @@ final class XMLToolkitWriter {
                 out.print(node.getNodeValue());
                 break;
             default:
-                throw new RuntimeException(
+                throw new SingularFormException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -242,7 +245,7 @@ final class XMLToolkitWriter {
                 }
                 break;
             default:
-                throw new RuntimeException(
+                throw new SingularFormException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -280,7 +283,7 @@ final class XMLToolkitWriter {
                 }
                 break;
             default:
-                throw new RuntimeException(
+                throw new SingularFormException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -335,7 +338,7 @@ final class XMLToolkitWriter {
         if (LISTA_SPACE[0] == null) {
             //Primeira chama monta array de espaços
             int tamBuffer = SPACE.length() * LISTA_SPACE.length;
-            StringBuffer buf = new StringBuffer(tamBuffer);
+            StringBuilder buf = new StringBuilder(tamBuffer);
             for (int i = 0; i < LISTA_SPACE.length; i++) {
                 LISTA_SPACE[i] = buf.toString();
                 buf.append(SPACE);

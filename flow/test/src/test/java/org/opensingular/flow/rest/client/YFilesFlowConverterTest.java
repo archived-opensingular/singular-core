@@ -54,7 +54,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //    static boolean started;
 //
 //    @Before
-//    public void setup() {
+//    public void setUp() {
 //        if (!started) {
 //            Flow.setConf(mbpmBean, true);
 //

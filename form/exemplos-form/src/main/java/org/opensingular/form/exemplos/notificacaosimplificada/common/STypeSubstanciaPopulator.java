@@ -85,7 +85,6 @@ public class STypeSubstanciaPopulator {
                     .exists(i -> Value.notNull(i, idConfiguracaoLinhaProducao));
         }
 
-        final String substanciaSimpleName = substanciaDescricao.getNameSimple();
         {
             substancia
                     .withView(SViewReadOnly::new)

@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.jdbc.Work;
+import org.opensingular.flow.core.SingularFlowException;
 
 @SuppressWarnings("unchecked")
 public class SessionWrapper {
@@ -61,7 +62,7 @@ public class SessionWrapper {
                 c.setAutoCommit(false);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new SingularFlowException(e);
         }
     }
 

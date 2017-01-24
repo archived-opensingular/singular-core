@@ -100,7 +100,7 @@ public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "processInstance", cascade = CascadeType.REMOVE)
     private List<ROLE_USER> roles;
 
-    @OrderBy(clause = "DT_INICIO asc")
+    @OrderBy(clause = "CO_INSTANCIA_TAREFA, DT_INICIO asc")
     @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<TASK_INSTANCE> tasks;
 

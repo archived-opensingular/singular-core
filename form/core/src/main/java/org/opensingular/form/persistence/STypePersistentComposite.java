@@ -17,6 +17,8 @@
 package org.opensingular.form.persistence;
 
 import org.opensingular.form.*;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 import java.util.Optional;
 
@@ -26,12 +28,16 @@ public class STypePersistentComposite extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
     }
 
     public Optional<FormKey> getFormKey(SInstance i) {
         return Optional.ofNullable(SInstances.getRootInstance(i)).map(x -> x.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
+    }
+
+    protected STypePersistentComposite withLoadListener(IConsumer<SIComposite> loadListener) {
+        this.asAtr().setAttributeValue(SPackageBasic.ATR_LOAD_LISTENER, loadListener);
+        return this;
     }
 
 }

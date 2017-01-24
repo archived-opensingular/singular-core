@@ -18,9 +18,6 @@ package org.opensingular.form.script;
 
 import org.opensingular.form.SIComposite;
 
-import java.util.Collection;
-import java.util.Set;
-
 /**
  * Representa um contexto de execução baseado em instância do tipo SIComposite.
  *
@@ -34,7 +31,6 @@ class BindingsSIComposite extends BindingsSInstance<JSWrapperComposite, SICompos
 
     @Override
     public Object get(Object key) {
-        int index = -1;
         if (key instanceof String) {
             JSWrapperInstance<?> w = getWrapper().get((String) key);
             if (w != null) {

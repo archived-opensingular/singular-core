@@ -17,6 +17,8 @@
 package org.opensingular.form.internal.xml;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,11 +26,11 @@ import org.w3c.dom.Text;
 
 public abstract class MDocument implements Document {
 
-    public static final void toMDocument(MDocument no) {
-        //Não faz nada
+    public static void toMDocument(MDocument no) {
+        throw SingularException.rethrow("Não deveria ser chamadado esse metodo com um parâmetro MDocument");
     }
 
-    public static final MDocument toMDocument(Document no) {
+    public static MDocument toMDocument(Document no) {
         if (no == null) {
             return null;
         } else if (no instanceof MDocument) {
@@ -37,18 +39,18 @@ public abstract class MDocument implements Document {
         return new MDocumentWrapper(no);
     }
 
-    public static final MDocument toMDocument(Node no) {
+    public static MDocument toMDocument(Node no) {
         if (no == null) {
             return null;
         } else if (no instanceof MDocument) {
             return (MDocument) no;
         } else if (no.getNodeType() != Node.DOCUMENT_NODE) {
-            throw new RuntimeException("no " + XPathToolkit.getFullPath(no) + " não é Document");
+            throw new SingularFormException("no " + XPathToolkit.getFullPath(no) + " não é Document");
         }
         return new MDocumentWrapper((Document) no);
     }
 
-    public static final MDocument newInstance() {
+    public static MDocument newInstance() {
         return toMDocument(MElementWrapper.newDocument());
     }
 
@@ -63,7 +65,7 @@ public abstract class MDocument implements Document {
         String resto = null;
         if (pos != -1) {
             if (pos == 0) {
-                throw new RuntimeException("Criação no raiz para elemento salto não faz sentido");
+                throw new SingularFormException("Criação no raiz para elemento salto não faz sentido");
             }
             resto = qualifiedName.substring(pos + 1);
             qualifiedName = qualifiedName.substring(0, pos);

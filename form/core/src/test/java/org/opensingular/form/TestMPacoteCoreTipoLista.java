@@ -1,24 +1,18 @@
 package org.opensingular.form;
 
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPackageWithCircularReference.TypeTestPark;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPackageWithCircularReference.TypeTestTree;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.Pedido;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TestTipoListaComCargaInterna;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TipoPedido;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.SIInteger;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeBoolean;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeString;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.opensingular.form.type.core.*;
 
 import java.util.Collection;
-
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TestMPacoteCoreTipoLista extends TestCaseForm {
@@ -212,7 +206,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     private void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalType(SType<?> original,
             STypeList<?, ?> list) {
-        assertType(list.getElementsType()).isDirectExtensionOf(original);
+        assertType(list.getElementsType()).isExtensionCorrect(original);
 
         assertType(original).isAttribute(SPackageBasic.ATR_LABEL, null);
         assertType(list.getElementsType()).isAttribute(SPackageBasic.ATR_LABEL, null);
@@ -281,8 +275,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     private void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedido(TipoPedido pedido,
             STypeList<TipoPedido, Pedido> list1, STypeList<TipoPedido, Pedido> list2) {
-        assertType(list1.getElementsType()).isDirectExtensionOf(pedido);
-        assertType(list2.getElementsType()).isDirectExtensionOf(pedido).isNotSameAs(list1.getElementsType());
+        assertType(list1.getElementsType()).isExtensionCorrect(pedido);
+        assertType(list2.getElementsType()).isExtensionCorrect(pedido).isNotSameAs(list1.getElementsType());
 
         assertType(pedido).isAttrLabel(null);
         assertType(list1.getElementsType()).isAttrLabel(null);
@@ -427,14 +421,14 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         aTree.isString("name").isNotRecursiveReference();
         aTree.isList("childrens").isNotRecursiveReference();
         aTree.isNotRecursiveReference();
-        aTree.listElementType("childrens").isDirectExtensionOf(tTree).isRecursiveReference();
+        aTree.listElementType("childrens").isExtensionCorrect(tTree).isRecursiveReference();
         aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
         assertType(tTree.name).isNotNull().isSameAs(tTree.getField("name"));
         assertType(tTree.childrens).isNotNull().isSameAs(tTree.getField("childrens"));
         assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).name).isSameAs(tTree.name);
         assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).childrens).isSameAs(tTree.childrens);
 
-        testTreeRecursiveInstance(tTree, tTree.name, tTree.childrens);
+        testTreeRecursiveInstance(tTree, tTree.name, tTree.childrens, "Tree", "SubTree");
 
         TypeTestPark tPark = tTree.getDictionary().getType(TypeTestPark.class);
 
@@ -506,12 +500,12 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         aTree.isString("name").isNotRecursiveReference();
         aTree.isList("childrens").isNotRecursiveReference();
         aTree.isNotRecursiveReference();
-        aTree.listElementType("childrens").isDirectExtensionOf(tTree).isRecursiveReference();
+        aTree.listElementType("childrens").isExtensionCorrect(tTree).isRecursiveReference();
         aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
         aTree.listElementType("childrens").field("name").isSameAs(tTreeName);
         aTree.listElementType("childrens").listElementType("childrens").isSameAs(tSubTree);
 
-        testTreeRecursiveInstance(tTree, tTreeName, tTreeChildrens);
+        testTreeRecursiveInstance(tTree, tTreeName, tTreeChildrens, "Tree", "SubTree");
 
         STypeComposite<SIComposite>                         tPark      = pb.createCompositeType("park");
         STypeString                                         tParkName  = tPark.addFieldString("name");
@@ -533,7 +527,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         AssertionsSType aPark = assertType(tPark);
         aPark.isComposite(3);
-        aPark.field("tree").isDirectExtensionOf(tTree);
+        aPark.getTarget().getDictionary().debug();
+        //aPark.field("tree").isExtensionCorrect(tTree);
         aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.getField("tree"));
         aPark.field("trees").listElementType().field("name").isDirectExtensionOf(tTreeName);
         aPark.field("trees").listElementType().field("childrens").isDirectExtensionOf(tTreeChildrens);
@@ -541,24 +536,30 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
                 tTreeChildrens.getElementsType());
 
         SIComposite iPark = tPark.newInstance();
+        tPark.debug();
+//        testTreeRecursiveInstance((STypeComposite<SIComposite>) tPark.getField("tree"), tPark.getLocalType("tree.name"),
+//                tPark.getLocalType("tree.childrens"), "", "");
+
     }
 
-    private void testTreeRecursiveInstance(STypeComposite<SIComposite> tTree, SType<?> tName, SType<?> tChildrens2) {
+    private void testTreeRecursiveInstance(STypeComposite<SIComposite> tTree, SType<?> tName, SType<?> tChildrens2,
+            String expectedFirstLevelLabel, String expectedSubLevelLabel) {
         STypeList<STypeComposite<SIComposite>, SIComposite> tChildrens =
                 (STypeList<STypeComposite<SIComposite>, SIComposite>) tChildrens2;
 
         SIComposite iTree = tTree.newInstance();
         iTree.setValue(tName, "a");
-        SIComposite f = iTree.getField(tChildrens).addNew();
-        f.setValue(tName, "b");
-        f = iTree.getField(tChildrens).addNew();
-        f.setValue(tName, "c");
-        f.getField(tChildrens).addNew().setValue(tName, "d");
+        SIComposite f0 = iTree.getField(tChildrens).addNew();
+        f0.setValue(tName, "b");
+        SIComposite f1 = iTree.getField(tChildrens).addNew();
+        f1.setValue(tName, "c");
+        SIComposite f10 = f1.getField(tChildrens).addNew();
+        f10.setValue(tName, "d");
 
         AssertionsSInstance aITree = assertInstance(iTree);
-        aITree.isAttrLabel("Tree");
-        aITree.field("childrens[0]").isComposite().isAttrLabel("SubTree");
-        aITree.field("childrens[1].childrens[0]").isComposite().isAttrLabel("SubTree");
+        aITree.isAttrLabel(expectedFirstLevelLabel);
+        aITree.field("childrens[0]").isComposite().isAttrLabel(expectedSubLevelLabel);
+        aITree.field("childrens[1].childrens[0]").isComposite().isAttrLabel(expectedSubLevelLabel);
         aITree.isValueEquals("name", "a");
         aITree.isValueEquals("childrens[0].name", "b");
         aITree.isValueEquals("childrens[1].name", "c");
