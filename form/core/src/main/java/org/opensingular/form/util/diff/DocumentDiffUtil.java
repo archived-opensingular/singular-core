@@ -196,15 +196,16 @@ public final class DocumentDiffUtil {
             List<? extends SInstance> newerList, boolean[] consumed, int posN, int posNotConsumed) {
         SInstance instanceNewer = posN == -1 ? null : newerList.get(posN);
         DiffInfo info = calculateDiff(parent, instanceOriginal, instanceNewer);
+        int returnValue = posNotConsumed;
         info.setOriginalIndex(posO);
         if (posN != -1) {
             info.setNewerIndex(posN);
             consumed[posN] = true;
             if (posN == posNotConsumed + 1) {
-                posNotConsumed = posN;
+                returnValue = posN;
             }
         }
-        return posNotConsumed;
+        return returnValue;
     }
 
     /** Encontra a posição de um elemento dentro da lista com o ID informado. Retorna -1 senão encontrar. */

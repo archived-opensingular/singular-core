@@ -46,34 +46,35 @@ public final class PathReader {
 
     /** Cria um leitor de path para o resto do caminho a partir da posição informada. */
     private PathReader(String path, int inicio) {
+        int inicioCopy = inicio;
         if (path == null) {
             throw new SingularFormException("O path do campo não pode ser nulo.");
         }
         this.path = path;
-        if (inicio >= path.length()) {
+        if (inicioCopy >= path.length()) {
             aListIndex = false;
-            end = inicio;
+            end = inicioCopy;
             token = null;
-        } else if(path.charAt(inicio) == '[') {
+        } else if(path.charAt(inicioCopy) == '[') {
             aListIndex = true;
-            end = findListIndexTokenEndOrException(path, inicio);
-            token = path.substring(inicio + 1, end - 1);
+            end = findListIndexTokenEndOrException(path, inicioCopy);
+            token = path.substring(inicioCopy + 1, end - 1);
         } else {
             aListIndex = false;
-            if (path.charAt(inicio) == '.') {
-                if (inicio == 0) {
-                    throw newInvalidPathInPosition(path, inicio, null);
+            if (path.charAt(inicioCopy) == '.') {
+                if (inicioCopy == 0) {
+                    throw newInvalidPathInPosition(path, inicioCopy, null);
                 } else {
-                    inicio++;
+                    inicioCopy++;
                 }
-            } else if (inicio != 0) {
-                throw newInvalidPathInPosition(path, inicio, null);
+            } else if (inicioCopy != 0) {
+                throw newInvalidPathInPosition(path, inicioCopy, null);
             }
 
-            end = findTokenEndOrException(path, inicio);
-            token = path.substring(inicio, end);
+            end = findTokenEndOrException(path, inicioCopy);
+            token = path.substring(inicioCopy, end);
             if (SFormUtil.isNotValidSimpleName(token)) {
-                throw newInvalidPathInPosition(path, inicio, "Não é um nome de campo válido");
+                throw newInvalidPathInPosition(path, inicioCopy, "Não é um nome de campo válido");
             }
         }
     }
@@ -98,8 +99,9 @@ public final class PathReader {
 
     private int findTokenEndOrException(String s, int inicio) {
         int pos = inicio;
-        for (; pos < s.length() && s.charAt(pos) != '.' && s.charAt(pos) != '['; pos++)
-            ;
+        while (pos < s.length() && s.charAt(pos) != '.' && s.charAt(pos) != '[') {
+            pos++;
+        }
         if (inicio == pos) {
             throw newInvalidPathInPosition(s, inicio, null);
         }
