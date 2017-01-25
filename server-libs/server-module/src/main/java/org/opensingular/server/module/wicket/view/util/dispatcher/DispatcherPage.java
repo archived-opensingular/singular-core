@@ -239,7 +239,8 @@ public abstract class DispatcherPage extends WebPage {
                 && !currentTask.getTaskHistory().isEmpty()) {
             TaskInstanceHistoryEntity taskInstanceHistory = currentTask.getTaskHistory().get(currentTask.getTaskHistory().size() - 1);
 
-            return taskInstanceHistory.getEndDateAllocation() == null
+            return taskInstanceHistory.getAllocatedUser() != null
+                    && taskInstanceHistory.getEndDateAllocation() == null
                     && !username.equalsIgnoreCase(taskInstanceHistory.getAllocatedUser().getCodUsuario());
         }
 
