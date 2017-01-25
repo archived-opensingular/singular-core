@@ -26,13 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.*;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.io.MformPersistenciaXML;
@@ -44,6 +38,7 @@ import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -163,7 +158,9 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         private void saveState() {
             MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
-            if (xml != null) instanceBackupXml = xml.toString();
+            if (xml != null) {
+                instanceBackupXml = xml.toString();
+            }
         }
 
         private void rollbackState() {
@@ -176,7 +173,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw SingularException.rethrow(e.getMessage(), e);
             }
         }
 
@@ -311,8 +308,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
                 if (tipo instanceof STypeSimple) {
                     columnTypes.add(new ColumnType(tipo.getName(), null));
-                }
-                if (tipo instanceof STypeComposite) {
+                } else if (tipo.isComposite()) {
                     ((STypeComposite<?>) tipo)
                             .getFields()
                             .stream()

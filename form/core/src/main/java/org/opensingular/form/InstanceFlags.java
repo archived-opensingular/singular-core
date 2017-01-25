@@ -24,7 +24,7 @@ package org.opensingular.form;
  */
 public enum InstanceFlags {
 
-    RemovendoInstancia, IsAtributo;
+    REMOVENDO_INSTANCIA, IS_ATRIBUTO;
 
     private int bit;
 

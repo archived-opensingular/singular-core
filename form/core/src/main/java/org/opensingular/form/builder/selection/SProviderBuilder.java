@@ -16,9 +16,9 @@
 
 package org.opensingular.form.builder.selection;
 
+import org.opensingular.form.SType;
 import org.opensingular.form.provider.LookupOptionsProvider;
 import org.opensingular.form.provider.SSimpleProvider;
-import org.opensingular.form.SType;
 import org.opensingular.form.provider.STextQueryProvider;
 
 public class SProviderBuilder extends AbstractBuilder {
@@ -35,11 +35,11 @@ public class SProviderBuilder extends AbstractBuilder {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(provider));
     }
 
-    public <T extends SSimpleProvider> void simpleProvider(String providerName) {
+    public void simpleProvider(String providerName) {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(providerName));
     }
 
-    public <T extends STextQueryProvider> void filteredProvider(String providerName) {
+    public void filteredProvider(String providerName) {
         type.asAtrProvider().asAtrProvider().provider(new LookupOptionsProvider(providerName));
     }
 

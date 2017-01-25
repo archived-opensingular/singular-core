@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.wicket.util.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
@@ -38,9 +39,15 @@ public class NullOrEmptyModel implements IBooleanModel {
     }
 
     public static boolean nullOrEmpty(Object obj) {
-        return (obj instanceof String && ((String) obj).trim().isEmpty()) ||
-                (obj instanceof IModel<?> && nullOrEmpty(((IModel<?>) obj).getObject())) ||
-                (obj instanceof Component && nullOrEmpty(((Component) obj).getDefaultModel())) ||
-                (obj == null);
+        if (obj == null) {
+            return true;
+        } else if (obj instanceof String) {
+            return StringUtils.isBlank((String) obj);
+        } else if (obj instanceof IModel<?>) {
+            return nullOrEmpty(((IModel<?>) obj).getObject());
+        } else if (obj instanceof Component) {
+            return nullOrEmpty(((Component) obj).getDefaultModel());
+        }
+        return false;
     }
 }

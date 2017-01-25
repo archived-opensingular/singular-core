@@ -16,7 +16,10 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.util.json.JSONToolkit;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.*;
 
 import java.io.*;
@@ -24,6 +27,10 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
+
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
+import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeText;
 
 /**
  * Representa um Element com diversos métodos utilitários para
@@ -209,17 +216,17 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param no elemento não precisa ser convertido
      */
-    public static final void toMElement(MElement no) {
-        //Não faz nada
+    public static void toMElement(MElement no) {
+        throw SingularException.rethrow("Não deveria ser chamadado esse metodo com um parâmetro MElement");
     }
 
-    public static final MElement toMElement(Element no) {
+    public static MElement toMElement(Element no) {
         if (no == null) {
             return null;
         } else if (no instanceof MElement) {
             return (MElement) no;
         }
-        return new MElementWrapper((Element) no);
+        return new MElementWrapper(no);
     }
 
     /**
@@ -228,13 +235,13 @@ public abstract class MElement implements Element, Serializable {
      * @param no Element original.
      * @return Null se no for null. O próprio se esse já for MElement.
      */
-    public static final MElement toMElement(Node no) {
+    public static MElement toMElement(Node no) {
         if (no == null) {
             return null;
         } else if (no instanceof MElement) {
             return (MElement) no;
-        } else if (no.getNodeType() != Node.ELEMENT_NODE) {
-            throw new RuntimeException("no " + XPathToolkit.getFullPath(no) + " não é Element");
+        } else if (!isNodeTypeElement(no)) {
+            throw new SingularFormException("no " + XPathToolkit.getFullPath(no) + " não é Element");
         }
         return new MElementWrapper((Element) no);
     }
@@ -246,7 +253,7 @@ public abstract class MElement implements Element, Serializable {
      * @param toCall Classe cujo nome sera o nome da tag
      * @return MElement wrapper.
      */
-    public static final MElement newInstance(Class<?> toCall) {
+    public static MElement newInstance(Class<?> toCall) {
         return newInstance(toCall.getName().replace('.', '-'));
     }
 
@@ -257,7 +264,7 @@ public abstract class MElement implements Element, Serializable {
      * @param nomeRaiz nome da tag raiz
      * @return MElement wrapper.
      */
-    public static final MElement newInstance(String nomeRaiz) {
+    public static MElement newInstance(String nomeRaiz) {
         return new MElementWrapper(nomeRaiz);
     }
 
@@ -272,7 +279,7 @@ public abstract class MElement implements Element, Serializable {
      * (ex.: "fi:ContaPagamento").
      * @return -
      */
-    public static final MElement newInstance(String nameSpaceURI, String nomeRaiz) {
+    public static MElement newInstance(String nameSpaceURI, String nomeRaiz) {
         return new MElementWrapper(nameSpaceURI, nomeRaiz);
     }
 
@@ -373,7 +380,7 @@ public abstract class MElement implements Element, Serializable {
             try {
                 return addElement(nome, (InputStream) o);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw SingularException.rethrow(e.getMessage(), e);
             }
         } else if (o instanceof byte[]) {
             return addElement(nome, (byte[]) o);
@@ -498,9 +505,9 @@ public abstract class MElement implements Element, Serializable {
      */
     public final MElement addBoolean(String nome, boolean valor) {
         if (valor) {
-            return addElement(nome, "true");
+            return addElement(nome, Boolean.TRUE.toString());
         } else {
-            return addElement(nome, "false");
+            return addElement(nome, Boolean.FALSE.toString());
         }
     }
 
@@ -519,7 +526,7 @@ public abstract class MElement implements Element, Serializable {
             if (s.length() == 0) {
                 return addElement(nome, (String) null);
             }
-            Integer.parseInt(s); //Testa se é um inteiro
+            Integer.parseInt(s); //NOSONAR Testa se é um inteiro
             return addElement(nome, s);
         }
     }
@@ -540,7 +547,7 @@ public abstract class MElement implements Element, Serializable {
         if (valor != null) {
             String v = valor.trim();
             if (v.length() > 0) {
-                Integer.parseInt(v); //Testa se é um inteiro
+                Integer.parseInt(v); //NOSONAR Testa se é um inteiro
                 return addElement(nome, v);
             }
         }
@@ -548,13 +555,13 @@ public abstract class MElement implements Element, Serializable {
             if (valorDefault instanceof String) {
                 String v = ((String) valorDefault).trim();
                 if (v.length() > 0) {
-                    Integer.parseInt(v); //Testa se é um inteiro
+                    Integer.parseInt(v); //NOSONAR Testa se é um inteiro
                     return addElement(nome, v);
                 }
             } else if (valorDefault instanceof Integer) {
-                return addElement(nome, (Integer) valorDefault);
+                return addElement(nome, valorDefault);
             } else {
-                throw new RuntimeException("Tipo default inválido ("
+                throw new SingularFormException("Tipo default inválido ("
                         + valorDefault.getClass().getName()
                         + ") para um inteiro");
             }
@@ -578,7 +585,7 @@ public abstract class MElement implements Element, Serializable {
         if (valor != null) {
             String v = valor.trim();
             if (v.length() > 0) {
-                Integer.parseInt(v); //Testa se é um inteiro
+                Integer.parseInt(v); //NOSONAR Testa se é um inteiro
                 return addElement(nome, v);
             }
         }
@@ -735,18 +742,18 @@ public abstract class MElement implements Element, Serializable {
      */
     public final Node updateNode(String xPath, String value) {
         Node n = getNode(xPath);
-        if ((n == null) && (value != null) && (value.length() != 0)) {
+        if ((n == null) && !StringUtils.isEmpty(value)) {
             return addElement(xPath, value);
         } else if (n instanceof Element) {
             Node filho = n.getFirstChild();
             if (filho == null) {
-                if ((value != null) && (value.length() != 0)) {
+                if (!StringUtils.isEmpty(value)) {
                     Document d = n.getOwnerDocument();
                     Text txt = d.createTextNode(value);
                     n.appendChild(txt);
                 }
-            } else if (filho.getNodeType() == Node.TEXT_NODE) {
-                if ((value != null) && (value.length() != 0)) {
+            } else if (isNodeTypeText(filho)) {
+                if (!StringUtils.isEmpty(value)) {
                     filho.setNodeValue(value);
                 } else {
                     n.removeChild(filho);
@@ -815,7 +822,7 @@ public abstract class MElement implements Element, Serializable {
             //    setSQLTime(ps, coluna, xPath);
             //    break;
             default:
-                throw new RuntimeException("Tipo " + tipoSQL + " não tratado por MElement");
+                throw new SingularFormException("Tipo " + tipoSQL + " não tratado por MElement");
         }
     }
 
@@ -868,7 +875,7 @@ public abstract class MElement implements Element, Serializable {
             //    setSQLTime(ps, coluna, xPath);
             //    break;
             default:
-                throw new RuntimeException("Tipo " + tipoSQL + " não tratado por MElement");
+                throw new SingularFormException("Tipo " + tipoSQL + " não tratado por MElement");
         }
     }
 
@@ -1047,8 +1054,7 @@ public abstract class MElement implements Element, Serializable {
         int qtd = 0;
         Node node = getFirstChild();
         while (node != null) {
-            if ((node.getNodeType() == Node.ELEMENT_NODE)
-                    && (nome == null || node.getNodeName().equals(nome))) {
+            if (isNodeTypeElement(node, nome)) {
                 qtd++;
             }
             node = node.getNextSibling();
@@ -1072,7 +1078,7 @@ public abstract class MElement implements Element, Serializable {
      * @param no do qual será extraido o texto
      * @return pdoe ser null
      */
-    static final String getValorTexto(Node no) {
+    static String getValorTexto(Node no) {
         //Não é private, pois a classe XMLToolkit também utiliza
         if (no == null) {
             return null;
@@ -1080,19 +1086,19 @@ public abstract class MElement implements Element, Serializable {
         switch (no.getNodeType()) {
             case Node.ELEMENT_NODE:
                 Node n = no.getFirstChild();
-                if ((n != null) && (n.getNodeType() == Node.TEXT_NODE)) {
+                if (isNodeTypeText(n)) {
                     return n.getNodeValue();
                 }
                 break;
             case Node.ATTRIBUTE_NODE:
             case Node.TEXT_NODE:
                 String valor = no.getNodeValue();
-                if ((valor != null) && (valor.length() != 0)) {
+                if (!StringUtils.isEmpty(valor)) {
                     return valor;
                 }
                 break;
             default:
-                throw new RuntimeException("getValorTexto(Node) não trata nó "
+                throw new SingularFormException("getValorTexto(Node) não trata nó "
                         + XPathToolkit.getNomeTipo(no));
         }
         return null;
@@ -1203,7 +1209,7 @@ public abstract class MElement implements Element, Serializable {
      * @param xPath dos elementos a terem os valores retornados
      * @return sempre diferente de null
      */
-    public final String[] getValores(String xPath) {
+    public final List<String> getValores(String xPath) {
         return XPathToolkit.getValores(this, xPath);
     }
 
@@ -1237,12 +1243,12 @@ public abstract class MElement implements Element, Serializable {
      */
     public final boolean getBoolean(String xPath) {
         String s = getValorNotNull(xPath);
-        if ("true".equals(s)) {
+        if (Boolean.TRUE.toString().equals(s)) {
             return true;
-        } else if ("false".equals(s)) {
+        } else if (Boolean.FALSE.toString().equals(s)) {
             return false;
         }
-        throw new RuntimeException("O valro em " + xPath + " não é boolean = " + s);
+        throw new SingularFormException("O valor em " + xPath + " não é boolean = " + s);
     }
 
     /**
@@ -1257,12 +1263,12 @@ public abstract class MElement implements Element, Serializable {
         String s = getValor(xPath);
         if (s == null) {
             return valorDefault;
-        } else if ("true".equals(s)) {
+        } else if (Boolean.TRUE.toString().equals(s)) {
             return true;
-        } else if ("false".equals(s)) {
+        } else if (Boolean.FALSE.toString().equals(s)) {
             return false;
         }
-        throw new RuntimeException("O valro em " + xPath + " não é boolean = " + s);
+        throw new SingularFormException("O valor em " + xPath + " não é boolean = " + s);
     }
 
     /**
@@ -1595,10 +1601,10 @@ public abstract class MElement implements Element, Serializable {
      * @param xPath caminho do elemento desejado
      * @return O Node no destino ou null se o xPath não existir
      *
-     * @throws RuntimeException Se o node no xPath não for um Element
+     * @throws SingularFormException Se o node no xPath não for um Element
      * @see XPathToolkit
      */
-    public final MElement getElement(String xPath) throws RuntimeException {
+    public final MElement getElement(String xPath) {
         return toMElement(XPathToolkit.selectElement(this, xPath));
     }
 
@@ -1811,12 +1817,10 @@ public abstract class MElement implements Element, Serializable {
      * primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private final MElement procurarElementAnterior(Node no, String nome) {
+    private MElement procurarElementAnterior(Node no, String nome) {
         while (no != null) {
-            if (no.getNodeType() == Node.ELEMENT_NODE) {
-                if ((nome == null) || nome.equals(no.getNodeName())) {
-                    return toMElement(no);
-                }
+            if (isNodeTypeElement(no, nome)) {
+                return toMElement(no);
             }
             no = no.getPreviousSibling();
         }
@@ -1831,16 +1835,8 @@ public abstract class MElement implements Element, Serializable {
      * primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private final MElement procurarProximoElement(Node no, String nome) {
-        while (no != null) {
-            if (no.getNodeType() == Node.ELEMENT_NODE) {
-                if ((nome == null) || nome.equals(no.getNodeName())) {
-                    return toMElement(no);
-                }
-            }
-            no = no.getNextSibling();
-        }
-        return null;
+    private MElement procurarProximoElement(Node no, String nome) {
+        return toMElement(XmlUtil.nextSiblingOfTypeElement(no, nome));
     }
 
     /**

@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.internal.PathReader;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +40,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
-        //        MILista<I> lista = new MILista<>();
         SIList<I> lista = (SIList<I>) elementsType.getDictionary().getType(STypeList.class).newInstance();
         lista.setType(elementsType.getDictionary().getType(STypeList.class));
         lista.elementsType = elementsType;
@@ -102,15 +103,13 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E addElement(E e) {
-        E instance = e;
-        instance.setDocument(getDocument());
-        return addInternal(instance, true, -1);
+        e.setDocument(getDocument());
+        return addInternal(e, true, -1);
     }
 
     public E addElementAt(int index, E e) {
-        E instance = e;
-        instance.setDocument(getDocument());
-        return addInternal(instance, false, index);
+        e.setDocument(getDocument());
+        return addInternal(e, false, index);
     }
 
     public E addNewAt(int index) {
@@ -131,8 +130,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public SIList<E> addValues(Collection<?> values) {
-        for (Object valor : values)
-            addValue(valor);
+        values.forEach(v -> addValue(v));
         return this;
     }
 
@@ -197,18 +195,18 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             if (pathReader == null) {
                 throw new SingularFormException(msg, this);
             }
-            throw new SingularFormException(pathReader.getErroMsg(this, msg));
+            throw new SingularFormException(pathReader.getErrorMsg(this, msg));
         }
         return values.get(index);
     }
 
     private int resolveIndex(PathReader pathReader) {
         if (!pathReader.isIndex()) {
-            throw new SingularFormException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getTrecho() + "'"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getToken() + "'"));
         }
         int index = pathReader.getIndex();
         if (index < 0) {
-            throw new SingularFormException(pathReader.getErroMsg(this, index + " é um valor inválido de índice"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, index + " é um valor inválido de índice"));
         }
         return index;
     }
@@ -229,9 +227,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             list.getValue().clear();
         } else if (obj instanceof List) {
             clearInstance();
-            for (Object o : (List)obj){
-                addValue(o);
-            }
+            ((List) obj).stream().forEach(o -> addValue(o));
         } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
@@ -255,8 +251,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     /**
      * Remove o elemento da lista e dispara o
      * pós processamento do elemento da lista (listeners e desassociação do pai)
-     * @param index
-     * @return
      */
     public E remove(int index) {
         E e = getChecking(index, null);
@@ -267,9 +261,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     /**
      * Processa a instancia com as rotinas necessárias após a desassociação
      * do elemento da lista.
-     * @param e
-     * Instancia cuja remoção deve ser processada
-     * @return
+     * @param e Instancia cuja remoção deve ser processada
      */
     private E internalRemove(E e){
         e.internalOnRemove();
@@ -294,7 +286,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
      * Retornar o índice da instancia dentro da lista. Utiliza identidade (==)
      * em vez de equals().
      *
-     * @param supposedChild
      * @return -1 senão encontrou
      */
     public int indexOf(SInstance supposedChild) {
@@ -327,7 +318,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public Iterator<E> iterator() {
         return (values == null) ? Collections.emptyIterator() : new Iterator<E>() {
 
-            Iterator<E> it = values.iterator();
+            final Iterator<E> it = values.iterator();
             E current;
 
             @Override
@@ -337,7 +328,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
             @Override
             public E next() {
-                return current = it.next();
+                current = it.next();
+                return current;
             }
 
             @Override
@@ -412,6 +404,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public E remove(E e) {
-        return (E) remove(values.indexOf(e));
+        return remove(values.indexOf(e));
     }
 }

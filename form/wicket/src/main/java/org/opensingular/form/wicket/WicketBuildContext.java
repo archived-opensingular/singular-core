@@ -41,7 +41,6 @@ import org.opensingular.form.wicket.mapper.TabMapper;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -195,12 +194,12 @@ public class WicketBuildContext implements Serializable {
                 // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
-            final ISInstanceAwareModel<?> model = (ISInstanceAwareModel<?>) defaultModel;
-            // final SType<?> tipo = model.getMInstancia().getType();
+            ISInstanceAwareModel<?> selectedModel = (ISInstanceAwareModel<?>) defaultModel;
+            // final SType<?> tipo = selectedModel.getMInstancia().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
                     formComponent,
-                    ISInstanceAwareModel.getInstanceModel(model),
+                    ISInstanceAwareModel.getInstanceModel(selectedModel),
                     new OnFieldUpdatedListener());
         }
         return formComponent;
@@ -249,7 +248,7 @@ public class WicketBuildContext implements Serializable {
         return findNearest(comp).map(it -> it.getRootContext());
     }
 
-    protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
+    protected static String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
             SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
@@ -263,7 +262,7 @@ public class WicketBuildContext implements Serializable {
      * para ser usado em mensagens de erro.
      * Exemplo: "O campo 'Contato > Endereços > Endereço > Logradouro' é obrigatório"
      */
-    protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
+    protected static String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
             SInstance    instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();

@@ -16,11 +16,6 @@
 
 package org.opensingular.lib.wicket.util.modal;
 
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
-import org.opensingular.lib.wicket.util.feedback.NotContainedFeedbackMessageFilter;
-import org.opensingular.lib.wicket.util.ajax.AjaxErrorEventPayload;
-import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -48,8 +43,12 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.wicket.util.ajax.AjaxErrorEventPayload;
+import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
+import org.opensingular.lib.wicket.util.feedback.NotContainedFeedbackMessageFilter;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 import java.io.Serializable;
 
@@ -68,7 +67,7 @@ public class BSModalBorder extends Border {
         LINK("btn-link"),
         DANGER("btn-danger"),
         BLUE("blue"),
-        CANCEl("cancel-btn"),
+        CANCEL("cancel-btn"),
         CONFIRM("confirm-btn");
         //@formatter:on
 
@@ -107,7 +106,6 @@ public class BSModalBorder extends Border {
     private static final String EXPAND_ICON   = "expandIcon";
     private static final String TITLE         = "title";
     private static final String HEADER        = "header";
-    private static final String BODY          = "body";
     private static final String FOOTER        = "footer";
 
     private Size    size          = Size.NORMAL;
@@ -176,7 +174,7 @@ public class BSModalBorder extends Border {
 
         dialog.add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('keypress', function (e) {"
                 + "  var buttons = $(this).find('.btn-primary:visible');"
-                + "  if (buttons.length > 0 && e.which === 13) {"
+                + "  if (e.target.tagName.toLowerCase() != 'textarea' && buttons.length > 0 && e.which === 13) {"
                 + "    e.preventDefault();"
                 + "    $(buttons[buttons.length - 1]).click();"
                 + "  }"
@@ -364,27 +362,21 @@ public class BSModalBorder extends Border {
     }
 
     public void clearInputs() {
-        visitChildren(new IVisitor<Component, Void>() {
-            @Override
-            public void component(Component comp, IVisit<Void> visit) {
-                if (comp instanceof Form) {
-                    ((Form<?>) comp).clearInput();
-                    visit.dontGoDeeper();
-                } else if (comp instanceof FormComponent) {
-                    ((FormComponent<?>) comp).clearInput();
-                }
+        visitChildren((IVisitor<Component, Void>) (comp, visit) -> {
+            if (comp instanceof Form) {
+                ((Form<?>) comp).clearInput();
+                visit.dontGoDeeper();
+            } else if (comp instanceof FormComponent) {
+                ((FormComponent<?>) comp).clearInput();
             }
         });
     }
 
     public void focusFirstComponent(AjaxRequestTarget target) {
-        getBodyContainer().visitChildren(FormComponent.class, new IVisitor<FormComponent<?>, Void>() {
-            @Override
-            public void component(FormComponent<?> object, IVisit<Void> visit) {
-                if (object.isEnabledInHierarchy()) {
-                    target.focusComponent(object);
-                    visit.stop();
-                }
+        getBodyContainer().visitChildren(FormComponent.class, (IVisitor<FormComponent<?>, Void>) (object, visit) -> {
+            if (object.isEnabledInHierarchy()) {
+                target.focusComponent(object);
+                visit.stop();
             }
         });
     }

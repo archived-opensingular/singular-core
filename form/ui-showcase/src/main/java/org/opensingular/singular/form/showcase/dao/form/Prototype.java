@@ -16,16 +16,9 @@
 
 package org.opensingular.singular.form.showcase.dao.form;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "PROTOTYPE")
@@ -67,8 +60,11 @@ public class Prototype implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Prototype prototype = (Prototype) o;
         return Objects.equals(id, prototype.id);
     }

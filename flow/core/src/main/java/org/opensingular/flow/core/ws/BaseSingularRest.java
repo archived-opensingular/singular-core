@@ -16,14 +16,13 @@
 
 package org.opensingular.flow.core.ws;
 
-import java.util.Objects;
-
-import javax.xml.ws.WebServiceException;
-
+import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessInstance;
+
+import javax.xml.ws.WebServiceException;
+import java.util.Objects;
 
 public class BaseSingularRest {
 
@@ -72,7 +71,9 @@ public class BaseSingularRest {
         if (user == null) {
             throw new WebServiceException("Usuário não encontrado");
         }
-        if(lastVersion == null) lastVersion = 0;
+        if(lastVersion == null) {
+            lastVersion = 0;
+        }
         processInstance.getCurrentTask().relocateTask(user, user, false, "", lastVersion);
     }
 

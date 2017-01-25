@@ -72,8 +72,8 @@ public class InstanceSerializableRef<I extends SInstance> implements Externaliza
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         instance.detachEventCollector();
-        FormSerialized fs = FormSerializationUtil.toSerializedObject(get());
-        out.writeObject(fs);
+        FormSerialized newFs = FormSerializationUtil.toSerializedObject(get());
+        out.writeObject(newFs);
     }
 
     @Override

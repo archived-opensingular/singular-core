@@ -1,12 +1,5 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -14,13 +7,20 @@ import org.apache.wicket.util.file.File;
 import org.fest.assertions.core.Condition;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 
 @SuppressWarnings("rawtypes")
 @Ignore("Review after updating logic")
@@ -113,6 +113,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     private File createTempFileAndSetOnField(FileUploadField uploadField) throws IOException {
         //Cria um arquivo de teste e adiciona ao componente
         java.io.File temp = File.createTempFile("temp"+String.valueOf(new Date().getTime()), ".txt");
+        temp.deleteOnExit();
         FileOutputStream outputStream = new FileOutputStream(temp);
         outputStream.write("Teste".getBytes());
         outputStream.flush();

@@ -47,6 +47,8 @@ public class FreemarkerUtil {
         cfg.setObjectWrapper(wrapper);
     }
 
+    private FreemarkerUtil() {}
+
     public static String mergeWithFreemarker(String template, Object obj) {
 
         if (obj == null || template == null) {

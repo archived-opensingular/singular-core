@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 public class HTMLUtil {
 
+    private HTMLUtil() {}
+
     /**
      * <p>Identifica se o conteudo passo é html</p>
      * pattern: &lt;([\d[a-zA-Z]]+).*?>[\s\S]*&lt;/\s*?\1>

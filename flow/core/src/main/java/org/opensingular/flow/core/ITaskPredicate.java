@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import java.io.Serializable;
 import java.util.function.Predicate;
 
-public interface ITaskPredicate extends Predicate<TaskInstance>, Serializable {
+public interface ITaskPredicate extends Predicate<TaskInstance> {
 
     String getName();
 

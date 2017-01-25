@@ -18,6 +18,8 @@ package org.opensingular.lib.wicket.util.scripts;
 
 public class Scripts {
 
+    private Scripts() {}
+
     /**
      * Quando a tecla Enter é acionada procura um button da classe "btn-primary"
      * e executa o click().

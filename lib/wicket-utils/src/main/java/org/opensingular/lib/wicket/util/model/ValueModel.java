@@ -16,34 +16,81 @@
 
 package org.opensingular.lib.wicket.util.model;
 
+import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IObjectClassAwareModel;
+import org.opensingular.lib.commons.lambda.IFunction;
+
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.apache.wicket.model.Model;
+//Duplica a lógica de org.apache.wicket.model.Model<T> com alguma variações no equals e hashcode()
+public final class ValueModel<T extends Serializable> implements IMappingModel<T>, IObjectClassAwareModel<T> {
 
-import org.opensingular.lib.commons.lambda.IFunction;
+    /** Backing object. */
+    private T object;
 
-public final class ValueModel<T extends Serializable>
-        extends Model<T>
-        implements IMappingModel<T> {
-    
     private final IFunction<T, Object> equalsHashArgsFunc;
-    
+
     public ValueModel(T object, IFunction<T, Object> equalsHashArgsFunc) {
-        super(object);
+        setObject(object);
         this.equalsHashArgsFunc = equalsHashArgsFunc;
     }
+
+    /**
+     * @see org.apache.wicket.model.IModel#getObject()
+     */
+    @Override
+    public T getObject() {
+        return object;
+    }
+
+    /**
+     * Set the model object; calls setObject(java.io.Serializable). The model object must be
+     * serializable, as it is stored in the session
+     *
+     * @param object the model object
+     * @see org.apache.wicket.model.IModel#setObject(Object)
+     */
+    @Override
+    public void setObject(final T object) {
+        this.object = object;
+    }
+
+    /**
+     * @see org.apache.wicket.model.IDetachable#detach()
+     */
+    @Override
+    public void detach() {
+        if (object instanceof IDetachable) {
+            ((IDetachable) object).detach();
+        }
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Model:classname=[");
+        sb.append(getClass().getName()).append("]");
+        sb.append(":object=[").append(object).append("]");
+        return sb.toString();
+    }
+
+    @Override
+    public Class<T> getObjectClass() {
+        return object != null ? (Class<T>) object.getClass() : null;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(equalsHashArgsFunc.apply(this.getObject()));
     }
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
-        if (!(obj instanceof ValueModel<?>))
-            return false;
-        return Objects.deepEquals(
-            equalsHashArgsFunc.apply(this.getObject()),
-            equalsHashArgsFunc.apply(((ValueModel<T>) obj).getObject()));
+        return (obj instanceof ValueModel<?>) && Objects.deepEquals(equalsHashArgsFunc.apply(this.getObject()),
+                equalsHashArgsFunc.apply(((ValueModel<T>) obj).getObject()));
     }
 }

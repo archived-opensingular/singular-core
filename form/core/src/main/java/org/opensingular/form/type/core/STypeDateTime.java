@@ -16,14 +16,14 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.STypeSimple;
-import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.SInfoType;
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +46,9 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
     }
 
     public Date fromString(String value) {
-        if (Strings.isNullOrEmpty(value)) return null;
+        if (Strings.isNullOrEmpty(value)) {
+            return null;
+        }
         try {
             return isoFormarter().parseLocalDateTime(value).toDate();
         } catch (Exception e) {

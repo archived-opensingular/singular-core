@@ -72,7 +72,7 @@ class MapByName<K> implements Iterable<K> {
         return valor;
     }
 
-    final static <TT extends Object> TT newInstance(Class<TT> classeAlvo) {
+    static <TT> TT newInstance(Class<TT> classeAlvo) {
         try {
             return classeAlvo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

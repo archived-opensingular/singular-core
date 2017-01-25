@@ -70,16 +70,12 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
     /**
      * Informa se a SInstance passada por parâmetro possui uma chave associada.
      * Caso contrário é considerado um formulário não persistence
-     * @param instance
-     * @return
      */
     boolean isPersistent(INSTANCE instance);
 
     /**
      * Salva as alterações na versão atual e incrementa versão do formulário
      * e replica as anotações em suas versões iniciais
-     * @param instance
-     * @return
      */
     default FormKey newVersion(INSTANCE instance, Integer inclusionActor){
         return newVersion(instance, inclusionActor, true);
@@ -88,8 +84,6 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
     /**
      * Salva as alterações na versão atual e incrementa versão do formulário
      * e das anotações vinculadas
-     * @param instance
-     * @return
      */
     FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
 }

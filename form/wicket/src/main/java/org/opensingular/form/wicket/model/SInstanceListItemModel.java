@@ -18,13 +18,15 @@ package org.opensingular.form.wicket.model;
 
 import org.opensingular.form.SInstance;
 
+import java.io.Serializable;
+
 public class SInstanceListItemModel<I extends SInstance>
     extends AbstractSInstanceItemListaModel<I>
 {
 
     private int index;
 
-    public SInstanceListItemModel(Object rootTarget, int index) {
+    public SInstanceListItemModel(Serializable rootTarget, int index) {
         super(rootTarget);
         this.index = index;
     }

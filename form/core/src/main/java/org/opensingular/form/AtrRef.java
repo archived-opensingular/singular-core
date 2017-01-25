@@ -19,7 +19,7 @@ package org.opensingular.form;
 import com.google.common.base.Preconditions;
 
 @SuppressWarnings("rawtypes")
-public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
+public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final Class<? extends SPackage> packageClass;
 
@@ -30,8 +30,6 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
     private final Class<I>                 instanceClass;
 
     private final Class<V>                 valueClass;
-
-    private Class<? extends SType<?>>      ownerClass;
 
     private String                         nameScope;
 
@@ -52,6 +50,10 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
         this.instanceClass = instanceClass;
         this.valueClass = valueClass;
         selfReference = (typeClass == null) && (instanceClass == null) && (valueClass == null);
+        if (! selfReference && instanceClass == null) {
+            throw new SingularFormException("O Atributo " + nameSimple + " não define o tipo da instância do atributo",
+                    this);
+        }
     }
 
     public String getNameSimple() {
@@ -67,8 +69,8 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
     }
 
     public String getNameFull() {
-        if (!isBinded()) {
-            throw new RuntimeException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
+        if (isNotBindDone()) {
+            throw new SingularFormException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
         }
 
         return nameFull;
@@ -78,18 +80,18 @@ public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
         return selfReference;
     }
 
-    public final boolean isBinded() {
-        return nameScope != null;
+    final boolean isNotBindDone() {
+        return nameScope == null;
     }
 
     final void bind(String scopeName) {
-        if (!isBinded()) {
+        if (isNotBindDone()) {
             Preconditions.checkNotNull(scopeName);
             this.nameScope = scopeName;
             nameFull = scopeName + "." + nameSimple;
         } else {
             if (!this.nameScope.equals(scopeName)) {
-                throw new RuntimeException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
+                throw new SingularFormException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
                     + "' não podendo ser reassoaciado ao pacote " + scopeName);
             }
         }

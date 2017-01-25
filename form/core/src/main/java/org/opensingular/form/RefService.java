@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * recuperar a referência ao serviço depois de ser deserializado.
  * </p>
  * <p>
- * É um solução semelhante a {@link org.apache.wicket.model.IModel}.
+ * É um solução semelhante a org.apache.wicket.model.IModel.
  * </p>
  *
  * @author Daniel C. Bordin
@@ -69,12 +69,7 @@ public interface RefService<T> extends Serializable, Supplier<T> {
      */
     @SuppressWarnings("serial")
     public static <T extends Serializable> RefService<T> of(T value) {
-        return new RefService<T>() {
-            @Override
-            public T get() {
-                return value;
-            }
-        };
+        return (RefService<T>) () -> value;
     }
 
     /**
@@ -83,6 +78,6 @@ public interface RefService<T> extends Serializable, Supplier<T> {
      * tipo cache ou que pode ser recalculada depois.
      */
     public static <T> ServiceRefTransientValue<T> ofToBeDescartedIfSerialized(T value) {
-        return new ServiceRefTransientValue<T>(value);
+        return new ServiceRefTransientValue<>(value);
     }
 }

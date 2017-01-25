@@ -43,8 +43,6 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
         addFieldString(FIELD_TEXT);
         addFieldString(FIELD_CLASSIFIER);
         addFieldBoolean(FIELD_APPROVED);
@@ -54,7 +52,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Object> T convert(Object valor, Class<T> classeDestino) {
+    public <T> T convert(Object valor, Class<T> classeDestino) {
         return (T) valor;
     }
 }

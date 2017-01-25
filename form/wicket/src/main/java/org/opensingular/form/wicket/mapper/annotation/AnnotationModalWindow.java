@@ -26,7 +26,6 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
 
 import org.apache.wicket.validation.validator.StringValidator;
 import org.opensingular.form.wicket.behavior.CountDownBehaviour;
@@ -82,7 +81,7 @@ class AnnotationModalWindow extends BFModalWindow {
 
             setBody(container);
 
-            addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"), new CancelOrCloseButton("btn-cancelar"));
+            addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new CancelOrCloseButton("btn-cancelar"));
             addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("Confirmar"), new OkButton("btn-ok", annotationComponent));
 
             comment.add(StringValidator.maximumLength(4000));

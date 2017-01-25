@@ -16,20 +16,20 @@
 
 package org.opensingular.form;
 
-import java.util.Collection;
-
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.view.ViewResolver;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.view.ViewResolver;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public class SDictionary {
 
-    private MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
+    private final MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
 
-    private MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
+    private final MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
 
     private final SDocument internalDocument = new SDocument();
 
@@ -38,7 +38,7 @@ public class SDictionary {
     public static final String SINGULAR_PACKAGES_PREFIX = "singular.form.";
 
     /** Configurações globais do dicionário. */
-    private SDictionaryConfig dictionaryConfig = new SDictionaryConfig(this);
+    private final SDictionaryConfig dictionaryConfig = new SDictionaryConfig(this);
 
     /** Identficador único e sequencial do tipo dentro do dicionário. */
     private int idCount;
@@ -119,7 +119,8 @@ public class SDictionary {
      *
      * @return Nunca Null.
      */
-    public <T extends SType<?>> T getType(Class<T> typeClass) {
+    @Nonnull
+    public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
         T typeRef = getTypeOptional(typeClass);
         if (typeRef == null) {
             throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
@@ -173,6 +174,10 @@ public class SDictionary {
             Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
             SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
             SPackage pacoteDestino = findPackage(scope);
+            if (pacoteDestino == null) {
+                throw new SingularFormException("O pacote de destino para carregar o tipo " +
+                        newType.getNameSimple() + " não pode ser nulo.");
+            }
             if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
                 throw new SingularFormException(
                         "Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '" +
@@ -209,15 +214,13 @@ public class SDictionary {
     }
 
     /** Executa todos os processadores para o tipo informado que estiverem pendentes de execução (se existirem). */
-    public  void runPendingTypeProcessorExecution(SType<?> type) {
+    final void runPendingTypeProcessorExecution(SType<?> type) {
         if(pendingTypeProcessorExecution != null) {
             Collection<Runnable> tasks = pendingTypeProcessorExecution.removeAll(type);
             if(pendingTypeProcessorExecution.isEmpty()) {
                 pendingTypeProcessorExecution = null;
             }
-            for(Runnable task: tasks) {
-                task.run();
-            }
+            tasks.forEach(Runnable::run);
         }
     }
 
@@ -225,11 +228,10 @@ public class SDictionary {
      * Registra que existem processadores pendentes de execução para o tipo, os quais deverão ser executados depois de
      * concluir a execução do onLoadType da classe.
      */
-    public void addTypeProcessorForLatterExecutuion(SType<?> type, Runnable runnable) {
+    final void addTypeProcessorForLatterExecutuion(SType<?> type, Runnable runnable) {
         if(pendingTypeProcessorExecution == null) {
             pendingTypeProcessorExecution = ArrayListMultimap.create();
         }
-        SType<?> dependentType = type.getSuperType();
-        pendingTypeProcessorExecution.put(dependentType, runnable);
+        pendingTypeProcessorExecution.put(type, runnable);
     }
 }

@@ -50,9 +50,6 @@ public class SViewByBlock extends AbstractSViewByBlock {
     }
     /**
      * Cria um bloco para cada tipo informado
-     * 
-     * @param types
-     * @return this
      */
     public SViewByBlock newBlockPerType(Collection<SType<?>> types){
         types.stream().forEach(field -> newBlock().add(field));

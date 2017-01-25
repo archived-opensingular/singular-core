@@ -16,30 +16,13 @@
 
 package org.opensingular.form.wicket.helpers;
 
-import java.io.Serializable;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
-import org.opensingular.form.RefService;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
+import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.DefaultServiceRegistry;
-import org.opensingular.form.document.RefSDocumentFactory;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
-import org.opensingular.form.document.TypeLoader;
+import org.opensingular.form.document.*;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.component.SingularForm;
@@ -47,51 +30,56 @@ import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
+import java.io.Serializable;
+import java.util.Optional;
+
+/**
+ * Classe utilitária de teste para dar suporte ao {@link SingularFormBaseTest}
+ * Não deve ser referenciada fora do código de teste.
+ */
 public class DummyPage extends WebPage {
 
-    final public SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected ViewMode viewMode = ViewMode.EDIT;
-    protected AnnotationMode annotationMode = AnnotationMode.NONE;
-    protected SIComposite currentInstance;
-    protected Consumer<STypeComposite> typeBuilder;
-    protected Function<SType, SIComposite> instanceCreator;
+    final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
+    protected              ViewMode            viewMode       = ViewMode.EDIT;
+    protected              AnnotationMode      annotationMode = AnnotationMode.NONE;
+    protected transient SIComposite                   currentInstance;
+    protected           IConsumer<STypeComposite>     typeBuilder;
+    protected           IFunction<SType, SIComposite> instanceCreator;
 
     private SingularForm<?> form = new SingularForm<>("form");
 
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            return createCurrentInstance(buildBaseType());
+            if (instanceCreator != null) {
+                Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
+                if (baseType.isPresent()) {
+                    if (baseType.get().isComposite()) {
+                        typeBuilder.accept((STypeComposite) baseType.get());
+                    }
+                    currentInstance = instanceCreator.apply(baseType.get());
+                }
+            }
+            return currentInstance;
         }
 
         @Override
-        public ViewMode getViewMode() { return viewMode;    }
+        public ViewMode getViewMode() {
+            return viewMode;
+        }
 
         @Override
-        public AnnotationMode getAnnotationMode() {    return annotationMode;  }
+        public AnnotationMode getAnnotationMode() {
+            return annotationMode;
+        }
     };
-
-    private Optional<SType<?>> buildBaseType() {
-        Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
-        baseType.ifPresent((x) -> {
-            if (baseType.get() instanceof STypeComposite) {
-                typeBuilder.accept((STypeComposite) baseType.get());
-            }
-        });
-        return baseType;
-    }
-
-    private SInstance createCurrentInstance(Optional<SType<?>> baseType) {
-        Optional.of(instanceCreator).ifPresent((x) -> {
-                currentInstance = instanceCreator.apply(baseType.get());
-            });
-        return currentInstance ;
-    }
-
     private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
         @Override
-        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {}
+        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+        }
     };
 
     public DummyPage() {
@@ -110,18 +98,27 @@ public class DummyPage extends WebPage {
         return singularValidationButton;
     }
 
-    public void setAsVisualizationView() {  viewMode = ViewMode.READ_ONLY;  }
-    public void setAsEditView() {  viewMode = ViewMode.EDIT;  }
+    public void setAsVisualizationView() {
+        viewMode = ViewMode.READ_ONLY;
+    }
 
-    public void enableAnnotation() { annotationMode = AnnotationMode.EDIT; }
+    public void setAsEditView() {
+        viewMode = ViewMode.EDIT;
+    }
 
-    public SIComposite getCurrentInstance() { return currentInstance; }
+    public void enableAnnotation() {
+        annotationMode = AnnotationMode.EDIT;
+    }
 
-    public void setInstanceCreator(Function<SType, SIComposite> instanceCreator) {
+    public SIComposite getCurrentInstance() {
+        return currentInstance;
+    }
+
+    public void setInstanceCreator(IFunction<SType, SIComposite> instanceCreator) {
         this.instanceCreator = instanceCreator;
     }
 
-    public void setTypeBuilder(Consumer<STypeComposite> typeBuilder) {
+    public void setTypeBuilder(IConsumer<STypeComposite> typeBuilder) {
         this.typeBuilder = typeBuilder;
     }
 }
@@ -129,7 +126,7 @@ public class DummyPage extends WebPage {
 class MockFormConfig implements SFormConfig<String>, Serializable {
 
     private final MockSDocumentFactory documentFactory = new MockSDocumentFactory();
-    private final MockTypeLoader mockTypeLoader = new MockTypeLoader();
+    private final MockTypeLoader       mockTypeLoader  = new MockTypeLoader();
 
     @Override
     public SDocumentFactory getDocumentFactory() {
@@ -144,17 +141,12 @@ class MockFormConfig implements SFormConfig<String>, Serializable {
 
 class MockSDocumentFactory extends SDocumentFactory implements Serializable {
 
-    private final DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
+    private final transient DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
 
-    private final SingularFormContextWicket singularFormContextWicket = new Context();
+    private final transient SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
-        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, new RefService<SingularFormContextWicket>() {
-            @Override
-            public SingularFormContextWicket get() {
-                return singularFormContextWicket;
-            }
-        });
+        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, () -> singularFormContextWicket);
     }
 
     @Override
@@ -174,7 +166,8 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     }
 
     @Override
-    protected void setupDocument(SDocument document) {}
+    protected void setupDocument(SDocument document) {
+    }
 
     private class Context implements SingularFormContextWicket, Serializable {
         @Override

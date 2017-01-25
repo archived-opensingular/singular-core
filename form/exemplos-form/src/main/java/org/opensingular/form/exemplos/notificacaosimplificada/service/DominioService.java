@@ -343,7 +343,7 @@ public class DominioService {
         list.add(Pair.of(i++, "Achillea millefolium"));
         list.add(Pair.of(i++, "Achyrocline satureioides + Aesculus hippocastanum"));
         list.add(Pair.of(i++, "Glycyrrhiza glabra + Cynara scolymus"));
-        list.add(Pair.of(i++, "Zingiber officinale\n"));
+        list.add(Pair.of(i, "Zingiber officinale\n"));
 
         return list;
     }
@@ -355,7 +355,7 @@ public class DominioService {
         list.add(Pair.of(i++, "30mg"));
         list.add(Pair.of(i++, "50mg + 60mg"));
         list.add(Pair.of(i++, "20mg + 10mg"));
-        list.add(Pair.of(i++, "5mg"));
+        list.add(Pair.of(i, "5mg"));
 
         return list;
     }
@@ -388,7 +388,7 @@ public class DominioService {
         list.add(Pair.of(i++, "Pirose"));
         list.add(Pair.of(i++, "Queimação"));
         list.add(Pair.of(i++, "Tosse"));
-        list.add(Pair.of(i++, "Vômito"));
+        list.add(Pair.of(i, "Vômito"));
 
         return list;
     }

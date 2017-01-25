@@ -56,7 +56,7 @@ final class RuntimeDocumentScript {
             } else if (instance instanceof SIList) {
                 w = new JSWrapperList(this, (SIList<?>) instance);
             } else {
-                w = new JSWrapperInstance<SInstance>(this, instance);
+                w = new JSWrapperInstance<>(this, instance);
             }
             wrappers.put(id, w);
         }

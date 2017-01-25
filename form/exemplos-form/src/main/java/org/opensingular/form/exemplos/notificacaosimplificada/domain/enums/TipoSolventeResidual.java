@@ -27,8 +27,8 @@ public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Charact
 
     public static final String ENUM_CLASS_NAME = "org.opensingular.form.exemplos.notificacaosimplificada.domain.enums.TipoSolventeResidual";
 
-    private Character codigo;
-    private String    descricao;
+    private final Character codigo;
+    private final String    descricao;
 
 
     private TipoSolventeResidual(Character codigo, String descricao) {
@@ -42,18 +42,8 @@ public enum TipoSolventeResidual implements EnumId<TipoSolventeResidual, Charact
     }
 
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-
     public Character getCodigo() {
         return codigo;
-    }
-
-
-    public void setCodigo(Character codigo) {
-        this.codigo = codigo;
     }
 
     @Override

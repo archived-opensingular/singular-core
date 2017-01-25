@@ -35,7 +35,7 @@ public class SIAttachment extends SIComposite {
         if (file == null) {
             throw new SingularFormException("O arquivo não pode ser nulo.");
         }
-        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name));
+        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name, getDocument()));
     }
 
     private void setContent(String name, IAttachmentRef ref) {
@@ -47,14 +47,24 @@ public class SIAttachment extends SIComposite {
 
     void deleteReference() {
         if (getFileId() != null) {
-            getAttachmentService().deleteReference(getFileId());
+            getAttachmentService().deleteReference(getFileId(), getDocument());
         }
         setValue(STypeAttachment.FIELD_FILE_ID, null);
         setValue(STypeAttachment.FIELD_HASH_SHA1, null);
         setValue(STypeAttachment.FIELD_SIZE, null);
         setValue(STypeAttachment.FIELD_NAME, null);
-        setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
-        setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, null);
+        if (hasAttribute(STypeAttachment.ATR_ORIGINAL_ID)) {
+            setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
+        }
+        if (hasAttribute(STypeAttachment.ATR_IS_TEMPORARY)) {
+            setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, null);
+        }
+    }
+
+    @Override
+    public void clearInstance() {
+        deleteReference();
+        super.clearInstance();
     }
 
     @Override
@@ -79,7 +89,7 @@ public class SIAttachment extends SIComposite {
      * arquivo.
      */
     public long getFileSize() {
-        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1l);
+        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1L);
     }
 
     public void setFileSize(long size) {
@@ -131,20 +141,35 @@ public class SIAttachment extends SIComposite {
         }
     }
 
+    public String fileSizeToString() {
+        if (getFileSize() <= 0) {
+            return "";
+        }
+        final String[] sufix = new String[]{"B", "KB", "MB", "GB"};
+        int posSufix = 0;
+        double bytesSize = getFileSize();
+
+        while (bytesSize > 900 && posSufix < sufix.length - 1) {
+            bytesSize = bytesSize / 1024;
+            posSufix++;
+        }
+
+        return Math.round(bytesSize) + " " + sufix[posSufix];
+    }
+
     @Override
     public String toStringDisplayDefault() {
         if (getFileSize() <= 0 || getFileName() == null) {
             return super.toStringDisplayDefault();
         }
-        final String[] sufixo    = new String[]{"B", "KB", "MB", "GB"};
-        int            posSufixo = 0;
-        double         bytesSize = getFileSize();
-
-        while (bytesSize > 900 && posSufixo < sufixo.length - 1) {
-            bytesSize = bytesSize / 1024;
-            posSufixo++;
-        }
-
-        return getFileName() + " (" + Math.round(bytesSize) + " " + sufixo[posSufixo] + ")";
+        return getFileName() + " (" + fileSizeToString() + ")";
     }
+
+    public void update(IAttachmentRef ref) {
+        this.setFileName(ref.getName());
+        this.setFileId(ref.getId());
+        this.setFileHashSHA1(ref.getHashSHA1());
+        this.setFileSize(ref.getSize());
+    }
+
 }

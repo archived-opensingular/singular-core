@@ -16,25 +16,22 @@
 
 package org.opensingular.form;
 
-import static java.util.stream.Collectors.joining;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
+import org.opensingular.form.type.util.SPackageUtil;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
+import javax.annotation.Nonnull;
+import javax.lang.model.SourceVersion;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-
-import javax.lang.model.SourceVersion;
-
-import org.opensingular.form.type.core.SPackageBootstrap;
-import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
-import org.opensingular.form.type.util.SPackageUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
-
-import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import static java.util.stream.Collectors.joining;
 
@@ -45,12 +42,12 @@ public final class SFormUtil {
     private SFormUtil() {
     }
 
-    static boolean isValidSimpleName(String name) {
-        return idPattern.matcher(name).matches();
+    public static boolean isNotValidSimpleName(String name) {
+        return !idPattern.matcher(name).matches();
     }
 
     static void validateSimpleName(String name) {
-        if (!isValidSimpleName(name)) {
+        if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para tipo ou atributo");
         }
     }
@@ -69,25 +66,25 @@ public final class SFormUtil {
         return type;
     }
 
-    private static SType<?> resolveFieldTypeInternal(SType<?> type, PathReader pathReader) {
-        if (type instanceof STypeComposite) {
+    private static SType<?> resolveFieldTypeInternal(@Nonnull SType<?> type, PathReader pathReader) {
+        if (type.isComposite()) {
             if (pathReader.isIndex()) {
-                throw new SingularFormException(pathReader.getTextoErro(type, "Índice de lista não se aplica a um tipo composto"));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"));
             }
-            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getTrecho());
+            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getToken());
             if (campo == null) {
-                throw new SingularFormException(pathReader.getTextoErro(type, "Não existe o campo '" + pathReader.getTrecho() + '\''));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + pathReader.getToken() + '\''));
             }
             return campo;
-        } else if (type instanceof STypeList) {
+        } else if (type.isList()) {
             if (pathReader.isIndex()) {
                 return ((STypeList<?, ?>) type).getElementsType();
             }
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não se aplica a um tipo lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica a um tipo lista"));
         } else if (type instanceof STypeSimple) {
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não se aplica um path a um tipo simples"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica um path a um tipo simples"));
         } else {
-            throw new SingularFormException(pathReader.getTextoErro(type, "Não implementado para " + type.getClass()));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não implementado para " + type.getClass()));
         }
     }
 
@@ -104,26 +101,26 @@ public final class SFormUtil {
             sequencia.add(current);
             current = current.getParent();
         }
-        if (sequencia != null) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = sequencia.size() - 1; i != -1; i--) {
-                current = sequencia.get(i);
-                if (current.getParent() instanceof SIList) {
-                    int pos = ((SIList<?>) current.getParent()).indexOf(current);
-                    if (pos == -1) {
-                        throw new SingularFormException(current.getName() + " não é mais filho de " + current.getParent().getName());
-                    }
-                    sb.append('[').append(pos).append(']');
-                } else {
-                    if (current.getParent() != null && sb.length() != 0) {
-                        sb.append('.');
-                    }
-                    sb.append(current.getName());
-                }
-            }
-            return sb.toString();
+        if (sequencia == null) {
+            return null;
         }
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for (int i = sequencia.size() - 1; i != -1; i--) {
+            current = sequencia.get(i);
+            if (current.getParent() instanceof SIList) {
+                int pos = ((SIList<?>) current.getParent()).indexOf(current);
+                if (pos == -1) {
+                    throw new SingularFormException(current.getName() + " não é mais filho de " + current.getParent().getName());
+                }
+                sb.append('[').append(pos).append(']');
+            } else {
+                if (current.getParent() != null && sb.length() != 0) {
+                    sb.append('.');
+                }
+                sb.append(current.getName());
+            }
+        }
+        return sb.toString();
     }
 
     public static String generateUserFriendlyName(String simpleName) {
@@ -232,20 +229,15 @@ public final class SFormUtil {
 
     private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
-    private static Map<String, Class<? extends SPackage>> getSingularPackages() {
+    private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
-            synchronized (SFormUtil.class) {
-                if (singularPackages == null) {
-                    singularPackages = SupplierUtil.cached(() -> {
-                        Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
-                        // addPackage(builder, SPackageBasic.class);
-                        addPackage(builder, SPackageUtil.class);
-                        addPackage(builder, SPackageBootstrap.class);
-                        addPackage(builder, SPackageCountryBrazil.class);
-                        return builder.build();
-                    });
-                }
-            }
+            singularPackages = SupplierUtil.cached(() -> {
+                Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
+                addPackage(builder, SPackageUtil.class);
+                addPackage(builder, SPackageBootstrap.class);
+                addPackage(builder, SPackageCountryBrazil.class);
+                return builder.build();
+            });
         }
         return singularPackages.get();
     }
@@ -280,7 +272,7 @@ public final class SFormUtil {
     /**
      * Indica se o tipo é um definição do próprio singular (true) ou se é uma definição de terceiros ou do usuário.
      */
-    public static final boolean isSingularBuiltInType(SType<?> type) {
+    public static boolean isSingularBuiltInType(SType<?> type) {
         return type.getPackage().getName().startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX);
     }
 

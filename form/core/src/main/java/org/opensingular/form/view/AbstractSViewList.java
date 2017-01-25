@@ -16,8 +16,8 @@
 
 package org.opensingular.form.view;
 
-import org.opensingular.form.STypeList;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeList;
 
 /**
  * Representa view que atuam diretamente sobre tipos lista.
@@ -30,6 +30,6 @@ public abstract class AbstractSViewList extends SView {
     /** Se aplica somene se o tipo for da classe {@link STypeList} */
     @Override
     public boolean isApplicableFor(SType<?> type) {
-        return type instanceof STypeList;
+        return type.isList();
     }
 }

@@ -16,21 +16,11 @@
 
 package org.opensingular.flow.core.builder;
 
-import java.util.Objects;
-
-import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.MProcessRole;
-import org.opensingular.flow.core.MTask;
-import org.opensingular.flow.core.MTaskEnd;
-import org.opensingular.flow.core.MTaskJava;
-import org.opensingular.flow.core.MTaskPeople;
-import org.opensingular.flow.core.MTransition;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.core.StartedTaskListener;
+import org.opensingular.flow.core.*;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarType;
-import org.opensingular.flow.core.MTaskWait;
+
+import java.util.Objects;
 
 public class FlowBuilderImpl extends
         FlowBuilder<ProcessDefinition<?>, FlowMap, BTask, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
@@ -237,7 +227,7 @@ public class FlowBuilderImpl extends
             return self();
         }
 
-        public <K extends ProcessInstance,T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        public <T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
             getTransition().setMetaDataValue(propRef, value);
             return self();
         }

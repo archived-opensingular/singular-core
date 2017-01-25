@@ -116,7 +116,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
                 @Override
                 public boolean isVisible() {
-                    return !breads.isEmpty();
+                    return !isEmpty();
                 }
             };
 

@@ -20,7 +20,6 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SPackage;
-import org.opensingular.form.type.basic.SPackageBasic;
 
 @SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "util")
 public class SPackageUtil extends SPackage {

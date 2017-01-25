@@ -22,6 +22,7 @@ import org.apache.wicket.model.IModel;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -38,7 +39,7 @@ public class SearchModalMapper extends AbstractControlsFieldComponentMapper {
             formGroup.appendDiv(selectModalBusca);
             return selectModalBusca;
         }
-        throw new RuntimeException("SearchModalMapper only works with a MSelecaoPorModalBuscaView.");
+        throw new SingularFormException("SearchModalMapper only works with a MSelecaoPorModalBuscaView.");
     }
 
     @Override

@@ -48,7 +48,7 @@ public class TestVal {
     private SISimple    data3;
 
     @Before
-    public void setup() {
+    public void setUp() {
         _dicionario = SDictionary.create();
         PackageBuilder pb = _dicionario.createNewPackage("teste");
 

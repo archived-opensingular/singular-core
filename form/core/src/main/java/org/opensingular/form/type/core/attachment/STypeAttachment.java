@@ -16,9 +16,6 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
@@ -44,8 +41,6 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
         addFieldString(FIELD_FILE_ID);
         addFieldString(FIELD_NAME);
         addFieldString(FIELD_HASH_SHA1);
