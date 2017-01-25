@@ -72,7 +72,6 @@ public class DefaultVarService implements VarService {
     @Override
     public VarDefinition newDefinitionInteger(String ref, String name) {
         return null;
-//        return new VarDefinitionImpl(ref, name, new VarTypeInteger(), false);
     }
 
     @Override

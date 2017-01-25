@@ -215,9 +215,6 @@ public abstract class PDFUtil implements Loggable {
             }
 
             File pdfFile  = tmp.createTempFile( "result.pdf", false);
-            //File jarFile  = tmp.createTempFile( "cookie.txt", true);
-            //commandAndArgs.add("--cookie-jar");
-            //commandAndArgs.add(jarFile.getAbsolutePath());
             commandAndArgs.add(fixPathArg(htmlFile));
             commandAndArgs.add(pdfFile.getAbsolutePath());
 
