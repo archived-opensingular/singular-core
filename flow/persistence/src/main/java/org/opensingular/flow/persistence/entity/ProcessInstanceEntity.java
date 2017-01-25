@@ -53,17 +53,15 @@ public class ProcessInstanceEntity extends AbstractProcessInstanceEntity<Actor, 
         this.currentTasks = currentTasks;
     }
 
+    /**
+     * O current task também pode ser uma task com o tipo End,
+     * mas não tem como fazer isso com o @Where
+     */
     public TaskInstanceEntity getCurrentTask() {
-        // O current task também pode ser uma task com o tipo End,
-        // mas não tem como fazer isso com o @Where
-//        if (currentTasks != null && currentTasks.size() == 1) {
-//            return currentTasks.stream().findFirst().get();
-//        } else if (currentTasks != null && currentTasks.size() != 1) {
-//            throw new SingularFlowException("Esse fluxo possui mais de um estado atual, não é possível determinar um único estado atual");
-//        }
         if (getTasks() != null && getTasks().size() > 0) {
             return getTasks().get(getTasks().size() - 1);
         }
         return null;
     }
+
 }

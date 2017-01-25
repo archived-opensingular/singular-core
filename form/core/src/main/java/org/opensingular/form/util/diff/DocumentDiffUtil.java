@@ -164,16 +164,10 @@ public final class DocumentDiffUtil {
         for (int posO = 0; posO < originals.size(); posO++) {
             SInstance iO = originals.get(posO);
             int posN = findById(iO.getId(), newerList);
-            if (posN == -1) {
-                posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
-            } else {
-                for (int posD = posNotConsumed; posD < posN; posD++) {
-                    if (!consumed[posD]) {
-                        posNotConsumed = diffLine(info, null, -1, newerList, consumed, posD, posNotConsumed);
-                    }
-                }
-                posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
+            if (posN != -1) {
+                posNotConsumed = calculateDiffNewListElement(info, newerList, posN, consumed, posNotConsumed);
             }
+            posNotConsumed = diffLine(info, iO, posO, newerList, consumed, posN, posNotConsumed);
         }
 
         for (int posN = posNotConsumed; posN < newerList.size(); posN++) {
@@ -186,20 +180,32 @@ public final class DocumentDiffUtil {
         }
     }
 
+    private static int calculateDiffNewListElement(@Nonnull DiffInfo info, List<? extends SInstance> newerList,
+            int posN, boolean[] consumed, int posNotConsumed) {
+        int newPosNotConsumed = posNotConsumed;
+        for (int posD = posNotConsumed; posD < posN; posD++) {
+            if (!consumed[posD]) {
+                newPosNotConsumed = diffLine(info, null, -1, newerList, consumed, posD, posNotConsumed);
+            }
+        }
+        return newPosNotConsumed;
+    }
+
     /** Calcula o diff entre dois elementos de lista diferentes, sem fazer chamada recursiva. */
     private static int diffLine(DiffInfo parent, SInstance instanceOriginal, int posO,
             List<? extends SInstance> newerList, boolean[] consumed, int posN, int posNotConsumed) {
         SInstance instanceNewer = posN == -1 ? null : newerList.get(posN);
         DiffInfo info = calculateDiff(parent, instanceOriginal, instanceNewer);
+        int returnValue = posNotConsumed;
         info.setOriginalIndex(posO);
         if (posN != -1) {
             info.setNewerIndex(posN);
             consumed[posN] = true;
             if (posN == posNotConsumed + 1) {
-                posNotConsumed = posN;
+                returnValue = posN;
             }
         }
-        return posNotConsumed;
+        return returnValue;
     }
 
     /** Encontra a posição de um elemento dentro da lista com o ID informado. Retorna -1 senão encontrar. */
@@ -283,7 +289,7 @@ public final class DocumentDiffUtil {
             return info.copyWithoutChildren();
         } else if (newList.size() > 1) {
             DiffInfo newInfo = info.copyWithoutChildren();
-            newList.stream().forEach(newInfo::addChild);
+            newList.forEach(newInfo::addChild);
             return newInfo;
         }
         DiffInfo newInfo = newList.get(0);
@@ -401,7 +407,7 @@ public final class DocumentDiffUtil {
          *
          * @return True se adicionou como entrada ou False a entrada não pertecer com sub entrada da atual.
          */
-        final <I extends SInstance> boolean register(CalculatorEntry newEntry) {
+        final boolean register(CalculatorEntry newEntry) {
             if (!this.typeClass.isAssignableFrom(newEntry.getTypeClass())) {
                 return false;
             }
@@ -423,19 +429,18 @@ public final class DocumentDiffUtil {
          * tiver nenhum match.
          */
         public CalculatorEntry get(Class<?> typeClassTarget) {
-            if (this.typeClass.isAssignableFrom(typeClassTarget)) {
-                if (subEntries != null) {
-                    CalculatorEntry result;
-                    for (CalculatorEntry e : subEntries) {
-                        result = e.get(typeClassTarget);
-                        if (result != null) {
-                            return result;
-                        }
+            if (! this.typeClass.isAssignableFrom(typeClassTarget)) {
+                return null;
+            } else if (subEntries != null) {
+                CalculatorEntry result;
+                for (CalculatorEntry e : subEntries) {
+                    result = e.get(typeClassTarget);
+                    if (result != null) {
+                        return result;
                     }
                 }
-                return this;
             }
-            return null;
+            return this;
         }
     }
 }

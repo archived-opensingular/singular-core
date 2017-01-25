@@ -26,6 +26,7 @@ import org.w3c.dom.traversal.NodeIterator;
 
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
@@ -84,11 +85,6 @@ import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
  * @author Daniel C. Bordin
  */
 public final class XPathToolkit {
-
-    /**
-     * Para ao retornar resultado vazio não criar novo objeto.
-     */
-    private static final String[] LISTA_VAZIA = new String[0];
 
     /**
      * Esconde o construtor pro ser uma classe utiliária.
@@ -389,47 +385,39 @@ public final class XPathToolkit {
      *
      * @param contextNode Ponto de partida da pesquisa
      * @param xPath Consulta para seleção dos nodes
-     * @return Sempre not null. Se não encontrar nada retorna array de tamanho
-     * zero.
+     * @return Sempre not null. Se não encontrar nada retorna vazio.
      */
-    public static String[] getValores(Node contextNode, String xPath) {
+    public static List<String> getValores(Node contextNode, String xPath) {
         // O XPath não funciona a partir o MElement
         if (contextNode instanceof EWrapper) {
             contextNode = ((EWrapper) contextNode).getOriginal();
         }
 
         List<String> lista = null;
-        String valor;
         if (isSelectSimples(xPath)) {
             MElementResult rs = new MElementResult((Element) contextNode, xPath);
             while (rs.next()) {
-                valor = rs.getValor();
-                if (valor != null) {
-                    if (lista == null) {
-                        lista = new ArrayList<>();
-                    }
-                    lista.add(valor);
-                }
+                lista = addToList(lista, rs.getValor());
             }
         } else {
             NodeList list = selectNodeList(contextNode, xPath);
             int tam = list.getLength();
             for (int i = 0; i < tam; i++) {
-                valor = MElement.getValorTexto(list.item(i));
-                if (valor != null) {
-                    if (lista == null) {
-                        lista = new ArrayList<>();
-                    }
-                    lista.add(valor);
-                }
+                lista = addToList(lista, MElement.getValorTexto(list.item(i)));
             }
         }
+        return lista == null ? Collections.emptyList() : lista;
+    }
 
-        //monta o array de String
-        if (lista == null) {
-            return LISTA_VAZIA;
+    private static List<String> addToList(List<String> lista, String valor) {
+        List<String> nova = lista;
+        if (valor != null) {
+            if (lista == null) {
+                nova = new ArrayList<>();
+            }
+            nova.add(valor);
         }
-        return lista.toArray(new String[lista.size()]);
+        return nova;
     }
 
     /**

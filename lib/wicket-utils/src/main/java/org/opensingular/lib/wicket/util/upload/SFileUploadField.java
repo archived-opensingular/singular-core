@@ -16,15 +16,15 @@
 
 package org.opensingular.lib.wicket.util.upload;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.IMultipartWebRequest;
 import org.apache.wicket.request.Request;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Altera o FileUploadField do wicket padrão para suportar arquivos com 0kb
@@ -44,20 +44,19 @@ public class SFileUploadField extends FileUploadField {
         List<FileUpload> fileUploads = super.getFileUploads();
         if (fileUploads != null && !fileUploads.isEmpty()) {
             return fileUploads;
-        } else {
-            fileUploads = new ArrayList<>();
-            final Request request = getRequest();
-            if (request instanceof IMultipartWebRequest) {
-                final List<FileItem> fileItems = ((IMultipartWebRequest) request).getFile(getInputName());
+        }
+        fileUploads = new ArrayList<>();
+        Request request = getRequest();
+        if (request instanceof IMultipartWebRequest) {
+            List<FileItem> fileItems = ((IMultipartWebRequest) request).getFile(getInputName());
 
-                if (fileItems != null) {
-                    for (FileItem item : fileItems) {
-                        fileUploads.add(new FileUpload(item));
-                    }
+            if (fileItems != null) {
+                for (FileItem item : fileItems) {
+                    fileUploads.add(new FileUpload(item));
                 }
             }
-            return fileUploads;
         }
+        return fileUploads;
     }
 
 }

@@ -21,16 +21,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class ProcessDefinitionCache {
 
@@ -53,7 +47,7 @@ public final class ProcessDefinitionCache {
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String[] packagesNames) {
         this.packagesNames = packagesNames;
-        ImmutableList.Builder<ProcessDefinition<?>> cache = ImmutableList.builder();
+        ImmutableList.Builder<ProcessDefinition<?>> newCache = ImmutableList.builder();
         Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
         Map<Class<? extends ProcessInstance>, ProcessDefinition<?>> cacheByInstanceType = new HashMap<>();
 
@@ -68,14 +62,14 @@ public final class ProcessDefinitionCache {
                 continue;
             }
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
-            cache.add(def);
+            newCache.add(def);
             if (cacheByKey.containsKey(def.getKey())) {
                 throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getKey());
             }
             cacheByKey.put(def.getKey(), def);
             cacheByInstanceType.put(def.getProcessInstanceClass(), def);
         }
-        definitions = cache.build();
+        definitions = newCache.build();
         definitionsByKey = ImmutableMap.copyOf(cacheByKey);
     }
 

@@ -77,32 +77,24 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     }
 
     private boolean isNotDerivedClassOfSTypeComposite(SType<?> type) {
-        return (!(type instanceof STypeComposite)) || type.getClass() == STypeComposite.class;
+        return !type.isComposite() || type.getClass() == STypeComposite.class;
     }
 
     private void propagatePublicFieldsToExtendedComposite(STypeComposite composite, CompositePublicInfo info,
             boolean preOnLoad) {
-        CompositePublicInfo infoSuper = null;
+        info.checkSanity(composite.getClass());
         for (PublicFieldRef ref : info) {
             SType<?> newFieldValue = composite.getField(ref.getName());
             if (newFieldValue == null) {
-                if(composite.getSuperType().getClass() == composite.getClass()) {
+                if (composite.getSuperType().getClass() == composite.getClass() || info.isFieldFromSuperType(composite,
+                        ref)) {
                     newFieldValue = copyFieldValueFromSuperType(composite, ref);
-                } else if(ref.isFieldCameFromSuperType() && isNotCoreClass(composite.getSuperType().getClass())) {
-                    //Precisa verificar de novo pois ref.isFieldCameFromSuperType() pode se referencia uma classe pai
-                    // intermediária que não chegou a virar um Type
-                    if (infoSuper == null) {
-                        infoSuper = getPublicInfo(composite.getSuperType().getClass());
-                    }
-                    if (infoSuper.getPublicField(ref.getName()) != null) {
-                        newFieldValue = copyFieldValueFromSuperType(composite, ref);
-                    }
                 }
             }
 
             if (newFieldValue != null) {
                 setJavaField(composite, ref, newFieldValue);
-            } else if (! preOnLoad) {
+            } else if (!preOnLoad) {
                 throw new SingularFormException(erroValue(composite, null, ref, null,
                         "Erro tentando setar valor na instância extendida de " + composite +
                                 " pois não foi encontrado o valor para atribuir ao campo " + ref.getName()));
@@ -244,13 +236,13 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     private boolean isInsideChildrenTypes(SType<?> type, String typeName) {
         if (type.getNameSimple().equals(typeName)) {
             return true;
-        } else if (type instanceof STypeComposite) {
+        } else if (type.isComposite()) {
             for (SType<?> children : ((STypeComposite<?>) type).getFields()) {
                 if (isInsideChildrenTypes(children, typeName)) {
                     return true;
                 }
             }
-        } else if (type instanceof STypeList) {
+        } else if (type.isList()) {
             return isInsideChildrenTypes(((STypeList<?, ?>) type).getElementsType(), typeName);
         }
         return false;
@@ -307,7 +299,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
     }
 
     private static CompositePublicInfo readPublicFields(Class<?> aClass) {
-        CompositePublicInfo info = new CompositePublicInfo();
+        CompositePublicInfo info = new CompositePublicInfo(aClass);
         Field[] fields = aClass.getFields();
         for (Field field : fields) {
             int mods = field.getModifiers();
@@ -318,33 +310,31 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         }
         info.finisheLoad();
 
-        if (info.isNotEmpty()) {
-            Class<?> superClass = aClass.getSuperclass();
-            if (isNotCoreClass(superClass)) {
-                CompositePublicInfo superInfo = getPublicInfo(superClass);
-                for(PublicFieldRef refSuper : superInfo) {
-                    info.getPublicField(refSuper.getName()).setFieldCameFromSuperType(true);
-                }
-            }
-        }
         return info;
     }
 
     /** Verifica se a classe é do usuário ou da implementação core. */
     private static boolean isNotCoreClass(Class<?> aClass) {
-        return aClass.getPackage() != SType.class.getPackage() ||
-                (aClass != STypeComposite.class && aClass != STypeSimple.class && aClass != STypeList.class &&
-                        aClass != SType.class);
+        if (aClass.getPackage() == SType.class.getPackage()) {
+            return !(aClass.getSuperclass() == SType.class || aClass == SType.class);
+        }
+        return true;
     }
 
     private static class CompositePublicInfo implements Iterable<PublicFieldRef> {
 
+        private final Class<?> targetClass;
         private Map<String, PublicFieldRef> refs;
 
         /**
          * Indica que a classe já foi especionada com sucesso uma vez.
          */
         private boolean publicFieldsMatched;
+        private Class<?> superTypeClass;
+
+        public CompositePublicInfo(Class<?> targetClass) {
+            this.targetClass = targetClass;
+        }
 
         public boolean isPublicFieldsMatched() {
             return publicFieldsMatched;
@@ -375,7 +365,44 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         public boolean isNotEmpty() {
             return !refs.isEmpty();
         }
+
+        // Garante a carga das informações da classe do super tipo foram lidas
+        public void ensureSuperTypeInfoWasReaded(SType<?> target) {
+            Class<? extends SType> superClass = target.getSuperType().getClass();
+            if (superTypeClass == null) {
+                if (isNotEmpty() && isNotCoreClass(superClass)) {
+                    CompositePublicInfo superInfo = getPublicInfo(superClass);
+                    for(PublicFieldRef refSuper : superInfo) {
+                        getPublicField(refSuper.getName()).setFieldCameFromSuperType(true);
+                    }
+                }
+                superTypeClass = superClass;
+            } else {
+                checkClassSanity(superClass, superTypeClass);
+            }
+        }
+
+        /** Verifica se o field Java em questão deve ser lido dos fields da classe do super tipo */
+        public boolean isFieldFromSuperType(STypeComposite composite, PublicFieldRef ref) {
+            ensureSuperTypeInfoWasReaded(composite);
+            return ref.isFieldFromSuperType();
+        }
+
+        /** Verifica se a info atual se refere a classe do tipo informado como esperado. */
+        private void checkSanity(Class<?> expectedTargetClass) {
+            checkClassSanity(expectedTargetClass, targetClass);
+        }
     }
+
+    /** Verifica se a info atual se refere a classe do tipo informado como esperado. */
+    private static void checkClassSanity(Class<?> expectedClass, Class<?> currentClass) {
+        if (currentClass != expectedClass) {
+            throw new SingularFormException(
+                    "Era esperado que o metadado fosse para a classe " + expectedClass.getName() +
+                            " mas na verdade o metadado é da classe " + currentClass.getName());
+        }
+    }
+
 
     /**
      * Representa um field público da classe
@@ -406,7 +433,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             this.fieldCameFromSuperType = fieldCameFromSuperType;
         }
 
-        public boolean isFieldCameFromSuperType() {
+        public boolean isFieldFromSuperType() {
             return fieldCameFromSuperType;
         }
 

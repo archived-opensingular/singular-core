@@ -26,6 +26,7 @@ import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
+import javax.annotation.Nonnull;
 import javax.lang.model.SourceVersion;
 import java.util.*;
 import java.util.function.Predicate;
@@ -65,8 +66,8 @@ public final class SFormUtil {
         return type;
     }
 
-    private static SType<?> resolveFieldTypeInternal(SType<?> type, PathReader pathReader) {
-        if (type instanceof STypeComposite) {
+    private static SType<?> resolveFieldTypeInternal(@Nonnull SType<?> type, PathReader pathReader) {
+        if (type.isComposite()) {
             if (pathReader.isIndex()) {
                 throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"));
             }
@@ -75,7 +76,7 @@ public final class SFormUtil {
                 throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + pathReader.getToken() + '\''));
             }
             return campo;
-        } else if (type instanceof STypeList) {
+        } else if (type.isList()) {
             if (pathReader.isIndex()) {
                 return ((STypeList<?, ?>) type).getElementsType();
             }
@@ -100,26 +101,26 @@ public final class SFormUtil {
             sequencia.add(current);
             current = current.getParent();
         }
-        if (sequencia != null) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = sequencia.size() - 1; i != -1; i--) {
-                current = sequencia.get(i);
-                if (current.getParent() instanceof SIList) {
-                    int pos = ((SIList<?>) current.getParent()).indexOf(current);
-                    if (pos == -1) {
-                        throw new SingularFormException(current.getName() + " não é mais filho de " + current.getParent().getName());
-                    }
-                    sb.append('[').append(pos).append(']');
-                } else {
-                    if (current.getParent() != null && sb.length() != 0) {
-                        sb.append('.');
-                    }
-                    sb.append(current.getName());
-                }
-            }
-            return sb.toString();
+        if (sequencia == null) {
+            return null;
         }
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for (int i = sequencia.size() - 1; i != -1; i--) {
+            current = sequencia.get(i);
+            if (current.getParent() instanceof SIList) {
+                int pos = ((SIList<?>) current.getParent()).indexOf(current);
+                if (pos == -1) {
+                    throw new SingularFormException(current.getName() + " não é mais filho de " + current.getParent().getName());
+                }
+                sb.append('[').append(pos).append(']');
+            } else {
+                if (current.getParent() != null && sb.length() != 0) {
+                    sb.append('.');
+                }
+                sb.append(current.getName());
+            }
+        }
+        return sb.toString();
     }
 
     public static String generateUserFriendlyName(String simpleName) {
@@ -232,7 +233,6 @@ public final class SFormUtil {
         if (singularPackages == null) {
             singularPackages = SupplierUtil.cached(() -> {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
-                // addPackage(builder, SPackageBasic.class);
                 addPackage(builder, SPackageUtil.class);
                 addPackage(builder, SPackageBootstrap.class);
                 addPackage(builder, SPackageCountryBrazil.class);

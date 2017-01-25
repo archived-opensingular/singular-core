@@ -98,7 +98,7 @@ public class FormXsdUtil {
             }
             newType = parent.getPkg().createType(name, typeOfNewType);
             readXsd(newType, element);
-        } else if (typeContext instanceof STypeComposite) {
+        } else if (typeContext.isComposite()) {
             if (element.isList()) {
                 if (typeOfNewType.getClass() == STypeComposite.class) {
                     newType = ((STypeComposite) typeContext).addFieldListOfComposite(name + "List", name);
@@ -118,7 +118,7 @@ public class FormXsdUtil {
     }
 
     private static void readXsdAtributeDefinition(ElementReader element, SType<?> typeContext) {
-        if (!(typeContext instanceof STypeComposite)) {
+        if (!typeContext.isComposite()) {
             element.checkUnexpectedNodeFor(typeContext);
             return;
         }
@@ -135,15 +135,16 @@ public class FormXsdUtil {
                 newType.asAtr().required("required".equals(value));
             }
         } else {
-            readXsdOwnAttributesOfCardinality(element, newType);
+            readXsdOwnAttributeMinOccurs(element, newType);
+            readXsdOwnAttributeMaxOccurs(element, newType);
         }
     }
 
-    private static void readXsdOwnAttributesOfCardinality(ElementReader element, SType<?> newType) {
+    private static void readXsdOwnAttributeMinOccurs(ElementReader element, SType<?> newType) {
         Integer minOccurs = element.getAttrInteger("minOccurs");
         if (minOccurs == null || minOccurs.intValue() == 1) {
             newType.asAtr().required();
-            if (newType instanceof STypeList) {
+            if (newType.isList()) {
                 ((STypeList) newType).withMiniumSizeOf(1);
             }
         } else if (minOccurs.intValue() > 1) {
@@ -153,19 +154,20 @@ public class FormXsdUtil {
                 throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"));
             }
         }
+    }
+
+    private static void readXsdOwnAttributeMaxOccurs(ElementReader element, SType<?> newType) {
         String value = element.getAttr("maxOccurs");
-        if (value != null) {
-            if ("unbounded".equalsIgnoreCase(value)) {
-                if (!newType.isList()) {
-                    throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
-                }
-            } else {
-                int maxOccurs = Integer.parseInt(value);
-                if (newType instanceof STypeList) {
-                    ((STypeList) newType).withMaximumSizeOf(maxOccurs);
-                } else if (maxOccurs != 1) {
-                    throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
-                }
+        if ("unbounded".equalsIgnoreCase(value)) {
+            if (!newType.isList()) {
+                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
+            }
+        } else if (value != null) {
+            int maxOccurs = Integer.parseInt(value);
+            if (newType.isList()) {
+                ((STypeList) newType).withMaximumSizeOf(maxOccurs);
+            } else if (maxOccurs != 1) {
+                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
             }
         }
     }

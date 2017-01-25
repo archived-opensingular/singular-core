@@ -30,6 +30,8 @@ import java.util.function.BiFunction;
 
 class FlowEngine {
 
+    private FlowEngine() {}
+
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();
         return updateState(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);
@@ -55,16 +57,7 @@ class FlowEngine {
                 initTask(instancia, taskDestino, instanciaTarefa);
                 
                 if (transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
-                    for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
-                        if (papel.isAutomaticUserAllocation()) {
-                            MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
-                                instanciaTarefa);
-                            Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
-                                    + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
-
-                            instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
-                        }
-                    }
+                    automaticallySetUsersRole(instancia, instanciaTarefa, transicaoOrigem);
                 }
                 
                 final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn, transicaoOrigem);
@@ -92,6 +85,20 @@ class FlowEngine {
             transicaoOrigem = searchTransition(instanciaTarefa, nomeTransicao);
             taskDestino = transicaoOrigem.getDestination();
             tarefaOrigem = instanciaTarefa;
+        }
+    }
+
+    private static <P extends ProcessInstance> void automaticallySetUsersRole(P instancia, TaskInstance instanciaTarefa,
+            MTransition transicaoOrigem) {
+        for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
+            if (papel.isAutomaticUserAllocation()) {
+                MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
+                    instanciaTarefa);
+                Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
+                        + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
+
+                instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
+            }
         }
     }
 

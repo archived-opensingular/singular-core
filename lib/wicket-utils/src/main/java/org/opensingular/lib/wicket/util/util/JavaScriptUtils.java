@@ -34,6 +34,8 @@ package org.opensingular.lib.wicket.util.util;
  */
 public class JavaScriptUtils {
 
+    private JavaScriptUtils() {}
+
     /**
      * Turn JavaScript special characters into escaped characters.
      *

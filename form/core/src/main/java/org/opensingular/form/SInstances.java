@@ -160,21 +160,20 @@ public abstract class SInstances {
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitPostOrder(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
         boolean dontGoAbove = false;
-        if (rootInstance instanceof ICompositeInstance) {
+        if ((rootInstance instanceof ICompositeInstance) && filter.visitChildren(rootInstance)) {
             final ICompositeInstance parent = (ICompositeInstance) rootInstance;
-            if (filter.visitChildren(rootInstance)) {
-                final Visit<R> childVisit = new Visit<>(visit.getPartial());
-                for (SInstance child : parent.getAllChildren()) {
-                    if (filter.visitObject(child)) {
-                        internalVisitPostOrder(child, visitor, filter, childVisit);
-                        visit.setPartial(childVisit.getPartial());
-                        if (childVisit.dontGoDeeper)
-                            dontGoAbove = true;
-                        if (childVisit.stopped) {
-                            visit.stop(childVisit.result);
-                            return;
-                        }
-                    }
+            final Visit<R> childVisit = new Visit<>(visit.getPartial());
+            for (SInstance child : parent.getAllChildren()) {
+                if (! filter.visitObject(child)) {
+                    continue;
+                }
+                internalVisitPostOrder(child, visitor, filter, childVisit);
+                visit.setPartial(childVisit.getPartial());
+                if (childVisit.dontGoDeeper)
+                    dontGoAbove = true;
+                if (childVisit.stopped) {
+                    visit.stop(childVisit.result);
+                    return;
                 }
             }
         }

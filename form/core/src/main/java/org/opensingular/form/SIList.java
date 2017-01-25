@@ -40,7 +40,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
-        //        MILista<I> lista = new MILista<>();
         SIList<I> lista = (SIList<I>) elementsType.getDictionary().getType(STypeList.class).newInstance();
         lista.setType(elementsType.getDictionary().getType(STypeList.class));
         lista.elementsType = elementsType;

@@ -16,9 +16,7 @@
 
 package org.opensingular.lib.wicket.util.debugbar.contributor;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.devutils.debugbar.IDebugBarContributor;
 import org.apache.wicket.devutils.debugbar.StandardDebugPanel;
 import org.apache.wicket.markup.html.WebPage;
@@ -39,13 +37,7 @@ public class JVMContributor extends StandardDebugPanel {
         super(id);
     }
 
-    public static final IDebugBarContributor DEBUG_BAR_CONTRIB = new IDebugBarContributor() {
-        @Override
-        public Component createComponent(final String id, final DebugBar debugBar) {
-            return new JVMContributor(id);
-        }
-
-    };
+    public static final IDebugBarContributor DEBUG_BAR_CONTRIB = (id, debugBar) -> new JVMContributor(id);
 
     @Override
     protected IModel<String> getDataModel() {

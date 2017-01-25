@@ -20,20 +20,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
+import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.DefaultServiceRegistry;
-import org.opensingular.form.document.RefSDocumentFactory;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
-import org.opensingular.form.document.TypeLoader;
+import org.opensingular.form.document.*;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.component.SingularForm;
@@ -65,7 +54,16 @@ public class DummyPage extends WebPage {
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            return createCurrentInstance(buildBaseType());
+            if (instanceCreator != null) {
+                Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
+                if (baseType.isPresent()) {
+                    if (baseType.get().isComposite()) {
+                        typeBuilder.accept((STypeComposite) baseType.get());
+                    }
+                    currentInstance = instanceCreator.apply(baseType.get());
+                }
+            }
+            return currentInstance;
         }
 
         @Override
@@ -86,23 +84,6 @@ public class DummyPage extends WebPage {
 
     public DummyPage() {
         add(form.add(singularFormPanel, singularValidationButton));
-    }
-
-    private Optional<SType<?>> buildBaseType() {
-        Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
-        baseType.ifPresent((x) -> {
-            if (baseType.get() instanceof STypeComposite) {
-                typeBuilder.accept((STypeComposite) baseType.get());
-            }
-        });
-        return baseType;
-    }
-
-    private SInstance createCurrentInstance(Optional<SType<?>> baseType) {
-        Optional.of(instanceCreator).ifPresent((x) -> {
-            currentInstance = instanceCreator.apply(baseType.get());
-        });
-        return currentInstance;
     }
 
     public Form<?> getForm() {
@@ -165,12 +146,7 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     private final transient SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
-        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, new RefService<SingularFormContextWicket>() {
-            @Override
-            public SingularFormContextWicket get() {
-                return singularFormContextWicket;
-            }
-        });
+        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, () -> singularFormContextWicket);
     }
 
     @Override

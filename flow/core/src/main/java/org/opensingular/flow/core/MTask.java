@@ -220,7 +220,7 @@ public abstract class MTask<K extends MTask<?>> {
         }
     }
 
-    public <T extends ProcessInstance> K addStartedTaskListener(StartedTaskListener startedTaskListener) {
+    public K addStartedTaskListener(StartedTaskListener startedTaskListener) {
         if (this.startedTaskListeners == null) {
             this.startedTaskListeners = new LinkedList<>();
         }

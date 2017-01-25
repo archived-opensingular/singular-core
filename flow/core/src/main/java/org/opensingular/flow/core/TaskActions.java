@@ -16,11 +16,13 @@
 
 package org.opensingular.flow.core;
 
-import java.util.function.Consumer;
-
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.function.Consumer;
+
 public class TaskActions {
+
+    private TaskActions() {}
 
     public static IConditionalTaskAction executeTransition(final ITaskPredicate predicate, final MTransition transicao) {
         return executeTransition(predicate, transicao.getName());

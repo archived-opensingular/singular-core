@@ -16,27 +16,14 @@
 
 package org.opensingular.form.util.transformer;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SISimple;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SingularFormException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,7 +52,7 @@ public class Value {
         return Value.of(current, tipo) != null;
     }
 
-    public static <T> boolean notNull(SInstance current, STypeComposite tipo) {
+    public static boolean notNull(SInstance current, STypeComposite tipo) {
         if (current != null && tipo != null) {
             SIComposite targetInstance = (SIComposite) getInstance(current, tipo);
             return Value.notNull(targetInstance);
@@ -74,7 +61,7 @@ public class Value {
     }
 
 
-    public static <T> boolean notNull(SInstance current, STypeList tipo) {
+    public static boolean notNull(SInstance current, STypeList tipo) {
         if (current != null && tipo != null) {
             SIList instanciaLista = (SIList) getInstance(current, tipo);
             return Value.notNull(instanciaLista);
@@ -82,15 +69,15 @@ public class Value {
         return false;
     }
 
-    public static <T> boolean notNull(SIList instanciaLista) {
+    public static boolean notNull(SIList instanciaLista) {
         return instanciaLista != null && !instanciaLista.isEmpty();
     }
 
-    public static <T> boolean notNull(SIComposite instanciaComposta) {
+    public static boolean notNull(SIComposite instanciaComposta) {
         return instanciaComposta != null && !instanciaComposta.isEmptyOfData();
     }
 
-    public static <T> boolean notNull(SISimple instanciaSimples) {
+    public static boolean notNull(SISimple instanciaSimples) {
         return instanciaSimples != null && !instanciaSimples.isEmptyOfData();
     }
 
@@ -111,7 +98,7 @@ public class Value {
         return null;
     }
 
-    public static <T> boolean notNull(SInstance instancia) {
+    public static boolean notNull(SInstance instancia) {
         if (instancia instanceof SIComposite) {
             return Value.notNull((SIComposite) instancia);
         } else if (instancia instanceof SISimple) {
@@ -304,10 +291,11 @@ public class Value {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-
-            if (o == null || getClass() != o.getClass()) return false;
-
+            if (this == o) {
+                return true;
+            } else if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Content content = (Content) o;
 
             return new EqualsBuilder()

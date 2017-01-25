@@ -16,32 +16,35 @@
 
 package org.opensingular.lib.wicket.util.validator;
 
-import java.util.Arrays;
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 
+import java.util.Arrays;
+
 public interface BaseValidator<T> extends IValidator<T> {
 
-    default ValidationError validationError(String key) {
+    //TODO (by Daniel Bordin) Essa classe não deveria ser uma classe utilitária em vez de uma interface? Ou pelo
+    // menos um classe abstrata
+
+    public static ValidationError validationError(String key) {
         ValidationError error = new ValidationError();
         error.setKeys(Arrays.asList(key));
         return error;
     }
 
-    default ValidationError validationError(String key, String var1, Object value1) {
+    public static ValidationError validationError(String key, String var1, Object value1) {
         return validationError(key)
             .setVariable(var1, value1);
     }
 
-    default ValidationError validationError(String key, String var1, Object value1, String var2, Object value2) {
+    public static ValidationError validationError(String key, String var1, Object value1, String var2, Object value2) {
         return validationError(key)
             .setVariable(var1, value1)
             .setVariable(var2, value2);
     }
 
-    default ValidationError validationError(IModel<String> errorMessage) {
+    public static ValidationError validationError(IModel<String> errorMessage) {
         return new ValidationError()
             .setMessage(errorMessage.getObject());
     }

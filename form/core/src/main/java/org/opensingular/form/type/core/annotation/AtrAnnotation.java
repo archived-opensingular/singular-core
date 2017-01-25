@@ -56,7 +56,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      *
      * @return this
      */
-    public <T extends Enum & AnnotationClassifier> AtrAnnotation setAnnotated() {
+    public AtrAnnotation setAnnotated() {
         setAnnotated(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
         return this;
     }

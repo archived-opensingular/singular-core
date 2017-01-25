@@ -105,7 +105,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public <V> void setAttributeValue(SType<?> defAttribute, Object value) {
+    public void setAttributeValue(SType<?> defAttribute, Object value) {
         getTarget().setAttributeValue(defAttribute, value);
     }
 

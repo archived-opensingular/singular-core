@@ -35,9 +35,8 @@ public class WkHtmlToPdfRestController implements Loggable {
     @ResponseBody
     @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH, method = RequestMethod.POST, produces = "application/pdf")
     public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody WKHtmlToPdfDTO dto) {
-        final File file;
         try {
-            file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter());
+            File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter());
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .contentLength(file.length())

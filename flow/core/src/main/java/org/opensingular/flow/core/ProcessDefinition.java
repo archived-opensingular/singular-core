@@ -16,48 +16,29 @@
 
 package org.opensingular.flow.core;
 
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.*;
 import org.opensingular.flow.core.property.MetaData;
-import org.opensingular.flow.core.variable.VarDefinitionMap;
-import org.opensingular.flow.core.variable.VarService;
-import org.opensingular.lib.commons.base.SingularException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.MoreObjects;
-
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
+import org.opensingular.flow.core.variable.VarDefinitionMap;
+import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.base.SingularException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -129,13 +110,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
             throw new SingularFlowException("A definição de fluxo deve ser anotada com " + DefinitionInfo.class.getName());
         }
-        String key = this.getClass().getAnnotation(DefinitionInfo.class).value();
-        Objects.requireNonNull(key, "key");
+        String flowKey = this.getClass().getAnnotation(DefinitionInfo.class).value();
+        Objects.requireNonNull(flowKey, "key");
         Objects.requireNonNull(processInstanceClass, "processInstanceClass");
-        if (getClass().getSimpleName().equalsIgnoreCase(key)) {
+        if (getClass().getSimpleName().equalsIgnoreCase(flowKey)) {
             throw new SingularFlowException("A o nome simples da classe do processo(" + getClass().getSimpleName() + ") não pode ser igual a chave definida em @DefinitionInfo.");
         }
-        this.key = key;
+        this.key = flowKey;
         this.processInstanceClass = processInstanceClass;
         this.variableService = varService;
     }

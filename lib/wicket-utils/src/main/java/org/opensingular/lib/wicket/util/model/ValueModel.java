@@ -90,8 +90,7 @@ public final class ValueModel<T extends Serializable> implements IMappingModel<T
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
-        if (!(obj instanceof ValueModel<?>)) return false;
-        return Objects.deepEquals(equalsHashArgsFunc.apply(this.getObject()),
+        return (obj instanceof ValueModel<?>) && Objects.deepEquals(equalsHashArgsFunc.apply(this.getObject()),
                 equalsHashArgsFunc.apply(((ValueModel<T>) obj).getObject()));
     }
 }

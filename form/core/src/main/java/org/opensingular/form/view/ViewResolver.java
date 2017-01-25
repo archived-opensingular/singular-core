@@ -16,12 +16,9 @@
 
 package org.opensingular.form.view;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
+import org.opensingular.form.*;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -96,32 +93,27 @@ public class ViewResolver {
         return instance.getDictionary().getViewResolver().resolveInternal(instance);
     }
 
-    private SView resolveInternal(SInstance instance) {
-        SType type = instance.getType();
-        SView view = null;
-        while (type != null) {
-            view = type.getView();
-            if (view != null) { return view;    }
-            type = type.getSuperType();
+    /** Busca encontrar a view mais pertinente para a instância informada. */
+    private @Nonnull SView resolveInternal(SInstance instance) {
+        //Verifica se há uma view explicitamente definida
+        for(SType type = instance.getType(); type != null; type = type.getSuperType()) {
+            if (type.getView() != null) {
+                return type.getView();
+            }
         }
+        //Senão, tenta decidir qual seria a melhor view
         Class<?> classType = instance.getType().getClass();
-        int priority = -1;
+        PrioritizedResult<SView> resultView = PrioritizedResult.empty();
         while (classType != SType.class) {
             TreeSet<ViewRuleRef> list = rules.get(classType);
             if (list != null) {
                 for (ViewRuleRef rule : list) {
-                    if (view == null || rule.getPriority() > priority) {
-                        SView novo = rule.apply(instance);
-                        if (novo != null) {
-                            view = novo;
-                            priority = rule.getPriority();
-                        }
-                    }
+                    resultView = resultView.selectHigherPriority(rule.getPriority(), () -> rule.apply(instance));
                 }
             }
             classType = classType.getSuperclass();
         }
-        return view != null ? view : SView.DEFAULT;
+        return resultView.orElse(SView.DEFAULT);
     }
 
     private static class ViewRuleSimple extends ViewRule {

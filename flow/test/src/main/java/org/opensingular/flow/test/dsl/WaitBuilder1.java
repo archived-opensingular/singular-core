@@ -28,7 +28,7 @@ public class WaitBuilder1 {
     }
 
     @FunctionalInterface
-    public static interface WaitPredicate<T extends ProcessInstance> {
+    public static interface WaitPredicate {
 
         String execute(ProcessInstance i);
     }

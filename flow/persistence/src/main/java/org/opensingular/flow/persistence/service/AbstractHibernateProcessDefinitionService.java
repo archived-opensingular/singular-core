@@ -212,22 +212,24 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             }
 
             if (task.getAccessStrategy() != null) {
-                final List<String> roles = task.getAccessStrategy().getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
-                for (String roleName : roles) {
-
-                    PROCESS_ROLE_DEF roleDefinition = null;
-                    for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
-                        if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
-                            roleDefinition = (PROCESS_ROLE_DEF) rd;
-                            break;
-                        }
-                    }
-
-                    addRoleToTask(roleDefinition, taskDefinition);
-                }
+                List<String> roles = task.getAccessStrategy().getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
+                addRolesToTaks(process, taskDefinition, roles);
             }
         }
         return taskDefinition;
+    }
+
+    private void addRolesToTaks(PROCESS_DEF process, TASK_DEF taskDefinition, List<String> roles) {
+        for (String roleName : roles) {
+            PROCESS_ROLE_DEF roleDefinition = null;
+            for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
+                if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
+                    roleDefinition = (PROCESS_ROLE_DEF) rd;
+                    break;
+                }
+            }
+            addRoleToTask(roleDefinition, taskDefinition);
+        }
     }
 
     protected abstract ROLE_TASK addRoleToTask(PROCESS_ROLE_DEF roleDefinition, TASK_DEF taskDefinition);
@@ -261,10 +263,13 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return false;
     }
 
-    private boolean isNewVersion(IEntityTaskTransitionVersion oldEntityTaskTransition, IEntityTaskTransitionVersion newEntityTaskTransition) {
-        return oldEntityTaskTransition == null || !oldEntityTaskTransition.getName().equalsIgnoreCase(newEntityTaskTransition.getName())
-                || !oldEntityTaskTransition.getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getAbbreviation())
-                || oldEntityTaskTransition.getType() != newEntityTaskTransition.getType() || !oldEntityTaskTransition.getDestinationTask()
-                        .getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getDestinationTask().getAbbreviation());
+    private static boolean isNewVersion(IEntityTaskTransitionVersion oldTaskTransition, IEntityTaskTransitionVersion newTaskTransition) {
+        //@formatter:off
+        return oldTaskTransition == null ||
+                !oldTaskTransition.getName().equalsIgnoreCase(newTaskTransition.getName()) ||
+                !oldTaskTransition.getAbbreviation().equalsIgnoreCase(newTaskTransition.getAbbreviation()) ||
+                oldTaskTransition.getType() != newTaskTransition.getType() ||
+                !oldTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newTaskTransition.getDestinationTask().getAbbreviation());
+        //@formatter:on
     }
 }

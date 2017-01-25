@@ -16,30 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.converter.SInstanceConverter;
-import org.opensingular.form.converter.SimpleSInstanceConverter;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.provider.Config;
-import org.opensingular.form.provider.Config.Column;
-import org.opensingular.form.provider.FilteredPagedProvider;
-import org.opensingular.form.provider.FilteredProvider;
-import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
-import org.opensingular.form.provider.ProviderContext;
-import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
-import org.opensingular.lib.wicket.util.datatable.IBSAction;
-import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -48,8 +24,22 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
+import org.opensingular.form.*;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.converter.SimpleSInstanceConverter;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.provider.*;
+import org.opensingular.form.provider.Config.Column;
+import org.opensingular.form.view.SViewSearchModal;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
+import org.opensingular.lib.wicket.util.datatable.IBSAction;
+import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -196,12 +186,8 @@ class SearchModalBodyPanel extends Panel {
 
     private SingularFormPanel buildInnerSingularFormPanel() {
 
-        final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class, new IVisitor<SingularFormPanel, SingularFormPanel>() {
-            @Override
-            public void component(SingularFormPanel parent, IVisit<SingularFormPanel> visit) {
-                visit.stop(parent);
-            }
-        });
+        final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class,
+                (parent, visit) -> visit.stop(parent));
 
         return new SingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig(), true) {
             @Override

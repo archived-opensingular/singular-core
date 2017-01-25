@@ -27,6 +27,7 @@ import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ import java.util.Optional;
  * Loader de dicionário baseado no Spring. Espera que o mesmo será um bean do
  * Spring. Com isso cria referências ({@link #createDictionaryRef(Serializable)}
  * ) serializáveis mediante uso do nome do bean no Spring como forma de
- * recuperar o loader a partir da referência ao ser deserialziada.
+ * recuperar o loader a partir da referência ao ser deserializada.
  *
  * @author Daniel C. Bordin
  */
@@ -44,12 +45,9 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
     private String springBeanName;
 
     @Override
-    protected final Optional<RefType> loadRefTypeImpl(TYPE_KEY typeId) {
-        Optional<SType<?>> type = loadType(typeId);
-        if (!type.isPresent()) {
-            throw new SingularFormException(getClass().getName() + ".loadType(TYPE_KEY) retornou null em vez de um Optional");
-        }
-        return type.map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
+    @Nonnull
+    protected final Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId) {
+        return loadType(typeId).map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
     }
 
     @Override
@@ -67,17 +65,19 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
         return springBeanName;
     }
 
+    /** Representa um Referencia a SType que utiliza um bean Spring para resover a referencia apontada pelo ID. */
     final static class SpringRefType<KEY extends Serializable> extends RefTypeByKey<KEY> {
 
         private final String springBeanName;
 
-        private SpringRefType(String springBeanName, KEY typeId, SType<?> type) {
+        private SpringRefType(@Nonnull String springBeanName, @Nonnull KEY typeId, SType<?> type) {
             super(typeId, type);
             this.springBeanName = springBeanName;
         }
 
         @Override
-        public SType<?> retrieveByKey(KEY typeId) {
+        @Nonnull
+        public SType<?> retrieveByKey(@Nonnull KEY typeId) {
             SpringTypeLoader<KEY> loader = SpringFormUtil.getApplicationContext().getBean(springBeanName, SpringTypeLoader.class);
             if (loader == null) {
                 throw new SingularFormException(

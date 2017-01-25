@@ -16,25 +16,10 @@
 
 package org.opensingular.flow.core;
 
-import java.awt.HeadlessException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.List;
-import java.util.function.Function;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
-import org.slf4j.LoggerFactory;
+import java.util.*;
+import java.util.function.Function;
 
 
 
@@ -44,6 +29,8 @@ public class MBPMUtil {
     private static final int PESO_TASK_WAIT = 300;
     private static final int PESO_TASK_PESSOA = 1000;
     private static final int PESO_TASK_FIM = 100000;
+
+    private MBPMUtil() {}
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
         instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTask().getEntityTaskInstance().getTask(),
@@ -79,7 +66,7 @@ public class MBPMUtil {
     public static List<MTask<?>> getSortedTasksByDistanceFromBeginning(ProcessDefinition<?> definicao) {
         calculateTaskOrder(definicao.getFlowMap());
         List<MTask<?>> novo = new ArrayList<>(definicao.getFlowMap().getTasks());
-        Collections.sort(novo, (t1, t2) -> {
+        novo.sort((t1, t2) -> {
             if (t1.getOrder() != t2.getOrder()) {
                 return t1.getOrder() - t2.getOrder();
             }

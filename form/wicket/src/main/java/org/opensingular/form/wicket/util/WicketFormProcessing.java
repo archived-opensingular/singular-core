@@ -65,6 +65,8 @@ public class WicketFormProcessing implements Loggable {
     public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
 
+    private WicketFormProcessing() {}
+
     public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
             if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage()) {
@@ -216,7 +218,7 @@ public class WicketFormProcessing implements Loggable {
                     .collect(toSet());
 
             final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
-            final Predicate<SType<?>> isElementsDependent = (type) -> (type instanceof STypeList) && isDependent.test(((STypeList<?, ?>) type).getElementsType());
+            final Predicate<SType<?>> isElementsDependent = (type) -> type.isList() && isDependent.test(((STypeList<?, ?>) type).getElementsType());
 
             final Predicate<SInstance> shouldRefreshPredicate = childInstance -> {
 

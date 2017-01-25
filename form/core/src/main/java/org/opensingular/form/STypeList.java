@@ -16,20 +16,20 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.builder.selection.SSelectionBuilder;
+import org.opensingular.form.builder.selection.SelectionBuilder;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.form.view.SView;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-
-import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.view.SMultiSelectionByPicklistView;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.builder.selection.SSelectionBuilder;
-import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.view.SMultiSelectionBySelectView;
 
 /**
  * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
@@ -115,7 +115,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
 
     @Override
     protected void extendSubReference() {
-        if (getSuperType() instanceof STypeList) {
+        if (getSuperType().isList()) {
             E type = (E) ((STypeList) getSuperType()).elementsType;
             if (type != null) {
                 setElementsType(type);

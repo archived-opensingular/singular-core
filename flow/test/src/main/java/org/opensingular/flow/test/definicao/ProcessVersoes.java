@@ -20,7 +20,9 @@ import org.opensingular.flow.core.ProcessInstance;
 
 public class ProcessVersoes extends ProcessInstance {
 
-    //chamar new DefinicaoProcessVersoes().newInstance();
+    /**
+     * chamar new DefinicaoProcessVersoes().newInstance();
+     */
     protected ProcessVersoes(){
 
     }

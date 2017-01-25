@@ -17,9 +17,10 @@
 package org.opensingular.form.view;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.form.SType;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
@@ -97,28 +98,28 @@ public class ViewMapperRegistry<T> implements Serializable {
         return Optional.ofNullable(mapper);
     }
 
-    private T getMapper(Class<?> type, SView view) {
-        RegisterEntry<T> selected = null;
-        int score = -1;
+    private @Nullable T getMapper(Class<?> type, SView view) {
         while (type != SType.class) {
             List<RegisterEntry<T>> list = registry.get(type);
             if (list != null) {
-                for (RegisterEntry<T> entry : list) {
-                    if (entry.isCompatible(view)) {
-                        int newScore = entry.scoreFor(view);
-                        if (selected == null || newScore > score) {
-                            selected = entry;
-                            score = newScore;
-                        }
-                    }
-                }
+                T selected = findEntryMoreRelevant(list, view);
                 if (selected != null) {
-                    return selected.factory.get();
+                    return selected;
                 }
             }
             type = type.getSuperclass();
         }
         return null;
+    }
+
+    private @Nullable T findEntryMoreRelevant(List<RegisterEntry<T>> list, SView view) {
+        PrioritizedResult<RegisterEntry<T>> result = PrioritizedResult.empty();
+        for (RegisterEntry<T> entry : list) {
+            if (entry.isCompatible(view)) {
+                result = result.selectHigherPriority(entry.scoreFor(view), entry);
+            }
+        }
+        return result.get() == null ? null : result.get().factory.get();
     }
 
     /**
