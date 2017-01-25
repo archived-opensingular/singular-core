@@ -7,27 +7,42 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular-server</artifactId>
 
-    <version>1.5.6-SNAPSHOT</version>
+    <version>1.5.7-SNAPSHOT</version>
     <name>[projeto-raiz :: singular-server]</name>
+    <description>Singular server</description>
+    <url>http://opensingular.org</url>
     <packaging>pom</packaging>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Daniel Bordin</name>
+            <organization>Singular</organization>
+        </developer>
+        <developer>
+            <name>Danilo Mesquita</name>
+            <organization>Singular</organization>
+        </developer>
+        <developer>
+            <name>Delfino Filho</name>
+            <organization>Singular</organization>
+        </developer>
+        <developer>
+            <name>Vinicius Nunes</name>
+            <organization>Singular</organization>
+        </developer>
+    </developers>
 
     <modules>
         <module>server-libs</module>
         <module>sso</module>
     </modules>
-
-    <distributionManagement>
-        <repository>
-            <id>singular-releases</id>
-            <name>singular-releases</name>
-            <url>http://nexus.mirante.net.br/nexus/content/repositories/singular-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>singular-snapshots</id>
-            <name>singular-snapshots</name>
-            <url>http://nexus.mirante.net.br/nexus/content/repositories/singular-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -75,6 +90,19 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -135,6 +163,46 @@
     </scm>
 
     <profiles>
+        <profile>
+            <id>release</id>
+
+            <distributionManagement>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <properties>
+                <project.scm.url>https://github.com/opensingular/singular-server/tree/master</project.scm.url>
+                <project.scm.connection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.connection>
+                <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.developerConnection>
+            </properties>
+        </profile>
+
         <profile>
             <id>test</id>
             <activation>
@@ -233,8 +301,8 @@
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
-        <singular.version>1.5.6-SNAPSHOT</singular.version>
-        <singular.server.version>1.5.6-SNAPSHOT</singular.server.version>
+        <singular.version>1.5.7-SNAPSHOT</singular.version>
+        <singular.server.version>1.5.7-SNAPSHOT</singular.server.version>
         <cas.version>4.0.4</cas.version>
         <cas.client.version>3.4.1</cas.client.version>
     </properties>
