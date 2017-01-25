@@ -174,7 +174,7 @@ public class BSModalBorder extends Border {
 
         dialog.add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('keypress', function (e) {"
                 + "  var buttons = $(this).find('.btn-primary:visible');"
-                + "  if (buttons.length > 0 && e.which === 13) {"
+                + "  if (e.target.tagName.toLowerCase() != 'textarea' && buttons.length > 0 && e.which === 13) {"
                 + "    e.preventDefault();"
                 + "    $(buttons[buttons.length - 1]).click();"
                 + "  }"

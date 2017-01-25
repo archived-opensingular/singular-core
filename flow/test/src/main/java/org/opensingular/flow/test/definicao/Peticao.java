@@ -128,13 +128,6 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
 
     public void notificar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("Notificado");
-
     }
 
-//    @SuppressWarnings("unchecked")
-//    public static void main(String[] args) {
-//        MBPMUtil.showSwingDiagram((Class<? extends ProcessDefinition<?>>) new Object() {
-//            /* VAZIO */
-//        }.getClass().getEnclosingClass());
-//    }
 }

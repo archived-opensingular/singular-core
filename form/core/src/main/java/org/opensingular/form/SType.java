@@ -75,16 +75,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private AttributeDefinitionInfo attributeDefinitionInfo;
 
     /**
-     * Se true, representa um campo sem criar um tipo para ser reutilizado em outros pontos.
-     */
-    //private boolean onlyAField;
-
-    /**
-     * Representa um campo que não será persistido. Se aplica somente se apenasCampo=true.
-     */
-    //private boolean transientField;
-
-    /**
      * Classe a  ser usada para criar as instâncias do tipo atual. Pode ser null, indicado que o tipo atual é abstrato.
      */
     @Nullable
@@ -475,20 +465,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
 
-    //    public MTipo<I> withOnChange(IBehavior<I> behavior) {
-    //        return as
-    //    }
-    //
-    //    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
-    //        // TODO implementar
-    //        throw new NotImplementedException("TODO implementar");
-    //    }
-    //
-    //    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
-    //        // TODO implementar
-    //        throw new NotImplementedException("TODO implementar");
-    //    }
-
     @SuppressWarnings("unchecked")
     public <T> T as(Class<T> targetClass) {
         if (STranslatorForAttribute.class.isAssignableFrom(targetClass)) {
@@ -731,9 +707,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 }
             }
             instanceCount++;
-
-            //            init(newInstance);
-
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException(

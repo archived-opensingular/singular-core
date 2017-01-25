@@ -233,7 +233,6 @@ public final class SFormUtil {
         if (singularPackages == null) {
             singularPackages = SupplierUtil.cached(() -> {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
-                // addPackage(builder, SPackageBasic.class);
                 addPackage(builder, SPackageUtil.class);
                 addPackage(builder, SPackageBootstrap.class);
                 addPackage(builder, SPackageCountryBrazil.class);

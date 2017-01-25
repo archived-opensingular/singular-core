@@ -70,9 +70,11 @@ public class SessionWrapper {
     // Métodos facilitadores
     // -----------------------------------------------------------------------------
 
+    /**
+     * TODO decidir se chamara automaticamente o método validar
+     * HibernateIntegration.validar(obj);
+     */
     public void validar(Object obj) {
-        // TODO decidir se chamara automaticamente o método validar
-        // HibernateIntegration.validar(obj);
     }
 
     public Serializable save(Object novoObj) {
