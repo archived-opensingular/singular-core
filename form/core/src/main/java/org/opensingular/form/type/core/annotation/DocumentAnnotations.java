@@ -123,10 +123,6 @@ public class DocumentAnnotations {
             RefSDocumentFactory refSDocumentFactory = docRef.getDocumentFactoryRef();
             if (refSDocumentFactory != null) {
                 documentFactory = refSDocumentFactory.get();
-                if (documentFactory == null) {
-                    throw new SingularFormException(
-                            "A documentFactory " + RefSDocumentFactory.class.getName() + ".get() retornou null");
-                }
             } else {
                 documentFactory = SDocumentFactory.empty();
             }

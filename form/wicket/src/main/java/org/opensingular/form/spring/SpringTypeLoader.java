@@ -47,11 +47,7 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
     @Override
     @Nonnull
     protected final Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId) {
-        Optional<SType<?>> type = loadType(typeId);
-        if (type == null) {
-            throw new SingularFormException(getClass().getName() + ".loadType(TYPE_KEY) retornou null em vez de um Optional");
-        }
-        return type.map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
+        return loadType(typeId).map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
     }
 
     @Override

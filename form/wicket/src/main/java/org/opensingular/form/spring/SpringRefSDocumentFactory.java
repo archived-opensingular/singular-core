@@ -16,6 +16,7 @@
 
 package org.opensingular.form.spring;
 
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocumentFactory;
 
@@ -41,6 +42,11 @@ public class SpringRefSDocumentFactory extends RefSDocumentFactory {
         if (springBeanName != null) {
             f = SpringFormUtil.getApplicationContext().getBean(springBeanName, SDocumentFactory.class);
         }
-        return f;
+        if(f != null) {
+            return f;
+        } else {
+            throw new SingularFormException("Não foi possivel recuperar o SDocumentFactory");
+        }
     }
+
 }
