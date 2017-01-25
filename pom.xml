@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.5-SNAPSHOT</version>
+    <version>1.5.6-SNAPSHOT</version>
     <name>[projeto-raiz :: singular]</name>
     <packaging>pom</packaging>
 
@@ -212,6 +212,12 @@
             <version>2.0M10</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.12</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -374,7 +380,7 @@
         <sonar.exclusions>**/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>1.5.5-SNAPSHOT</singular.version>
+        <singular.version>1.5.6-SNAPSHOT</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
