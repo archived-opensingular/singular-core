@@ -73,17 +73,18 @@ public class DocumentAnnotations {
 
     private SIAnnotation getAnnotationOrCreate(SInstance instance, String classifier) {
         if (classifier == null) {
-            classifier = AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION.name();
+           return getAnnotationOrCreate(instance, AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION.name());
+        } else {
+            SIAnnotation annotation = getAnnotation(instance, classifier);
+            if (annotation == null) {
+                isValidClassifier(instance, classifier);
+                annotation = newAnnotation();
+                annotation.setTarget(instance);
+                annotation.setClassifier(classifier);
+                annotationsMap.put(instance.getId(), annotation);
+            }
+            return annotation;
         }
-        SIAnnotation annotation = getAnnotation(instance, classifier);
-        if (annotation == null) {
-            isValidClassifier(instance, classifier);
-            annotation = newAnnotation();
-            annotation.setTarget(instance);
-            annotation.setClassifier(classifier);
-            annotationsMap.put(instance.getId(), annotation);
-        }
-        return annotation;
     }
 
     /** Verifice se instancia recebe o classificador de anotação informado. */
@@ -123,10 +124,6 @@ public class DocumentAnnotations {
             RefSDocumentFactory refSDocumentFactory = docRef.getDocumentFactoryRef();
             if (refSDocumentFactory != null) {
                 documentFactory = refSDocumentFactory.get();
-                if (documentFactory == null) {
-                    throw new SingularFormException(
-                            "A documentFactory " + RefSDocumentFactory.class.getName() + ".get() retornou null");
-                }
             } else {
                 documentFactory = SDocumentFactory.empty();
             }

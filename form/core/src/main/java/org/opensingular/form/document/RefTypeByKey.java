@@ -48,11 +48,7 @@ public abstract class RefTypeByKey<KEY extends Serializable> extends RefType {
     @Override
     @Nonnull
     protected final SType<?> retrieve() {
-        SType<?> type = retrieveByKey(typeId);
-        if (type == null) {
-            throw new SingularFormException(getClass().getName() + ".retrieveByKey(KEY) retornou null");
-        }
-        return type;
+        return retrieveByKey(typeId);
     }
 
     /** Deve localizar o tipo para o id informado. Não deve retornar null. */

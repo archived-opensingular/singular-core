@@ -53,9 +53,6 @@ public abstract class SerializableReference<K> implements Serializable, Supplier
     public final K get() {
         if (reference == null) {
             reference = retrieve();
-            if (reference == null) {
-                throw new SingularFormException(getClass().getName() + ".retrieve() retornou null");
-            }
         }
         return reference;
     }
