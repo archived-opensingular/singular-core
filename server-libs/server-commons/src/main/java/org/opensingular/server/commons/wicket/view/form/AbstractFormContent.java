@@ -179,6 +179,7 @@ public abstract class AbstractFormContent extends Content {
                     addToastrSuccessMessage("message.success");
                     atualizarContentWorklist(target);
                 } catch (HibernateOptimisticLockingFailureException e) {
+                    getLogger().debug(e.getMessage());
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }
@@ -205,6 +206,7 @@ public abstract class AbstractFormContent extends Content {
                     save(target, instanceModel);
                     addToastrSuccessMessage("message.success");
                 } catch (HibernateOptimisticLockingFailureException e) {
+                    getLogger().debug(e.getMessage());
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }

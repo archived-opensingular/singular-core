@@ -41,7 +41,7 @@ public class SingularJSBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     protected void respond(AjaxRequestTarget target) {
         getComponent().getPage().visitChildren((component, visit) -> {
-            if (component.getId().equals("tabela")) {
+            if ("tabela".equals(component.getId())) {
                 target.add(component);
                 visit.stop();
             }
