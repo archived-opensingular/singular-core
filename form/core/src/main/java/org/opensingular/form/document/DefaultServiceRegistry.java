@@ -37,8 +37,7 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public Map<String, Pair> services() {
-        return (servicesByName == null) ? Collections.emptyMap() :
-                ImmutableMap.copyOf(servicesByName);
+        return ImmutableMap.copyOf(servicesByName);
     }
 
     @Override
