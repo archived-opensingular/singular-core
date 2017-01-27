@@ -41,7 +41,7 @@ public abstract class TempFileUtils {
     private TempFileUtils() {}
 
     public static void withTempDir(IConsumerEx<File, IOException> callback) throws IOException {
-        internalWithTempFile(() -> Files.createTempDir(), callback);
+        internalWithTempFile(Files::createTempDir, callback);
     }
 
     public static void withTempFile(String prefix, String suffix, IConsumerEx<File, IOException> callback)
@@ -78,7 +78,7 @@ public abstract class TempFileUtils {
             Path dirPath = dir.toPath();
             Path filePath = dirPath.resolve(relativePath);
             filePath.getParent().toFile().mkdirs();
-            internalWithTempFile(() -> filePath.toFile(), file -> callback.accept(dir, file));
+            internalWithTempFile(filePath::toFile, file -> callback.accept(dir, file));
         });
     }
 

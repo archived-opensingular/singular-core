@@ -18,7 +18,7 @@ package org.opensingular.ws.wkhtmltopdf.controller;
 
 import org.opensingular.lib.commons.pdf.PDFUtil;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.ws.wkhtmltopdf.dto.WKHtmlToPdfDTO;
+import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileInputStream;
 
-import static org.opensingular.ws.wkhtmltopdf.constains.WkHtmlToPdfConstants.CONVERT_HTML_TO_PDF_PATH;
+import static org.opensingular.ws.wkhtmltopdf.constains.HtmlToPdfConstants.CONVERT_HTML_TO_PDF_PATH;
 
 @RestController
 public class WkHtmlToPdfRestController implements Loggable {
 
     @ResponseBody
     @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH, method = RequestMethod.POST, produces = "application/pdf")
-    public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody WKHtmlToPdfDTO dto) {
+    public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody HtmlToPdfDTO dto) {
         try {
             File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter());
             return ResponseEntity.ok()
