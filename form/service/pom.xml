@@ -7,14 +7,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>form-service</artifactId>
+    <artifactId>singular-form-service</artifactId>
     <name>[singular :: form :: service]</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-core</artifactId>
+            <artifactId>singular-form-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>

@@ -9,14 +9,14 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>flow-rest-client</artifactId>
+    <artifactId>singular-flow-rest-client</artifactId>
     <name>[singular :: flow :: rest-client]</name>
     <packaging>jar</packaging>
 
     <dependencies>
     	<dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-core</artifactId>
+            <artifactId>singular-flow-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
     	

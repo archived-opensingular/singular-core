@@ -15,19 +15,19 @@
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-core</artifactId>
+            <artifactId>singular-flow-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-persistence</artifactId>
+            <artifactId>singular-flow-persistence</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-service</artifactId>
+            <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
         </dependency>
 

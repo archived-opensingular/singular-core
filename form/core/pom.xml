@@ -9,7 +9,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>form-core</artifactId>
+    <artifactId>singular-form-core</artifactId>
     <name>[singular :: form :: core]</name>
     <packaging>jar</packaging>
 

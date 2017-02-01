@@ -9,14 +9,14 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>flow-core</artifactId>
+    <artifactId>singular-flow-core</artifactId>
     <name>[singular :: flow :: core]</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-schedule</artifactId>
+            <artifactId>singular-flow-schedule</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>

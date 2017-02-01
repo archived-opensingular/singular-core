@@ -7,14 +7,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>flow-persistence</artifactId>
+    <artifactId>singular-flow-persistence</artifactId>
     <name>[singular :: flow :: persistence]</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-core</artifactId>
+            <artifactId>singular-flow-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>

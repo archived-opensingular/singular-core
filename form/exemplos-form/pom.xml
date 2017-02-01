@@ -10,7 +10,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>exemplos-form</artifactId>
+    <artifactId>singular-exemplos-form</artifactId>
     <name>[singular :: form :: exemplos-form]</name>
     <packaging>jar</packaging>
 
@@ -19,7 +19,7 @@
         <!-- Projeto Singular -->
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-wicket</artifactId>
+            <artifactId>singular-form-wicket</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>

@@ -9,8 +9,8 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>form-ui-showcase</artifactId>
-    <name>[singular :: form :: ui-showcase]</name>
+    <artifactId>singular-ui-showcase</artifactId>
+    <name>[singular :: ui-showcase]</name>
     <packaging>war</packaging>
 
     <build>
@@ -48,17 +48,17 @@
         <!-- Projeto Singular -->
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-wicket</artifactId>
+            <artifactId>singular-form-wicket</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>exemplos-form</artifactId>
+            <artifactId>singular-exemplos-form</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-service</artifactId>
+            <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
         </dependency>
 

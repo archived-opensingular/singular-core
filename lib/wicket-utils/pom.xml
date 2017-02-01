@@ -9,7 +9,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>wicket-utils</artifactId>
+    <artifactId>singular-wicket-utils</artifactId>
     <name>[singular :: libs :: wicket-utils]</name>
     <packaging>jar</packaging>
 

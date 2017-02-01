@@ -9,7 +9,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ui-static-resources</artifactId>
+    <artifactId>singular-ui-resources</artifactId>
     <name>[singular :: common :: ui-static-resources]</name>
     <packaging>war</packaging>
 

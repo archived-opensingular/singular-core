@@ -9,7 +9,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>flow-schedule</artifactId>
+    <artifactId>singular-flow-schedule</artifactId>
     <name>[singular :: flow :: schedule]</name>
     <packaging>jar</packaging>
 

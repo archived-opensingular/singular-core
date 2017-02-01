@@ -9,7 +9,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>form-wicket</artifactId>
+    <artifactId>singular-form-wicket</artifactId>
     <name>[singular :: form :: wicket]</name>
     <packaging>jar</packaging>
 
@@ -46,13 +46,13 @@
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-core</artifactId>
+            <artifactId>singular-form-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>wicket-utils</artifactId>
+            <artifactId>singular-wicket-utils</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
