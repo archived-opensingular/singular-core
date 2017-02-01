@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.ws.wkhtmltopdf.dto;
+package org.opensingular.lib.commons.dto;
 
 import java.io.Serializable;
 
-public class WKHtmlToPdfDTO implements Serializable {
+public class HtmlToPdfDTO implements Serializable {
 
     private String header;
     private String body;
     private String footer;
 
-    public WKHtmlToPdfDTO() {
+    public HtmlToPdfDTO() {
     }
 
-    public WKHtmlToPdfDTO(String header, String body, String footer) {
+    public HtmlToPdfDTO(String header, String body, String footer) {
         this.header = header;
         this.body = body;
         this.footer = footer;
