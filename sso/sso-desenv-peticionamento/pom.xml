@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>org.opensingular</groupId>
-        <artifactId>sso</artifactId>
+        <artifactId>singular-sso</artifactId>
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
     <name>[singular-server :: sso :: sso-desenv-peticionamento ]</name>
-    <artifactId>sso-desenv-peticionamento</artifactId>
+    <artifactId>singular-sso-desenv-petition</artifactId>
     <packaging>war</packaging>
 
     <dependencies>

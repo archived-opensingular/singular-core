@@ -10,7 +10,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>p-server-commons</artifactId>
+    <artifactId>singular-p-server-commons</artifactId>
     <name>[singular-server :: server-libs :: p-server-libs :: p-server-commons]</name>
     <packaging>jar</packaging>
 
@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>server-commons</artifactId>
+            <artifactId>singular-server-commons</artifactId>
             <version>${singular.server.version}</version>
         </dependency>
 

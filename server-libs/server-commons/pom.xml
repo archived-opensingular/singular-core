@@ -10,7 +10,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>server-commons</artifactId>
+    <artifactId>singular-server-commons</artifactId>
     <name>[singular-server :: server-libs :: server-commons]</name>
     <packaging>jar</packaging>
 
@@ -42,12 +42,12 @@
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-persistence</artifactId>
+            <artifactId>singular-flow-persistence</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-service</artifactId>
+            <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
         </dependency>
 

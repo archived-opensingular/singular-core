@@ -10,7 +10,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sso</artifactId>
+    <artifactId>singular-sso</artifactId>
     <name>[singular-server :: sso]</name>
     <packaging>pom</packaging>
 
