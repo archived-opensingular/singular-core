@@ -421,7 +421,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean isRequired() {
-        return SInstances.attributeValue(this, SPackageBasic.ATR_REQUIRED, false);
+        return SInstances.attributeValue(this, SPackageBasic.ATR_REQUIRED, Boolean.FALSE);
     }
 
     public void setRequired(Boolean value) {
@@ -433,7 +433,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean exists() {
-        return SInstances.attributeValue(this, SPackageBasic.ATR_EXISTS, true);
+        return SInstances.attributeValue(this, SPackageBasic.ATR_EXISTS, Boolean.TRUE);
     }
 
     public void setExists(Boolean value) {
