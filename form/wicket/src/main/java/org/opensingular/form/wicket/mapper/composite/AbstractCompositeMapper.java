@@ -129,8 +129,10 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             final SType<?>                 tCampo        = iCampo.getType();
             final HashMap<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
-            return (hintColWidths.containsKey(tCampo.getName()))
-                    ? hintColWidths.get(tCampo.getName())
+            String tCampoName = tCampo.getName();
+
+            return (hintColWidths.containsKey(tCampoName))
+                    ? hintColWidths.get(tCampoName)
                     : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
 

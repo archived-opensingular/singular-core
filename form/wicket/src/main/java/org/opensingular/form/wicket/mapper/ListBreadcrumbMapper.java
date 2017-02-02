@@ -218,23 +218,26 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target, IModel<? extends SInstance> itemModel) {
             ctx.getRootContext().getBreadCrumbs().add((String) ctx.getCurrentInstance().getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
 
-            target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", ctx.getRootContainer().getMarkupId()));
-            ctx.getRootContainer().getItems().removeAll();
-            WicketBuildContext childCtx = ctx.createChild(ctx.getRootContainer(), true, itemModel);
+            BSContainer<?> rootContainer = ctx.getRootContainer();
+
+            target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", rootContainer.getMarkupId()));
+            rootContainer.getItems().removeAll();
+            WicketBuildContext childCtx = ctx.createChild(rootContainer, true, itemModel);
             childCtx.setShowBreadcrumb(true);
             ctx.getUiBuilderWicket().build(childCtx, ctx.getViewMode());
-            childCtx.getRootContainer().add(new AttributeAppender("style", Model.of("display: none")) {
+            BSContainer<?> childCtxRootContainer = childCtx.getRootContainer();
+            childCtxRootContainer.add(new AttributeAppender("style", Model.of("display: none")) {
                 @Override
                 public boolean isTemporary(Component component) {
                     return true;
                 }
             });
-            target.appendJavaScript(String.format("$('#%s').show('slide', { direction: 'right' }, 500);", childCtx.getRootContainer().getMarkupId()));
+            target.appendJavaScript(String.format("$('#%s').show('slide', { direction: 'right' }, 500);", childCtxRootContainer.getMarkupId()));
 
-            final BSRow buttonsRow = ctx.getRootContainer().newGrid().newRow();
+            final BSRow buttonsRow = rootContainer.newGrid().newRow();
             appendButtons(ctx, buttonsRow.newCol(11));
 
-            target.add(ctx.getRootContainer());
+            target.add(rootContainer);
         }
 
         @Override

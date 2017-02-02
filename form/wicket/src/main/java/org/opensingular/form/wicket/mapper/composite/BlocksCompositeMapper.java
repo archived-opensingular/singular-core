@@ -72,8 +72,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
                 final Block block = view.getBlocks().get(i);
-                if (StringUtils.isEmpty(block.getName()) && block.getTypes().size() == 1 && ctx.getCurrentInstance() instanceof SIComposite) {
-                    final SIComposite sic        = ctx.getCurrentInstance();
+                SInstance currentInstance = ctx.getCurrentInstance();
+                if (StringUtils.isEmpty(block.getName()) && block.getTypes().size() == 1 && currentInstance instanceof SIComposite) {
+                    final SIComposite sic        = (SIComposite) currentInstance;
                     final SInstance   firstChild = sic.getField(block.getTypes().get(0));
                     block.setName(firstChild.asAtr().getLabel());
                     ctx.setTitleInBlock(true);
@@ -84,8 +85,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
 
             for (SType<?> f : getInstanceType().getFields()) {
-                if (!addedTypes.contains(f.getNameSimple())) {
-                    remainingTypes.add(f.getNameSimple());
+                String nameSimple = f.getNameSimple();
+                if (!addedTypes.contains(nameSimple)) {
+                    remainingTypes.add(nameSimple);
                 }
             }
 
