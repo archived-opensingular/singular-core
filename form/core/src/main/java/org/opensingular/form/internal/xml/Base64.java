@@ -19,6 +19,7 @@ package org.opensingular.form.internal.xml;
 import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -119,7 +120,7 @@ final class Base64 {
     /**
      * Preferred encoding.
      */
-    private final static String PREFERRED_ENCODING = "UTF-8";
+    private final static String PREFERRED_ENCODING = StandardCharsets.UTF_8.name();
 
     /**
      * The 64 valid Base64 values.
@@ -901,13 +902,15 @@ final class Base64 {
             int numBytes;
 
             // Check for size of file
-            if (file.length() > Integer.MAX_VALUE) {
+            long fileLength = file.length();
+
+            if (fileLength > Integer.MAX_VALUE) {
                 System.err.println("File is too big for this convenience method ("
-                        + file.length()
+                        + fileLength
                         + " bytes).");
                 return null;
             } // end if: file too big for int index
-            buffer = new byte[(int) file.length()];
+            buffer = new byte[(int) fileLength];
 
             // Open a stream
             fis = new FileInputStream(file);

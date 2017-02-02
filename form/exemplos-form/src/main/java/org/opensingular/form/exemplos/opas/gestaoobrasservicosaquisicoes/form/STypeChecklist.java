@@ -47,7 +47,7 @@ public class STypeChecklist extends STypeComposite<SIComposite> {
 
         final STypeComposite<SIComposite> item = itens.getElementsType();
         final STypeString descrItem = item.addFieldString("descricao");
-        descrItem.asAtr().label("Descrição").enabled(false);
+        descrItem.asAtr().label("Descrição").enabled(Boolean.FALSE);
         item.addFieldString("avaliacao", true)
             .selectionOf("Sim", "Não", "Parcial", "Não se aplica")
             .withRadioView()
