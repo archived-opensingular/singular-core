@@ -17,11 +17,19 @@
 package org.opensingular.form.io.definition;
 
 import com.google.common.collect.Lists;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SScopeBase;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
