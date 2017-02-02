@@ -39,10 +39,18 @@ import java.util.List;
 @GenericGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<ProcessDefinitionEntity, TaskVersionEntity, RoleTaskEntity> {
+
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "taskDefinition", fetch = FetchType.LAZY)
     private List<TaskPermissionEntity> taskPermissions;
 
+    public List<TaskPermissionEntity> getTaskPermissions() {
+        return taskPermissions;
+    }
+
+    public void setTaskPermissions(List<TaskPermissionEntity> taskPermissions) {
+        this.taskPermissions = taskPermissions;
+    }
 
 }

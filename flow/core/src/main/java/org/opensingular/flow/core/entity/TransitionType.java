@@ -40,14 +40,14 @@ public enum TransitionType {
     }
     
     public boolean isEvent(){
-        return equals(E);
+        return this == E;
     }
 
     public boolean isAutomatic(){
-        return equals(A);
+        return this == A;
     }
 
     public boolean isHuman(){
-        return equals(H);
+        return this == H;
     }
 }

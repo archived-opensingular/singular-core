@@ -103,7 +103,7 @@ public class MTransition {
             this.rolesToDefineUser.add(papel);
             return this;
         } else {
-            throw new SingularFlowException("Only automatic user allocation is allowed in " + origin.getTaskType().toString() + " tasks");
+            throw new SingularFlowException("Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks");
         }
     }
 

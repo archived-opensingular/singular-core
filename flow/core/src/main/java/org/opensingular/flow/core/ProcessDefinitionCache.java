@@ -49,7 +49,6 @@ public final class ProcessDefinitionCache {
         this.packagesNames = packagesNames;
         ImmutableList.Builder<ProcessDefinition<?>> newCache = ImmutableList.builder();
         Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
-        Map<Class<? extends ProcessInstance>, ProcessDefinition<?>> cacheByInstanceType = new HashMap<>();
 
         String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 1);
         packagesToScan[packagesToScan.length -1] = "org.opensingular";
@@ -63,14 +62,16 @@ public final class ProcessDefinitionCache {
             }
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
             newCache.add(def);
-            if (cacheByKey.containsKey(def.getKey())) {
-                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getKey());
+            String key = def.getKey();
+            if (cacheByKey.containsKey(key)) {
+                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + key);
             }
-            cacheByKey.put(def.getKey(), def);
-            cacheByInstanceType.put(def.getProcessInstanceClass(), def);
+            cacheByKey.put(key, def);
         }
+
         definitions = newCache.build();
         definitionsByKey = ImmutableMap.copyOf(cacheByKey);
+
     }
 
     public synchronized static ProcessDefinitionCache get(String[] packagesNames) {
