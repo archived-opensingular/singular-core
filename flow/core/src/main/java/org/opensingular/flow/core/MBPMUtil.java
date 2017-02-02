@@ -64,11 +64,14 @@ public class MBPMUtil {
     }
 
     public static List<MTask<?>> getSortedTasksByDistanceFromBeginning(ProcessDefinition<?> definicao) {
-        calculateTaskOrder(definicao.getFlowMap());
-        List<MTask<?>> novo = new ArrayList<>(definicao.getFlowMap().getTasks());
+        FlowMap flowMap = definicao.getFlowMap();
+        calculateTaskOrder(flowMap);
+        List<MTask<?>> novo = new ArrayList<>(flowMap.getTasks());
         novo.sort((t1, t2) -> {
-            if (t1.getOrder() != t2.getOrder()) {
-                return t1.getOrder() - t2.getOrder();
+            int order1 = t1.getOrder();
+            int order2 = t2.getOrder();
+            if (order1 != order2) {
+                return order1 - order2;
             }
             return t1.getName().compareTo(t2.getName());
         });
@@ -87,7 +90,8 @@ public class MBPMUtil {
 
     private static void orderedVisit(int previousValue, MTask<?> task, Deque<MTask<?>> deque) {
         int valor = previousValue + calculateWeight(task);
-        if (task.getOrder() == 0 || (task.getOrder() < valor && !deque.contains(task))) {
+        int order = task.getOrder();
+        if (order == 0 || (order < valor && !deque.contains(task))) {
             task.setOrder(valor);
             deque.add(task);
             for (MTransition transicao : task.getTransitions()) {

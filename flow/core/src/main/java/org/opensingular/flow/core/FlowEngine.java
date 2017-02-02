@@ -25,6 +25,7 @@ import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
@@ -168,23 +169,30 @@ class FlowEngine {
     }
 
     private static MTransition searchTransition(TaskInstance tarefaAtual, String nomeTransicao) {
-        final MTask<?> estadoAtual = tarefaAtual.getFlowTask();
 
-        MTransition transicao;
+        final MTask<?> estadoAtual = tarefaAtual.getFlowTask();
+        final MTransition transicao;
+        final List<MTransition> transitions = estadoAtual.getTransitions();
+
         if (nomeTransicao == null) {
-            if (estadoAtual.getTransitions().size() == 1) {
-                transicao = estadoAtual.getTransitions().get(0);
-            } else if (estadoAtual.getTransitions().size() > 1 && estadoAtual.getDefaultTransition() != null) {
-                transicao = estadoAtual.getDefaultTransition();
+            if (transitions.size() == 1) {
+                transicao = transitions.get(0);
             } else {
-                throw new SingularFlowException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
+
+                MTransition defaultTransition = estadoAtual.getDefaultTransition();
+
+                if (transitions.size() > 1 && defaultTransition != null) {
+                    transicao = defaultTransition;
+                } else {
+                    throw new SingularFlowException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
+                }
             }
         } else {
             transicao = estadoAtual.getTransition(nomeTransicao);
             if (transicao == null) {
                 throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName()
                         + "] não possui a transição '" + nomeTransicao + "' solicitada. As opções são: {"
-                        + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
+                        + Joiner.on(',').join(transitions) + '}');
             }
         }
         return transicao;
@@ -193,8 +201,9 @@ class FlowEngine {
     private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         if (paramIn != null) {
             for (VarInstance variavel : paramIn) {
-                if (instancia.getProcessDefinition().getVariables().contains(variavel.getRef())) {
-                    instancia.setVariavel(variavel.getRef(), variavel.getValue());
+                String ref = variavel.getRef();
+                if (instancia.getProcessDefinition().getVariables().contains(ref)) {
+                    instancia.setVariavel(ref, variavel.getValue());
                 }
             }
         }
