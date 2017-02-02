@@ -35,7 +35,7 @@ public class FlowRendererFactory {
             CacheBuilder.newBuilder().expireAfterWrite(4, TimeUnit.HOURS)
                     .build(new CacheLoader<Class<? extends ProcessDefinition>, byte[]>() {
                         @Override
-                        public byte[] load(Class<? extends ProcessDefinition> classe) throws Exception {
+                        public byte[] load(Class<? extends ProcessDefinition> classe) {
                             return flowRenderer().generateImage(Flow.getProcessDefinition(classe));
                         }
 

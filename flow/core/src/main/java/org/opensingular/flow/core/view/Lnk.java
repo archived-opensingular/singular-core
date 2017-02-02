@@ -19,6 +19,7 @@ package org.opensingular.flow.core.view;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.opensingular.flow.core.SingularFlowException;
@@ -91,7 +92,7 @@ public class Lnk implements Serializable {
             if (url_.indexOf('?') == -1) {
                 separador = '?';
             }
-            return new Lnk(url_ + separador + parameter + "=" + URLEncoder.encode(value, "UTF-8"), urlAppMissing);
+            return new Lnk(url_ + separador + parameter + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.name()), urlAppMissing);
         } catch (UnsupportedEncodingException e) {
             throw new SingularFlowException(e);
         }

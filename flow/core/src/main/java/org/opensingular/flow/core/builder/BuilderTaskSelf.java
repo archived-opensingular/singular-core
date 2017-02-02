@@ -29,8 +29,9 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
     TASK getTask();
 
     default SELF with(Consumer<SELF> consumer) {
-        consumer.accept(self());
-        return self();
+        SELF self = self();
+        consumer.accept(self);
+        return self;
     }
 
     @SuppressWarnings("unchecked")

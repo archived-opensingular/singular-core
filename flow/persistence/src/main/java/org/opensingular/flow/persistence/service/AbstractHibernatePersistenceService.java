@@ -327,11 +327,13 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             boolean salvou = false;
             for (VarInstance variavel : instanceMap) {
                 if (variavel.getValue() != null) {
+
                     IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
-                    IEntityVariableInstance processInstanceVar = instance.getVariable(variavel.getRef());
+                    String ref = variavel.getRef();
+                    IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
 
                     IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
-                    novo.setName(variavel.getRef());
+                    novo.setName(ref);
                     novo.setValue(variavel.getPersistentString());
                     novo.setDate(dateHour);
                     ss.save(novo);
