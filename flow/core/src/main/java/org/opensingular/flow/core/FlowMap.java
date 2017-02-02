@@ -239,14 +239,22 @@ public class FlowMap {
      * @return a tarefa adicionada.
      */
     protected <T extends MTask> T addTask(T task) {
-        if (tasksByName.containsKey(task.getName())) {
-            throw new SingularFlowException(createErrorMsg("Task with name '" + task.getName() + "' already defined"));
+
+        String name = task.getName();
+        String abbreviation = task.getAbbreviation();
+
+        if (tasksByName.containsKey(name)) {
+            throw new SingularFlowException(createErrorMsg("Task with name '" + name + "' already defined"));
         }
-        tasksByName.put(task.getName(), task);
-        if (tasksByAbbreviation.containsKey(task.getAbbreviation())) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + task.getAbbreviation() + "' already defined"));
+
+        tasksByName.put(name, task);
+
+        if (tasksByAbbreviation.containsKey(abbreviation)) {
+            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' already defined"));
         }
-        tasksByAbbreviation.put(task.getAbbreviation(), task);
+
+        tasksByAbbreviation.put(abbreviation, task);
+
         return task;
     }
 
