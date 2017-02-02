@@ -64,7 +64,7 @@ public class TableListMapper extends AbstractListaMapper {
             return;
         }
 
-        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, true);
+        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
         ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
     }
 

@@ -52,7 +52,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 public interface IBehaviorsMixin extends Serializable {
 
     default AttributeAppender attrAppender(String attribute, Serializable valueOrModel, String separator) {
-        return attrAppender(attribute, valueOrModel, separator, Model.of(true));
+        return attrAppender(attribute, valueOrModel, separator, Model.of(Boolean.TRUE));
     }
 
     default AttributeAppender attrAppender(String attribute, Serializable valueOrModel, String separator, IModel<Boolean> enabledModel) {
@@ -88,7 +88,7 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeModifier attr(String attribute, Serializable valueOrModel) {
-        return attr(attribute, valueOrModel, Model.of(true));
+        return attr(attribute, valueOrModel, Model.of(Boolean.TRUE));
     }
 
     default AttributeModifier attr(String attribute, Serializable valueOrModel, IModel<Boolean> enabledModel) {
@@ -102,7 +102,7 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeAppender classAppender(Serializable valueOrModel) {
-        return classAppender(valueOrModel, Model.of(true));
+        return classAppender(valueOrModel, Model.of(Boolean.TRUE));
     }
 
     default AttributeAppender classAppender(Serializable valueOrModel, IModel<Boolean> enabledModel) {

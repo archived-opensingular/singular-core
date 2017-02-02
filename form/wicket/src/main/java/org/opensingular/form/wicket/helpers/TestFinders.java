@@ -102,7 +102,7 @@ public class TestFinders {
                 .map(ISInstanceAwareModel::getMInstancia)
                 .map(SInstance::getType)
                 .map(type::equals)
-                .orElse(false));
+                .orElse(Boolean.FALSE));
     }
 
     public static <T extends Component> Stream<T> findOnForm(Class<T> classOfQuery, Form form, Predicate<T> predicate) {

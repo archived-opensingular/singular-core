@@ -219,9 +219,9 @@ public class InputMaskBehavior extends Behavior {
     private void setDefaultOpcoes(Map<String, Object> options) {
         options.put("placeholder", "");
         options.put("skipOptionalPartCharacter", "");
-        options.put("showMaskOnHover", false);
-        options.put("showMaskOnFocus", false);
-        options.put("greedy", false);
+        options.put("showMaskOnHover", Boolean.FALSE);
+        options.put("showMaskOnFocus", Boolean.FALSE);
+        options.put("greedy", Boolean.FALSE);
     }
 
     private void setJsonOptions(Map<String, Object> options) {

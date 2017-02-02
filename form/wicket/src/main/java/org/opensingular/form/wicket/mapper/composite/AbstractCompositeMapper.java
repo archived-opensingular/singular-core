@@ -51,7 +51,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper {
 
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS = HashMap::new;
-    static final HintKey<Boolean>                  INLINE     = () -> false;
 
     @Override
     public void buildView(WicketBuildContext ctx) {

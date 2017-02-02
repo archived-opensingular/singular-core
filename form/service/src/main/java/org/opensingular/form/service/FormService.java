@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
-    private final Boolean KEEP_ANNOTATIONS = true;
+    private final boolean KEEP_ANNOTATIONS = true;
 
     @Inject
     private FormDAO formDAO;

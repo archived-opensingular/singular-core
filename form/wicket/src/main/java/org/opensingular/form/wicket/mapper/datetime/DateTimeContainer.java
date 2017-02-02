@@ -91,8 +91,8 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
 
     protected Map<String, Object> getParams() {
         final Map<String, Object> params = new TreeMap<>();
-        params.put("defaultTime", false);
-        params.put("showMeridian", false);
+        params.put("defaultTime", Boolean.FALSE);
+        params.put("showMeridian", Boolean.FALSE);
         if (dateTimerView != null) {
             params.put("showMeridian", dateTimerView.isMode24hs());
             if (dateTimerView.getMinuteStep() == null) {

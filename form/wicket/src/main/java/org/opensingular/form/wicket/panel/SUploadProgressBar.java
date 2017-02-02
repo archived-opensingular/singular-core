@@ -200,7 +200,7 @@ public abstract class SUploadProgressBar extends Panel {
      */
     private Form<?> getCallbackForm()
     {
-        Boolean insideModal = getForm().visitParents(ModalWindow.class, (object, visit) -> visit.stop(true));
+        Boolean insideModal = getForm().visitParents(ModalWindow.class, (object, visit) -> visit.stop(Boolean.TRUE));
         if (insideModal != null && insideModal) {
             return getForm();
         } else {

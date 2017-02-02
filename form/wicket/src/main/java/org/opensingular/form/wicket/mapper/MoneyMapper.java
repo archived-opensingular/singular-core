@@ -136,8 +136,8 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
         Map<String, Object> options = new HashMap<>();
         options.put("thousands", ".");
         options.put("decimal", ",");
-        options.put("allowZero", false);
-        options.put("allowNegative", true);
+        options.put("allowZero", Boolean.FALSE);
+        options.put("allowNegative", Boolean.TRUE);
 
         return options;
     }
