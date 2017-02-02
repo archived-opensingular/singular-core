@@ -88,10 +88,11 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public void adjustJSEvents(Component comp) {
         BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(comp);
-        datepicker.getTextField()
+        Component textField = datepicker.getTextField();
+        textField
                 .add(new SingularEventBehavior()
                         .setProcessEvent("changeDate", datepicker)
-                        .setValidateEvent("blur", datepicker.getTextField())
+                        .setValidateEvent("blur", textField)
                         .setSupportComponents(datepicker.getButton()));
     }
 

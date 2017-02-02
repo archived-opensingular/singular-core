@@ -21,7 +21,7 @@ import java.util.Calendar;
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.MBPMUtil;
+import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskPredicates;
