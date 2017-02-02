@@ -122,8 +122,9 @@ public class TaskInstance {
     }
 
     public String getName() {
-        if (getFlowTask() != null) {
-            return getFlowTask().getName();
+        MTask<?> flowTask = getFlowTask();
+        if (flowTask != null) {
+            return flowTask.getName();
         }
         return getTaskVersion().getName();
     }
@@ -162,22 +163,25 @@ public class TaskInstance {
     }
 
     public boolean isEnd() {
-        if (getFlowTask() != null) {
-            return getFlowTask().isEnd();
+        MTask<?> flowTask = getFlowTask();
+        if (flowTask != null) {
+            return flowTask.isEnd();
         }
         return getTaskVersion().isEnd();
     }
 
     public boolean isPeople() {
-        if (getFlowTask() != null) {
-            return getFlowTask().isPeople();
+        MTask<?> flowTask = getFlowTask();
+        if (flowTask != null) {
+            return flowTask.isPeople();
         }
         return getTaskVersion().isPeople();
     }
 
     public boolean isWait() {
-        if (getFlowTask() != null) {
-            return getFlowTask().isWait();
+        MTask<?> flowTask = getFlowTask();
+        if (flowTask != null) {
+            return flowTask.isWait();
         }
         return getTaskVersion().isWait();
     }
@@ -244,12 +248,16 @@ public class TaskInstance {
     }
 
     public void createSubTask(String historyType, ProcessInstance childProcessInstance) {
-        getPersistenceService().setParentTask(childProcessInstance.getEntity(), entityTask);
+
+        IEntityProcessInstance childProcessInstanceEntity = childProcessInstance.getEntity();
+
+        getPersistenceService().setParentTask(childProcessInstanceEntity, entityTask);
 
         if (historyType != null) {
-            log(historyType, childProcessInstance.getEntity().getDescription(), childProcessInstance.getCurrentTask().getAllocatedUser())
+            log(historyType, childProcessInstanceEntity.getDescription(), childProcessInstance.getCurrentTask().getAllocatedUser())
                     .sendEmail();
         }
+
         notifyStateUpdate();
     }
 
@@ -301,7 +309,7 @@ public class TaskInstance {
         if (adicionarAlocado) {
             MUser p = getAllocatedUser();
             if (p != null) {
-                sb.append(" (").append(p.getSimpleName()).append(")");
+                sb.append(" (").append(p.getSimpleName()).append(')');
             }
         }
         return sb;
@@ -313,7 +321,8 @@ public class TaskInstance {
         if (getAllocatedUser() != null) {
             return ImmutableList.of(getAllocatedUser());
         }
-        if (getFlowTask() != null && (getFlowTask().isPeople() || (getFlowTask().isWait() && getFlowTask().getAccessStrategy() != null))) {
+        MTask<?> flowTask = getFlowTask();
+        if (flowTask != null && (flowTask.isPeople() || (flowTask.isWait() && flowTask.getAccessStrategy() != null))) {
             Set<Integer> codPessoas = getFirstLevelUsersCodWithAccess();
             return (List<MUser>) getPersistenceService().retrieveUsersByCod(codPessoas);
         }
@@ -321,11 +330,17 @@ public class TaskInstance {
     }
 
     private Set<Integer> getFirstLevelUsersCodWithAccess() {
-        Objects.requireNonNull(getFlowTask(), "Task com a sigla " + getTaskVersion().getAbbreviation() + " não encontrada na definição "
-                + getProcessInstance().getProcessDefinition().getName());
-        Objects.requireNonNull(getFlowTask().getAccessStrategy(),
-                "Estratégia de acesso da task " + getTaskVersion().getAbbreviation() + " não foi definida");
-        return getFlowTask().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());
+
+        MTask<?> flowTask = getFlowTask();
+        TaskAccessStrategy<ProcessInstance> accessStrategy = flowTask.getAccessStrategy();
+        IEntityTaskVersion taskVersion = getTaskVersion();
+        String abbreviation = taskVersion.getAbbreviation();
+        ProcessInstance processInstance = getProcessInstance();
+
+        Objects.requireNonNull(flowTask, "Task com a sigla " + abbreviation + " não encontrada na definição " + processInstance.getProcessDefinition().getName());
+        Objects.requireNonNull(accessStrategy,"Estratégia de acesso da task " + abbreviation + " não foi definida");
+
+        return accessStrategy.getFirstLevelUsersCodWithAccess(processInstance);
     }
 
     public void executeTransition() {

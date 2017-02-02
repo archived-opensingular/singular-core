@@ -143,13 +143,14 @@ public class ProcessInstance implements Serializable {
         if (entity == null) {
             if(codEntity != null) {
                 IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
-                if (newfromDB != null && !getProcessDefinition().getEntityProcessDefinition().equals(
+                IEntityProcessDefinition entityProcessDefinition = getProcessDefinition().getEntityProcessDefinition();
+                if (newfromDB != null && !entityProcessDefinition.equals(
                         newfromDB.getProcessVersion().getProcessDefinition())) {
                     throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity +
                             " se refere a definição de processo " +
                             newfromDB.getProcessVersion().getProcessDefinition().getKey() +
                             " mas era esperado que referenciasse " +
-                            getProcessDefinition().getEntityProcessDefinition());
+                            entityProcessDefinition);
                 }
                 entity = newfromDB;
             }
@@ -257,8 +258,9 @@ public class ProcessInstance implements Serializable {
      * atual.
      */
     public String getCurrentTaskName() {
-        if (getEstado() != null) {
-            return getEstado().getName();
+        MTask<?> estado = getEstado();
+        if (estado != null) {
+            return estado.getName();
         }
         TaskInstance tarefaAtual = getCurrentTask();
         if (tarefaAtual != null) {

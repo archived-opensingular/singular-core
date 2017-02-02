@@ -157,7 +157,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return getProcessInstance(processClass, Integer.parseInt(id));
+            return getProcessInstance(processClass, Integer.valueOf(id));
         } else {
             return (X) getProcessInstance(id);
         }
