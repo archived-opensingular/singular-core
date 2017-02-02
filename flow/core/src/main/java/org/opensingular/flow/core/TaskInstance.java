@@ -318,8 +318,9 @@ public class TaskInstance {
 
     @SuppressWarnings("unchecked")
     public List<MUser> getDirectlyResponsibles() {
-        if (getAllocatedUser() != null) {
-            return ImmutableList.of(getAllocatedUser());
+        MUser allocatedUser = getAllocatedUser();
+        if (allocatedUser != null) {
+            return ImmutableList.of(allocatedUser);
         }
         MTask<?> flowTask = getFlowTask();
         if (flowTask != null && (flowTask.isPeople() || (flowTask.isWait() && flowTask.getAccessStrategy() != null))) {

@@ -387,8 +387,9 @@ public class MformPersistenciaXML {
         }
 
         private MElement complement(SInstance instancia, MElement element) {
-            if (builder.isPersistId() && instancia.getId() != null) {
-                element.setAttribute(ATRIBUTO_ID, instancia.getId().toString());
+            Integer id = instancia.getId();
+            if (builder.isPersistId() && id != null) {
+                element.setAttribute(ATRIBUTO_ID, id.toString());
             }
             if (builder.isPersistAttributes()) {
                 for (SInstance atr : instancia.getAttributes()) {

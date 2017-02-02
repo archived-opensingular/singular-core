@@ -117,7 +117,8 @@ public abstract class SScopeBase implements SScope {
         um tipo tem uma referência para ele mesmo, além de evitar recargas e duplicação de atributos.
         */
         newType.setRecursiveReference(isRecursiveReference(newType));
-        if (newType.getSuperType() == null || newType.getSuperType().getClass() != newType.getClass()) {
+        SType<?> superType = newType.getSuperType();
+        if (superType == null || superType.getClass() != newType.getClass()) {
             newType.extendSubReference();
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePreOnLoadTypeCall(newType);
             newType.setCallingOnLoadType(true);
@@ -130,7 +131,7 @@ public abstract class SScopeBase implements SScope {
                 if(isSuperTypeCallingOnLoadType(newType)) {
                     //Não pode rodar os processadores em quanto nao tiver terminado o onLoadType do tipo pai
                     newType.setCallingOnLoadType(true);
-                    getDictionary().addTypeProcessorForLatterExecutuion(newType.getSuperType(), () -> {
+                    getDictionary().addTypeProcessorForLatterExecutuion(superType, () -> {
                         TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, false);
                         getDictionary().runPendingTypeProcessorExecution(newType);
                         newType.setCallingOnLoadType(false);
@@ -227,15 +228,16 @@ public abstract class SScopeBase implements SScope {
         if(isRecursiveReference()) {
             ((SScopeBase) getParentScope()).register(type);
         } else {
+            String nameSimple = type.getNameSimple();
             if (localTypes == null) {
                 localTypes = new LinkedHashMap<>();
             } else {
-                if (localTypes.containsKey(type.getNameSimple())) {
+                if (localTypes.containsKey(nameSimple)) {
                     throw new SingularFormException(
-                            "A definição '" + type.getNameSimple() + "' já está criada no escopo " + getName());
+                            "A definição '" + nameSimple + "' já está criada no escopo " + getName());
                 }
             }
-            localTypes.put(type.getNameSimple(), type);
+            localTypes.put(nameSimple, type);
         }
     }
 

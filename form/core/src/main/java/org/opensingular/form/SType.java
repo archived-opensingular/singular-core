@@ -854,18 +854,22 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     private String suppressPackage(String name, boolean aggressive) {
-        if (isEqualsStart(name, getName())) {
-            return name.substring(getName().length() + 1);
-        } else if (isEqualsStart(name, getParentScope().getName())) {
-            return name.substring(getParentScope().getName().length() + 1);
-        } else if (isEqualsStart(name, SPackageCore.NAME)) {
-            String v = name.substring(SPackageCore.NAME.length() + 1);
-            if (aggressive && isEqualsStart(v, "SType")) {
-                v = v.substring(6);
+        String thisName = getName();
+        if (isEqualsStart(name, thisName)) {
+            return name.substring(thisName.length() + 1);
+        } else {
+            String parentScopeName = getParentScope().getName();
+            if (isEqualsStart(name, parentScopeName)) {
+                return name.substring(parentScopeName.length() + 1);
+            } else if (isEqualsStart(name, SPackageCore.NAME)) {
+                String v = name.substring(SPackageCore.NAME.length() + 1);
+                if (aggressive && isEqualsStart(v, "SType")) {
+                    v = v.substring(6);
+                }
+                return v;
+            } else if (aggressive && isEqualsStart(name, SPackageBasic.NAME)) {
+                return name.substring(SPackageBasic.NAME.length() + 1);
             }
-            return v;
-        } else if (aggressive && isEqualsStart(name, SPackageBasic.NAME)) {
-            return name.substring(SPackageBasic.NAME.length() + 1);
         }
         return name;
     }

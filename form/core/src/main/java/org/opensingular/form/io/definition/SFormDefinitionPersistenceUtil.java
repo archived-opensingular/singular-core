@@ -51,8 +51,9 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void ensureType(ContextArchive ctx, SType<?> type) {
-        while (type.getParentScope() instanceof SType) {
-            type = (SType<?>) type.getParentScope();
+        Object i;
+        while ((i = type.getParentScope()) instanceof SType) {
+            type = (SType<?>) i;
         }
         if (!ctx.isNecessaryToArchive(type) || ctx.isAlreadyArchived(type)) {
             return;
@@ -62,9 +63,10 @@ public class SFormDefinitionPersistenceUtil {
     }
 
     private static void writeType(ContextArchive ctx, SIPersistenceType pType, SType<?> type) {
-        pType.setSuperType(ctx.translateImport(type.getSuperType()));
+        SType<?> superType = type.getSuperType();
+        pType.setSuperType(ctx.translateImport(superType));
         
-        ensureType(ctx, type.getSuperType());
+        ensureType(ctx, superType);
 
         if (type.isComposite()) {
             //TODO (por Daniel Bordin) O código abaixo ainda precisa resolver a questão de field que foram extendido
@@ -78,9 +80,10 @@ public class SFormDefinitionPersistenceUtil {
 
     public static SType<?> fromArchive(SIPersistenceArchive persistenceArchive) {
         ContextUnarchive ctx = new ContextUnarchive(persistenceArchive);
-        Lists.reverse(persistenceArchive.getPackages().getChildren()).forEach(ctx::createNewPackage);
+        List<SIPersistencePackage> children = persistenceArchive.getPackages().getChildren();
+        Lists.reverse(children).forEach(ctx::createNewPackage);
 
-        for (SIPersistencePackage pPackage : Lists.reverse(persistenceArchive.getPackages().getChildren())) {
+        for (SIPersistencePackage pPackage : Lists.reverse(children)) {
             PackageBuilder pkg = ctx.getPackage(pPackage.getPackageName());
             for (SIPersistenceType pType : Lists.reverse(pPackage.getTypes().getChildren())) {
                 SType<?> superType = resolveSuperType(ctx, pkg.getPackage(), pType);

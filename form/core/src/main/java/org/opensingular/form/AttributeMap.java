@@ -23,12 +23,13 @@ class AttributeMap implements Iterable<SType<?>> {
     private Map<String, SType<?>> attributes;
 
     final void add(SType<?> atributo) {
+        String atributoName = atributo.getName();
         if (attributes == null) {
             attributes = new LinkedHashMap<>();
-        } else if (attributes.containsKey(atributo.getName())) {
-            throw new SingularFormException("Já existe um atributo '" + atributo.getName() + "' definido");
+        } else if (attributes.containsKey(atributoName)) {
+            throw new SingularFormException("Já existe um atributo '" + atributoName + "' definido");
         }
-        attributes.put(atributo.getName(), atributo);
+        attributes.put(atributoName, atributo);
     }
 
     public SType<?> get(String name) {

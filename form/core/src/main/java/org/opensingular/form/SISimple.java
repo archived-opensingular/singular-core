@@ -142,8 +142,10 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
         if (getClass() != obj.getClass())
             return false;
         SISimple<?> other = (SISimple<?>) obj;
-        if (!getType().equals(other.getType())
-                && !getType().getName().equals(other.getType().getName())) {
+        STypeSimple<?, TIPO_NATIVO> type = getType();
+        STypeSimple<?, ?> otherType = other.getType();
+        if (!type.equals(otherType)
+                && !type.getName().equals(otherType.getName())) {
             return false;
         }
         TIPO_NATIVO v1 = getValue();

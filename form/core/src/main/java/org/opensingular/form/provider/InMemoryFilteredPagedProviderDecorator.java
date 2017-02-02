@@ -65,7 +65,8 @@ public class InMemoryFilteredPagedProviderDecorator<R extends Serializable> impl
             }
             return values;
         } else {
-            return filteredProvider.load(context).subList(context.getFirst(), context.getFirst() + context.getCount());
+            int first = context.getFirst();
+            return filteredProvider.load(context).subList(first, first + context.getCount());
         }
     }
 

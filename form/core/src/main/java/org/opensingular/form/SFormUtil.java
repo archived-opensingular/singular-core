@@ -71,9 +71,10 @@ public final class SFormUtil {
             if (pathReader.isIndex()) {
                 throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"));
             }
-            SType<?> campo = ((STypeComposite<?>) type).getField(pathReader.getToken());
+            String token = pathReader.getToken();
+            SType<?> campo = ((STypeComposite<?>) type).getField(token);
             if (campo == null) {
-                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + pathReader.getToken() + '\''));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + token + '\''));
             }
             return campo;
         } else if (type.isList()) {

@@ -28,7 +28,8 @@ public class DefaultAttachmentPersistenceHelper implements IAttachmentPersistenc
                                   IAttachmentPersistenceHandler temporaryHandler,
                                   IAttachmentPersistenceHandler persistenceHandler) {
 
-        if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
+        String originalFileId = attachment.getOriginalFileId();
+        if (!Objects.equals(attachment.getFileId(), originalFileId)) {
 
             IAttachmentRef fileRef = temporaryHandler.getAttachment(attachment.getFileId());
 
@@ -48,8 +49,8 @@ public class DefaultAttachmentPersistenceHelper implements IAttachmentPersistenc
                     updateFileId(attachment, newRef);
                 }
 
-            } else if (attachment.getOriginalFileId() != null) {
-                persistenceHandler.deleteAttachment(attachment.getOriginalFileId(), attachment.getDocument());
+            } else if (originalFileId != null) {
+                persistenceHandler.deleteAttachment(originalFileId, attachment.getDocument());
             }
         }
     }
