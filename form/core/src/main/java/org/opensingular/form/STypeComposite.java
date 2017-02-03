@@ -97,7 +97,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return null;
     }
 
-    private <I extends SInstance, T extends SType<I>> T addInternal(String localName, T type) {
+    private <T extends SType<?>> T addInternal(String localName, T type) {
         if (instanceCount > 0){
             throw new SingularFormException("O MTipo '" + type.getName() +
                     "' já possui instancias associadas, não é seguro alterar sua definição. ", this);
@@ -152,7 +152,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     /**
      * Cria um novo campo com o nome informado como sendo do tipo informado e já marcado como obrigatório.
      */
-    public <I extends SInstance, T extends SType<I>> T addField(String fieldSimpleName, Class<T> type, boolean required) {
+    public <T extends SType<?>> T addField(String fieldSimpleName, Class<T> type, boolean required) {
         T field = addField(fieldSimpleName, type);
         field.withRequired(required);
         return field;
@@ -161,7 +161,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     /**
      * Cria um novo campo com o nome informado como sendo do tipo informado.
      */
-    public <I extends SInstance, T extends SType<I>> T addField(String fieldSimpleName, Class<T> typeClass) {
+    public <T extends SType<?>> T addField(String fieldSimpleName, Class<T> typeClass) {
         return addField(fieldSimpleName, resolveType(typeClass));
     }
 
@@ -169,7 +169,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     /**
      * Cria um novo campo com o nome informado como sendo do tipo informado.
      */
-    public <I extends SInstance, T extends SType<I>> T addField(String fieldSimpleName, T parentType) {
+    public <T extends SType<?>> T addField(String fieldSimpleName, T parentType) {
         checkNameNewField(fieldSimpleName, parentType);
         T field = extendType(fieldSimpleName, parentType);
         return addInternal(fieldSimpleName, field);
