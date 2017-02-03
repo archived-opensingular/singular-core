@@ -14,15 +14,6 @@
     <artifactId>singular-sso-desenv-petition</artifactId>
     <packaging>war</packaging>
 
-    <dependencies>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>3.1.0</version>
-        <scope>provided</scope>
-      </dependency>
-    </dependencies>
-
     <build>
         <finalName>sso#peticionamento</finalName>
     </build>
