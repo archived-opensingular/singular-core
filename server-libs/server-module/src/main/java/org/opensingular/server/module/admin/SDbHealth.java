@@ -54,6 +54,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 	        .asAtr()
 	        	.label("Schema")
 	        	.maxLength(20)
+	        	.enabled(false)
 	        .asAtrBootstrap()
 	        	.colPreference(2);
 
@@ -61,6 +62,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         	.asAtr()
         		.label("Nome")
         		.maxLength(50)
+        		.enabled(false)
         	.asAtrBootstrap()
         		.colPreference(2);
         
@@ -112,6 +114,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         	.asAtr()
         		.label("Nome")
         		.maxLength(50)
+        		.enabled(false)
         	.asAtrBootstrap()
         		.colPreference(2);
         

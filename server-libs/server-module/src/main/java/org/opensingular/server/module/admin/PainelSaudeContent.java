@@ -30,7 +30,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.component.SingularSaveButton;
+import org.opensingular.form.util.transformer.TransformPojoUtil;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.server.commons.wicket.view.template.Content;
@@ -104,16 +104,8 @@ public class PainelSaudeContent extends Content {
 				// TODO Auto-generated method stub
 			}
 		};
-		SingularSaveButton saveButton = new SingularSaveButton("saveButtonDB", panelBD.getRootInstance()){
-			@Override
-			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
-					IModel<? extends SInstance> instanceModel) {
-				// TODO Auto-generated method stub
-			}
-		};
 		containerDB.add(panelBD);
 		containerDB.add(checkButton);
-		containerDB.add(saveButton);
 		
 		return containerDB;
 	}
