@@ -157,6 +157,20 @@
     </build>
 
     <dependencies>
+        <!-- FOR JAVADOC GENERATION -->
+        <dependency>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Apache Commons API -->
         <dependency>
             <groupId>org.apache.commons</groupId>
