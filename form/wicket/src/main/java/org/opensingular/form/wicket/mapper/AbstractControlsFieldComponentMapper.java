@@ -45,7 +45,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper {
 
-    final static HintKey<Boolean> NO_DECORATION = (HintKey<Boolean>) () -> false;
+    final static HintKey<Boolean> NO_DECORATION = (HintKey<Boolean>) () -> Boolean.FALSE;
 
     protected abstract Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel);
 

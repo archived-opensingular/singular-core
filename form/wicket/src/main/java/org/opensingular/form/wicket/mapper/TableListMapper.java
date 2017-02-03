@@ -44,6 +44,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
@@ -63,24 +64,25 @@ public class TableListMapper extends AbstractListaMapper {
             return;
         }
 
-        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, true);
+        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
         ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
     }
 
     private TableListPanel buildPannel(WicketBuildContext ctx, String id) {
+
         final IModel<SIList<SInstance>> list        = $m.get(ctx::getCurrentInstance);
         final SViewListByTable          view        = (SViewListByTable) ctx.getView();
-        final Boolean                   isEdition   = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
+        ViewMode                        viewMode    = ctx.getViewMode();
+        final Boolean                   isEdition   = viewMode == null || viewMode.isEdition();
         final SIList<SInstance>         iLista      = list.getObject();
         final SType<?>                  currentType = ctx.getCurrentInstance().getType();
 
         addMinimumSize(currentType, iLista);
 
-        TableListPanel panel = TableListPanel.TableListPanelBuilder.build(id,
+        return TableListPanel.TableListPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
                 (c, form) -> builContent(c, form, list, ctx, view, isEdition),
                 (f, form) -> buildFooter(f, form, ctx));
-        return panel;
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
@@ -151,9 +153,10 @@ public class TableListMapper extends AbstractListaMapper {
                 row.newTHeaderCell($m.ofValue(""));
             }
 
-            int sumWidthPref = compositeElementsType.getFields().stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
+            Collection<SType<?>> fields       = compositeElementsType.getFields();
+            int                  sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
-            for (SType<?> tCampo : compositeElementsType.getFields()) {
+            for (SType<?> tCampo : fields) {
 
                 final Integer        preferentialWidth  = tCampo.asAtrBootstrap().getColPreference(1);
                 final IModel<String> headerModel        = $m.ofValue(tCampo.asAtr().getLabel());

@@ -30,6 +30,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.component.BFModalWindow;
+import org.opensingular.form.wicket.model.SIAnnotationModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
@@ -55,8 +56,9 @@ class AnnotationModalWindow extends BFModalWindow {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        final SInstanceValueModel<String>  textModel     = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationComponent.getAnnotationModel(), "text"));
-        final SInstanceValueModel<Boolean> approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationComponent.getAnnotationModel(), "isApproved"));
+        SIAnnotationModel<?>               annotationModel = annotationComponent.getAnnotationModel();
+        final SInstanceValueModel<String>  textModel       = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationModel, "text"));
+        final SInstanceValueModel<Boolean> approvedModel   = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationModel, "isApproved"));
 
         if (editable) {
 

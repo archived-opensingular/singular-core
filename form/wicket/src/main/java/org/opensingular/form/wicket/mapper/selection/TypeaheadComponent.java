@@ -173,7 +173,7 @@ public class TypeaheadComponent extends Panel {
             @Override
             public void setObject(String key) {
                 if (StringUtils.isEmpty(key)) {
-                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, true);
+                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, Boolean.TRUE);
                     getMInstancia().clearInstance();
                 } else {
                     final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));

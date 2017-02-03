@@ -27,6 +27,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.util.convert.IConverter;
 
 import org.opensingular.form.SInstance;
@@ -60,8 +61,9 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
                 .add(new Behavior() {
                     @Override
                     public void beforeRender(Component component) {
-                        component.getResponse().write("<div class=\"input-group\">");
-                        component.getResponse().write("<div class=\"input-group-addon\">R$</div>");
+                        Response response = component.getResponse();
+                        response.write("<div class=\"input-group\">");
+                        response.write("<div class=\"input-group-addon\">R$</div>");
                     }
 
                     @Override
@@ -134,8 +136,8 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
         Map<String, Object> options = new HashMap<>();
         options.put("thousands", ".");
         options.put("decimal", ",");
-        options.put("allowZero", false);
-        options.put("allowNegative", true);
+        options.put("allowZero", Boolean.FALSE);
+        options.put("allowNegative", Boolean.TRUE);
 
         return options;
     }

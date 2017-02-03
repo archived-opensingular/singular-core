@@ -91,7 +91,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         if ((mi != null) && (mi.getValue() != null)) {
             checked = (Boolean) mi.getValue();
         } else {
-            checked = false;
+            checked = Boolean.FALSE;
         }
 
         String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";

@@ -66,11 +66,11 @@ public class SkinOptions implements Serializable, Loggable {
     }
 
     public void addSkin(String name) {
-        skins.add(new Skin(name, false));
+        skins.add(new Skin(name, Boolean.FALSE));
     }
 
     public Skin addDefaulSkin(String name) {
-        Skin skin = new Skin(name, true);
+        Skin skin = new Skin(name, Boolean.TRUE);
         skins.add(skin);
         return skin;
     }

@@ -94,7 +94,7 @@ public class WicketFormProcessing implements Loggable {
 
         if (RequestCycle.get().getMetaData(MDK_PROCESSED) == null) {
             if (baseInstanceModel == null) {
-                return setAndReturn.apply(false);
+                return setAndReturn.apply(Boolean.FALSE);
             }
 
             final SInstance baseInstance = baseInstanceModel.getObject();
@@ -114,7 +114,7 @@ public class WicketFormProcessing implements Loggable {
             updateValidationFeedbackOnDescendants(target, container);
 
             if (hasErrors)
-                return setAndReturn.apply(false);
+                return setAndReturn.apply(Boolean.FALSE);
 
             // atualizar documento e recuperar instancias com atributos alterados
             document.updateAttributes(baseInstance, null);
@@ -122,7 +122,7 @@ public class WicketFormProcessing implements Loggable {
             // re-renderizar form
             refreshComponentOrCellContainer(target, container);
         }
-        return setAndReturn.apply(true);
+        return setAndReturn.apply(Boolean.TRUE);
     }
 
     /**
@@ -342,7 +342,7 @@ public class WicketFormProcessing implements Loggable {
 
     private static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
-            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
+            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
             target.add(WicketFormUtils.resolveRefreshingComponent(
                     ObjectUtils.defaultIfNull(
                             WicketFormUtils.getCellContainer(component), component)));

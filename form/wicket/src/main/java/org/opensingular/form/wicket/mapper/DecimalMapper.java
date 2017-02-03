@@ -81,8 +81,8 @@ public class DecimalMapper extends StringMapper {
         options.put("placeholder", "0");
         options.put("radixPoint", ",");
         options.put("groupSeparator", ".");
-        options.put("autoGroup", true);
-        options.put("digitsOptional", true);
+        options.put("autoGroup", Boolean.TRUE);
+        options.put("digitsOptional", Boolean.TRUE);
         options.put("onBeforePaste", new JsonFunction("function (pastedValue, opts) {" +
             "                return pastedValue.replace(/[^0-9,]/g, '');" +
             "            }"));

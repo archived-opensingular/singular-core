@@ -44,7 +44,7 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     private static final Integer DEFAULT_ZOOM = 4;
 
     private final IModel<String> metadadosModel = new Model<>();
-    private final IModel<Boolean> readOnly = Model.of(false);
+    private final IModel<Boolean> readOnly = Model.of(Boolean.FALSE);
 
     private final WebMarkupContainer map = new WebMarkupContainer("map");
     private final HiddenField<String> metadados = new HiddenField<>("metadados", metadadosModel);

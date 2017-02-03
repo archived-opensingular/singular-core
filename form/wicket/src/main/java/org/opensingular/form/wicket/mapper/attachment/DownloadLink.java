@@ -49,7 +49,7 @@ public class DownloadLink extends Link<Void> {
     private DownloadSupportedBehavior downloadSupportedBehaviour;
 
     public DownloadLink(String id, IModel<SIAttachment> model, DownloadSupportedBehavior downloadSupportedBehaviour) {
-        this(id, model, downloadSupportedBehaviour, Model.of(true));
+        this(id, model, downloadSupportedBehaviour, Model.of(Boolean.TRUE));
     }
 
     public DownloadLink(String id, IModel<SIAttachment> model, DownloadSupportedBehavior downloadSupportedBehaviour

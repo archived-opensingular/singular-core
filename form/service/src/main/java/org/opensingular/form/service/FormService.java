@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
 
-    private final Boolean KEEP_ANNOTATIONS = true;
+    private final boolean KEEP_ANNOTATIONS = true;
 
     @Inject
     private FormDAO formDAO;
@@ -164,10 +164,11 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     private FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
-        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(type.getName());
+        String name = type.getName();
+        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(name);
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
-            formTypeEntity.setAbbreviation(type.getName());
+            formTypeEntity.setAbbreviation(name);
             formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
                     .orElse(SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) type.getClass())));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES

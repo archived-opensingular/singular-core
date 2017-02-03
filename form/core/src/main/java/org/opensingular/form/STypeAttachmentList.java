@@ -31,8 +31,9 @@ public class STypeAttachmentList extends STypeList<STypeAttachment, SIAttachment
     protected void onLoadType(TypeBuilder tb) {
         asAtr().displayString(context -> {
             final StringBuilder displayString = new StringBuilder();
-            if (context.instance() instanceof SIList) {
-                ((SIList<?>) context.instance()).getChildren()
+            SInstance instance = context.instance();
+            if (instance instanceof SIList) {
+                ((SIList<?>) instance).getChildren()
                         .stream()
                         .map(i -> (SIAttachment) i)
                         .map(SIAttachment::toStringDisplayDefault)

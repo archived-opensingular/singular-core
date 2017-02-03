@@ -97,8 +97,9 @@ public class ViewResolver {
     private @Nonnull SView resolveInternal(SInstance instance) {
         //Verifica se há uma view explicitamente definida
         for(SType type = instance.getType(); type != null; type = type.getSuperType()) {
-            if (type.getView() != null) {
-                return type.getView();
+            SView view = type.getView();
+            if (view != null) {
+                return view;
             }
         }
         //Senão, tenta decidir qual seria a melhor view
