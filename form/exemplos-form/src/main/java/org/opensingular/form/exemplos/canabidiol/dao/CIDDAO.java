@@ -102,12 +102,12 @@ public class CIDDAO {
 
         if (clazz.isAssignableFrom(CapituloCID.class)) {
             String cap = StringUtils.trim(values[index++]);
-            ((CapituloCID) value).setCapitulo(Integer.parseInt(cap));
+            ((CapituloCID) value).setCapitulo(Integer.valueOf(cap));
         }
 
         String catinicial = StringUtils.trim(values[index++]);
         value.setLetraInicial(catinicial.charAt(0));
-        value.setNumInicial(Integer.parseInt(catinicial.substring(1)));
+        value.setNumInicial(Integer.valueOf(catinicial.substring(1)));
 
         String catfinal;
         if (clazz.isAssignableFrom(SubCategoriaCID.class)) {
@@ -121,7 +121,7 @@ public class CIDDAO {
         }
 
         value.setLetraFinal(catfinal.charAt(0));
-        value.setNumFinal(Integer.parseInt(catfinal.substring(1)));
+        value.setNumFinal(Integer.valueOf(catfinal.substring(1)));
 
         value.setDescricao(StringUtils.trim(values[index++]));
 
