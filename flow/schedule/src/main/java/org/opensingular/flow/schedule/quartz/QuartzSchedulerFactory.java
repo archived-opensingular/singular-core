@@ -271,12 +271,12 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         if (quartzProperties != null) {
             for (Enumeration<?> en = quartzProperties.propertyNames(); en.hasMoreElements(); ) {
                 String key = (String) en.nextElement();
-                Object value = quartzProperties.getProperty(key);
+                String value = quartzProperties.getProperty(key);
                 if (value == null) {
-                    value = quartzProperties.get(key);
+                    value = quartzProperties.getProperty(key);
                 }
                 assert value != null;
-                mergedProps.put(key, value);
+                mergedProps.setProperty(key, value);
             }
         }
     }
