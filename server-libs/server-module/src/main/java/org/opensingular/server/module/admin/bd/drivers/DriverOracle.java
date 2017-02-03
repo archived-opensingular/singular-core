@@ -1,72 +1,69 @@
-package org.opensingular.server.module.wicket.view.util;
+package org.opensingular.server.module.admin.bd.drivers;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.ResultTransformer;
 import org.opensingular.lib.support.persistence.SimpleDAO;
-import org.springframework.stereotype.Component;
+import org.opensingular.server.module.admin.bd.objects.ColumnInfo;
+import org.opensingular.server.module.admin.bd.objects.SequenceInfo;
+import org.opensingular.server.module.admin.bd.objects.TableInfo;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 
+	@Transactional
 	@Override
 	public List<TableInfo> getAllInfoTable(List<String> tabelas) {
 		List<TableInfo> privilegios = new ArrayList<>();
 		
 		tabelas.forEach(tableName-> {
 			TableInfo tabelaInfo = new TableInfo();
-			tabelaInfo.setNomeTabela(tableName);
+			tabelaInfo.setTableName(tableName);
 			
-			tabelaInfo.setPrivilegios(verificaPermissaoTabelaEspecifica(tableName));
+			tabelaInfo.setUserPrivs(getPermissionEspecificTable(tableName));
 			privilegios.add(tabelaInfo);
 			
-			if(!tabelaInfo.getPrivilegios().isEmpty()){
-				tabelaInfo.setColunasInfo(verificaTipoDadoColuna(tableName));
-				if(tabelaInfo.getColunasInfo() != null && !tabelaInfo.getColunasInfo().isEmpty())
-					tabelaInfo.setSchema(tabelaInfo.getColunasInfo().get(0).getSchema());
+			if(!tabelaInfo.getUserPrivs().isEmpty()){
+				tabelaInfo.setColumnsInfo(getColumnsInfoFromTable(tableName));
+				if(tabelaInfo.getColumnsInfo() != null && !tabelaInfo.getColumnsInfo().isEmpty())
+					tabelaInfo.setSchema(tabelaInfo.getColumnsInfo().get(0).getSchema());
 			}
 		});
 		
 		return privilegios;
 	}
-	/**
-	 * Esse metodo pesquisa as informações das colunas quando elas são encontradas,
-	 * retornando por fim um TableInfo, esse TableInfo terá as permissoes de acesso da tabela(SELECT, DROP, UPDATE, ALTER)
-	 * nulos, pois eles não são o foco desse metodo.
-	 * Para ter todos os elementos de um TableInfo preenchidos, use getAllInfoTable.
-	 */
+
+	@Transactional
 	@Override
-	public TableInfo checkColumnPermissions(String tabela, List<ColumnType> columnsName) {
-		TableInfo info = new TableInfo();
-		info.setNomeTabela(tabela);
+	public TableInfo checkColumnPermissions(TableInfo tableInfo) {
 		
-		List<ColumnType> colunas = verificaTipoDadoColuna(tabela);
+		List<ColumnInfo> colunas = getColumnsInfoFromTable(tableInfo.getTableName());
 		
-		List<ColumnType> colunasAux = new ArrayList<>();
+		List<ColumnInfo> colunasAux = new ArrayList<>();
 		if(colunas != null && !colunas.isEmpty()){
-			columnsName.forEach(column->{
-				for (ColumnType col: colunas) {
-					if(col.getColumnName().equals(column.getColumnName()) &&
-							col.getDataLength().compareTo(column.getDataLength()) == 0){
-						col.setFound(true);
+			tableInfo.getColumnsInfo().forEach(column->{
+				for (ColumnInfo col: colunas) {
+					if(col.getColumnName().equals(column.getColumnName())) {
 						colunasAux.add(col);
+						col.setFoundHibernate(true);
 						break;
 					}
 				}
 			});
-			info.setColunasInfo(colunasAux);			
 		}
 		
-		/*
-		 *  Verifica se o elemento foi encontrado na lista de resultado
-		 *  
+		/*  Verifica se o elemento foi encontrado na lista de resultado
 		 *  Se não for encontrado, então coloca ele na lista indicando que nao foi encontrado.
 		 */
-		columnsName.forEach(column->{
-			ColumnType colunaEncontrada = null;
-			for (ColumnType col: colunasAux) {
+		tableInfo.getColumnsInfo().forEach(column->{
+			ColumnInfo colunaEncontrada = null;
+			for (ColumnInfo col: colunasAux) {
 				if(col.getColumnName().equals(column.getColumnName())){
 					colunaEncontrada = col;
 					break;
@@ -74,27 +71,27 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 			}
 			
 			if(colunaEncontrada == null){
-				column.setFound(false); // garantir que quem passou não modificou o valor
 				colunasAux.add(column);
 			}
-		});			
+		});
+		tableInfo.setColumnsInfo(colunasAux);
 		
-		return info;
+		return tableInfo;
 	}
-
-	private List<ColumnType> verificaTipoDadoColuna(String tabela) {
+	
+	private List<ColumnInfo> getColumnsInfoFromTable(String table) {
 		String query = "SELECT OWNER, COLUMN_NAME, DATA_TYPE, CHAR_LENGTH, DATA_PRECISION, TABLE_NAME, DATA_LENGTH "
-				+ " FROM SYS.ALL_TAB_COLUMNS "
+				+ " FROM SYS.ALL_TAB_COLS "
 				+ " WHERE TABLE_NAME = :nome_tabela";
 		
 		SQLQuery querySQL = getSession().createSQLQuery(query);
-		querySQL.setParameter("nome_tabela", tabela);
+		querySQL.setParameter("nome_tabela", table);
 		
 		querySQL.setResultTransformer(new ResultTransformer() {
 			
 			@Override
 			public Object transformTuple(Object[] obj, String[] arg1) {
-				ColumnType column = new ColumnType();
+				ColumnInfo column = new ColumnInfo();
 				
 				column.setSchema((String) obj[0]);
 				column.setColumnName((String) obj[1]);
@@ -103,7 +100,7 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 				column.setDataPrecision((BigDecimal) obj[4]);
 				column.setTableName((String) obj[5]);
 				column.setDataLength((BigDecimal) obj[6]);
-				column.setFound(true);
+				column.setFoundDataBase(true);
 				
 				return column;
 			}
@@ -126,7 +123,7 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 	 * @param tabela
 	 * @return lista de String com o nome dos privilegios obtidos.
 	 */
-	private List<String> verificaPermissaoTabelaEspecifica(String tabela) {
+	private List<String> getPermissionEspecificTable(String tabela) {
 		String query = " SELECT PRIVILEGE"
 				+ " FROM SYS.ALL_TAB_PRIVS_RECD"
 				+ " WHERE TABLE_NAME = :nome_tabela";
@@ -137,26 +134,25 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 		return querySQL.list();
 	}
 	
-	/**
-	 * Esse metodo pesquisa as informações de acesso a tabela,
-	 * retornando por fim um TableInfo, esse TableInfo terá as informações de coluna nulos, pois eles não são o foco desse metodo.
-	 * Para ter todos os elementos de um TableInfo preenchidos, use getAllInfoTable.
-	 */
 	@Override
-	public List<TableInfo> checkTablePermissions(List<String> tabelas) {
-		List<TableInfo> privilegios = new ArrayList<>();
-		
-		tabelas.forEach(tableName-> {
-			TableInfo tabelaInfo = new TableInfo();
-			tabelaInfo.setNomeTabela(tableName);
-			
-			tabelaInfo.setPrivilegios(verificaPermissaoTabelaEspecifica(tableName));
-			privilegios.add(tabelaInfo);
-		});
-		return privilegios;
+	@Transactional
+	public List<TableInfo> getTablesPermission(List<TableInfo> tabelas) {
+		tabelas.forEach(table-> setFoundAndUserPrivsFromTable(table));
+		return tabelas;
+	}
+
+	private void setFoundAndUserPrivsFromTable(TableInfo table) {
+		List<String> permissions = getPermissionEspecificTable(table.getTableName());
+		table.setUserPrivs(permissions);
+		if(permissions != null && !permissions.isEmpty()){
+			table.setFound(true);
+		}else{
+			table.setFound(false);
+		}
 	}
 
 	@Override
+	@Transactional
 	public List<SequenceInfo> checkSequences(List<String> sequencesName) {
 		
 		List<SequenceInfo> sequences = new ArrayList<>();
@@ -197,5 +193,22 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 			sequences.add(info);
 		});
 		return sequences;
+	}
+
+	@Override
+	@Transactional
+	public List<TableInfo> checkAllInfoTable(List<TableInfo> tables) {
+		
+		tables.forEach(table->{
+			setFoundAndUserPrivsFromTable(table);
+			checkColumnPermissions(table);
+			
+			if(table.getSchema() == null
+					&& table.getColumnsInfo() != null && !table.getColumnsInfo().isEmpty()){
+				table.setSchema(table.getColumnsInfo().get(0).getSchema());
+			}
+		});
+		
+		return tables;
 	}
 }

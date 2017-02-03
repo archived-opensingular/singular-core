@@ -17,14 +17,21 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
     <form wicket:id="form">
-    	<div>
-    		<button wicket:id="buttonBD" class="btn btn-info">Banco de Dados</button>
+    	<div class="singular-container">
+    		<button wicket:id="buttonDB" class="btn btn-info">Banco de Dados</button>
     		<button wicket:id="buttonRede" class="btn btn-info"> Rede</button>
     		<button wicket:id="buttonWS" class="btn btn-info">WS</button>
+    		<button wicket:id="buttonCaches" class="btn btn-info">Clear Caches</button>
     	</div>
-    	<div>
-<!--     		<div wicket:id="panelBD"></div> -->
+    	
+    	<div wicket:id="containerDB">
+    		<div wicket:id="panelDB"></div>
+	    	<div class="text-right">
+		    	<button type="submit" wicket:id="checkButtonDB" class="btn validate-btn">Validar</button>
+		    	<button type="submit" wicket:id="saveButtonDB" class="btn save-btn">Salvar</button>
+	    	</div>
     	</div>
+    	
     </form>
 </wicket:extend>
 </html>

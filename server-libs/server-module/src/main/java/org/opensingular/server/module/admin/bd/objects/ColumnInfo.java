@@ -1,10 +1,10 @@
-package org.opensingular.server.module.wicket.view.util;
+package org.opensingular.server.module.admin.bd.objects;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @SuppressWarnings("serial")
-public class ColumnType implements Serializable {
+public class ColumnInfo implements Serializable {
 	
 	private String schema; // No Oracle, o schema geralmente é o OWNER
 	private String tableName;
@@ -31,16 +31,22 @@ public class ColumnType implements Serializable {
 	 */
 	private BigDecimal dataLength;
 	
-	private boolean found =false;
+	private boolean foundHibernate = false;
+	private boolean foundDataBase = false;
 	
-	public ColumnType() {
+	public ColumnInfo() {
 	}
 	
-	public ColumnType(String columnName) {
+	public ColumnInfo(String columnName) {
 		this.columnName = columnName;
 	}
 	
-	public ColumnType(String columnName, BigDecimal dataLength) {
+	public ColumnInfo(String columnName, boolean foundHibernate) {
+		this.columnName = columnName;
+		this.foundHibernate = foundHibernate;
+	}
+	
+	public ColumnInfo(String columnName, BigDecimal dataLength) {
 		this.columnName = columnName;
 		this.dataLength = dataLength;
 	}
@@ -88,12 +94,20 @@ public class ColumnType implements Serializable {
 		this.dataLength = dataLength;
 	}
 
-	public boolean isFound() {
-		return found;
+	public boolean isFoundHibernate() {
+		return foundHibernate;
 	}
 
-	public void setFound(boolean found) {
-		this.found = found;
+	public void setFoundHibernate(boolean foundHibernate) {
+		this.foundHibernate = foundHibernate;
 	}
-	
+
+	public boolean isFoundDataBase() {
+		return foundDataBase;
+	}
+
+	public void setFoundDataBase(boolean foundDataBase) {
+		this.foundDataBase = foundDataBase;
+	}
+
 }

@@ -1,4 +1,4 @@
-package org.opensingular.server.module.wicket.view.util;
+package org.opensingular.server.module.admin.bd.objects;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -1,6 +1,4 @@
-package org.opensingular.server.module.wicket.view.util;
-
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+package org.opensingular.server.module.admin;
 
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
@@ -14,8 +12,11 @@ public class PainelSaudePage extends Template {
 
 	@Override
 	protected Content getContent(String id) {
-		// TODO verificar maneira correta de passar o formVersionEntityPK
-		Long valor = (long) 1;
 		return new PainelSaudeContent(id);
+	}
+	
+	@Override
+	protected boolean withMenu() {
+		return false;
 	}
 }
