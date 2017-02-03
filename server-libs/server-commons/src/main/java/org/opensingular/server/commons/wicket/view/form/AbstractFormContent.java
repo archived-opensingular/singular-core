@@ -135,10 +135,8 @@ public abstract class AbstractFormContent extends Content {
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
 
                 SDocumentFactory extendedFactory = singularFormConfig.getDocumentFactory().extendAddingSetupStep(
-                        document -> {
-                            document.bindLocalService("processService", AbstractFormContent.ProcessFormService.class,
-                                    RefService.of((AbstractFormContent.ProcessFormService) () -> getProcessInstance()));
-                        });
+                        document -> document.bindLocalService("processService", ProcessFormService.class,
+                                RefService.of((ProcessFormService) () -> getProcessInstance())));
                 return AbstractFormContent.this.createInstance(extendedFactory, refType);
             }
 
@@ -181,6 +179,7 @@ public abstract class AbstractFormContent extends Content {
                     addToastrSuccessMessage("message.success");
                     atualizarContentWorklist(target);
                 } catch (HibernateOptimisticLockingFailureException e) {
+                    getLogger().debug(e.getMessage());
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }
@@ -207,6 +206,7 @@ public abstract class AbstractFormContent extends Content {
                     save(target, instanceModel);
                     addToastrSuccessMessage("message.success");
                 } catch (HibernateOptimisticLockingFailureException e) {
+                    getLogger().debug(e.getMessage());
                     addToastrErrorMessage("message.save.concurrent_error");
                 }
             }
@@ -240,7 +240,7 @@ public abstract class AbstractFormContent extends Content {
 
     protected BSModalBorder construirCloseModal() {
         BSModalBorder closeModal = new BSModalBorder("close-modal", getMessage("label.title.close.draft"));
-        closeModal.addButton(BSModalBorder.ButtonStyle.CANCEl, "label.button.cancel", new AjaxButton("cancel-close-btn") {
+        closeModal.addButton(BSModalBorder.ButtonStyle.CANCEL, "label.button.cancel", new AjaxButton("cancel-close-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 closeModal.hide(target);

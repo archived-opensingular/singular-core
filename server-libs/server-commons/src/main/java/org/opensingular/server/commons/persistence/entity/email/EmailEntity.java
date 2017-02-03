@@ -71,6 +71,7 @@ public class EmailEntity extends BaseEntity<Long> {
         inverseJoinColumns = @JoinColumn(name = "CO_ARQUIVO"))
     private List<AttachmentEntity> attachments = new ArrayList<>();
     
+    @Override
     public Long getCod() {
         return cod;
     }

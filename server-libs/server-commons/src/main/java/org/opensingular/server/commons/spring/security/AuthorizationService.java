@@ -201,7 +201,7 @@ public class AuthorizationService implements Loggable {
     }
 
     private String removeTask(String permissionId) {
-        int idx = permissionId.lastIndexOf("_");
+        int idx = permissionId.lastIndexOf('_');
         if (idx > -1) {
             return permissionId.substring(0, idx);
         }

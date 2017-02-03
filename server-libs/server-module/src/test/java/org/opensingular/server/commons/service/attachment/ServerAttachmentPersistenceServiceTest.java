@@ -9,7 +9,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.dao.AttachmentDao;
 import org.opensingular.form.persistence.dto.AttachmentRef;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.service.IFormService;
@@ -44,7 +44,7 @@ public class ServerAttachmentPersistenceServiceTest {
     private FormVersionEntity formVersionEntity;
 
     @Mock
-    private AttachmentDao<AttachmentEntity, AttachmentContentEntitty> attachmentDao;
+    private AttachmentDao<AttachmentEntity, AttachmentContentEntity> attachmentDao;
 
     @InjectMocks
     private ServerAttachmentPersistenceService serverAttachmentPersistenceService;

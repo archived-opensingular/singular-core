@@ -7,10 +7,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>server-libs</artifactId>
-        <version>1.5.5-SNAPSHOT</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>server-module</artifactId>
+    <artifactId>singular-server-module</artifactId>
     <name>[singular-server :: server-libs :: server-module]</name>
     <packaging>jar</packaging>
 
@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>server-commons</artifactId>
+            <artifactId>singular-server-commons</artifactId>
             <version>${singular.server.version}</version>
         </dependency>
 

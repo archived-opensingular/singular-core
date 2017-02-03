@@ -57,7 +57,6 @@ public abstract class AbstractHistoricoContent extends Content {
     @Inject
     private PetitionService<?> petitionService;
 
-    private int    instancePK;
     private long   petitionPK;
     private String processGroupPK;
     private String menu;
@@ -80,7 +79,6 @@ public abstract class AbstractHistoricoContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         petitionPK = getPage().getPageParameters().get(DispatcherPageParameters.PETITION_ID).toLong();
-        instancePK = getPage().getPageParameters().get(DispatcherPageParameters.INSTANCE_ID).toInt();
         processGroupPK = getPage().getPageParameters().get(DispatcherPageParameters.PROCESS_GROUP_PARAM_NAME).toString();
         menu = getPage().getPageParameters().get(DispatcherPageParameters.MENU_PARAM_NAME).toString();
         queue(setupDataTable(createDataProvider()));
@@ -130,12 +128,8 @@ public abstract class AbstractHistoricoContent extends Content {
                             Optional.of(model.getObject())
                                     .map(PetitionHistoryDTO::getPetitionContentHistory)
                                     .map(PetitionContentHistoryEntity::getFormVersionHistoryEntities)
-                                    .ifPresent(list -> {
-                                        list.forEach(fvh -> {
-                                            dropDownButtonPanel
-                                                    .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()));
-                                        });
-                                    });
+                                    .ifPresent(list -> list.forEach(fvh -> dropDownButtonPanel
+                                            .addButton(Model.of(fvh.getFormVersion().getFormEntity().getFormType().getLabel()), viewFormButton(fvh.getCodFormVersion()))));
 
                             return dropDownButtonPanel;
                         })
@@ -210,7 +204,7 @@ public abstract class AbstractHistoricoContent extends Content {
         final String groupConnectionURL = petitionService.findByProcessGroupCod(processGroupPK).getConnectionURL();
         try {
             final String path = new URL(groupConnectionURL).getPath();
-            return path.substring(0, path.indexOf("/", 1));
+            return path.substring(0, path.indexOf('/', 1));
         } catch (Exception e) {
             throw SingularServerException.rethrow(String.format("Erro ao tentar fazer o parse da URL: %s", groupConnectionURL), e);
         }

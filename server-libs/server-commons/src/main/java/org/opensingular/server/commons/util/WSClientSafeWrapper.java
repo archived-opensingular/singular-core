@@ -46,6 +46,7 @@ public class WSClientSafeWrapper {
                     log.warn(String.format("CHAMADA A WEB-SERVICE: %s OPERACAO: %s ", wsIface.getName(), method.getName()));
                     ExecutorService executor = Executors.newCachedThreadPool();
                     Callable<Object> task = new Callable<Object>() {
+                        @Override
                         public Object call() throws InvocationTargetException, IllegalAccessException {
                             return method.invoke(ref, args);
                         }

@@ -1,8 +1,10 @@
 package org.opensingular.server.commons.spring.security.config.cas.util;
 
-import org.opensingular.lib.commons.base.SingularProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,18 +13,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.opensingular.lib.commons.base.SingularProperties;
 
 /**
  * The type Single sing out filter wrapper.
  */
 public class SingleSingOutFilterWrapper extends SSOConfigurableFilter {
-
-    private static final Logger logger = LoggerFactory.getLogger(SingleSingOutFilterWrapper.class);
 
     /**
      * Constante DELEGATE_CLASS_NAME.
@@ -50,7 +47,7 @@ public class SingleSingOutFilterWrapper extends SSOConfigurableFilter {
         final Map<String, String> params = new HashMap<String, String>();
         params.put(CAS_SERVER_URL_PREFIX_PARAM, SingularProperties.get().getProperty(getSingularContext().getServerPropertyKey(SSOFilter.SSO_URL_PREFIX)));
         Enumeration enumeration = filterConfig.getInitParameterNames();
-        for (; enumeration.hasMoreElements(); ) {
+        while (enumeration.hasMoreElements()) {
             String s = (String) enumeration.nextElement();
             params.put(s, filterConfig.getInitParameter(s));
         }

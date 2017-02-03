@@ -145,4 +145,12 @@ public abstract class Content extends Panel implements Loggable {
     protected abstract IModel<?> getContentTitleModel();
 
     protected abstract IModel<?> getContentSubtitleModel();
+
+    public boolean isWithBreadcrumb() {
+        return withBreadcrumb;
+    }
+
+    public boolean isWithInfoLink() {
+        return withInfoLink;
+    }
 }

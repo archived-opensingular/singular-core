@@ -16,18 +16,12 @@
 
 package org.opensingular.server.commons.flow.metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opensingular.flow.core.property.MetaDataRef;
-import org.opensingular.server.commons.config.IServerContext;
 
 public class PetitionHistoryTaskMetaDataValue {
 
     public static final PetitionHistoryTaskMetaDataKey KEY = new PetitionHistoryTaskMetaDataKey(PetitionHistoryTaskMetaDataKey.class.getName(), PetitionHistoryTaskMetaDataValue.class);
     public static final PetitionHistoryTaskMetaDataValue ON = new PetitionHistoryTaskMetaDataValue();
-
-    private List<IServerContext> contexts = new ArrayList<>(2);
 
     PetitionHistoryTaskMetaDataValue() {
     }

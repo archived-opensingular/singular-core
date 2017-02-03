@@ -20,7 +20,6 @@ package org.opensingular.server.commons.wicket.view.form;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.wicket.model.IModel;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.server.commons.wicket.view.template.Content;

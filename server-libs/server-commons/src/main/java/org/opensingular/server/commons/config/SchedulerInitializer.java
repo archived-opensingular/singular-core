@@ -28,5 +28,13 @@ public abstract class SchedulerInitializer {
 
     public abstract Class<?> mailConfiguration();
 
+    /**
+     * @deprecated
+     * Deveria ter implementação padrão.
+     * A implementação padrão deve vir para esse módulo ou o método deve ser removido
+     * //TODO danilo.mesquita
+     * @return
+     */
+    @Deprecated
     public abstract Class<?> attachmentGCConfiguration();
 }

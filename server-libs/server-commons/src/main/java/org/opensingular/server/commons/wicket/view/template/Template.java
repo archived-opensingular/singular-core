@@ -16,12 +16,10 @@
 
 package org.opensingular.server.commons.wicket.view.template;
 
-import org.apache.wicket.markup.html.WebPage;
-import org.opensingular.lib.wicket.util.menu.MetronicMenu;
-import org.opensingular.server.commons.wicket.view.SingularToastrHelper;
-import org.opensingular.server.commons.wicket.view.behavior.SingularJSBehavior;
-import org.opensingular.lib.wicket.util.template.SingularTemplate;
-import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -32,14 +30,16 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.opensingular.lib.wicket.util.template.SingularTemplate;
+import org.opensingular.server.commons.wicket.view.SingularToastrHelper;
+import org.opensingular.server.commons.wicket.view.behavior.SingularJSBehavior;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;

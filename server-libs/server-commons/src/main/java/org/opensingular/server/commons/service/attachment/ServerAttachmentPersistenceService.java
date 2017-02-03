@@ -3,7 +3,7 @@ package org.opensingular.server.commons.service.attachment;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dto.AttachmentRef;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 @Transactional
-public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntitty> extends ServerAbstractAttachmentPersistenceService<T, C> {
+public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntity> extends ServerAbstractAttachmentPersistenceService<T, C> {
 
     @Inject
     protected transient IFormService formService;
@@ -35,8 +35,7 @@ public class ServerAttachmentPersistenceService<T extends AttachmentEntity, C ex
     @Override
     public AttachmentCopyContext<AttachmentRef> copy(IAttachmentRef ref, SDocument sdoc) {
         if (!(ref instanceof AttachmentRef)) {
-            throw new SingularFormPersistenceException("A service ServerAttachmentPersistenceService suporta apenas" +
-                    " anexos persistidos em banco de dados e referencias do tipo " + AttachmentRef.class.getName());
+            return super.copy(ref, sdoc);
         }
         if (sdoc != null && sdoc.getRoot() != null) {
             formAttachmentService.saveNewFormAttachmentEntity(getAttachmentEntity(ref), formService.findCurrentFormVersion(sdoc));

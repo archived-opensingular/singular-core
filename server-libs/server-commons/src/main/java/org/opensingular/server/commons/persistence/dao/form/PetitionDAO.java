@@ -21,7 +21,7 @@ import org.opensingular.flow.core.TaskType;
 import org.opensingular.form.persistence.entity.FormAttachmentEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
-import org.opensingular.server.commons.persistence.dto.PeticaoDTO;
+import org.opensingular.server.commons.persistence.dto.PetitionDTO;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.persistence.filter.QuickFilter;
 import org.opensingular.server.commons.spring.security.PetitionAuthMetadataDTO;
@@ -62,7 +62,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         return (Long) createQuery(filtro, siglasProcesso, true, formNames).uniqueResult();
     }
 
-    public List<PeticaoDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
+    public List<PetitionDTO> quickSearch(QuickFilter filtro, List<String> siglasProcesso, List<String> formNames) {
         final Query query = createQuery(filtro, siglasProcesso, false, formNames);
         query.setFirstResult(filtro.getFirst());
         query.setMaxResults(filtro.getCount());
@@ -70,8 +70,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         return query.list();
     }
 
-    protected Class<? extends PeticaoDTO> getResultClass() {
-        return PeticaoDTO.class;
+    protected Class<? extends PetitionDTO> getResultClass() {
+        return PetitionDTO.class;
     }
 
     public List<Map<String, Object>> quickSearchMap(QuickFilter filter, List<String> processesAbbreviation, List<String> formNames) {
@@ -168,11 +168,15 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         } else {
             hql.append(" AND p.processInstanceEntity is not null ");
             hql.append(" AND (ta.endDate is null OR task.type = :tipoEnd) ");
-            params.put("tipoEnd", TaskType.End);
+            params.put("tipoEnd", TaskType.END);
         }
 
         appendCustomWhereClauses(hql, params, filtro);
 
+        appendSort(hql, filtro, count);
+    }
+
+    private void appendSort(StringBuilder hql, QuickFilter filtro, boolean count) {
         if (filtro.getSortProperty() != null) {
             hql.append(mountSort(filtro.getSortProperty(), filtro.isAscending()));
         } else if (!count) {
@@ -219,7 +223,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         buildFromClause(hql, filtro);
         buildWhereClause(hql, params, filtro, siglasProcesso, formNames, count);
 
-        final Query query = getSession().createQuery(hql.toString()); //NOSONAR findsecbugs:SQL_INJECTION_HIBERNATE false positive
+        final Query query = getSession().createQuery(hql.toString());
         setParametersQuery(query, params);
 
         return query;
@@ -274,7 +278,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
         query.append(" order by ct.cod DESC ");
         return (PetitionAuthMetadataDTO) Optional.ofNullable(getSession().createQuery(query.toString())
                 .setParameter("sim", SimNao.SIM)
-                .setParameter("fim", TaskType.End)
+                .setParameter("fim", TaskType.END)
                 .setParameter("petitionId", petitionId)
                 .setMaxResults(1)
                 .list())

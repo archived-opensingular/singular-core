@@ -46,25 +46,21 @@ public abstract class PWebInitializer extends WebInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
         if (SingularProperties.get().isTrue(SingularProperties.DEFAULT_CAS_ENABLED)) {
-            addCASFilterAnalise(servletContext);
-            addCASFilterPeticionamento(servletContext);
-            addCASSLOListener(servletContext);
+            addCASFilter(servletContext, PServerContext.WORKLIST);
+            addCASFilter(servletContext, PServerContext.PETITION);
+            addSingleSignOutListener(servletContext);
         }
     }
 
-    private void addCASSLOListener(ServletContext servletContext) {
+    protected void addCASFilter(ServletContext servletContext, PServerContext context) {
+        configureSSO(servletContext, "SSOFilter" + context.name(), context);
+    }
+
+    protected void addSingleSignOutListener(ServletContext servletContext) {
         servletContext.addListener(SingleSignOutHttpSessionListener.class);
     }
 
-    private void addCASFilterAnalise(ServletContext servletContext) {
-        configureCASAnvisa(servletContext, "SSOFilter" + PServerContext.WORKLIST.name(), PServerContext.WORKLIST);
-    }
-
-    private void addCASFilterPeticionamento(ServletContext servletContext) {
-        configureCASAnvisa(servletContext, "SSOFilter" + PServerContext.PETITION.name(), PServerContext.PETITION);
-    }
-
-    private void configureCASAnvisa(ServletContext servletContext, String filterName, IServerContext context) {
+    protected void configureSSO(ServletContext servletContext, String filterName, IServerContext context) {
         FilterRegistration.Dynamic ssoFilter = servletContext.addFilter(filterName, SSOFilter.class);
         servletContext.setAttribute(filterName, context);
         ssoFilter.setInitParameter(SSOConfigurableFilter.SINGULAR_CONTEXT_ATTRIBUTE, filterName);
@@ -80,7 +76,7 @@ public abstract class PWebInitializer extends WebInitializer {
      *
      * @return
      */
-    private String getExcludeUrlRegex() {
+    protected final String getExcludeUrlRegex() {
         return Joiner.on(",").join(getDefaultPublicUrls()).replaceAll("\\*", ".*");
     }
 

@@ -70,9 +70,7 @@ public class PServerFreeMarkerUtil {
     private static Object encode(Object o) {
         final Map m = new HashMap();
         if (o instanceof Map) {
-            ((Map) o).forEach((k, v) -> {
-                m.put(k, encode(v));
-            });
+            ((Map) o).forEach((k, v) -> m.put(k, encode(v)));
         } else if (o instanceof String) {
             return HtmlUtils.htmlEscape((String) o);
         } else if (o instanceof Collection) {

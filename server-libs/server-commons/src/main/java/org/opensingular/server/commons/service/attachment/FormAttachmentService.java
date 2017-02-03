@@ -1,7 +1,7 @@
 package org.opensingular.server.commons.service.attachment;
 
 import org.opensingular.form.persistence.dao.FormAttachmentDAO;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.entity.FormAttachmentEntity;
 import org.opensingular.form.persistence.entity.FormAttachmentEntityId;
@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Transactional
-public class FormAttachmentService extends AbstractFormAttachmentService<AttachmentEntity, AttachmentContentEntitty, FormAttachmentEntity> {
+public class FormAttachmentService extends AbstractFormAttachmentService<AttachmentEntity, AttachmentContentEntity, FormAttachmentEntity> {
 
     @Inject
     private FormAttachmentDAO formAttachmentDAO;

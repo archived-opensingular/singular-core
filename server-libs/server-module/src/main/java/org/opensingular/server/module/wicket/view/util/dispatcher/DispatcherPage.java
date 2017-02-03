@@ -41,6 +41,8 @@ import org.opensingular.flow.core.ITaskPageStrategy;
 import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.MTaskUserExecutable;
 import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -195,7 +197,8 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     protected void dispatch(FormPageConfig config) {
-        if (config != null && !hasAccess(config)) {
+        if (config != null
+                && (!hasAccess(config))) {
             redirectForbidden();
         } else if (config != null) {
             dispatchForDestination(config, retrieveDestination(config));
@@ -210,7 +213,38 @@ public abstract class DispatcherPage extends WebPage {
         if (petitionId < 0) {
             petitionId = null;
         }
-        return authorizationService.hasPermission(petitionId, config.getFormType(), String.valueOf(userDetails.getUserPermissionKey()), config.getFormAction().name());
+        boolean hasPermission = authorizationService.hasPermission(petitionId, config.getFormType(), String.valueOf(userDetails.getUserPermissionKey()), config.getFormAction().name());
+
+        // Qualquer modo de edição o usuário deve ter permissão e estar alocado na tarefa,
+        // para os modos de visualização basta a permissão.
+        if (ViewMode.EDIT == config.getFormAction().getViewMode()
+                || AnnotationMode.EDIT == config.getFormAction().getAnnotationMode()) {
+            return hasPermission && !isTaskAssignedToAnotherUser(config);
+        } else {
+            return hasPermission;
+        }
+
+    }
+
+    private boolean isTaskAssignedToAnotherUser(FormPageConfig config) {
+        String username   = SingularSession.get().getUsername();
+        Long   petitionId = NumberUtils.toLong(config.getPetitionId(), -1);
+        if (petitionId < 0) {
+            petitionId = null;
+        }
+
+        TaskInstanceEntity currentTask = petitionService.findCurrentTaskByPetitionId(petitionId);
+
+        if (currentTask != null
+                && !currentTask.getTaskHistory().isEmpty()) {
+            TaskInstanceHistoryEntity taskInstanceHistory = currentTask.getTaskHistory().get(currentTask.getTaskHistory().size() - 1);
+
+            return taskInstanceHistory.getAllocatedUser() != null
+                    && taskInstanceHistory.getEndDateAllocation() == null
+                    && !username.equalsIgnoreCase(taskInstanceHistory.getAllocatedUser().getCodUsuario());
+        }
+
+        return false;
     }
 
     private String loadTypeNameFormFormVersionPK(Long formVersionPK) {

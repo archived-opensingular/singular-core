@@ -31,7 +31,6 @@ import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.service.FormService;
 import org.opensingular.form.service.IFormService;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
-import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
 import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
 import org.opensingular.server.commons.cache.SingularKeyGenerator;
 import org.opensingular.server.commons.file.FileInputStreamAndHashFactory;
@@ -69,7 +68,12 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @SuppressWarnings("rawtypes")
@@ -240,6 +244,7 @@ public class SingularDefaultBeanFactory {
     }
 
     @Bean
+    @Primary
     public CacheManager cacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
         return new EhCacheCacheManager(ehCacheManagerFactoryBean.getObject());
     }

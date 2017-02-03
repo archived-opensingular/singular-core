@@ -38,6 +38,7 @@ public class SimpleMessageFlowConfirmModal<T extends PetitionEntity> extends Abs
         return MarkupCreator.div("flow-modal" + idSuffix, new HTMLParameters().styleClass("portlet-body form"), MarkupCreator.div("flow-msg"));
     }
 
+    @Override
     public BSModalBorder init(String idSuffix, String tn, IModel<? extends SInstance> im, ViewMode vm) {
         final BSModalBorder modal = new BSModalBorder("flow-modal" + idSuffix, new StringResourceModel("label.button.confirm", formPage, null));
         addDefaultCancelButton(modal);
