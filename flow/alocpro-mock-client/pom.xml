@@ -33,14 +33,7 @@
             <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
-        
-        <!-- FOR JAVADOC GENERATION -->
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
-        </dependency>
+
     </dependencies>
 
 </project>
