@@ -144,7 +144,7 @@ public final class ConversorToolkit {
             }
         } catch (ParseException e) {
             throw new SingularFormException(
-                    "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset());
+                    "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset(), e);
         }
     }
 
@@ -169,7 +169,7 @@ public final class ConversorToolkit {
             }
             return getTimeFormat().parse(novaHora);
         } catch (ParseException e) {
-            throw new ParseException(
+            throw new SingularFormException(
                     "Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(),
                     e.getErrorOffset());
         }
@@ -188,7 +188,7 @@ public final class ConversorToolkit {
             }
             return Double.parseDouble(valor.replace(',', '.'));
         } catch (Exception e) {
-            throw new NumberFormatException("Valor inválido (" + valor + ")!");
+            throw new SingularFormException("Valor inválido (" + valor + ")!", e);
         }
     }
 
@@ -199,7 +199,7 @@ public final class ConversorToolkit {
         try {
             return Integer.parseInt(removeCaracterFromString(valor.trim(), '.'));
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Valor inválido (" + valor + ")!");
+            throw new SingularFormException("Valor inválido (" + valor + ")!", e);
         }
     }
 

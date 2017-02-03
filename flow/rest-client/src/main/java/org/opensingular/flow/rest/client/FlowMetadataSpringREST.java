@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.opensingular.lib.commons.util.Loggable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -37,9 +38,7 @@ import org.opensingular.flow.core.authorization.AccessLevel;
 import org.opensingular.flow.core.service.IFlowMetadataService;
 import static org.opensingular.flow.core.service.IFlowMetadataREST.*;
 
-class FlowMetadataSpringREST implements IFlowMetadataService {
-
-    static final Logger logger = LoggerFactory.getLogger(MBPMUtil.class);
+class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     
     private final String groupToken;
     private final String connectionURL;
@@ -58,7 +57,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService {
                 "userCod","accessLevel"), Set.class,  userCod, accessLevel.name());
             return result;
         } catch (Exception e) {
-            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
+            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
             return Collections.emptySet();
         }
     }
@@ -70,7 +69,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService {
                 "processDefinitionKey","userCod","accessLevel"), Boolean.class, 
                 processDefinitionKey, userCod, accessLevel.name());
         } catch (Exception e) {
-            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_HAS_ACCESS, e);
+            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
             return false;
         }
     }
@@ -82,7 +81,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService {
                 "processInstanceFullId","userCod","accessLevel"), Boolean.class, 
                 processInstanceFullId, userCod, accessLevel.name());
         } catch (Exception e) {
-            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_INSTANCE_HAS_ACCESS, e);
+            getLogger().error("Erro ao acessar serviço: {}{}",connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
             return false;
         }
     }
@@ -102,9 +101,9 @@ class FlowMetadataSpringREST implements IFlowMetadataService {
             if(response.getStatusCode().equals(HttpStatus.OK)){       
                 return response.getBody();
             }
-            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_DIAGRAM+": StatusCode: "+response.getStatusCode());
+            getLogger().error("Erro ao acessar serviço: {}{}: StatusCode: {}",connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, response.getStatusCode());
         } catch (Exception e) {
-            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_DIAGRAM, e);
+            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_DIAGRAM, e);
         }
         return null;
     }
