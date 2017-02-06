@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-server</artifactId>
-        <version>1.5.6</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>server-libs</artifactId>
@@ -23,16 +23,10 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-wicket</artifactId>
+            <artifactId>singular-form-wicket</artifactId>
             <version>${singular.version}</version>
         </dependency>
 

@@ -41,8 +41,8 @@ import org.opensingular.server.commons.wicket.SingularApplication;
 public abstract class WebInitializer {
 
 
-    static final        String SINGULAR_SECURITY = "[SINGULAR][WEB] {} {}";
-    public static final Logger logger            = LoggerFactory.getLogger(SpringSecurityInitializer.class);
+    static final String SINGULAR_SECURITY = "[SINGULAR][WEB] {} {}";
+    public static final Logger logger = LoggerFactory.getLogger(WebInitializer.class);
 
     public void init(ServletContext ctx) throws ServletException {
         onStartup(ctx);

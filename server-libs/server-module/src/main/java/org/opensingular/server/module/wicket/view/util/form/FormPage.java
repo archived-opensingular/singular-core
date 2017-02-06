@@ -34,9 +34,6 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 public class FormPage extends AbstractFormPage<PetitionEntity> {
 
 
-    @Inject
-    private SingularServerConfiguration singularServerConfiguration;
-
     public FormPage() {
         this(null);
     }

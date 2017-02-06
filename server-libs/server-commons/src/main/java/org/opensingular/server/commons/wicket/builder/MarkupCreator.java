@@ -69,15 +69,15 @@ public class MarkupCreator {
 
         final StringBuilder builder = new StringBuilder();
 
-        builder.append("<").append(tag).append(" wicket:id='").append(wicketID).append("' ");
+        builder.append('<').append(tag).append(" wicket:id='").append(wicketID).append("' ");
         Optional.ofNullable(parameters)
                 .map(HTMLParameters::getParametersMap)
                 .ifPresent(p -> p.forEach((k, v) -> builder.append(k).append("='").append(v).append("' ")));
-        builder.append(">");
+        builder.append('>');
         if (nesteds != null) {
             Arrays.stream(nesteds).forEach(builder::append);
         }
-        builder.append("</").append(tag).append(">");
+        builder.append("</").append(tag).append('>');
 
         return builder.toString();
     }

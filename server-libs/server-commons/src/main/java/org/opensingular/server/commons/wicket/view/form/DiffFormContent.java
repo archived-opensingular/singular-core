@@ -158,7 +158,7 @@ public class DiffFormContent<P extends PetitionEntity> extends Content {
     private String mountUrlOldVersion() {
         StringBuilder url = new StringBuilder();
         url.append(DispatcherPageUtil.getBaseURL())
-                .append("?")
+                .append('?')
                 .append(String.format("%s=%s", DispatcherPageParameters.ACTION, FormActions.FORM_VIEW.getId()))
                 .append(String.format("&%s=%s", DispatcherPageParameters.FORM_VERSION_KEY, originalFormVersion.getCod()));
 

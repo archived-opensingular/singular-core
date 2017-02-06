@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The type Sso logout util.
@@ -33,7 +34,7 @@ public class SSOLogoutUtil {
             if (session != null) {
                 session.invalidate();
             }
-            String redirect = SingularProperties.get().getProperty(context.getServerPropertyKey(SSOFilter.SSO_LOGOUT)) + "?service=" + URLEncoder.encode(extractServiceParam(request), "UTF-8");
+            String redirect = SingularProperties.get().getProperty(context.getServerPropertyKey(SSOFilter.SSO_LOGOUT)) + "?service=" + URLEncoder.encode(extractServiceParam(request), StandardCharsets.UTF_8.name());
             logger.warn(" REDIRECIONANDO PARA: {}", StringEscapeUtils.escapeJava(redirect));
             response.sendRedirect(redirect);
         } catch (Exception e) {

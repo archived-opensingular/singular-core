@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
@@ -69,7 +70,7 @@ public class SingularDefaultPersistenceConfiguration {
 
     protected ResourceDatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.setSqlScriptEncoding("UTF-8");
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
         populator.addScript(drops);
         populator.addScript(sqlCreateTablesForm);
         populator.addScript(sqlCreateTables);
@@ -98,7 +99,7 @@ public class SingularDefaultPersistenceConfiguration {
         initializer.setDataSource(dataSource);
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSeparator("#");
-        populator.setSqlScriptEncoding("UTF-8");
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
         populator.addScript(sqlCreateFunction);
         initializer.setDatabasePopulator(populator);
         initializer.setEnabled(isDatabaseInitializerEnabled());
@@ -148,7 +149,7 @@ public class SingularDefaultPersistenceConfiguration {
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
         if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
-            LOGGER.info("Utilizando schema customizado: " + SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME));
+            LOGGER.info("Utilizando schema customizado: {}", SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME));
             sessionFactoryBean.setEntityInterceptor(new EntityInterceptor());
         }
         return sessionFactoryBean;
@@ -171,18 +172,18 @@ public class SingularDefaultPersistenceConfiguration {
 
     protected Properties hibernateProperties() {
         final Properties hibernateProperties = new Properties();
-        hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
-        hibernateProperties.put("hibernate.connection.isolation", 2);
-        hibernateProperties.put("hibernate.jdbc.batch_size", 30);
-        hibernateProperties.put("hibernate.show_sql", false);
-        hibernateProperties.put("hibernate.format_sql", true);
-        hibernateProperties.put("hibernate.enable_lazy_load_no_trans", true);
-        hibernateProperties.put("hibernate.jdbc.use_get_generated_keys", true);
-        hibernateProperties.put("hibernate.cache.use_second_level_cache", true);
-        hibernateProperties.put("hibernate.cache.use_query_cache", true);
+        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
+        hibernateProperties.setProperty("hibernate.connection.isolation", "2");
+        hibernateProperties.setProperty("hibernate.jdbc.batch_size", "30");
+        hibernateProperties.setProperty("hibernate.show_sql", "false");
+        hibernateProperties.setProperty("hibernate.format_sql", "true");
+        hibernateProperties.setProperty("hibernate.enable_lazy_load_no_trans", "true");
+        hibernateProperties.setProperty("hibernate.jdbc.use_get_generated_keys", "true");
+        hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", "true");
+        hibernateProperties.setProperty("hibernate.cache.use_query_cache", "true");
         /*não utilizar a singleton region factory para não conflitar com o cache do singular-server */
-        hibernateProperties.put("net.sf.ehcache.configurationResourceName", "/default-singular-ehcache.xml");
-        hibernateProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
+        hibernateProperties.setProperty("net.sf.ehcache.configurationResourceName", "/default-singular-ehcache.xml");
+        hibernateProperties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
         return hibernateProperties;
     }
 

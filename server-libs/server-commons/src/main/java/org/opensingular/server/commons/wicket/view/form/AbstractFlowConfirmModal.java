@@ -42,7 +42,7 @@ public abstract class AbstractFlowConfirmModal<T extends PetitionEntity> impleme
      * @return the new AjaxButton
      */
     protected FlowConfirmButton<T> newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
-        return new FlowConfirmButton<T>(tn, "confirm-btn", im, ViewMode.EDIT.equals(vm), formPage, m){
+        return new FlowConfirmButton<T>(tn, "confirm-btn", im, ViewMode.EDIT == vm, formPage, m){
             @Override
             protected void onValidationSuccess(AjaxRequestTarget ajaxRequestTarget, Form form, IModel model) {
                 super.onValidationSuccess(ajaxRequestTarget, form, model);

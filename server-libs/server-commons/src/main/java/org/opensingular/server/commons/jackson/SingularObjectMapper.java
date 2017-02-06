@@ -41,7 +41,7 @@ public class SingularObjectMapper extends ObjectMapper {
     private static class TimestampSerializer extends JsonSerializer<Timestamp> {
 
         @Override
-        public void serialize(Timestamp value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+        public void serialize(Timestamp value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             if (value == null) {
                 gen.writeNull();
             } else {

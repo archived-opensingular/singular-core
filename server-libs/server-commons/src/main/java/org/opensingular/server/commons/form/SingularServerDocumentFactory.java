@@ -20,16 +20,26 @@ import org.opensingular.form.RefService;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.spring.SpringSDocumentFactory;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
-public class SingularServerDocumentFactory extends SpringSDocumentFactory {
+
+public class SingularServerDocumentFactory extends SpringSDocumentFactory  {
 
     @Override
     @SuppressWarnings("unchecked")
     protected void setupDocument(SDocument document) {
-        document.setAttachmentPersistenceTemporaryHandler(
-                RefService.of(getServiceRegistry().lookupService(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class)));
-        document.setAttachmentPersistencePermanentHandler(
-                RefService.of(getServiceRegistry().lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class)));
+        document.setAttachmentPersistenceTemporaryHandler(new RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>>() {
+            @Override
+            public IAttachmentPersistenceHandler<? extends IAttachmentRef> get() {
+                return getServiceRegistry().lookupService(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+            }
+        });
+        document.setAttachmentPersistencePermanentHandler(new RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>>() {
+            @Override
+            public IAttachmentPersistenceHandler<? extends IAttachmentRef> get() {
+                return getServiceRegistry().lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+            }
+        });
     }
 
 }

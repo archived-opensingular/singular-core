@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class DispatcherPageUtil {
     public static final String ACTION_ID = "a";
     public static final String  PETITION_ID = "k";
     private static final Logger LOGGER      = LoggerFactory.getLogger(DispatcherPageUtil.class);
-    private static final String ENCODING    = "UTF-8";
+    private static final String ENCODING    = StandardCharsets.UTF_8.name();
 
     private String url;
 

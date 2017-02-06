@@ -53,7 +53,7 @@ public class YFilesFlowRemoteRenderer implements IFlowRenderer {
     }
 
     private Task from(MTask<?> task, MTask<?> startTask) {
-        Task t = new Task(task.isWait(), task.isJava(), task.isPeople(), task.isEnd(), task.getName(), task.getAbbreviation(), task.equals(startTask), new ArrayList<>(0), task.getMetaDataValue(IFlowRenderer.SEND_EMAIL, false));
+        Task t = new Task(task.isWait(), task.isJava(), task.isPeople(), task.isEnd(), task.getName(), task.getAbbreviation(), task.equals(startTask), new ArrayList<>(0), task.getMetaDataValue(IFlowRenderer.SEND_EMAIL, Boolean.FALSE));
         for (MTransition mt : task.getTransitions()) {
             t.getTransitions().add(from(mt));
         }

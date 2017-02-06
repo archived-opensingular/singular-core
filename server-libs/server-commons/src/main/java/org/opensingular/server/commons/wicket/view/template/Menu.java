@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.wicket.view.template;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -145,16 +146,16 @@ public class Menu extends Panel {
         @Override
         protected void respond(AjaxRequestTarget target) {
             final String        type     = "application/json";
-            final String        encoding = "UTF-8";
+            final String        encoding = StandardCharsets.UTF_8.name();
             final StringBuilder json     = new StringBuilder();
-            json.append("{");
+            json.append('{');
             for (int i = 0; i < itens.size(); i++) {
-                json.append("\"item").append(i).append("\"").append(":").append(itens.get(i).getRight().get());
+                json.append("\"item").append(i).append('\"').append(':').append(itens.get(i).getRight().get());
                 if (i + 1 != itens.size()) {
-                    json.append(",");
+                    json.append(',');
                 }
             }
-            json.append("}");
+            json.append('}');
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(new TextRequestHandler(type, encoding, json.toString()));
         }
     }

@@ -7,10 +7,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>server-libs</artifactId>
-        <version>1.5.6</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>server-commons</artifactId>
+    <artifactId>singular-server-commons</artifactId>
     <name>[singular-server :: server-libs :: server-commons]</name>
     <packaging>jar</packaging>
 
@@ -42,27 +42,13 @@
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-persistence</artifactId>
+            <artifactId>singular-flow-persistence</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-service</artifactId>
+            <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

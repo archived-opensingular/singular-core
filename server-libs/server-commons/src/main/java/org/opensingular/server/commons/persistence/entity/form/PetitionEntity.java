@@ -142,7 +142,7 @@ public class PetitionEntity extends BaseEntity<Long> {
             return null;
         } else {
             return formPetitionEntities.stream()
-                    .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                    .filter(f -> SimNao.SIM == f.getMainForm())
                     .map(f -> {
                         if (f.getForm() != null) {
                             return f.getForm();

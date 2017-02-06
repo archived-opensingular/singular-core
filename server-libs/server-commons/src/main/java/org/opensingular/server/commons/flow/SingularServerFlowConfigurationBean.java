@@ -68,7 +68,7 @@ public class SingularServerFlowConfigurationBean extends HibernateSingularFlowCo
                 getLogger().info("INITIALIZING FLOW DEFINITIONS");
                 getDefinitions().forEach(d -> {
                     try {
-                        getLogger().info("INITIALIZING " + d.getName() + "....");
+                        getLogger().info("INITIALIZING {}....",  d.getName());
                         d.getEntityProcessVersion();
                     } catch (Exception e) {
                         getLogger().error(e.getMessage(), e);
