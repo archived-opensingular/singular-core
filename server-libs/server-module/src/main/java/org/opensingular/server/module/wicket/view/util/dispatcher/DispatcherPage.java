@@ -285,7 +285,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private FormActions resolveFormAction(StringValue action) {
-        return FormActions.getById(Integer.parseInt(action.toString("0")));
+        return FormActions.getById(Integer.valueOf(action.toString("0")));
     }
 
     protected FormPageConfig parseParameters(Request r) {

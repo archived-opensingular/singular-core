@@ -22,9 +22,8 @@ import org.opensingular.form.spring.SpringSDocumentFactory;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
-import java.io.Serializable;
 
-public class SingularServerDocumentFactory extends SpringSDocumentFactory implements Serializable {
+public class SingularServerDocumentFactory extends SpringSDocumentFactory  {
 
     @Override
     @SuppressWarnings("unchecked")

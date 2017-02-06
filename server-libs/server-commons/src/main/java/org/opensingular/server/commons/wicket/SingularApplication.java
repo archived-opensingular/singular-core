@@ -82,10 +82,12 @@ public abstract class SingularApplication extends AuthenticatedWebApplication
             applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
 
-        new AnnotatedMountScanner().scanPackage("org.opensingular").mount(this);
+        AnnotatedMountScanner annotatedMountScanner = new AnnotatedMountScanner();
+
+        annotatedMountScanner.scanPackage("org.opensingular").mount(this);
 
         for (String packageName : getPackagesToScan()) {
-            new AnnotatedMountScanner().scanPackage(packageName).mount(this);
+            annotatedMountScanner.scanPackage(packageName).mount(this);
         }
 
         getDebugSettings().setComponentPathAttributeName("wicketpath");

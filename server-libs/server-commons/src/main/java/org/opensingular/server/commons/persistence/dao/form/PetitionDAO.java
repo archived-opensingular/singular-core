@@ -216,7 +216,7 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     private Query createQuery(QuickFilter filtro, List<String> siglasProcesso, boolean count, List<String> formNames) {
 
-        final StringBuilder       hql    = new StringBuilder("");
+        final StringBuilder       hql    = new StringBuilder(   );
         final Map<String, Object> params = new HashMap<>();
 
         buildSelectClause(hql, count, filtro);
