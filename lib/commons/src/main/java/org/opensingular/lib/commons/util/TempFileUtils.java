@@ -47,8 +47,7 @@ public abstract class TempFileUtils {
         internalWithTempFile(Files::createTempDir, callback);
     }
 
-    public static void withTempFile(String prefix, String suffix, IConsumerEx<File, IOException> callback)
-            throws IOException {
+    public static void withTempFile(String prefix, String suffix, IConsumerEx<File, IOException> callback) {
         internalWithTempFile(() -> File.createTempFile(prefix, suffix), callback);
     }
 
@@ -75,8 +74,7 @@ public abstract class TempFileUtils {
      * @param relativePath caminho
      * @param callback     biconsumer<baseDir, file>
      */
-    public static void withFileInTempDir(Path relativePath, IBiConsumerEx<File, File, IOException> callback)
-            throws IOException {
+    public static void withFileInTempDir(Path relativePath, IBiConsumerEx<File, File, IOException> callback){
         Preconditions.checkArgument(!relativePath.isAbsolute());
         Preconditions.checkArgument(relativePath.getNameCount() > 0);
         withTempDir(dir -> {
