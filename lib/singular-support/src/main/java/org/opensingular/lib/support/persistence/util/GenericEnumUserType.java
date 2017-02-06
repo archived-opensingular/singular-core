@@ -107,7 +107,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
                     e);
         }
 
-        type = (AbstractSingleColumnStandardBasicType<?>) new TypeResolver()
+        type = (AbstractStandardBasicType<?>) new TypeResolver()
                 .heuristicType(identifierType.getName(), parameters);
 
         if (type == null) {

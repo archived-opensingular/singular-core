@@ -68,7 +68,7 @@ public class RestfulHtmlToPdfConverter implements HtmlToPdfConverter {
     }
 
     private String generateFileName() {
-        return "singular-ws-html2pdf" + UUID.randomUUID().toString();
+        return "singular-ws-html2pdf" + UUID.randomUUID();
     }
 
     private static RestTemplate defaultRestTemplate() {

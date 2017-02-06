@@ -394,7 +394,7 @@ public class WicketBuildContext implements Serializable {
 
     public static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
 
-        private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(WicketFormProcessing.class);
+        private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(WicketBuildContext.class);
 
         @Override
         public void onValidate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {

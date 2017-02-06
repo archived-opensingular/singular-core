@@ -44,13 +44,13 @@ public interface IWicketComponentMapper extends UIComponentMapper {
      *  Esse evento é utilizado em alguns js da aplicação, para mudar o nome é preciso fazer uma varredura de texto.
      */
     @Deprecated
-    static final String SINNGULAR_BLUR_CHANGE_EVENT = "singular:blurchange";
+    String SINNGULAR_BLUR_CHANGE_EVENT = "singular:blurchange";
 
     /** Evento javascript padrão para ativar uma requisição ajax para validação do campo */
-    static final String SINGULAR_VALIDATE_EVENT = "singular:validate";
+    String SINGULAR_VALIDATE_EVENT = "singular:validate";
 
     /** Evento javascript padrão para ativar uma requisição ajax para processamento do campo */
-    static final String SINGULAR_PROCESS_EVENT = "singular:process";
+    String SINGULAR_PROCESS_EVENT = "singular:process";
 
     void buildView(WicketBuildContext ctx);
 
@@ -74,7 +74,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
             component.add(new AjaxUpdateInputBehavior(SINGULAR_PROCESS_EVENT, model, false, listener));
             //component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
         } else {
-            LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para {}", component);
+            LoggerFactory.getLogger(IWicketComponentMapper.class).warn("Atualização ajax não suportada para {}", component);
         }
     }
 
