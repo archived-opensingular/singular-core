@@ -51,8 +51,8 @@ final class ErrorHandlerMElement implements ErrorHandler {
             buf_ = new StringBuilder(1024);
             buf_.append("Erro(s) efetuando parse");
         }
-        buf_.append("\n");
-        buf_.append(tipo).append(":");
+        buf_.append('\n');
+        buf_.append(tipo).append(':');
         if (ex.getLineNumber() > -1) {
             buf_.append(" Line=").append(ex.getLineNumber());
         }

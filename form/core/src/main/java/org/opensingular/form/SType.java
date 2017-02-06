@@ -755,11 +755,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             pad(appendable, level);
             debugTypeHeader(appendable);
             debugAttributes(appendable);
-            appendable.append("\n");
+            appendable.append('\n');
 
             if (this instanceof STypeSimple && asAtrProvider().getProvider() != null) {
                 pad(appendable, level + 2).append("selection of ").append(asAtrProvider().getProvider().toString())
-                        .append("\n");
+                        .append('\n');
             }
 
             debugAttributesDefined(appendable, level);

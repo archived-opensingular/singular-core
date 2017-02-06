@@ -102,7 +102,7 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
             pattern.append("R$ ###,###.");
 
             for (int i = 0; i < digitos; i += 1) {
-                pattern.append("#");
+                pattern.append('#');
             }
 
             decimalFormat.applyPattern(pattern.toString());
