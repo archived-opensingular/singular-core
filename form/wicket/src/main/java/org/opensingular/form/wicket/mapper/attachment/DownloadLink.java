@@ -30,7 +30,8 @@ import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +42,8 @@ import java.util.regex.Pattern;
 public class DownloadLink extends Link<Void> {
 
 
-    private static final String       FILE_REGEX_PATTERN   = ".*\\.(.*)";
-    private static final List<String> SUPPORTED_EXTENSIONS = Arrays.asList("pdf", "jpg", "gif", "png");
+    private static final String      FILE_REGEX_PATTERN   = ".*\\.(.*)";
+    private static final Set<String> SUPPORTED_EXTENSIONS = new LinkedHashSet<>(Arrays.asList("pdf", "jpg", "gif", "png"));
 
     private IModel<SIAttachment>      model;
     private IModel<Boolean>           openInNewTabIfIsBrowserFriendly;

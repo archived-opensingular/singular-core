@@ -169,7 +169,7 @@ public class PackageBuilder {
         return attributeDef;
     }
 
-    public <I extends SInstance, T extends SType<I>> T createAttributeType(AtrRef<T, ?, ?> atr) {
+    public <I extends SInstance, T extends SType<I>> T createAttributeType(AtrRef<T, I, ?> atr) {
         if (atr.isSelfReference()) {
             throw new SingularFormException("Não pode ser criado um atributo global que seja selfReference");
         }

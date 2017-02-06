@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class IOUtil {
 
     public static final int BUFFER_2MB = 2 * 1048576;
     public static final int BUFFER_5MB = 5 * 1048576;
-    public static final Charset UTF8 = Charset.forName("UTF-8");
+    public static final Charset UTF8 = Charset.forName(StandardCharsets.UTF_8.name());
 
     private IOUtil() {}
 

@@ -39,7 +39,7 @@ public class SIHTML extends SISimple<String> implements SIComparable<String> {
             }
             this.setValue(sb.toString());
         } catch (IOException ex) {
-            throw new SingularFormException("Ocorreu um erro ao ler o modelo do parecer");
+            throw new SingularFormException("Ocorreu um erro ao ler o modelo do parecer", ex);
         }
     }
 

@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         HTML_NEW_TAB = Optional.ofNullable(PortletRichTextPanel.class.getResourceAsStream("PortletRichTextNewTab.html"))
                 .map(in -> {
                     try {
-                        return JavaScriptUtils.javaScriptEscape(IOUtils.toString(in, "UTF-8"));
+                        return JavaScriptUtils.javaScriptEscape(IOUtils.toString(in, StandardCharsets.UTF_8.name()));
                     } catch (IOException e) {
                         throw new SingularFormException("Não foi possivel extrair o conteudo html", e);
                     }

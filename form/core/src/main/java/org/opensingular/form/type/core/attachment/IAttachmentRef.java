@@ -65,7 +65,7 @@ public interface IAttachmentRef extends Serializable, DataSource{
         try (InputStream is = getInputStream()){
             return new Tika().detect(is);
         } catch (IOException e) {
-            throw new SingularFormException("Não foi possivel detectar o content type.");
+            throw new SingularFormException("Não foi possivel detectar o content type.", e);
         }
     }
     

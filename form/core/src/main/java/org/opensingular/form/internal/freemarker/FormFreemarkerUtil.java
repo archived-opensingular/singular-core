@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 
@@ -42,7 +43,8 @@ public final class FormFreemarkerUtil {
 
     private static Configuration cfg;
 
-    private FormFreemarkerUtil() {}
+    private FormFreemarkerUtil() {
+    }
 
     public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
         return context -> merge(context.instance(), stringTemplate);
@@ -83,7 +85,7 @@ public final class FormFreemarkerUtil {
     private static synchronized Configuration getConfiguration() {
         if (cfg == null) {
             Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
-            novo.setDefaultEncoding("UTF-8");
+            novo.setDefaultEncoding(StandardCharsets.UTF_8.name());
             novo.setLocale(new Locale("pt", "BR"));
             novo.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             cfg = novo;
@@ -200,7 +202,7 @@ public final class FormFreemarkerUtil {
                 Optional<Constructor<?>> constructor = Arrays.stream(getClass().getConstructors())
                         .filter(c -> c.getParameterCount() == 1 && c.getParameterTypes()[0].isAssignableFrom(getInstance().getClass()))
                         .findFirst();
-                if (! constructor.isPresent()) {
+                if (!constructor.isPresent()) {
                     throw new SingularFormException(
                             "Não foi encontrado o construtor " + getClass().getSimpleName() + "(SInstance)");
                 }
@@ -394,12 +396,12 @@ public final class FormFreemarkerUtil {
             return new TemplateModelIterator() {
 
                 @Override
-                public TemplateModel next() throws TemplateModelException {
+                public TemplateModel next() {
                     return toTemplateModel(it.next());
                 }
 
                 @Override
-                public boolean hasNext() throws TemplateModelException {
+                public boolean hasNext() {
                     return it.hasNext();
                 }
             };

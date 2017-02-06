@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -170,10 +171,10 @@ public final class SingularPropertiesImpl implements SingularProperties {
         Properties defaults = new Properties();
         try (
                 InputStream input = defaultIfNull(SingularProperties.class.getResourceAsStream(DEFAULT_PROPERTIES_FILENAME), new NullInputStream(0));
-                Reader reader = new InputStreamReader(input, "utf-8")) {
+                Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8.name())) {
             defaults.load(reader);
         } catch (IOException ex) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException("", ex);
         }
         return defaults;
     }
@@ -181,7 +182,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
     private Properties loadNotOverriding(Properties newProperties, String propertiesName, URL propertiesUrl) {
         Properties props;
         try (InputStream input = propertiesUrl.openStream()) {
-            props = PropertiesUtils.load(propertiesUrl, "utf-8");
+            props = PropertiesUtils.load(propertiesUrl, StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw SingularException.rethrow("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
         }

@@ -74,7 +74,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
             component.add(new AjaxUpdateInputBehavior(SINGULAR_PROCESS_EVENT, model, false, listener));
             //component.add(SINGULAR_FORM_GROUP_HEIGHT_FIX);
         } else {
-            LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
+            LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para {}", component);
         }
     }
 

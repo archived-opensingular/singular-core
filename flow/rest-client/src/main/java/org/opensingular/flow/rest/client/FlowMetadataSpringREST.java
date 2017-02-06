@@ -98,7 +98,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
             ResponseEntity<byte[]> response = restTemplate.exchange(getConnectionURL(PATH_PROCESS_DEFINITION_DIAGRAM,
                 "processDefinitionKey"), HttpMethod.GET, entity, byte[].class, processDefinitionKey);
 
-            if(response.getStatusCode().equals(HttpStatus.OK)){       
+            if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();
             }
             getLogger().error("Erro ao acessar serviço: {}{}: StatusCode: {}",connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, response.getStatusCode());

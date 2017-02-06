@@ -405,7 +405,7 @@ public class WicketBuildContext implements Serializable {
         public void onProcess(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
             long ms = Calendar.getInstance().getTimeInMillis();
             WicketFormProcessing.onFieldProcess(s, t, m);
-            LOGGER.info("[SINGULAR] Tempo processando (ms): " + (Calendar.getInstance().getTimeInMillis() - ms));
+            LOGGER.info("[SINGULAR] Tempo processando (ms): {}", (Calendar.getInstance().getTimeInMillis() - ms));
         }
 
         @Override

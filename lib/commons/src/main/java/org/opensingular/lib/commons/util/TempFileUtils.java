@@ -23,6 +23,7 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IBiConsumerEx;
 import org.opensingular.lib.commons.lambda.IConsumerEx;
 import org.opensingular.lib.commons.lambda.ISupplierEx;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,10 +36,12 @@ import java.util.logging.Logger;
 
 public abstract class TempFileUtils {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TempFileUtils.class);
     private static final String DEFAULT_FILE_SUFFIX = ".tmp";
     private static final String DEFAULT_FILE_PREFIX = "TempFileUtils_";
 
-    private TempFileUtils() {}
+    private TempFileUtils() {
+    }
 
     public static void withTempDir(IConsumerEx<File, IOException> callback) throws IOException {
         internalWithTempFile(Files::createTempDir, callback);
@@ -54,11 +57,13 @@ public abstract class TempFileUtils {
     }
 
     private static void internalWithTempFile(ISupplierEx<File, IOException> fileSupplier,
-            IConsumerEx<File, IOException> callback) throws IOException {
+                                             IConsumerEx<File, IOException> callback) {
         File file = null;
         try {
             file = fileSupplier.get();
             callback.accept(file);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
         } finally {
             if (exists(file)) {
                 FileUtils.deleteQuietly(file);
@@ -134,7 +139,7 @@ public abstract class TempFileUtils {
      * Faz log do erro do delete e dispara exception se necessário.
      */
     private static void dealWithDeleteErro(@Nonnull File file, @Nonnull Class<?> requester, boolean failQuietily,
-            @Nullable Exception e) {
+                                           @Nullable Exception e) {
         String msg = "Nao foi possível apagar o arquivo " + file;
         Logger logger = Logger.getLogger(requester.getName());
         logger.log(Level.SEVERE, msg, e);

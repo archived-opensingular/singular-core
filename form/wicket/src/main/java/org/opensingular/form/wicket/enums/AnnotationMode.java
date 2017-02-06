@@ -21,10 +21,11 @@ public enum AnnotationMode {
     NONE, EDIT, READ_ONLY;
 
     public boolean editable() {
-        return this.equals(EDIT);
+        return this == EDIT;
     }
 
     public boolean enabled() {
-        return !this.equals(NONE);
+        return this != NONE;
     }
+
 }
