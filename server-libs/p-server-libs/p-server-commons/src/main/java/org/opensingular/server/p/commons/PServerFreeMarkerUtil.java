@@ -62,7 +62,7 @@ public class PServerFreeMarkerUtil {
             cfg.getTemplate(templateName).process(encode(map), sw);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
-            throw new SingularFormException("Não foi possivel fazer o merge do template " + templateName);
+            throw new SingularFormException("Não foi possivel fazer o merge do template " + templateName, ex);
         }
 
         return sw.toString();
