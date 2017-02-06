@@ -147,14 +147,14 @@ public class Menu extends Panel {
             final String        type     = "application/json";
             final String        encoding = "UTF-8";
             final StringBuilder json     = new StringBuilder();
-            json.append("{");
+            json.append('{');
             for (int i = 0; i < itens.size(); i++) {
-                json.append("\"item").append(i).append("\"").append(":").append(itens.get(i).getRight().get());
+                json.append("\"item").append(i).append('\"').append(':').append(itens.get(i).getRight().get());
                 if (i + 1 != itens.size()) {
-                    json.append(",");
+                    json.append(',');
                 }
             }
-            json.append("}");
+            json.append('}');
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(new TextRequestHandler(type, encoding, json.toString()));
         }
     }

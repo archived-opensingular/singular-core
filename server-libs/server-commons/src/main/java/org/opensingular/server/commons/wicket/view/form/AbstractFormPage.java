@@ -386,7 +386,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
         StringBuilder url = new StringBuilder();
         url.append(DispatcherPageUtil.getBaseURL())
-                .append("?")
+                .append('?')
                 .append(String.format("%s=%s", DispatcherPageParameters.ACTION, config.getFormAction().getId()))
                 .append(String.format("&%s=%s", DispatcherPageParameters.PETITION_ID, config.getPetitionId()))
                 .append(String.format("&%s=%s", DispatcherPageParameters.FORM_NAME, config.getFormType()))
