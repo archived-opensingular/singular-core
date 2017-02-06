@@ -131,7 +131,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 
                 addressee.setSentDate(new Date());
                 
-                getLogger().info("Email enviado para o destinatário(cod="+addressee.getCod()+")="+addressee.getAddress());
+                getLogger().info("Email enviado para o destinatário(cod=%d)=%d", addressee.getCod(), addressee.getAddress());
             } catch (Exception ex) {
                 addressee.setSentDate(null);
                 String msg = "ERRO ao enviar email para o destinatário(cod=" + addressee.getCod() + ")=" + addressee.getAddress();

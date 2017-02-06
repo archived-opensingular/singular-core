@@ -149,7 +149,7 @@ public class SingularDefaultPersistenceConfiguration {
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
         if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
-            LOGGER.info("Utilizando schema customizado: " + SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME));
+            LOGGER.info("Utilizando schema customizado: %d", SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME));
             sessionFactoryBean.setEntityInterceptor(new EntityInterceptor());
         }
         return sessionFactoryBean;
