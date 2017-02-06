@@ -445,7 +445,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
-    public SType<I> withRequired(Boolean value) {
+    public SType<I> withRequired(boolean value) {
         return with(SPackageBasic.ATR_REQUIRED, value);
     }
 
