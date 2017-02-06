@@ -19,6 +19,7 @@ import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,7 +132,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         WebResponse response = (WebResponse) RequestCycle.get().getResponse();
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "no-store, no-cache");
-        response.getOutputStream().write(jsonFile.toString().getBytes());
+        response.getOutputStream().write(jsonFile.toString().getBytes(StandardCharsets.UTF_8));
         response.flush();
     }
 

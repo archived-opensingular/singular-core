@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.wicket.util.datatable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
  * @param <S>       Propriedade de Ordenacao
  * @param <PREVCOL> Coluna
  */
-public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
+public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements Serializable {
 
 
     public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {
