@@ -51,7 +51,7 @@ public abstract class TempFileUtils {
         internalWithTempFile(() -> File.createTempFile(prefix, suffix), callback);
     }
 
-    public static void withTempFile(IConsumerEx<File, IOException> callback) throws IOException {
+    public static void withTempFile(IConsumerEx<File, IOException> callback) {
         withTempFile(DEFAULT_FILE_PREFIX, DEFAULT_FILE_SUFFIX, callback);
     }
 
