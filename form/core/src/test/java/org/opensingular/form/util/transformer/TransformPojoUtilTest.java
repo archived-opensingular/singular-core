@@ -1,5 +1,6 @@
 package org.opensingular.form.util.transformer;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,12 +9,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.STypeString;
 
 @SuppressWarnings("unchecked")
 public class TransformPojoUtilTest {
@@ -180,10 +185,14 @@ public class TransformPojoUtilTest {
 		return mappedAll.get(System.identityHashCode(object));
 	}
 	
+	private SDictionary _dicionario;
+	private PackageBuilder pb;
 	
-//	@Inject
-//	@Named("formConfigWithDatabase")
-	private SFormConfig<String> formConfig;
+	@Before
+	public void setUp(){
+		_dicionario = SDictionary.create();
+		pb = _dicionario.createNewPackage("teste");
+	}
 	
 	@Test
 	public void testeMapPrimitiveTypes(){
@@ -191,12 +200,23 @@ public class TransformPojoUtilTest {
 		object.setIdade(25);
 		object.setDoubleVal(2974.5);
 		
-		// TODO comparacao
-		SInstance instanceTest = generateInstance();
-		pojoToInstanceTest(object, instanceTest, false);
+		STypeComposite<SIComposite> classe = pb.createCompositeType("classe");
+		classe.addFieldInteger("idade");
+		classe.addFieldDecimal("doubleVal");
+		
+		SIComposite siObject = classe.newInstance();
+		
+		pojoToInstanceTest(object, siObject, false);
+		
+		SInstance integerField = siObject.getField("idade");
+		SInstance doubleField = siObject.getField("doubleVal");
+		
+		Assert.assertNotNull(integerField);
+		Assert.assertNotNull(doubleField);
+		
+		Assert.assertEquals(25, integerField.getValue());
+		Assert.assertEquals(2974.5, ((BigDecimal)doubleField.getValue()).doubleValue(), 0);
 	}
-
-
 	
 	@Test
 	public void testeMapComplexType(){
@@ -204,12 +224,21 @@ public class TransformPojoUtilTest {
 		object.setDoubleValBig(294.5);
 		PojoTransformTestSubClass subObject = new PojoTransformTestSubClass();
 		subObject.setNome("nome");
-		
 		object.setSubClass(subObject);
+
+		STypeComposite<SIComposite> classe = pb.createCompositeType("classe");
+		classe.addFieldDecimal("doubleValBig");
+		STypeComposite<SIComposite> subClasse =  classe.addFieldComposite("subClass");
+		subClasse.addFieldString("nome");
 		
-//		TODO comparacao
-		SInstance instanceTest = generateInstance();
-		pojoToInstanceTest(object, instanceTest, false);
+		SIComposite siObject = classe.newInstance();
+		
+		pojoToInstanceTest(object, siObject, false);
+		
+		SIComposite subClassField = (SIComposite) siObject.getField("subClass");
+		
+		Assert.assertNotNull(subClassField);
+		Assert.assertEquals("nome", subClassField.getField("nome").getValue());
 	}
 	
 	@Test
@@ -221,53 +250,73 @@ public class TransformPojoUtilTest {
 		treeSetTest.add("string 3");
 		object.setSetCollectionTest(treeSetTest);
 		
-		// TODO comparacao
-		SInstance instanceTest = generateInstance();
-		pojoToInstanceTest(object, instanceTest, false);
+		STypeComposite<SIComposite> classe = pb.createCompositeType("classe");
+		classe.addFieldListOf("setCollectionTest", STypeString.class);
+		
+		SIComposite siObject = classe.newInstance();
+		
+		pojoToInstanceTest(object, siObject, false);
+		
+		SIList<SInstance> field = (SIList<SInstance>) siObject.getField("setCollectionTest");
+		
+		List<Object> value = field.getValue();
+		
+		Assert.assertEquals("string 1", value.get(0));
+		Assert.assertEquals("string 2", value.get(1));
+		Assert.assertEquals("string 3", value.get(2));
+		
 	}
 	
 	@Test
 	public void testeMapCollectionComplexType(){
 		PojoTransformTestSuperClass object = new PojoTransformTestSuperClass();
-		object.setIdade(25);
-		
 		PojoTransformTestSubClass subObject = new PojoTransformTestSubClass("nome");
 		PojoTransformTestSubClass subObject2 = new PojoTransformTestSubClass("outroNome");
 		PojoTransformTestSubClass subObject3 = new PojoTransformTestSubClass("maisOutroNome");
 		
 		object.setComplexCollection(Arrays.asList(subObject, subObject2, subObject3));
 		
-		// TODO comparacao
-		SInstance instanceTest = generateInstance();
-		pojoToInstanceTest(object, instanceTest, false);
+		STypeComposite<SIComposite> classe = pb.createCompositeType("classe");
+		STypeList<STypeComposite<SIComposite>, SIComposite> listItems = classe.addFieldListOfComposite("complexCollection", "subTipo");
+		
+		STypeComposite<SIComposite> item = listItems.getElementsType();
+		item.addFieldString("nome");
+		
+		SIComposite siObject = classe.newInstance();
+		
+		pojoToInstanceTest(object, siObject, false);
+		
+		SIList<SIComposite> compositeList = (SIList<SIComposite>) siObject.getFieldList("complexCollection");
+		
+		List<SIComposite> children = compositeList.getChildren();
+		
+		Assert.assertEquals("nome", children.get(0).getField("nome").getValue());
+		Assert.assertEquals("outroNome", children.get(1).getField("nome").getValue());
+		Assert.assertEquals("maisOutroNome", children.get(2).getField("nome").getValue());
 	}
 	
-	@Test
-	public void testeMapStrictModeTrue(){
+	@Test(expected=Exception.class)
+	public void testeMapStrictModeTrue() throws Exception{
+		
 		PojoTransformTestSuperClass object = new PojoTransformTestSuperClass();
 		object.setIdade(25);
 		
 		PojoTransformTestSubClass subObject = new PojoTransformTestSubClass("nome");
-		PojoTransformTestSubClass subObject2 = new PojoTransformTestSubClass("outroNome");
-		PojoTransformTestSubClass subObject3 = new PojoTransformTestSubClass("maisOutroNome");
+		object.setSubClass(subObject);
 		
-		object.setComplexCollection(Arrays.asList(subObject, subObject2, subObject3));
+		STypeComposite<SIComposite> classe = pb.createCompositeType("classe");
+		classe.addFieldInteger("idade");
+		classe.addFieldInteger("idadeBig");
+		classe.addFieldDecimal("doubleVal");
+		classe.addFieldDecimal("doubleValBig");
+		classe.addFieldListOf("setCollectionTest", STypeString.class);
+		classe.addFieldListOfComposite("complexCollection", "subTipo");
+		classe.addFieldComposite("subClass");
 		
-		// TODO comparacao
-		SInstance instanceTest = generateInstance();
-		pojoToInstanceTest(object, instanceTest, false);
+		SIComposite siObject = classe.newInstance();
+		TransformPojoUtil.pojoToSInstance(object, siObject, true);
 	}
 	
-	private SInstance generateInstance() {
-		return SDocumentFactory.empty().createInstance(new RefType() {
-			@Override
-			protected SType<?> retrieve() {
-				return formConfig.getTypeLoader().loadTypeOrException("");
-//				return formConfig.getTypeLoader().loadTypeOrException(SDbHealth.TYPE_FULL_NAME);
-			}
-		});
-	}
-
 	private void pojoToInstanceTest(PojoTransformTestSuperClass object, SInstance instanceTest, boolean strictMode) {
 		try {
 			TransformPojoUtil.pojoToSInstance(object, instanceTest, strictMode);
@@ -276,130 +325,4 @@ public class TransformPojoUtilTest {
 		}
 	}
 	
-	private class PojoTransformTestSuperClass {
-		private int idade;
-		private Integer idadeBig;
-		private double doubleVal;
-		private Double doubleValBig;
-		
-		private PojoTransformTestSubClass subClass;
-		
-		private List<PojoTransformTestSubClass> complexCollection = new ArrayList<>();
-		private Set<String> setCollectionTest = new TreeSet<>();
-		
-//		private Map<Object, Object> mapTest = new HashMap<>();
-
-		public int getIdade() {
-			return idade;
-		}
-
-		public void setIdade(int idade) {
-			this.idade = idade;
-		}
-
-		public Integer getIdadeBig() {
-			return idadeBig;
-		}
-
-		public void setIdadeBig(Integer idadeBig) {
-			this.idadeBig = idadeBig;
-		}
-
-		public double getDoubleVal() {
-			return doubleVal;
-		}
-
-		public void setDoubleVal(double doubleVal) {
-			this.doubleVal = doubleVal;
-		}
-
-		public Double getDoubleValBig() {
-			return doubleValBig;
-		}
-
-		public void setDoubleValBig(Double doubleValBig) {
-			this.doubleValBig = doubleValBig;
-		}
-
-		public PojoTransformTestSubClass getSubClass() {
-			return subClass;
-		}
-
-		public void setSubClass(PojoTransformTestSubClass subClass) {
-			this.subClass = subClass;
-		}
-
-		public List<PojoTransformTestSubClass> getComplexCollection() {
-			return complexCollection;
-		}
-
-		public void setComplexCollection(List<PojoTransformTestSubClass> complexCollection) {
-			this.complexCollection = complexCollection;
-		}
-
-		public Set<String> getSetCollectionTest() {
-			return setCollectionTest;
-		}
-
-		public void setSetCollectionTest(Set<String> setCollectionTest) {
-			this.setCollectionTest = setCollectionTest;
-		}
-
-//		public Map<Object, Object> getMapTest() {
-//			return mapTest;
-//		}
-	//
-//		public void setMapTest(Map<Object, Object> mapTest) {
-//			this.mapTest = mapTest;
-//		}
-	}
-	
-	private class PojoTransformTestSubClass {
-		private String nome;
-		private String cpf;
-		
-		private Integer valorQualquer;
-		
-		private PojoTransformTestSuperClass pai;
-		
-		public PojoTransformTestSubClass() {
-		}
-		
-		public PojoTransformTestSubClass(String nome) {
-			this.nome = nome;
-		}
-
-		public String getNome() {
-			return nome;
-		}
-
-		public void setNome(String nome) {
-			this.nome = nome;
-		}
-
-		public String getCpf() {
-			return cpf;
-		}
-
-		public void setCpf(String cpf) {
-			this.cpf = cpf;
-		}
-
-		public Integer getValorQualquer() {
-			return valorQualquer;
-		}
-
-		public void setValorQualquer(Integer valorQualquer) {
-			this.valorQualquer = valorQualquer;
-		}
-
-		public PojoTransformTestSuperClass getPai() {
-			return pai;
-		}
-
-		public void setPai(PojoTransformTestSuperClass pai) {
-			this.pai = pai;
-		}
-		
-	}
 }

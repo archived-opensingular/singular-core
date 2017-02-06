@@ -215,7 +215,6 @@ public class TransformPojoUtil {
 				// verifica se os valores existem em ambos os lugares
 				List<String> nomesAtributos = new ArrayList<>();
 				composite.getAllChildren().forEach(inst->nomesAtributos.add(inst.getType().getNameSimple()));
-				
 				Set<String> keySet = ((Map<String, Object>) pojoDataMap).keySet();
 				for (String string : keySet) {
 					if(!nomesAtributos.contains(string)){
@@ -228,8 +227,13 @@ public class TransformPojoUtil {
 				// pega o objeto ou mapa que é referenciado 
 				
 				Map<String, Object> mapNovo = new HashMap<>();
-				// mapa criado pra garantir que teremos a referencia do objeto salva(key) 
-				mapNovo.put(child.getType().getNameSimple(), object);
+				if(child.getType().isComposite()){
+					mapNovo = (Map<String, Object>) object;
+				}else{
+					// mapa criado pra garantir que teremos a referencia do objeto salva(key) 
+					mapNovo.put(child.getType().getNameSimple(), object);
+				}
+				
 				
 				 /*Caso ele tenha uma referencia já colocada, ela estará no pojoReferenceDataMap
 				 * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
