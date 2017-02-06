@@ -40,7 +40,7 @@ public class PServerFreeMarkerUtil {
 
     private static final Version       VERSION = VERSION_2_3_22;
     private static final Configuration cfg     = new Configuration(VERSION);
-    private static final Logger        LOGGER  = LoggerFactory.getLogger(FreemarkerUtil.class);
+    private static final Logger        LOGGER  = LoggerFactory.getLogger(PServerFreeMarkerUtil.class);
 
     static {
         final BeansWrapper wrapper = new BeansWrapperBuilder(VERSION).build();
