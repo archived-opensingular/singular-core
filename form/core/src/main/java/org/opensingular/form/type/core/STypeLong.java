@@ -53,7 +53,7 @@ public class STypeLong extends STypeSimple<SILong, Long> {
             return null;
         }
         try {
-            return Long.parseLong(valor);
+            return Long.valueOf(valor);
         } catch (Exception e) {
             throw createConversionError(valor, Long.class, null, e);
         }

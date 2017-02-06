@@ -38,7 +38,7 @@ public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumbe
     @Override
     protected Integer parseValuePersistenceString(String persistenceString) {
         try {
-            return Integer.parseInt(persistenceString);
+            return Integer.valueOf(persistenceString);
         } catch (Exception e) {
             throw new SingularFormPersistenceException("O valor da chave não é um inteiro válido", e).add("key",
                     persistenceString);

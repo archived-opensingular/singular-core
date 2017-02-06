@@ -162,7 +162,7 @@ public class MformPersistenciaXML {
             for (int i = 0; i < atributos.getLength(); i++) {
                 Attr at = (Attr) atributos.item(i);
                 if (at.getName().equals(ATRIBUTO_ID)) {
-                    instancia.setId(Integer.parseInt(at.getValue()));
+                    instancia.setId(Integer.valueOf(at.getValue()));
                 } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
                     instancia.setAttributeValue(at.getName(), at.getValue());
                 }
