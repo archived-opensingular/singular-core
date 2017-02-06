@@ -174,7 +174,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
                 Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8.name())) {
             defaults.load(reader);
         } catch (IOException ex) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException("", ex);
         }
         return defaults;
     }

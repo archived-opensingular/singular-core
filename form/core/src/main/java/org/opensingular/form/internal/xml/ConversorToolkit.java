@@ -169,9 +169,7 @@ public final class ConversorToolkit {
             }
             return getTimeFormat().parse(novaHora);
         } catch (ParseException e) {
-            throw new SingularFormException(
-                    "Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(),
-                    e.getErrorOffset());
+            throw new SingularFormException("Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(), e);
         }
     }
 
