@@ -17,27 +17,15 @@
 package org.opensingular.server.commons.wicket.view.form;
 
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.service.IFormService;
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;
 
 public class DiffFormPage extends Template {
 
-    @Inject
-    @Named("formConfigWithDatabase")
-    private SFormConfig<String> singularFormConfig;
-
-    @Inject
-    private IFormService formService;
     private FormPageConfig config;
 
 
     public DiffFormPage(FormPageConfig config) {
-
         this.config = config;
     }
 
