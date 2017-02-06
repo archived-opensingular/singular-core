@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
@@ -69,7 +70,7 @@ public class SingularDefaultPersistenceConfiguration {
 
     protected ResourceDatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.setSqlScriptEncoding("UTF-8");
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
         populator.addScript(drops);
         populator.addScript(sqlCreateTablesForm);
         populator.addScript(sqlCreateTables);
@@ -98,7 +99,7 @@ public class SingularDefaultPersistenceConfiguration {
         initializer.setDataSource(dataSource);
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.setSeparator("#");
-        populator.setSqlScriptEncoding("UTF-8");
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
         populator.addScript(sqlCreateFunction);
         initializer.setDatabasePopulator(populator);
         initializer.setEnabled(isDatabaseInitializerEnabled());

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static freemarker.template.Configuration.VERSION_2_3_22;
@@ -45,7 +46,7 @@ public class PServerFreeMarkerUtil {
         final BeansWrapper wrapper = new BeansWrapperBuilder(VERSION).build();
         cfg.setObjectWrapper(wrapper);
         cfg.setTemplateLoader(new ClassTemplateLoader(PServerFreeMarkerUtil.class.getClassLoader(), "templates"));
-        cfg.setDefaultEncoding("UTF-8");
+        cfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
     }
 
     public static String mergeWithFreemarker(String templateName, Map<String, Object> model) {

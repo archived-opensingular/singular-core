@@ -16,6 +16,7 @@
 
 package org.opensingular.server.commons.wicket.view.template;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -145,7 +146,7 @@ public class Menu extends Panel {
         @Override
         protected void respond(AjaxRequestTarget target) {
             final String        type     = "application/json";
-            final String        encoding = "UTF-8";
+            final String        encoding = StandardCharsets.UTF_8.name();
             final StringBuilder json     = new StringBuilder();
             json.append('{');
             for (int i = 0; i < itens.size(); i++) {
