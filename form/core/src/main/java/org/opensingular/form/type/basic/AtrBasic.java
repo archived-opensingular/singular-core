@@ -274,7 +274,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic upperCaseText() {
-        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, true);
+        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, Boolean.TRUE);
         return this;
     }
 

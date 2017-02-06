@@ -116,8 +116,8 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_EXISTS_FUNCTION);
         pb.createAttributeIntoType(STypeSimple.class, ATR_INITIAL_VALUE);
         pb.createAttributeIntoType(STypeSimple.class, ATR_FORMULA);
-        pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(true);
-        pb.createAttributeIntoType(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
+        pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(Boolean.TRUE);
+        pb.createAttributeIntoType(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(Boolean.TRUE);
         pb.createAttributeIntoType(STypeList.class, ATR_PHRASE_BREAK).withDefaultValueIfNull(PhraseBreak.COMMA);
         pb.createAttributeIntoType(STypeList.class, ATR_ITEM_LABEL);
         pb.createAttributeIntoType(STypeList.class, ATR_MAXIMUM_SIZE);
@@ -125,8 +125,8 @@ public class SPackageBasic extends SPackage {
 
         pb.createAttributeIntoType(STypeDate.class, ATR_MAX_DATE);
 
-        pb.getAttribute(ATR_REQUIRED).withDefaultValueIfNull(false);
-        pb.getAttribute(ATR_EXISTS).withDefaultValueIfNull(true);
+        pb.getAttribute(ATR_REQUIRED).withDefaultValueIfNull(Boolean.FALSE);
+        pb.getAttribute(ATR_EXISTS).withDefaultValueIfNull(Boolean.TRUE);
 
         // Cria os tipos de atributos
         pb.createAttributeType(ATR_MAX_LENGTH);
@@ -158,7 +158,7 @@ public class SPackageBasic extends SPackage {
 
         pb.addAttribute(STypeString.class, ATR_MAX_LENGTH, 100);
 //        pb.addAttribute(STypeString.class, ATR_EDIT_SIZE, 50);
-        pb.addAttribute(STypeString.class, ATR_UPPER_CASE_TEXT, false);
+        pb.addAttribute(STypeString.class, ATR_UPPER_CASE_TEXT, Boolean.FALSE);
 
         pb.addAttribute(STypeInteger.class, ATR_MAX_LENGTH);
 //        pb.addAttribute(STypeInteger.class, ATR_EDIT_SIZE);

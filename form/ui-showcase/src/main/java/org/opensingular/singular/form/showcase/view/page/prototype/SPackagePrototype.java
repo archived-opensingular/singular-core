@@ -122,7 +122,7 @@ public class SPackagePrototype extends SPackage {
 
         fieldType.addFieldBoolean(IS_LIST)
                 .withRadioView()
-                .withDefaultValueIfNull(false)
+                .withDefaultValueIfNull(Boolean.FALSE)
                 .asAtr().label("Múltiplo").getTipo().asAtrBootstrap().colPreference(2);
 
         addAttributeFields(pb, fieldType, type);
