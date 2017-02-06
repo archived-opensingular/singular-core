@@ -60,7 +60,7 @@ public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> 
             Integer digit1 = this.retrieveDV(cnpjArray);
             Integer digit2 = this.retrieveDV(cnpjArray, digit1);
 
-            String dvExpected = digit1.toString() + digit2.toString();
+            String dvExpected = String.format("%d%d", digit1, digit2);
             String dv = cnpjArray[cnpjArray.length - 2] + "" + cnpjArray[cnpjArray.length - 1];
 
             return dv.equals(dvExpected);

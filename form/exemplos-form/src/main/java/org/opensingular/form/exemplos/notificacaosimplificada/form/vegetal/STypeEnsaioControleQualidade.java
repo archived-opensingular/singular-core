@@ -108,7 +108,7 @@ public class STypeEnsaioControleQualidade extends STypeComposite<SIComposite> {
                     .visible(i -> TipoReferencia.NAO_FARMACOPEICO.getId().equals(Value.of(i, idTipoReferencia)));
 
             STypeAttachment f           = resultadosLote.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(STypeAttachment.FIELD_NAME);
+            SType<?> nomeArquivo = f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 

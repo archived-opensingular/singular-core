@@ -36,7 +36,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
 
     private static final SingularPropertiesImpl INSTANCE = new SingularPropertiesImpl();
 
-    private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularProperties.class);
+    private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularPropertiesImpl.class);
     private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
     private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
     private volatile Properties properties;
