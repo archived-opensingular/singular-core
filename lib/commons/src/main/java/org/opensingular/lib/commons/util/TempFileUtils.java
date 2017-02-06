@@ -43,7 +43,7 @@ public abstract class TempFileUtils {
     private TempFileUtils() {
     }
 
-    public static void withTempDir(IConsumerEx<File, IOException> callback) throws IOException {
+    public static void withTempDir(IConsumerEx<File, IOException> callback) {
         internalWithTempFile(Files::createTempDir, callback);
     }
 

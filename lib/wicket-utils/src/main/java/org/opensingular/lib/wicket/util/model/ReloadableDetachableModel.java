@@ -92,7 +92,7 @@ public abstract class ReloadableDetachableModel<T> implements IModel<T>
             transientModelObject = load();
 
             if (log.isDebugEnabled()) {
-                log.debug("loaded transient object {} for {}, requestCycle", transientModelObject, this, RequestCycle.get());
+                log.debug("loaded transient object {} for {}, {}", transientModelObject, this, RequestCycle.get());
             }
 
             onAttach();
