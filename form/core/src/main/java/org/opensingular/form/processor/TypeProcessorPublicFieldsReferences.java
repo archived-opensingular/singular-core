@@ -291,7 +291,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             classInfoCache = CacheBuilder.newBuilder().weakValues().build(
                     new CacheLoader<Class<?>, CompositePublicInfo>() {
                         @Override
-                        public CompositePublicInfo load(Class<?> aClass) throws Exception {
+                        public CompositePublicInfo load(Class<?> aClass) {
                             return readPublicFields(aClass);
                         }
                     });

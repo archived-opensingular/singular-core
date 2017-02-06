@@ -119,7 +119,7 @@ final class ErrorHandlerMElement implements ErrorHandler {
      *
      * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
-    public void warning(SAXParseException exception) throws SAXException {
+    public void warning(SAXParseException exception)  {
     }
 
 }

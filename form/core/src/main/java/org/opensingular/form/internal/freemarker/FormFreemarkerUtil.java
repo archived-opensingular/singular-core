@@ -43,7 +43,8 @@ public final class FormFreemarkerUtil {
 
     private static Configuration cfg;
 
-    private FormFreemarkerUtil() {}
+    private FormFreemarkerUtil() {
+    }
 
     public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
         return context -> merge(context.instance(), stringTemplate);
@@ -201,7 +202,7 @@ public final class FormFreemarkerUtil {
                 Optional<Constructor<?>> constructor = Arrays.stream(getClass().getConstructors())
                         .filter(c -> c.getParameterCount() == 1 && c.getParameterTypes()[0].isAssignableFrom(getInstance().getClass()))
                         .findFirst();
-                if (! constructor.isPresent()) {
+                if (!constructor.isPresent()) {
                     throw new SingularFormException(
                             "Não foi encontrado o construtor " + getClass().getSimpleName() + "(SInstance)");
                 }
@@ -395,12 +396,12 @@ public final class FormFreemarkerUtil {
             return new TemplateModelIterator() {
 
                 @Override
-                public TemplateModel next() throws TemplateModelException {
+                public TemplateModel next() {
                     return toTemplateModel(it.next());
                 }
 
                 @Override
-                public boolean hasNext() throws TemplateModelException {
+                public boolean hasNext() {
                     return it.hasNext();
                 }
             };
