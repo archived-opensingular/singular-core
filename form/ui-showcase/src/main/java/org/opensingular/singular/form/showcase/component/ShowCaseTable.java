@@ -129,7 +129,7 @@ public class ShowCaseTable {
 
     private ShowCaseGroup addGroup(String groupName, Icone icon, ShowCaseType tipo) {
         Map<String, ShowCaseGroup> groups;
-        if (ShowCaseType.FORM.equals(tipo)) {
+        if (ShowCaseType.FORM == tipo) {
             groups = formGroups;
         } else {
             groups = studioGroups;
