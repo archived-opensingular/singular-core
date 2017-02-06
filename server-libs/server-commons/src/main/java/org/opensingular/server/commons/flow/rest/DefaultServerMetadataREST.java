@@ -161,7 +161,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         caixaEntrada.setIcone(Icone.DOCS);
         caixaEntrada.setSearchEndpoint(SEARCH_TASKS);
         caixaEntrada.setCountEndpoint(COUNT_TASKS);
-        caixaEntrada.setEndedTasks(false);
+        caixaEntrada.setEndedTasks(Boolean.FALSE);
         caixaEntrada.setFieldsDatatable(criarFieldsDatatableWorklist());
         caixaEntrada.addAction(ASSIGN);
         caixaEntrada.addAction(DefaultActions.ANALYSE);
@@ -189,7 +189,7 @@ public class DefaultServerMetadataREST implements IServerMetadataREST {
         concluidas.setIcone(Icone.DOCS);
         concluidas.setSearchEndpoint(SEARCH_TASKS);
         concluidas.setCountEndpoint(COUNT_TASKS);
-        concluidas.setEndedTasks(true);
+        concluidas.setEndedTasks(Boolean.TRUE);
         concluidas.setFieldsDatatable(criarFieldsDatatableWorklistConcluidas());
         concluidas.addAction(DefaultActions.VIEW);
         itemBoxes.add(concluidas);

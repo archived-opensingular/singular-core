@@ -406,7 +406,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected Boolean isTransitionButtonVisibible(MTransition transition) {
-        return true;
+        return Boolean.TRUE;
     }
 
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance, boolean mainForm) {

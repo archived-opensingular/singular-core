@@ -142,7 +142,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                     getLogger().error(msg);
                 } else {
                     getLogger().error(msg, ex);
-                    errorCache.put(ex.getClass(), true);
+                    errorCache.put(ex.getClass(), Boolean.TRUE);
                 }
                 return false;
             }

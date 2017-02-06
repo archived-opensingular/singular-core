@@ -158,7 +158,7 @@ public class BoxContent extends AbstractBoxContent<BoxItemModel> {
                         getMessage("label.table.column.history"),
                         Icone.HISTORY,
                         this::criarLinkHistorico,
-                        (x) -> true,
+                        (x) -> Boolean.TRUE,
                         c -> c.styleClasses($m.ofValue("worklist-action-btn")));
 
         builder.appendColumn(actionColumn);

@@ -62,7 +62,7 @@ public enum JGraphFlowRenderer implements IFlowRenderer {
         final mxStylesheet foo = new mxStylesheet();
 
         final Map<String, Object> stil = new HashMap<>();
-        stil.put(mxConstants.STYLE_ROUNDED, true);
+        stil.put(mxConstants.STYLE_ROUNDED, Boolean.TRUE);
         stil.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
         stil.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
         stil.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
