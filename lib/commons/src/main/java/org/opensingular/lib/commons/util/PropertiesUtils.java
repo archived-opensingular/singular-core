@@ -36,7 +36,7 @@ public abstract class PropertiesUtils {
     public static Properties propertiesFromMap(Map<String, String> map) {
         Properties props = new Properties();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            props.put(entry.getKey(), entry.getValue());
+            props.setProperty(entry.getKey(), entry.getValue());
         }
         return props;
     }

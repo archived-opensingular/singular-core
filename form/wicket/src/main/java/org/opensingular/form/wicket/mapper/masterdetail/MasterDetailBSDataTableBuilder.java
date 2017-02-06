@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-class MasterDetailBSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> extends BSDataTableBuilder<T, S, PREVCOL> implements Serializable {
+class MasterDetailBSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> extends BSDataTableBuilder<T, S, PREVCOL> {
 
     MasterDetailBSDataTableBuilder(ISortableDataProvider<T, S> dataProvider) {
         super(dataProvider);

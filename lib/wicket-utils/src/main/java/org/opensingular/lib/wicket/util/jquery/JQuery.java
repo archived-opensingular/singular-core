@@ -36,10 +36,8 @@ public class JQuery {
 //    }
 
     public static StringBuilder convertEvent(Component component, String originalEvent, String newEvent) {
-        return $(component).append(""
-            + ".on('" + originalEvent + "', function(){"
-            + " $(this).trigger('" + newEvent + "');"
-            + "});");
+        return $(component).append("" + ".on('").append(originalEvent).append("', function(){")
+                .append(" $(this).trigger('").append(newEvent).append("');").append("});");
     }
 
     public static CharSequence redirectEvent(
@@ -51,8 +49,7 @@ public class JQuery {
     }
 
     public static StringBuilder $(Component... components) {
-        final Component[] allComponents = components;
-        final String selector = Arrays.stream(allComponents).filter(WicketUtils.$L.notNull())
+        final String selector = Arrays.stream(components).filter(WicketUtils.$L.notNull())
             .map(it -> (it instanceof Page) ? "document" : "#" + it.getMarkupId())
             .collect(Collectors.joining(","));
         return $(selector);

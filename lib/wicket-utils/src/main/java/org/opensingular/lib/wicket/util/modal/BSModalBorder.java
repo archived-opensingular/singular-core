@@ -415,7 +415,7 @@ public class BSModalBorder extends Border {
         StringBuilder sb = JQuery.$(this);
 
         if (blockingFunction != null)
-            sb.append(".one('hidden.bs.modal', ").append(blockingFunction).append(")");
+            sb.append(".one('hidden.bs.modal', ").append(blockingFunction).append(')');
 
         return sb.append(".modal('hide')");
 

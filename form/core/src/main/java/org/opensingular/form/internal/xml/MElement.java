@@ -377,11 +377,7 @@ public abstract class MElement implements Element, Serializable {
         } else if (o instanceof Calendar) {
             return addElement(nome, (Calendar) o);
         } else if (o instanceof InputStream) {
-            try {
-                return addElement(nome, (InputStream) o);
-            } catch (IOException e) {
-                throw SingularException.rethrow(e.getMessage(), e);
-            }
+            return addElement(nome, (InputStream) o);
         } else if (o instanceof byte[]) {
             return addElement(nome, (byte[]) o);
         } else {
@@ -492,7 +488,7 @@ public abstract class MElement implements Element, Serializable {
      *
      * @throws IOException se erro na leitura dos bytes
      */
-    public final MElement addElement(String nome, InputStream in) throws IOException {
+    public final MElement addElement(String nome, InputStream in) {
         return addElement(nome, MElementWrapper.toBASE64(in));
     }
 
@@ -1401,7 +1397,7 @@ public abstract class MElement implements Element, Serializable {
      * @throws IOException Se houver problemas de conversão ou de escrita para a
      * saida.
      */
-    public final void getByteBASE64(String xPath, OutputStream out) throws IOException {
+    public final void getByteBASE64(String xPath, OutputStream out) {
         MElementWrapper.fromBASE64(getValorNotNull(xPath), out);
     }
 

@@ -19,6 +19,7 @@ package org.opensingular.form;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -89,12 +90,12 @@ public abstract class STypes {
         return StreamSupport.stream(new STypeRecursiveSpliterator(root, includeRoot), false);
     }
 
-    public static Collection<? extends SType<?>> containedTypes(SType<?> node) {
+    public static Collection<SType<?>> containedTypes(SType<?> node) {
         List<SType<?>> result = new ArrayList<>();
         if (node instanceof ICompositeType) {
             result.addAll(((ICompositeType) node).getContainedTypes());
         }
-        result.removeIf(it -> it == null);
+        result.removeIf(Objects::isNull);
         return result;
     }
 

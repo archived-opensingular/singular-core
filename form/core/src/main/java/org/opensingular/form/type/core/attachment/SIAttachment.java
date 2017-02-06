@@ -27,6 +27,8 @@ import java.util.Optional;
 
 public class SIAttachment extends SIComposite {
 
+    public static final String[] SUFFIXES = {"B", "KB", "MB", "GB"};
+
     private AttachmentDocumentService getAttachmentService() {
         return AttachmentDocumentService.lookup(this);
     }
@@ -146,16 +148,15 @@ public class SIAttachment extends SIComposite {
         if (getFileSize() <= 0) {
             return "";
         }
-        final String[] sufix = new String[]{"B", "KB", "MB", "GB"};
         int posSufix = 0;
         double bytesSize = getFileSize();
 
-        while (bytesSize > 900 && posSufix < sufix.length - 1) {
+        while (bytesSize > 900 && posSufix < SUFFIXES.length - 1) {
             bytesSize = bytesSize / 1024;
             posSufix++;
         }
 
-        return Math.round(bytesSize) + " " + sufix[posSufix];
+        return Math.round(bytesSize) + " " + SUFFIXES[posSufix];
     }
 
     @Override

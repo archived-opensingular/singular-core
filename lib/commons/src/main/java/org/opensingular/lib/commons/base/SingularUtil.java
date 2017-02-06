@@ -20,6 +20,7 @@ import com.google.common.base.Throwables;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.Normalizer;
 
@@ -33,7 +34,7 @@ public final class SingularUtil {
     }
     
     public static String toSHA1(Object object) {
-        return toSHA1(object.toString().getBytes());
+        return toSHA1(object.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     public static String toSHA1(byte[] bytes) {
