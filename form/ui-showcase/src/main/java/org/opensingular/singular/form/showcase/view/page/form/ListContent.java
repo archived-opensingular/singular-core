@@ -111,7 +111,6 @@ public class ListContent extends Content implements SingularWicketContainer<List
                 )
                 .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
                 .setStripedRows(false)
-                .add($b.classAppender("worklist"))
                 .build("form-list");
         return dataTable;
     }
