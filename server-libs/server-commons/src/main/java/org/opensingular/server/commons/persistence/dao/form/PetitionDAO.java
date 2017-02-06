@@ -261,8 +261,8 @@ public class PetitionDAO<T extends PetitionEntity> extends BaseDAO<T, Long> {
 
     public PetitionAuthMetadataDTO findPetitionAuthMetadata(Long petitionId) {
         StringBuilder query = new StringBuilder();
-        query.append(" select distinct new " + PetitionAuthMetadataDTO.class.getName() + "(ft.abbreviation, ftm.abbreviation, td.abbreviation, pd.key, ct.cod) from ");
-        query.append(" " + PetitionEntity.class.getName() + " pe ");
+        query.append(" select distinct new ").append(PetitionAuthMetadataDTO.class.getName()).append("(ft.abbreviation, ftm.abbreviation, td.abbreviation, pd.key, ct.cod) from ");
+        query.append(" ").append(PetitionEntity.class.getName()).append(" pe ");
         query.append(" left join pe.processDefinitionEntity pd  ");
         query.append(" left join pe.processInstanceEntity pi  ");
         query.append(" left join pi.tasks ct  ");

@@ -183,8 +183,7 @@ public class TaskInstanceDAO extends BaseDAO<TaskInstanceEntity, Integer> {
         StringBuilder sb = new StringBuilder();
 
         sb
-                .append(" select ti ")
-                .append(" from " + getPetitionEntityClass().getName() + " pet ")
+                .append(" select ti ").append(" from ").append(getPetitionEntityClass().getName()).append(" pet ")
                 .append(" inner join pet.processInstanceEntity pi ")
                 .append(" inner join pi.tasks ti ")
                 .append(" inner join ti.task task ")
