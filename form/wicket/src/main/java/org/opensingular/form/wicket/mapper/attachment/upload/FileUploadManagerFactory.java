@@ -28,7 +28,7 @@ public class FileUploadManagerFactory implements Loggable, Serializable {
         if (manager == null) {
             manager = new FileUploadManager();
             session.setAttribute(FileUploadManager.SESSION_KEY, manager);
-            getLogger().debug("Manager created: SESSION_ID = " + session.getId());
+            getLogger().debug("Manager created: SESSION_ID = {}", session.getId());
         }
         return manager;
     }
