@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.pdf;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ final class PDFUtilWin extends PDFUtil {
     @Override
     protected void writeToFile(File destination, String content) throws SingularPDFException {
         try (FileOutputStream fos = new FileOutputStream(destination);
-             Writer fw = new OutputStreamWriter(fos, Charset.forName("UTF-8").newEncoder())){
+             Writer fw = new OutputStreamWriter(fos, StandardCharsets.UTF_8.newEncoder())){
             fw.write(content);
         } catch(Exception e) {
             throw new SingularPDFException("Erro escrevendo conteúdo no arquivo" + destination.getAbsolutePath(), e);

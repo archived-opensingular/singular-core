@@ -8,12 +8,14 @@ import org.opensingular.form.wicket.helpers.DummyPage;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
+
 public class DummyPageTest {
 
     @Test
     public void testPageRendering() {
         WicketTester tester = new WicketTester();
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
 
         DummyPage dummyPage = new DummyPage() ;
         dummyPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});

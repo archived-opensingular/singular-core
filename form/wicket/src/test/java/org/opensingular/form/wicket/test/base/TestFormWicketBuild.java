@@ -29,6 +29,7 @@ import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.findContainerRelativePath;
@@ -52,7 +53,7 @@ public class TestFormWicketBuild  {
                 return null;
             }
         });
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
     }
 
     protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {

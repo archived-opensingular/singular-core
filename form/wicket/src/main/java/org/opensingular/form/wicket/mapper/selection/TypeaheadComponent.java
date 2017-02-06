@@ -49,6 +49,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -366,7 +367,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
         requestCycle().scheduleRequestHandlerAfterCurrent(
-                new TextRequestHandler("application/json", "utf-8", generateResultOptions(values(filterValue()))));
+                new TextRequestHandler("application/json", StandardCharsets.UTF_8.name(), generateResultOptions(values(filterValue()))));
     }
 
     private String filterValue() {

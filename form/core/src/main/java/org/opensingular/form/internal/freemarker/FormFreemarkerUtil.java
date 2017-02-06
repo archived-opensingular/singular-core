@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 
@@ -83,7 +84,7 @@ public final class FormFreemarkerUtil {
     private static synchronized Configuration getConfiguration() {
         if (cfg == null) {
             Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
-            novo.setDefaultEncoding("UTF-8");
+            novo.setDefaultEncoding(StandardCharsets.UTF_8.name());
             novo.setLocale(new Locale("pt", "BR"));
             novo.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             cfg = novo;
