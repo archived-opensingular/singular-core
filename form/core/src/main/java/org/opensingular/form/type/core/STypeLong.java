@@ -20,6 +20,8 @@ import org.opensingular.form.STypeSimple;
 import org.opensingular.form.SInfoType;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigInteger;
+
 @SInfoType(name = "Long", spackage = SPackageCore.class)
 public class STypeLong extends STypeSimple<SILong, Long> {
 
@@ -34,14 +36,14 @@ public class STypeLong extends STypeSimple<SILong, Long> {
     @Override
     protected Long convertNotNativeNotString(Object valor) {
         if (valor instanceof Number) {
-            long longValue = ((Number) valor).longValue();
-            if (longValue > Long.MAX_VALUE) {
+            BigInteger bigIntegerValue = new BigInteger(String.valueOf(valor));
+            if (bigIntegerValue.compareTo(new BigInteger(String.valueOf(Long.MAX_VALUE))) > 0) {
                 throw createConversionError(valor, Long.class, " Valor muito grande.", null);
             }
-            if (longValue < Long.MIN_VALUE) {
+            if (bigIntegerValue.compareTo(new BigInteger(String.valueOf(Long.MIN_VALUE))) < 0) {
                 throw createConversionError(valor, Long.class, " Valor muito pequeno.", null);
             }
-            return ((Number) valor).longValue();
+            return bigIntegerValue.longValue();
         }
         throw createConversionError(valor);
     }
