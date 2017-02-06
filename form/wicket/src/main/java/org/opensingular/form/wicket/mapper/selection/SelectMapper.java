@@ -119,16 +119,16 @@ public class SelectMapper extends AbstractControlsFieldComponentMapper {
                 final List<Object>              ids          = new ArrayList<>();
                 final IFunction<Object, Object> idFunction   = atrProvider.getIdFunction();
 
-                /**
-                 * Collect All Ids
+                /*
+                  Collect All Ids
                  */
                 values.forEach(v -> ids.add(idFunction.apply(v)));
 
                 if (!ids.contains(idFunction.apply(converted))) {
 
-                    /**
-                     * Se for requisição Ajax, limpa o campo caso o valor não for encontrado,
-                     * caso contrario mantem o valor.
+                    /*
+                      Se for requisição Ajax, limpa o campo caso o valor não for encontrado,
+                      caso contrario mantem o valor.
                      */
 
                     if (requestCycle != null && requestCycle.find(AjaxRequestTarget.class) != null) {

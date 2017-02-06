@@ -104,7 +104,7 @@ public class ProcessadorCodigoFonte {
 
     public String getJavadoc() {
         StringBuilder sb = new StringBuilder();
-        javadocDeClasse.forEach(s -> sb.append(s).append("\n"));
+        javadocDeClasse.forEach(s -> sb.append(s).append('\n'));
         return sb.toString();
     }
 

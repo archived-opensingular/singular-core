@@ -16,26 +16,25 @@
 
 package org.opensingular.lib.wicket.util.datatable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
 import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @param <T>       Tipo de objeto que sera renderizado pelas celulas da coluna
  * @param <S>       Propriedade de Ordenacao
  * @param <PREVCOL> Coluna
  */
-public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
+public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements Serializable {
 
 
     public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {
@@ -52,7 +51,6 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
     private boolean advanceTable         = false;
     private boolean condensedTable       = false;
     private boolean showNoRecordsToolbar = true;
-    private List<Behavior> behaviors = new ArrayList<>();
 
     public BSDataTableBuilder() {
     }
@@ -154,11 +152,6 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     public BSDataTableBuilder<T, S, ?> withNoRecordsToolbar() {
         showNoRecordsToolbar = false;
-        return this;
-    }
-
-    public BSDataTableBuilder<T, S, ?> add(Behavior behavior) {
-        behaviors.add(behavior);
         return this;
     }
 

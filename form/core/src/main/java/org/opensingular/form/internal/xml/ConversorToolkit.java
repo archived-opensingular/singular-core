@@ -17,6 +17,7 @@
 package org.opensingular.form.internal.xml;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -125,7 +126,7 @@ public final class ConversorToolkit {
 
         try {
             checarNull(data);
-            byte[] novo = data.getBytes();
+            byte[] novo = data.getBytes(StandardCharsets.UTF_8);
             for (int i = 0; i < novo.length; i++) {
                 switch (novo[i]) {
                     case '\\':
@@ -138,9 +139,9 @@ public final class ConversorToolkit {
                 }
             }
             if (data.length() > 8) {
-                return getDateFormat().parse(new String(novo));
+                return getDateFormat().parse(new String(novo, StandardCharsets.UTF_8));
             } else {
-                return getDateFormat("dd/MM/yy").parse(new String(novo));
+                return getDateFormat("dd/MM/yy").parse(new String(novo, StandardCharsets.UTF_8));
             }
         } catch (ParseException e) {
             throw new SingularFormException(
@@ -160,7 +161,7 @@ public final class ConversorToolkit {
                 }
             }
             if (pontos < 3) {
-                StringBuilder sb = new StringBuilder(novaHora + 9);
+                StringBuilder sb = new StringBuilder(novaHora).append(9);
                 sb.append(novaHora);
                 for (; pontos < 3; pontos++) {
                     sb.append(":00");

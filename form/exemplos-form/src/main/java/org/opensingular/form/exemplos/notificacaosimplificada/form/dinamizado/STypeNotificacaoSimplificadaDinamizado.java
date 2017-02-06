@@ -170,13 +170,11 @@ public class STypeNotificacaoSimplificadaDinamizado extends STypeComposite<SICom
                     .dependsOn(descricaoDinamizada)
                     .visible(i -> {
                         final SIList<SIComposite> list = i.findNearest(formulasHomeopaticas).orElse(null);
-                        final boolean hasIdDescricaoDinamizadaPresent = list.stream()
+                        return list != null && list.stream()
                                 .map(SIComposite::getChildren)
                                 .flatMap(Collection::stream)
                                 .map(ins -> ins.findNearest(descricaoDinamizada))
-                                .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
-                                .findFirst().isPresent();
-                        return !list.isEmpty() && hasIdDescricaoDinamizadaPresent;
+                                .anyMatch(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada));
                     })
                     .displayString("${descricao}")
                     .asAtrBootstrap()

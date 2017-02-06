@@ -30,7 +30,7 @@ public abstract class BaseEntity<PK extends Serializable> implements Serializabl
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(getClass().getName());
-        s.append("[id = ").append(getCod()).append("]");
+        s.append("[id = ").append(getCod()).append(']');
         return s.toString();
     }
 
