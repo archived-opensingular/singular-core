@@ -15,16 +15,13 @@
  */
 package org.opensingular.flow.schedule.quartz;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Calendar;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.JobListener;
 import org.quartz.ListenerManager;
 import org.quartz.ObjectAlreadyExistsException;
@@ -34,6 +31,7 @@ import org.quartz.SchedulerListener;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.TriggerListener;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.simpl.SimpleClassLoadHelper;
 import org.quartz.spi.ClassLoadHelper;
 import org.quartz.xml.XMLSchedulingDataProcessor;
@@ -56,7 +54,7 @@ public abstract class SchedulerAccessor {
 
     private String[] jobSchedulingDataLocations;
 
-    private List<JobDetail> jobDetails;
+    private Set<JobDetail> jobDetails;
 
     private Map<String, Calendar> calendars;
 
@@ -112,7 +110,7 @@ public abstract class SchedulerAccessor {
      * @see org.quartz.JobDetail
      */
     public void setJobDetails(JobDetail... jobDetails) {
-        this.jobDetails = new ArrayList<>(Arrays.asList(jobDetails));
+        this.jobDetails = new LinkedHashSet<>(Arrays.asList(jobDetails));
     }
 
     /**
@@ -184,7 +182,7 @@ public abstract class SchedulerAccessor {
                     addJobToScheduler(jobDetail);
                 }
             } else {
-                this.jobDetails = new LinkedList<>();
+                this.jobDetails = new LinkedHashSet<>();
             }
 
             if (this.calendars != null) {
@@ -198,10 +196,9 @@ public abstract class SchedulerAccessor {
                     addTriggerToScheduler(trigger);
                 }
             }
+        } catch (SchedulerException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof SchedulerException) {
-                throw (SchedulerException) e;
-            }
             throw new SchedulerException("Registration of jobs and triggers failed: " + e.getMessage(), e);
         }
     }
@@ -330,6 +327,18 @@ public abstract class SchedulerAccessor {
                 listenerManager.addTriggerListener(listener, new LinkedList<>());
             }
         }
+    }
+
+    /**
+     * Recuperar as chaves de todos os jobs agendados
+     * por meio deste objeto.
+     *
+     * @return um set com todas as chaves, caso não exista nenhuma
+     *          retorna um set vazio.
+     * @throws SchedulerException
+     */
+    public Set<JobKey> getAllJobKeys() throws SchedulerException {
+        return getScheduler().getJobKeys(GroupMatcher.anyGroup());
     }
 
     /**

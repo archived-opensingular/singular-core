@@ -91,10 +91,8 @@ public abstract class ReloadableDetachableModel<T> implements IModel<T>
             attached = true;
             transientModelObject = load();
 
-            if (log.isDebugEnabled())
-            {
-                log.debug("loaded transient object " + transientModelObject + " for " + this +
-                    ", requestCycle " + RequestCycle.get());
+            if (log.isDebugEnabled()) {
+                log.debug("loaded transient object {} for {}, {}", transientModelObject, this, RequestCycle.get());
             }
 
             onAttach();
@@ -124,7 +122,7 @@ public abstract class ReloadableDetachableModel<T> implements IModel<T>
     {
         StringBuilder sb = new StringBuilder(super.toString());
         sb.append(":attached=").append(attached).append(":tempModelObject=[").append(
-            this.transientModelObject).append("]");
+            this.transientModelObject).append(']');
         return sb.toString();
     }
 

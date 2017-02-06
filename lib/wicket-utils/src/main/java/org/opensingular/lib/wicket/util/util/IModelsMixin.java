@@ -16,21 +16,17 @@
 
 package org.opensingular.lib.wicket.util.util;
 
-import static java.util.Comparator.*;
-
-import java.io.Serializable;
-
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.PropertyModel;
-
+import org.apache.wicket.model.*;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.model.ValueModel;
+
+import java.io.Serializable;
+
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsFirst;
 
 @SuppressWarnings({ "serial" })
 public interface IModelsMixin extends Serializable {
@@ -95,12 +91,7 @@ public interface IModelsMixin extends Serializable {
     }
 
     default public <T> IModel<T> get(ISupplier<T> supplier) {
-        return new IReadOnlyModel<T>() {
-            @Override
-            public T getObject() {
-                return supplier.get();
-            }
-        };
+        return (IReadOnlyModel<T>) () -> supplier.get();
     }
 
     default public <T> IModel<T> getSet(ISupplier<T> getter, IConsumer<T> setter) {

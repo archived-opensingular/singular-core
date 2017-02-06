@@ -92,3 +92,13 @@ CREATE TABLE DBSINGULAR.TB_ANOTACAO_FORMULARIO
    CO_VERSAO_ANOTACAO_ATUAL INTEGER              NULL,
    CONSTRAINT PK_TB_ANOTACAO PRIMARY KEY (CO_VERSAO_FORMULARIO, CO_CHAVE_ANOTACAO)
 );
+
+/*==============================================================*/
+/* Table: TB_ANEXO_FORMULARIO                                   */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_ANEXO_FORMULARIO
+(
+   CO_VERSAO_FORMULARIO NUMBER               NOT NULL,
+   CO_ARQUIVO           NUMBER               NOT NULL,
+   CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO, CO_ARQUIVO)
+);

@@ -6,10 +6,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>1.5.4</version>
+        <version>1.5.7</version>
     </parent>
 
-    <artifactId>flow-schedule</artifactId>
+    <artifactId>singular-flow-schedule</artifactId>
     <name>[singular :: flow :: schedule]</name>
     <packaging>jar</packaging>
 
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.5.4</version>
+            <version>1.5.7</version>
         </dependency>
         <!-- Quartz framework -->
         <dependency>

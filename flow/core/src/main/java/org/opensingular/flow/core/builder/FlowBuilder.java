@@ -76,7 +76,8 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     }
 
     public void setStartTask(TASK_DEF taskDefinition) {
-        getFlowMap().setStartTask(getFlowMap().getTask(taskDefinition));
+        MAPA flowMap = getFlowMap();
+        flowMap.setStartTask(flowMap.getTask(taskDefinition));
     }
 
     public <T extends ProcessInstance> void setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
@@ -188,11 +189,12 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     }
     
     public BUILDER_TRANSITION addAutomaticTransition(TASK_DEF origin, ITaskPredicate condition, TASK_DEF destination) {
-        return newTransition(getFlowMap().getTask(origin).addAutomaticTransition(condition, getFlowMap().getTask(destination)));
+        MAPA flowMap = getFlowMap();
+        return newTransition(flowMap.getTask(origin).addAutomaticTransition(condition, flowMap.getTask(destination)));
     }
 
     public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy) {
-        getFlowMap().getAllTasks().stream().forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
+        getFlowMap().getAllTasks().forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
     }
 
     public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy, Predicate<MTask<?>> applyToPredicate) {

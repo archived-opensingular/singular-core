@@ -16,15 +16,12 @@
 
 package org.opensingular.form;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.util.transformer.Value;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.opensingular.form.util.transformer.Value;
 
 public class SIComposite extends SInstance implements ICompositeInstance {
 
@@ -162,9 +159,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      * Obtém o valor de um campo a partir do seu tipo O campo deve ser filho
      * imediato desse MTipo
      *
-     * @param field
-     *            Tipo do campo filho
-     * @return
+     * @param field Tipo do campo filho
      */
     public Object getValue(SType<?> field) {
         return getValue(field.getNameSimple());
@@ -220,9 +215,9 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      */
     private int findFieldIndexOpt(PathReader pathReader) {
         if (pathReader.isIndex()) {
-            throw new SingularFormException(pathReader.getErroMsg(this, "Não é uma lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é uma lista"));
         }
-        return getType().findIndexOf(pathReader.getTrecho());
+        return getType().findIndexOf(pathReader.getToken());
     }
 
     /**
@@ -232,18 +227,18 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     private int findFieldIndex(PathReader pathReader) {
         int fieldIndex = findFieldIndexOpt(pathReader);
         if (fieldIndex == -1) {
-            throw new SingularFormException(pathReader.getErroMsg(this, "Não é um campo definido"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é um campo definido"));
         }
         return fieldIndex;
     }
 
     @Override
-    public final <T extends Object> T getValue(String fieldPath, Class<T> resultClass) {
+    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
         return getValue(new PathReader(fieldPath), resultClass);
     }
 
     @Override
-    final <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
+    final <T> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
         SInstance instance = getFieldLocalWithoutCreating(pathReader);
         if (instance != null) {
             return instance.getValueWithDefaultIfNull(pathReader.next(), resultClass);
@@ -262,17 +257,13 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SIComposite other = (SIComposite) obj;
-        if (!getType().equals(other.getType())) {
+        } else if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        return Objects.equals(fields, other.fields);
+        SIComposite other = (SIComposite) obj;
+        return getType().equals(other.getType()) && Objects.equals(fields, other.fields);
     }
 
     private final static class FieldMapOfRecordInstance {
@@ -320,9 +311,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
             if (getClass() != obj.getClass())
                 return false;
             FieldMapOfRecordInstance other = (FieldMapOfRecordInstance) obj;
-            if (!Arrays.equals(instances, other.instances))
-                return false;
-            return true;
+            return Arrays.equals(instances, other.instances);
         }
     }
 }

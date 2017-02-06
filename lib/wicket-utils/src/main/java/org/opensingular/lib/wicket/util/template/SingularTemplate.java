@@ -34,6 +34,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehaviour;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,7 +88,7 @@ public abstract class SingularTemplate extends WebPage {
                 Stream.of(
                         skinnableResource("/global/plugins/respond.min.js"),
                         skinnableResource("/global/plugins/excanvas.min.js")
-                ).map(url -> JavaScriptHeaderItem.forUrl(url, null, false, "UTF-8", "lt IE 9")),
+                ).map(url -> JavaScriptHeaderItem.forUrl(url, null, false, StandardCharsets.UTF_8.name(), "lt IE 9")),
                 Stream.of(
                         skinnableResource("/global/plugins/jquery-migrate.min.js"),
                         skinnableResource("/global/plugins/jquery-ui/jquery-ui.min.js"),

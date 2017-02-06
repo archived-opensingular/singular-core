@@ -51,7 +51,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper {
 
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS = HashMap::new;
-    static final HintKey<Boolean>                  INLINE     = () -> false;
 
     @Override
     public void buildView(WicketBuildContext ctx) {
@@ -129,8 +128,10 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             final SType<?>                 tCampo        = iCampo.getType();
             final HashMap<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
-            return (hintColWidths.containsKey(tCampo.getName()))
-                    ? hintColWidths.get(tCampo.getName())
+            String tCampoName = tCampo.getName();
+
+            return (hintColWidths.containsKey(tCampoName))
+                    ? hintColWidths.get(tCampoName)
                     : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
 

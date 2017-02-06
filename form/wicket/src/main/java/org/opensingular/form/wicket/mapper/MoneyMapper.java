@@ -20,16 +20,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.util.convert.IConverter;
 
 import org.opensingular.form.SInstance;
@@ -63,8 +61,9 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
                 .add(new Behavior() {
                     @Override
                     public void beforeRender(Component component) {
-                        component.getResponse().write("<div class=\"input-group\">");
-                        component.getResponse().write("<div class=\"input-group-addon\">R$</div>");
+                        Response response = component.getResponse();
+                        response.write("<div class=\"input-group\">");
+                        response.write("<div class=\"input-group-addon\">R$</div>");
                     }
 
                     @Override
@@ -97,13 +96,13 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
             final BigDecimal valor = (BigDecimal) mi.getValue();
             final Map<String, Object> options = withOptionsOf(model);
-            final Integer digitos = (int) options.get(PRECISION);
+            final Integer digitos = (Integer) options.get(PRECISION);
             final StringBuilder pattern = new StringBuilder();
 
             pattern.append("R$ ###,###.");
 
             for (int i = 0; i < digitos; i += 1) {
-                pattern.append("#");
+                pattern.append('#');
             }
 
             decimalFormat.applyPattern(pattern.toString());
@@ -137,8 +136,8 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
         Map<String, Object> options = new HashMap<>();
         options.put("thousands", ".");
         options.put("decimal", ",");
-        options.put("allowZero", false);
-        options.put("allowNegative", true);
+        options.put("allowZero", Boolean.FALSE);
+        options.put("allowNegative", Boolean.TRUE);
 
         return options;
     }

@@ -21,7 +21,7 @@ import java.util.Calendar;
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.MBPMUtil;
+import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskPredicates;
@@ -113,8 +113,9 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         flow.from(AGUARDANDO_GERENTE).go(DEFERIR, DEFERIDO);
 
         // Tarefa aguardando analise a mais de um dia é indeferida automaticamente
-        flow.addAutomaticTransition(AGUARDANDO_ANALISE, TaskPredicates.timeLimitInDays(1), INDEFERIDO);
-        flow.addAutomaticTransition(AGUARDANDO_GERENTE, TaskPredicates.timeLimitInDays(1), AGUARDANDO_PUBLICACAO);
+        ITaskPredicate oneDayTimeLimit = TaskPredicates.timeLimitInDays(1);
+        flow.addAutomaticTransition(AGUARDANDO_ANALISE, oneDayTimeLimit, INDEFERIDO);
+        flow.addAutomaticTransition(AGUARDANDO_GERENTE, oneDayTimeLimit, AGUARDANDO_PUBLICACAO);
 
         return flow.build();
     }
@@ -128,13 +129,6 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
 
     public void notificar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("Notificado");
-
     }
 
-//    @SuppressWarnings("unchecked")
-//    public static void main(String[] args) {
-//        MBPMUtil.showSwingDiagram((Class<? extends ProcessDefinition<?>>) new Object() {
-//            /* VAZIO */
-//        }.getClass().getEnclosingClass());
-//    }
 }

@@ -16,15 +16,17 @@
 
 package org.opensingular.lib.commons.base;
 
-import java.security.MessageDigest;
-import java.text.Normalizer;
-
+import com.google.common.base.Throwables;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import com.google.common.base.Throwables;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.text.Normalizer;
 
 public final class SingularUtil {
+
+    private SingularUtil() {}
 
     public static RuntimeException propagate(Throwable throwable) {
         Throwables.propagateIfPossible(throwable, SingularException.class);
@@ -32,7 +34,7 @@ public final class SingularUtil {
     }
     
     public static String toSHA1(Object object) {
-        return toSHA1(object.toString().getBytes());
+        return toSHA1(object.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     public static String toSHA1(byte[] bytes) {
@@ -55,11 +57,8 @@ public final class SingularUtil {
         for (char c : original.toCharArray()) {
             if (sb.length() == 0) {
                 if (Character.isJavaIdentifierStart(c)) {
-                    if (firstCharacterUpperCase) {
-                        sb.append(Character.toUpperCase(c));
-                    } else {
-                        sb.append(Character.toLowerCase(c));
-                    }
+                    c = firstCharacterUpperCase ? Character.toUpperCase(c) : Character.toLowerCase(c);
+                    sb.append(c);
                 }
             } else if (Character.isJavaIdentifierPart(c)) {
                 if (nextUpper) {

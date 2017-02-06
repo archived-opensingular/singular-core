@@ -16,23 +16,23 @@
 
 package org.opensingular.form.io.definition;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-
-import org.opensingular.form.SIList;
+import com.google.common.collect.Lists;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SScopeBase;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
-import com.google.common.collect.Lists;
-
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Transforma a definição de um tipo ou mesmo de um pacote inteiro em uma
@@ -43,7 +43,10 @@ import org.opensingular.lib.commons.internal.function.SupplierUtil;
  */
 public class SFormDefinitionPersistenceUtil {
 
-    private static Supplier<STypePersistenceArchive> typePresistenceArchive = SupplierUtil.cached(() -> createTypePersistence());
+    private final static Supplier<STypePersistenceArchive> typePresistenceArchive = SupplierUtil.cached(
+            SFormDefinitionPersistenceUtil::createTypePersistence);
+
+    private SFormDefinitionPersistenceUtil() {}
 
     public static SIPersistenceArchive toArchive(SType<?> type) {
         ContextArchive ctx = new ContextArchive(type.getDictionary());
@@ -56,8 +59,9 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void ensureType(ContextArchive ctx, SType<?> type) {
-        while (type.getParentScope() instanceof SType) {
-            type = (SType<?>) type.getParentScope();
+        Object i;
+        while ((i = type.getParentScope()) instanceof SType) {
+            type = (SType<?>) i;
         }
         if (!ctx.isNecessaryToArchive(type) || ctx.isAlreadyArchived(type)) {
             return;
@@ -67,11 +71,12 @@ public class SFormDefinitionPersistenceUtil {
     }
 
     private static void writeType(ContextArchive ctx, SIPersistenceType pType, SType<?> type) {
-        pType.setSuperType(ctx.translateImport(type.getSuperType()));
+        SType<?> superType = type.getSuperType();
+        pType.setSuperType(ctx.translateImport(superType));
         
-        ensureType(ctx, type.getSuperType());
+        ensureType(ctx, superType);
 
-        if (type instanceof STypeComposite) {
+        if (type.isComposite()) {
             //TODO (por Daniel Bordin) O código abaixo ainda precisa resolver a questão de field que foram extendido
             // e tiveram apenas uma atributo alterado
             for (SType<?> localField : ((STypeComposite<?>) type).getFieldsLocal()) {
@@ -83,10 +88,10 @@ public class SFormDefinitionPersistenceUtil {
 
     public static SType<?> fromArchive(SIPersistenceArchive persistenceArchive) {
         ContextUnarchive ctx = new ContextUnarchive(persistenceArchive);
-        for (SIPersistencePackage pPackage : Lists.reverse(persistenceArchive.getPackages().getChildren())) {
-            ctx.createNewPackage(pPackage);
-        }
-        for (SIPersistencePackage pPackage : Lists.reverse(persistenceArchive.getPackages().getChildren())) {
+        List<SIPersistencePackage> children = persistenceArchive.getPackages().getChildren();
+        Lists.reverse(children).forEach(ctx::createNewPackage);
+
+        for (SIPersistencePackage pPackage : Lists.reverse(children)) {
             PackageBuilder pkg = ctx.getPackage(pPackage.getPackageName());
             for (SIPersistenceType pType : Lists.reverse(pPackage.getTypes().getChildren())) {
                 SType<?> superType = resolveSuperType(ctx, pkg.getPackage(), pType);
@@ -99,7 +104,7 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void readType(ContextUnarchive ctx, SType<?> newType, SIPersistenceType pType) {
-        if (newType instanceof STypeComposite) {
+        if (newType.isComposite()) {
             readMembers(ctx, (STypeComposite<?>) newType, pType.getMembers());
         }
     }
@@ -144,9 +149,7 @@ public class SFormDefinitionPersistenceUtil {
         }
 
         private void prepareDefaultImports(SDictionary dictionary) {
-            for (SType<?> type : dictionary.getType(SType.class).getPackage().getLocalTypes()) {
-                imports.add(type.getName());
-            }
+            dictionary.getType(SType.class).getPackage().getLocalTypes().forEach(type -> imports.add(type.getName()));
         }
 
         public SIPersistenceArchive getArchive() {
@@ -180,16 +183,11 @@ public class SFormDefinitionPersistenceUtil {
 
     private static class ContextUnarchive {
 
-        private SDictionary dictionary = SDictionary.create();
+        private final SDictionary dictionary = SDictionary.create();
         private final Map<String, PackageBuilder> pkgs = new HashMap<>();
         private final Map<String, String> imports = new HashMap<>();
 
-        private final SIPersistenceArchive pArchive;
-        private final Map<String, SIPersistencePackage> packages = new HashMap<>();
-        private final Map<String, SIPersistenceType> types = new HashMap<>();
-
         public ContextUnarchive(SIPersistenceArchive pArchive) {
-            this.pArchive = pArchive;
             prepareDefaultImports(dictionary);
         }
 

@@ -34,7 +34,6 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.telefoneNacional());
         asAtr().maxLength(15).label("Telefone");
     }
@@ -85,11 +84,13 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         }
         if (phoneMatcher.matches()) {
             String number = "";
-            if (phoneMatcher.groupCount() >= 2 && phoneMatcher.group(2) != null) {
-                number = phoneMatcher.group(2);
+            String secondGroup = phoneMatcher.group(2);
+            if (phoneMatcher.groupCount() >= 2 && secondGroup  != null) {
+                number = secondGroup ;
             }
-            if (phoneMatcher.groupCount() == 3 && phoneMatcher.group(3) != null) {
-                number = number + "-" + phoneMatcher.group(3);
+            String thirdGroup = phoneMatcher.group(3);
+            if (phoneMatcher.groupCount() == 3 && thirdGroup != null) {
+                number = number + "-" + thirdGroup;
             }
             return number;
         }

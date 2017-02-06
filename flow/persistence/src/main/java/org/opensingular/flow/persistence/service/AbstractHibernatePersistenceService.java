@@ -278,7 +278,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     @Override
     public Integer updateVariableValue(PROCESS_INSTANCE processInstance, VarInstance mVariavel, Integer dbVariableCod) {
         SessionWrapper ss = getSession();
-        Object valorAjustado = mVariavel.getValor();
+        Object valorAjustado = mVariavel.getValue();
         VARIABLE_INSTANCE variavel = null;
         if (dbVariableCod != null) {
             variavel = retrieveVariableInstanceByCod(dbVariableCod);
@@ -296,18 +296,18 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             // Para não forçar carga
             variavel = newVariableInstance(processInstance, mVariavel.getRef());
 
-            String valorString = mVariavel.getStringPersistencia();
+            String valorString = mVariavel.getPersistentString();
             if (!Objects.equals(valorString, variavel.getValue())) {
-                variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
+                variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getType()));
                 variavel.setValue(valorString);
             }
 
             ss.save(variavel);
             ss.refresh(processInstance);
         } else {
-            String valorString = mVariavel.getStringPersistencia();
+            String valorString = mVariavel.getPersistentString();
             if (!Objects.equals(valorString, variavel.getValue())) {
-                variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
+                variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getType()));
                 variavel.setValue(valorString);
                 ss.merge(variavel);
             }
@@ -326,13 +326,15 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
             boolean salvou = false;
             for (VarInstance variavel : instanceMap) {
-                if (variavel.getValor() != null) {
-                    IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getTipo());
-                    IEntityVariableInstance processInstanceVar = instance.getVariable(variavel.getRef());
+                if (variavel.getValue() != null) {
+
+                    IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
+                    String ref = variavel.getRef();
+                    IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
 
                     IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
-                    novo.setName(variavel.getRef());
-                    novo.setValue(variavel.getStringPersistencia());
+                    novo.setName(ref);
+                    novo.setValue(variavel.getPersistentString());
                     novo.setDate(dateHour);
                     ss.save(novo);
                     salvou = true;
@@ -419,9 +421,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
             sub.add(Restrictions.isNull("T.endDate"));
             if (active) {
-                sub.add(Restrictions.ne("TA.type", TaskType.End));
+                sub.add(Restrictions.ne("TA.type", TaskType.END));
             } else {
-                sub.add(Restrictions.eq("TA.type", TaskType.End));
+                sub.add(Restrictions.eq("TA.type", TaskType.END));
             }
             sub.setProjection(Projections.id());
             

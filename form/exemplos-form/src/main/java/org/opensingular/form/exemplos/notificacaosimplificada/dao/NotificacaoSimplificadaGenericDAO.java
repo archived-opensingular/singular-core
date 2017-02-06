@@ -29,7 +29,7 @@ import java.util.List;
 @Repository
 public class NotificacaoSimplificadaGenericDAO extends SimpleDAO {
 
-    public <PK extends Serializable, T extends BaseEntity<PK>> void saveOrUpdate(T entity) {
+    public <T extends BaseEntity<?>> void saveOrUpdate(T entity) {
         getSession().saveOrUpdate(entity);
     }
 
@@ -64,7 +64,7 @@ public class NotificacaoSimplificadaGenericDAO extends SimpleDAO {
         return criteria.list();
     }
 
-    public <PK extends Serializable, T extends BaseEntity<PK>> void delete(T entity) {
+    public <T extends BaseEntity<?>> void delete(T entity) {
         getSession().delete(entity);
     }
 }

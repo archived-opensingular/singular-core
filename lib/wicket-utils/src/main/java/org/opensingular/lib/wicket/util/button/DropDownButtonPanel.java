@@ -125,7 +125,7 @@ public class DropDownButtonPanel extends Panel {
     /**
      * Metadados para construção dos botoes
      */
-    private class ButtonMetadata implements Serializable {
+    private static class ButtonMetadata implements Serializable {
 
         private IModel<String>            label;
         private IFunction<String, Button> buttonFactory;

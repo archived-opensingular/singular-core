@@ -1,6 +1,8 @@
 package org.opensingular.form.document;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -15,24 +17,26 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Matchers;
 
+import org.mockito.Mockito;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.AttachmentTestUtil;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {
 
-    private STypeComposite<?> groupingType;
-    private SIAttachment fileFieldInstance;
+    private STypeComposite<?>             groupingType;
+    private SIAttachment                  fileFieldInstance;
     private SDocument                     document;
     private IAttachmentPersistenceHandler tempHandler, persistentHandler;
 
@@ -41,7 +45,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         createTypes(createTestDictionary().createNewPackage("teste"));
         createInstances();
         setupServices();
@@ -74,20 +78,24 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
-        IAttachmentRef tempRef;
-        IAttachmentRef persistentRef;
+        IAttachmentRef tempRef       = attachmentRef("abacate", content);
+        IAttachmentRef persistentRef = attachmentRef("abacate", content);
 
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(tempRef = attachmentRef("abacate", content));
+                .thenReturn(tempRef);
 
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
-            .thenReturn(persistentRef = attachmentRef("abacate", content));
-
-        when(persistentHandler.copy(tempRef))
                 .thenReturn(persistentRef);
 
+        when(persistentHandler.copy(eq(tempRef), any()))
+                .thenReturn(new AttachmentCopyContext<>(persistentRef));
+
+        when(persistentHandler.getAttachmentPersistenceHelper())
+                .thenReturn(new DefaultAttachmentPersistenceHelper());
+
         document.persistFiles();
-        verify(persistentHandler).copy(tempRef);
+
+        verify(persistentHandler).copy(eq(tempRef), any());
     }
 
     @Test
@@ -96,17 +104,20 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
-        IAttachmentRef tempRef;
-        IAttachmentRef persistentRef;
+        IAttachmentRef tempRef       = attachmentRef("abacate", content);
+        IAttachmentRef persistentRef = attachmentRef("avocado", content);
 
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(tempRef = attachmentRef("abacate", content));
+                .thenReturn(tempRef);
 
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
-            .thenReturn(persistentRef = attachmentRef("avocado", content));
-
-        when(persistentHandler.copy(tempRef))
                 .thenReturn(persistentRef);
+
+        when(persistentHandler.copy(eq(tempRef), any()))
+                .thenReturn(new AttachmentCopyContext<>(persistentRef));
+
+        when(persistentHandler.getAttachmentPersistenceHelper())
+                .thenReturn(new DefaultAttachmentPersistenceHelper());
 
         document.persistFiles();
         assertThat(fileFieldInstance.getFileId()).isEqualTo("avocado");
@@ -126,14 +137,16 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
                 .thenReturn(tempRef = attachmentRef("abacate", content));
 
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
-            .thenReturn(persistentRef = attachmentRef("abacate", content));
+                .thenReturn(persistentRef = attachmentRef("abacate", content));
 
-        when(persistentHandler.copy(tempRef))
-                .thenReturn(persistentRef);
+        when(persistentHandler.copy(eq(tempRef), Mockito.anyObject()))
+                .thenReturn(new AttachmentCopyContext<>(persistentRef));
 
+        when(persistentHandler.getAttachmentPersistenceHelper())
+                .thenReturn(new DefaultAttachmentPersistenceHelper());
 
         document.persistFiles();
-        verify(tempHandler).deleteAttachment("abacate");
+        verify(tempHandler).deleteAttachment(eq("abacate"), any());
     }
 
     @Test
@@ -143,17 +156,19 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
-        IAttachmentRef tempRef;
-        IAttachmentRef persistentRef;
+        IAttachmentRef tempRef       = attachmentRef("abacate", content);
+        IAttachmentRef persistentRef = attachmentRef("abacate", content);
+
         when(tempHandler.getAttachment("abacate"))
-                .thenReturn(tempRef = attachmentRef("abacate", content));
+                .thenReturn(tempRef);
         when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt"))
-            .thenReturn(persistentRef = attachmentRef("abacate", content));
-        when(persistentHandler.copy(tempRef))
                 .thenReturn(persistentRef);
+        when(persistentHandler.copy(eq(tempRef), Mockito.anyObject()))
+                .thenReturn(new AttachmentCopyContext<>(persistentRef));
+        when(persistentHandler.getAttachmentPersistenceHelper()).thenReturn(new DefaultAttachmentPersistenceHelper());
 
         document.persistFiles();
-        verify(persistentHandler).deleteAttachment("avocado");
+        verify(persistentHandler).deleteAttachment(eq("avocado"), any());
     }
 
     @Test
@@ -161,19 +176,21 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         fileFieldInstance.setFileId("abacate");
         fileFieldInstance.setOriginalFileId("abacate");
 
+        when(persistentHandler.getAttachmentPersistenceHelper()).thenReturn(new DefaultAttachmentPersistenceHelper());
+
         document.persistFiles();
-        verify(persistentHandler, never()).deleteAttachment(Matchers.any());
-        verify(tempHandler, never()).deleteAttachment(Matchers.any());
+        verify(persistentHandler, never()).deleteAttachment(any(), any());
+        verify(tempHandler, never()).deleteAttachment(any(), any());
     }
 
     @Test
     public void naoFalhaCasoNaoTenhaNadaTemporario() {
         fileFieldInstance.setFileId("abacate");
         fileFieldInstance.setOriginalFileId(null);
-
+        when(persistentHandler.getAttachmentPersistenceHelper()).thenReturn(new DefaultAttachmentPersistenceHelper());
         document.persistFiles();
-        verify(persistentHandler, never()).deleteAttachment(Matchers.any());
-        verify(tempHandler, never()).deleteAttachment(Matchers.any());
+        verify(persistentHandler, never()).deleteAttachment(any(), any());
+        verify(tempHandler, never()).deleteAttachment(any(), any());
     }
 
     private IAttachmentRef attachmentRef(String hash, byte[] content) {
@@ -194,7 +211,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
             public InputStream getInputStream() throws IOException {
                 return new ByteArrayInputStream(content);
             }
-            
+
             @Override
             public String getName() {
                 return hash;

@@ -98,7 +98,7 @@ public class PackageBuilder {
     }
 
     @SuppressWarnings("rawtypes")
-    public <T extends SType<?>, V extends Object> void addAttribute(Class<? extends SType> typeClass, AtrRef<T, ?, V> atr, V attributeValue) {
+    public <T extends SType<?>, V> void addAttribute(Class<? extends SType> typeClass, AtrRef<T, ?, V> atr, V attributeValue) {
         SType<?> targetType = getType(typeClass);
         SType<?> attribute = addAttributeInternal(targetType, atr);
         targetType.setAttributeValue(attribute, attributeValue);
@@ -122,7 +122,7 @@ public class PackageBuilder {
     private SType<?> getAttributeOptional(AtrRef<?, ?, ?> atr) {
         getDictionary().loadPackage(atr.getPackageClass());
 
-        if (!atr.isBinded()) {
+        if (atr.isNotBindDone()) {
             return null;
         }
         SType<?> type = getDictionary().getTypeOptional(atr.getNameFull());
@@ -169,7 +169,7 @@ public class PackageBuilder {
         return attributeDef;
     }
 
-    public <I extends SInstance, T extends SType<I>> T createAttributeType(AtrRef<T, ?, ?> atr) {
+    public <I extends SInstance, T extends SType<I>> T createAttributeType(AtrRef<T, I, ?> atr) {
         if (atr.isSelfReference()) {
             throw new SingularFormException("Não pode ser criado um atributo global que seja selfReference");
         }

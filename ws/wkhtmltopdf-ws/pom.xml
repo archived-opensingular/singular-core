@@ -10,18 +10,18 @@
 
     <parent>
         <groupId>org.opensingular</groupId>
-        <artifactId>ws</artifactId>
-        <version>1.5.4</version>
+        <artifactId>singular-ws</artifactId>
+        <version>1.5.7</version>
     </parent>
 
-    <artifactId>wkhtmltopdf-ws</artifactId>
+    <artifactId>singular-wkhtmltopdf-ws</artifactId>
     <name>[singular :: ws :: wkhtmltopdf-ws]</name>
     <packaging>war</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>wkhtmltopdf-client</artifactId>
+            <artifactId>singular-wkhtmltopdf-client</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>

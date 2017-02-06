@@ -17,14 +17,12 @@
 package org.opensingular.form.script;
 
 import org.opensingular.form.RefService;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.script.*;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -44,19 +42,15 @@ public class FormJavascriptUtil {
     /**
      * Devolve uma instância cacheada da engine de execução de Javascript.
      */
-    private static ScriptEngine getEngine() {
+    private synchronized static ScriptEngine getEngine() {
         if (engineSupplier == null) {
-            synchronized (FormJavascriptUtil.class) {
-                if (engineSupplier == null) {
-                    engineSupplier = SupplierUtil.cached(() -> {
-                        ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-                        if (!(engine instanceof Compilable)) {
-                            throw new SingularFormException("Esperado que a engine " + engine + " fosse compilável");
-                        }
-                        return engine;
-                    });
+            engineSupplier = SupplierUtil.cached(() -> {
+                ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+                if (!(engine instanceof Compilable)) {
+                    throw new SingularFormException("Esperado que a engine " + engine + " fosse compilável");
                 }
-            }
+                return engine;
+            });
         }
         return engineSupplier.get();
     }

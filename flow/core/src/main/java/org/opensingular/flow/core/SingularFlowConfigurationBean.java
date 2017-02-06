@@ -17,25 +17,24 @@
 package org.opensingular.flow.core;
 
 import net.vidageek.mirror.dsl.Mirror;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.flow.core.defaults.NullViewLocator;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
+import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
+import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.flow.core.defaults.NullViewLocator;
-import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.flow.schedule.ScheduledJob;
 import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
-import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -90,7 +89,6 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
     
     public final String getProcessGroupCod() {
-//        Objects.requireNonNull(processGroupCod);
         if (processGroupCod == null) {
             throw new SingularFlowException("Não foi definido o ProcessGroupCod");
         }
@@ -159,7 +157,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return getProcessInstance(processClass, Integer.parseInt(id));
+            return getProcessInstance(processClass, Integer.valueOf(id));
         } else {
             return (X) getProcessInstance(id);
         }

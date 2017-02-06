@@ -20,8 +20,6 @@ import org.opensingular.form.SInstance;
 
 /**
  * Validator para {@link SInstance}
- * 
- * @param <MInstancia>
  */
 public interface IInstanceValidator<I extends SInstance> {
     

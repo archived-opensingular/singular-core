@@ -16,13 +16,9 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.time.YearMonth;
-import java.util.HashMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
@@ -30,23 +26,25 @@ import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.form.YearMonthField;
 
+import java.time.YearMonth;
+import java.util.HashMap;
+
 public class YearMonthMapper extends AbstractControlsFieldComponentMapper {
 
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
 
         YearMonthField comp = new YearMonthField(model.getObject().getName(), new SInstanceValueModel<>(model));
+
+        HashMap<String, String> options = new HashMap<>();
+        options.put("data-date-format", "mm/yyyy");
+        options.put("data-date-start-view", "months");
+        options.put("data-date-min-view-mode", "months");
+        options.put("data-date-start-date", "01/1900");
+        options.put("data-date-end-date", "12/2999");
+
         formGroup.appendDatepicker(comp.setLabel(labelModel)
-            .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)),
-            new HashMap<String, String>() {
-                {
-                    put("data-date-format", "mm/yyyy");
-                    put("data-date-start-view", "months");
-                    put("data-date-min-view-mode", "months");
-                    put("data-date-start-date", "01/1900");
-                    put("data-date-end-date", "12/2999");
-                }
-            });
+                .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)), options);
         return comp;
     }
 

@@ -73,8 +73,10 @@ public class AnnotationComponent extends Panel {
 
         setAnnotationModel(new SIAnnotationModel<>(referenced, DefaultAnnotationClassifier.DEFAULT_ANNOTATION));
 
-        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "text"));
-        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "isApproved"));
+        SIAnnotationModel<?> annotationModel = getAnnotationModel();
+
+        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationModel, "text"));
+        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationModel, "isApproved"));
 
         add($b.classAppender("annotation-toggle-container btn-group"));
         add($b.attr("style", "position:absolute; top:0px; right:17px;"));
@@ -174,7 +176,7 @@ public class AnnotationComponent extends Panel {
             return "btn-danger";
     }
 
-    private final class NewAnnotationButton extends ActionAjaxButton {
+    private static final class NewAnnotationButton extends ActionAjaxButton {
         private final BFModalWindow annotationModal;
 
         private NewAnnotationButton(String id, BFModalWindow annotationModal, boolean editable) {
@@ -199,7 +201,7 @@ public class AnnotationComponent extends Panel {
         }
     }
 
-    private final class EditAnnotationButton extends ActionAjaxButton {
+    private final static class EditAnnotationButton extends ActionAjaxButton {
         private final BFModalWindow annotationModal;
 
         private EditAnnotationButton(String id, BFModalWindow annotationModal) {
@@ -214,7 +216,7 @@ public class AnnotationComponent extends Panel {
         }
     }
 
-    private final class ViewAnnotationButton extends ActionAjaxButton {
+    private final static class ViewAnnotationButton extends ActionAjaxButton {
         private final BFModalWindow annotationModal;
 
         private ViewAnnotationButton(String id, BFModalWindow annotationModal) {
@@ -229,7 +231,7 @@ public class AnnotationComponent extends Panel {
         }
     }
 
-    private final class RemoveAnnotationButton extends ActionAjaxButton {
+    private final static class RemoveAnnotationButton extends ActionAjaxButton {
         private final BFModalWindow deleteModal;
 
         private RemoveAnnotationButton(String id, BFModalWindow deleteModal) {
@@ -265,7 +267,7 @@ public class AnnotationComponent extends Panel {
                                             + ".find('a:visible:first').each(function(){this.focus();});");
                                 }
                             })
-                    .addLink(BSModalBorder.ButtonStyle.CANCEl, $m.ofValue("Cancelar"),
+                    .addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"),
                             new ActionAjaxLink<Void>("cancelDeleteBtn") {
                                 @Override
                                 protected void onAction(AjaxRequestTarget target) {

@@ -35,7 +35,6 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addFieldString(FIELD_LATITUDE);
         addFieldString(FIELD_LONGITUDE);
     }

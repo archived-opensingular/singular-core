@@ -23,10 +23,11 @@ public enum ViewMode {
     READ_ONLY;
 
     public boolean isEdition() {
-        return this.equals(EDIT);
+        return this == EDIT;
     }
 
     public boolean isVisualization() {
-        return this.equals(READ_ONLY);
+        return this == READ_ONLY;
     }
+
 }

@@ -35,7 +35,7 @@ public class IconeView extends WebMarkupContainer {
             if (getModelObject() != null) {
                 return getModelObject().getCssClass();
             }
-            return false;
+            return Boolean.FALSE;
         }), $m.isNullOrEmpty(getModel())));
 
         if (style != null) {

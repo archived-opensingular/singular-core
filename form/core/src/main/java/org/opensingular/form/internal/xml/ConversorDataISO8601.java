@@ -51,7 +51,9 @@ public final class ConversorDataISO8601 {
     private static final byte MILI = 7;
     private static final byte NANO = 8;
 
-    public static final String format(java.sql.Date d) {
+    private ConversorDataISO8601() {}
+
+    public static String format(java.sql.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
 
@@ -78,12 +80,12 @@ public final class ConversorDataISO8601 {
                 prescisao);
     }
 
-    public static final java.sql.Date getDateSQL(String s) {
+    public static java.sql.Date getDateSQL(String s) {
         GregorianCalendar gc = getCalendar(s);
         return new java.sql.Date(gc.getTime().getTime());
     }
 
-    public static final String format(java.util.Date d) {
+    public static String format(java.util.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
 
@@ -105,11 +107,11 @@ public final class ConversorDataISO8601 {
                 prescisao);
     }
 
-    public static final java.util.Date getDate(String s) {
+    public static java.util.Date getDate(String s) {
         return getCalendar(s).getTime();
     }
 
-    public static final String format(Timestamp t) {
+    public static String format(Timestamp t) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(t);
         return format(
@@ -124,7 +126,7 @@ public final class ConversorDataISO8601 {
                 NANO);
     }
 
-    public static final Timestamp getTimestamp(String s) {
+    public static Timestamp getTimestamp(String s) {
         int[] t = valueOf(s);
         GregorianCalendar gc =
                 new GregorianCalendar(t[ANO], t[MES] - 1, t[DIA], t[HORA], t[MINUTO], t[SEGUNDO]);
@@ -135,7 +137,7 @@ public final class ConversorDataISO8601 {
         return ts;
     }
 
-    public static final String format(Calendar gc) {
+    public static String format(Calendar gc) {
         return format(
                 gc.get(Calendar.YEAR),
                 gc.get(Calendar.MONTH) + 1,
@@ -148,7 +150,7 @@ public final class ConversorDataISO8601 {
                 MILI);
     }
 
-    public static final GregorianCalendar getCalendar(String s) {
+    public static GregorianCalendar getCalendar(String s) {
         int[] t = valueOf(s);
         GregorianCalendar gc =
                 new GregorianCalendar(t[ANO], t[MES] - 1, t[DIA], t[HORA], t[MINUTO], t[SEGUNDO]);
@@ -169,8 +171,8 @@ public final class ConversorDataISO8601 {
             texto_ = texto;
         }
 
-        public boolean isFim() {
-            return pos_ == texto_.length();
+        public boolean isNotEnd() {
+            return pos_ != texto_.length();
         }
 
         public int lerNumero(int digitosMinimos, int digitosMaximos, boolean shiftMaximo) {
@@ -248,7 +250,7 @@ public final class ConversorDataISO8601 {
 
     }
 
-    private static final int[] valueOf(String s) {
+    private static int[] valueOf(String s) {
 
         if (s == null) {
             throw new java.lang.IllegalArgumentException("string null");
@@ -264,13 +266,13 @@ public final class ConversorDataISO8601 {
         t[DIA] = leitor.lerNumero(1, 2, false);
 
         // hora opcional
-        if (!leitor.isFim()) {
+        if (leitor.isNotEnd()) {
             leitor.lerSeparadorDataHora();
             t[HORA] = leitor.lerNumero(1, 2, false);
             leitor.lerCaracter(':');
             t[MINUTO] = leitor.lerNumero(1, 2, false);
             //segundos opcionais
-            if (!leitor.isFim()) {
+            if (leitor.isNotEnd()) {
                 leitor.lerCaracter(':');
                 t[SEGUNDO] = leitor.lerNumero(1, 2, false);
                 // nanos/milis opcionais
@@ -287,14 +289,14 @@ public final class ConversorDataISO8601 {
             //}
         }
 
-        if (!leitor.isFim()) {
+        if (leitor.isNotEnd()) {
             throw leitor.erroFormato();
         }
 
         return t;
     }
 
-    private static final String format(
+    private static String format(
             int year,
             int month,
             int day,
@@ -307,20 +309,7 @@ public final class ConversorDataISO8601 {
 
         StringBuilder buffer = new StringBuilder(40);
 
-        if (year < 0) {
-            throw new IllegalArgumentException("Ano Negativo");
-        } else if (year < 10) {
-            buffer.append("000");
-        } else if (year < 100) {
-            buffer.append("00");
-        } else if (year < 1000) {
-            buffer.append('0');
-        }
-        buffer.append(year);
-        buffer.append('-');
-        format2(buffer, month);
-        buffer.append('-');
-        format2(buffer, day);
+        formatYearMonthDay(buffer, year, month, day);
 
         if ((prescisao == DIA)
                 || ((hour == 0) && (minute == 0) && (second == 0) && (mili == 0) && (nano == 0))) {
@@ -335,51 +324,63 @@ public final class ConversorDataISO8601 {
         format2(buffer, second);
 
         if (nano == 0) {
-            if ((mili < 0) || (mili > 999)) {
-                throw new IllegalArgumentException("Milisegundos <0 ou >999");
-            }
-            if ((prescisao == MILI) || (prescisao == NANO)) {
-                buffer.append('.');
-                format3(buffer, mili);
-            }
+            formatMiliIfNecessary(buffer, mili, prescisao);
+        } else if (mili != 0) {
+            throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
         } else {
-            if (mili != 0) {
-                throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
-            }
-            if ((nano < 0) || (nano > 999999999)) {
-                throw new IllegalArgumentException("Nanos <0 ou >999999999");
-            }
-            // Geralmente so tem precisão de mili segundos
-            // Se forem apenas milisegundos fica .999
-            // Se realm
-            mili = nano / 1000000;
-            if ((prescisao == MILI) || (prescisao == NANO)) {
-                buffer.append('.');
-                format3(buffer, mili);
-            }
-            if (prescisao == NANO) {
-                nano = nano % 1000000;
-                if (nano != 0) {
-                    String nanoS = Integer.toString(nano);
-                    for (int i = 6 - nanoS.length(); i != 0; i--) {
-                        buffer.append('0');
-                    }
-                    //Trunca zeros restantes
-                    int ultimo = nanoS.length() - 1;
-                    while ((ultimo != -1) && (nanoS.charAt(ultimo) == '0')) {
-                        ultimo--;
-                    }
-                    for (int i = 0; i <= ultimo; i++) {
-                        buffer.append(nanoS.charAt(i));
-                    }
-                }
-            }
+            formatMiliAndNanoIfNecessary(buffer, nano, prescisao);
         }
 
         return buffer.toString();
     }
 
-    private static final void format2(StringBuilder buffer, int valor) {
+    private static void formatYearMonthDay(StringBuilder buffer, int year, int month, int day) {
+        if (year < 0) {
+            throw new IllegalArgumentException("Ano Negativo");
+        } else if (year < 10) {
+            buffer.append("000");
+        } else if (year < 100) {
+            buffer.append("00");
+        } else if (year < 1000) {
+            buffer.append('0');
+        }
+        buffer.append(year);
+        buffer.append('-');
+        format2(buffer, month);
+        buffer.append('-');
+        format2(buffer, day);
+    }
+
+    private static void formatMiliAndNanoIfNecessary(StringBuilder buffer, int nano, byte prescisao) {
+        int mili;
+        if ((nano < 0) || (nano > 999999999)) {
+            throw new IllegalArgumentException("Nanos <0 ou >999999999");
+        }
+        // Geralmente so tem precisão de mili segundos
+        // Se forem apenas milisegundos fica .999
+        // Se realm
+        mili = nano / 1000000;
+        formatMiliIfNecessary(buffer, mili, prescisao);
+        if (prescisao == NANO) {
+            nano = nano % 1000000;
+            if (nano != 0) {
+                String nanoS = Integer.toString(nano);
+                for (int i = 6 - nanoS.length(); i != 0; i--) {
+                    buffer.append('0');
+                }
+                //Trunca zeros restantes
+                int ultimo = nanoS.length() - 1;
+                while ((ultimo != -1) && (nanoS.charAt(ultimo) == '0')) {
+                    ultimo--;
+                }
+                for (int i = 0; i <= ultimo; i++) {
+                    buffer.append(nanoS.charAt(i));
+                }
+            }
+        }
+    }
+
+    private static void format2(StringBuilder buffer, int valor) {
         if (valor < 0) {
             throw new IllegalArgumentException("valor negativo");
         } else if (valor < 10) {
@@ -390,15 +391,21 @@ public final class ConversorDataISO8601 {
         buffer.append(valor);
     }
 
-    private static final void format3(StringBuilder buffer, int valor) {
-        if (valor < 0) {
-            throw new IllegalArgumentException("valor negativo");
-        } else if (valor < 10) {
-            buffer.append("00");
-        } else if (valor < 100) {
-            buffer.append('0');
+    private static void formatMiliIfNecessary(StringBuilder buffer, int mili, byte prescisao) {
+        if (mili < 0) {
+            throw new IllegalArgumentException("Milisegundos <0");
+        } else if (mili > 999){
+            throw new IllegalArgumentException("Milisegundos >999");
         }
-        buffer.append(valor);
+        if ((prescisao == MILI) || (prescisao == NANO)) {
+            buffer.append('.');
+            if (mili < 10) {
+                buffer.append("00");
+            } else if (mili < 100) {
+                buffer.append('0');
+            }
+            buffer.append(mili);
+        }
     }
 
     /**
@@ -407,43 +414,22 @@ public final class ConversorDataISO8601 {
      * @param valor a ser verificado
      * @return true se atender ao formato
      */
-    public static final boolean isISO8601(String valor) {
-        if ((valor == null) || valor.length() < 10) {
+    public static boolean isISO8601(String valor) {
+        //                01234567890123456789012345678
+        //                1999-05-31T13:20:00.000-05:00
+        String mascara = "????-??-??T??:??:??.?????????";
+        if ((valor == null) || valor.length() < 10 || valor.length() > mascara.length()) {
             return false;
         }
-        //01234567890123456789012345678
-        //1999-05-31T13:20:00.000-05:00<p>
-
         int tam = valor.length();
         for (int i = 0; i < tam; i++) {
-            switch (i) {
-                case 4:
-                case 7:
-                    if (valor.charAt(i) != '-') {
-                        return false;
-                    }
-                    break;
-                case 10:
-                    if (valor.charAt(i) != 'T' && valor.charAt(i) != ' ') {
-                        return false;
-                    }
-                    break;
-                case 13:
-                case 16:
-                    if (valor.charAt(i) != ':') {
-                        return false;
-                    }
-                    break;
-                case 19:
-                    if (valor.charAt(i) != '.') {
-                        return false;
-                    }
-                    break;
-                default:
-                    if (!Character.isDigit(valor.charAt(i))) {
-                        return false;
-                    }
-                    break;
+            char m = mascara.charAt(i);
+            if (m == '?') {
+                if (!Character.isDigit(valor.charAt(i))) {
+                    return false;
+                }
+            } else if (m != valor.charAt(i) && (i != 10 || valor.charAt(i) != ' ')) {
+                return false;
             }
         }
         return true;

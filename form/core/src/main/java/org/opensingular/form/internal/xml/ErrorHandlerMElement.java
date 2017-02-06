@@ -34,7 +34,7 @@ final class ErrorHandlerMElement implements ErrorHandler {
     /**
      * Armazena a lista de erros encontrada. *
      */
-    private StringBuffer buf_;
+    private StringBuilder buf_;
 
     /**
      * Adiciona o erro informado ao buffer para posterior recuperação. A única
@@ -48,11 +48,11 @@ final class ErrorHandlerMElement implements ErrorHandler {
      */
     private void addToBuffer(String tipo, SAXParseException ex) throws SAXParseException {
         if (buf_ == null) {
-            buf_ = new StringBuffer(1024);
+            buf_ = new StringBuilder(1024);
             buf_.append("Erro(s) efetuando parse");
         }
-        buf_.append("\n");
-        buf_.append(tipo).append(":");
+        buf_.append('\n');
+        buf_.append(tipo).append(':');
         if (ex.getLineNumber() > -1) {
             buf_.append(" Line=").append(ex.getLineNumber());
         }
@@ -119,7 +119,7 @@ final class ErrorHandlerMElement implements ErrorHandler {
      *
      * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
-    public void warning(SAXParseException exception) throws SAXException {
+    public void warning(SAXParseException exception)  {
     }
 
 }

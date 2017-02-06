@@ -65,6 +65,11 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
             throw new AssertionError(errorMsg("Super tipo inválido:\nEsperado  : " + expectedSuperType +
                     "\nEncontrado: " + getTarget().getSuperType()));
 
+        } else if(! expectedSuperType.getClass().isAssignableFrom(getTarget().getClass())) {
+            throw new AssertionError(
+                    errorMsg("A classe do tipo " + getTarget() + " deveria igual ou extender a classe " +
+                            expectedSuperType.getClass().getName() + ", que e a classe de seu supertipo " +
+                            expectedSuperType + ". Em vez disso, é uma classe " + getTarget().getClass().getName()));
         }
         return this;
     }
@@ -81,6 +86,46 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
         STypeComposite parent2 = (STypeComposite) parent.getSuperType();
         SType<?> parentRef = parent2.getField(getTarget().getNameSimple());
         return isDirectExtensionOf(parentRef);
+    }
+
+    /**
+     * Verifica se o tipo e seu tipos internos (se existirem) extendem corretamente o tipo pai. Faz uma analise
+     * recursiva para os subtipos.
+     */
+    public AssertionsSType isExtensionCorrect() {
+        SType<?> superType = getTarget().getSuperType();
+        if (! (getTarget().isComposite() || getTarget().isList())) {
+            throw new AssertionError(errorMsg("O tipo deve ser um composite"));
+        }
+        return isExtensionCorrect(superType);
+    }
+
+    /**
+     * Verifica se o tipo e seu tipos internos (se existirem) extendem corretamente o tipo informado. Faz uma analise
+     * recursiva para os subtipos.
+     */
+    public AssertionsSType isExtensionCorrect(Class<? extends SType> typeClass) {
+        return isExtensionCorrect(getTarget().getDictionary().getType(typeClass));
+    }
+
+    /**
+     * Verifica se o tipo e seu tipos internos (se existirem) extendem corretamente o tipo informado. Faz uma analise
+     * recursiva para os subtipos.
+     */
+    public AssertionsSType isExtensionCorrect(SType<?> expectedSuperType) {
+        isDirectExtensionOf(expectedSuperType);
+        if (getTarget().isComposite()) {
+            assertThat(expectedSuperType).isInstanceOf(STypeComposite.class);
+            if(! (getTarget().isRecursiveReference() && getTarget().getSuperType() == expectedSuperType)) {
+                for (SType<?> fieldSuper : ((STypeComposite<?>) expectedSuperType).getFields()) {
+                    field(fieldSuper.getNameSimple()).isExtensionCorrect(fieldSuper);
+                }
+            }
+        } else if (getTarget().isList()) {
+            assertThat(expectedSuperType).isInstanceOf(STypeList.class);
+            listElementType().isExtensionCorrect(((STypeList<?,?>) expectedSuperType).getElementsType());
+        }
+        return this;
     }
 
     private AssertionsSType is(Class<?> typeString, String fieldPath) {

@@ -146,11 +146,11 @@ public class Substancia extends VocabularioControlado {
     }
 
     public boolean isLiquido() {
-        return FormaFisica.LIQUIDO.equals(getTipoFormaFisica());
+        return FormaFisica.LIQUIDO == getTipoFormaFisica();
     }
 
     public boolean isSolido() {
-        return FormaFisica.SOLIDO.equals(getTipoFormaFisica());
+        return FormaFisica.SOLIDO == getTipoFormaFisica();
     }
 
     public BigDecimal getNumeroPontoFusao() {

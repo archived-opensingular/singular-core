@@ -45,8 +45,6 @@ public interface AnnotationPersistence extends BasicAnnotationPersistence {
      * de anotações cujo classifier é o mesmo.
      *
      * Retorna todas as SILists de anotações de todos os classifiers do formulário
-     * @param formKey
-     * @return
      */
     public List<SIList<SIAnnotation>> loadAll(FormKey formKey);
 

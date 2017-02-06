@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.behavior;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
@@ -29,6 +24,11 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>Classe responsável por adicionar máscara a um {@code input}.</p>
@@ -65,34 +65,34 @@ public class InputMaskBehavior extends Behavior {
         /**
          * <p>Máscara que permite apenas valores numéricos: [0-9].</p>
          */
-        public static Masks NUMERIC = new Masks("9");
+        public static final Masks NUMERIC = new Masks("9");
 
         /**
          * <p>Máscara para datas do tipo DD/MM/AAAA.</p>
          */
-        public static Masks FULL_DATE = new Masks("99/99/9999");
+        public static final Masks FULL_DATE = new Masks("99/99/9999");
 
         /**
          * <p>Máscara para datas do tipo MM/AAAA.</p>
          */
-        public static Masks SHORT_DATE = new Masks("99/9999");
+        public static final Masks SHORT_DATE = new Masks("99/9999");
 
         /**
          * <p>Máscara para CPF.</p>
          */
-        public static Masks CPF = new Masks("999.999.999-99");
+        public static final Masks CPF = new Masks("999.999.999-99");
 
         /**
          * <p>Máscara para CNPJ.</p>
          */
-        public static Masks CNPJ = new Masks("99.999.999/9999-99");
+        public static final Masks CNPJ = new Masks("99.999.999/9999-99");
 
         /**
          * <p>Máscara para CEP.</p>
          */
-        public static Masks CEP = new Masks("99.999-999");
+        public static final Masks CEP = new Masks("99.999-999");
 
-        public static Masks TIME = new Masks("9{1,2}:99");
+        public static final Masks TIME = new Masks("9{1,2}:99");
 
         private String mask;
 
@@ -219,9 +219,9 @@ public class InputMaskBehavior extends Behavior {
     private void setDefaultOpcoes(Map<String, Object> options) {
         options.put("placeholder", "");
         options.put("skipOptionalPartCharacter", "");
-        options.put("showMaskOnHover", false);
-        options.put("showMaskOnFocus", false);
-        options.put("greedy", false);
+        options.put("showMaskOnHover", Boolean.FALSE);
+        options.put("showMaskOnFocus", Boolean.FALSE);
+        options.put("greedy", Boolean.FALSE);
     }
 
     private void setJsonOptions(Map<String, Object> options) {

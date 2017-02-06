@@ -56,8 +56,6 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-
 
         embalagemPrimaria = this.addField("embalagemPrimaria", STypeEmbalagemPrimaria.class);
         embalagemPrimaria.asAtr().displayString("${descricao}");
@@ -86,7 +84,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
         {
 
             STypeAttachment f = estudosEstabilidade.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            SType<?> nomeArquivo = f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
@@ -99,7 +97,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
         {
 
             STypeAttachment f = laudosControle.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            SType<?> nomeArquivo = f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 
@@ -108,7 +106,7 @@ public class STypeAcondicionamento extends STypeComposite<SIComposite> {
             layoutsRotulagem.asAtr().label("Layout da rotulagem");
 
             STypeAttachment f = layoutsRotulagem.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            SType<?> nomeArquivo = f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 

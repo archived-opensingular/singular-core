@@ -31,7 +31,6 @@ import org.apache.wicket.util.visit.Visits;
 import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
-import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -66,6 +65,8 @@ public class WicketFormProcessing implements Loggable {
     public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
 
+    private WicketFormProcessing() {}
+
     public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
             if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage()) {
@@ -93,7 +94,7 @@ public class WicketFormProcessing implements Loggable {
 
         if (RequestCycle.get().getMetaData(MDK_PROCESSED) == null) {
             if (baseInstanceModel == null) {
-                return setAndReturn.apply(false);
+                return setAndReturn.apply(Boolean.FALSE);
             }
 
             final SInstance baseInstance = baseInstanceModel.getObject();
@@ -113,7 +114,7 @@ public class WicketFormProcessing implements Loggable {
             updateValidationFeedbackOnDescendants(target, container);
 
             if (hasErrors)
-                return setAndReturn.apply(false);
+                return setAndReturn.apply(Boolean.FALSE);
 
             // atualizar documento e recuperar instancias com atributos alterados
             document.updateAttributes(baseInstance, null);
@@ -121,7 +122,7 @@ public class WicketFormProcessing implements Loggable {
             // re-renderizar form
             refreshComponentOrCellContainer(target, container);
         }
-        return setAndReturn.apply(true);
+        return setAndReturn.apply(Boolean.TRUE);
     }
 
     /**
@@ -212,21 +213,18 @@ public class WicketFormProcessing implements Loggable {
 
         if (target != null) {
 
-            final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                    .map(SInstanceEvent::getSource)
-                    .map(SInstance::getId)
+            final Set<Integer> updatedInstanceIds = eventCollector.streamEvents()
+                    .map(event -> event.getSource().getId())
                     .collect(toSet());
 
             final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
-            final Predicate<SType<?>> isElementsDependent = (type) -> (type instanceof STypeList) && isDependent.test(((STypeList<?, ?>) type).getElementsType());
+            final Predicate<SType<?>> isElementsDependent = (type) -> type.isList() && isDependent.test(((STypeList<?, ?>) type).getElementsType());
 
             final Predicate<SInstance> shouldRefreshPredicate = childInstance -> {
 
                 if (childInstance == null) {
                     return false;
-                }
-
-                if (updatedInstanceIds.contains(childInstance.getId())) {
+                } else if (updatedInstanceIds.contains(childInstance.getId())) {
                     return true;
                 }
 
@@ -344,7 +342,7 @@ public class WicketFormProcessing implements Loggable {
 
     private static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
-            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, true);
+            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
             target.add(WicketFormUtils.resolveRefreshingComponent(
                     ObjectUtils.defaultIfNull(
                             WicketFormUtils.getCellContainer(component), component)));

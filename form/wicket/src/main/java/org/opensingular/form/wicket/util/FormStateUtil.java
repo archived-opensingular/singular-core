@@ -26,6 +26,8 @@ import static org.opensingular.form.util.transformer.Value.hydrate;
 
 public class FormStateUtil {
 
+    private FormStateUtil() {}
+
     public static FormState keepState(SInstance instance) {
         return new FormState(dehydrate(instance));
     }

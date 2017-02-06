@@ -30,11 +30,11 @@ public class TransitionAccess {
     }
 
     public boolean isEnabled() {
-        return level.equals(TransitionAccessLevel.ENABLED) || level.equals(TransitionAccessLevel.ENABLED_BUT_HIDDEN);
+        return level == TransitionAccessLevel.ENABLED || level == TransitionAccessLevel.ENABLED_BUT_HIDDEN;
     }
 
     public boolean isVisible() {
-        return level.equals(TransitionAccessLevel.ENABLED) || level.equals(TransitionAccessLevel.DISABLED_BUT_VISIBLE);
+        return level == TransitionAccessLevel.ENABLED || level == TransitionAccessLevel.DISABLED_BUT_VISIBLE;
     }
 
     public String getMessage() {

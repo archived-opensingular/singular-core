@@ -7,10 +7,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.5.4</version>
+        <version>1.5.7</version>
     </parent>
 
-    <artifactId>exemplos-form</artifactId>
+    <artifactId>singular-exemplos-form</artifactId>
     <name>[singular :: form :: exemplos-form]</name>
     <packaging>jar</packaging>
 
@@ -19,7 +19,7 @@
         <!-- Projeto Singular -->
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-wicket</artifactId>
+            <artifactId>singular-form-wicket</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
@@ -37,13 +37,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
             <version>2.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>

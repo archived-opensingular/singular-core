@@ -27,7 +27,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class MetronicMenu extends Panel {
 
-    public List<AbstractMenuItem> itens = new ArrayList<>();
+    private final List<AbstractMenuItem> itens = new ArrayList<>();
 
     public MetronicMenu(String id) {
         super(id);

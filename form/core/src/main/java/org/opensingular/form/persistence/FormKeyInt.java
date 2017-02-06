@@ -24,7 +24,7 @@ package org.opensingular.form.persistence;
 public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumber {
 
     public FormKeyInt(int value) {
-        super(Integer.valueOf(value));
+        super(value);
     }
 
     public FormKeyInt(Integer value) {
@@ -38,7 +38,7 @@ public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumbe
     @Override
     protected Integer parseValuePersistenceString(String persistenceString) {
         try {
-            return Integer.parseInt(persistenceString);
+            return Integer.valueOf(persistenceString);
         } catch (Exception e) {
             throw new SingularFormPersistenceException("O valor da chave não é um inteiro válido", e).add("key",
                     persistenceString);

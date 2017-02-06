@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         HTML_NEW_TAB = Optional.ofNullable(PortletRichTextPanel.class.getResourceAsStream("PortletRichTextNewTab.html"))
                 .map(in -> {
                     try {
-                        return JavaScriptUtils.javaScriptEscape(IOUtils.toString(in, "UTF-8"));
+                        return JavaScriptUtils.javaScriptEscape(IOUtils.toString(in, StandardCharsets.UTF_8.name()));
                     } catch (IOException e) {
                         throw new SingularFormException("Não foi possivel extrair o conteudo html", e);
                     }
@@ -92,15 +93,20 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private void build(WicketBuildContext ctx) {
-        add(label = new Label("label", Model.of(Optional.ofNullable(ctx.getCurrentInstance().asAtr().getLabel()).orElse(EMPTY))));
-        add(htmlContent = new Label("htmlContent", new SInstanceValueModel<>(ctx.getModel())));
-        add(hiddenInput = new HiddenField<>("hiddenInput", new SInstanceValueModel<>(ctx.getModel())));
+        label = new Label("label", Model.of(Optional.ofNullable(ctx.getCurrentInstance().asAtr().getLabel()).orElse(EMPTY)));
+        htmlContent = new Label("htmlContent", new SInstanceValueModel<>(ctx.getModel()));
+        hiddenInput = new HiddenField<>("hiddenInput", new SInstanceValueModel<>(ctx.getModel()));
+
+        add(label);
+        add(htmlContent);
+        add(hiddenInput);
         add(new Button("button") {
             @Override
             protected String getOnClickScript() {
                 return "openNewTabWithCKEditor" + hash + "();";
             }
         });
+
         htmlContent.setEscapeModelStrings(false);
     }
 

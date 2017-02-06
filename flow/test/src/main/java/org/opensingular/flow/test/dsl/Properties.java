@@ -18,8 +18,4 @@ package org.opensingular.flow.test.dsl;
 
 public class Properties {
 
-//
-//    public ITaskDefinition of("nome"){
-//
-//    }
 }

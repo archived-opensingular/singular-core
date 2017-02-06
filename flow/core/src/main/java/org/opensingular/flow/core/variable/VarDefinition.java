@@ -20,7 +20,7 @@ import org.opensingular.flow.core.property.MetaDataRef;
 
 import java.io.Serializable;
 
-public interface VarDefinition extends Serializable{
+public interface VarDefinition {
 
     public String getRef();
 

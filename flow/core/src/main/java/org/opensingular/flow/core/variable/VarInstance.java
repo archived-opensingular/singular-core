@@ -20,45 +20,41 @@ import java.io.Serializable;
 
 import org.opensingular.flow.core.property.MetaData;
 
-/**
- * @deprecated traduzir o nome dos métodos para ingles
- */
-@Deprecated
 //TODO marcar a variável quando esta for utilizada. Essa interface deve obrigar a implementacao de um metodo para essa verificacao
-public interface VarInstance extends Serializable {
+public interface VarInstance {
 
-    VarInstance setValor(Object valor);
+    VarInstance setValue(Object valor);
 
-    VarDefinition getDefinicao();
+    VarDefinition getDefinition();
 
-    Object getValor();
+    Object getValue();
 
     String getStringDisplay();
 
-    String getStringPersistencia();
+    String getPersistentString();
 
     MetaData getMetaData();
 
     @SuppressWarnings("unchecked")
-    default <T> T getValor(T defaultValue) {
-        T v = (T) getValor();
+    default <T> T getValue(T defaultValue) {
+        T v = (T) getValue();
         return (v == null) ? defaultValue : v;
     }
 
     default String getRef() {
-        return getDefinicao().getRef();
+        return getDefinition().getRef();
     }
 
-    default String getNome() {
-        return getDefinicao().getName();
+    default String getName() {
+        return getDefinition().getName();
     }
 
-    default boolean isObrigatorio() {
-        return getDefinicao().isRequired();
+    default boolean isRequired() {
+        return getDefinition().isRequired();
     }
 
-    default VarType getTipo() {
-        return getDefinicao().getType();
+    default VarType getType() {
+        return getDefinition().getType();
     }
 
     void setChangeListner(VarInstanceMap<?> changeListener);

@@ -32,8 +32,7 @@ import java.util.Map;
  */
 public class FromPojoList<T> extends FromPojo<T> {
 
-    private SType   listType;
-    private List<T> pojoList;
+    private final List<T> pojoList;
 
     /**
      *
@@ -45,7 +44,6 @@ public class FromPojoList<T> extends FromPojo<T> {
     public FromPojoList(STypeComposite<? extends SIComposite> target, List<T> pojoList) {
         super(target);
         this.pojoList = pojoList;
-        this.listType = target;
     }
 
     @Override

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,17 +36,19 @@ public class IOUtil {
 
     public static final int BUFFER_2MB = 2 * 1048576;
     public static final int BUFFER_5MB = 5 * 1048576;
-    public static final Charset UTF8 = Charset.forName("UTF-8");
+    public static final Charset UTF8 = Charset.forName(StandardCharsets.UTF_8.name());
+
+    private IOUtil() {}
 
     public static InputStream newBuffredInputStream(File f) throws FileNotFoundException {
         return newBuffredInputStream(new FileInputStream(f));
     }
 
-    public static OutputStream newBuffredOutputStream(File f) throws FileNotFoundException {
-        return newBuffredOutputStream(new FileOutputStream(f));
+    public static OutputStream newBufferedOutputStream(File f) throws FileNotFoundException {
+        return newBufferedOutputStream(new FileOutputStream(f));
     }
 
-    public static OutputStream newBuffredOutputStream(OutputStream out) throws FileNotFoundException {
+    public static OutputStream newBufferedOutputStream(OutputStream out) {
         return new BufferedOutputStream(out, BUFFER_2MB);
     }
 
@@ -58,7 +61,7 @@ public class IOUtil {
     }
 
     public static void writeLines(File f, String... lines) throws IOException {
-        try (OutputStream fos = newBuffredOutputStream(f)) {
+        try (OutputStream fos = newBufferedOutputStream(f)) {
             writeLines(fos, lines);
         }
     }

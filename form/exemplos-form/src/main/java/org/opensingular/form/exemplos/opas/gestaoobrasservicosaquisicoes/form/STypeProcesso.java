@@ -40,7 +40,6 @@ public class STypeProcesso extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
         addDadosProcesso();
         addObrasProcesso();
         

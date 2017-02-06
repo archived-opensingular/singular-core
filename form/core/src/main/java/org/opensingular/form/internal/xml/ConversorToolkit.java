@@ -17,6 +17,7 @@
 package org.opensingular.form.internal.xml;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -26,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+
+import org.opensingular.form.SingularFormException;
 
 /**
  * @author Expedito Júnior
@@ -43,7 +46,7 @@ public final class ConversorToolkit {
 
     private static DateFormat dateTimeFormat__;
 
-    private static NumberFormat[] numberFormat__ = new NumberFormat[30];
+    private static final NumberFormat[] numberFormat__ = new NumberFormat[30];
 
     /**
      * Esconde o contrutor
@@ -58,7 +61,7 @@ public final class ConversorToolkit {
         }
     }
 
-    public static Calendar getCalendar(String data) throws ParseException {
+    public static Calendar getCalendar(String data) {
         return getCalendar(getDateFromData(data));
     }
 
@@ -123,7 +126,7 @@ public final class ConversorToolkit {
 
         try {
             checarNull(data);
-            byte[] novo = data.getBytes();
+            byte[] novo = data.getBytes(StandardCharsets.UTF_8);
             for (int i = 0; i < novo.length; i++) {
                 switch (novo[i]) {
                     case '\\':
@@ -131,16 +134,18 @@ public final class ConversorToolkit {
                     case '.':
                     case ' ':
                         novo[i] = (byte) '/';
+                        break;
+                    default:
                 }
             }
             if (data.length() > 8) {
-                return getDateFormat().parse(new String(novo));
+                return getDateFormat().parse(new String(novo, StandardCharsets.UTF_8));
             } else {
-                return getDateFormat("dd/MM/yy").parse(new String(novo));
+                return getDateFormat("dd/MM/yy").parse(new String(novo, StandardCharsets.UTF_8));
             }
         } catch (ParseException e) {
-            throw new RuntimeException(
-                    "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset());
+            throw new SingularFormException(
+                    "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset(), e);
         }
     }
 
@@ -155,15 +160,17 @@ public final class ConversorToolkit {
                     pontos++;
                 }
             }
-            while (pontos < 3) {
-                novaHora += ":00";
-                pontos++;
+            if (pontos < 3) {
+                StringBuilder sb = new StringBuilder(novaHora).append(9);
+                sb.append(novaHora);
+                for (; pontos < 3; pontos++) {
+                    sb.append(":00");
+                }
+                novaHora = sb.toString();
             }
             return getTimeFormat().parse(novaHora);
         } catch (ParseException e) {
-            throw new ParseException(
-                    "Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(),
-                    e.getErrorOffset());
+            throw new SingularFormException("Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(), e);
         }
     }
 
@@ -180,7 +187,7 @@ public final class ConversorToolkit {
             }
             return Double.parseDouble(valor.replace(',', '.'));
         } catch (Exception e) {
-            throw new NumberFormatException("Valor inválido (" + valor + ")!");
+            throw new SingularFormException("Valor inválido (" + valor + ")!", e);
         }
     }
 
@@ -191,7 +198,7 @@ public final class ConversorToolkit {
         try {
             return Integer.parseInt(removeCaracterFromString(valor.trim(), '.'));
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Valor inválido (" + valor + ")!");
+            throw new SingularFormException("Valor inválido (" + valor + ")!", e);
         }
     }
 

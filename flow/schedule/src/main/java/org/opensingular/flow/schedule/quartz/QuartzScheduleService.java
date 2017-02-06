@@ -16,15 +16,16 @@
 
 package org.opensingular.flow.schedule.quartz;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
-
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 public class QuartzScheduleService implements IScheduleService, Loggable {
 
@@ -109,5 +110,10 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         } catch (SchedulerException e) {
             getLogger().trace(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Set<JobKey> getAllJobKeys() throws SchedulerException {
+        return quartzSchedulerFactory.getAllJobKeys();
     }
 }

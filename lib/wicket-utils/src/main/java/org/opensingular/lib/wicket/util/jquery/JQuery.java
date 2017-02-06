@@ -16,16 +16,17 @@
 
 package org.opensingular.lib.wicket.util.jquery;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-
-import org.opensingular.lib.wicket.util.util.WicketUtils;
-import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
-
 public class JQuery {
+
+    private JQuery() {}
 
 //    public static StringBuilder $(Component component) {
 //        if (component instanceof Page) {
@@ -35,10 +36,8 @@ public class JQuery {
 //    }
 
     public static StringBuilder convertEvent(Component component, String originalEvent, String newEvent) {
-        return $(component).append(""
-            + ".on('" + originalEvent + "', function(){"
-            + " $(this).trigger('" + newEvent + "');"
-            + "});");
+        return $(component).append("" + ".on('").append(originalEvent).append("', function(){")
+                .append(" $(this).trigger('").append(newEvent).append("');").append("});");
     }
 
     public static CharSequence redirectEvent(
@@ -50,8 +49,7 @@ public class JQuery {
     }
 
     public static StringBuilder $(Component... components) {
-        final Component[] allComponents = components;
-        final String selector = Arrays.stream(allComponents).filter(WicketUtils.$L.notNull())
+        final String selector = Arrays.stream(components).filter(WicketUtils.$L.notNull())
             .map(it -> (it instanceof Page) ? "document" : "#" + it.getMarkupId())
             .collect(Collectors.joining(","));
         return $(selector);

@@ -31,7 +31,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         try {
             instance = aspectClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException("Erro criando classe de aspecto '" + aspectClass.getName() + "'", e);
+            throw new SingularFormException("Erro criando classe de aspecto '" + aspectClass.getName() + "'", e);
         }
         return of(original, instance);
     }
@@ -52,14 +52,14 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
 
     public SAttributeEnabled getTarget() {
         if (target == null) {
-            throw new RuntimeException("O objeto alvo dos atributos não foi definido");
+            throw new SingularFormException("O objeto alvo dos atributos não foi definido");
         }
         return target;
     }
 
     public SType<?> getTipo() {
         if (target == null) {
-            throw new RuntimeException("O objeto alvo dos atributos não foi definido");
+            throw new SingularFormException("O objeto alvo dos atributos não foi definido");
         }
         if (target instanceof SType) {
             return (SType<?>) target;
@@ -105,7 +105,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public <V> void setAttributeValue(SType<?> defAttribute, Object value) {
+    public void setAttributeValue(SType<?> defAttribute, Object value) {
         getTarget().setAttributeValue(defAttribute, value);
     }
 

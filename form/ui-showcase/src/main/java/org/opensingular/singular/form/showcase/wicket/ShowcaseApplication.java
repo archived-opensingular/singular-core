@@ -39,6 +39,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 public class ShowcaseApplication extends AuthenticatedWebApplication
@@ -72,7 +73,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(false);
-        getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
+        getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
         getComponentOnConfigureListeners().add(component -> {
             boolean outputId = !component.getRenderBodyOnly();
             component.setOutputMarkupId(outputId).setOutputMarkupPlaceholderTag(outputId);

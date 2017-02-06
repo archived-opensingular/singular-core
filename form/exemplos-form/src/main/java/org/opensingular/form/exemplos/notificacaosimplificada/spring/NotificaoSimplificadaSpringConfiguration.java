@@ -33,6 +33,7 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @AutoScanDisabled
@@ -95,7 +96,7 @@ public class NotificaoSimplificadaSpringConfiguration {
 
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.setSqlScriptEncoding("UTF-8");
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
         if (!SingularProperties.get().isFalse("anvisa.enabled.h2.inserts")) {
             populator.addScript(drops);
             populator.addScript(createTables);

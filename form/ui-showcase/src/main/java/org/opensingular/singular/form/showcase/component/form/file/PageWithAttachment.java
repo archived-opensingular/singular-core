@@ -24,21 +24,18 @@ import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 public class PageWithAttachment {
 
-    RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> persistanceRef;
-
     public void beforeRendering(SIComposite instance){
-        /**
-         * Você deve estabelecer o serviço para persistir seus arquivos.
-         */
+        // Você deve estabelecer o serviço para persistir seus arquivos.
         SDocument document = instance.getDocument();
-        document.setAttachmentPersistencePermanentHandler(persistanceRef);
+        document.setAttachmentPersistencePermanentHandler(createPersister());
     }
 
     public void beforeSave(SIComposite instance){
-        /**
-         * Isto converterá seus arquivos de temporários para persistentes.
-         */
+        // Isto converterá seus arquivos de temporários para persistentes.
         instance.getDocument().persistFiles();
     }
 
+    private RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> createPersister() {
+        return null;
+    }
 }

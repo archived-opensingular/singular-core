@@ -16,18 +16,19 @@
 
 package org.opensingular.lib.wicket.util.template;
 
-import org.opensingular.lib.commons.util.Loggable;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.Cookie;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,11 +67,13 @@ public class SkinOptions implements Serializable, Loggable {
     }
 
     public void addSkin(String name) {
-        skins.add(new Skin(name, false));
+        skins.add(new Skin(name, Boolean.FALSE));
     }
 
-    public void addDefaulSkin(String name) {
-        skins.add(new Skin(name, true));
+    public Skin addDefaulSkin(String name) {
+        Skin skin = new Skin(name, Boolean.TRUE);
+        skins.add(skin);
+        return skin;
     }
 
     public List<Skin> options() {
@@ -84,7 +87,7 @@ public class SkinOptions implements Serializable, Loggable {
             final JSONObject json = new JSONObject();
             json.put("name", selection.getName());
             try {
-                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8"));
+                cookie.setValue(URLEncoder.encode(json.toString(), StandardCharsets.UTF_8.name()));
             } catch (UnsupportedEncodingException e) {
                 getLogger().error(e.getMessage(), e);
             }
@@ -94,36 +97,34 @@ public class SkinOptions implements Serializable, Loggable {
     }
 
     public Skin currentSkin() {
-        if (current == null) {
-            final Cookie cookie = request().getCookie("skin");
-            if (cookie != null) {
-                try {
-                    String name = (String) new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8")).get("name");
-                    return options()
-                            .stream()
-                            .filter(s -> s.getName().equals(name))
-                            .findFirst()
-                            .orElseGet(() -> {
-                                if (!getDefaultSkin().isPresent()) {
-                                    addDefaulSkin(name);
-                                }
-                                return getDefaultSkin().orElse(fallBackSkin());
-                            });
-                } catch (UnsupportedEncodingException e) {
-                    getLogger().error(e.getMessage(), e);
-                    return getDefaultSkin().orElse(fallBackSkin());
-                }
-            }
-            return getDefaultSkin().orElse(fallBackSkin());
+        if (current != null) {
+            return current;
         }
-        return current;
+        Cookie cookie = request().getCookie("skin");
+        if (cookie != null) {
+            try {
+                String name = (String) new JSONObject(URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.name())).get("name");
+                return skins
+                        .stream()
+                        .filter(s -> s.getName().equals(name))
+                        .findFirst()
+                        .orElseGet(() -> {
+                            Optional<Skin> skin = getDefaultSkin();
+                            if (skin.isPresent()) {
+                                return skin.get();
+                            }
+                            return addDefaulSkin(name);
+                        });
+            } catch (UnsupportedEncodingException e) {
+                getLogger().error(e.getMessage(), e);
+                return getDefaultSkin().orElse(fallBackSkin());
+            }
+        }
+        return getDefaultSkin().orElse(fallBackSkin());
     }
 
     public Optional<Skin> getDefaultSkin() {
-        return options()
-                .stream()
-                .filter(s -> s.defaultSkin)
-                .findFirst();
+        return skins.stream().filter(s -> s.defaultSkin).findFirst();
     }
 
     private static WebRequest request() {

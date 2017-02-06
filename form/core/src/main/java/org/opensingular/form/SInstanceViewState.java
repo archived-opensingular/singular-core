@@ -74,7 +74,7 @@ public enum SInstanceViewState {
 
     public static boolean isInstanceRequired(SInstance instance) {
         return (instance != null)
-            && SInstances.attributeValue(instance, SPackageBasic.ATR_REQUIRED, false)
+            && SInstances.attributeValue(instance, SPackageBasic.ATR_REQUIRED, Boolean.FALSE)
             && get(instance).isEnabled();
     }
 

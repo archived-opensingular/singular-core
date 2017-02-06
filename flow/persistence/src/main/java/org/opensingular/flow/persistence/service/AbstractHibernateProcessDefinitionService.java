@@ -16,39 +16,19 @@
 
 package org.opensingular.flow.persistence.service;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.MProcessRole;
-import org.opensingular.flow.core.MTask;
-import org.opensingular.flow.core.MTransition;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.SingularFlowException;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessGroup;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.entity.*;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
-import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
+import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+
+import java.util.*;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityRoleDefinition, PROCESS_ROLE extends IEntityRoleInstance, ROLE_TASK extends IEntityRoleTask>
         extends AbstractHibernateService
@@ -104,42 +84,45 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     private final PROCESS_DEF retrieveOrcreateEntityProcessDefinitionFor(ProcessDefinition<?> definicao) {
         SessionWrapper sw = getSession();
         requireNonNull(definicao);
+        String key = definicao.getKey();
         PROCESS_DEF def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
-                pd -> pd.getKey().equals(definicao.getKey()));
+                pd -> pd.getKey().equals(key));
         if (def == null) {
             def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
                 pd -> pd.getDefinitionClassName().equals(definicao.getClass().getName()));
         }
         IEntityProcessGroup processGroup = retrieveProcessGroup();
+        String name = definicao.getName();
+        String category = definicao.getCategory();
         if (def == null) {
             def = newInstanceOf(getClassProcessDefinition());
-            def.setCategory(retrieveOrCreateCategoryWith(definicao.getCategory()));
+            def.setCategory(retrieveOrCreateCategoryWith(category));
             def.setProcessGroup(processGroup);
-            def.setName(definicao.getName());
-            def.setKey(definicao.getKey());
+            def.setName(name);
+            def.setKey(key);
             def.setDefinitionClassName(definicao.getClass().getName());
 
             sw.save(def);
             sw.refresh(def);
         } else {
             if(!def.getProcessGroup().equals(processGroup)){
-                throw new SingularFlowException("O processo "+definicao.getName()+" esta associado a outro grupo/sistema: "+def.getProcessGroup().getCod()+" - "+def.getProcessGroup().getName());
+                throw new SingularFlowException("O processo "+ name +" esta associado a outro grupo/sistema: "+def.getProcessGroup().getCod()+" - "+def.getProcessGroup().getName());
             }
             boolean mudou = false;
-            if (!definicao.getKey().equals(def.getKey())) {
-                def.setKey(definicao.getKey());
+            if (!key.equals(def.getKey())) {
+                def.setKey(key);
                 mudou = true;
             }
-            if (!definicao.getName().equals(def.getName())) {
-                def.setName(definicao.getName());
+            if (!name.equals(def.getName())) {
+                def.setName(name);
                 mudou = true;
             }
-            CATEGORY categoria = retrieveOrCreateCategoryWith(definicao.getCategory());
+            CATEGORY categoria = retrieveOrCreateCategoryWith(category);
             if (!Objects.equals(def.getCategory(), categoria)) {
-                def.setCategory(retrieveOrCreateCategoryWith(definicao.getCategory()));
+                def.setCategory(retrieveOrCreateCategoryWith(category));
                 mudou = true;
             }
-            if (!definicao.getClass().getName().equals(def.getDefinitionClassName())) {
+            if (!Objects.equals(def.getDefinitionClassName(), definicao.getClass().getName())) {
                 def.setDefinitionClassName(definicao.getClass().getName());
                 mudou = true;
             }
@@ -223,31 +206,36 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     protected abstract TASK_DEF createEntityDefinitionTask(PROCESS_DEF process);
 
     private final TASK_DEF retrieveOrCreateEntityDefinitionTask(PROCESS_DEF process, MTask<?> task) {
-        TASK_DEF taskDefinition = (TASK_DEF) process.getTaskDefinition(task.getAbbreviation());
+
+        String abbreviation = task.getAbbreviation();
+        TASK_DEF taskDefinition = (TASK_DEF) process.getTaskDefinition(abbreviation);
+
         if (taskDefinition == null) {
             taskDefinition = createEntityDefinitionTask(process);
-            taskDefinition.setAbbreviation(task.getAbbreviation());
-            if (task.getAccessStrategy() != null) {
-                taskDefinition.setAccessStrategyType(task.getAccessStrategy().getType());
-            }
+            taskDefinition.setAbbreviation(abbreviation);
 
-            if (task.getAccessStrategy() != null) {
-                final List<String> roles = task.getAccessStrategy().getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
-                for (String roleName : roles) {
+            TaskAccessStrategy<ProcessInstance> accessStrategy = task.getAccessStrategy();
 
-                    PROCESS_ROLE_DEF roleDefinition = null;
-                    for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
-                        if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
-                            roleDefinition = (PROCESS_ROLE_DEF) rd;
-                            break;
-                        }
-                    }
-
-                    addRoleToTask(roleDefinition, taskDefinition);
-                }
+            if (accessStrategy != null) {
+                taskDefinition.setAccessStrategyType(accessStrategy.getType());
+                List<String> roles = accessStrategy.getVisualizeRoleNames(task.getFlowMap().getProcessDefinition(), task);
+                addRolesToTaks(process, taskDefinition, roles);
             }
         }
         return taskDefinition;
+    }
+
+    private void addRolesToTaks(PROCESS_DEF process, TASK_DEF taskDefinition, List<String> roles) {
+        for (String roleName : roles) {
+            PROCESS_ROLE_DEF roleDefinition = null;
+            for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
+                if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
+                    roleDefinition = (PROCESS_ROLE_DEF) rd;
+                    break;
+                }
+            }
+            addRoleToTask(roleDefinition, taskDefinition);
+        }
     }
 
     protected abstract ROLE_TASK addRoleToTask(PROCESS_ROLE_DEF roleDefinition, TASK_DEF taskDefinition);
@@ -281,10 +269,13 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return false;
     }
 
-    private boolean isNewVersion(IEntityTaskTransitionVersion oldEntityTaskTransition, IEntityTaskTransitionVersion newEntityTaskTransition) {
-        return oldEntityTaskTransition == null || !oldEntityTaskTransition.getName().equalsIgnoreCase(newEntityTaskTransition.getName())
-                || !oldEntityTaskTransition.getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getAbbreviation())
-                || oldEntityTaskTransition.getType() != newEntityTaskTransition.getType() || !oldEntityTaskTransition.getDestinationTask()
-                        .getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getDestinationTask().getAbbreviation());
+    private static boolean isNewVersion(IEntityTaskTransitionVersion oldTaskTransition, IEntityTaskTransitionVersion newTaskTransition) {
+        //@formatter:off
+        return oldTaskTransition == null ||
+                !oldTaskTransition.getName().equalsIgnoreCase(newTaskTransition.getName()) ||
+                !oldTaskTransition.getAbbreviation().equalsIgnoreCase(newTaskTransition.getAbbreviation()) ||
+                oldTaskTransition.getType() != newTaskTransition.getType() ||
+                !oldTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newTaskTransition.getDestinationTask().getAbbreviation());
+        //@formatter:on
     }
 }

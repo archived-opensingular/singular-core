@@ -16,30 +16,11 @@
 
 package org.opensingular.singular.form.showcase.view.page.form.examples;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeDate;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.*;
+import org.opensingular.form.type.core.*;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
-import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.view.SMultiSelectionByPicklistView;
-import org.opensingular.form.view.SMultiSelectionBySelectView;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.view.SViewSelectionByRadio;
-import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.view.*;
 
 @SInfoType(spackage = SPackagePeticaoGGTOX.class, name = "STypePeticaoGGTOX")
 public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
@@ -189,9 +170,9 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                         .asAtrBootstrap().colPreference(4);
 
                 //TODO caso eu marque sem restrições os outros campos devem ser desabilitados
-                STypeString restricao = addField("restricao", STypeString.class);
+                STypeString restricao2 = addField("restricao", STypeString.class);
 
-                final STypeList<STypeString, SIString> restricoes = root.addFieldListOf("restricoes", restricao);
+                final STypeList<STypeString, SIString> restricoes = root.addFieldListOf("restricoes", restricao2);
 
                 restricoes.selectionOf("Impureza relevante presente",
                         "Controle de impureza determinado",
@@ -231,13 +212,13 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
 
             private STypeString createSugeridaField() {
                 final STypeList<STypeComposite<SIComposite>, SIComposite> sinonimias = root.addFieldListOfComposite("sinonimias", "sinonimia");
-                final STypeComposite<?>                                   sinonimia  = sinonimias.getElementsType();
+                final STypeComposite<?>                                   sinonimia2  = sinonimias.getElementsType();
 
                 sinonimias.withView(SViewListByTable::new);
                 sinonimias.asAtr()
                         .label("Lista de sinonímias sugeridas para esta substância/mistura");
 
-                STypeString field = sinonimia.addFieldString("nomeSinonimia", true);
+                STypeString field = sinonimia2.addFieldString("nomeSinonimia", true);
 
                 field.asAtr().label("Sinonímia sugerida").maxLength(100);
 
@@ -254,8 +235,8 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 root.asAtr().label("Finalidades")
                         .asAtrBootstrap().colPreference(4);
 
-                STypeString                            finalidade  = addField("finalidadeConformeMatriz", STypeString.class);
-                final STypeList<STypeString, SIString> finalidades = root.addFieldListOf("finalidades", finalidade);
+                STypeString                            finalidade2  = addField("finalidadeConformeMatriz", STypeString.class);
+                final STypeList<STypeString, SIString> finalidades = root.addFieldListOf("finalidades", finalidade2);
                 finalidades.selectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização").cast();
                 finalidades.withView(SMultiSelectionByCheckboxView::new);
             }
@@ -270,8 +251,8 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
 
                 root.asAtr().label("Uso pretendido").asAtrBootstrap().colPreference(4);
 
-                final STypeString                      usoPretendido   = addField("usoPretendido", STypeString.class);
-                final STypeList<STypeString, SIString> usosPretendidos = root.addFieldListOf("usosPretendidos", usoPretendido);
+                final STypeString                      usoPretendido2   = addField("usoPretendido", STypeString.class);
+                final STypeList<STypeString, SIString> usosPretendidos = root.addFieldListOf("usosPretendidos", usoPretendido2);
                 usosPretendidos.selectionOf("Uso 1", "Uso 2", "Uso 3");
                 usosPretendidos.withView(SMultiSelectionByPicklistView::new)
                         .asAtr().label("Lista de uso pretendido/mistura");
@@ -329,8 +310,8 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
             final STypeComposite<SIComposite>                         type;
             final STypeString                                         produtoExterior;
             final STypeString                                         tipo;
-            STypeString material;
-            final STypeString  unidadeMedida;
+            final STypeString material;
+            final STypeString unidadeMedida;
             final STypeInteger capacidade;
             private final String[]
                     tiposDisponiveis     = new String[]{
@@ -412,7 +393,7 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 arquivo = createArquivoField();
                 tipo = createTipoField();
 
-                SType<?> nomeArquivo = (STypeSimple) arquivo.getField(arquivo.FIELD_NAME);
+                SType<?> nomeArquivo = arquivo.getField(arquivo.FIELD_NAME);
                 nomeArquivo.asAtr().label("Nome do Arquivo");
                 root.withView(new SViewListByMasterDetail()
                                 .col((STypeSimple) nomeArquivo)
@@ -642,10 +623,10 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 }
 
                 private STypeDecimal createDecimalField(String fieldname, String label, String subtitle) {
-                    STypeDecimal valorPh = type.addFieldDecimal(fieldname, true);
-                    valorPh.asAtr().label(label).subtitle(subtitle)
+                    STypeDecimal ph = type.addFieldDecimal(fieldname, true);
+                    ph.asAtr().label(label).subtitle(subtitle)
                             .asAtrBootstrap().colPreference(4);
-                    return valorPh;
+                    return ph;
                 }
             }
         }

@@ -47,6 +47,8 @@ public class FreemarkerUtil {
         cfg.setObjectWrapper(wrapper);
     }
 
+    private FreemarkerUtil() {}
+
     public static String mergeWithFreemarker(String template, Object obj) {
 
         if (obj == null || template == null) {
@@ -59,7 +61,7 @@ public class FreemarkerUtil {
             new Template(String.valueOf(template.hashCode()), new StringReader(safeWrap(template)), cfg).process(obj, sw);
         } catch (IOException | TemplateException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new SingularFormException("Não foi possivel fazer o merge do template " + template);
+            throw new SingularFormException("Não foi possivel fazer o merge do template " + template, e);
         }
 
         return sw.toString();

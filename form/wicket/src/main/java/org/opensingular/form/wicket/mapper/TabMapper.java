@@ -97,27 +97,33 @@ public class TabMapper extends DefaultCompositeMapper {
                 SViewTab tabView = (SViewTab) instance.getType().getView();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
                 // da prioridade ao que foi definido na View e nos atributos em seguida
-                final Optional<Integer> colXs = Optional.ofNullable(Optional.ofNullable(tabView.getNavColXs()).orElse(bootstrap.getColXs(bootstrap.getColPreference())));
-                final Optional<Integer> colSm = Optional.ofNullable(Optional.ofNullable(tabView.getNavColSm()).orElse(bootstrap.getColSm(bootstrap.getColPreference())));
-                final Optional<Integer> colMd = Optional.ofNullable(Optional.ofNullable(tabView.getNavColMd()).orElse(bootstrap.getColMd(bootstrap.getColPreference())));
-                final Optional<Integer> colLg = Optional.ofNullable(Optional.ofNullable(tabView.getNavColLg()).orElse(bootstrap.getColLg(bootstrap.getColPreference())));
-                
-                if(colXs.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
-                    getNavigation().xs(colXs.get());
-                    getContent().xs(BSTabCol.MAX_COLS - colXs.get());
+                Integer colPreference = bootstrap.getColPreference();
+                Integer colXs = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference));
+                Integer colSm = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference));
+                Integer colMd = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference));
+                Integer colLg = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference));
+
+                if (colXs != null) {
+                    getNavigation().xs(colXs);
+                    getContent().xs(BSTabCol.MAX_COLS - colXs);
                 }
-                if(colSm.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
-                    getNavigation().sm(colSm.get());
-                    getContent().sm(BSTabCol.MAX_COLS - colSm.get());
+                if (colSm != null) {
+                    getNavigation().sm(colSm);
+                    getContent().sm(BSTabCol.MAX_COLS - colSm);
                 }
-                if(colMd.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
-                    getNavigation().md(colMd.get());
-                    getContent().md(BSTabCol.MAX_COLS - colMd.get());
+                if (colMd != null) {
+                    getNavigation().md(colMd);
+                    getContent().md(BSTabCol.MAX_COLS - colMd);
                 }
-                if(colLg.filter(x -> x < BSTabCol.MAX_COLS ).isPresent()){
-                    getNavigation().lg(colLg.get());
-                    getContent().lg(BSTabCol.MAX_COLS - colLg.get());
+                if (colLg != null) {
+                    getNavigation().lg(colLg);
+                    getContent().lg(BSTabCol.MAX_COLS - colLg);
                 }
+            }
+
+            private Integer resolveCol(Integer cols, Integer defaultCols) {
+                Integer c = cols != null ? cols : defaultCols;
+                return c != null && c < BSTabCol.MAX_COLS ? c : null;
             }
         };
         
@@ -184,10 +190,10 @@ public class TabMapper extends DefaultCompositeMapper {
             SInstance field = instance.getField(name);
             if (field != null) {
                 AtrAnnotation annotatedField = field.asAtrAnnotation();
-                if (annotatedField.hasAnnotationOnTree()) {
+                if (annotatedField.hasAnyAnnotationOnTree()) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().getAnnotationMode().editable() &&
-                    annotatedField.isOrHasAnnotatedChild()) {
+                    annotatedField.hasAnyAnnotable()) {
                     isAnnotated = true;
                 }
             }

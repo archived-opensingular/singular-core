@@ -16,6 +16,12 @@
 
 package org.opensingular.singular.form.showcase.dao.form;
 
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
 import org.opensingular.form.exemplos.emec.credenciamentoescolagoverno.form.STypeCredenciamentoEscolaGoverno;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.baixorisco.STypeNotificacaoSimplificadaBaixoRisco;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.dinamizado.STypeNotificacaoSimplificadaDinamizado;
@@ -23,19 +29,15 @@ import org.opensingular.form.exemplos.notificacaosimplificada.form.gas.STypeNoti
 import org.opensingular.form.exemplos.notificacaosimplificada.form.habilitacao.STypeHabilitacaoEmpresa;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.vegetal.STypeNotificacaoSimplificadaFitoterapico;
 import org.opensingular.form.exemplos.opas.gestaoobrasservicosaquisicoes.form.STypeGestaoObras;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.SPackage;
-import org.opensingular.form.SType;
-import org.opensingular.singular.form.showcase.component.CaseBaseForm;
-import org.opensingular.singular.form.showcase.component.ShowCaseTable;
-import org.opensingular.singular.form.showcase.view.page.form.examples.STypeCurriculo;
 import org.opensingular.form.spring.SpringTypeLoader;
 import org.opensingular.singular.form.showcase.component.CaseBase;
+import org.opensingular.singular.form.showcase.component.CaseBaseForm;
+import org.opensingular.singular.form.showcase.component.ShowCaseTable;
+import org.opensingular.singular.form.showcase.component.ShowCaseTable.ShowCaseGroup;
+import org.opensingular.singular.form.showcase.component.ShowCaseTable.ShowCaseItem;
 import org.opensingular.singular.form.showcase.component.ShowCaseType;
+import org.opensingular.singular.form.showcase.view.page.form.examples.STypeCurriculo;
 import org.opensingular.singular.form.showcase.view.page.form.examples.STypeExample;
-import com.google.common.base.Preconditions;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -69,18 +71,22 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 
     @PostConstruct
     private void init() {
-        for (ShowCaseTable.ShowCaseGroup group : showCaseTable.getGroups()) {
-            for (ShowCaseTable.ShowCaseItem item : group.getItens()) {
-                String itemName = group.getGroupName() + " - " + item.getComponentName();
-                for (CaseBase cb : item.getCases()) {
-                    if (cb instanceof CaseBaseForm) {
-                        CaseBaseForm c = (CaseBaseForm) cb;
-                        if (StringUtils.isEmpty(c.getSubCaseName())) {
-                            add(itemName, c, group.getTipo());
-                        } else {
-                            add(itemName + " - " + c.getSubCaseName(), c, group.getTipo());
-                        }
-                    }
+        for (ShowCaseGroup group : showCaseTable.getGroups()) {
+            for (ShowCaseItem item : group.getItens()) {
+                addGroupItem(group, item);
+            }
+        }
+    }
+
+    private void addGroupItem(ShowCaseGroup group, ShowCaseItem item) {
+        String itemName = group.getGroupName() + " - " + item.getComponentName();
+        for (CaseBase cb : item.getCases()) {
+            if (cb instanceof CaseBaseForm) {
+                CaseBaseForm c = (CaseBaseForm) cb;
+                if (StringUtils.isEmpty(c.getSubCaseName())) {
+                    add(itemName, c, group.getTipo());
+                } else {
+                    add(itemName + " - " + c.getSubCaseName(), c, group.getTipo());
                 }
             }
         }
@@ -102,7 +108,7 @@ public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
         }, tipo);
     }
 
-    private void add(Class<? extends SPackage> packageClass, String typeName, ShowCaseType tipo) {
+    final void add(Class<? extends SPackage> packageClass, String typeName, ShowCaseType tipo) {
         String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
         add(typeName, simpleName, () -> {
             SDictionary d = SDictionary.create();

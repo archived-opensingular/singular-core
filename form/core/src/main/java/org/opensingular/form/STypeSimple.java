@@ -16,19 +16,18 @@
 
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.view.SViewSelectionByRadio;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
-
+import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.type.core.AtrFormula;
 import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 @SuppressWarnings("rawtypes")
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
@@ -98,12 +97,12 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
     }
 
     public VALUE fromString(String value) {
-        throw new RuntimeException("Não implementado");
+        throw new UnsupportedOperationException("Não implementado");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Object> T convert(Object value, Class<T> resultClass) {
+    public <T> T convert(Object value, Class<T> resultClass) {
         if (value == null) {
             return null;
         } else if (resultClass.isAssignableFrom(valueClass)) {
@@ -119,9 +118,9 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
             Class<? extends Enum> enumClass = resultClass.asSubclass(Enum.class);
             return (T) Enum.valueOf(enumClass, value.toString());
         } else {
-            Converter converter = ConvertUtils.lookup(value.getClass(), resultClass);
-            if (converter != null) {
-                return resultClass.cast(converter.convert(resultClass, value));
+            Converter apacheConverter = ConvertUtils.lookup(value.getClass(), resultClass);
+            if (apacheConverter != null) {
+                return resultClass.cast(apacheConverter.convert(resultClass, value));
             }
         }
 

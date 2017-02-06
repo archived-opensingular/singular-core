@@ -16,21 +16,15 @@
 
 package org.opensingular.form.exemplos.notificacaosimplificada.form.dinamizado;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.tuple.Triple;
+import org.opensingular.form.*;
+import org.opensingular.form.converter.ValueToSICompositeConverter;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.STypeAcondicionamento;
 import org.opensingular.form.exemplos.notificacaosimplificada.form.vocabulario.STypeCategoriaRegulatoria;
-import org.opensingular.form.exemplos.util.TripleConverter;
 import org.opensingular.form.exemplos.notificacaosimplificada.service.DominioService;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeAttachmentList;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.form.exemplos.util.TripleConverter;
 import org.opensingular.form.provider.Config;
 import org.opensingular.form.provider.FilteredPagedProvider;
 import org.opensingular.form.provider.ProviderContext;
@@ -40,13 +34,7 @@ import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.util.transformer.Value;
-import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.view.SViewTextArea;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.tuple.Triple;
+import org.opensingular.form.view.*;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -104,7 +92,7 @@ public class STypeNotificacaoSimplificadaDinamizado extends STypeComposite<SICom
 
     private void addCaracteristicas() {
 
-        final STypeCategoriaRegulatoria classe               = addField("classeConformeMatriz", STypeCategoriaRegulatoria.class);
+        addField("classeConformeMatriz", STypeCategoriaRegulatoria.class);
         final STypeLinhaProducaoDinamizado                        linhaProducao        = addField("linhaProducao", STypeLinhaProducaoDinamizado.class);
         final STypeList<STypeComposite<SIComposite>, SIComposite> formulasHomeopaticas = addFieldListOfComposite("formulasHomeopaticas", "formulaHomeopatica");
 
@@ -182,13 +170,11 @@ public class STypeNotificacaoSimplificadaDinamizado extends STypeComposite<SICom
                     .dependsOn(descricaoDinamizada)
                     .visible(i -> {
                         final SIList<SIComposite> list = i.findNearest(formulasHomeopaticas).orElse(null);
-                        final boolean hasIdDescricaoDinamizadaPresent = list.stream()
+                        return list != null && list.stream()
                                 .map(SIComposite::getChildren)
                                 .flatMap(Collection::stream)
                                 .map(ins -> ins.findNearest(descricaoDinamizada))
-                                .filter(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada))
-                                .findFirst().isPresent();
-                        return !list.isEmpty() && hasIdDescricaoDinamizadaPresent;
+                                .anyMatch(ins -> ins.isPresent() && Value.notNull(ins.get(), idDescricaoDinamizada));
                     })
                     .displayString("${descricao}")
                     .asAtrBootstrap()

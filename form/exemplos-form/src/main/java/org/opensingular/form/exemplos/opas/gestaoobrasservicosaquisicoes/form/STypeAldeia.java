@@ -31,8 +31,6 @@ public class STypeAldeia extends STypeComposite<SIComposite>{
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
-        
         addFieldString(FIELD_NOME, true).asAtr().label("Aldeia");
         addFieldInteger(FIELD_QTD_FAMILIAS, true).asAtr().label("Nº Famílias");
         addFieldInteger(FIELD_POPULACAO, true).asAtr().label("População");

@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentPersistenceHandler;
 import org.opensingular.lib.commons.base.SingularUtil;
-import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentHandler;
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
 
@@ -29,7 +29,7 @@ public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHan
         } catch (Exception e) {
             SingularUtil.propagate(e);
         }
-        return new FileSystemAttachmentHandler(tmpFolder);
+        return new FileSystemAttachmentPersistenceHandler(tmpFolder);
     }
 
 }

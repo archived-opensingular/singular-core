@@ -2,6 +2,7 @@ package org.opensingular.form.wicket;
 
 import static org.junit.Assert.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -47,7 +48,7 @@ public class SValidationFeedbackHandlerTest {
                 return null;
             }
         });
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
     }
 
     protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {

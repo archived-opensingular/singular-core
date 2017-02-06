@@ -38,7 +38,7 @@ public class ValidationResult {
     }
 
     public void addErro(VarInstance var, String msg) {
-        addErro(var.getNome() + ": " + msg);
+        addErro(var.getName() + ": " + msg);
     }
 
     @Override

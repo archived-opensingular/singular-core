@@ -18,7 +18,7 @@ public class TestMInstances extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
     }
 

@@ -16,18 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
-import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.converter.SInstanceConverter;
-import org.opensingular.form.provider.Provider;
-import org.opensingular.form.provider.ProviderContext;
-import org.opensingular.form.util.transformer.Value;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.form.wicket.util.WicketFormProcessing;
-import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -47,14 +35,27 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.provider.Provider;
+import org.opensingular.form.provider.ProviderContext;
+import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static com.google.common.collect.Maps.newLinkedHashMap;
 
 
 /**
@@ -98,7 +99,8 @@ public class TypeaheadComponent extends Panel {
         super(id);
         this.model = model;
         this.fetch = fetch;
-        add(container = buildContainer());
+        container = buildContainer();
+        add(container);
     }
 
     protected static String generateResultOptions(Map<String, String> options) {
@@ -117,34 +119,33 @@ public class TypeaheadComponent extends Panel {
     @SuppressWarnings("unchecked")
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        c.add(labelField = new TextField<>("label_field", new Model<String>() {
+        labelField = new TextField<>("label_field", new Model<String>() {
 
             private String lastDisplay;
-            private Object lastValue;
+            private Serializable lastValue;
 
             @Override
             public String getObject() {
                 if (instance().isEmptyOfData()) {
                     return null;
-                } else {
-                    if (!Value.dehydrate(instance()).equals(lastValue)) {
-                        lastValue = Value.dehydrate(instance());
-                        final SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
-                        if (converter != null) {
-                            final Serializable converted = converter.toObject(instance());
-                            if (converted != null) {
-                                lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
-                            }
+                } else if (!Value.dehydrate(instance()).equals(lastValue)) {
+                    lastValue = Value.dehydrate(instance());
+                    SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        Serializable converted = converter.toObject(instance());
+                        if (converted != null) {
+                            lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
                         }
                     }
-                    return lastDisplay;
                 }
+                return lastDisplay;
             }
-        }));
-        c.add(valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
+        });
+        c.add(labelField);
+        valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
-            private Object lastValue;
+            private Serializable lastValue;
 
             @Override
             public SInstance getMInstancia() {
@@ -173,7 +174,7 @@ public class TypeaheadComponent extends Panel {
             @Override
             public void setObject(String key) {
                 if (StringUtils.isEmpty(key)) {
-                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, true);
+                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, Boolean.TRUE);
                     getMInstancia().clearInstance();
                 } else {
                     final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
@@ -185,8 +186,10 @@ public class TypeaheadComponent extends Panel {
                 }
             }
 
-        }));
-        add(dynamicFetcher = new BloodhoundDataBehavior(model, cache));
+        });
+        c.add(valueField);
+        dynamicFetcher = new BloodhoundDataBehavior(model, cache);
+        add(dynamicFetcher);
         return c;
     }
 
@@ -364,7 +367,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
         requestCycle().scheduleRequestHandlerAfterCurrent(
-                new TextRequestHandler("application/json", "utf-8", generateResultOptions(values(filterValue()))));
+                new TextRequestHandler("application/json", StandardCharsets.UTF_8.name(), generateResultOptions(values(filterValue()))));
     }
 
     private String filterValue() {

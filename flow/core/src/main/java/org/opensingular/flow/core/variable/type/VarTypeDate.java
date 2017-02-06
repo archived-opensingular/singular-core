@@ -35,7 +35,7 @@ public class VarTypeDate implements VarType {
 
     @Override
     public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValor(), varInstance.getDefinicao());
+        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class VarTypeDate implements VarType {
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Integer.toString((Integer) varInstance.getValor());
+        return Integer.toString((Integer) varInstance.getValue());
     }
 
 

@@ -16,14 +16,16 @@
 
 package org.opensingular.flow.core;
 
-import java.util.Date;
-import java.util.function.Predicate;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import java.util.Date;
+import java.util.function.Predicate;
+
 public class TaskPredicates {
+
+    private TaskPredicates() {}
 
     public static ITaskPredicate disabledCreator() {
         return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !Flow.canBeAllocated(taskInstance.getProcessInstance().getUserCreator()));
@@ -38,7 +40,7 @@ public class TaskPredicates {
             return false;
         });
         taskPredicateImpl.setFullDescription("Prazo Extrapolado em " + numberOfDays + " dias");
-        taskPredicateImpl.setEventType(EventType.Timer);
+        taskPredicateImpl.setEventType(EventType.TIMER);
         return taskPredicateImpl;
     }
 
@@ -47,7 +49,7 @@ public class TaskPredicates {
         private final String name;
         private final Predicate<TaskInstance> predicate;
 
-        private EventType eventType = EventType.Conditional;
+        private EventType eventType = EventType.CONDITIONAL;
 
         private String description;
 

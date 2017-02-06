@@ -95,14 +95,13 @@ public class UnidadeMedida extends VocabularioControlado {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null) {
-            if (obj instanceof UnidadeMedida) {
-                UnidadeMedida um = (UnidadeMedida) obj;
-                if (um.getId() != null) {
-                    return um.getId().equals(this.getId());
-                }
+        if (obj instanceof UnidadeMedida) {
+            UnidadeMedida um = (UnidadeMedida) obj;
+            if (um.getId() != null) {
+                return um.getId().equals(this.getId());
             }
         }
         return false;
     }
+
 }

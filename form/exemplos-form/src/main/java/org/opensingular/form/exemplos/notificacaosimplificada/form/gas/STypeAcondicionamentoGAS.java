@@ -43,7 +43,6 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        super.onLoadType(tb);
 
         embalagemPrimaria = this.addFieldString("embalagemPrimaria");
         embalagemPrimaria.selectionOf("Cilindro", "Tanque", "Caminhão Tanque");
@@ -59,7 +58,7 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
             layoutsRotulagem.asAtr().label("Layout da rotulagem");
 
             STypeAttachment f = layoutsRotulagem.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            SType<?> nomeArquivo = f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 

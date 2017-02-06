@@ -16,10 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Set;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -28,17 +24,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-
-import org.opensingular.form.wicket.feedback.FeedbackFence;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.lib.commons.lambda.IBiConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.*;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -46,14 +32,24 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
+import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
+
+import java.util.Collection;
+import java.util.Set;
+
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -68,24 +64,25 @@ public class TableListMapper extends AbstractListaMapper {
             return;
         }
 
-        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, true);
+        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
         ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
     }
 
     private TableListPanel buildPannel(WicketBuildContext ctx, String id) {
+
         final IModel<SIList<SInstance>> list        = $m.get(ctx::getCurrentInstance);
         final SViewListByTable          view        = (SViewListByTable) ctx.getView();
-        final Boolean                   isEdition   = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
+        ViewMode                        viewMode    = ctx.getViewMode();
+        final Boolean                   isEdition   = viewMode == null || viewMode.isEdition();
         final SIList<SInstance>         iLista      = list.getObject();
         final SType<?>                  currentType = ctx.getCurrentInstance().getType();
 
         addMinimumSize(currentType, iLista);
 
-        TableListPanel panel = TableListPanel.TableListPanelBuilder.build(id,
+        return TableListPanel.TableListPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
                 (c, form) -> builContent(c, form, list, ctx, view, isEdition),
                 (f, form) -> buildFooter(f, form, ctx));
-        return panel;
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
@@ -100,7 +97,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
-        if (!(elementsType instanceof STypeComposite) && elementsType.asAtr().isRequired()) {
+        if (!elementsType.isComposite() && elementsType.asAtr().isRequired()) {
             title.add($b.classAppender("singular-form-required"));
         }
 
@@ -147,7 +144,7 @@ public class TableListMapper extends AbstractListaMapper {
 
 //        content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
-        if (elementsType instanceof STypeComposite) {
+        if (elementsType.isComposite()) {
 
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
             final BSTRow            row                   = tableHeader.newRow();
@@ -156,9 +153,10 @@ public class TableListMapper extends AbstractListaMapper {
                 row.newTHeaderCell($m.ofValue(""));
             }
 
-            int sumWidthPref = compositeElementsType.getFields().stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
+            Collection<SType<?>> fields       = compositeElementsType.getFields();
+            int                  sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
-            for (SType<?> tCampo : compositeElementsType.getFields()) {
+            for (SType<?> tCampo : fields) {
 
                 final Integer        preferentialWidth  = tCampo.asAtrBootstrap().getColPreference(1);
                 final IModel<String> headerModel        = $m.ofValue(tCampo.asAtr().getLabel());

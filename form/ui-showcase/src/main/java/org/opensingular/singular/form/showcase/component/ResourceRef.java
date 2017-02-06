@@ -16,16 +16,16 @@
 
 package org.opensingular.singular.form.showcase.component;
 
+import org.apache.commons.io.IOUtils;
+import org.opensingular.lib.commons.base.SingularUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Optional;
-
-import org.apache.commons.io.IOUtils;
-
-import org.opensingular.lib.commons.base.SingularUtil;
 
 /**
  * Representa um referência um recurso no class path e seu respectivo nome para
@@ -66,7 +66,7 @@ public class ResourceRef implements Serializable {
     public String getContent() {
         InputStream in = referenceClass.getResourceAsStream(resourcePath);
         try {
-            return IOUtils.toString(in, Charset.forName("UTF-8"));
+            return IOUtils.toString(in, Charset.forName(StandardCharsets.UTF_8.name()));
         } catch (IOException e) {
             throw SingularUtil.propagate(e);
         }
@@ -97,10 +97,7 @@ public class ResourceRef implements Serializable {
     }
 
     public String getExtension() {
-        final String displayName = getDisplayName();
-        if (displayName != null) {
-            return displayName.substring(displayName.lastIndexOf('.') + 1);
-        }
-        return null;
+        String name = getDisplayName();
+        return name == null ? null : name.substring(name.lastIndexOf('.') + 1);
     }
 }

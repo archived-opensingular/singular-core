@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.jdbc.Work;
+import org.opensingular.flow.core.SingularFlowException;
 
 @SuppressWarnings("unchecked")
 public class SessionWrapper {
@@ -61,7 +62,7 @@ public class SessionWrapper {
                 c.setAutoCommit(false);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new SingularFlowException(e);
         }
     }
 
@@ -69,9 +70,11 @@ public class SessionWrapper {
     // Métodos facilitadores
     // -----------------------------------------------------------------------------
 
+    /**
+     * TODO decidir se chamara automaticamente o método validar
+     * HibernateIntegration.validar(obj);
+     */
     public void validar(Object obj) {
-        // TODO decidir se chamara automaticamente o método validar
-        // HibernateIntegration.validar(obj);
     }
 
     public Serializable save(Object novoObj) {

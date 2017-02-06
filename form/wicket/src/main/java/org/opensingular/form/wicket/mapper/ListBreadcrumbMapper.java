@@ -26,13 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.*;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.io.MformPersistenciaXML;
@@ -44,6 +38,7 @@ import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -163,7 +158,9 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
 
         private void saveState() {
             MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
-            if (xml != null) instanceBackupXml = xml.toString();
+            if (xml != null) {
+                instanceBackupXml = xml.toString();
+            }
         }
 
         private void rollbackState() {
@@ -176,7 +173,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw SingularException.rethrow(e.getMessage(), e);
             }
         }
 
@@ -221,23 +218,26 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target, IModel<? extends SInstance> itemModel) {
             ctx.getRootContext().getBreadCrumbs().add((String) ctx.getCurrentInstance().getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
 
-            target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", ctx.getRootContainer().getMarkupId()));
-            ctx.getRootContainer().getItems().removeAll();
-            WicketBuildContext childCtx = ctx.createChild(ctx.getRootContainer(), true, itemModel);
+            BSContainer<?> rootContainer = ctx.getRootContainer();
+
+            target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", rootContainer.getMarkupId()));
+            rootContainer.getItems().removeAll();
+            WicketBuildContext childCtx = ctx.createChild(rootContainer, true, itemModel);
             childCtx.setShowBreadcrumb(true);
             ctx.getUiBuilderWicket().build(childCtx, ctx.getViewMode());
-            childCtx.getRootContainer().add(new AttributeAppender("style", Model.of("display: none")) {
+            BSContainer<?> childCtxRootContainer = childCtx.getRootContainer();
+            childCtxRootContainer.add(new AttributeAppender("style", Model.of("display: none")) {
                 @Override
                 public boolean isTemporary(Component component) {
                     return true;
                 }
             });
-            target.appendJavaScript(String.format("$('#%s').show('slide', { direction: 'right' }, 500);", childCtx.getRootContainer().getMarkupId()));
+            target.appendJavaScript(String.format("$('#%s').show('slide', { direction: 'right' }, 500);", childCtxRootContainer.getMarkupId()));
 
-            final BSRow buttonsRow = ctx.getRootContainer().newGrid().newRow();
+            final BSRow buttonsRow = rootContainer.newGrid().newRow();
             appendButtons(ctx, buttonsRow.newCol(11));
 
-            target.add(ctx.getRootContainer());
+            target.add(rootContainer);
         }
 
         @Override
@@ -311,8 +311,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                 SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
                 if (tipo instanceof STypeSimple) {
                     columnTypes.add(new ColumnType(tipo.getName(), null));
-                }
-                if (tipo instanceof STypeComposite) {
+                } else if (tipo.isComposite()) {
                     ((STypeComposite<?>) tipo)
                             .getFields()
                             .stream()

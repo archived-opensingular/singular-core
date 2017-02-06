@@ -16,13 +16,12 @@
 
 package org.opensingular.form.wicket.model;
 
-import org.opensingular.lib.commons.lambda.IFunction;
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
-import org.opensingular.form.converter.SimpleSInstanceConverter;
-import org.apache.wicket.model.IModel;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -52,33 +51,33 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
 
     @Override
     public Serializable getObject() {
-        if (model.getObject().isEmptyOfData()) {
+        SInstance instance = getMInstancia();
+        if (instance.isEmptyOfData()) {
             return null;
         }
-        if (resolver.apply(getMInstancia()).isPresent()) {
-            return resolver.apply(getMInstancia()).get().toObject(model.getObject());
-        } else {
-            if (getMInstancia() instanceof SIComposite) {
-                throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
-            } else {
-                return new SimpleSInstanceConverter<>().toObject(getMInstancia());
-            }
+        Optional<SInstanceConverter> converter = resolver.apply(instance);
+        if (converter.isPresent()) {
+            return converter.get().toObject(instance);
+        } else if (instance instanceof SIComposite) {
+            throw new SingularFormException("Nenhum converter foi informado para o tipo " + instance.getName(), instance);
         }
+        return (Serializable) instance.getValue();
     }
 
     @Override
     public void setObject(Serializable object) {
+        SInstance instance = getMInstancia();
         if (object == null) {
-            getMInstancia().clearInstance();
+            instance.clearInstance();
         } else {
-            if (resolver.apply(getMInstancia()).isPresent()) {
-                resolver.apply(getMInstancia()).get().fillInstance(getMInstancia(), object);
+            Optional<SInstanceConverter> converter = resolver.apply(instance);
+            if (converter.isPresent()) {
+                converter.get().fillInstance(instance, object);
+            } else if (instance instanceof SIComposite) {
+                throw new SingularFormException("Nenhum converter foi informado para o tipo " + instance.getName(),
+                        instance);
             } else {
-                if (getMInstancia() instanceof SIComposite) {
-                    throw new SingularFormException("Nenhum converter foi informado para o tipo " + getMInstancia().getName());
-                } else {
-                    new SimpleSInstanceConverter<>().fillInstance(getMInstancia(), object);
-                }
+                instance.setValue(object);
             }
         }
     }

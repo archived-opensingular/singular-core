@@ -16,40 +16,32 @@
 
 package org.opensingular.form;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.builder.selection.SelectionBuilder;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.function.IBehavior;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.provider.SimpleProvider;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.validation.IInstanceValidator;
+import org.opensingular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.lib.commons.lambda.IConsumer;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-
-import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.context.UIComponentMapper;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.function.IBehavior;
-import org.opensingular.form.provider.SimpleProvider;
-import org.opensingular.form.validation.ValidationErrorLevel;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.validation.IInstanceValidator;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
@@ -72,9 +64,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private SScope scope;
 
-    private AttributeMap attributesDefined = new AttributeMap();
+    private final AttributeMap attributesDefined = new AttributeMap();
 
-    private MapAttributeDefinitionResolver attributesResolved;
+    private final MapAttributeDefinitionResolver attributesResolved;
 
     private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
 
@@ -83,18 +75,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private AttributeDefinitionInfo attributeDefinitionInfo;
 
     /**
-     * Se true, representa um campo sem criar um tipo para ser reutilizado em outros pontos.
-     */
-    //private boolean onlyAField;
-
-    /**
-     * Representa um campo que não será persistido. Se aplica somente se apenasCampo=true.
-     */
-    //private boolean transientField;
-
-    /**
      * Classe a  ser usada para criar as instâncias do tipo atual. Pode ser null, indicado que o tipo atual é abstrato.
      */
+    @Nullable
     private final Class<? extends I> instanceClass;
 
     /** Representa o tipo ao qual o tipo atual extende. Pode ou não ser da mesma classe do tipo atual. */
@@ -133,10 +116,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * Esse método é chamado quando do primeiro registro de um classe Java que extende SType. Esse método é chamado
      * apenas uma única vez para o registro de cada classe. Se forem criadas extensões do mesmo tipo sem criar uma nova
      * classe Java, esse método não será chamado para o tipos filhos.
+     * <p>ATENÇÃO: A implementação não deve chamar super.onLoadType(), pois pode deixar o tipo incosistente</p>
      *
      * @param tb Classe utilitária de apoio na configuração do tipo
      */
     protected void onLoadType(TypeBuilder tb) {
+        throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()");
         // Esse método será implementado nas classes derevidas se precisarem
     }
 
@@ -158,7 +143,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     /**
-     * Metodo invocado após um tipo ser extendido, de modo, que o mesmo possa extender sub referência que possua.
+     * Metodo invocado após um tipo ser extendido, de modo, que o mesmo possa extender sub referências que possua.
      */
     protected void extendSubReference() {
         //Se necessário, a classes derivadas vão implementar esse método
@@ -320,8 +305,21 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public <M extends SInstance> M getAttributeInstance(AtrRef<?, M, ?> atr) {
-        Class<M> instanceAttributeClass =
-                atr.isSelfReference() ? (Class<M>) getInstanceClassResolved() : atr.getInstanceClass();
+        Class<M> instanceAttributeClass;
+        if(atr.isSelfReference()) {
+            instanceAttributeClass = (Class<M>) getInstanceClassResolved();
+            if (instanceAttributeClass == null) {
+                throw new SingularFormException(
+                        "O Atributo " + atr.getNameFull() + " é uma SELF reference ao tipo, mas o tipo é abstrato",
+                        this);
+            }
+        } else {
+            instanceAttributeClass = atr.getInstanceClass();
+            if (instanceAttributeClass == null) {
+                throw new SingularFormException(
+                        "O Atributo " + atr.getNameFull() + " não define o tipo da instância do atributo", this);
+            }
+        }
         SInstance instance = getAttributeInstanceInternal(atr.getNameFull());
         return instanceAttributeClass.cast(instance);
     }
@@ -447,7 +445,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
-    public SType<I> withRequired(Boolean value) {
+    public SType<I> withRequired(boolean value) {
         return with(SPackageBasic.ATR_REQUIRED, value);
     }
 
@@ -466,20 +464,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     public final boolean exists() {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
     }
-
-    //    public MTipo<I> withOnChange(IBehavior<I> behavior) {
-    //        return as
-    //    }
-    //
-    //    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
-    //        // TODO implementar
-    //        throw new NotImplementedException("TODO implementar");
-    //    }
-    //
-    //    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
-    //        // TODO implementar
-    //        throw new NotImplementedException("TODO implementar");
-    //    }
 
     @SuppressWarnings("unchecked")
     public <T> T as(Class<T> targetClass) {
@@ -597,16 +581,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     public final boolean isDependentType(SType<?> type) {
         if (dependentTypes != null) {
-            for(SType<?> d : dependentTypes ) {
+            for (SType<?> d : dependentTypes) {
                 if (type.isTypeOf(d)) {
                     return true;
                 }
             }
         }
-        if (superType != null) {
-            return superType.isDependentType(type);
-        }
-        return false;
+        return superType != null && superType.isDependentType(type);
     }
 
     public boolean hasDependentTypes() {
@@ -726,9 +707,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 }
             }
             instanceCount++;
-
-            //            init(newInstance);
-
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException(
@@ -761,7 +739,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                 return;
             }
         }
-        throw new SingularFormException("A instância " + instance + " não é do tipo " + this, instance);
+        throw new SingularFormException(
+                "A instância " + instance + " é do tipo " + instance.getType() + ", mas era esperada ser do tipo " +
+                        this, instance);
     }
 
     @Override
@@ -770,59 +750,65 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     @Override
-    public void debug(Appendable appendable, int level) {
+    void debug(Appendable appendable, int level) {
         try {
-            SType<?> at = this.isAttribute() ? this : null;
-            pad(appendable, level).append(at == null ? "def " : "defAtt ");
-            appendable.append(getNameSimple());
-            if (at != null) {
-                SType<?> owner = at.getAttributeDefinitionInfo().getOwner();
-                if (owner != null && owner != at.getParentScope()) {
-                    appendable.append(" for ").append(suppressPackage(owner.getName()));
-                }
-            }
-            if (at == null) {
-                if (superType == null || superType.getClass() != getClass()) {
-                    appendable.append(" (").append(getClass().getSimpleName());
-                    if (instanceClass != null && (superType == null || !instanceClass.equals(superType.instanceClass))) {
-                        appendable.append(":").append(instanceClass.getSimpleName());
-                    }
-                    appendable.append(")");
-                }
-            } else if (at.isSelfReference()) {
-                appendable.append(" (SELF)");
-            }
-            if (superType != null && (at == null || !at.isSelfReference())) {
-                appendable.append(" extend ").append(suppressPackage(superType.getName()));
-                if (this instanceof STypeList) {
-                    STypeList<?, ?> lista = (STypeList<?, ?>) this;
-                    if (lista.getElementsType() != null) {
-                        appendable.append(" of ").append(suppressPackage(lista.getElementsType().getName()));
-                    }
-                }
-            }
+            pad(appendable, level);
+            debugTypeHeader(appendable);
             debugAttributes(appendable);
-            appendable.append("\n");
+            appendable.append('\n');
 
             if (this instanceof STypeSimple && asAtrProvider().getProvider() != null) {
                 pad(appendable, level + 2).append("selection of ").append(asAtrProvider().getProvider().toString())
-                        .append("\n");
+                        .append('\n');
             }
 
-            attributesDefined.getAttributes().stream().filter(att -> !getLocalTypeOptional(att.getNameSimple())
-                    .isPresent()).forEach(att -> {
-                try {
-                    pad(appendable, level + 1).append("att ").append('\n').append(suppressPackage(att.getName()))
-                            .append(':').append(suppressPackage(att.getSuperType().getName())).append(
-                            att.isSelfReference() ? " SELF" : "");
-                } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                }
-            });
+            debugAttributesDefined(appendable, level);
 
             super.debug(appendable, level + 1);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    private void debugTypeHeader(Appendable appendable) throws IOException {
+        if (isAttribute()) {
+            debugTypeHeaderAttribute(appendable);
+        } else {
+            debugTypeHeaderNormalType(appendable);
+        }
+        if (superType != null && (! isAttribute() || !isSelfReference())) {
+            appendable.append(" extend ");
+            appendNameAndId(appendable, superType);
+            if (this.isList()) {
+                STypeList<?, ?> lista = (STypeList<?, ?>) this;
+                if (lista.getElementsType() != null) {
+                    appendable.append(" of ");
+                    appendNameAndId(appendable, lista.getElementsType());
+                }
+            }
+        }
+    }
+
+    private void debugTypeHeaderAttribute(Appendable appendable) throws IOException {
+        appendable.append("defAtt ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
+        SType<?> owner = getAttributeDefinitionInfo().getOwner();
+        if (owner != null && owner != getParentScope()) {
+            appendable.append(" for ");
+            appendNameAndId(appendable, owner);
+        }
+        if (isSelfReference()) {
+            appendable.append(" (SELF)");
+        }
+    }
+
+    private void debugTypeHeaderNormalType(Appendable appendable) throws IOException {
+        appendable.append("def ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
+        if (superType == null || superType.getClass() != getClass()) {
+            appendable.append(" (").append(getClass().getSimpleName());
+            if (instanceClass != null && (superType == null || !instanceClass.equals(superType.instanceClass))) {
+                appendable.append(":").append(instanceClass.getSimpleName());
+            }
+            appendable.append(")");
         }
     }
 
@@ -846,23 +832,44 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         }
     }
 
+    private void debugAttributesDefined(Appendable appendable, int level) {
+        attributesDefined.getAttributes().stream().filter(att -> !getLocalTypeOptional(att.getNameSimple())
+                .isPresent()).forEach(att -> {
+            try {
+                pad(appendable, level + 1).append("att ").append(suppressPackage(att.getName()))
+                        .append(':').append(suppressPackage(att.getSuperType().getName())).append(
+                        att.isSelfReference() ? " SELF" : "").append('\n');
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        });
+    }
+
+    private void appendNameAndId(Appendable appendable, SType<?> type) throws IOException {
+        appendable.append(suppressPackage(type.getName())).append('@').append(Integer.toString(type.getTypeId()));
+    }
+
     private String suppressPackage(String name) {
         return suppressPackage(name, false);
     }
 
     private String suppressPackage(String name, boolean aggressive) {
-        if (isEqualsStart(name, getName())) {
-            return name.substring(getName().length() + 1);
-        } else if (isEqualsStart(name, getParentScope().getName())) {
-            return name.substring(getParentScope().getName().length() + 1);
-        } else if (isEqualsStart(name, SPackageCore.NAME)) {
-            String v = name.substring(SPackageCore.NAME.length() + 1);
-            if (aggressive && isEqualsStart(v, "SType")) {
-                v = v.substring(6);
+        String thisName = getName();
+        if (isEqualsStart(name, thisName)) {
+            return name.substring(thisName.length() + 1);
+        } else {
+            String parentScopeName = getParentScope().getName();
+            if (isEqualsStart(name, parentScopeName)) {
+                return name.substring(parentScopeName.length() + 1);
+            } else if (isEqualsStart(name, SPackageCore.NAME)) {
+                String v = name.substring(SPackageCore.NAME.length() + 1);
+                if (aggressive && isEqualsStart(v, "SType")) {
+                    v = v.substring(6);
+                }
+                return v;
+            } else if (aggressive && isEqualsStart(name, SPackageBasic.NAME)) {
+                return name.substring(SPackageBasic.NAME.length() + 1);
             }
-            return v;
-        } else if (aggressive && isEqualsStart(name, SPackageBasic.NAME)) {
-            return name.substring(SPackageBasic.NAME.length() + 1);
         }
         return name;
     }

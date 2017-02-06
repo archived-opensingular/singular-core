@@ -1,21 +1,21 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.opensingular.form.SIList;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper.MULTIPLE_HIDDEN_UPLOAD_FIELD_ID;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper.MULTIPLE_HIDDEN_UPLOAD_FIELD_ID;
 
 @Ignore("Review after updating logic")
 public class AttachmentListMapperTest extends SingularFormBaseTest {
@@ -48,6 +48,7 @@ public class AttachmentListMapperTest extends SingularFormBaseTest {
         assertThat(attachments.size()).isEqualTo(0);
 
         final File tempFile = File.createTempFile("file", "temptest");
+        tempFile.deleteOnExit();
 
         form.setFile(getFormRelativePath(multipleFileField), new org.apache.wicket.util.file.File(tempFile), "text/plain");
 

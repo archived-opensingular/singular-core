@@ -4,7 +4,7 @@
     <parent>
         <artifactId>singular-flow</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.4</version>
+        <version>1.5.7</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,19 +15,19 @@
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-core</artifactId>
+            <artifactId>singular-flow-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-persistence</artifactId>
+            <artifactId>singular-flow-persistence</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-service</artifactId>
+            <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
@@ -97,13 +97,6 @@
             <artifactId>quartz</artifactId>
             <version>2.2.1</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

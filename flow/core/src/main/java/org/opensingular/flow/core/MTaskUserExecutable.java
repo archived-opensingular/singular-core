@@ -77,5 +77,4 @@ public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> exte
         this.executionPage = executionPage;
         return (K) this;
     }
-
 }

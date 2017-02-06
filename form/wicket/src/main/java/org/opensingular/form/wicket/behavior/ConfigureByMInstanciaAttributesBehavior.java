@@ -16,9 +16,6 @@
 
 package org.opensingular.form.wicket.behavior;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SInstanceViewState;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
@@ -27,6 +24,9 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstanceViewState;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
 public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
@@ -42,14 +42,11 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     @Override
     public void onConfigure(Component component) {
         super.onConfigure(component);
-        component.setEnabled(isInstanceEnabled(component));
-        handleVisibility(component);
+        if (component != null) {
+            component.setEnabled(isInstanceEnabled(component));
+            component.setVisible(isInstanceVisible(component));
+        }
     }
-
-    private void handleVisibility(Component comp) {
-        comp.setVisible(isInstanceVisible(comp));
-    }
-
 
     public void renderHead(Component component, IHeaderResponse response) {
         if (component instanceof FormComponent<?>)

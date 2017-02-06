@@ -6,11 +6,11 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.5.4</version>
+        <version>1.5.7</version>
     </parent>
 
-    <artifactId>form-ui-showcase</artifactId>
-    <name>[singular :: form :: ui-showcase]</name>
+    <artifactId>singular-ui-showcase</artifactId>
+    <name>[singular :: ui-showcase]</name>
     <packaging>war</packaging>
 
     <build>
@@ -48,17 +48,17 @@
         <!-- Projeto Singular -->
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-wicket</artifactId>
+            <artifactId>singular-form-wicket</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>exemplos-form</artifactId>
+            <artifactId>singular-exemplos-form</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-service</artifactId>
+            <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
@@ -69,13 +69,6 @@
             <version>1.3.176</version>
         </dependency>
 
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- EHCache -->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
@@ -83,15 +76,6 @@
             <version>2.9.0</version>
         </dependency>
 
-
-
-        <!-- FOR JAVADOC GENERATION -->
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- FOR TESTING USING SPRING -->
         <dependency>

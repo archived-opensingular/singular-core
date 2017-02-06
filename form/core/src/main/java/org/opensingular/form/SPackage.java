@@ -74,7 +74,7 @@ public class SPackage extends SScopeBase {
     @Override
     protected void debug(Appendable appendable, int level) {
         try {
-            pad(appendable, level).append(getName()).append("\n");
+            pad(appendable, level).append(getName()).append('\n');
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }

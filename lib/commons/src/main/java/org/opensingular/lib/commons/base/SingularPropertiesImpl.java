@@ -16,35 +16,27 @@
 
 package org.opensingular.lib.commons.base;
 
-import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.lambda.IConsumerEx;
+import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public enum SingularPropertiesImpl implements SingularProperties {
-    INSTANCE;
+public final class SingularPropertiesImpl implements SingularProperties {
 
-    private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularProperties.class);
+    private static final SingularPropertiesImpl INSTANCE = new SingularPropertiesImpl();
+
+    private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularPropertiesImpl.class);
     private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
     private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
     private volatile Properties properties;
@@ -179,10 +171,10 @@ public enum SingularPropertiesImpl implements SingularProperties {
         Properties defaults = new Properties();
         try (
                 InputStream input = defaultIfNull(SingularProperties.class.getResourceAsStream(DEFAULT_PROPERTIES_FILENAME), new NullInputStream(0));
-                Reader reader = new InputStreamReader(input, "utf-8")) {
+                Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8.name())) {
             defaults.load(reader);
         } catch (IOException ex) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException("", ex);
         }
         return defaults;
     }
@@ -190,7 +182,7 @@ public enum SingularPropertiesImpl implements SingularProperties {
     private Properties loadNotOverriding(Properties newProperties, String propertiesName, URL propertiesUrl) {
         Properties props;
         try (InputStream input = propertiesUrl.openStream()) {
-            props = PropertiesUtils.load(propertiesUrl, "utf-8");
+            props = PropertiesUtils.load(propertiesUrl, StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw SingularException.rethrow("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
         }
@@ -313,8 +305,8 @@ public enum SingularPropertiesImpl implements SingularProperties {
         }
 
         private static class State implements Serializable {
-            final Properties          propertiesBackup = new Properties();
-            final Map<String, String> systemBackup     = new HashMap<>();
+            private final Properties          propertiesBackup = new Properties();
+            private final Map<String, String> systemBackup     = new HashMap<>();
         }
     }
 }

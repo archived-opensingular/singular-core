@@ -16,7 +16,6 @@
 
 package org.opensingular.form.persistence.dao;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -25,16 +24,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
-
-import org.opensingular.form.io.HashUtil;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.form.persistence.entity.AttachmentContentEntitty;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.joda.time.DateTime;
+import org.opensingular.form.persistence.entity.AbstractFormAttachmentEntity;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
-public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentContentEntitty> extends BaseDAO<T, Long> {
+public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentContentEntity> extends BaseDAO<T, Long> {
 
     @Inject
     private AttachmentContentDao<C> attachmentContentDao;
@@ -95,4 +96,27 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public List<AttachmentEntity> listOldOrphanAttachments() {
+        StringBuilder hql = new StringBuilder();
+        hql.append(" SELECT a FROM ").append(AttachmentEntity.class.getName()).append(" as a ");
+        hql.append(" WHERE a.creationDate < :ontem ");
+        hql.append(" AND NOT EXISTS ( ");
+        hql.append("    SELECT 1 FROM ").append(AbstractFormAttachmentEntity.class.getName()).append(" as fa ");
+        hql.append("    WHERE fa.cod.attachmentCod = a.cod ");
+        hql.append(" ) ");
+
+        Query query = getSession().createQuery(hql.toString());
+        Date ontem = new DateTime().minusDays(1).toDate();
+        query.setParameter("ontem", ontem);
+
+        return query.list();
+    }
+
+    @Override
+    public T find(Long aLong) {
+        T t = super.find(aLong);
+        Hibernate.initialize(t);
+        return t;
+    }
 }

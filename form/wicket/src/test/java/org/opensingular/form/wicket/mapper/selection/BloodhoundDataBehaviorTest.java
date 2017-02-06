@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
     public void setsEncoding() {
         executeBloodhoundDataBehavior();
         assertThat(tester.getLastResponse().getContentType()).contains("application/json");
-        assertThat(tester.getLastResponse().getContentType()).contains("charset=utf-8");
+        assertThat(tester.getLastResponse().getContentType()).contains("charset="+ StandardCharsets.UTF_8.name());
     }
 
     @Test

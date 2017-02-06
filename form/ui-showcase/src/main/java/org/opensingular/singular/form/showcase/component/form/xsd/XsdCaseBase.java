@@ -16,30 +16,27 @@
 
 package org.opensingular.singular.form.showcase.component.form.xsd;
 
-import java.util.Optional;
-
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.io.FormXsdUtil;
 import org.opensingular.singular.form.showcase.component.CaseBaseForm;
 import org.opensingular.singular.form.showcase.component.ResourceRef;
 
-public abstract class XsdCaseBase extends CaseBaseForm {
+import java.util.Optional;
 
-    private final String xsdFileName;
+public abstract class XsdCaseBase extends CaseBaseForm {
 
     private String packageName = "xsd";
     private String typeName;
 
-    public XsdCaseBase(String xsdFileName, String componentName) {
+    public XsdCaseBase(String componentName) {
         super(componentName, null);
-        this.xsdFileName = xsdFileName;
     }
 
-    public XsdCaseBase(String xsdFileName, String componentName, String subCaseName) {
+    public XsdCaseBase(String componentName, String subCaseName) {
         super(componentName, subCaseName);
-        this.xsdFileName = xsdFileName;
     }
 
     @Override
@@ -55,7 +52,9 @@ public abstract class XsdCaseBase extends CaseBaseForm {
 
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage(packageName);
-        return FormXsdUtil.xsdToSType(pb, getMainSourceResourceName().get().getContent());
+        ResourceRef ref = getMainSourceResourceName().orElseThrow(
+                () -> new SingularFormException("Não foi definido o o arquivo XSD de exemplo"));
+        return FormXsdUtil.xsdToSType(pb, ref.getContent());
 
     }
 

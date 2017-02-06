@@ -40,8 +40,8 @@ public enum TipoDecisao {
     RETRATACAO("R", "Retratação"),
     NAO_RETRATACAO("T", "Não retratação");
 
-    private String codigo;
-    private String descricao;
+    private final String codigo;
+    private final String descricao;
 
     private TipoDecisao(String codigo, String descricao) {
         this.codigo = codigo;
@@ -56,24 +56,10 @@ public enum TipoDecisao {
     }
 
     /**
-     * @param codigo the codigo to set
-     */
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    /**
      * @return the descricao
      */
     public String getDescricao() {
         return descricao;
-    }
-
-    /**
-     * @param descricao the descricao to set
-     */
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
     }
 
     public static TipoDecisao valueOfEnum(String codigo) {
@@ -116,8 +102,7 @@ public enum TipoDecisao {
      * @link #TipoDecisao#INDEFERIDO}
      */
     public static boolean isEqualDeferidoOrIndeferido(TipoDecisao decisao) {
-        return DEFERIDO.equals(decisao)
-                || INDEFERIDO.equals(decisao);
+        return DEFERIDO == decisao || INDEFERIDO == decisao;
     }
 
     /**

@@ -18,6 +18,7 @@ package org.opensingular.form.internal.util;
 
 import org.opensingular.form.SingularFormException;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
@@ -48,12 +49,10 @@ public abstract class SerializableReference<K> implements Serializable, Supplier
     }
 
     @Override
+    @Nonnull
     public final K get() {
         if (reference == null) {
             reference = retrieve();
-            if (reference == null) {
-                throw new SingularFormException(getClass().getName() + ".retrieve() retornou null");
-            }
         }
         return reference;
     }
@@ -75,6 +74,7 @@ public abstract class SerializableReference<K> implements Serializable, Supplier
      *
      * @return Não pode retornar null.
      */
+    @Nonnull
     protected abstract K retrieve();
 
 }

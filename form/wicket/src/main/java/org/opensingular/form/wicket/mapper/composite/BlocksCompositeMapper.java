@@ -16,6 +16,14 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.StyleAttributeModifier;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -29,14 +37,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.StyleAttributeModifier;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
 
 import java.util.*;
 
@@ -72,8 +72,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
                 final Block block = view.getBlocks().get(i);
-                if (StringUtils.isEmpty(block.getName()) && block.getTypes().size() == 1 && ctx.getCurrentInstance() instanceof SIComposite) {
-                    final SIComposite sic        = ctx.getCurrentInstance();
+                SInstance currentInstance = ctx.getCurrentInstance();
+                if (StringUtils.isEmpty(block.getName()) && block.getTypes().size() == 1 && currentInstance instanceof SIComposite) {
+                    final SIComposite sic        = (SIComposite) currentInstance;
                     final SInstance   firstChild = sic.getField(block.getTypes().get(0));
                     block.setName(firstChild.asAtr().getLabel());
                     ctx.setTitleInBlock(true);
@@ -84,8 +85,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
 
             for (SType<?> f : getInstanceType().getFields()) {
-                if (!addedTypes.contains(f.getNameSimple())) {
-                    remainingTypes.add(f.getNameSimple());
+                String nameSimple = f.getNameSimple();
+                if (!addedTypes.contains(nameSimple)) {
+                    remainingTypes.add(nameSimple);
                 }
             }
 
@@ -171,14 +173,12 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private boolean isAnyChildrenVisible() {
-            if (ctx.getCurrentInstance().asAtr().exists() && ctx.getCurrentInstance().asAtr().isVisible()) {
+            SInstance instance = ctx.getCurrentInstance();
+            if ((instance instanceof SIComposite) && instance.asAtr().exists() && instance.asAtr().isVisible()) {
                 for (String typeName : block.getTypes()) {
-                    if (ctx.getCurrentInstance() instanceof SIComposite) {
-                        final SIComposite ci    = ctx.getCurrentInstance();
-                        final SInstance   field = ci.getField(typeName);
-                        if (field.asAtr().exists() && field.asAtr().isVisible()) {
-                            return true;
-                        }
+                    SInstance   field = ((SIComposite) instance).getField(typeName);
+                    if (field.asAtr().exists() && field.asAtr().isVisible()) {
+                        return true;
                     }
                 }
             }
@@ -188,19 +188,20 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         @Override
         public void onEvent(IEvent<?> event) {
             super.onEvent(event);
-            if (AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
-                final Boolean isAnyFieldUpdated = getRequestCycle().getMetaData(WicketFormProcessing.MDK_FIELD_UPDATED);
-                if (isAnyFieldUpdated != null && isAnyFieldUpdated) {
-                    final AjaxRequestTarget payload = (AjaxRequestTarget) event.getPayload();
-                    if (isAnyChildrenVisible() != visible) {
-                        if (isAnyChildrenVisible()) {
-                            payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
-                            visible = true;
-                        } else {
-                            payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
-                            visible = false;
-                        }
+            if (! AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
+                return;
+            }
+            Boolean isAnyFieldUpdated = getRequestCycle().getMetaData(WicketFormProcessing.MDK_FIELD_UPDATED);
+            if (isAnyFieldUpdated != null && isAnyFieldUpdated) {
+                AjaxRequestTarget payload = (AjaxRequestTarget) event.getPayload();
+                boolean newVisible = isAnyChildrenVisible();
+                if (newVisible != visible) {
+                    if (newVisible) {
+                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
+                    } else {
+                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
                     }
+                    visible = newVisible;
                 }
             }
         }

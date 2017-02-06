@@ -24,7 +24,7 @@ package org.opensingular.form.persistence;
 public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber {
 
     public FormKeyLong(long value) {
-        super(Long.valueOf(value));
+        super(value);
     }
 
     public FormKeyLong(Long value) {
@@ -38,7 +38,7 @@ public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber 
     @Override
     protected Long parseValuePersistenceString(String persistenceString) {
         try {
-            return Long.parseLong(persistenceString);
+            return Long.valueOf(persistenceString);
         } catch (Exception e) {
             throw new SingularFormPersistenceException("O valor da chave não é um long válido", e).add("key",
                     persistenceString);
@@ -72,6 +72,6 @@ public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber 
 
     @Override
     public Integer intValue() {
-        return Integer.valueOf(getValue().intValue());
+        return getValue().intValue();
     }
 }

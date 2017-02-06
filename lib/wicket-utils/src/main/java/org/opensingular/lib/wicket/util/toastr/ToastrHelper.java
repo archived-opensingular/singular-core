@@ -80,8 +80,8 @@ public class ToastrHelper {
         settings.getExtendedTimeOut().setValue(0);
         settings.getShowMethod().setValue(ShowMethod.SLIDE_DOWN);
         settings.getNotificationContent().setValue("");
-        settings.getCloseButton().setValue(true);
-        settings.getProgressBar().setValue(true);
+        settings.getCloseButton().setValue(Boolean.TRUE);
+        settings.getProgressBar().setValue(Boolean.TRUE);
         return settings;
     }
 

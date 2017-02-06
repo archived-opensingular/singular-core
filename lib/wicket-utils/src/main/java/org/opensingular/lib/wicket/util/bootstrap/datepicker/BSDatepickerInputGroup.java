@@ -16,18 +16,18 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.datepicker;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.Date;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.convert.IConverter;
-
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.resource.Icone;
+
+import java.util.Date;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class BSDatepickerInputGroup extends BSInputGroup {
 
@@ -121,13 +121,36 @@ public class BSDatepickerInputGroup extends BSInputGroup {
     public ViewMode getStartView()  { return startView;     }
     public ViewMode getMinView()    { return minView;       }
     public ViewMode getMaxView()    { return maxView;       }
-    public BSDatepickerInputGroup setDateFormat(String   dateFormat) { this.dateFormat = dateFormat; return this; }
-    public BSDatepickerInputGroup setStartDate (String    startDate) { this.startDate  = startDate;  return this; }
-    public BSDatepickerInputGroup setEndDate   (String      endDate) { this.endDate    = endDate;    return this; }
-    public BSDatepickerInputGroup setStartView (ViewMode  startView) { this.startView  = startView;  return this; }
-    public BSDatepickerInputGroup setMinView   (ViewMode    minView) { this.minView    = minView;    return this; }
-    public BSDatepickerInputGroup setMaxView   (ViewMode    maxView) { this.maxView    = maxView;    return this; }
     //@formatter:on
+    public BSDatepickerInputGroup setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+        return this;
+    }
+
+    public BSDatepickerInputGroup setStartDate(String startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public BSDatepickerInputGroup setEndDate(String endDate) {
+        this.endDate = endDate;
+        return this;
+    }
+
+    public BSDatepickerInputGroup setStartView(ViewMode startView) {
+        this.startView = startView;
+        return this;
+    }
+
+    public BSDatepickerInputGroup setMinView(ViewMode minView) {
+        this.minView = minView;
+        return this;
+    }
+
+    public BSDatepickerInputGroup setMaxView(ViewMode maxView) {
+        this.maxView = maxView;
+        return this;
+    }
 
     public BSDatepickerInputGroup setConverter(IConverter<Date> converter) {
         this.converter = converter;
