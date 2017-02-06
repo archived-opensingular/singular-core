@@ -44,7 +44,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SIList<SInstance>> model = $m.get(() -> (SIList<SInstance>) ctx.getModel().getObject());
+        final IModel<SIList<SInstance>> model = (IModel<SIList<SInstance>>) ctx.getModel();
 
         checkView(ctx.getView(), model);
 

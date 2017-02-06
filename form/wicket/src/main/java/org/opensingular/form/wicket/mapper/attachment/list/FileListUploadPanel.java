@@ -41,6 +41,7 @@ import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
@@ -100,7 +101,9 @@ public class FileListUploadPanel extends Panel implements Loggable {
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
 
-        if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
+        ViewMode viewMode = ctx.getViewMode();
+
+        if (isEdition(viewMode)) {
             label.add(new RequiredListLabelClassAppender(model));
         }
 
@@ -113,25 +116,29 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add(new WebMarkupContainer("button-container")
                 .add(fileField)
                 .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
-                .add($b.visibleIf(() -> ctx.getViewMode().isEdition())));
+                .add($b.visibleIf(() -> isEdition(viewMode))));
 
         add(ctx.createFeedbackCompactPanel("feedback"));
         add(new WebMarkupContainer("empty-box")
                 .add(new WebMarkupContainer("select-file-link")
                         .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))
-                        .add($b.visibleIf(ctx.getViewMode()::isEdition))
+                        .add($b.visibleIf(viewMode::isEdition))
                         .add($b.onReadyScript(c -> JQuery.on(c, "click", JQuery.$(fileField).append(".click();")))))
                 .add(new Label("empty-message", $m.ofValue("Nenhum arquivo adicionado"))
-                        .add($b.visibleIf(ctx.getViewMode()::isVisualization)))
+                        .add($b.visibleIf(viewMode::isVisualization)))
                 .add($b.visibleIf(() -> model.getObject().isEmpty())));
 
         add(adder, remover, downloader);
         add($b.classAppender("FileListUploadPanel"));
         add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
 
-        if (ctx.getViewMode().isVisualization() && model.getObject().isEmpty()) {
+        if (viewMode.isVisualization() && model.getObject().isEmpty()) {
             add($b.classAppender("FileListUploadPanel_empty"));
         }
+    }
+
+    private boolean isEdition(ViewMode viewMode) {
+        return viewMode != null && viewMode.isEdition();
     }
 
     @Override

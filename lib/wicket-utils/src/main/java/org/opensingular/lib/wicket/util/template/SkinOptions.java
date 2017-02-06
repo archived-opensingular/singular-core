@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,11 +67,11 @@ public class SkinOptions implements Serializable, Loggable {
     }
 
     public void addSkin(String name) {
-        skins.add(new Skin(name, false));
+        skins.add(new Skin(name, Boolean.FALSE));
     }
 
     public Skin addDefaulSkin(String name) {
-        Skin skin = new Skin(name, true);
+        Skin skin = new Skin(name, Boolean.TRUE);
         skins.add(skin);
         return skin;
     }
@@ -86,7 +87,7 @@ public class SkinOptions implements Serializable, Loggable {
             final JSONObject json = new JSONObject();
             json.put("name", selection.getName());
             try {
-                cookie.setValue(URLEncoder.encode(json.toString(), "UTF-8"));
+                cookie.setValue(URLEncoder.encode(json.toString(), StandardCharsets.UTF_8.name()));
             } catch (UnsupportedEncodingException e) {
                 getLogger().error(e.getMessage(), e);
             }
@@ -102,7 +103,7 @@ public class SkinOptions implements Serializable, Loggable {
         Cookie cookie = request().getCookie("skin");
         if (cookie != null) {
             try {
-                String name = (String) new JSONObject(URLDecoder.decode(cookie.getValue(), "UTF-8")).get("name");
+                String name = (String) new JSONObject(URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.name())).get("name");
                 return skins
                         .stream()
                         .filter(s -> s.getName().equals(name))

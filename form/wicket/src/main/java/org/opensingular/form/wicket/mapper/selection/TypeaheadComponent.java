@@ -49,6 +49,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -173,7 +174,7 @@ public class TypeaheadComponent extends Panel {
             @Override
             public void setObject(String key) {
                 if (StringUtils.isEmpty(key)) {
-                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, true);
+                    getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, Boolean.TRUE);
                     getMInstancia().clearInstance();
                 } else {
                     final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
@@ -366,7 +367,7 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     @Override
     public void respond(AjaxRequestTarget target) {
         requestCycle().scheduleRequestHandlerAfterCurrent(
-                new TextRequestHandler("application/json", "utf-8", generateResultOptions(values(filterValue()))));
+                new TextRequestHandler("application/json", StandardCharsets.UTF_8.name(), generateResultOptions(values(filterValue()))));
     }
 
     private String filterValue() {

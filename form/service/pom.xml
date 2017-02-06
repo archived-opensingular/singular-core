@@ -3,18 +3,18 @@
     <parent>
         <artifactId>singular-form</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.6</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>form-service</artifactId>
+    <artifactId>singular-form-service</artifactId>
     <name>[singular :: form :: service]</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-core</artifactId>
+            <artifactId>singular-form-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
@@ -91,13 +91,6 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

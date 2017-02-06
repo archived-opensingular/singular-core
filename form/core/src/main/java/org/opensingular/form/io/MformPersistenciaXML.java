@@ -162,7 +162,7 @@ public class MformPersistenciaXML {
             for (int i = 0; i < atributos.getLength(); i++) {
                 Attr at = (Attr) atributos.item(i);
                 if (at.getName().equals(ATRIBUTO_ID)) {
-                    instancia.setId(Integer.parseInt(at.getValue()));
+                    instancia.setId(Integer.valueOf(at.getValue()));
                 } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
                     instancia.setAttributeValue(at.getName(), at.getValue());
                 }
@@ -387,8 +387,9 @@ public class MformPersistenciaXML {
         }
 
         private MElement complement(SInstance instancia, MElement element) {
-            if (builder.isPersistId() && instancia.getId() != null) {
-                element.setAttribute(ATRIBUTO_ID, instancia.getId().toString());
+            Integer id = instancia.getId();
+            if (builder.isPersistId() && id != null) {
+                element.setAttribute(ATRIBUTO_ID, id.toString());
             }
             if (builder.isPersistAttributes()) {
                 for (SInstance atr : instancia.getAttributes()) {

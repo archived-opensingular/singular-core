@@ -621,10 +621,11 @@ public abstract class MElement implements Element, Serializable {
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
     public final MElement addDate(String nome, String valor, String valorDefault) {
-        if ((valor != null) && (valor.trim().length() > 0)) {
-            return addElement(nome, ConversorToolkit.getDateFromData(valor.trim()));
-        } else if ((valorDefault != null) && (valorDefault.trim().length() > 0)) {
-            return addElement(nome, ConversorToolkit.getDateFromData(valorDefault.trim()));
+        String trim;
+        if ((valor != null) && ((trim = valor.trim()).length() > 0)) {
+            return addElement(nome, ConversorToolkit.getDateFromData(trim));
+        } else if ((valorDefault != null) && ((trim = valorDefault.trim()).length() > 0)) {
+            return addElement(nome, ConversorToolkit.getDateFromData(trim));
         }
         return null;
     }

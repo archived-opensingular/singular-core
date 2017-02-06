@@ -46,8 +46,9 @@ public class SIAttachment extends SIComposite {
     }
 
     void deleteReference() {
-        if (getFileId() != null) {
-            getAttachmentService().deleteReference(getFileId(), getDocument());
+        String fileId = getFileId();
+        if (fileId != null) {
+            getAttachmentService().deleteReference(fileId, getDocument());
         }
         setValue(STypeAttachment.FIELD_FILE_ID, null);
         setValue(STypeAttachment.FIELD_HASH_SHA1, null);

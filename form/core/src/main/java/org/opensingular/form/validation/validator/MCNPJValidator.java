@@ -20,7 +20,8 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.validation.IInstanceValidatable;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -30,9 +31,10 @@ public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> 
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");
-    private final List<String> invalidPatterns = Arrays.asList(
-            "00000000000000", "11111111111111", "22222222222222", "33333333333333", "44444444444444",
-            "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999");
+    private final Set<String> invalidPatterns = new LinkedHashSet<>(Arrays.asList("00000000000000",
+            "11111111111111", "22222222222222", "33333333333333", "44444444444444", "55555555555555", "66666666666666",
+            "77777777777777", "88888888888888", "99999999999999"
+    ));
 
     @Override
     public void validate(IInstanceValidatable<SIString> validatable, String value) {
@@ -58,7 +60,7 @@ public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> 
             Integer digit1 = this.retrieveDV(cnpjArray);
             Integer digit2 = this.retrieveDV(cnpjArray, digit1);
 
-            String dvExpected = digit1.toString() + digit2.toString();
+            String dvExpected = String.format("%d%d", digit1, digit2);
             String dv = cnpjArray[cnpjArray.length - 2] + "" + cnpjArray[cnpjArray.length - 1];
 
             return dv.equals(dvExpected);

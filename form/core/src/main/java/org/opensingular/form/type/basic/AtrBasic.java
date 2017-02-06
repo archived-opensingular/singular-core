@@ -107,7 +107,7 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic visible(Boolean value) {
+    public AtrBasic visible(boolean value) {
         setAttributeValue(SPackageBasic.ATR_VISIBLE, value);
         return this;
     }
@@ -117,7 +117,7 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic enabled(Boolean value) {
+    public AtrBasic enabled(boolean value) {
         setAttributeValue(SPackageBasic.ATR_ENABLED, value);
         return this;
     }
@@ -149,7 +149,7 @@ public class AtrBasic extends STranslatorForAttribute {
         return required(true);
     }
 
-    public AtrBasic required(Boolean value) {
+    public AtrBasic required(boolean value) {
         setAttributeValue(SPackageBasic.ATR_REQUIRED, value);
         return this;
     }
@@ -163,7 +163,7 @@ public class AtrBasic extends STranslatorForAttribute {
         return !Boolean.FALSE.equals(getAttributeValue(SPackageBasic.ATR_REQUIRED));
     }
 
-    public AtrBasic exists(Boolean value) {
+    public AtrBasic exists(boolean value) {
         setAttributeValue(SPackageBasic.ATR_EXISTS, value);
         return this;
     }
@@ -274,7 +274,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic upperCaseText() {
-        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, true);
+        setAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT, Boolean.TRUE);
         return this;
     }
 

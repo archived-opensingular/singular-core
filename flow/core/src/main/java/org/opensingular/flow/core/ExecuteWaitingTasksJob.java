@@ -80,11 +80,11 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
             for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                 TaskInstance instanciaTarefa = instancia.getCurrentTask();
                 Date         dataExecucao    = task.getExecutionDate(instancia, instanciaTarefa);
-                if (!dataExecucao.equals(instancia.getCurrentTask().getTargetEndDate())) {
-                    instancia.getCurrentTask().setTargetEndDate(dataExecucao);
+                if (!dataExecucao.equals(instanciaTarefa.getTargetEndDate())) {
+                    instanciaTarefa.setTargetEndDate(dataExecucao);
                 }
                 if (hoje.after(dataExecucao)) {
-                    log.append("Executando transição da instância: ").append(instancia.getFullId()).append("\n");
+                    log.append("Executando transição da instância: ").append(instancia.getFullId()).append('\n');
                     instancia.executeTransition();
                     mbpmBean.getPersistenceService().commitTransaction();
                 }
@@ -102,7 +102,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                     Date alvo = task.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
                     if (alvo != null) {
                         log.append("Alterando data alvo: ").append(instancia.getFullId()).append(" para ").append(alvo)
-                                .append("\n");
+                                .append('\n');
                         instanciaTarefa.setTargetEndDate(alvo);
                         mbpmBean.getPersistenceService().commitTransaction();
                     }

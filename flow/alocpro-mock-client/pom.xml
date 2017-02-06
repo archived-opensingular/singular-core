@@ -6,17 +6,17 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>1.5.6</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>flow-alocpro-mock-client</artifactId>
+    <artifactId>singular-flow-alocpro-mock-client</artifactId>
     <name>[singular :: flow :: rest-client]</name>
     <packaging>jar</packaging>
 
     <dependencies>
     	<dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>flow-core</artifactId>
+            <artifactId>singular-flow-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
     	
@@ -33,14 +33,7 @@
             <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
-        
-        <!-- FOR JAVADOC GENERATION -->
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
-        </dependency>
+
     </dependencies>
 
 </project>

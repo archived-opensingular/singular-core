@@ -58,7 +58,7 @@ public class STypeAcondicionamentoGAS extends STypeComposite<SIComposite> {
             layoutsRotulagem.asAtr().label("Layout da rotulagem");
 
             STypeAttachment f = layoutsRotulagem.getElementsType();
-            SType<?> nomeArquivo = (STypeSimple) f.getField(f.FIELD_NAME);
+            SType<?> nomeArquivo = f.getField(STypeAttachment.FIELD_NAME);
             nomeArquivo.asAtr().label("Nome do Arquivo");
         }
 

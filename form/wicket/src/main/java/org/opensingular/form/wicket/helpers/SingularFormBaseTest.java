@@ -34,6 +34,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -52,7 +53,7 @@ public abstract class SingularFormBaseTest {
     @Before
     public void setUp() {
         tester = new WicketTester();
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding("utf-8");
+        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
         page = new DummyPage();
         page.setTypeBuilder(this::buildBaseType);
         page.setInstanceCreator(this::createAndPopulateInstance);

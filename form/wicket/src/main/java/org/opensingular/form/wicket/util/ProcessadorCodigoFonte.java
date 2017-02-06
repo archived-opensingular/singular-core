@@ -98,7 +98,7 @@ public class ProcessadorCodigoFonte {
 
     public String getFonteProcessado() {
         StringBuilder sb = new StringBuilder();
-        fonteFinal.forEach(s -> sb.append(s).append("\n"));
+        fonteFinal.forEach(s -> sb.append(s).append('\n'));
         return sb.toString();
     }
 

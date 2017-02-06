@@ -6,10 +6,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.5.6</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>form-wicket</artifactId>
+    <artifactId>singular-form-wicket</artifactId>
     <name>[singular :: form :: wicket]</name>
     <packaging>jar</packaging>
 
@@ -46,13 +46,13 @@
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>form-core</artifactId>
+            <artifactId>singular-form-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>wicket-utils</artifactId>
+            <artifactId>singular-wicket-utils</artifactId>
             <version>${singular.version}</version>
         </dependency>
 
@@ -131,12 +131,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.12</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
 

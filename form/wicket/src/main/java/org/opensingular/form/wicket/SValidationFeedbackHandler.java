@@ -274,7 +274,7 @@ public class SValidationFeedbackHandler implements Serializable {
 
     private static Set<Component> collectLowerBoundInstances(Component container) {
         final Set<Component> comps = Sets.newHashSet();
-        if (container != null && container instanceof MarkupContainer) {
+        if (container instanceof MarkupContainer) {
             Visits.visitChildren((MarkupContainer) container, (Component object, IVisit<Void> visit) -> {
                 SValidationFeedbackHandler handler = get(object);
                 if (handler != null) {

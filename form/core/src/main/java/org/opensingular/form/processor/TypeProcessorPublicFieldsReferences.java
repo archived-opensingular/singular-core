@@ -173,10 +173,11 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             } else if (currentValue == null) {
                 setJavaField(composite, ref, expectedType);
             } else if (currentValue != expectedType) {
+                String expectedTypeNameSimple = expectedType.getNameSimple();
                 throw new SingularFormException(erroValue(composite, expectedType, ref, currentValue,
-                        "O field java público '" + expectedType.getNameSimple() +
+                        "O field java público '" + expectedTypeNameSimple +
                                 "' da classe " + composite.getClass().getSimpleName() +
-                                " deveria ter o valor do atributo '" + expectedType.getNameSimple() + "' do type"));
+                                " deveria ter o valor do atributo '" + expectedTypeNameSimple + "' do type"));
             }
         }
     }
@@ -290,7 +291,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
             classInfoCache = CacheBuilder.newBuilder().weakValues().build(
                     new CacheLoader<Class<?>, CompositePublicInfo>() {
                         @Override
-                        public CompositePublicInfo load(Class<?> aClass) throws Exception {
+                        public CompositePublicInfo load(Class<?> aClass) {
                             return readPublicFields(aClass);
                         }
                     });

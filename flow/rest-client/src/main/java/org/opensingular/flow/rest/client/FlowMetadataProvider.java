@@ -42,7 +42,7 @@ public class FlowMetadataProvider implements IFlowMetadataProvider {
     private static LoadingCache<GroupDTO, IFlowMetadataService> metadataService = 
         CacheBuilder.newBuilder().maximumSize(5).expireAfterWrite(1, TimeUnit.HOURS).build(new CacheLoader<GroupDTO, IFlowMetadataService>() {
         @Override
-        public IFlowMetadataService load(GroupDTO groupDTO) throws Exception {
+        public IFlowMetadataService load(GroupDTO groupDTO) {
             return new FlowMetadataSpringREST(groupDTO.getCod(), groupDTO.getConnectionURL());
         }
     });

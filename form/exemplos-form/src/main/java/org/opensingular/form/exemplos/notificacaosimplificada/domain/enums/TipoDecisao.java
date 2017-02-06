@@ -102,8 +102,7 @@ public enum TipoDecisao {
      * @link #TipoDecisao#INDEFERIDO}
      */
     public static boolean isEqualDeferidoOrIndeferido(TipoDecisao decisao) {
-        return DEFERIDO.equals(decisao)
-                || INDEFERIDO.equals(decisao);
+        return DEFERIDO == decisao || INDEFERIDO == decisao;
     }
 
     /**

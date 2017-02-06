@@ -55,7 +55,7 @@ public class CaseInteractionEnabledPackage extends SPackage {
                 .asAtr().label("Enable");
 
         record.asAtr()
-                .enabled(ins -> ins.findNearestValue(enabled, Boolean.class).orElse(false))
+                .enabled(ins -> ins.findNearestValue(enabled, Boolean.class).orElse(Boolean.FALSE))
                 .dependsOn(enabled);
 
         recordText.asAtr()

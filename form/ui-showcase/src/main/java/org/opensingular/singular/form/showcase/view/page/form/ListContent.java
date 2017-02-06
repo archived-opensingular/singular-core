@@ -74,7 +74,7 @@ public class ListContent extends Content implements SingularWicketContainer<List
         } else {
             tipo = ShowCaseType.STUDIO;
         }
-        return tipo.equals(templateEntry.getTipo());
+        return tipo == templateEntry.getTipo();
     }
 
     @Override

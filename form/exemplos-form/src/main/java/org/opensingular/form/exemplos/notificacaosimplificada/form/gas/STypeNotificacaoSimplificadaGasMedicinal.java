@@ -36,14 +36,9 @@ public class STypeNotificacaoSimplificadaGasMedicinal extends STypeComposite<SIC
         addAcondicionamentos();
     }
 
-    private STypeString                                      descricao;
-    private STypeComposite<SIComposite>                      informacoesFarmacopeicas;
-    private STypeList<STypeAcondicionamentoGAS, SIComposite> acondicionamentos;
-    private STypeString                                      nomeComercial;
-
 
     private void addDescricao() {
-        descricao = addFieldString("descricao");
+        STypeString descricao = addFieldString("descricao");
         descricao.asAtr().label("Descrição").required();
         descricao.withSelectView();
         descricao.asAtrBootstrap().colPreference(6);
@@ -51,7 +46,7 @@ public class STypeNotificacaoSimplificadaGasMedicinal extends STypeComposite<SIC
     }
 
     private void addNomeComercial() {
-        nomeComercial = addFieldString("nomeComercial");
+        STypeString nomeComercial = addFieldString("nomeComercial");
         nomeComercial
                 .asAtr()
                 .label("Nome do gás")
@@ -61,14 +56,14 @@ public class STypeNotificacaoSimplificadaGasMedicinal extends STypeComposite<SIC
     }
 
     private void addInformacoesFarmacopeicas() {
-        informacoesFarmacopeicas = addFieldComposite("informacoesFarmacopeicas");
+        STypeComposite<SIComposite> informacoesFarmacopeicas = addFieldComposite("informacoesFarmacopeicas");
         informacoesFarmacopeicas.asAtr().label("Informações farmacopeicas");
 
         informacoesFarmacopeicas.addField("farmacopeia", STypeFarmacopeiaReferencia.class);
     }
 
     private void addAcondicionamentos() {
-        acondicionamentos = addFieldListOf("acondicionamentos", STypeAcondicionamentoGAS.class);
+        STypeList<STypeAcondicionamentoGAS, SIComposite> acondicionamentos = addFieldListOf("acondicionamentos", STypeAcondicionamentoGAS.class);
         acondicionamentos.withMiniumSizeOf(1);
         acondicionamentos
                 .withView(new SViewListByMasterDetail()

@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.6</version>
+    <version>1.5.7-SNAPSHOT</version>
     <name>[projeto-raiz :: singular]</name>
     <description>Core do singular</description>
     <url>http://opensingular.org</url>
@@ -170,6 +170,20 @@
     </build>
 
     <dependencies>
+        <!-- FOR JAVADOC GENERATION -->
+        <dependency>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Apache Commons API -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -311,7 +325,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -360,6 +374,18 @@
         <!-- Falso positivo: atributos publicos nos stypes  -->
         <sonar.issue.ignore.multicriteria.e16.ruleKey>squid:ClassVariableVisibilityCheck</sonar.issue.ignore.multicriteria.e16.ruleKey>
         <sonar.issue.ignore.multicriteria.e16.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e16.resourceKey>
+        <!-- Falso positivo: array armazenado diretamente -->
+        <sonar.issue.ignore.multicriteria.e17.ruleKey>pmd:ArrayIsStoredDirectly</sonar.issue.ignore.multicriteria.e17.ruleKey>
+        <sonar.issue.ignore.multicriteria.e17.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e17.resourceKey>
+        <!-- Falso positivo: métodos chamados de maneira redundante -->
+        <sonar.issue.ignore.multicriteria.e18.ruleKey>fb-contrib:PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS</sonar.issue.ignore.multicriteria.e18.ruleKey>
+        <sonar.issue.ignore.multicriteria.e18.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e18.resourceKey>
+        <!-- Falso positivo: chamada a método não final no construtor -->
+        <sonar.issue.ignore.multicriteria.e19.ruleKey>fb-contrib:PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS</sonar.issue.ignore.multicriteria.e19.ruleKey>
+        <sonar.issue.ignore.multicriteria.e19.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e19.resourceKey>
+
+
+
 
 
 
@@ -453,11 +479,12 @@
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>1.5.6</singular.version>
+        <singular.version>1.5.7-SNAPSHOT</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
     </properties>
+
 
 </project>

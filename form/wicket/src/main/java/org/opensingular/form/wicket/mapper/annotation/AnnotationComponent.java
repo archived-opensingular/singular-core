@@ -73,8 +73,10 @@ public class AnnotationComponent extends Panel {
 
         setAnnotationModel(new SIAnnotationModel<>(referenced, DefaultAnnotationClassifier.DEFAULT_ANNOTATION));
 
-        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "text"));
-        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(getAnnotationModel(), "isApproved"));
+        SIAnnotationModel<?> annotationModel = getAnnotationModel();
+
+        textModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationModel, "text"));
+        approvedModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(annotationModel, "isApproved"));
 
         add($b.classAppender("annotation-toggle-container btn-group"));
         add($b.attr("style", "position:absolute; top:0px; right:17px;"));

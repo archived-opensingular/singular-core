@@ -33,6 +33,7 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -87,7 +88,7 @@ public class CIDDAO {
 
     private static <T extends AbstractDadoCID> List<T> readFile(String filename, Class<T> targetClass) throws IOException, InstantiationException, IllegalAccessException {
         List<T> cids = new ArrayList<>();
-        LineIterator lineIterator = IOUtils.lineIterator(CIDDAO.class.getClassLoader().getResource("data/cid/" + filename).openStream(), "UTF-8");
+        LineIterator lineIterator = IOUtils.lineIterator(CIDDAO.class.getClassLoader().getResource("data/cid/" + filename).openStream(), StandardCharsets.UTF_8.name());
         lineIterator.next();
         for (; lineIterator.hasNext(); ) {
             cids.add(readCidData(targetClass, lineIterator.next()));
@@ -102,12 +103,12 @@ public class CIDDAO {
 
         if (clazz.isAssignableFrom(CapituloCID.class)) {
             String cap = StringUtils.trim(values[index++]);
-            ((CapituloCID) value).setCapitulo(Integer.parseInt(cap));
+            ((CapituloCID) value).setCapitulo(Integer.valueOf(cap));
         }
 
         String catinicial = StringUtils.trim(values[index++]);
         value.setLetraInicial(catinicial.charAt(0));
-        value.setNumInicial(Integer.parseInt(catinicial.substring(1)));
+        value.setNumInicial(Integer.valueOf(catinicial.substring(1)));
 
         String catfinal;
         if (clazz.isAssignableFrom(SubCategoriaCID.class)) {
@@ -121,7 +122,7 @@ public class CIDDAO {
         }
 
         value.setLetraFinal(catfinal.charAt(0));
-        value.setNumFinal(Integer.parseInt(catfinal.substring(1)));
+        value.setNumFinal(Integer.valueOf(catfinal.substring(1)));
 
         value.setDescricao(StringUtils.trim(values[index++]));
 

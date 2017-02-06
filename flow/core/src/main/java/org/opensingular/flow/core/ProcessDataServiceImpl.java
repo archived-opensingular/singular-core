@@ -63,18 +63,18 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     @Override
     public final List<I> retrieveActiveInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, true));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, Boolean.TRUE));
     }
 
     @Override
     public final List<I> retrieveEndedInstances() {
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), null, false));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), null, Boolean.FALSE));
     }
 
     @Override
     public final List<I> retrieveEndedInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, false));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, Boolean.FALSE));
     }
 
     @Override
@@ -132,19 +132,20 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
 
     @Override
     public final List<I> retrieveAllInstances(boolean exibirEncerradas) {
+        FlowMap flowMap = getFlowMap();
         if (exibirEncerradas) {
             Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-            estadosAlvo.addAll(convertToEntityTask(getFlowMap().getTasks()));
-            estadosAlvo.addAll(convertToEntityTask(getFlowMap().getEndTasks()));
+            estadosAlvo.addAll(convertToEntityTask(flowMap.getTasks()));
+            estadosAlvo.addAll(convertToEntityTask(flowMap.getEndTasks()));
             return retrieveAllInstancesIn(estadosAlvo);
         } else {
-            return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks()));
+            return retrieveAllInstancesIn(convertToEntityTask(flowMap.getTasks()));
         }
     }
 
     @Override
     public final List<I> retrieveActiveInstancesWithPeople() {
-        return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople())));
+        return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(MTask::isPeople)));
     }
 
     protected final IEntityProcessDefinition getEntityProcessDefinition() {

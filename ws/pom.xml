@@ -7,10 +7,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular</artifactId>
-        <version>1.5.6</version>
+        <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ws</artifactId>
+    <artifactId>singular-ws</artifactId>
     <name>[singular :: ws]</name>
     <packaging>pom</packaging>
 

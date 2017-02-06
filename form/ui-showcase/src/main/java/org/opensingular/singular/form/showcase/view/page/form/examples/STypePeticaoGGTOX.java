@@ -393,7 +393,7 @@ public class STypePeticaoGGTOX extends STypeComposite<SIComposite> {
                 arquivo = createArquivoField();
                 tipo = createTipoField();
 
-                SType<?> nomeArquivo = (STypeSimple) arquivo.getField(arquivo.FIELD_NAME);
+                SType<?> nomeArquivo = arquivo.getField(arquivo.FIELD_NAME);
                 nomeArquivo.asAtr().label("Nome do Arquivo");
                 root.withView(new SViewListByMasterDetail()
                                 .col((STypeSimple) nomeArquivo)
