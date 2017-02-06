@@ -313,7 +313,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             appendButtonViewDiff(buttonContainer, config.getPetitionId(), currentInstance);
         }
 
-        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
+        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT == viewMode || AnnotationMode.EDIT == annotationMode)) {
             int index = 0;
             trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {//NOSONAR
                 if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
