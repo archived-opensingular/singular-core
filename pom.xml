@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.7-SNAPSHOT</version>
+    <version>1.5.7</version>
     <name>[projeto-raiz :: singular]</name>
     <description>Core do singular</description>
     <url>http://opensingular.org</url>
