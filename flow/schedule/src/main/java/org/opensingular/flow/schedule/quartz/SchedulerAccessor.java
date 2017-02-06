@@ -15,12 +15,7 @@
  */
 package org.opensingular.flow.schedule.quartz;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,7 +54,7 @@ public abstract class SchedulerAccessor {
 
     private String[] jobSchedulingDataLocations;
 
-    private List<JobDetail> jobDetails;
+    private Set<JobDetail> jobDetails;
 
     private Map<String, Calendar> calendars;
 
@@ -115,7 +110,7 @@ public abstract class SchedulerAccessor {
      * @see org.quartz.JobDetail
      */
     public void setJobDetails(JobDetail... jobDetails) {
-        this.jobDetails = new ArrayList<>(Arrays.asList(jobDetails));
+        this.jobDetails = new LinkedHashSet<>(Arrays.asList(jobDetails));
     }
 
     /**
@@ -187,7 +182,7 @@ public abstract class SchedulerAccessor {
                     addJobToScheduler(jobDetail);
                 }
             } else {
-                this.jobDetails = new LinkedList<>();
+                this.jobDetails = new LinkedHashSet<>();
             }
 
             if (this.calendars != null) {
@@ -202,7 +197,7 @@ public abstract class SchedulerAccessor {
                 }
             }
         } catch (SchedulerException e) {
-            throw (SchedulerException) e;
+            throw e;
         } catch (Exception e) {
             throw new SchedulerException("Registration of jobs and triggers failed: " + e.getMessage(), e);
         }
