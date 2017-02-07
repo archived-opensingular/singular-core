@@ -10,12 +10,12 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <name>[singular-server :: sso :: sso-desenv-peticionamento ]</name>
+    <name>[singular-server :: sso :: sso-desenv-petition ]</name>
     <artifactId>singular-sso-desenv-petition</artifactId>
     <packaging>war</packaging>
 
     <build>
-        <finalName>sso#peticionamento</finalName>
+        <finalName>sso#petition</finalName>
     </build>
 
 </project>
