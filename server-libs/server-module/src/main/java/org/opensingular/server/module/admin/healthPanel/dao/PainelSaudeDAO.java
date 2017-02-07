@@ -1,4 +1,4 @@
-package org.opensingular.server.module.admin;
+package org.opensingular.server.module.admin.healthPanel.dao;
 
 import java.util.Map;
 

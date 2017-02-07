@@ -1,4 +1,4 @@
-package org.opensingular.server.module.admin.bd.objects;
+package org.opensingular.server.module.admin.healthPanel.db.objects;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

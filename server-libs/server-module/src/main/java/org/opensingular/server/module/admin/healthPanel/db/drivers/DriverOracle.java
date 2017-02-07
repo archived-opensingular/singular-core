@@ -1,4 +1,4 @@
-package org.opensingular.server.module.admin.bd.drivers;
+package org.opensingular.server.module.admin.healthPanel.db.drivers;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,9 +9,9 @@ import javax.transaction.Transactional;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.ResultTransformer;
 import org.opensingular.lib.support.persistence.SimpleDAO;
-import org.opensingular.server.module.admin.bd.objects.ColumnInfo;
-import org.opensingular.server.module.admin.bd.objects.SequenceInfo;
-import org.opensingular.server.module.admin.bd.objects.TableInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.ColumnInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.SequenceInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.TableInfo;
 import org.springframework.stereotype.Repository;
 
 @Repository

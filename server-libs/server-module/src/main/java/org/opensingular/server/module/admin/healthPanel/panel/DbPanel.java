@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.opensingular.server.module.admin;
+package org.opensingular.server.module.admin.healthPanel.panel;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
@@ -33,51 +30,26 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.util.transformer.TransformPojoUtil;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.server.commons.wicket.view.template.Content;
+import org.opensingular.server.module.admin.healthPanel.db.objects.HealthInfo;
+import org.opensingular.server.module.admin.healthPanel.service.PainelSaudeService;
+import org.opensingular.server.module.admin.healthPanel.stypes.SDbHealth;
 
-@SuppressWarnings("serial")
-public class PainelSaudeContent extends Content {
-	
-    @Inject
+public class DbPanel extends Panel {
+	@Inject
     @Named("formConfigWithDatabase")
     private SFormConfig<String> formConfig;
-    
-    @Inject
+	
+	@Inject
     private PainelSaudeService painelService;
 
-	public PainelSaudeContent(String id) {
+	public DbPanel(String id) {
 		super(id);
-		buildContent();
-	}
-	
-	private void buildContent(){
-		Form<Void> form = new Form<>("form");
-		add(form);
-		
-		WebMarkupContainer containerBD = createContainerBD();
-		form.add(containerBD);
-//		containerBD.setVisible(false);
-		
-		Button buttonBD = new Button("buttonDB"){
-			@Override
-			public void onSubmit() {
-//				containerBD.setVisible(true);
-			}
-		};
-		buttonBD.setDefaultFormProcessing(false);
-		
-		Button buttonRede = new Button("buttonRede");
-		Button buttonWS = new Button("buttonWS");
-		Button buttonCaches = new Button("buttonCaches");
-		
-		form.add(buttonBD);
-		form.add(buttonRede);
-		form.add(buttonWS);
-		form.add(buttonCaches);
 	}
 
-	private WebMarkupContainer createContainerBD() {
-		WebMarkupContainer containerDB = new WebMarkupContainer("containerDB");
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		
 		SingularFormPanel<String> panelBD = new SingularFormPanel<String>("panelDB", formConfig) {
 			@Override
 			protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
@@ -93,7 +65,7 @@ public class PainelSaudeContent extends Content {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				return createInstance; 
+				return createInstance;
 			}
 		};
 		
@@ -101,23 +73,10 @@ public class PainelSaudeContent extends Content {
 			@Override
 			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
 					IModel<? extends SInstance> instanceModel) {
-				// TODO Auto-generated method stub
+//				form.add(new Feedbac)
 			}
 		};
-		containerDB.add(panelBD);
-		containerDB.add(checkButton);
-		
-		return containerDB;
+		add(panelBD);
+		add(checkButton);
 	}
-
-	@Override
-	protected IModel<?> getContentTitleModel() {
-		return new Model<>("Painel Saude");
-	}
-
-	@Override
-	protected IModel<?> getContentSubtitleModel() {
-		return new Model<>("");
-	}
-	
 }

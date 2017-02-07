@@ -1,4 +1,4 @@
-package org.opensingular.server.module.admin;
+package org.opensingular.server.module.admin.healthPanel;
 
 import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.commons.wicket.view.template.Template;

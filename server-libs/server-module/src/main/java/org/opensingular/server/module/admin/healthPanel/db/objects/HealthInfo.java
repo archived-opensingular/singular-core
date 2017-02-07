@@ -1,8 +1,6 @@
-package org.opensingular.server.module.admin;
+package org.opensingular.server.module.admin.healthPanel.db.objects;
 
 import java.util.List;
-
-import org.opensingular.server.module.admin.bd.objects.TableInfo;
 
 public class HealthInfo {
 	private List<TableInfo> tablesList;

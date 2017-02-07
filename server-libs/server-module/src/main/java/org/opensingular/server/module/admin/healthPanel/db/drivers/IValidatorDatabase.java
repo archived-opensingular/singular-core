@@ -1,9 +1,9 @@
-package org.opensingular.server.module.admin.bd.drivers;
+package org.opensingular.server.module.admin.healthPanel.db.drivers;
 
 import java.util.List;
 
-import org.opensingular.server.module.admin.bd.objects.SequenceInfo;
-import org.opensingular.server.module.admin.bd.objects.TableInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.SequenceInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.TableInfo;
 
 public interface IValidatorDatabase {
 	/**
@@ -31,6 +31,7 @@ public interface IValidatorDatabase {
 	public TableInfo checkColumnPermissions(TableInfo tableInfo);
 	
 	/**
+	 * Metodo para verificar se encontra as sequences especificadas no banco
 	 * 
 	 * @param sequencesName Uma lista com o nome de todas as sequences encontradas no Hibernate
 	 * @return Uma Lista de SequenceInfo com cada sequenceName recebido dizendo se encontrou 

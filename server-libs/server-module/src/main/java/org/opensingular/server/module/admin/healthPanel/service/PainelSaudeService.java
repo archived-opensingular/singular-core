@@ -1,4 +1,4 @@
-package org.opensingular.server.module.admin;
+package org.opensingular.server.module.admin.healthPanel.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +10,12 @@ import javax.inject.Inject;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.opensingular.lib.support.persistence.util.SqlUtil;
-import org.opensingular.server.module.admin.bd.drivers.DriverOracle;
-import org.opensingular.server.module.admin.bd.drivers.IValidatorDatabase;
-import org.opensingular.server.module.admin.bd.objects.ColumnInfo;
-import org.opensingular.server.module.admin.bd.objects.TableInfo;
+import org.opensingular.server.module.admin.healthPanel.dao.PainelSaudeDAO;
+import org.opensingular.server.module.admin.healthPanel.db.drivers.DriverOracle;
+import org.opensingular.server.module.admin.healthPanel.db.drivers.IValidatorDatabase;
+import org.opensingular.server.module.admin.healthPanel.db.objects.ColumnInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.HealthInfo;
+import org.opensingular.server.module.admin.healthPanel.db.objects.TableInfo;
 import org.springframework.stereotype.Service;
 
 @Service

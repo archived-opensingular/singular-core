@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.module.admin;
+package org.opensingular.server.module.admin.healthPanel.stypes;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.wicket.validation.IErrorMessageSource;
-import org.apache.wicket.validation.IValidationError;
-import org.apache.wicket.validation.ValidationError;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -36,6 +33,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.lib.support.persistence.util.SqlUtil;
 
 @SInfoType(spackage = SSystemHealthPackage.class, newable = true, name = SDbHealth.TYPE_NAME)
 public class SDbHealth extends STypeComposite<SIComposite> {
@@ -50,7 +48,8 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         
         STypeComposite<SIComposite> tabela = tabelas.getElementsType();
         
-        tabela.addFieldString("schema")
+        STypeString schemaField = tabela.addFieldString("schema");
+		schemaField
 	        .asAtr()
 	        	.label("Schema")
 	        	.maxLength(20)
@@ -74,13 +73,6 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 	    	.asAtrBootstrap()
 	    		.colPreference(2);
 		
-		tabela.addInstanceValidator(validatable->{
-			Optional<SIBoolean> foundTableInstance = validatable.getInstance().findNearest(foundTableField);
-			if(!foundTableInstance.isPresent() || !foundTableInstance.get().getValue()){
-				validatable.error("Tabela não encontrada.");
-			}
-		});
-        
         STypeList<STypeString, SIString> privs = tabela.addFieldListOf("userPrivs", STypeString.class);
         privs
         	.asAtr()
@@ -89,18 +81,33 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         	.asAtrBootstrap()
         		.colPreference(2);
         privs.setView(()->new SViewListByTable().disableNew().disableDelete());
-        privs.addInstanceValidator(validatable->{
-        	List<Object> listPrivs = validatable.getInstance().getValue();
-        	List<String> vals = new ArrayList<>();
-        	listPrivs.forEach(obj->vals.add((String)obj));
-        	
-        	
-        	if(!vals.contains("SELECT") || !vals.contains("UPDATE")
-        			|| !vals.contains("DELETE") || !vals.contains("ALTER")){
-//        		validatable.error(ValidationErrorLevel.WARNING, new ValidationError("CRUD incompleto!"));
-        	}
-        });
         
+		tabela.addInstanceValidator(validatable -> {
+			Optional<SIBoolean> foundTableInstance = validatable.getInstance().findNearest(foundTableField);
+			if (!foundTableInstance.isPresent() || !foundTableInstance.get().getValue()) {
+				validatable.error("Tabela não encontrada.");
+			}
+
+			Optional<SIString> foundSchemaField = validatable.getInstance().findNearest(schemaField);
+			Optional<SIList<SIString>> listObj = validatable.getInstance().findNearest(privs);
+			List<Object> listPrivs = listObj.get().getValue();
+			List<String> vals = new ArrayList<>();
+			listPrivs.forEach(obj -> vals.add((String) obj));
+
+			if(foundSchemaField.get() == null){
+				validatable.error(ValidationErrorLevel.ERROR, "Schema not found!");
+			}else{
+				if (!vals.contains("SELECT") || !vals.contains("UPDATE") || !vals.contains("DELETE")
+						|| !vals.contains("INSERT")) {
+					if (SqlUtil.isSingularSchema(foundSchemaField.get().getValue())) {
+						validatable.error(ValidationErrorLevel.ERROR, "CRUD incompleto!");
+					}else{
+						validatable.error(ValidationErrorLevel.WARNING, "CRUD incompleto!");
+					}
+				}
+				
+			}
+		});
         
         STypeList<STypeComposite<SIComposite>, SIComposite> colunas = tabela.addFieldListOfComposite("columnsInfo", "colunas");
         
@@ -164,7 +171,6 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 			.asAtrBootstrap()
 	      		.colPreference(2);
 
-		
         
 		coluna.addInstanceValidator(validatable->{
 			Optional<SIBoolean> databaseFieldInstance = validatable.getInstance().findNearest(foundDatabaseField);
