@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>singular-exemplos-form</artifactId>
+            <artifactId>singular-form-samples</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
