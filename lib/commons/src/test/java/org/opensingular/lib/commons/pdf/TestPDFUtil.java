@@ -17,10 +17,13 @@
 package org.opensingular.lib.commons.pdf;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -39,6 +42,7 @@ public class TestPDFUtil {
 
     @Before
     public void setupEnviroment() {
+        Assume.assumeTrue(!"false".equals(System.getProperty("singular.test.native.enabled")));
         PDFUtil.clearHome();
         File dir;
         if (PDFUtil.isWindows()) {

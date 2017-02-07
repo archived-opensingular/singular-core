@@ -10,8 +10,8 @@
         <version>1.5.7</version>
     </parent>
 
-    <artifactId>singular-exemplos-form</artifactId>
-    <name>[singular :: form :: exemplos-form]</name>
+    <artifactId>singular-form-samples</artifactId>
+    <name>[singular :: form :: form-samples]</name>
     <packaging>jar</packaging>
 
     <dependencies>
