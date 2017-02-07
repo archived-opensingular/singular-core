@@ -7,8 +7,8 @@
     <artifactId>singular</artifactId>
 
     <version>1.5.7-SNAPSHOT</version>
-    <name>[projeto-raiz :: singular]</name>
-    <description>Core do singular</description>
+    <name>[singular]</name>
+    <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
     <packaging>pom</packaging>
 
