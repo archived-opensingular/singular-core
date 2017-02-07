@@ -8,7 +8,7 @@
     <artifactId>singular-server</artifactId>
 
     <version>1.5.7</version>
-    <name>[projeto-raiz :: singular-server]</name>
+    <name>[singular-server]</name>
     <description>Singular server</description>
     <url>http://opensingular.org</url>
     <packaging>pom</packaging>
