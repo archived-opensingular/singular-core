@@ -10,12 +10,12 @@
         <version>1.5.7</version>
     </parent>
 
-    <name>[singular-server :: sso :: sso-desenv-analise ]</name>
-    <artifactId>singular-sso-desenv-analysis</artifactId>
+    <name>[singular-server :: sso :: sso-desenv-petition ]</name>
+    <artifactId>singular-sso-desenv-petition</artifactId>
     <packaging>war</packaging>
 
     <build>
-        <finalName>sso#analise</finalName>
+        <finalName>sso#petition</finalName>
     </build>
 
 </project>

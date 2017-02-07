@@ -15,8 +15,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>sso-desenv-analise</module>
-        <module>sso-desenv-peticionamento</module>
+        <module>sso-desenv-analysis</module>
+        <module>sso-desenv-petition</module>
     </modules>
 
 

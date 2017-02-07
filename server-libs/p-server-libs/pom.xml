@@ -6,11 +6,11 @@
 
     <parent>
         <groupId>org.opensingular</groupId>
-        <artifactId>server-libs</artifactId>
+        <artifactId>singular-server-libs</artifactId>
         <version>1.5.7</version>
     </parent>
 
-    <artifactId>p-server-libs</artifactId>
+    <artifactId>singular-p-server-libs</artifactId>
     <name>[singular-server :: server-libs :: p-server-libs]</name>
     <packaging>pom</packaging>
 

@@ -10,7 +10,7 @@
         <version>1.5.7</version>
     </parent>
 
-    <artifactId>server-libs</artifactId>
+    <artifactId>singular-server-libs</artifactId>
     <name>[singular-server :: server-libs]</name>
     <packaging>pom</packaging>
 
