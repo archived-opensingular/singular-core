@@ -25,7 +25,7 @@ public class AttachmentGCSchedulerInitializer {
     
     @Bean
     public AttachmentGCJob scheduleAttachmentGCJob(IScheduleService scheduleService){
-        AttachmentGCJob attachmentGCJob = new AttachmentGCJob(ScheduleDataBuilder.buildMinutely(1));
+        AttachmentGCJob attachmentGCJob = new AttachmentGCJob(ScheduleDataBuilder.buildDaily(1, 1));
         scheduleService.schedule(attachmentGCJob);
         return attachmentGCJob;
     }
