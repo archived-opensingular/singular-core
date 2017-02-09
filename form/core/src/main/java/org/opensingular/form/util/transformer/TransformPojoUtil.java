@@ -229,21 +229,22 @@ public class TransformPojoUtil {
 				
 				Map<String, Object> mapNovo = new HashMap<>();
 				if(child.getType().isComposite()){
-					mapNovo = (Map<String, Object>) object;
+					/*Caso ele tenha uma referencia já colocada, ela estará no pojoReferenceDataMap
+					 * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
+					 * especificados no STYPE chamador, ou seja, nao vai entrar em recursão enchendo a heap se quem chamou nao repetir os atributos*/ 
+					// TODO verificar quando tiver referencia circular
+					if(object instanceof String && ((String) object).contains("codRef=")){
+						String[] split = ((String) object).split("=");
+						mapNovo = pojoReferenceDataMap.get(Integer.valueOf(split[split.length-1]));
+					}else{
+						mapNovo = (Map<String, Object>) object;
+					}
 				}else{
 					// mapa criado pra garantir que teremos a referencia do objeto salva(key) 
 					mapNovo.put(child.getType().getNameSimple(), object);
 				}
 				
 				
-				 /*Caso ele tenha uma referencia já colocada, ela estará no pojoReferenceDataMap
-				 * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
-				 * especificados no STYPE chamador, ou seja, nao vai entrar em recursão enchendo a heap se quem chamou nao repetir os atributos*/ 
-				// TODO verificar quando tiver referencia circular
-				if(object instanceof String && ((String) object).contains("codRef=")){
-					String[] split = ((String) object).split("=");
-					mapNovo.put(child.getType().getNameSimple(), pojoReferenceDataMap.get(Integer.valueOf(split[split.length-1])));
-				}
 				realMapToSInstance(pojoReferenceDataMap, mapNovo, child, strictMode);
 			}
 		} else if (type.isList()){

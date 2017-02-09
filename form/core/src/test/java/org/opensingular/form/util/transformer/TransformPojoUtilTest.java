@@ -295,6 +295,33 @@ public class TransformPojoUtilTest {
 		Assert.assertEquals("maisOutroNome", children.get(2).getField("nome").getValue());
 	}
 	
+	@Test
+	public void testeMapCircularReference(){
+		
+		PojoTransformTestSuperClass object = new PojoTransformTestSuperClass();
+		object.setIdade(25);
+		
+		PojoTransformTestSubClass subObject = new PojoTransformTestSubClass("nome");
+		subObject.setPai(object);
+		
+		object.setSubClass(subObject);
+		
+		STypeComposite<SIComposite> classe = pb.createCompositeType("classe");
+		classe.addFieldInteger("idade");
+		STypeComposite<SIComposite> subClass = classe.addFieldComposite("subClass");
+		STypeComposite<SIComposite> copyOfObject = subClass.addFieldComposite("pai");
+		copyOfObject.addFieldInteger("idade");
+		
+		SIComposite siObject = classe.newInstance();
+		
+		pojoToInstanceTest(object, siObject, false);
+		
+		SIComposite field = (SIComposite) siObject.getField("subClass");
+		SIComposite fieldCopyOfSiObject = (SIComposite) field.getField("pai");
+		
+		Assert.assertEquals(object.getIdade(), fieldCopyOfSiObject.getField("idade").getValue());
+	}
+	
 	@Test(expected=Exception.class)
 	public void testeMapStrictModeTrue() throws Exception{
 		
