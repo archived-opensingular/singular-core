@@ -242,7 +242,7 @@ public class TransformPojoUtil {
 				// TODO verificar quando tiver referencia circular
 				if(object instanceof String && ((String) object).contains("codRef=")){
 					String[] split = ((String) object).split("=");
-					mapNovo.put(child.getType().getNameSimple(), pojoReferenceDataMap.get(Integer.parseInt(split[split.length-1])));
+					mapNovo.put(child.getType().getNameSimple(), pojoReferenceDataMap.get(Integer.valueOf(split[split.length-1])));
 				}
 				realMapToSInstance(pojoReferenceDataMap, mapNovo, child, strictMode);
 			}
