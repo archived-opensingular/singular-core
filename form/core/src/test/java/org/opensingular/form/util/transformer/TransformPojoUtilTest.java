@@ -103,11 +103,11 @@ public class TransformPojoUtilTest {
 		
 		Map<String, Object> map = getMapObject(paiObject);
 		
-		List<String> object = (List<String>) map.get("setCollectionTest");
+		List<Object> object = (List<Object>) map.get("setCollectionTest");
 		
-		Assert.assertTrue(set.contains(object.get(0)));
-		Assert.assertTrue(set.contains(object.get(1)));
-		Assert.assertTrue(set.contains(object.get(2)));
+		Assert.assertTrue(set.contains(((Map<String, Object>)object.get(0)).get("String")));
+		Assert.assertTrue(set.contains(((Map<String, Object>)object.get(1)).get("String")));
+		Assert.assertTrue(set.contains(((Map<String, Object>)object.get(2)).get("String")));
 	}
 	
 //	@Test
