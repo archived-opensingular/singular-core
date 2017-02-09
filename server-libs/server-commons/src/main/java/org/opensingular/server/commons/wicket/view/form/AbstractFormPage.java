@@ -313,7 +313,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
             appendButtonViewDiff(buttonContainer, config.getPetitionId(), currentInstance);
         }
 
-        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
+        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDIT == viewMode || AnnotationMode.EDIT == annotationMode)) {
             int index = 0;
             trans.stream().filter(this::isTransitionButtonVisibible).forEach(t -> {//NOSONAR
                 if (t.getMetaDataValue(ServerContextMetaData.KEY) != null && t.getMetaDataValue(ServerContextMetaData.KEY).isEnabledOn(SingularSession.get().getServerContext())) {
@@ -386,7 +386,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
         StringBuilder url = new StringBuilder();
         url.append(DispatcherPageUtil.getBaseURL())
-                .append("?")
+                .append('?')
                 .append(String.format("%s=%s", DispatcherPageParameters.ACTION, config.getFormAction().getId()))
                 .append(String.format("&%s=%s", DispatcherPageParameters.PETITION_ID, config.getPetitionId()))
                 .append(String.format("&%s=%s", DispatcherPageParameters.FORM_NAME, config.getFormType()))
@@ -406,7 +406,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     }
 
     protected Boolean isTransitionButtonVisibible(MTransition transition) {
-        return true;
+        return Boolean.TRUE;
     }
 
     protected final T getUpdatedPetitionFromInstance(IModel<? extends SInstance> currentInstance, boolean mainForm) {

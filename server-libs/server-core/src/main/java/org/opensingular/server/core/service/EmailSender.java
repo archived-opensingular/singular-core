@@ -58,9 +58,9 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
             setPassword(properties.getProperty("singular.mail.password"));
             setProtocol(properties.getProperty("singular.mail.protocol"));
             
-            getJavaMailProperties().put("mail.smtp.host", getHost());
-            getJavaMailProperties().put("mail.smtp.port", getPort());
-            getJavaMailProperties().put("mail.smtp.user", getUsername());
+            getJavaMailProperties().setProperty("mail.smtp.host", getHost());
+            getJavaMailProperties().setProperty("mail.smtp.port", String.valueOf(getPort()));
+            getJavaMailProperties().setProperty("mail.smtp.user", getUsername());
             if(StringUtils.trimToNull(properties.getProperty("singular.mail.auth")) != null){
                 getJavaMailProperties().put("mail.smtp.auth", properties.getProperty("singular.mail.auth"));
             }
@@ -131,7 +131,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                 
                 addressee.setSentDate(new Date());
                 
-                getLogger().info("Email enviado para o destinatário(cod="+addressee.getCod()+")="+addressee.getAddress());
+                getLogger().info("Email enviado para o destinatário(cod={})={}", addressee.getCod(), addressee.getAddress());
             } catch (Exception ex) {
                 addressee.setSentDate(null);
                 String msg = "ERRO ao enviar email para o destinatário(cod=" + addressee.getCod() + ")=" + addressee.getAddress();
@@ -142,7 +142,7 @@ public class EmailSender extends JavaMailSenderImpl implements Loggable {
                     getLogger().error(msg);
                 } else {
                     getLogger().error(msg, ex);
-                    errorCache.put(ex.getClass(), true);
+                    errorCache.put(ex.getClass(), Boolean.TRUE);
                 }
                 return false;
             }

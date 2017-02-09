@@ -28,6 +28,7 @@ import org.opensingular.lib.support.persistence.BaseDAO;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.SqlUtil;
 import org.opensingular.server.commons.exception.SingularServerException;
+import org.opensingular.server.commons.persistence.transformer.FindActorByUserCodResultTransformer;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -40,28 +41,21 @@ public class ActorDAO extends BaseDAO<Actor, Integer> {
     }
 
     public Actor buscarPorCodUsuario(String username) {
+
         if (username == null) {
             return null;
         }
+
         Query query = getSession().createSQLQuery(
                 "select a.CO_ATOR as \"cod\", a.CO_USUARIO as \"codUsuario\", a.NO_ATOR as \"nome\", a.DS_EMAIL as \"email\" " +
                         " FROM " + Constants.SCHEMA + ".VW_ATOR a " +
                         " WHERE UPPER(trim(a.CO_USUARIO)) = :codUsuario");
+
         query.setParameter("codUsuario", username.toUpperCase());
+        query.setResultTransformer(new FindActorByUserCodResultTransformer());
 
-        Object[] dados = (Object[]) query.uniqueResult();
-        Actor    actor = null;
-        if (dados != null) {
-            actor = new Actor();
-            if (dados[0] != null) {
-                actor.setCod(((Number) dados[0]).intValue());
-            }
-            actor.setCodUsuario(dados[1].toString());
-            actor.setNome((String) dados[2]);
-            actor.setEmail((String) dados[3]);
-        }
+        return (Actor) query.uniqueResult();
 
-        return actor;
     }
 
     public MUser saveUserIfNeeded(MUser mUser) {

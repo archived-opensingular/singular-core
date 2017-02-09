@@ -126,7 +126,7 @@ public abstract class DispatcherPage extends WebPage {
                 } else {
                     logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
                 }
-            } else if (!ViewMode.READ_ONLY.equals(cfg.getViewMode())) {
+            } else if (!(ViewMode.READ_ONLY == cfg.getViewMode())) {
                 throw SingularServerException.rethrow("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
             }
         }
@@ -145,7 +145,7 @@ public abstract class DispatcherPage extends WebPage {
     private WebPage retrieveDestination(FormPageConfig config) {
         if (config.isDiff()) {
             return newDiffPage(config);
-        } else if (config.getViewMode().isVisualization() && !AnnotationMode.EDIT.equals(config.getAnnotationMode())) {
+        } else if (config.getViewMode().isVisualization() && !(AnnotationMode.EDIT == config.getAnnotationMode())) {
             return newVisualizationPage(config);
         } else {
             return retrieveDestinationUsingSingularWebRef(config, retrieveSingularWebRef(config));
@@ -161,7 +161,7 @@ public abstract class DispatcherPage extends WebPage {
         Long    formVersionPK;
         Boolean showAnnotations;
 
-        showAnnotations = config.getAnnotationMode().equals(AnnotationMode.READ_ONLY);
+        showAnnotations = config.getAnnotationMode() == AnnotationMode.READ_ONLY;
 
         if (config.getFormVersionPK() != null) {
             formVersionPK = config.getFormVersionPK();
@@ -285,7 +285,7 @@ public abstract class DispatcherPage extends WebPage {
     }
 
     private FormActions resolveFormAction(StringValue action) {
-        return FormActions.getById(Integer.parseInt(action.toString("0")));
+        return FormActions.getById(Integer.valueOf(action.toString("0")));
     }
 
     protected FormPageConfig parseParameters(Request r) {

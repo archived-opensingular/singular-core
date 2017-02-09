@@ -160,7 +160,7 @@ public abstract class AbstractHistoricoContent extends Content {
                     .getPetitionContentHistory()
                     .getFormVersionHistoryEntities()
                     .stream()
-                    .filter(f -> SimNao.SIM.equals(f.getMainForm()))
+                    .filter(f -> SimNao.SIM == f.getMainForm())
                     .findFirst()
                     .map(FormVersionHistoryEntity::getCodFormVersion)
                     .map(Object::toString)

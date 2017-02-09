@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>org.opensingular</groupId>
-        <artifactId>p-server-libs</artifactId>
-        <version>1.5.7-SNAPSHOT</version>
+        <artifactId>singular-p-server-libs</artifactId>
+        <version>1.5.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-p-server-module</artifactId>
@@ -38,12 +38,6 @@
             <groupId>org.opensingular</groupId>
             <artifactId>singular-server-module</artifactId>
             <version>${singular.server.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
  

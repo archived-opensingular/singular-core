@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class SingularCASLogoutHandler implements SingularLogoutHandler, Loggable {
 
@@ -47,7 +48,7 @@ public class SingularCASLogoutHandler implements SingularLogoutHandler, Loggable
             if (session != null) {
                 session.invalidate();
             }
-            String redirect = logoutURL + "?service=" + URLEncoder.encode(extractServiceParam(request), "UTF-8");
+            String redirect = logoutURL + "?service=" + URLEncoder.encode(extractServiceParam(request), StandardCharsets.UTF_8.name());
             getLogger().warn(" REDIRECIONANDO PARA: {}", StringEscapeUtils.escapeJava(redirect));
             response.sendRedirect(redirect);
         } catch (Exception e) {

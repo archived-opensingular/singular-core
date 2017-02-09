@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>org.opensingular</groupId>
-        <artifactId>server-libs</artifactId>
-        <version>1.5.7-SNAPSHOT</version>
+        <artifactId>singular-server-libs</artifactId>
+        <version>1.5.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-server-commons</artifactId>
@@ -49,20 +49,6 @@
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-service</artifactId>
             <version>${singular.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.interceptor</groupId>
-            <artifactId>javax.interceptor-api</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

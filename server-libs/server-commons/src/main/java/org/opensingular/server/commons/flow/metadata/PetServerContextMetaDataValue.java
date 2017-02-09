@@ -19,14 +19,14 @@ package org.opensingular.server.commons.flow.metadata;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.server.commons.config.IServerContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PetServerContextMetaDataValue {
 
     public static final PetServerMetaDataKey KEY = new PetServerMetaDataKey(PetServerMetaDataKey.class.getName(), PetServerContextMetaDataValue.class);
 
-    private List<IServerContext> contexts = new ArrayList<>(2);
+    private Set<IServerContext> contexts = new HashSet<>(2);
 
     PetServerContextMetaDataValue() {
 

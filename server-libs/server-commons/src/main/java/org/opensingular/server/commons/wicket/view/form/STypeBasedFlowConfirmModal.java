@@ -92,7 +92,7 @@ public class STypeBasedFlowConfirmModal<T extends PetitionEntity> extends Abstra
 
     @Override
     protected FlowConfirmButton<T> newFlowConfirmButton(String tn, IModel<? extends SInstance> im, ViewMode vm, BSModalBorder m) {
-        return new FlowConfirmButton<>(tn, "confirm-btn", im, validatePageForm && ViewMode.EDIT.equals(vm), formPage, m);
+        return new FlowConfirmButton<>(tn, "confirm-btn", im, validatePageForm && ViewMode.EDIT == vm, formPage, m);
     }
 
     private void addCloseButton(BSModalBorder modal) {

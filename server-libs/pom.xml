@@ -7,10 +7,10 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-server</artifactId>
-        <version>1.5.7-SNAPSHOT</version>
+        <version>1.5.8-SNAPSHOT</version>
     </parent>
 
-    <artifactId>server-libs</artifactId>
+    <artifactId>singular-server-libs</artifactId>
     <name>[singular-server :: server-libs]</name>
     <packaging>pom</packaging>
 
@@ -23,12 +23,6 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>

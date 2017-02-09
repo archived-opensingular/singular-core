@@ -7,8 +7,8 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular-server</artifactId>
 
-    <version>1.5.7-SNAPSHOT</version>
-    <name>[projeto-raiz :: singular-server]</name>
+    <version>1.5.8-SNAPSHOT</version>
+    <name>[singular-server]</name>
     <description>Singular server</description>
     <url>http://opensingular.org</url>
     <packaging>pom</packaging>
@@ -162,47 +162,23 @@
         <developerConnection>${project.scm.developerConnection}</developerConnection>
     </scm>
 
+    <dependencies>
+        <!-- FOR JAVADOC GENERATION -->
+        <dependency>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <profiles>
-        <profile>
-            <id>release</id>
-
-            <distributionManagement>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-            </distributionManagement>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-
-            <properties>
-                <project.scm.url>https://github.com/opensingular/singular-server/tree/master</project.scm.url>
-                <project.scm.connection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.connection>
-                <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.developerConnection>
-            </properties>
-        </profile>
-
         <profile>
             <id>test</id>
             <activation>
@@ -218,10 +194,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>
-            e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,
-            s1,s2,s3,s4,s5,s6,s7,s8
-        </sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -301,6 +274,8 @@
         <sonar.issue.ignore.multicriteria.s7.resourceKey>**/SSOFilter.java</sonar.issue.ignore.multicriteria.s7.resourceKey>
         <sonar.issue.ignore.multicriteria.s8.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s8.ruleKey>
         <sonar.issue.ignore.multicriteria.s8.resourceKey>**/DefaultServerREST.java</sonar.issue.ignore.multicriteria.s8.resourceKey>
+        <sonar.issue.ignore.multicriteria.s9.ruleKey>fb-contrib:MDM_SETDEFAULTLOCALE</sonar.issue.ignore.multicriteria.s9.ruleKey>
+        <sonar.issue.ignore.multicriteria.s9.resourceKey>**/SingularApplication.java</sonar.issue.ignore.multicriteria.s9.resourceKey>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-server.git</project.scm.connection>
@@ -310,8 +285,8 @@
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
-        <singular.version>1.5.7-SNAPSHOT</singular.version>
-        <singular.server.version>1.5.7-SNAPSHOT</singular.server.version>
+        <singular.version>1.5.8-SNAPSHOT</singular.version>
+        <singular.server.version>1.5.8-SNAPSHOT</singular.server.version>
         <cas.version>4.0.4</cas.version>
         <cas.client.version>3.4.1</cas.client.version>
     </properties>

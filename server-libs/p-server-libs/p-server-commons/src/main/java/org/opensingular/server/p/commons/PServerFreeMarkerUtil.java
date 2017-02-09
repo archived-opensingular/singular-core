@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static freemarker.template.Configuration.VERSION_2_3_22;
@@ -39,13 +40,13 @@ public class PServerFreeMarkerUtil {
 
     private static final Version       VERSION = VERSION_2_3_22;
     private static final Configuration cfg     = new Configuration(VERSION);
-    private static final Logger        LOGGER  = LoggerFactory.getLogger(FreemarkerUtil.class);
+    private static final Logger        LOGGER  = LoggerFactory.getLogger(PServerFreeMarkerUtil.class);
 
     static {
         final BeansWrapper wrapper = new BeansWrapperBuilder(VERSION).build();
         cfg.setObjectWrapper(wrapper);
         cfg.setTemplateLoader(new ClassTemplateLoader(PServerFreeMarkerUtil.class.getClassLoader(), "templates"));
-        cfg.setDefaultEncoding("UTF-8");
+        cfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
     }
 
     public static String mergeWithFreemarker(String templateName, Map<String, Object> model) {
@@ -61,7 +62,7 @@ public class PServerFreeMarkerUtil {
             cfg.getTemplate(templateName).process(encode(map), sw);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
-            throw new SingularFormException("Não foi possivel fazer o merge do template " + templateName);
+            throw new SingularFormException("Não foi possivel fazer o merge do template " + templateName, ex);
         }
 
         return sw.toString();
