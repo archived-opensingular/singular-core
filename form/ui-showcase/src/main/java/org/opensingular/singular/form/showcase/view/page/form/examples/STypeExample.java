@@ -114,7 +114,7 @@ public class STypeExample extends STypeComposite<SIComposite> {
         this.address.addInstanceValidator(InstanceValidators.allOrNothing());
     }
 
-    private <I extends SInstance, T extends SType<I>> T addField(STypeComposite<?> root, String name, String label,
+    private <T extends SType<?>> T addField(STypeComposite<?> root, String name, String label,
                                                                  Class<T> type) {
         T campo = root.addField(name, type);
         campo.asAtr().label(label);

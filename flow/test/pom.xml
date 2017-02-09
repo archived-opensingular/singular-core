@@ -4,12 +4,12 @@
     <parent>
         <artifactId>singular-flow</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.7-SNAPSHOT</version>
+        <version>1.5.8-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>flow-test</artifactId>
+    <artifactId>singular-flow-test</artifactId>
     <name>[singular :: flow :: flow-test]</name>
 
     <dependencies>
@@ -97,13 +97,6 @@
             <artifactId>quartz</artifactId>
             <version>2.2.1</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -239,7 +239,7 @@ public class DocumentAnnotations {
             }
         } else {
             SInstance parent = findByXPathAndId(document, instancesById, path, index - 1);
-            if (parent != null && parent instanceof SIComposite) {
+            if (parent instanceof SIComposite) {
                 return ((SIComposite) parent).getField(name);
             }
         }

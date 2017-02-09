@@ -53,7 +53,7 @@ public class CaseInteractionExistsPackage extends SPackage {
         exists.asAtr().label("Exists");
 
         record
-                .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(false))
+                .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(Boolean.FALSE))
                 .asAtr().dependsOn(exists);
 
         recordText.asAtr().label("Text")

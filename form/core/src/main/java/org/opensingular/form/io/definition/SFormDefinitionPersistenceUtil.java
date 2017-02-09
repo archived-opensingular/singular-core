@@ -44,7 +44,7 @@ import java.util.function.Supplier;
 public class SFormDefinitionPersistenceUtil {
 
     private final static Supplier<STypePersistenceArchive> typePresistenceArchive = SupplierUtil.cached(
-            () -> createTypePersistence());
+            SFormDefinitionPersistenceUtil::createTypePersistence);
 
     private SFormDefinitionPersistenceUtil() {}
 
@@ -187,12 +187,7 @@ public class SFormDefinitionPersistenceUtil {
         private final Map<String, PackageBuilder> pkgs = new HashMap<>();
         private final Map<String, String> imports = new HashMap<>();
 
-        private final SIPersistenceArchive pArchive;
-        private final Map<String, SIPersistencePackage> packages = new HashMap<>();
-        private final Map<String, SIPersistenceType> types = new HashMap<>();
-
         public ContextUnarchive(SIPersistenceArchive pArchive) {
-            this.pArchive = pArchive;
             prepareDefaultImports(dictionary);
         }
 

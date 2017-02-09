@@ -29,6 +29,8 @@ import java.util.stream.Stream;
  */
 public class ScheduleDataBuilder {
 
+    private static final String[] WEEK_DAYS_NAMES = new String[]{"domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"};
+
     private ScheduleDataBuilder() {
         /* CONSTRUTOR VAZIO */
     }
@@ -68,11 +70,9 @@ public class ScheduleDataBuilder {
     public static IScheduleData buildWeekly(int hours, int minutes, Integer... dayOfWeek) {
         Preconditions.checkArgument(dayOfWeek.length > 0, "any dayOfWeek provided");
 
-        String[] weekDaysNames = new String[]{"domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"};
-
         try (Stream<Integer> dayOfWeekStream = Arrays.stream(dayOfWeek)) {
 
-            String daysDescription = dayOfWeekStream.map((day) -> weekDaysNames[day]).collect(Collectors.joining(","));
+            String daysDescription = dayOfWeekStream.map((day) -> WEEK_DAYS_NAMES[day]).collect(Collectors.joining(","));
             String description = "Semanal: " + daysDescription
                     + " às " + hours + ':' + (minutes < 10 ? "0" : "") + minutes + "h";
 

@@ -61,7 +61,7 @@ class SpringFormUtil {
 
     public static String erroMsg(NamedBean bean, String msg) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[");
+        sb.append('[');
         if (bean.getBeanName() != null) {
             sb.append("bean=").append(bean.getBeanName()).append("; ");
         }

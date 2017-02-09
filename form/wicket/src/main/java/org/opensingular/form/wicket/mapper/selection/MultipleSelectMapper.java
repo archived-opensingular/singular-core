@@ -104,7 +104,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
                 //TODO implementar logica de auto detecção
                 PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
                 if (phraseBreak == PhraseBreak.BREAK_LINE) {
-                    output.append("\n");
+                    output.append('\n');
                 } else if (phraseBreak == PhraseBreak.COMMA) {
                     output.append(", ");
                 }

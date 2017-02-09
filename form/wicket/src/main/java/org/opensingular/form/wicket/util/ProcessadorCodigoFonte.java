@@ -98,13 +98,13 @@ public class ProcessadorCodigoFonte {
 
     public String getFonteProcessado() {
         StringBuilder sb = new StringBuilder();
-        fonteFinal.forEach(s -> sb.append(s).append("\n"));
+        fonteFinal.forEach(s -> sb.append(s).append('\n'));
         return sb.toString();
     }
 
     public String getJavadoc() {
         StringBuilder sb = new StringBuilder();
-        javadocDeClasse.forEach(s -> sb.append(s).append("\n"));
+        javadocDeClasse.forEach(s -> sb.append(s).append('\n'));
         return sb.toString();
     }
 

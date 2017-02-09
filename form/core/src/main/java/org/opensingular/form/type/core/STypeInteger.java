@@ -53,7 +53,7 @@ public class STypeInteger extends STypeSimple<SIInteger, Integer> {
             return null;
         }
         try {
-            return Integer.parseInt(valor);
+            return Integer.valueOf(valor);
         } catch (Exception e) {
             throw createConversionError(valor, Integer.class, null, e);
         }

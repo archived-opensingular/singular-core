@@ -19,21 +19,19 @@ package org.opensingular.form.validation.validator;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.validation.IInstanceValidatable;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCPFValidator");
 
-    private final List<String> invalidPatterns = Arrays.asList(
-            "00000000000", "11111111111", "22222222222", "33333333333", "44444444444",
-            "55555555555", "66666666666", "77777777777", "88888888888", "99999999999");
+    private final Set<String> invalidPatterns = new LinkedHashSet<>(Arrays.asList("00000000000", "11111111111",
+            "22222222222", "33333333333", "44444444444", "55555555555", "66666666666", "77777777777", "88888888888",
+            "99999999999"
+    ));
 
     @Override
     public void validate(IInstanceValidatable<SIString> validatable, String value) {

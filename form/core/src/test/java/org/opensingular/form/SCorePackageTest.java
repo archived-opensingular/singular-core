@@ -58,14 +58,14 @@ public class SCorePackageTest extends TestCaseForm {
         Assert.assertEquals(true, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
 
-        tipoB.withRequired(null);
+        tipoB.withRequired(false);
 
         Assert.assertEquals(false, tipoS.isRequired());
         Assert.assertEquals(false, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
 
         tipoS.withRequired(true);
-        tipoB.withRequired(null);
+        tipoB.withRequired(false);
 
         Assert.assertEquals(true, tipoS.isRequired());
         Assert.assertEquals(false, tipoB.isRequired());

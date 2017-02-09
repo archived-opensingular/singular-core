@@ -74,7 +74,7 @@ public class ListContent extends Content implements SingularWicketContainer<List
         } else {
             tipo = ShowCaseType.STUDIO;
         }
-        return tipo.equals(templateEntry.getTipo());
+        return tipo == templateEntry.getTipo();
     }
 
     @Override
@@ -111,7 +111,6 @@ public class ListContent extends Content implements SingularWicketContainer<List
                 )
                 .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
                 .setStripedRows(false)
-                .add($b.classAppender("worklist"))
                 .build("form-list");
         return dataTable;
     }

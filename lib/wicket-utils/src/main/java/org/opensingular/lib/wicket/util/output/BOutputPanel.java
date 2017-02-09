@@ -30,13 +30,10 @@ public class BOutputPanel extends Panel {
      */
     private static final long serialVersionUID = -7120790446032810735L;
 
-    private final IModel<String> outputText;
-
     private Label outputTextLabel;
 
     public BOutputPanel(String id, IModel<String> outputText) {
         super(id);
-        this.outputText = outputText;
         this.outputTextLabel = new Label("output", outputText);
     }
 

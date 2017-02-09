@@ -61,7 +61,7 @@ public class FileDownloadLink extends Link<File> {
     @Override
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
-        if (ContentDisposition.INLINE.equals(contentDisposition)) {
+        if (ContentDisposition.INLINE == contentDisposition) {
             tag.put("target", "_blank");
         }
     }

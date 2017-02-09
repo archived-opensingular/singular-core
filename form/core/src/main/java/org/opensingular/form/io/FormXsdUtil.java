@@ -331,7 +331,7 @@ public class FormXsdUtil {
 
         public Integer getAttrInteger(String attributeName) {
             String value = getAttr(attributeName);
-            return value == null ? null : Integer.parseInt(value);
+            return value == null ? null : Integer.valueOf(value);
         }
 
         public int getAttrMaxOccurs() {

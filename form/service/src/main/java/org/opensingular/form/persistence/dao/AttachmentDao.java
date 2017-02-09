@@ -99,10 +99,10 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     @SuppressWarnings("unchecked")
     public List<AttachmentEntity> listOldOrphanAttachments() {
         StringBuilder hql = new StringBuilder();
-        hql.append(" SELECT a FROM " + AttachmentEntity.class.getName() + " as a ");
+        hql.append(" SELECT a FROM ").append(AttachmentEntity.class.getName()).append(" as a ");
         hql.append(" WHERE a.creationDate < :ontem ");
         hql.append(" AND NOT EXISTS ( ");
-        hql.append("    SELECT 1 FROM " + AbstractFormAttachmentEntity.class.getName() + " as fa ");
+        hql.append("    SELECT 1 FROM ").append(AbstractFormAttachmentEntity.class.getName()).append(" as fa ");
         hql.append("    WHERE fa.cod.attachmentCod = a.cod ");
         hql.append(" ) ");
 

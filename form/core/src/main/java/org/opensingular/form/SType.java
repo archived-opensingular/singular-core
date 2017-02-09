@@ -445,7 +445,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
-    public SType<I> withRequired(Boolean value) {
+    public SType<I> withRequired(boolean value) {
         return with(SPackageBasic.ATR_REQUIRED, value);
     }
 
@@ -755,11 +755,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             pad(appendable, level);
             debugTypeHeader(appendable);
             debugAttributes(appendable);
-            appendable.append("\n");
+            appendable.append('\n');
 
             if (this instanceof STypeSimple && asAtrProvider().getProvider() != null) {
                 pad(appendable, level + 2).append("selection of ").append(asAtrProvider().getProvider().toString())
-                        .append("\n");
+                        .append('\n');
             }
 
             debugAttributesDefined(appendable, level);

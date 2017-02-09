@@ -285,21 +285,18 @@ public class MasterDetailPanel extends Panel {
                 Collection<IValidationError> errors       = baseInstance.getNestedValidationErrors();
                 if ((errors != null) && !errors.isEmpty()) {
                     String alertLevel = errors.stream()
-                            .map(IValidationError::getErrorLevel)
-                            .collect(Collectors.maxBy(Comparator.naturalOrder()))
+                            .map(IValidationError::getErrorLevel).max(Comparator.naturalOrder())
                             .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
                             .orElse(null);
 
-                    final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert " + alertLevel + "'>");
+                    final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
                     for (IValidationError error : errors) {
                         Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
-                        if (inst.isPresent()) {
-                            sb.append("<li>")
-                                    .append(SFormUtil.generateUserFriendlyPath(inst.get(), baseInstance))
-                                    .append(": ")
-                                    .append(error.getMessage())
-                                    .append("</li>");
-                        }
+                        inst.ifPresent(sInstance -> sb.append("<li>")
+                                .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
+                                .append(": ")
+                                .append(error.getMessage())
+                                .append("</li>"));
                     }
                     sb.append("</ul></div>");
 

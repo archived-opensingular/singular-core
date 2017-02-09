@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -65,7 +66,7 @@ public class ResourceRef implements Serializable {
     public String getContent() {
         InputStream in = referenceClass.getResourceAsStream(resourcePath);
         try {
-            return IOUtils.toString(in, Charset.forName("UTF-8"));
+            return IOUtils.toString(in, Charset.forName(StandardCharsets.UTF_8.name()));
         } catch (IOException e) {
             throw SingularUtil.propagate(e);
         }

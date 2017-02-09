@@ -141,7 +141,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return Current annotation if this instance, if none is present one is created.
      */
-    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation() {
+    public SIAnnotation annotation() {
         return getAnnotationService().getAnnotationOrCreate(target());
     }
 

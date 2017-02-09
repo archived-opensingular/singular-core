@@ -324,7 +324,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @throws IOException Se houver erro na leitura do dados
      */
-    public static String toBASE64(InputStream in) throws IOException {
+    public static String toBASE64(InputStream in) {
         if (in == null) {
             throw new IllegalArgumentException("inputstream está null");
         }
@@ -352,7 +352,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param out Destino do bytes decodificados.
      * @throws IOException Se problema com a stream de output.
      */
-    static void fromBASE64(String stringValue, OutputStream out) throws IOException {
+    static void fromBASE64(String stringValue, OutputStream out) {
         if (stringValue == null || out == null) {
             throw new IllegalArgumentException("parametro null");
         }

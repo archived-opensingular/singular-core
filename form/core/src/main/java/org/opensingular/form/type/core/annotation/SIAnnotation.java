@@ -87,7 +87,7 @@ public class SIAnnotation extends SIComposite {
         if (path.length() != 0) {
             path.append('/');
         }
-        path.append(instance.getName()).append("[@id=").append(instance.getId()).append("]");
+        path.append(instance.getName()).append("[@id=").append(instance.getId()).append(']');
         return path;
     }
 

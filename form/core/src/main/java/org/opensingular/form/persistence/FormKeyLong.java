@@ -38,7 +38,7 @@ public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber 
     @Override
     protected Long parseValuePersistenceString(String persistenceString) {
         try {
-            return Long.parseLong(persistenceString);
+            return Long.valueOf(persistenceString);
         } catch (Exception e) {
             throw new SingularFormPersistenceException("O valor da chave não é um long válido", e).add("key",
                     persistenceString);

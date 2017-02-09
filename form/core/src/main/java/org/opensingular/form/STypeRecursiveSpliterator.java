@@ -16,41 +16,41 @@
 
 package org.opensingular.form;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 public class STypeRecursiveSpliterator implements Spliterator<SType<?>> {
-    private final Deque<SType<?>> deque = new ArrayDeque<>();
-    public STypeRecursiveSpliterator(SType<?> root, boolean includeRoot) {
-        if (includeRoot)
-            this.deque.add(root);
 
-        Collection possibleTypes = STypes.containedTypes(root);
-        Collection<SType> newTypes = newArrayList();
+    private final Deque<SType<?>> deque = new ArrayDeque<>();
+
+    public STypeRecursiveSpliterator(SType<?> root, boolean includeRoot) {
+
+        if (includeRoot) {
+            this.deque.add(root);
+        }
+
+        Collection<SType<?>> possibleTypes = STypes.containedTypes(root);
+        Collection<SType<?>> newTypes;
+
         do {
+            newTypes = new ArrayList<>();
             addTypesNotYetPresent(possibleTypes, newTypes);
-            Collection<SType> childTypes = createNewPossibleTypesToInspect(newTypes);
-            newTypes = newArrayList();
-            possibleTypes = childTypes;
-        }while(!possibleTypes.isEmpty());
+            possibleTypes = createNewPossibleTypesToInspect(newTypes);
+        } while (!possibleTypes.isEmpty());
+
     }
 
-    private Collection<SType> createNewPossibleTypesToInspect(Collection<SType> newTypes) {
-        Collection<SType> childTypes = newArrayList();
-        for(SType t: newTypes){
+    private Collection<SType<?>> createNewPossibleTypesToInspect(Collection<SType<?>> newTypes) {
+        Collection< SType<?>> childTypes = new ArrayList<>();
+        for (SType<?> t : newTypes) {
             childTypes.addAll(STypes.containedTypes(t));
         }
         return childTypes;
     }
 
-    private void addTypesNotYetPresent(Collection<SType> possibleTypes, Collection<SType> newTypes) {
-        for(SType  t: possibleTypes){
-            if(!this.deque.contains(t)){
+    private void addTypesNotYetPresent(Collection<SType<?>> possibleTypes, Collection<SType<?>> newTypes) {
+        for (SType<?> t : possibleTypes) {
+            if (!this.deque.contains(t)) {
                 this.deque.add(t);
                 newTypes.add(t);
             }
@@ -66,14 +66,17 @@ public class STypeRecursiveSpliterator implements Spliterator<SType<?>> {
         action.accept(node);
         return true;
     }
+
     @Override
     public Spliterator<SType<?>> trySplit() {
         return new STypeRecursiveSpliterator(deque.removeFirst(), true);
     }
+
     @Override
     public long estimateSize() {
         return getExactSizeIfKnown();
     }
+
     @Override
     public int characteristics() {
         return Spliterator.NONNULL | Spliterator.DISTINCT;

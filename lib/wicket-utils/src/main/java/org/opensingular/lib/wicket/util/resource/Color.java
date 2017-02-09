@@ -40,7 +40,7 @@ public enum Color {
     }
 
     public String getFontCssClass() {
-        return (this.equals(DEFAULT) ? "theme-font-color": "font-".concat(cssClass));
+        return (this == DEFAULT ? "theme-font-color": "font-".concat(cssClass));
     }
 
     @Override

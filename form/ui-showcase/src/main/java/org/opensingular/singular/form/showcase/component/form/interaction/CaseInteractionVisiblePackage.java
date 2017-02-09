@@ -53,7 +53,7 @@ public class CaseInteractionVisiblePackage extends SPackage {
         visible.asAtr().label("Visible");
 
         record.asAtr()
-                .visible(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
+                .visible(ins -> ins.findNearestValue(visible, Boolean.class).orElse(Boolean.FALSE))
                 .dependsOn(visible);
 
         recordText.asAtr()
