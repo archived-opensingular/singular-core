@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +37,10 @@ import org.opensingular.form.SType;
 public class TransformPojoUtil {
 	
 //	private static final Logger LOGGER = LoggerFactory.getLogger(TransformPojoUtil.class);
-	private static List<Class<?>> STOP_CRITERY = defineStopCritery();
+	private static Set<Class<?>> STOP_CRITERY = defineStopCritery();
 
-	private static List<Class<?>> defineStopCritery() {
-		List<Class<?>> stop = new ArrayList<>();
+	private static Set<Class<?>> defineStopCritery() {
+		Set<Class<?>> stop = new HashSet<>();
 		
 		stop.add(Byte.class);
 		stop.add(Integer.class);
@@ -239,9 +240,9 @@ public class TransformPojoUtil {
 				 * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
 				 * especificados no STYPE chamador, ou seja, nao vai entrar em recursão enchendo a heap se quem chamou nao repetir os atributos*/ 
 				// TODO verificar quando tiver referencia circular
-				if(object != null && object instanceof String && ((String) object).contains("codRef=")){
+				if(object instanceof String && ((String) object).contains("codRef=")){
 					String[] split = ((String) object).split("=");
-					mapNovo.put(child.getType().getNameSimple(), pojoReferenceDataMap.get(split[split.length-1]));
+					mapNovo.put(child.getType().getNameSimple(), pojoReferenceDataMap.get(Integer.parseInt(split[split.length-1])));
 				}
 				realMapToSInstance(pojoReferenceDataMap, mapNovo, child, strictMode);
 			}
