@@ -15,23 +15,28 @@
  */
 package org.opensingular.server.module.admin.healthPanel.panel;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Properties;
-
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.opensingular.server.module.admin.healthPanel.service.HealthPanelWebService;
+import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.wicket.component.SingularSaveButton;
+import org.opensingular.form.wicket.component.SingularValidationButton;
+import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.server.module.admin.healthPanel.stypes.SWebHealth;
 
 public class WebPanel extends Panel {
-//	@Inject
-//    @Named("formConfigWithDatabase")
-//    private SFormConfig<String> formConfig;
-	
 	@Inject
-    private HealthPanelWebService painelService;
-
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> formConfig;
+	
 	public WebPanel(String id) {
 		super(id);
 	}
@@ -40,17 +45,37 @@ public class WebPanel extends Panel {
 	protected void onInitialize() {
 		super.onInitialize();
 		
-		URL testeUrl = null;
-		try {
-			testeUrl = new URL("http://www.google.com.br");
-			testeUrl.openConnection();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		SingularFormPanel<String> panelWeb = new SingularFormPanel<String>("panelWeb", formConfig) {
+			@Override
+			protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
+				return SDocumentFactory.empty().createInstance(new RefType() {
+					@Override
+					protected SType<?> retrieve() {
+						return singularFormConfig.getTypeLoader().loadTypeOrException(SWebHealth.TYPE_FULL_NAME);
+					}
+				});
+			}
+		};
 		
-		Properties teste = new Properties();
+		SingularValidationButton checkButton = new SingularValidationButton("checkButtonWeb", panelWeb.getRootInstance()){
+			@Override
+			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
+					IModel<? extends SInstance> instanceModel) {
+//				form.add(new Feedbac)
+			}
+		};
 		
+		SingularSaveButton saveButton = new SingularSaveButton("saveButtonWeb", panelWeb.getRootInstance()) {
+			@Override
+			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
+					IModel<? extends SInstance> instanceModel) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
 		
-		System.out.println(testeUrl);
+		add(panelWeb);
+		add(checkButton);
+		add(saveButton);
 	}
 }
