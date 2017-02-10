@@ -146,8 +146,8 @@ public class SingularDefaultPersistenceConfiguration {
     
     //  -Dsingular.custom.schema.name="DBFLOW" -->> argument tomcat
     protected String getUrlConnection() {
-    	return "jdbc:oracle:thin:@10.103.2.167:1521:vs02";
-//    	return "jdbc:oracle:thin:@10.103.2.167:1521:vs06";
+//    	return "jdbc:oracle:thin:@10.103.2.167:1521:vs02";
+    	return "jdbc:oracle:thin:@10.103.2.167:1521:vs06";
 //    	return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;EARLY_FILTER=1;MVCC=TRUE;LOCK_TIMEOUT=15000;";
     }
 

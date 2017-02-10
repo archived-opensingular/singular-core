@@ -45,42 +45,48 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 		
 		List<ColumnInfo> colunas = getColumnsInfoFromTable(tableInfo.getTableName());
 		
-		List<ColumnInfo> colunasAux = new ArrayList<>();
-		if(colunas != null && !colunas.isEmpty()){
-			tableInfo.getColumnsInfo().forEach(column->{
-				for (ColumnInfo col: colunas) {
-					if(col.getColumnName().equals(column.getColumnName())) {
-						colunasAux.add(col);
-						col.setFoundHibernate(true);
-						break;
-					}
-				}
-			});
-		}
-		
-		/*  Verifica se o elemento foi encontrado na lista de resultado
-		 *  Se não for encontrado, então coloca ele na lista indicando que nao foi encontrado.
-		 */
-		tableInfo.getColumnsInfo().forEach(column->{
-			ColumnInfo colunaEncontrada = null;
-			for (ColumnInfo col: colunasAux) {
-				if(col.getColumnName().equals(column.getColumnName())){
-					colunaEncontrada = col;
+		// Verifica se as colunas encontradas no banco foi encontrada no hibernate
+		// caso nao tenha sido, indica isso
+		colunas.forEach(coluna->{
+			boolean colunaDoBancoEncontradaNoHibernate = false;
+			for (ColumnInfo col: tableInfo.getColumnsInfo()) {
+				if(col.getColumnName().equals(coluna.getColumnName())) {
+					colunaDoBancoEncontradaNoHibernate = true;
+					coluna.setFoundHibernate(true);
 					break;
 				}
 			}
 			
-			if(colunaEncontrada == null){
-				colunasAux.add(column);
+			if(!colunaDoBancoEncontradaNoHibernate){
+				coluna.setFoundHibernate(false); // garantir que o valor é de que não foi encontrado
 			}
 		});
-		tableInfo.setColumnsInfo(colunasAux);
+		
+		// Verifica se as colunas encontradas no hibernate foram encontradas no banco
+		// caso nao tenha sido, indica isso
+		tableInfo.getColumnsInfo().forEach(tableCol->{
+			boolean colunaDoHibernateEncontradaNoBanco = false;
+			for (ColumnInfo col: colunas) {
+				if(col.getColumnName().equals(tableCol.getColumnName())) {
+					colunaDoHibernateEncontradaNoBanco = true;
+					break;
+				}
+			}
+			
+			if(!colunaDoHibernateEncontradaNoBanco){
+				tableCol.setFoundHibernate(true);
+				tableCol.setFoundDataBase(false);
+				colunas.add(tableCol);
+			}
+		});
+		
+		tableInfo.setColumnsInfo(colunas);
 		
 		return tableInfo;
 	}
 	
 	private List<ColumnInfo> getColumnsInfoFromTable(String table) {
-		String query = "SELECT OWNER, COLUMN_NAME, DATA_TYPE, CHAR_LENGTH, DATA_PRECISION, TABLE_NAME, DATA_LENGTH "
+		String query = "SELECT OWNER, COLUMN_NAME, DATA_TYPE, CHAR_LENGTH, DATA_PRECISION, TABLE_NAME, DATA_LENGTH, NULLABLE "
 				+ " FROM SYS.ALL_TAB_COLS "
 				+ " WHERE TABLE_NAME = :nome_tabela";
 		
@@ -100,6 +106,7 @@ public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
 				column.setDataPrecision((BigDecimal) obj[4]);
 				column.setTableName((String) obj[5]);
 				column.setDataLength((BigDecimal) obj[6]);
+				column.setNullable(((String) obj[7]).equals("Y"));
 				column.setFoundDataBase(true);
 				
 				return column;

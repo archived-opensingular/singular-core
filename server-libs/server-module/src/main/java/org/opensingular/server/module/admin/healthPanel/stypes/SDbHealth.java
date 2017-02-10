@@ -37,7 +37,7 @@ import org.opensingular.lib.support.persistence.util.SqlUtil;
 
 @SInfoType(spackage = SSystemHealthPackage.class, newable = true, name = SDbHealth.TYPE_NAME)
 public class SDbHealth extends STypeComposite<SIComposite> {
-	public static final String TYPE_NAME = "health";
+	public static final String TYPE_NAME = "dbhealth";
 	public static final String TYPE_FULL_NAME = SSystemHealthPackage.PACKAGE_NAME+"."+TYPE_NAME;
 	
 	@Override
@@ -53,7 +53,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 	        .asAtr()
 	        	.label("Schema")
 	        	.maxLength(20)
-	        	.enabled(false)
+	        	.enabled(true)
 	        .asAtrBootstrap()
 	        	.colPreference(2);
 
@@ -61,7 +61,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         	.asAtr()
         		.label("Nome")
         		.maxLength(50)
-        		.enabled(false)
+        		.enabled(true)
         	.asAtrBootstrap()
         		.colPreference(2);
         
@@ -69,7 +69,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 		foundTableField
         	.asAtr()
 	    		.label("Encontrado no Banco")
-	    		.enabled(false)
+	    		.enabled(true)
 	    	.asAtrBootstrap()
 	    		.colPreference(2);
 		
@@ -77,7 +77,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         privs
         	.asAtr()
         		.label("Permissões")
-        		.enabled(false)
+        		.enabled(true)
         	.asAtrBootstrap()
         		.colPreference(2);
         privs.setView(()->new SViewListByTable().disableNew().disableDelete());
@@ -121,7 +121,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         	.asAtr()
         		.label("Nome")
         		.maxLength(50)
-        		.enabled(false)
+        		.enabled(true)
         	.asAtrBootstrap()
         		.colPreference(2);
         
@@ -131,23 +131,23 @@ public class SDbHealth extends STypeComposite<SIComposite> {
       		.asAtr()
 	      		.label("Tipo de Dados")
 	      		.maxLength(10)
-	      		.enabled(false)
+	      		.enabled(true)
 	      	.asAtrBootstrap()
 	          	.colPreference(2);
       
         coluna.addFieldInteger("dataLength")
 	  		.asAtr()
 	  			.label("Tamanho(Bytes)")
-	  			.enabled(false)
+	  			.enabled(true)
 	  		.asAtrBootstrap()
 	          	.colPreference(2);
       
         coluna.addFieldInteger("charLength")
 	    	.asAtr()
 	    		.label("Tamanho(Caracteres)")
-	    		.enabled(false)
+	    		.enabled(true)
 	    	.asAtrBootstrap()
-	        	.colPreference(2);
+	        	.colPreference(1);
       
 //        coluna.addFieldInteger("dataPrecision")
 //	  		.asAtr()
@@ -155,11 +155,19 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 //	  		.asAtrBootstrap()
 //	          	.colPreference(1);
         
+        STypeBoolean nullableField = coluna.addFieldBoolean("nullable");
+		nullableField
+	    	.asAtr()
+	    		.label("Aceita null")
+//	    		.enabled(false)
+	    	.asAtrBootstrap()
+	        	.colPreference(1);
+        
         STypeBoolean foundHibernateField = coluna.addFieldBoolean("foundHibernate");
 		foundHibernateField
 	        .asAtr()
 				.label("Encontrado no Hibernate")
-				.enabled(false)
+				.enabled(true)
 			.asAtrBootstrap()
 	      		.colPreference(2);
         
@@ -167,17 +175,26 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 		foundDatabaseField
 	        .asAtr()
 				.label("Encontrado no Banco")
-				.enabled(false)
+				.enabled(true)
 			.asAtrBootstrap()
 	      		.colPreference(2);
 
-        
-		coluna.addInstanceValidator(validatable->{
+		nullableField.addInstanceValidator(validatable->{
 			Optional<SIBoolean> databaseFieldInstance = validatable.getInstance().findNearest(foundDatabaseField);
 			Optional<SIBoolean> hibernateFieldInstance = validatable.getInstance().findNearest(foundHibernateField);
 			
-			if(!databaseFieldInstance.isPresent() || !hibernateFieldInstance.isPresent()
-					|| !databaseFieldInstance.get().getValue() || !hibernateFieldInstance.get().getValue() ){
+			if(hibernateFieldInstance.isPresent() && !hibernateFieldInstance.get().getValue()
+					&& databaseFieldInstance.isPresent() && databaseFieldInstance.get().getValue()
+					&& !validatable.getInstance().getValue()){
+				validatable.error("Coluna NOT NULL não encontrada no mapeamento!");
+			} 
+		});
+		foundDatabaseField.addInstanceValidator(validatable->{
+			Optional<SIBoolean> databaseFieldInstance = validatable.getInstance().findNearest(foundDatabaseField);
+			Optional<SIBoolean> hibernateFieldInstance = validatable.getInstance().findNearest(foundHibernateField);
+			
+			if(databaseFieldInstance.isPresent() && hibernateFieldInstance.isPresent()
+					&& !databaseFieldInstance.get().getValue() && hibernateFieldInstance.get().getValue() ){
 				validatable.error("Inconsistência entre Banco de Dados e Mapeamento!");
 			}
 		});

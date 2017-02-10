@@ -31,7 +31,7 @@ import org.opensingular.form.util.transformer.TransformPojoUtil;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.server.module.admin.healthPanel.db.objects.HealthInfo;
-import org.opensingular.server.module.admin.healthPanel.service.PainelSaudeService;
+import org.opensingular.server.module.admin.healthPanel.service.HealthPanelDbService;
 import org.opensingular.server.module.admin.healthPanel.stypes.SDbHealth;
 
 public class DbPanel extends Panel {
@@ -40,7 +40,7 @@ public class DbPanel extends Panel {
     private SFormConfig<String> formConfig;
 	
 	@Inject
-    private PainelSaudeService painelService;
+    private HealthPanelDbService painelService;
 
 	public DbPanel(String id) {
 		super(id);

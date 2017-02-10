@@ -13,5 +13,6 @@ public class SSystemHealthPackage extends SPackage {
         super.onLoadPackage(pb);
         
         pb.createType(SDbHealth.class);
+        pb.createType(SWebHealth.class);
     }
 }

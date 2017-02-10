@@ -19,7 +19,7 @@ import org.opensingular.server.module.admin.healthPanel.db.objects.TableInfo;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PainelSaudeService {
+public class HealthPanelDbService {
 
 	@Inject
 	private DriverOracle driverOracle;
@@ -37,11 +37,19 @@ public class PainelSaudeService {
 		
 		map.forEach((k,v)->tabelas.add(getTableInfo(v)));
 		
-		validator.checkAllInfoTable(tabelas);
+//		validator.checkAllInfoTable(tabelas);
 		
-//		tabelas.get(0).setFound(false);
+		// TESTES
+		List<TableInfo> subList = tabelas.subList(0, 3);
+		validator.checkAllInfoTable(subList);
+
+		TableInfo tableInfo = tabelas.get(0);
+		tableInfo.setFound(false);
+		tableInfo.getColumnsInfo().get(0).setFoundHibernate(false);
+		tableInfo.getColumnsInfo().get(1).setFoundDataBase(false);
+		// END TESTES
 		
-		return new HealthInfo(tabelas);
+		return new HealthInfo(subList);
 	}
 
 	private TableInfo getTableInfo(ClassMetadata v) {

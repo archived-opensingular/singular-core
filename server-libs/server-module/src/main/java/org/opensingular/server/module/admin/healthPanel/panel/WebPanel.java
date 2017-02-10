@@ -15,20 +15,22 @@
  */
 package org.opensingular.server.module.admin.healthPanel.panel;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.server.module.admin.healthPanel.service.PainelSaudeService;
+import org.opensingular.server.module.admin.healthPanel.service.HealthPanelWebService;
 
 public class WebPanel extends Panel {
-	@Inject
-    @Named("formConfigWithDatabase")
-    private SFormConfig<String> formConfig;
+//	@Inject
+//    @Named("formConfigWithDatabase")
+//    private SFormConfig<String> formConfig;
 	
 	@Inject
-    private PainelSaudeService painelService;
+    private HealthPanelWebService painelService;
 
 	public WebPanel(String id) {
 		super(id);
@@ -38,5 +40,17 @@ public class WebPanel extends Panel {
 	protected void onInitialize() {
 		super.onInitialize();
 		
+		URL testeUrl = null;
+		try {
+			testeUrl = new URL("http://www.google.com.br");
+			testeUrl.openConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Properties teste = new Properties();
+		
+		
+		System.out.println(testeUrl);
 	}
 }

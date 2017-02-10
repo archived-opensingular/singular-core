@@ -20,7 +20,7 @@ import javax.inject.Named;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.server.module.admin.healthPanel.service.PainelSaudeService;
+import org.opensingular.server.module.admin.healthPanel.service.HealthPanelDbService;
 
 public class CachePanel extends Panel {
 	@Inject
@@ -28,7 +28,7 @@ public class CachePanel extends Panel {
     private SFormConfig<String> formConfig;
 	
 	@Inject
-    private PainelSaudeService painelService;
+    private HealthPanelDbService painelService;
 
 	public CachePanel(String id) {
 		super(id);

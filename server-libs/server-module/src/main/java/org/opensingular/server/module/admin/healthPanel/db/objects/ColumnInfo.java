@@ -31,6 +31,8 @@ public class ColumnInfo implements Serializable {
 	 */
 	private BigDecimal dataLength;
 	
+	private boolean nullable;
+	
 	private boolean foundHibernate = false;
 	private boolean foundDataBase = false;
 	
@@ -92,6 +94,14 @@ public class ColumnInfo implements Serializable {
 	}
 	public void setDataLength(BigDecimal dataLength) {
 		this.dataLength = dataLength;
+	}
+
+	public boolean isNullable() {
+		return nullable;
+	}
+
+	public void setNullable(boolean nullable) {
+		this.nullable = nullable;
 	}
 
 	public boolean isFoundHibernate() {
