@@ -16,12 +16,10 @@
 
 package org.opensingular.server.module.admin.healthPanel.stypes;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Hashtable;
-import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.directory.DirContext;
@@ -64,23 +62,39 @@ public class SWebHealth extends STypeComposite<SIComposite> {
 					ldapInfo.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 					ldapInfo.put(Context.PROVIDER_URL, url);
 					
+					// nao tem como definir o tempo limite pra tentar conectar
 					DirContext dirContext = new InitialDirContext(ldapInfo);
-					
-					System.out.println(dirContext);
+					dirContext.close();
+
 				}else if(url.contains("tcp://")){
 					url = url.replace("tcp://", "");
 					String[] piecesSocketPath = url.split(":");
 					Socket testClient = new Socket(piecesSocketPath[0], Integer.valueOf(piecesSocketPath[piecesSocketPath.length-1]));
-					
-					System.out.println(testClient);
+					testClient.close();
+
 				}else if(url.contains("udp://")){
-//					Datagra
+					url = url.replace("udp://", "");
+					String[] piecesUrl = url.split(":");
+//					
+//					InetSocketAddress address = new InetSocketAddress(
+//									InetAddress.getByName(piecesUrl[0]), 
+//									Integer.valueOf(piecesUrl[piecesUrl.length-1]));
+//					
+//					DatagramSocket server = new DatagramSocket();
+//					
+//					String msg = "Singular test connection";
+//					DatagramPacket connectionMsg = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address);
+//					server.send(connectionMsg);
+//					server.close();
+					
+					url = "http://"+piecesUrl[0];
+					URLConnection openConnection = new URL(url).openConnection();
+					openConnection.setConnectTimeout(2000);
+					openConnection.connect();
+					
 				}else{
 					// file, ftp, gopher, http, https, jar, mailto, netdoc
-					URL urlConnection = null;
-					urlConnection = new URL(url);
-					
-					URLConnection openConnection = urlConnection.openConnection();
+					URLConnection openConnection = new URL(url).openConnection();
 					openConnection.setConnectTimeout(2000);
 					openConnection.connect();
 				}
