@@ -22,7 +22,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.server.module.admin.healthPanel.service.HealthPanelDbService;
 
-public class WsPanel extends Panel {
+public class JobPanel extends Panel {
 	@Inject
     @Named("formConfigWithDatabase")
     private SFormConfig<String> formConfig;
@@ -30,7 +30,7 @@ public class WsPanel extends Panel {
 	@Inject
     private HealthPanelDbService painelService;
 
-	public WsPanel(String id) {
+	public JobPanel(String id) {
 		super(id);
 	}
 

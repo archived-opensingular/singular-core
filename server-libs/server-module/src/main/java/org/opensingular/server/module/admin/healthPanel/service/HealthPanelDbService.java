@@ -37,19 +37,9 @@ public class HealthPanelDbService {
 		
 		map.forEach((k,v)->tabelas.add(getTableInfo(v)));
 		
-//		validator.checkAllInfoTable(tabelas);
+		validator.checkAllInfoTable(tabelas);
 		
-		// TESTES
-		List<TableInfo> subList = tabelas.subList(0, 3);
-		validator.checkAllInfoTable(subList);
-
-		TableInfo tableInfo = tabelas.get(0);
-		tableInfo.setFound(false);
-		tableInfo.getColumnsInfo().get(0).setFoundHibernate(false);
-		tableInfo.getColumnsInfo().get(1).setFoundDataBase(false);
-		// END TESTES
-		
-		return new HealthInfo(subList);
+		return new HealthInfo(tabelas);
 	}
 
 	private TableInfo getTableInfo(ClassMetadata v) {

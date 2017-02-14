@@ -26,7 +26,7 @@ import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.module.admin.healthPanel.panel.CachePanel;
 import org.opensingular.server.module.admin.healthPanel.panel.DbPanel;
 import org.opensingular.server.module.admin.healthPanel.panel.WebPanel;
-import org.opensingular.server.module.admin.healthPanel.panel.WsPanel;
+import org.opensingular.server.module.admin.healthPanel.panel.JobPanel;
 
 @SuppressWarnings("serial")
 public class PainelSaudeContent extends Content {
@@ -60,18 +60,18 @@ public class PainelSaudeContent extends Content {
 			}
 		};
 		
-		AjaxButton buttonWs = new AjaxButton("buttonWs") {
-			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				form.replace(new WsPanel(CONTAINER_ALL_CONTENT));
-				target.add(form);
-			}
-		};
-		
 		AjaxButton buttonCache = new AjaxButton("buttonCache") {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				form.replace(new CachePanel(CONTAINER_ALL_CONTENT));
+				target.add(form);
+			}
+		};
+		
+		AjaxButton buttonWs = new AjaxButton("buttonJobs") {
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				form.replace(new JobPanel(CONTAINER_ALL_CONTENT));
 				target.add(form);
 			}
 		};

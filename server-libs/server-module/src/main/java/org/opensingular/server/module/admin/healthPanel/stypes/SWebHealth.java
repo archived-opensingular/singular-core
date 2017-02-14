@@ -16,15 +16,6 @@
 
 package org.opensingular.server.module.admin.healthPanel.stypes;
 
-import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
@@ -32,6 +23,9 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.server.module.admin.healthPanel.validation.IProtocolChecker;
+import org.opensingular.server.module.admin.healthPanel.validation.ProtocolCheckerFactory;
+import org.opensingular.server.module.admin.healthPanel.validation.WebProtocolValidator;
 
 @SInfoType(spackage = SSystemHealthPackage.class, newable = true, name = SWebHealth.TYPE_NAME)
 public class SWebHealth extends STypeComposite<SIComposite> {
@@ -44,63 +38,26 @@ public class SWebHealth extends STypeComposite<SIComposite> {
         STypeList<STypeComposite<SIComposite>, SIComposite> urlsList = this.addFieldListOfComposite("urls", "urlsList");
         urlsList.setView(()->new SViewListByTable());
         
+        this
+        	.asAtr()
+        		.label("Url")
+		        .subtitle("Protocolos suportados: HTTP, HTTPS, TCP, LDAP, UDP, ICMS.");
+        
         STypeComposite<SIComposite> tabela = urlsList.getElementsType();
         
         STypeString urlField = tabela.addFieldString("url");
 		urlField
 	        .asAtr()
-	        	.label("Url")
 	        	.maxLength(100)
 	        .asAtrBootstrap()
 	        	.colPreference(3);
 		
 		urlField.addInstanceValidator(validatable->{
-			String url = validatable.getInstance().getValue();
 			try {
-				if(url.contains("ldap://") || url.contains("ldaps://")){
-					Hashtable<String, String> ldapInfo = new Hashtable<>();
-					ldapInfo.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-					ldapInfo.put(Context.PROVIDER_URL, url);
-					
-					// nao tem como definir o tempo limite pra tentar conectar
-					DirContext dirContext = new InitialDirContext(ldapInfo);
-					dirContext.close();
-
-				}else if(url.contains("tcp://")){
-					url = url.replace("tcp://", "");
-					String[] piecesSocketPath = url.split(":");
-					Socket testClient = new Socket(piecesSocketPath[0], Integer.valueOf(piecesSocketPath[piecesSocketPath.length-1]));
-					testClient.close();
-
-				}else if(url.contains("udp://")){
-					url = url.replace("udp://", "");
-					String[] piecesUrl = url.split(":");
-//					
-//					InetSocketAddress address = new InetSocketAddress(
-//									InetAddress.getByName(piecesUrl[0]), 
-//									Integer.valueOf(piecesUrl[piecesUrl.length-1]));
-//					
-//					DatagramSocket server = new DatagramSocket();
-//					
-//					String msg = "Singular test connection";
-//					DatagramPacket connectionMsg = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address);
-//					server.send(connectionMsg);
-//					server.close();
-					
-					url = "http://"+piecesUrl[0];
-					URLConnection openConnection = new URL(url).openConnection();
-					openConnection.setConnectTimeout(2000);
-					openConnection.connect();
-					
-				}else{
-					// file, ftp, gopher, http, https, jar, mailto, netdoc
-					URLConnection openConnection = new URL(url).openConnection();
-					openConnection.setConnectTimeout(2000);
-					openConnection.connect();
-				}
+				IProtocolChecker protocolChecker = ProtocolCheckerFactory.getProtocolChecker(validatable.getInstance().getValue());
+				protocolChecker.protocolCheck(validatable);
 			} catch (Exception e) {
 				validatable.error(e.getMessage());
-				e.printStackTrace();
 			}
 		});
 	}
