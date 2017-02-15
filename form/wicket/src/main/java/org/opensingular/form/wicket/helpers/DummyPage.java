@@ -46,11 +46,17 @@ import java.util.Optional;
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected              ViewMode            viewMode       = ViewMode.EDIT;
-    protected              AnnotationMode      annotationMode = AnnotationMode.NONE;
-    protected transient SIComposite                   currentInstance;
-    protected           IConsumer<STypeComposite>     typeBuilder;
-    protected           IFunction<RefType, SIComposite> instanceCreator;
+
+    protected ViewMode viewMode = ViewMode.EDIT;
+
+    protected AnnotationMode annotationMode = AnnotationMode.NONE;
+
+    protected transient SIComposite currentInstance;
+
+    protected IConsumer<STypeComposite> typeBuilder;
+
+    protected IFunction<RefType, SIComposite> instanceCreator;
+
     private final List<IConsumer<SIComposite>> instancePopulators = new ArrayList<>();
 
     private SingularForm<?> form = new SingularForm<>("form");
@@ -70,7 +76,7 @@ public class DummyPage extends WebPage {
                     SDocumentFactory factory = mockFormConfig.getDocumentFactory();
                     currentInstance = (SIComposite) factory.createInstance(refType);
                 }
-                instancePopulators.stream().forEach(populator -> populator.accept(currentInstance));
+                instancePopulators.forEach(populator -> populator.accept(currentInstance));
             }
             return currentInstance;
         }

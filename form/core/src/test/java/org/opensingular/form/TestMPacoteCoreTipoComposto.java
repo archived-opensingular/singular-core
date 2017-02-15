@@ -5,6 +5,7 @@ import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.Tes
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaC;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaE;
+import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -320,11 +321,11 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testCargaCamposDeSubTipoCompostoRepetidoDuasVezesByClass() {
-        SDictionary dictionary = createTestDictionary();
-        TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
-        TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
-        AssertionsSType assertA = assertType(a).isComposite(1);
-        AssertionsSType assertB = assertType(b).isComposite(3);
+        SDictionary                       dictionary = createTestDictionary();
+        TestTipoCompositeComCargaInterna  a          = dictionary.getType(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInternaB b          = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
+        AssertionsSType                   assertA    = assertType(a).isComposite(1);
+        AssertionsSType                   assertB    = assertType(b).isComposite(3);
         assertB.isString("descricao");
         assertB.isComposite("bloco1", 1);
         assertB.isString("bloco1.nome");

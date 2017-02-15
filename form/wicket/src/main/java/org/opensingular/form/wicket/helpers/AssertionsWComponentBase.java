@@ -19,6 +19,10 @@ package org.opensingular.form.wicket.helpers;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
 import javax.annotation.Nonnull;
@@ -44,6 +48,19 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
             return "null : " + msg;
         }
         return getTarget().getPageRelativePath() + " : " + msg;
+    }
+
+
+    /**
+     * Busca um sub componente do componente atual com o tipo informado e retonar o resultado. O resultado pode
+     * conter um valor null senão for encontrado o componente.
+     */
+    @Nonnull
+    public final AssertionsWComponent getSubCompomentWithType(SType<?> type) {
+        return findSubComponent(component -> ISInstanceAwareModel.optionalCast(component.getDefaultModel())
+                .map(ISInstanceAwareModel::getMInstancia)
+                .map(SInstance::getType)
+                .map(type::equals).orElse(false)).isNotNull();
     }
 
     /**
@@ -101,4 +118,19 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     public AssertionsWTextField asTextField() {
         return new AssertionsWTextField(getTarget(TextField.class));
     }
+
+    /**
+     *
+     * Verifica se o objeto atual possui um model que contem alguma SInstance, dispara expection caso não possua
+     *
+     * @return AssertionsSInstance para assertions de SInstance
+     */
+    @Nonnull
+    public AssertionsSInstance assertSInstance() {
+        return new AssertionsSInstance(ISInstanceAwareModel.optionalCast(getTarget().getDefaultModel())
+                .map(ISInstanceAwareModel::getMInstancia)
+                .orElseThrow(() -> new AssertionError(errorMsg("O Componente "+getTarget()
+                        +" não possui model de SInstance "))));
+    }
+
 }

@@ -1,5 +1,7 @@
-package org.opensingular.form;
+package org.opensingular.form.helpers;
 
+import org.opensingular.form.AtrRef;
+import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
