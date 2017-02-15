@@ -20,10 +20,6 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         return "Na instância '" + getTarget().getName() + "': " + msg;
     }
 
-    protected String errorMsg(String msg, Object expected, Object current) {
-        return errorMsg(msg + ":\n Esperado  : " + expected + "\n Encontrado: " + current);
-    }
-
     /**
      * Verifica se o valor da instância atual é null.
      */

@@ -55,7 +55,7 @@ public class STypeStringSelectionFromProviderFieldTest {
         public void rendersAnDropDownWithSpecifiedOptionsByName() {
             tester.assertEnabled(formField(form, "favoriteFruit"));
             form.submit();
-            List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
+            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
             assertThat(options).hasSize(1);
             DropDownChoice choices = options.get(0);
             assertThat(choices.getChoices())

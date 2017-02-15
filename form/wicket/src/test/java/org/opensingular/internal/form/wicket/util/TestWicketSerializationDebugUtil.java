@@ -39,7 +39,7 @@ public class TestWicketSerializationDebugUtil {
 
     @Before
     public void setUp() {
-        tester = new SingularWicketTester(this.getClass());
+        tester = new SingularWicketTester();
     }
 
     @Test

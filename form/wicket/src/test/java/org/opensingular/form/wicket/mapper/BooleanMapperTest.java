@@ -1,5 +1,10 @@
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
@@ -7,17 +12,12 @@ import org.opensingular.form.type.core.SIBoolean;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findId;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class BooleanMapperTest {
@@ -28,7 +28,7 @@ public class BooleanMapperTest {
         }
 
         @Test public void rendersACheckBoxByDefault() {
-            List<CheckBox> inputs = (List) findTag(form.getForm(), CheckBox.class);
+            List<CheckBox> inputs = findTag(form.getForm(), CheckBox.class);
             assertThat(inputs).hasSize(1);
         }
 
@@ -69,7 +69,7 @@ public class BooleanMapperTest {
     public static class WithRadioViewNoPreset extends WithRadioView {
 
         @Test public void rendersARadioChoiceIfAsked() {
-            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+            List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
             assertThat(inputs).hasSize(1);
             assertThat(inputs.get(0).getChoices()).containsOnly("Sim", "Não");
         }
@@ -128,7 +128,7 @@ public class BooleanMapperTest {
         }
 
         @Test public void rendersARadioChoiceWithPersonalizedLabel() {
-            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+            List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
             assertThat(inputs.get(0).getChoices()).containsOnly("For Sure", "No Way");
         }
     }
@@ -147,7 +147,7 @@ class Base extends SingularFormBaseTest {
     }
 
     protected CheckBox getCheckboxAt(int index) {
-        return (CheckBox) ((List) findTag(form.getForm(), CheckBox.class)).get(index);
+        return findTag(form.getForm(), CheckBox.class).get(index);
     }
 
     protected SIBoolean baseField() {
@@ -164,7 +164,7 @@ class WithRadioView extends Base {
     }
 
     protected RadioChoice radioChoiceAt(int index) {
-        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+        List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
         return inputs.get(index);
     }
 }

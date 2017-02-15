@@ -1,11 +1,5 @@
 package org.opensingular.form.wicket;
 
-import static org.junit.Assert.*;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Set;
-import java.util.function.Supplier;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
@@ -13,7 +7,6 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
@@ -24,11 +17,17 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.helpers.SingularWicketTester;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.test.base.TestPanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.panel.FormPanel;
+
+import java.util.Set;
+import java.util.function.Supplier;
+
+import static org.junit.Assert.assertFalse;
 
 public class SValidationFeedbackHandlerTest {
     WicketTester                      tester;
@@ -42,13 +41,12 @@ public class SValidationFeedbackHandlerTest {
 
     @Before
     public void setUp() {
-        tester = new WicketTester(new WebApplication() {
+        tester = new SingularWicketTester(false, new WebApplication() {
             @Override
             public Class<? extends Page> getHomePage() {
                 return null;
             }
         });
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
     }
 
     protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
@@ -98,7 +96,6 @@ public class SValidationFeedbackHandlerTest {
 //        });
 
         Set<? extends SInstance> lowerBound = SValidationFeedbackHandler.collectLowerBoundInstances(new FeedbackFence(testPanel));
-//        System.out.println(lowerBound);
         assertFalse(lowerBound.isEmpty());
     }
 }
