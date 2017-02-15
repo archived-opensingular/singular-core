@@ -1,24 +1,5 @@
 package org.opensingular.form.wicket.test.base;
 
-import org.opensingular.form.curriculo.SPackageCurriculo;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
-import org.opensingular.form.wicket.SingularFormContextWicket;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.component.SingularForm;
-import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.model.SInstanceRootModel;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
-import org.opensingular.lib.wicket.util.panel.FormPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
@@ -28,8 +9,23 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.*;
+import org.opensingular.form.curriculo.SPackageCurriculo;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
+import org.opensingular.form.wicket.SingularFormContextWicket;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.helpers.SingularWicketTester;
+import org.opensingular.form.wicket.model.SInstanceRootModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.panel.FormPanel;
 
-import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.findContainerRelativePath;
@@ -47,13 +43,12 @@ public class TestFormWicketBuild  {
 
     @Before
     public void setUp() {
-        tester = new WicketTester(new WebApplication() {
+        tester = new SingularWicketTester(false, new WebApplication() {
             @Override
             public Class<? extends Page> getHomePage() {
                 return null;
             }
         });
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
     }
 
     protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
