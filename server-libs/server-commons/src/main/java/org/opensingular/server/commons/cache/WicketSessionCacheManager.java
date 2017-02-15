@@ -1,4 +1,4 @@
-package org.opensingular.server.commons.spring;
+package org.opensingular.server.commons.cache;
 
 import org.apache.wicket.Session;
 import org.opensingular.server.commons.cache.SingularCache;
