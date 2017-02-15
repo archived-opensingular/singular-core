@@ -29,10 +29,11 @@ import java.util.EnumSet;
 
 public abstract class SpringSecurityInitializer {
 
-    static final String SINGULAR_SECURITY = "[SINGULAR][SECURITY] {} {}";
-    public static final Logger logger = LoggerFactory.getLogger(SpringSecurityInitializer.class);
+    static final        String SINGULAR_SECURITY = "[SINGULAR][SECURITY] {} {}";
+    public static final Logger logger            = LoggerFactory.getLogger(SpringSecurityInitializer.class);
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping, IServerContext[] serverContexts) {
+        addRestSecurity(applicationContext);
         addSpringSecurityFilter(ctx, applicationContext, springMVCServletMapping);
         for (IServerContext context : serverContexts) {
             logger.info(SINGULAR_SECURITY, "Securing (Spring Security) context:", context.getContextPath());
@@ -41,6 +42,9 @@ public abstract class SpringSecurityInitializer {
         }
     }
 
+    protected void addRestSecurity(AnnotationConfigWebApplicationContext applicationContext){
+        applicationContext.register(DefaultRestSecurity.class);
+    }
 
     protected void addLogoutFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping, IServerContext context) {
         ctx
@@ -53,7 +57,6 @@ public abstract class SpringSecurityInitializer {
                 .addFilter("springSecurityFilterChain", DelegatingFilterProxy.class)
                 .addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, springMVCServletMapping);
     }
-
 
     protected abstract <T extends WebSecurityConfigurerAdapter> Class<T> getSpringSecurityConfigClass(IServerContext context);
 

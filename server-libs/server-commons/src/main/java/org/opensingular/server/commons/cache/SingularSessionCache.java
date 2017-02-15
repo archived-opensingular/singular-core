@@ -1,6 +1,5 @@
-package org.opensingular.server.commons.util;
+package org.opensingular.server.commons.cache;
 
-import org.opensingular.server.commons.spring.WicketSessionCacheManager;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.lang.annotation.Documented;
