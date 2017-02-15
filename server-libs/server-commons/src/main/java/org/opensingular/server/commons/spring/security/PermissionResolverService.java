@@ -27,7 +27,7 @@ import org.opensingular.server.commons.flow.rest.ActionDefinition;
 import org.opensingular.server.commons.form.FormActions;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.PetitionService;
-import org.opensingular.server.commons.util.SingularSessionCache;
+import org.opensingular.server.commons.cache.SingularSessionCache;
 
 import javax.inject.Inject;
 import javax.inject.Named;
