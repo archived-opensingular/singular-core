@@ -1,9 +1,7 @@
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.AssertionsSInstance;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SIComposite;

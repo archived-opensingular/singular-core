@@ -1,27 +1,26 @@
 package org.opensingular.form.wicket.mapper;
 
-import static org.junit.Assert.*;
-
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-
-import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
-import static org.opensingular.form.wicket.helpers.TestFinders.*;
+
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.*;
+import static org.opensingular.form.wicket.helpers.TestFinders.findId;
 @RunWith(Enclosed.class)
 public class DateMapperTest {
 
@@ -30,7 +29,7 @@ public class DateMapperTest {
         protected STypeDate dateType;
 
         @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
+        protected final void buildBaseType(STypeComposite<?> baseType) {
             dateType = baseType.addFieldDate("data");
         }
 

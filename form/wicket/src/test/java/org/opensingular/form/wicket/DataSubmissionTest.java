@@ -1,20 +1,19 @@
 package org.opensingular.form.wicket;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 
 import java.util.List;
 
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
 @RunWith(Enclosed.class)
 public class DataSubmissionTest {
@@ -44,13 +43,13 @@ public class DataSubmissionTest {
         }
 
         @Test public void testEditRendering() {
-            List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
+            List<TextField> tags = findTag(form.getForm(), TextField.class);
             assertThat(tags.get(0).getValue()).isEqualTo("value1");
             assertThat(tags.get(1).getValue()).isEqualTo("value2");
         }
 
         @Test public void submissionUpdatesInstance() {
-            List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
+            List<TextField> tags = findTag(form.getForm(), TextField.class);
             TextField text1 = tags.get(0), text2 = tags.get(1);
 
             form.setValue(text1,"nvalue1");
@@ -74,13 +73,13 @@ public class DataSubmissionTest {
         }
 
         @Test public void testEditRendering() {
-            List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
+            List<TextField> tags = findTag(form.getForm(), TextField.class);
             assertThat(tags.get(0).getValue()).isEqualTo("value1");
             assertThat(tags.get(1).getValue()).isEqualTo("value2");
         }
 
         @Test public void submissionUpdatesInstance() {
-            List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
+            List<TextField> tags = findTag(form.getForm(), TextField.class);
             TextField text1 = tags.get(0), text2 = tags.get(1);
 
             form.submit();
@@ -104,7 +103,7 @@ public class DataSubmissionTest {
         }
 
         @Test public void submissionUpdatesInstance() {
-            List<TextField> tags = (List) findTag(form.getForm(), TextField.class);
+            List<TextField> tags = findTag(form.getForm(), TextField.class);
             TextField text1 = tags.get(0);
 
             assertThat(page.getCurrentInstance().getValue(data1))
@@ -144,7 +143,7 @@ public class DataSubmissionTest {
         }
 
         @Test public void stopsDisplayingIt() {
-            List<TextField> tags = (List) findTag(tester.getLastRenderedPage(), TextField.class);
+            List<TextField> tags = findTag(tester.getLastRenderedPage(), TextField.class);
             TextField text1 = tags.get(0), text2 = tags.get(1);
 
             assertThat(page.getCurrentInstance().getValue(data1))
