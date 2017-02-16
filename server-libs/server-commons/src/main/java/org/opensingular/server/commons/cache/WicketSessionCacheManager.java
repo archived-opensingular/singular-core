@@ -1,8 +1,8 @@
-package org.opensingular.server.commons.spring;
+package org.opensingular.server.commons.cache;
 
 import org.apache.wicket.Session;
-import org.opensingular.server.commons.util.SingularCache;
-import org.opensingular.server.commons.util.SingularSessionCache;
+import org.opensingular.server.commons.cache.SingularCache;
+import org.opensingular.server.commons.cache.SingularSessionCache;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 

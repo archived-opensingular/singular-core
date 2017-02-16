@@ -1,4 +1,4 @@
-package org.opensingular.server.commons.spring;
+package org.opensingular.server.commons.cache;
 
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
