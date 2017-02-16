@@ -15,19 +15,18 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org">
+<meta charset="utf-8"/>
 <wicket:extend>
     <form wicket:id="form">
     	<div class="singular-container">
-    		<button wicket:id="buttonDb" class="btn btn-info">Banco de Dados</button>
-    		<button wicket:id="buttonWeb" class="btn btn-info"> Rede</button>
     		<button wicket:id="buttonCache" class="btn btn-info">Caches</button>
+    		<button wicket:id="buttonDb" class="btn btn-info">Database</button>
     		<button wicket:id="buttonJobs" class="btn btn-info">Jobs</button>
+    		<button wicket:id="buttonPermissions" class="btn btn-info">Permissions</button>
+    		<button wicket:id="buttonWeb" class="btn btn-info">Web</button>
     	</div>
     	
-    	<div wicket:id="containerAllContent">
-<!--     		<div wicket:id="contentPanel"></div> -->
-    	</div>
-    	
+    	<div wicket:id="containerAllContent"></div>
     </form>
 </wicket:extend>
 </html>

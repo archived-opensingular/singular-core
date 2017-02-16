@@ -16,19 +16,22 @@
 package org.opensingular.server.module.admin.healthsystem.panel;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.server.module.admin.healthsystem.service.HealthPanelDbService;
+import org.opensingular.server.commons.admin.AdminFacade;
+import org.opensingular.server.commons.wicket.view.SingularToastrHelper;
+import org.quartz.SchedulerException;
 
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+
+@SuppressWarnings("serial")
 public class JobPanel extends Panel {
-	@Inject
-    @Named("formConfigWithDatabase")
-    private SFormConfig<String> formConfig;
 	
 	@Inject
-    private HealthPanelDbService painelService;
+    private AdminFacade adminFacade;
 
 	public JobPanel(String id) {
 		super(id);
@@ -38,5 +41,18 @@ public class JobPanel extends Panel {
 	protected void onInitialize() {
 		super.onInitialize();
 		
+		add(new AjaxButton("runAllJobs") {
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				try {
+					adminFacade.runAllJobs();
+					
+					new SingularToastrHelper(this).
+						addToastrMessage(ToastrType.SUCCESS, "All jobs runned!");
+				} catch (SchedulerException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

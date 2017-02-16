@@ -140,7 +140,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 	  			.label("Tamanho(Bytes)")
 	  			.enabled(true)
 	  		.asAtrBootstrap()
-	          	.colPreference(2);
+	          	.colPreference(1);
       
         coluna.addFieldInteger("charLength")
 	    	.asAtr()
@@ -149,11 +149,11 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 	    	.asAtrBootstrap()
 	        	.colPreference(1);
       
-//        coluna.addFieldInteger("dataPrecision")
-//	  		.asAtr()
-//	  			.label("Precisao(valores numericos)")
-//	  		.asAtrBootstrap()
-//	          	.colPreference(1);
+        coluna.addFieldInteger("dataPrecision")
+	  		.asAtr()
+	  			.label("Precisao(valores numericos)")
+	  		.asAtrBootstrap()
+	          	.colPreference(1);
         
         STypeBoolean nullableField = coluna.addFieldBoolean("nullable");
 		nullableField

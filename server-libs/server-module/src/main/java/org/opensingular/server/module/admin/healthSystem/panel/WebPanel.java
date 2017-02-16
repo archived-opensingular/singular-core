@@ -30,8 +30,12 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.server.commons.wicket.view.SingularToastrHelper;
 import org.opensingular.server.module.admin.healthsystem.stypes.SWebHealth;
 
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+
+@SuppressWarnings("serial")
 public class WebPanel extends Panel {
 	@Inject
     @Named("formConfigWithDatabase")
@@ -61,7 +65,8 @@ public class WebPanel extends Panel {
 			@Override
 			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
 					IModel<? extends SInstance> instanceModel) {
-//				form.add(new Feedbac)
+				new SingularToastrHelper(this).
+					addToastrMessage(ToastrType.SUCCESS, "All sites can be connected!");
 			}
 		};
 		
@@ -69,8 +74,9 @@ public class WebPanel extends Panel {
 			@Override
 			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
 					IModel<? extends SInstance> instanceModel) {
-				// TODO Auto-generated method stub
-				
+				// TODO
+				new SingularToastrHelper(this).
+					addToastrMessage(ToastrType.INFO, "Working in progress.");
 			}
 		};
 		

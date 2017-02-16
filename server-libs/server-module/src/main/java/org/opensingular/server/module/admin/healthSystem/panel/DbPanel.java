@@ -30,9 +30,12 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.util.transformer.TransformPojoUtil;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.server.commons.wicket.view.SingularToastrHelper;
 import org.opensingular.server.module.admin.healthsystem.db.objects.HealthInfo;
 import org.opensingular.server.module.admin.healthsystem.service.HealthPanelDbService;
 import org.opensingular.server.module.admin.healthsystem.stypes.SDbHealth;
+
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 public class DbPanel extends Panel {
 	@Inject
@@ -73,7 +76,8 @@ public class DbPanel extends Panel {
 			@Override
 			protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
 					IModel<? extends SInstance> instanceModel) {
-//				form.add(new Feedbac)
+				new SingularToastrHelper(this).
+				addToastrMessage(ToastrType.SUCCESS, "All tables are accessible as excepted!");
 			}
 		};
 		add(panelBD);

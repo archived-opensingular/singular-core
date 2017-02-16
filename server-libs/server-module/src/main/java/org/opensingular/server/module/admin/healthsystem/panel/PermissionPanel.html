@@ -16,9 +16,10 @@
 
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel>
-	<div class="text-right" style="margin-bottom: 15px">
-		<button type="submit" wicket:id="checkButtonDB" class="btn validate-btn"><wicket:message key="label.button.validate"></button>
-	</div>
-	<div wicket:id="panelDB"></div>
+	<div class="portlet light">
+        <div class="dataTables_wrapper no-footer table-responsive">
+            <table wicket:id="tabela"></table>
+        </div>
+    </div>
 </wicket:panel>
 </html>

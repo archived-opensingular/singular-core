@@ -26,6 +26,7 @@ import org.opensingular.server.commons.wicket.view.template.Content;
 import org.opensingular.server.module.admin.healthsystem.panel.CachePanel;
 import org.opensingular.server.module.admin.healthsystem.panel.DbPanel;
 import org.opensingular.server.module.admin.healthsystem.panel.JobPanel;
+import org.opensingular.server.module.admin.healthsystem.panel.PermissionPanel;
 import org.opensingular.server.module.admin.healthsystem.panel.WebPanel;
 
 @SuppressWarnings("serial")
@@ -52,14 +53,6 @@ public class HealthSystemContent extends Content {
 			}
 		};
 		
-		AjaxButton buttonWeb = new AjaxButton("buttonWeb") {
-			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				form.replace(new WebPanel(CONTAINER_ALL_CONTENT));
-				target.add(form);
-			}
-		};
-		
 		AjaxButton buttonCache = new AjaxButton("buttonCache") {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -68,7 +61,7 @@ public class HealthSystemContent extends Content {
 			}
 		};
 		
-		AjaxButton buttonWs = new AjaxButton("buttonJobs") {
+		AjaxButton buttonJobs = new AjaxButton("buttonJobs") {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				form.replace(new JobPanel(CONTAINER_ALL_CONTENT));
@@ -76,15 +69,32 @@ public class HealthSystemContent extends Content {
 			}
 		};
 		
-		form.add(buttonDb);
-		form.add(buttonWeb);
-		form.add(buttonWs);
+		AjaxButton buttonPermissions = new AjaxButton("buttonPermissions") {
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				form.replace(new PermissionPanel(CONTAINER_ALL_CONTENT));
+				target.add(form);
+			}
+		};
+		
+		AjaxButton buttonWeb = new AjaxButton("buttonWeb") {
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				form.replace(new WebPanel(CONTAINER_ALL_CONTENT));
+				target.add(form);
+			}
+		};
+
 		form.add(buttonCache);
+		form.add(buttonDb);
+		form.add(buttonPermissions);
+		form.add(buttonJobs);
+		form.add(buttonWeb);
 	}
 
 	@Override
 	protected IModel<?> getContentTitleModel() {
-		return new Model<>("Painel Saude");
+		return new Model<>("Health System");
 	}
 
 	@Override

@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package org.opensingular.server.commons.admin.rest;
+package org.opensingular.server.commons.admin;
+
+import javax.inject.Named;
 
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.flow.schedule.ScheduledJob;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import net.sf.ehcache.CacheManager;
 
-@RestController
-@RequestMapping("/admin")
-public class AdminREST {
+@Named
+public class AdminFacade {
 
     @Autowired
     private IScheduleService scheduleService;
 
-    @RequestMapping(value = "/run-all-jobs", method = RequestMethod.GET)
     public void runAllJobs() throws SchedulerException {
         for (JobKey jobKey : scheduleService.getAllJobKeys()) {
             ScheduledJob scheduledJob = new ScheduledJob(jobKey.getName(), null, null);
@@ -43,7 +40,6 @@ public class AdminREST {
 
     }
 
-    @RequestMapping(value = "/clear-caches", method = RequestMethod.GET)
     public void clearCaches() {
         CacheManager.getInstance().clearAll();
     }
