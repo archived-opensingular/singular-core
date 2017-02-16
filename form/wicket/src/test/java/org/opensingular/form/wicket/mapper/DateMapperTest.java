@@ -8,7 +8,6 @@ import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 public class DateMapperTest {
 
-    private String isoDate = "1991-07-01";
     private SingularDummyFormPageTester tester;
 
     @Before
@@ -24,10 +23,10 @@ public class DateMapperTest {
     @Test
     public void editModeRenderingTest() throws Exception {
 
+        String isoDate = "1991-07-01";
+
         tester.getDummyPage().setAsEditView();
-
         tester.startDummyPage();
-
         tester.getAssertionsPage().getSubComponents(BSDatepickerInputGroup.class).isSize(1);
         tester.getAssertionsForm().getSubCompomentWithTypeNameSimple("data").assertSInstance().assertDateValue()
                 .isInSameYearAs(isoDate)
@@ -39,9 +38,7 @@ public class DateMapperTest {
     public void viewModeRenderingTest() throws Exception {
 
         tester.getDummyPage().setAsVisualizationView();
-
         tester.startDummyPage();
-
         tester.getAssertionsForm().getSubCompomentWithId("data")
                 .is(BOutputPanel.class)
                 .getSubCompomentWithId("output")

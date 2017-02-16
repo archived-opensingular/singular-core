@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.FormTester;
 
 import javax.servlet.ServletContext;
 
@@ -69,5 +70,9 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
         }
         startPage(page);
         return this;
+    }
+
+    public FormTester newFormTester(){
+        return newFormTester("form");
     }
 }
