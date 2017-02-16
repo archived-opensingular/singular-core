@@ -9,6 +9,8 @@ import org.opensingular.form.TestMPacoteCoreTipoLista.TestPackageWithCircularRef
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.Pedido;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TestTipoListaComCargaInterna;
 import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TipoPedido;
+import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.*;
 
