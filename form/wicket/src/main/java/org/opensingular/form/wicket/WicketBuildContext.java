@@ -195,7 +195,7 @@ public class WicketBuildContext implements Serializable {
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
             ISInstanceAwareModel<?> selectedModel = (ISInstanceAwareModel<?>) defaultModel;
-            // final SType<?> tipo = selectedModel.getMInstancia().getType();
+            // final SType<?> tipo = selectedModel.getSInstance().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
                     formComponent,
@@ -251,7 +251,7 @@ public class WicketBuildContext implements Serializable {
     protected static String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getSInstance();
             return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
@@ -265,7 +265,7 @@ public class WicketBuildContext implements Serializable {
     protected static String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance    instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            SInstance    instancia = ((ISInstanceAwareModel<?>) model).getSInstance();
             List<String> labels    = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.asAtr().getLabel());

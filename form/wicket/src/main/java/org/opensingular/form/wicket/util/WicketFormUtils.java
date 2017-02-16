@@ -112,7 +112,7 @@ public abstract class WicketFormUtils {
     }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
-            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
             : Optional.empty();
     }
 
@@ -138,7 +138,7 @@ public abstract class WicketFormUtils {
             } else if (model.getObject() instanceof SInstance) {
                 instance = (SInstance) model.getObject();
             } else if (model instanceof ISInstanceAwareModel<?>) {
-                instance = ((ISInstanceAwareModel<?>) model).getMInstancia();
+                instance = ((ISInstanceAwareModel<?>) model).getSInstance();
             } else {
                 return;
             }
@@ -169,7 +169,7 @@ public abstract class WicketFormUtils {
 
     public static Optional<SInstance> resolveInstance(final IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
-            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
             : Optional.empty();
     }
 

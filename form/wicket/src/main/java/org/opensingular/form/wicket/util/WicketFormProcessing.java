@@ -238,7 +238,7 @@ public class WicketFormProcessing implements Loggable {
 
             final Consumer<MarkupContainer> refreshDependentComponentsConsumer = rc -> rc.visitChildren(Component.class, (c, visit) -> {
                 ISInstanceAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
-                    final SInstance ins = model.getMInstancia();
+                    final SInstance ins = model.getSInstance();
                     if (shouldntGoDepper.test(ins)) {
                         visit.dontGoDeeper();
                     } else {

@@ -40,6 +40,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -56,7 +57,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
     /**
      * Instancia root do pacote
      */
-    private final SInstanceRootModel<SInstance> rootInstance;
+    private final SInstanceRootModel<SInstance> rootInstance = new SInstanceRootModel<>();
 
     /**
      * ViewMode, por padrão é de edição
@@ -93,7 +94,6 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
      */
     public SingularFormPanel(String id, SFormConfig<FORM_KEY> singularFormConfig, boolean nested) {
         super(id);
-        this.rootInstance = new SInstanceRootModel<>();
         this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
         this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
         this.nested = nested;
@@ -132,6 +132,7 @@ public abstract class SingularFormPanel<FORM_KEY extends Serializable> extends P
      *                           referências e configurador inicial da instancia e SDocument
      * @return Não pode ser Null
      */
+    @Nonnull
     protected abstract SInstance createInstance(SFormConfig<FORM_KEY> singularFormConfig);
 
     /**

@@ -83,7 +83,7 @@ public class TestFinders {
     public static Stream<FormComponent> findFormComponentsByType(Form form, SType type) {
         return findOnForm(FormComponent.class, form, fc -> ISInstanceAwareModel
                 .optionalCast(fc.getDefaultModel())
-                .map(ISInstanceAwareModel::getMInstancia)
+                .map(ISInstanceAwareModel::getSInstance)
                 .map(SInstance::getType)
                 .map(type::equals)
                 .orElse(Boolean.FALSE));

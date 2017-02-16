@@ -1,12 +1,12 @@
 package org.opensingular.form.wicket.validation;
 
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.junit.Assert;
+import org.junit.Test;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
 
@@ -29,8 +29,8 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
         form.submit(page.getSingularValidationButton());
-        Assert.assertTrue(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
-        Assert.assertFalse(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
+        Assert.assertTrue(findModelsByType(fieldOne).findFirst().get().getSInstance().hasValidationErrors());
+        Assert.assertFalse(findModelsByType(fieldTwo).findFirst().get().getSInstance().hasValidationErrors());
     }
 
     @Test
@@ -47,8 +47,8 @@ public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
         form.setValue(findFieldOneFormComponent(), testValue);
         tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
         form.submit(page.getSingularValidationButton());
-        Assert.assertFalse(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
-        Assert.assertTrue(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
+        Assert.assertFalse(findModelsByType(fieldOne).findFirst().get().getSInstance().hasValidationErrors());
+        Assert.assertTrue(findModelsByType(fieldTwo).findFirst().get().getSInstance().hasValidationErrors());
     }
 
     public FormComponent findFieldOneFormComponent() {

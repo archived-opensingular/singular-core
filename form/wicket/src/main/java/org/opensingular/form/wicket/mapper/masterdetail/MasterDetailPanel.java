@@ -61,7 +61,6 @@ import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -349,7 +348,7 @@ public class MasterDetailPanel extends Panel {
                     }
 
                     @Override
-                    public SInstance getMInstancia() {
+                    public SInstance getSInstance() {
                         return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };
