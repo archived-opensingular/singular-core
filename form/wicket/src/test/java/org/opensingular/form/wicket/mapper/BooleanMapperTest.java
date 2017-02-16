@@ -3,168 +3,148 @@ package org.opensingular.form.wicket.mapper;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.type.core.STypeBoolean;
-import org.opensingular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.AssertionsWComponent;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.opensingular.form.wicket.helpers.TestFinders.findId;
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
-@RunWith(Enclosed.class)
 public class BooleanMapperTest {
 
-    public static class Default extends Base {
-        @Test public void rendersSpecifiedLabel() {
-            tester.assertContains("Aceito os termos e condições");
-        }
+    private final static String ACEITA_TERMOS = "ACEITA_TERMOS";
 
-        @Test public void rendersACheckBoxByDefault() {
-            List<CheckBox> inputs = findTag(form.getForm(), CheckBox.class);
-            assertThat(inputs).hasSize(1);
-        }
-
-        @Test public void rendersACheckBoxByDefaultUnckecked() {
-            assertThat(getCheckboxAt(0).getValue()).isEqualTo("");
-        }
-
-        @Test public void submitsFalseThroutghTheCheckbox() {
-            form.submit();
-            assertThat(baseField().getValue()).isFalse();
-        }
-
-        @Test public void submitsTrueThroutghTheCheckbox() {
-            form.setValue(getCheckboxAt(0), "true");
-            form.submit();
-            assertThat(baseField().getValue()).isTrue();
-        }
+    private SingularDummyFormPageTester createTesterWithSimpleCheckbox() {
+        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(root -> {
+            root.addFieldBoolean(ACEITA_TERMOS).asAtr().label("Aceito os termos e condições");
+        });
+        return tester;
     }
 
-    public static class TrueInstance extends Base {
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> mockType) {
-            super.buildBaseType(mockType);
-        }
-
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            instance.getDescendant(field1).setValue(true);
-        }
-
-        @Test public void rendersACheckBoxCheckedWhenValueIsTrue() {
-            assertThat(getCheckboxAt(0).getValue()).isEqualTo("true");
-        }
-
+    private SingularDummyFormPageTester createTesterWithSimpleRadio() {
+        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(root -> {
+            STypeBoolean aceitaTermos = root.addFieldBoolean(ACEITA_TERMOS);
+            aceitaTermos.asAtr().label("Aceito os termos e condições");
+            aceitaTermos.withRadioView();
+        });
+        return tester;
     }
 
-    public static class WithRadioViewNoPreset extends WithRadioView {
-
-        @Test public void rendersARadioChoiceIfAsked() {
-            List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
-            assertThat(inputs).hasSize(1);
-            assertThat(inputs.get(0).getChoices()).containsOnly("Sim", "Não");
-        }
-
-        @Test public void rendersNoChoiceIfNoneIsSelected() {
-            assertThat(radioChoiceAt(0).getValue()).isNullOrEmpty();
-        }
-
-        @Test
-        public void submitsTheValueThroughTheRadioYes() {
-            selectOption(0);
-            form.submit();
-            assertThat(baseField().getValue()).isTrue();
-        }
-
-        @Test public void submitsTheValueThroughTheRadioNo() {
-            RadioChoice choice = radioChoiceAt(0);
-            selectOption(1);
-            form.submit();
-            assertThat(baseField().getValue()).isFalse();
-        }
-
-        private void selectOption(int index) {
-            form.select(findId(form.getForm(), "aceitaTermos").get(), index);
-        }
+    private AssertionsSInstance assertWhenSubmitsThroughTheAceitaTermosComponent(String value) {
+        SingularDummyFormPageTester tester = createTesterWithSimpleCheckboxAndStart();
+        AssertionsWComponent aceitaTermos = tester.getAssertionsPage().getSubCompomentWithId(ACEITA_TERMOS);
+        aceitaTermos.assertSInstance().isValueEquals(null);
+        tester.newFormTester().setValue(aceitaTermos.getTarget(), value).submit();
+        return aceitaTermos.assertSInstance();
     }
 
-    public static class WithRadioViewPresetTrue extends WithRadioView {
-
-        @Override protected void buildBaseType(STypeComposite<?> mockType) {
-            super.buildBaseType(mockType);
-
-        }
-
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            instance.getDescendant(field1).setValue(true);
-        }
-
-        @Test public void rendersFalseChoiceIfFalseIsSelected() {
-            assertThat(radioChoiceAt(0).getValue()).isEqualTo("Sim");
-        }
+    private SingularDummyFormPageTester createTesterWithSimpleRadioAndStart() {
+        return createTesterWithSimpleRadio().startDummyPage();
     }
 
-    public static class WithPersonalizedChoicesForRadioView extends Base {
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> mockType) {
-            super.buildBaseType(mockType);
-            field1.withRadioView("For Sure", "No Way");
-        }
-
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            instance.getDescendant(field1).setValue(true);
-        }
-
-        @Test public void rendersARadioChoiceWithPersonalizedLabel() {
-            List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
-            assertThat(inputs.get(0).getChoices()).containsOnly("For Sure", "No Way");
-        }
+    private SingularDummyFormPageTester createTesterWithSimpleCheckboxAndStart() {
+        return createTesterWithSimpleCheckbox().startDummyPage();
     }
 
-}
-
-class Base extends SingularFormBaseTest {
-
-    protected SDictionary dictionary;
-    protected STypeAttachment attachmentFileField;
-    protected STypeBoolean field1;
-
-    protected void buildBaseType(STypeComposite<?> mockType) {
-        field1 = mockType.addFieldBoolean("aceitaTermos");
-        field1.asAtr().label("Aceito os termos e condições");
+    @Test
+    public void testIfSpecifiedLabelIsRendered() {
+        createTesterWithSimpleCheckboxAndStart()
+                .assertContains("Aceito os termos e condições");
     }
 
-    protected CheckBox getCheckboxAt(int index) {
-        return findTag(form.getForm(), CheckBox.class).get(index);
+    @Test
+    public void rendersACheckBoxByDefault() {
+        createTesterWithSimpleCheckboxAndStart()
+                .getAssertionsPage()
+                .getSubComponents(CheckBox.class).isSize(1);
     }
 
-    protected SIBoolean baseField() {
-        return baseInstance().getDescendant(field1);
+    @Test
+    public void rendersACheckBoxByDefaultUnckecked() {
+        createTesterWithSimpleCheckboxAndStart()
+                .getAssertionsPage()
+                .getSubCompomentWithId(ACEITA_TERMOS).assertSInstance().isValueEquals(null);
     }
 
-}
-
-class WithRadioView extends Base {
-    @Override
-    protected void buildBaseType(STypeComposite<?> mockType) {
-        super.buildBaseType(mockType);
-        field1.withRadioView();
+    @Test
+    public void submitsFalseThroutghTheCheckbox() {
+        assertWhenSubmitsThroughTheAceitaTermosComponent("false").isValueEquals(false);
     }
 
-    protected RadioChoice radioChoiceAt(int index) {
-        List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
-        return inputs.get(index);
+    @Test
+    public void submitsTrueThroutghTheCheckbox() {
+        assertWhenSubmitsThroughTheAceitaTermosComponent("true").isValueEquals(true);
     }
+
+    @Test
+    public void rendersACheckBoxCheckedWhenValueIsTrue() {
+        SingularDummyFormPageTester tester = createTesterWithSimpleCheckbox();
+        tester.getDummyPage().addInstancePopulator(root -> {
+            root.setValue(ACEITA_TERMOS, true);
+        });
+        tester.startDummyPage();
+        tester.getAssertionsPage().getSubCompomentWithId(ACEITA_TERMOS)
+                .is(CheckBox.class)
+                .assertSInstance().isValueEquals(true);
+    }
+
+    @Test
+    public void rendersARadioChoiceIfAsked() {
+        SingularDummyFormPageTester tester = createTesterWithSimpleRadioAndStart();
+        List choices = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
+                .isSize(1)
+                .get(0)
+                .getTarget(RadioChoice.class)
+                .getChoices();
+        assertThat(choices).containsOnly("Sim", "Não");
+    }
+
+    @Test
+    public void rendersNoChoiceIfNoneIsSelected() {
+        SingularDummyFormPageTester tester = createTesterWithSimpleRadioAndStart();
+        RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
+                .isSize(1)
+                .get(0)
+                .getTarget(RadioChoice.class);
+        assertThat(radioChoice.getDefaultModelObject()).isNull();
+    }
+
+    @Test
+    public void submitsTheValueThroughTheRadioYes() {
+        assertWhenSubmitsThroughTheAceitaTermosComponent("true").isValueEquals(true);
+    }
+
+    @Test
+    public void submitsTheValueThroughTheRadioNo() {
+        assertWhenSubmitsThroughTheAceitaTermosComponent("false").isValueEquals(false);
+    }
+
+    @Test
+    public void rendersFalseChoiceIfFalseIsSelected() {
+        SingularDummyFormPageTester tester = createTesterWithSimpleRadio();
+        tester.getDummyPage().addInstancePopulator(si -> si.setValue(ACEITA_TERMOS, false));
+        tester.startDummyPage();
+        RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
+                .isSize(1)
+                .get(0)
+                .getTarget(RadioChoice.class);
+        assertThat(radioChoice.getDefaultModelObject()).isEqualTo("Não");
+    }
+
+    @Test
+    public void rendersTrueChoiceIfTrueIsSelected() {
+        SingularDummyFormPageTester tester = createTesterWithSimpleRadio();
+        tester.getDummyPage().addInstancePopulator(si -> si.setValue(ACEITA_TERMOS, true));
+        tester.startDummyPage();
+        RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
+                .isSize(1)
+                .get(0)
+                .getTarget(RadioChoice.class);
+        assertThat(radioChoice.getDefaultModelObject()).isEqualTo("Sim");
+    }
+
 }
