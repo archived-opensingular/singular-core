@@ -21,12 +21,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class HealthPanelDbService {
 
+	// TODO NÃO RESOLVER DESSA FORMA, FAZER, FALAR COM VINICIUS
 	@Inject
 	private DriverOracle driverOracle;
-	
+
 	@Inject
 	private HealthSystemDAO saudeDao;
-	
+
+	//TODO REMOVER ESSE ATRIBUTO, RETORNAR CNA FUNCAO DE VERIFICAR DIALETO
 	private IValidatorDatabase validator;
 	
 	public HealthInfo getAllDbMetaData(){
@@ -70,12 +72,16 @@ public class HealthPanelDbService {
 		
 		return tableInfo;
 	}
-	
+
+
+	// TODO RETORNAR O VALIDATOR AO INVÉS DE SETAR NA CLASSE
 	// TODO implementar outros drivers
 	private void verificaDialetoUtilizado(){
 		if(this.validator == null){
 			String hibernateDialect = saudeDao.getHibernateDialect();
-			if(hibernateDialect.equals("org.hibernate.dialect.Oracle9gDialect")
+			//TODO VERIFICAR SE É SUBCLASSE AO INVÉS DE COMPARAR STRING
+			if(hibernateDialect.toLowerCase().contains("oracle") ||
+					hibernateDialect.equals("org.hibernate.dialect.Oracle9gDialect")
 				|| hibernateDialect.equals("org.hibernate.dialect.Oracle10gDialect")
 				|| hibernateDialect.equals("org.hibernate.dialect.Oracle11gDialect")
 				|| hibernateDialect.equals("org.hibernate.dialect.Oracle12gDialect")){

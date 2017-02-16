@@ -32,6 +32,7 @@ import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SViewListByForm;
+import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.lib.support.persistence.util.SqlUtil;
 
@@ -44,7 +45,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 	protected void onLoadType(TypeBuilder tb) {
 		
         STypeList<STypeComposite<SIComposite>, SIComposite> tabelas = this.addFieldListOfComposite("tablesList", "tabela");
-        tabelas.setView(()->new SViewListByForm().disableNew().disableDelete());
+        tabelas.setView(()->new SViewListByMasterDetail().fullSize().disableNew().disableDelete());
         
         STypeComposite<SIComposite> tabela = tabelas.getElementsType();
         
