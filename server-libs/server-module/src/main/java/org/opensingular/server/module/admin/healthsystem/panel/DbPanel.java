@@ -79,6 +79,12 @@ public class DbPanel extends Panel {
 				new SingularToastrHelper(this).
 				addToastrMessage(ToastrType.SUCCESS, "All tables are accessible as excepted!");
 			}
+
+			@Override
+			protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+				super.onValidationError(target, form, instanceModel);
+
+			}
 		};
 		add(panelBD);
 		add(checkButton);
