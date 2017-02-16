@@ -108,20 +108,15 @@ public class SingularDefaultPersistenceConfiguration {
 
     @Bean
     public DataSource dataSource() {
-
         if (SingularProperties.get().isTrue(USE_INMEMORY_DATABASE)) {
             LOGGER.warn("Usando datasource banco em memória");
             final DriverManagerDataSource dataSource = new DriverManagerDataSource();
             dataSource.setUrl(getUrlConnection());
             
-//            dataSource.setUsername("sa");
-//            dataSource.setPassword("sa");
-//            dataSource.setDriverClassName("org.h2.Driver");
-            
-            dataSource.setUsername("flow_web");
-            dataSource.setPassword("flow_web");
-            dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
-            
+            dataSource.setUsername("sa");
+            dataSource.setPassword("sa");
+            dataSource.setDriverClassName("org.h2.Driver");
+
             final Properties connectionProperties = new Properties();
             connectionProperties.setProperty("removeAbandoned", "true");
             connectionProperties.setProperty("initialSize", "5");
@@ -142,13 +137,9 @@ public class SingularDefaultPersistenceConfiguration {
             return dataSource;
         }
     }
-    
-    
-    //  -Dsingular.custom.schema.name="DBFLOW" -->> argument tomcat
+
     protected String getUrlConnection() {
-//    	return "jdbc:oracle:thin:@10.103.2.167:1521:vs02";
-    	return "jdbc:oracle:thin:@10.103.2.167:1521:vs06";
-//    	return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;EARLY_FILTER=1;MVCC=TRUE;LOCK_TIMEOUT=15000;";
+    	return "jdbc:h2:file:./singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=4096;EARLY_FILTER=1;MVCC=TRUE;LOCK_TIMEOUT=15000;";
     }
 
     @DependsOn("scriptsInitializer")
