@@ -19,8 +19,14 @@ package org.opensingular.form.wicket.helpers;
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
+import org.opensingular.form.helpers.AssertionsSType;
 
 import javax.servlet.ServletContext;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Versão especializada do {@link SingularWicketTester} que automaticamente cria uma página Dummy para testar formuláro
@@ -32,7 +38,8 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
 
     private DummyPage page = new DummyPage();
 
-    public SingularDummyFormPageTester() {}
+    public SingularDummyFormPageTester() {
+    }
 
     public SingularDummyFormPageTester(Class<? extends Page> homePage) {
         super(homePage);
@@ -58,12 +65,16 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
         super(application, servletCtx, init);
     }
 
-    /** Retorna a página padrão de test de componente ou Form. */
+    /**
+     * Retorna a página padrão de test de componente ou Form.
+     */
     public DummyPage getDummyPage() {
         return page;
     }
 
-    /** Executa no wicket a página de teste padrão que contem o SType ou Form a ser testado. */
+    /**
+     * Executa no wicket a página de teste padrão que contem o SType ou Form a ser testado.
+     */
     public final SingularDummyFormPageTester startDummyPage() {
         if (page.getTypeBuilder() == null) {
             throw new RuntimeException("page.getTypeBuilder() está null (configuare para o teste)");
@@ -72,7 +83,35 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
         return this;
     }
 
-    public FormTester newFormTester(){
+    /**
+     * Constroi um novo formtestes do wicket
+     * @return o FormTester, @see {@link FormTester}
+     */
+    public FormTester newFormTester() {
         return newFormTester("form");
     }
+
+    /**
+     * Faz a pesquisa na instancia da pagina pelo nome informado, caso encotre nenhum ou mais de um joga uma exception
+     * @param simpleName o nome simples
+     * @return AssertionsSType
+     */
+    public AssertionsSType findTypeBySimpleName(String simpleName) {
+
+        List<SType<?>> types = SInstances.streamDescendants(getDummyPage().getCurrentInstance(), true)
+                .filter(ins -> ins.getType().getNameSimple().equals(simpleName))
+                .map(SInstance::getType)
+                .collect(Collectors.toList());
+
+        if(types.isEmpty()){
+            throw new RuntimeException("O nome informado não pertence a nenhum tipo da instancia atual");
+        }
+
+        if(types.size() > 1){
+            throw new RuntimeException("O nome informado pertence a mais de um elemento da instancia atual");
+        }
+
+        return new AssertionsSType(types.get(0));
+    }
+
 }
