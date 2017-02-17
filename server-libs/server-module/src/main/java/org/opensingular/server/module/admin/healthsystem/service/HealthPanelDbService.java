@@ -39,7 +39,7 @@ public class HealthPanelDbService {
 		
 		map.forEach((k,v)->tabelas.add(getTableInfo(v)));
 		
-		validator.checkAllInfoTable(tabelas);
+//		validator.checkAllInfoTable(tabelas);
 		
 		return new HealthInfo(tabelas);
 	}
