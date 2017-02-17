@@ -4,9 +4,13 @@ package org.opensingular.server.p.commons.spring.security;
 import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.opensingular.server.commons.config.IServerContext;
 import org.opensingular.server.commons.spring.security.config.cas.SingularCASSpringSecurityConfig;
+import org.opensingular.server.p.commons.auth.AdministrationAuthenticationProvider;
 import org.opensingular.server.p.commons.config.PServerContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 public class SecurityConfigs {
@@ -42,4 +46,29 @@ public class SecurityConfigs {
             return "";
         }
     }
+
+    @AutoScanDisabled
+    @Configuration
+    @EnableWebMvc
+    @Order(105)
+    public static class AdministrationSecuriry extends WebSecurityConfigurerAdapter {
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                    .authorizeRequests()
+                    .antMatchers("/").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .csrf().disable()
+                    .httpBasic();
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.authenticationProvider(new AdministrationAuthenticationProvider());
+        }
+
+    }
+
 }

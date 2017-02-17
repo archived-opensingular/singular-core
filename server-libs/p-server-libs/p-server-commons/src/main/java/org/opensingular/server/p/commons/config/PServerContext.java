@@ -26,14 +26,15 @@ import org.opensingular.server.commons.config.IServerContext;
 public enum PServerContext implements IServerContext {
 
     PETITION("/petition/*", "singular.petition"),
-    WORKLIST("/worklist/*", "singular.worklist");
+    WORKLIST("/worklist/*", "singular.worklist"),
+    ADMINISTRATION("/administration/*", "singular.administration");
 
     private final String contextPath;
     private final String propertiesBaseKey;
 
     PServerContext(String defaultPath, String propertiesBaseKey) {
         this.propertiesBaseKey = propertiesBaseKey;
-        String key = propertiesBaseKey + ".context";
+        String key  = propertiesBaseKey + ".context";
         String path = SingularProperties.get().getProperty(key);
         if (path == null || path.length() <= 0) {
             path = defaultPath;
@@ -92,7 +93,6 @@ public enum PServerContext implements IServerContext {
         String path = getContextPath().replace("*", "").replace(".", "").trim();
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
-
 
 
 }

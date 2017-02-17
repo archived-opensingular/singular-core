@@ -30,7 +30,10 @@ public class PSpringSecurityInitializer extends SpringSecurityInitializer {
             return (Class<T>) SecurityConfigs.CASAnalise.class;
         } else if (context.equals(PServerContext.PETITION)) {
             return (Class<T>) SecurityConfigs.CASPeticionamento.class;
+        } else if(context.equals(PServerContext.ADMINISTRATION)){
+            return (Class<T>) SecurityConfigs.AdministrationSecuriry.class;
         }
         return null;
     }
+
 }
