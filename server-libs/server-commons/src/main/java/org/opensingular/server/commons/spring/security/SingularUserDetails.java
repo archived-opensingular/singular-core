@@ -29,36 +29,36 @@ import org.opensingular.server.commons.config.IServerContext;
 
 public interface SingularUserDetails extends UserDetails {
 
-    public default boolean isContext(IServerContext context) {
+    default boolean isContext(IServerContext context) {
         return context.equals(getServerContext());
     }
 
-    public Object getUserPermissionKey();
+    Object getUserPermissionKey();
 
-    public IServerContext getServerContext();
+    IServerContext getServerContext();
 
-    public String getDisplayName();
+    String getDisplayName();
 
-    public List<SingularPermission> getPermissions();
+    List<SingularPermission> getPermissions();
 
     @Override
-    public default Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.EMPTY_LIST;
+    default Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
     }
 
     @Override
-    public default String getPassword() {
+    default String getPassword() {
         return null;
     }
 
 
-    public void addPermission(SingularPermission role);
+    void addPermission(SingularPermission role);
 
-    public default void addPermissions(SingularPermission... roles) {
+    default void addPermissions(SingularPermission... roles) {
         addPermissions(Arrays.asList(roles));
     }
 
-    public default void addPermissions(List<SingularPermission> roles) {
+    default void addPermissions(List<SingularPermission> roles) {
         if (roles != null) {
             for (SingularPermission role : roles) {
                 addPermission(role);
@@ -67,22 +67,22 @@ public interface SingularUserDetails extends UserDetails {
     }
 
     @Override
-    public default boolean isAccountNonExpired() {
+    default boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
-    public default boolean isAccountNonLocked() {
+    default boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
-    public default boolean isCredentialsNonExpired() {
+    default boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    public default boolean isEnabled() {
+    default boolean isEnabled() {
         return true;
     }
 }
