@@ -1,46 +1,56 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.opensingular.server.module.admin.healthsystem.service;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.opensingular.lib.support.persistence.util.SqlUtil;
 import org.opensingular.server.module.admin.healthsystem.dao.HealthSystemDAO;
-import org.opensingular.server.module.admin.healthsystem.db.drivers.DriverOracle;
 import org.opensingular.server.module.admin.healthsystem.db.drivers.IValidatorDatabase;
+import org.opensingular.server.module.admin.healthsystem.db.drivers.ValidatorFactory;
 import org.opensingular.server.module.admin.healthsystem.db.objects.ColumnInfo;
 import org.opensingular.server.module.admin.healthsystem.db.objects.HealthInfo;
 import org.opensingular.server.module.admin.healthsystem.db.objects.TableInfo;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class HealthPanelDbService {
-
-	// TODO NÃO RESOLVER DESSA FORMA, FAZER, FALAR COM VINICIUS
-	@Inject
-	private DriverOracle driverOracle;
-
 	@Inject
 	private HealthSystemDAO saudeDao;
 
-	//TODO REMOVER ESSE ATRIBUTO, RETORNAR CNA FUNCAO DE VERIFICAR DIALETO
-	private IValidatorDatabase validator;
-	
 	public HealthInfo getAllDbMetaData(){
-		verificaDialetoUtilizado();
-		Map<String, ClassMetadata> map = saudeDao.getAllDbMetaData();
-		
+		IValidatorDatabase validator = verificaDialetoUtilizado();
 		List<TableInfo> tabelas = new ArrayList<>();
-		
+
+		Map<String, ClassMetadata> map = saudeDao.getAllDbMetaData();
 		map.forEach((k,v)->tabelas.add(getTableInfo(v)));
-		
-//		validator.checkAllInfoTable(tabelas);
-		
+
+		try{
+			validator.checkAllInfoTable(tabelas);
+		} catch (Exception e){
+			tabelas.clear();
+			e.printStackTrace();
+		}
+
 		return new HealthInfo(tabelas);
 	}
 
@@ -73,25 +83,13 @@ public class HealthPanelDbService {
 		return tableInfo;
 	}
 
+	private IValidatorDatabase  verificaDialetoUtilizado(){
+		String hibernateDialect = saudeDao.getHibernateDialect();
 
-	// TODO RETORNAR O VALIDATOR AO INVÉS DE SETAR NA CLASSE
-	// TODO implementar outros drivers
-	private void verificaDialetoUtilizado(){
-		if(this.validator == null){
-			String hibernateDialect = saudeDao.getHibernateDialect();
-			//TODO VERIFICAR SE É SUBCLASSE AO INVÉS DE COMPARAR STRING
-			if(hibernateDialect.toLowerCase().contains("oracle") ||
-					hibernateDialect.equals("org.hibernate.dialect.Oracle9gDialect")
-				|| hibernateDialect.equals("org.hibernate.dialect.Oracle10gDialect")
-				|| hibernateDialect.equals("org.hibernate.dialect.Oracle11gDialect")
-				|| hibernateDialect.equals("org.hibernate.dialect.Oracle12gDialect")){
-				
-				validator = driverOracle;
-			}else if(hibernateDialect.equals("")){
-				
-			}else if(hibernateDialect.equals("")){
-				
-			}
+		try{
+			return ValidatorFactory.getDriver(hibernateDialect);
+		}catch (Exception e){
+			return null;
 		}
 	}
 }

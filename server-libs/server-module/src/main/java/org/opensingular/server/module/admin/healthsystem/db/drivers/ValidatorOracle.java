@@ -15,7 +15,7 @@ import org.opensingular.server.module.admin.healthsystem.db.objects.TableInfo;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DriverOracle extends SimpleDAO implements IValidatorDatabase{
+public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 
 	@Transactional
 	@Override
