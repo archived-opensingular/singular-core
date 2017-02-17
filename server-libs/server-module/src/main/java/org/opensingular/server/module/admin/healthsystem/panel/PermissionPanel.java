@@ -48,10 +48,8 @@ public class PermissionPanel extends Panel implements Loggable {
     }
 
     protected BSDataTable<SingularPermission, String> setupDataTable() {
-    	
-    	
         return new BSDataTableBuilder<>(createDataProvider())
-                .appendPropertyColumn($m.ofValue(getString("label.table.column.permissao")), SingularPermission::getSingularId)
+                .appendPropertyColumn($m.ofValue("Permissão Singular"), SingularPermission::getSingularId)
                 .setRowsPerPage(Long.MAX_VALUE)
                 .setStripedRows(false)
                 .setBorderedTable(false)

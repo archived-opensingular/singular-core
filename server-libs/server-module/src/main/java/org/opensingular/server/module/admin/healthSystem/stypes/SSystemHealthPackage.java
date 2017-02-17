@@ -6,7 +6,7 @@ import org.opensingular.form.SPackage;
 
 @SInfoPackage(name = SSystemHealthPackage.PACKAGE_NAME)
 public class SSystemHealthPackage extends SPackage {
-	public static final String PACKAGE_NAME = "org.opensingular.server.module.admin.healthPanel";
+	public static final String PACKAGE_NAME = "org.opensingular.server.module.admin.healthsystem";
 	
 	@Override
     protected void onLoadPackage(PackageBuilder pb) {

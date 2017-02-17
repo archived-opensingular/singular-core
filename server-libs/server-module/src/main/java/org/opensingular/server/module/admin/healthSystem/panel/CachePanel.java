@@ -47,7 +47,7 @@ public class CachePanel extends Panel {
 				adminFacade.clearCaches();
 				
 				new SingularToastrHelper(this).
-					addToastrMessage(ToastrType.SUCCESS, "Caches limpados!");
+					addToastrMessage(ToastrType.SUCCESS, "Caches cleaned!");
 			}
 		});
 		
