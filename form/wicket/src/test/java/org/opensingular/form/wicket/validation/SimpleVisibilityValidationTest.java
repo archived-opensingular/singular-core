@@ -1,8 +1,11 @@
 package org.opensingular.form.wicket.validation;
 
+import org.fest.assertions.api.IterableAssert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 @Ignore
@@ -11,11 +14,11 @@ public class SimpleVisibilityValidationTest {
     private static final String FIELD_ONE = "fieldOne";
     private static final String FIELD_TWO = "fieldTwo";
 
-    @Test
-    public void testIfContaisErrorOnlyForFieldOne() {
+    private SingularDummyFormPageTester tester;
 
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
-
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
         tester.getDummyPage().setTypeBuilder(baseType -> {
 
             STypeString fieldOne = baseType.addFieldString(FIELD_ONE);
@@ -25,27 +28,23 @@ public class SimpleVisibilityValidationTest {
             fieldTwo.asAtr().required(true).visible(i -> false);
 
         });
-
         tester.startDummyPage();
-
         tester.newFormTester().submit(tester.getDummyPage().getSingularValidationButton());
+    }
 
-        tester.getAssertionsForm()
+    @Test
+    public void testIfContaisErrorOnlyForFieldOne() {
+        assertThatFieldValidationErros(FIELD_ONE).hasSize(1);
+        assertThatFieldValidationErros(FIELD_TWO).isEmpty();
+    }
+
+    private IterableAssert<IValidationError> assertThatFieldValidationErros(String field) {
+        return tester.getAssertionsForm()
                 .getSubCompomentWithType(
-                        tester.findTypeBySimpleName(FIELD_ONE).is(STypeString.class).getTarget()
+                        tester.findTypeBySimpleName(field).is(STypeString.class).getTarget()
                 )
                 .assertSInstance()
-                .assertThatValidationErrors()
-                .hasSize(1);
-
-        tester.getAssertionsForm()
-                .getSubCompomentWithType(
-                        tester.findTypeBySimpleName(FIELD_TWO).is(STypeString.class).getTarget()
-                )
-                .assertSInstance()
-                .assertThatValidationErrors()
-                .isEmpty();
-
+                .assertThatValidationErrors();
     }
 
 
