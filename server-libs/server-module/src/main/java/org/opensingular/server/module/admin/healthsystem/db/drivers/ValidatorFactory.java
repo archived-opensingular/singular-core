@@ -15,12 +15,23 @@
  */
 package org.opensingular.server.module.admin.healthsystem.db.drivers;
 
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+
 /**
  * Created by vitor.rego on 17/02/2017.
  */
-public class ValidatorFactory {
+public enum ValidatorFactory {
+    ORACLE{
+        @Override
+        public IValidatorDatabase getDriver() {
+            return ApplicationContextProvider.get().getBean(ValidatorOracle.class);
+        }
+    };
+
+    public abstract IValidatorDatabase getDriver();
+
     public static IValidatorDatabase getDriver(String driverDialect) throws Exception{
-        for (ValidatorEnums value: ValidatorEnums.values()) {
+        for (ValidatorFactory value: ValidatorFactory.values()) {
             if(driverDialect.contains(value.toString().toLowerCase())){
                 return value.getDriver();
             }
