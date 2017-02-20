@@ -63,7 +63,7 @@ public class SecurityConfigs {
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .authorizeRequests()
-                    .antMatchers("/").permitAll()
+                    .antMatchers("/administration").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .csrf().disable()
