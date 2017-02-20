@@ -86,7 +86,7 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 		tabela.addInstanceValidator(validatable -> {
 			Optional<SIBoolean> foundTableInstance = validatable.getInstance().findNearest(foundTableField);
 			if (!foundTableInstance.isPresent() || !foundTableInstance.get().getValue()) {
-				validatable.error("Tabela não encontrada.");
+				validatable.error("Table not found!");
 			}
 
 			Optional<SIString> foundSchemaField = validatable.getInstance().findNearest(schemaField);
@@ -98,15 +98,11 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 			if(foundSchemaField.get() == null){
 				validatable.error(ValidationErrorLevel.ERROR, "Schema not found!");
 			}else{
-				if (!vals.contains("SELECT") || !vals.contains("UPDATE") || !vals.contains("DELETE")
-						|| !vals.contains("INSERT")) {
-					if (SqlUtil.isSingularSchema(foundSchemaField.get().getValue())) {
-						validatable.error(ValidationErrorLevel.ERROR, "CRUD incompleto!");
-					}else{
-						validatable.error(ValidationErrorLevel.WARNING, "CRUD incompleto!");
-					}
+				if (SqlUtil.isSingularSchema(foundSchemaField.get().getValue())
+						&& (!vals.contains("SELECT") || !vals.contains("UPDATE")
+							|| !vals.contains("DELETE") || !vals.contains("INSERT"))) {
+					validatable.error("Singular table without complete CRUD!");
 				}
-				
 			}
 		});
         
@@ -116,7 +112,6 @@ public class SDbHealth extends STypeComposite<SIComposite> {
         colunas.asAtr().label("Colunas");
         
         STypeComposite<SIComposite> coluna = colunas.getElementsType();
-        
         
         coluna.addFieldString("columnName")
         	.asAtr()
@@ -180,23 +175,26 @@ public class SDbHealth extends STypeComposite<SIComposite> {
 			.asAtrBootstrap()
 	      		.colPreference(2);
 
-		nullableField.addInstanceValidator(validatable->{
+		coluna.addInstanceValidator(validatable->{
 			Optional<SIBoolean> databaseFieldInstance = validatable.getInstance().findNearest(foundDatabaseField);
 			Optional<SIBoolean> hibernateFieldInstance = validatable.getInstance().findNearest(foundHibernateField);
-			
-			if(hibernateFieldInstance.isPresent() && !hibernateFieldInstance.get().getValue()
-					&& databaseFieldInstance.isPresent() && databaseFieldInstance.get().getValue()
-					&& !validatable.getInstance().getValue()){
-				validatable.error("Coluna NOT NULL não encontrada no mapeamento!");
-			} 
-		});
-		foundDatabaseField.addInstanceValidator(validatable->{
-			Optional<SIBoolean> databaseFieldInstance = validatable.getInstance().findNearest(foundDatabaseField);
-			Optional<SIBoolean> hibernateFieldInstance = validatable.getInstance().findNearest(foundHibernateField);
-			
-			if(databaseFieldInstance.isPresent() && hibernateFieldInstance.isPresent()
-					&& !databaseFieldInstance.get().getValue() && hibernateFieldInstance.get().getValue() ){
-				validatable.error("Inconsistência entre Banco de Dados e Mapeamento!");
+
+			// Encontrado no hibernate e nao no banco
+			if(hibernateFieldInstance.get().getValue() && !databaseFieldInstance.get().getValue()){
+				validatable.error("Inconsistency between database and Hibernate!");
+			}else{
+				// Encontrado no banco e nao no hibernate
+				Optional<SIBoolean> nullableFieldInstance = validatable.getInstance().findNearest(nullableField);
+				Optional<SIList<SIString>> listObj = validatable.getInstance().findNearest(privs);
+				List<Object> listPrivs = listObj.get().getValue();
+				List<String> vals = new ArrayList<>();
+				listPrivs.forEach(obj -> vals.add((String) obj));
+
+				if(!vals.contains("SELECT") || !vals.contains("DELETE")){
+					if(!nullableFieldInstance.get().getValue() && (!vals.contains("INSERT") || !vals.contains("UPDATE"))){
+						validatable.error("Column NOT NULL without SELECT or UPDATE permissions");
+					}
+				}
 			}
 		});
 	}

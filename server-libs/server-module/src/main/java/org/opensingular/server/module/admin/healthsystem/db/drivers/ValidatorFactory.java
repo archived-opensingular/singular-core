@@ -21,7 +21,7 @@ import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
  * Created by vitor.rego on 17/02/2017.
  */
 public enum ValidatorFactory {
-    ORACLE{
+    ORACLE("Oracle"){
         @Override
         public IValidatorDatabase getDriver() {
             return ApplicationContextProvider.get().getBean(ValidatorOracle.class);
@@ -30,9 +30,15 @@ public enum ValidatorFactory {
 
     public abstract IValidatorDatabase getDriver();
 
+    private String descricao;
+
+    ValidatorFactory(String descricao){
+        this.descricao = descricao;
+    }
+
     public static IValidatorDatabase getDriver(String driverDialect) throws Exception{
         for (ValidatorFactory value: ValidatorFactory.values()) {
-            if(driverDialect.contains(value.toString().toLowerCase())){
+            if(driverDialect.contains(value.descricao)){
                 return value.getDriver();
             }
         }
