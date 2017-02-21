@@ -35,9 +35,13 @@ public class ParameterDAO extends BaseDAO<ParameterEntity, Long> {
 
     public ParameterEntity findByNameAndProcessGroup(String name, IEntityProcessGroup processGroup) {
         getSession().refresh(processGroup);
+        return findByNameAndProcessGroup(name, processGroup.getCod());
+    }
+
+    public ParameterEntity findByNameAndProcessGroup(String name, String codProcessGroup) {
         Criteria c = getSession().createCriteria(tipo);
         c.add(Restrictions.eq("name", name));
-        c.add(Restrictions.eq("codProcessGroup", processGroup.getCod()));
+        c.add(Restrictions.eq("codProcessGroup", codProcessGroup));
         c.addOrder(Order.asc("cod"));
         c.setMaxResults(1);
         return (ParameterEntity) c.uniqueResult();

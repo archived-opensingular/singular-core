@@ -37,4 +37,8 @@ public class ParameterService implements Loggable {
         return Optional.ofNullable(parameterDAO.findByNameAndProcessGroup(name, processGroup));
     }
 
+    public Optional<ParameterEntity> findByNameAndProcessGroup(String name, String processGroup) {
+        return Optional.ofNullable(parameterDAO.findByNameAndProcessGroup(name, processGroup));
+    }
+
 }
