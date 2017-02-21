@@ -26,6 +26,8 @@ import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.server.commons.admin.healthsystem.webchecker.IProtocolChecker;
 import org.opensingular.server.commons.admin.healthsystem.webchecker.ProtocolCheckerFactory;
 
+import java.util.Arrays;
+
 @SInfoType(spackage = SSystemHealthPackage.class, newable = true, name = SWebHealth.TYPE_NAME)
 public class SWebHealth extends STypeComposite<SIComposite> {
 	public static final String TYPE_NAME = "webhealth";
@@ -40,7 +42,7 @@ public class SWebHealth extends STypeComposite<SIComposite> {
         this
         	.asAtr()
         		.label("Url (Protocolos suportados: "+
-        				ProtocolCheckerFactory.getSupportedProtocols().toString().replace("[", "").replace("]", "")
+						Arrays.asList(ProtocolCheckerFactory.values()).toString().replace("[", "").replace("]", "")
         				+")");
         
         STypeComposite<SIComposite> tabela = urlsList.getElementsType();
