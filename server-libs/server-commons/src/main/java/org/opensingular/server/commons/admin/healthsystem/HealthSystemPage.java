@@ -9,7 +9,7 @@ import static org.opensingular.server.commons.admin.healthsystem.HealthSystemPag
 @MountPath(HEALTH_SYSTEM_MOUNT_PATH)
 public class HealthSystemPage extends Template {
 
-	public static final String HEALTH_SYSTEM_MOUNT_PATH = "systemhealth";
+	public static final String HEALTH_SYSTEM_MOUNT_PATH = "healthsystem";
 
     public HealthSystemPage(){
     }
@@ -23,5 +23,6 @@ public class HealthSystemPage extends Template {
 	protected boolean withMenu() {
 		return false;
 	}
+
 
 }

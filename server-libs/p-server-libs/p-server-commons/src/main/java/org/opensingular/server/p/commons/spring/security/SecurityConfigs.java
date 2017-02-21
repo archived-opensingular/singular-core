@@ -62,8 +62,8 @@ public class SecurityConfigs {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
+                    .regexMatcher(PServerContext.ADMINISTRATION.getPathRegex())
                     .authorizeRequests()
-                    .antMatchers("/administration").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .csrf().disable()
