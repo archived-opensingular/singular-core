@@ -46,8 +46,6 @@ import java.util.Optional;
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected              ViewMode            viewMode       = ViewMode.EDIT;
-    protected              AnnotationMode      annotationMode = AnnotationMode.NONE;
     protected transient SIComposite                   currentInstance;
     protected           IConsumer<STypeComposite>     typeBuilder;
     protected           IFunction<RefType, SIComposite> instanceCreator;
@@ -55,7 +53,7 @@ public class DummyPage extends WebPage {
 
     private SingularForm<?> form = new SingularForm<>("form");
 
-    private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
+    private final SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
             Optional<RefType> baseType = mockFormConfig.getTypeLoader().loadRefType("mockType");
@@ -74,16 +72,6 @@ public class DummyPage extends WebPage {
             }
             return currentInstance;
         }
-
-        @Override
-        public ViewMode getViewMode() {
-            return viewMode;
-        }
-
-        @Override
-        public AnnotationMode getAnnotationMode() {
-            return annotationMode;
-        }
     };
     private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
         @Override
@@ -92,6 +80,7 @@ public class DummyPage extends WebPage {
     };
 
     public DummyPage() {
+        singularFormPanel.setAnnotationMode(AnnotationMode.NONE);
         add(form.add(singularFormPanel, singularValidationButton));
     }
 
@@ -108,15 +97,15 @@ public class DummyPage extends WebPage {
     }
 
     public void setAsVisualizationView() {
-        viewMode = ViewMode.READ_ONLY;
+        singularFormPanel.setViewMode(ViewMode.READ_ONLY);
     }
 
     public void setAsEditView() {
-        viewMode = ViewMode.EDIT;
+        singularFormPanel.setViewMode(ViewMode.EDIT);
     }
 
     public void enableAnnotation() {
-        annotationMode = AnnotationMode.EDIT;
+        singularFormPanel.setAnnotationMode(AnnotationMode.EDIT);
     }
 
     public SIComposite getCurrentInstance() {
@@ -125,10 +114,6 @@ public class DummyPage extends WebPage {
 
     public void setInstanceCreator(IFunction<RefType, SIComposite> instanceCreator) {
         this.instanceCreator = instanceCreator;
-    }
-
-    final IFunction<RefType, SIComposite> getInstanceCreator() {
-        return instanceCreator;
     }
 
     public void setTypeBuilder(IConsumer<STypeComposite> typeBuilder) {
@@ -178,11 +163,6 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
         @Override
         public UIBuilderWicket getUIBuilder() {
             return new UIBuilderWicket();
-        }
-
-        @Override
-        public ServiceRegistry getServiceRegistry() {
-            return defaultServiceRegistry;
         }
     }
 }

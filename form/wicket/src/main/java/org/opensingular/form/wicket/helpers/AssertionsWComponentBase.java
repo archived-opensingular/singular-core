@@ -65,7 +65,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
         return new AssertionsWComponent(findSubComponent(getTarget(), predicate));
     }
 
-    private Component findSubComponent(Component parent, Predicate<Component> predicate) {
+    final static Component findSubComponent(Component parent, Predicate<Component> predicate) {
         if (parent instanceof MarkupContainer) {
             for (Component component : (MarkupContainer) parent) {
                 if (predicate.test(component)) {
@@ -100,5 +100,36 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     @Nonnull
     public AssertionsWTextField asTextField() {
         return new AssertionsWTextField(getTarget(TextField.class));
+    }
+
+    /** Gera para o console a árvore de componentes a partir do elemento atual. */
+    public final SELF debugComponentTree() {
+        debugComponentTree(0, getTarget());
+        return (SELF) this;
+    }
+
+    private void debugComponentTree(int level, Component component) {
+        if (component == null) {
+            return;
+        }
+        for(int i = 0; i < level; i++) {
+            System.out.print("  ");
+        }
+
+        System.out.println(component.getId() + ":" + resolveClassName(component.getClass()));
+        if (component instanceof MarkupContainer) {
+            for(Component sub : (MarkupContainer) component) {
+                debugComponentTree(level+1, sub);
+            }
+        }
+    }
+
+    private String resolveClassName(Class<?> aClass) {
+        String name = aClass.getSimpleName();
+        while (name.length() == 0) {
+            aClass = aClass.getSuperclass();
+            name = aClass.getSimpleName();
+        }
+        return name;
     }
 }

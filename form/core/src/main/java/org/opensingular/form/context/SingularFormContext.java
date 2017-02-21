@@ -16,13 +16,9 @@
 
 package org.opensingular.form.context;
 
-import org.opensingular.form.document.ServiceRegistry;
-
 /**
  * Disponibiliza à aplicação os métodos de interação com o Singular Form.
  */
 public interface SingularFormContext {
-
-    public ServiceRegistry getServiceRegistry();
 
 }
