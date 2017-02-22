@@ -5,6 +5,8 @@ import java.net.Socket;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.validation.IInstanceValidatable;
 
+import javax.net.ssl.SSLSocketFactory;
+
 public class TcpChecker implements IProtocolChecker {
 
 	@Override
@@ -13,7 +15,7 @@ public class TcpChecker implements IProtocolChecker {
 		String[] piecesSocketPath = url.split(":");
 		Socket testClient;
 		try {
-			testClient = new Socket(piecesSocketPath[0], Integer.valueOf(piecesSocketPath[piecesSocketPath.length-1]));
+			testClient = SSLSocketFactory.getDefault().createSocket(piecesSocketPath[0], Integer.parseInt(piecesSocketPath[piecesSocketPath.length-1]));
 			testClient.close();
 		} catch (Exception e) {
 			validatable.error(e.getMessage());
