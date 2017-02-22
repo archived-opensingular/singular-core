@@ -41,7 +41,7 @@ public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 
 	@Transactional
 	@Override
-	public TableInfoDTO checkColumnPermissions(TableInfoDTO tableInfoDTO) {
+	public void checkColumnPermissions(TableInfoDTO tableInfoDTO) {
 		
 		List<ColumnInfoDTO> colunas = getColumnsInfoFromTable(tableInfoDTO.getTableName());
 		
@@ -81,8 +81,6 @@ public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 		});
 		
 		tableInfoDTO.setColumnsInfo(colunas);
-		
-		return tableInfoDTO;
 	}
 	
 	private List<ColumnInfoDTO> getColumnsInfoFromTable(String table) {
@@ -98,15 +96,16 @@ public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 			@Override
 			public Object transformTuple(Object[] obj, String[] arg1) {
 				ColumnInfoDTO column = new ColumnInfoDTO();
-				
-				column.setSchema((String) obj[0]);
-				column.setColumnName((String) obj[1]);
-				column.setDataType((String) obj[2]);
-				column.setCharLength((BigDecimal) obj[3]);
-				column.setDataPrecision((BigDecimal) obj[4]);
-				column.setTableName((String) obj[5]);
-				column.setDataLength((BigDecimal) obj[6]);
-				column.setNullable(((String) obj[7]).equals("Y"));
+
+				int i=0;
+				column.setSchema((String) obj[i]);
+				column.setColumnName((String) obj[++i]);
+				column.setDataType((String) obj[++i]);
+				column.setCharLength((BigDecimal) obj[++i]);
+				column.setDataPrecision((BigDecimal) obj[++i]);
+				column.setTableName((String) obj[++i]);
+				column.setDataLength((BigDecimal) obj[++i]);
+				column.setNullable("Y".equals((String) obj[++i]));
 				column.setFoundDataBase(true);
 				
 				return column;
@@ -177,11 +176,13 @@ public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 				@Override
 				public Object transformTuple(Object[] arg0, String[] arg1) {
 					SequenceInfoDTO info = new SequenceInfoDTO();
-					info.setSequenceName((String) arg0[0]);
-					info.setCurrentValue((BigDecimal) arg0[1]);
-					info.setMinValue((BigDecimal) arg0[2]);
-					info.setMaxValue((BigDecimal) arg0[3]);
-					info.setIncrement((BigDecimal) arg0[4]);
+
+					int i=0;
+					info.setSequenceName((String) arg0[i]);
+					info.setCurrentValue((BigDecimal) arg0[++i]);
+					info.setMinValue((BigDecimal) arg0[++i]);
+					info.setMaxValue((BigDecimal) arg0[++i]);
+					info.setIncrement((BigDecimal) arg0[++i]);
 					info.setFound(true);
 					
 					return info;
@@ -204,7 +205,7 @@ public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 
 	@Override
 	@Transactional
-	public List<TableInfoDTO> checkAllInfoTable(List<TableInfoDTO> tables) {
+	public void checkAllInfoTable(List<TableInfoDTO> tables) {
 		
 		tables.forEach(table->{
 			setFoundAndUserPrivsFromTable(table);
@@ -215,7 +216,5 @@ public class ValidatorOracle extends SimpleDAO implements IValidatorDatabase{
 				table.setSchema(table.getColumnsInfo().get(0).getSchema());
 			}
 		});
-		
-		return tables;
 	}
 }

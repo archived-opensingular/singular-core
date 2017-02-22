@@ -17,6 +17,7 @@ package org.opensingular.server.commons.service;
 
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.persistence.util.SqlUtil;
 import org.opensingular.server.commons.admin.healthsystem.validation.database.IValidatorDatabase;
 import org.opensingular.server.commons.admin.healthsystem.validation.database.ValidatorFactory;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class HealthPanelDbService {
+public class HealthPanelDbService implements Loggable {
 	@Inject
 	private HealthSystemDAO saudeDao;
 
@@ -42,30 +43,28 @@ public class HealthPanelDbService {
 		List<TableInfoDTO> tabelas = new ArrayList<>();
 
 		Map<String, ClassMetadata> map = saudeDao.getAllDbMetaData();
-		map.forEach((k,v)->tabelas.add(getTableInfo(v)));
+		map.forEach((k,v)->tabelas.add(getTableInfo((AbstractEntityPersister) v)));
 
 		try{
 			validator.checkAllInfoTable(tabelas);
 		} catch (Exception e){
 			tabelas.clear();
-			e.printStackTrace();
+			getLogger().error(e.getMessage());
 		}
 
 		return new HealthInfoDTO(tabelas);
 	}
 
-	private TableInfoDTO getTableInfo(ClassMetadata v) {
+	private TableInfoDTO getTableInfo(AbstractEntityPersister persister) {
 		TableInfoDTO tableInfoDTO = new TableInfoDTO();
-		
-		AbstractEntityPersister persister = (AbstractEntityPersister) v;
-		
+
 		String[] name = SqlUtil.replaceSchemaName(persister.getTableName()).split("\\.");
 		tableInfoDTO.setSchema(name[0]);
 		tableInfoDTO.setTableName(name[1]);
 		
 		List<String> colunas = new ArrayList<>();
 
-		String[] propertyNames = v.getPropertyNames();
+		String[] propertyNames = persister.getPropertyNames();
 		
 		Arrays.asList(propertyNames).forEach(propertyName->
 			colunas.add(persister.getPropertyColumnNames(propertyName)[0]));

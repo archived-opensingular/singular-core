@@ -40,10 +40,9 @@ public interface IValidatorDatabase {
 	 * @param tableInfoDTO - Esse tableInfoDTO deve ter o nome e columnsInfo preenchidos,
 	 * 	pois irá pesquisar no banco baseado no nome informado, 
 	 *  e fará a comparação utilizando os columnInfo existentes. 
-	 * 
-	 * @return o mesmo tableInfoDTO com as informações atualizadas
+	 *
 	 */
-	public TableInfoDTO checkColumnPermissions(TableInfoDTO tableInfoDTO);
+	public void checkColumnPermissions(TableInfoDTO tableInfoDTO);
 	
 	/**
 	 * Metodo para verificar se encontra as sequences especificadas no banco
@@ -66,7 +65,6 @@ public interface IValidatorDatabase {
 	 * Metodo para comparar uma lista de TableInfoDTO PREENCHIDA com os valores existentes no banco
 	 * 
 	 * @param tables Uma lista de colunas previamente preenchidas para verificar com o banco
-	 * @return a lista inicial atualizada
 	 */
-	public List<TableInfoDTO> checkAllInfoTable(List<TableInfoDTO> tables);
+	public void checkAllInfoTable(List<TableInfoDTO> tables);
 }

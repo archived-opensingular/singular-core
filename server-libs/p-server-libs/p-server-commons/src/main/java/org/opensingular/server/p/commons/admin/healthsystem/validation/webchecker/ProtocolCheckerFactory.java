@@ -65,7 +65,7 @@ public enum ProtocolCheckerFactory {
 	 */
 	public static IProtocolChecker getProtocolChecker(String url) throws Exception{
 		for (ProtocolCheckerFactory checkerFactory : ProtocolCheckerFactory.values()) {
-			Pattern pattern = Pattern.compile("^(?i)"+checkerFactory.toString()+"(?i)");
+			Pattern pattern = Pattern.compile("^(?i)"+checkerFactory+"(?i)");
 			Matcher matcher = pattern.matcher(url);
 			
 			if(matcher.find()){
