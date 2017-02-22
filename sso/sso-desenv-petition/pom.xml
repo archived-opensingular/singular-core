@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-sso</artifactId>
-        <version>1.5.8-SNAPSHOT</version>
+        <version>1.5.8</version>
     </parent>
 
     <name>[singular-server :: sso :: sso-desenv-petition ]</name>
