@@ -180,6 +180,46 @@
 
     <profiles>
         <profile>
+            <id>release</id>
+
+            <distributionManagement>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <properties>
+                <project.scm.url>https://github.com/opensingular/singular-server/tree/master</project.scm.url>
+                <project.scm.connection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.connection>
+                <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-server.git</project.scm.developerConnection>
+            </properties>
+        </profile>
+
+        <profile>
             <id>test</id>
             <activation>
                 <property>
