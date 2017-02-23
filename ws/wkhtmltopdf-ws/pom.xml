@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-ws</artifactId>
-        <version>1.5.8</version>
+        <version>1.5.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-wkhtmltopdf-ws</artifactId>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-wkhtmltopdf-client</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.9-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

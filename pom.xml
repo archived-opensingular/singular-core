@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.8</version>
+    <version>1.5.9-SNAPSHOT</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
