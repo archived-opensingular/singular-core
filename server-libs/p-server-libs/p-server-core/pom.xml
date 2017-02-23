@@ -37,12 +37,12 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-server-core</artifactId>
-            <version>${singular.server.version}</version>
+            <version>0.1.4</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-p-server-commons</artifactId>
-            <version>${singular.server.version}</version>
+            <version>0.1.4</version>
         </dependency>
     </dependencies>
  
