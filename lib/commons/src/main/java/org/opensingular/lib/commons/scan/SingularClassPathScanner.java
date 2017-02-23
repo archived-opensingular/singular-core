@@ -7,6 +7,7 @@ import org.opensingular.lib.commons.util.Loggable;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +24,11 @@ public enum SingularClassPathScanner implements Loggable {
 
     private final ScanResult scanCache;
 
+
     SingularClassPathScanner() {
+        long time = new Date().getTime();
         scanCache = new FastClasspathScanner().scan();
+        getLogger().info("Full classpath scan in {} ms", new Date().getTime() - time);
     }
 
     /**
