@@ -43,7 +43,7 @@ import org.opensingular.singular.form.showcase.dao.form.ExampleDataDAO;
 import org.opensingular.singular.form.showcase.dao.form.ExampleDataDTO;
 import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -104,7 +104,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Form<?> buildForm() {
-        SingularForm<?> form = new SingularForm<>("save-form");
+        SingularFormWicket<?> form = new SingularFormWicket<>("save-form");
         form.setMultiPart(true);
         form.setFileMaxSize(Bytes.MAX);
         form.setMaxSize(Bytes.MAX);

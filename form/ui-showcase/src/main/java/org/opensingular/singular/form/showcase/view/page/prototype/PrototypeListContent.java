@@ -53,7 +53,7 @@ import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.wicket.component.BFModalBorder;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.singular.form.showcase.dao.form.Prototype;
@@ -102,7 +102,7 @@ public class PrototypeListContent extends Content
 
         super.onInitialize();
 
-        add(new SingularForm<>("delete-form").add(deleteModal));
+        add(new SingularFormWicket<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
         listTable = setupDataTable();
         add(listTable);
@@ -139,7 +139,7 @@ public class PrototypeListContent extends Content
     }
 
     private MarkupContainer setUpInsertButton() {
-        return new SingularForm<>("form").add(new AjaxButton("insert") {
+        return new SingularFormWicket<>("form").add(new AjaxButton("insert") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 setResponsePage(PrototypePage.class);

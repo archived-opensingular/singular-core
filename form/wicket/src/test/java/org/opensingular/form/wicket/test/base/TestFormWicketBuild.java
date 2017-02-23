@@ -13,7 +13,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -114,7 +114,7 @@ public class TestFormWicketBuild  {
     }
 
     private TestPanel buildTestPanel(BSGrid rootContainer){
-        SingularForm<Object> form = new SingularForm<>("form");
+        SingularFormWicket<Object> form = new SingularFormWicket<>("form");
 
         TestPanel testPanel = new TestPanel("body-child"){
             @Override

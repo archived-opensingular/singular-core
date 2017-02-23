@@ -45,7 +45,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.wicket.component.BFModalBorder;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -77,7 +77,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
     protected void onInitialize() {
         super.onInitialize();
 
-        SingularForm<Void> form = new SingularForm<>("form");
+        SingularFormWicket<Void> form = new SingularFormWicket<>("form");
         form.setMultiPart(true);
         form.setFileMaxSize(Bytes.MAX);
         form.setMaxSize(Bytes.MAX);

@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
@@ -33,7 +33,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 public abstract class MetronicPanel extends TemplatePanel {
 
-    private SingularForm<?> form = null;
+    private SingularFormWicket<?> form = null;
     protected final boolean withForm;
 
     public MetronicPanel(String id) {
@@ -56,7 +56,7 @@ public abstract class MetronicPanel extends TemplatePanel {
         BSContainer<?>     content   = new BSContainer<>("_co");
         WebMarkupContainer container = this;
         if (withForm) {
-            form = new SingularForm<>("_fo");
+            form = new SingularFormWicket<>("_fo");
             add(form);
             container = form;
         }

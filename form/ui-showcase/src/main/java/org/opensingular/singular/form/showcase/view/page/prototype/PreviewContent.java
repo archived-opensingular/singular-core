@@ -25,7 +25,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.base.SingularUtil;
@@ -55,7 +55,7 @@ public class PreviewContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        SingularForm<?> enclosing = new SingularForm<>("just-a-form");
+        SingularFormWicket<?> enclosing = new SingularFormWicket<>("just-a-form");
         enclosing.setMultiPart(true);
         enclosing.setFileMaxSize(Bytes.MAX);
         enclosing.setMaxSize(Bytes.MAX);

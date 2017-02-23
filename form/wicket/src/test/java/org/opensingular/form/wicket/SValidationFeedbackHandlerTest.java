@@ -21,7 +21,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.curriculo.SPackageCurriculo;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
@@ -62,7 +62,7 @@ public class SValidationFeedbackHandlerTest {
     }
 
     private TestPanel buildTestPanel(BSGrid rootContainer) {
-        SingularForm<Object> form = new SingularForm<>("form");
+        SingularFormWicket<Object> form = new SingularFormWicket<>("form");
 
         TestPanel testPanel = new TestPanel("body-child") {
             @Override

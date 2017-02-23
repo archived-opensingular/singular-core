@@ -25,7 +25,7 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.*;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -49,9 +49,9 @@ public class DummyPage extends WebPage {
     protected           IConsumer<STypeComposite>     typeBuilder;
     protected           IFunction<SType, SIComposite> instanceCreator;
 
-    private SingularForm<?> form = new SingularForm<>("form");
+    private SingularFormWicket<?> form = new SingularFormWicket<>("form");
 
-    private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
+    private SingularFormPanel<String> singularFormPanel        = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
             if (instanceCreator != null) {
@@ -76,7 +76,7 @@ public class DummyPage extends WebPage {
             return annotationMode;
         }
     };
-    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
+    private SingularValidationButton  singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
         @Override
         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
         }
