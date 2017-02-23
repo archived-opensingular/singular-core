@@ -1,170 +1,129 @@
 package org.opensingular.form.wicket;
 
-import org.apache.wicket.markup.html.form.TextField;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.AssertionsWComponent;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-import java.util.List;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
-
-@RunWith(Enclosed.class)
 public class DataSubmissionTest {
 
-    private static class Base extends SingularFormBaseTest {
+    private static STypeString data1, data2;
+    private SingularDummyFormPageTester tester;
 
-        protected STypeString data1, data2;
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            data1 = baseType.addFieldString("data1");
-            data2 = baseType.addFieldString("data2");
-        }
-
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            instance.setValue("data1", "value1");
-            instance.setValue("data2", "value2");
-        }
+    private static void createTypeBuilder(STypeComposite typeBuilder) {
+        data1 = typeBuilder.addFieldString("data1");
+        data2 = typeBuilder.addFieldString("data2");
     }
 
-    public static class PresentsAndSubmitsData extends Base {
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            super.populateInstance(instance);
-            page.setAsEditView();
-        }
-
-        @Test public void testEditRendering() {
-            List<TextField> tags = findTag(form.getForm(), TextField.class);
-            assertThat(tags.get(0).getValue()).isEqualTo("value1");
-            assertThat(tags.get(1).getValue()).isEqualTo("value2");
-        }
-
-        @Test public void submissionUpdatesInstance() {
-            List<TextField> tags = findTag(form.getForm(), TextField.class);
-            TextField text1 = tags.get(0), text2 = tags.get(1);
-
-            form.setValue(text1,"nvalue1");
-            form.setValue(text2,"nvalue2");
-
-            form.submit();
-
-            assertThat(page.getCurrentInstance().getValue(data1))
-                    .isEqualTo("nvalue1");
-            assertThat(page.getCurrentInstance().getValue(data2))
-                    .isEqualTo("nvalue2");
-        }
+    private static void createInstancePopulator(SIComposite instance) {
+        instance.setValue("data1", "value1");
+        instance.setValue("data2", "value2");
     }
 
-    public static class KeepsDisabledData extends Base {
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            super.populateInstance(instance);
-            data2.asAtr().enabled(false);
-            page.setAsEditView();
-        }
-
-        @Test public void testEditRendering() {
-            List<TextField> tags = findTag(form.getForm(), TextField.class);
-            assertThat(tags.get(0).getValue()).isEqualTo("value1");
-            assertThat(tags.get(1).getValue()).isEqualTo("value2");
-        }
-
-        @Test public void submissionUpdatesInstance() {
-            List<TextField> tags = findTag(form.getForm(), TextField.class);
-            TextField text1 = tags.get(0), text2 = tags.get(1);
-
-            form.submit();
-
-            assertThat(page.getCurrentInstance().getValue(data1))
-                    .isEqualTo("value1");
-            assertThat(page.getCurrentInstance().getValue(data2))
-                    .isEqualTo("value2");
-        }
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(DataSubmissionTest::createTypeBuilder);
+        tester.getDummyPage().addInstancePopulator(DataSubmissionTest::createInstancePopulator);
     }
 
-    public static class KeepsInvisibledData extends Base {
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            super.populateInstance(instance);
+    // PresentsAndSubmitsData
+    @Test
+    public void testEditRenderingPresentsAndSubmitsData(){
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
 
-            data2.asAtr().visible((x)->{
+        tester.getAssertionsForm().getSubCompomentWithId("data1").asTextField().assertValue().isEqualTo("value1");
+        tester.getAssertionsForm().getSubCompomentWithId("data2").asTextField().assertValue().isEqualTo("value2");
+    }
+
+    @Test
+    public void testSubmissionUpdatesInstancePresentsAndSubmitsData(){
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
+
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+
+        tester.newFormTester().submit();
+
+        data1Assert.assertSInstance().isValueEquals("value1");
+        data2Assert.assertSInstance().isValueEquals("value2");
+    }
+
+    // KeepsDisabledData
+    @Test
+    public void testEditRenderingKeepsDisabledData(){
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
+        data2.asAtr().enabled(false);
+
+        tester.getAssertionsForm().getSubCompomentWithId("data1").asTextField().assertValue().isEqualTo("value1");
+        tester.getAssertionsForm().getSubCompomentWithId("data2").asTextField().assertValue().isEqualTo("value2");
+    }
+
+    @Test
+    public void testSubmissionUpdatesInstanceKeepsDisabledData(){
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
+        data2.asAtr().enabled(false);
+
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+
+        tester.newFormTester().submit();
+
+        data1Assert.assertSInstance().isValueEquals("value1");
+        data2Assert.assertSInstance().isValueEquals("value2");
+    }
+
+    // KeepsInvisibledData
+    @Test
+    public void testSubmissionUpdatesInstanceKeepsInvisibledData(){
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
+        data2.asAtr().visible(false);
+
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+
+        data1Assert.assertSInstance().isValueEquals("value1");
+        data2Assert.assertSInstance().isValueEquals("value2");
+
+        tester.newFormTester().submit();
+
+        data1Assert.assertSInstance().isValueEquals("value1");
+        data2Assert.assertSInstance().isValueEquals("value2");
+    }
+
+    // EreaseDependsOnData
+    @Test
+    public void testStopsDisplayingIt(){
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
+
+        data2.asAtr().dependsOn(data1);
+        data2.asAtr().exists((x)->{
+            SIComposite parent = (SIComposite) x.getParent();
+            SInstance d1 =  parent.getField(data1.getNameSimple());
+            if(d1 == null || d1.getValue() == null)
                 return false;
-            });
-            page.setAsEditView();
-        }
+            return !d1.getValue().equals("clear");
+        });
 
-        @Test public void submissionUpdatesInstance() {
-            List<TextField> tags = findTag(form.getForm(), TextField.class);
-            TextField text1 = tags.get(0);
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
+        data1Assert.assertSInstance().isNotNull().isValueEquals("value1");
+        tester.getAssertionsForm().getSubCompomentWithId("data2").assertSInstance().isNotNull().isValueEquals("value2");
 
-            assertThat(page.getCurrentInstance().getValue(data1))
-                    .isEqualTo("value1");
-            assertThat(page.getCurrentInstance().getValue(data2))
-                    .isEqualTo("value2");
+        tester.newFormTester().setValue(data1Assert.getTarget(), "clear");
+        tester.executeAjaxEvent(data1Assert.getTarget(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
 
-            form.submit();
-
-            assertThat(page.getCurrentInstance().getValue(data1))
-                    .isEqualTo("value1");
-            assertThat(page.getCurrentInstance().getValue(data2))
-                    .isEqualTo("value2");
-        }
+        tester.getAssertionsForm().getSubCompomentWithId("data1").assertSInstance().isNotNull().isValueEquals("clear");
+        tester.getAssertionsForm().getSubCompomentWithId("data2").assertSInstance().isValueNull();
     }
 
-    public static class EreaseDependsOnData extends Base {
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-            data2.asAtr().dependsOn(data1);
-            data2.asAtr().exists((x)->{
-                SIComposite parent = (SIComposite) x.getParent();
-                SInstance d1 =  parent.getField(data1.getNameSimple());
-                if(d1 == null || d1.getValue() == null) return false;
-                return !d1.getValue().equals("clear");
-            });
-        }
-
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            super.populateInstance(instance);
-
-
-            page.setAsEditView();
-        }
-
-        @Test public void stopsDisplayingIt() {
-            List<TextField> tags = findTag(tester.getLastRenderedPage(), TextField.class);
-            TextField text1 = tags.get(0), text2 = tags.get(1);
-
-            assertThat(page.getCurrentInstance().getValue(data1))
-                    .isEqualTo("value1");
-            assertThat(page.getCurrentInstance().getValue(data2))
-                    .isEqualTo("value2");
-
-            assertThat(tester.getTagById(text1.getMarkupId())).isNotNull();
-            assertThat(tester.getTagById(text2.getMarkupId())).isNotNull();
-
-            form.setValue(text1, "clear");
-            tester.executeAjaxEvent(text1, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-
-            assertThat(findFirstFormComponentsByType(form.getForm(), data1).getValue()).isNotNull();
-            assertThat(findFirstFormComponentsByType(form.getForm(), data2).getValue()).isEmpty();
-
-
-            assertThat(page.getCurrentInstance().getValue(data1))
-                    .isEqualTo("clear");
-            assertThat(page.getCurrentInstance().getValue(data2))
-                    .isNull();
-        }
-    }
 }
