@@ -49,17 +49,17 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-wicket</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-samples</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-service</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
 
         <!-- PERSISTENCE -->

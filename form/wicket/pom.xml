@@ -47,19 +47,19 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-core</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-wicket-utils</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
 
         <!--  WICKET DEPENDENCIES -->

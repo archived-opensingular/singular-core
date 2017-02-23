@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>${singular.version}</version>
+            <version>1.5.8</version>
         </dependency>
 
         <dependency>
