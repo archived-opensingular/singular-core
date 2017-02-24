@@ -512,8 +512,8 @@
         <sonar.issue.ignore.multicriteria.s48.resourceKey>**/DownloadSupportedBehavior.java</sonar.issue.ignore.multicriteria.s48.resourceKey>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
-        <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.developerConnection>
+        <project.scm.connection>scm:git:http://10.0.0.22/SINGULAR/singular-core.git</project.scm.connection>
+        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/SINGULAR/singular-core.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
