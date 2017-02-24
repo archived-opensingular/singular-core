@@ -104,11 +104,14 @@ public class SingularWicketTester extends WicketTester {
         return new AssertionsWComponent(getComponentFromLastRenderedPage(path));
     }
 
-    /** Cria um objeto de assertivas para o sub componente na hierarquia que for encontrado com o id informado. */
+    /**
+     * Cria um objeto de assertivas para o sub componente na hierarquia que for encontrado com o id informado ou dispara
+     * exception senão encontrar o componente.
+     */
     public final AssertionsWComponent getAssertionsForSubComp(String id) {
         checkIfStartPageCalled();
-        return new AssertionsWComponent(
-                AssertionsWComponentBase.findSubComponent(getLastRenderedPage(), c -> c.getId().equals(id)));
+        return AssertionsWComponentBase.createAssertionForSubComponent(getLastRenderedPage(),
+                c -> c.getId().equals(id));
     }
 
     private void checkIfStartPageCalled() {

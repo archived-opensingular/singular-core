@@ -1,15 +1,15 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.wicket.markup.html.form.TextField;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.TextField;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -46,7 +46,7 @@ public class STypeCompositeSelectItemAutoCompleteTest {
         }
 
         protected SIComposite fieldInstance() {
-            return page.getCurrentInstance().getDescendant(base);
+            return page.getInstance().getDescendant(base);
         }
 
     }

@@ -106,8 +106,8 @@ public class DummyPage extends WebPage {
         singularFormPanel.setAnnotationMode(AnnotationMode.EDIT);
     }
 
-    public SIComposite getCurrentInstance() {
-        return currentInstance;
+    public SIComposite getInstance() {
+        return (SIComposite) singularFormPanel.getInstance();
     }
 
     public void setInstanceCreator(IFunction<RefType, SIComposite> instanceCreator) {

@@ -52,7 +52,7 @@ public class STypeStringSelectionFieldTest {
         public void submitsSelectedValue() {
             form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
             form.submit();
-            Object value = page.getCurrentInstance().getValue(selectType.getNameSimple());
+            Object value = page.getInstance().getValue(selectType.getNameSimple());
             assertThat(value).isEqualTo("orange");
         }
     }

@@ -41,7 +41,7 @@ public class AttachmentListMapperTest extends SingularFormBaseTest {
 
         assertThat(multipleFileField).isNotNull();
 
-        final SIList<SIAttachment> attachments = page.getCurrentInstance()
+        final SIList<SIAttachment> attachments = page.getInstance()
                 .findNearest(typeAttachmentList)
                 .orElseThrow(() -> new SingularFormException("Não foi possivel encontrar a instancia"));
 

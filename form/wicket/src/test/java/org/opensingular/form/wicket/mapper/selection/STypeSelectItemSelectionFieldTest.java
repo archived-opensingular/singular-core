@@ -59,7 +59,7 @@ public class STypeSelectItemSelectionFieldTest {
         }
 
         protected SInstance getInstanciaSelect() {
-            return page.getCurrentInstance().getField("originUF");
+            return page.getInstance().getField("originUF");
         }
 
         protected List<DropDownChoice> options() {
@@ -98,7 +98,7 @@ public class STypeSelectItemSelectionFieldTest {
         public void submitsSelectedValue() {
             form.select(findId(form.getForm(), "originUF").get(), 0);
             form.submit();
-            SIComposite value = currentSelectionInstance(page.getCurrentInstance());
+            SIComposite value = currentSelectionInstance(page.getInstance());
             assertThat(value.getValue(idUF)).isEqualTo("DF");
         }
 
@@ -148,7 +148,7 @@ public class STypeSelectItemSelectionFieldTest {
         public void alsoWorksWhenFieldIsMandatory() {
             form.select(findId(form.getForm(), "originUF").get(), 0);
             form.submit();
-            SIComposite value = currentSelectionInstance(page.getCurrentInstance());
+            SIComposite value = currentSelectionInstance(page.getInstance());
             assertThat(value.getValue(idUF)).isEqualTo("DF");
         }
     }
@@ -167,7 +167,7 @@ public class STypeSelectItemSelectionFieldTest {
         public void verifiyIfSelectLabelIsCorrect() {
             form.select(findId(form.getForm(), "originUF").get(), 0);
             form.submit();
-            SIComposite value = currentSelectionInstance(page.getCurrentInstance());
+            SIComposite value = currentSelectionInstance(page.getInstance());
 //            assertThat(value.getSelectLabel()).isEqualTo("Distrito Federal");
         }
     }

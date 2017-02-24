@@ -40,7 +40,7 @@ public class STypeStringSelectItemAutoCompleteTest {
         }
 
         protected SIString fieldInstance() {
-            return baseInstance(page.getCurrentInstance());
+            return baseInstance(page.getInstance());
         }
 
         protected SIString baseInstance(SIComposite instance) {

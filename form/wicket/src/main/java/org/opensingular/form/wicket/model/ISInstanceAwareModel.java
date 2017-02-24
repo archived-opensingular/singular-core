@@ -24,12 +24,11 @@ import java.util.Optional;
 public interface ISInstanceAwareModel<T> extends IModel<T> {
     SInstance getSInstance();
 
-    static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model){
-        if(model != null && ISInstanceAwareModel.class.isAssignableFrom(model.getClass())){
+    static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model) {
+        if (model instanceof ISInstanceAwareModel) {
             return Optional.of((ISInstanceAwareModel<X>) model);
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     static IModel<SInstance> getInstanceModel(ISInstanceAwareModel<?> model) {
@@ -37,11 +36,14 @@ public interface ISInstanceAwareModel<T> extends IModel<T> {
             public SInstance getObject() {
                 return getSInstance();
             }
+
             public SInstance getSInstance() {
                 return model.getSInstance();
             }
+
             @Override
             public void setObject(SInstance object) {}
+
             @Override
             public void detach() {}
         };
