@@ -16,19 +16,6 @@
 
 package org.opensingular.singular.form.showcase.view.page;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.opensingular.singular.form.showcase.component.CaseBaseForm;
-import org.opensingular.singular.form.showcase.component.ShowCaseType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -38,7 +25,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Bytes;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
@@ -48,13 +34,24 @@ import org.opensingular.form.wicket.component.BFModalBorder;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.component.SingularValidationButton;
-import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
-import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.tab.BSTabPanel;
+import org.opensingular.singular.form.showcase.component.CaseBaseForm;
+import org.opensingular.singular.form.showcase.component.ShowCaseType;
+import org.opensingular.singular.form.showcase.dao.form.ShowcaseTypeLoader;
+import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements SingularWicketContainer<FormItemCasePanel, Void> {
 
@@ -62,8 +59,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
 
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
 
-    private SingularFormPanel<String> singularFormPanel = null;
-    private ViewMode viewMode = ViewMode.EDIT;
+    private SingularFormPanel singularFormPanel = null;
 
     @Inject
     @Named("formConfigWithoutDatabase")
@@ -88,34 +84,27 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
         add(form);
     }
 
-    private SingularFormPanel<String> buildSingularBasePanel() {
-        singularFormPanel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
-            @Override
-            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                final CaseBaseForm caseBase = getCaseBase().getObject();
-                String typeName = caseBase.getCaseType().getName();
-                if (caseBase.isDynamic()) {
-                    registerDynamicType(singularFormConfig, caseBase);
-                }
-                RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
-                return singularFormConfig.getDocumentFactory().createInstance(refType);
-            }
-
-            private void registerDynamicType(SFormConfig<String> singularFormConfig, CaseBaseForm caseBase) {
-                final ShowcaseTypeLoader typeLoader = (ShowcaseTypeLoader) singularFormConfig.getTypeLoader();
-                typeLoader.add(caseBase.getComponentName(), caseBase, ShowCaseType.FORM);
-            }
-
-            @Override
-            public ViewMode getViewMode() {
-                return viewMode;
-            }
-
-            @Override
-            public AnnotationMode getAnnotationMode(){ return getCaseBase().getObject().annotation(); }
-        };
-
+    private SingularFormPanel buildSingularBasePanel() {
+        singularFormPanel = new SingularFormPanel("singularFormPanel");
+        singularFormPanel.setInstanceCreator(this::createInstance);
+        singularFormPanel.setViewMode(ViewMode.EDIT);
+        singularFormPanel.setAnnotationMode(getCaseBase().getObject().annotation());
         return singularFormPanel;
+    }
+
+    private SInstance createInstance() {
+        final CaseBaseForm caseBase = getCaseBase().getObject();
+        String typeName = caseBase.getCaseType().getName();
+        if (caseBase.isDynamic()) {
+            registerDynamicType(singularFormConfig, caseBase);
+        }
+        RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
+        return singularFormConfig.getDocumentFactory().createInstance(refType);
+    }
+
+    private void registerDynamicType(SFormConfig<String> singularFormConfig, CaseBaseForm caseBase) {
+        final ShowcaseTypeLoader typeLoader = (ShowcaseTypeLoader) singularFormConfig.getTypeLoader();
+        typeLoader.add(caseBase.getComponentName(), caseBase, ShowCaseType.FORM);
     }
 
     private MarkupContainer buildButtons() {
@@ -124,7 +113,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
         return new ListView<ItemCaseButton>("buttons", botoes) {
             @Override
             protected void populateItem(ListItem<ItemCaseButton> item) {
-                item.add(item.getModelObject().buildButton("button", singularFormPanel.getRootInstance()));
+                item.add(item.getModelObject().buildButton("button", singularFormPanel.getInstanceModel()));
             }
         };
     }
@@ -186,14 +175,14 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             final AjaxButton ab = new AjaxButton(id) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    viewMode = ViewMode.READ_ONLY;
+                    singularFormPanel.setViewMode(ViewMode.READ_ONLY);
                     singularFormPanel.updateContainer();
                     target.add(form);
                 }
 
                 @Override
                 public boolean isVisible() {
-                    return viewMode.isEdition();
+                    return singularFormPanel.getViewMode().isEdition();
                 }
             };
 
@@ -224,14 +213,14 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
             final AjaxButton ab = new AjaxButton(id) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    viewMode = ViewMode.EDIT;
+                    singularFormPanel.setViewMode(ViewMode.EDIT);
                     singularFormPanel.updateContainer();
                     target.add(form);
                 }
 
                 @Override
                 public boolean isVisible() {
-                    return viewMode.isVisualization();
+                    return singularFormPanel.getViewMode().isVisualization();
                 }
             };
 

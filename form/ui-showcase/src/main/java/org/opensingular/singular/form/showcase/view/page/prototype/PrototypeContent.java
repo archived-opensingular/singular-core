@@ -16,10 +16,16 @@
 
 package org.opensingular.singular.form.showcase.view.page.prototype;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.internal.xml.MElement;
@@ -28,17 +34,10 @@ import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.singular.form.showcase.dao.form.Prototype;
 import org.opensingular.singular.form.showcase.dao.form.PrototypeDAO;
 import org.opensingular.singular.form.showcase.view.template.Content;
-import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.lang.Bytes;
-import org.apache.wicket.util.string.StringValue;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -62,7 +61,7 @@ public class PrototypeContent extends Content {
     }
 
     private SInstanceRootModel<SIComposite> model;
-    private SingularFormPanel<String> singularFormPanel;
+    private SingularFormPanel singularFormPanel;
 
     public PrototypeContent(String id, StringValue idValue) {
         super(id);
@@ -85,7 +84,7 @@ public class PrototypeContent extends Content {
         newItemForm.add(new ActionAjaxButton("save-btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                SIComposite instance = (SIComposite) singularFormPanel.getRootInstance().getObject();
+                SIComposite instance = (SIComposite) singularFormPanel.getInstance();
                 prototype.setName(instance.getValueString(SPackagePrototype.NAME));
                 prototype.setXml(getXmlFromInstance(instance));
                 prototypeDAO.save(prototype);
@@ -102,7 +101,7 @@ public class PrototypeContent extends Content {
         newItemForm.add(new ActionAjaxButton("preview_btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                if (WicketFormProcessing.onFormSubmit(form, target, singularFormPanel.getRootInstance(), true)) {
+                if (WicketFormProcessing.onFormSubmit(form, target, singularFormPanel.getInstanceModel(), true)) {
                     setResponsePage(new PreviewPage(model, PrototypeContent.this.getPage()));
                 } else {
                     addToastrWarningMessage("message.error.form");
@@ -119,34 +118,31 @@ public class PrototypeContent extends Content {
         queue(newItemForm);
     }
 
-    private SingularFormPanel<String> buildSingularFormPanel() {
-        singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
-            @Override
-            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                loadOrBuildModel();
-
-                SIComposite currentInstance = loadOrCreateInstance(new RefType() {
-                    protected SType<?> retrieve() {
-                        return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
-                    }
-                });
-                model = new SInstanceRootModel<>(currentInstance);
-
-                return currentInstance;
-            }
-
-            private SIComposite loadOrCreateInstance(RefType refType) {
-                String xml = prototype.getXml();
-                SInstance instance;
-                if (StringUtils.isBlank(xml)) {
-                    instance = singularFormConfig.getDocumentFactory().createInstance(refType);
-                } else {
-                    instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
-                }
-                return (SIComposite) instance;
-            }
-        };
+    private SingularFormPanel buildSingularFormPanel() {
+        singularFormPanel = new SingularFormPanel("singular-panel");
+        singularFormPanel.setInstanceCreator(this::createInstance);
         return singularFormPanel;
+    }
+
+    private SInstance createInstance() {
+        loadOrBuildModel();
+
+        RefType refType = RefType.of(() -> dictionary.getType(SPackagePrototype.META_FORM_COMPLETE));
+        SIComposite currentInstance = loadOrCreateInstance(refType);
+        model = new SInstanceRootModel<>(currentInstance);
+
+        return currentInstance;
+    }
+
+    private SIComposite loadOrCreateInstance(RefType refType) {
+        String xml = prototype.getXml();
+        SInstance instance;
+        if (StringUtils.isBlank(xml)) {
+            instance = singularFormConfig.getDocumentFactory().createInstance(refType);
+        } else {
+            instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+        }
+        return (SIComposite) instance;
     }
 
     protected void loadOrBuildModel() {

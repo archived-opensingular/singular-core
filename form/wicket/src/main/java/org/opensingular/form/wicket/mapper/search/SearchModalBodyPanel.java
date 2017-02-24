@@ -24,8 +24,10 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.*;
-import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.opensingular.form.document.RefType;
@@ -130,7 +132,7 @@ class SearchModalBodyPanel extends Panel {
             public long size() {
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
-                providerContext.setFilterInstance((SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
                 return getFilteredProvider().getSize(providerContext);
             }
 
@@ -138,7 +140,7 @@ class SearchModalBodyPanel extends Panel {
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
-                providerContext.setFilterInstance((SInstance) innerSingularFormPanel.getRootInstance().getObject());
+                providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
                 providerContext.setFirst(first);
                 providerContext.setCount(count);
                 providerContext.setSortProperty(sortProperty);
@@ -189,18 +191,11 @@ class SearchModalBodyPanel extends Panel {
         final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class,
                 (parent, visit) -> visit.stop(parent));
 
-        return new SingularFormPanel(FORM_PANEL_ID, parentSingularFormPanel.getSingularFormConfig(), true) {
-            @Override
-            protected SInstance createInstance(SFormConfig singularFormConfig) {
-                RefType filterRefType = new RefType() {
-                    @Override
-                    protected SType<?> retrieve() {
-                        return getConfig().getFilter();
-                    }
-                };
-                return singularFormConfig.getDocumentFactory().createInstance(filterRefType);
-            }
-        };
+        SingularFormPanel p = new SingularFormPanel(FORM_PANEL_ID, true);
+        p.setDocumentFactory(parentSingularFormPanel.getDocumentFactory());
+        p.setInstanceFromType(RefType.of(() -> getConfig().getFilter()));
+
+        return p;
     }
 
     private SInstance getInstance() {

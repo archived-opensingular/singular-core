@@ -46,34 +46,15 @@ import java.util.Optional;
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected transient SIComposite                   currentInstance;
     protected           IConsumer<STypeComposite>     typeBuilder;
     protected           IFunction<RefType, SIComposite> instanceCreator;
     private final List<IConsumer<SIComposite>> instancePopulators = new ArrayList<>();
 
     private SingularForm<?> form = new SingularForm<>("form");
 
-    private final SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
-        @Override
-        protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            Optional<RefType> baseType = mockFormConfig.getTypeLoader().loadRefType("mockType");
-            if (baseType.isPresent()) {
-                RefType refType = baseType.get();
-                if (refType.get().isComposite()) {
-                    typeBuilder.accept((STypeComposite) refType.get());
-                }
-                if (instanceCreator != null) {
-                    currentInstance = instanceCreator.apply(refType);
-                } else{
-                    SDocumentFactory factory = mockFormConfig.getDocumentFactory();
-                    currentInstance = (SIComposite) factory.createInstance(refType);
-                }
-                instancePopulators.stream().forEach(populator -> populator.accept(currentInstance));
-            }
-            return currentInstance;
-        }
-    };
-    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
+    private final SingularFormPanel singularFormPanel = new SingularFormPanel("singularFormPanel");
+
+    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getInstanceModel()) {
         @Override
         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
         }
@@ -81,14 +62,31 @@ public class DummyPage extends WebPage {
 
     public DummyPage() {
         singularFormPanel.setAnnotationMode(AnnotationMode.NONE);
+        singularFormPanel.setInstanceCreator(this::createInstance);
         add(form.add(singularFormPanel, singularValidationButton));
+    }
+
+    private SInstance createInstance() {
+        SIComposite currentInstance;
+        RefType refType = mockFormConfig.getTypeLoader().loadRefTypeOrException("mockType");
+        if (refType.get().isComposite()) {
+            typeBuilder.accept((STypeComposite) refType.get());
+        }
+        if (instanceCreator != null) {
+            currentInstance = instanceCreator.apply(refType);
+        } else{
+            SDocumentFactory factory = mockFormConfig.getDocumentFactory();
+            currentInstance = (SIComposite) factory.createInstance(refType);
+        }
+        instancePopulators.stream().forEach(populator -> populator.accept(currentInstance));
+        return currentInstance;
     }
 
     public Form<?> getForm() {
         return form;
     }
 
-    public SingularFormPanel<String> getSingularFormPanel() {
+    public SingularFormPanel getSingularFormPanel() {
         return singularFormPanel;
     }
 
@@ -109,7 +107,7 @@ public class DummyPage extends WebPage {
     }
 
     public SIComposite getCurrentInstance() {
-        return currentInstance;
+        return (SIComposite) singularFormPanel.getInstance();
     }
 
     public void setInstanceCreator(IFunction<RefType, SIComposite> instanceCreator) {
