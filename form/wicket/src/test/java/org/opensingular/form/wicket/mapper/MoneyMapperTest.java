@@ -20,26 +20,4 @@ public class MoneyMapperTest {
         textField.assertValue().isEqualTo("10,00");
     }
 
-
-    /*@Test
-    public void testVisualizationRendering() {
-        FormTester formTester = startPage(ViewMode.READ_ONLY);
-
-        Optional<String> money = findId(formTester.getForm(), "money");
-        assertTrue(money.isPresent());
-
-        Component panel = formTester.getForm().get(money.get());
-        assertNotNull(panel);
-        assertTrue(panel instanceof BOutputPanel);
-
-        Optional<String> outputFieldId = findId((BOutputPanel) panel, "output");
-        assertTrue(outputFieldId.isPresent());
-
-        Component output = panel.get(outputFieldId.get());
-        assertNotNull(panel);
-
-        assertEquals("R$ 10,00", output.getDefaultModelObject());
-    }*/
-
-
 }

@@ -1,5 +1,9 @@
-package org.opensingular.form;
+package org.opensingular.form.helpers;
 
+import org.fest.assertions.api.Assertions;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -17,7 +21,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> {
 
-    AssertionsSType(SType<?> type) {
+    public AssertionsSType(SType<?> type) {
         super(type);
     }
 
@@ -80,7 +84,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
      * original.
      */
     public AssertionsSType isExtensionOfParentCompositeFieldReference() {
-        assertThat(getTarget().getParentScope()).isInstanceOf(STypeComposite.class);
+        Assertions.assertThat(getTarget().getParentScope()).isInstanceOf(STypeComposite.class);
         STypeComposite parent = (STypeComposite) getTarget().getParentScope();
         new AssertionsSType(parent.getSuperType()).is(parent.getClass());
         STypeComposite parent2 = (STypeComposite) parent.getSuperType();
@@ -115,14 +119,14 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
     public AssertionsSType isExtensionCorrect(SType<?> expectedSuperType) {
         isDirectExtensionOf(expectedSuperType);
         if (getTarget().isComposite()) {
-            assertThat(expectedSuperType).isInstanceOf(STypeComposite.class);
+            Assertions.assertThat(expectedSuperType).isInstanceOf(STypeComposite.class);
             if(! (getTarget().isRecursiveReference() && getTarget().getSuperType() == expectedSuperType)) {
                 for (SType<?> fieldSuper : ((STypeComposite<?>) expectedSuperType).getFields()) {
                     field(fieldSuper.getNameSimple()).isExtensionCorrect(fieldSuper);
                 }
             }
         } else if (getTarget().isList()) {
-            assertThat(expectedSuperType).isInstanceOf(STypeList.class);
+            Assertions.assertThat(expectedSuperType).isInstanceOf(STypeList.class);
             listElementType().isExtensionCorrect(((STypeList<?,?>) expectedSuperType).getElementsType());
         }
         return this;
@@ -177,7 +181,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
     }
 
     private void compositeSize(int expectedSize) {
-        assertThat(((STypeComposite) getTarget()).getFields().size()).isEqualTo(expectedSize);
+        Assertions.assertThat(((STypeComposite) getTarget()).getFields().size()).isEqualTo(expectedSize);
     }
 
     /**

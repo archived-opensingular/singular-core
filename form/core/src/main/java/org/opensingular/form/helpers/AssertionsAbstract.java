@@ -1,5 +1,7 @@
-package org.opensingular.form;
+package org.opensingular.form.helpers;
 
+import org.opensingular.form.AtrRef;
+import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
@@ -34,14 +36,14 @@ public abstract class AssertionsAbstract<T extends SAttributeEnabled, SELF exten
      * Verifica se o atributo required ({@link SPackageBasic#ATR_REQUIRED}) é true.
      */
     public SELF isRequired() {
-        return isAttribute(SPackageBasic.ATR_REQUIRED, true);
+        return isAttribute(SPackageBasic.ATR_REQUIRED, Boolean.TRUE);
     }
 
     /**
      * Verifica se o atributo required ({@link SPackageBasic#ATR_REQUIRED}) é false.
      */
     public SELF isNotRequired() {
-        return isAttribute(SPackageBasic.ATR_REQUIRED, false);
+        return isAttribute(SPackageBasic.ATR_REQUIRED, Boolean.FALSE);
     }
 
     /**

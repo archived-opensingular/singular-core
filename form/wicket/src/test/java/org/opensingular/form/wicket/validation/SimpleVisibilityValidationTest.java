@@ -1,31 +1,51 @@
 package org.opensingular.form.wicket.validation;
 
-import org.junit.Assert;
+import org.fest.assertions.api.IterableAssert;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-public class SimpleVisibilityValidationTest extends SingularFormBaseTest {
+@Ignore
+public class SimpleVisibilityValidationTest {
 
-    STypeString fieldOne;
-    STypeString fieldTwo;
+    private static final String FIELD_ONE = "fieldOne";
+    private static final String FIELD_TWO = "fieldTwo";
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> mockType) {
+    private SingularDummyFormPageTester tester;
 
-        fieldOne = mockType.addFieldString("fieldOne");
-        fieldOne.asAtr().required(true);
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(baseType -> {
 
-        fieldTwo = mockType.addFieldString("fieldTwo");
-        fieldTwo.asAtr().visible(i -> false);
-        fieldTwo.asAtr().required(true);
+            STypeString fieldOne = baseType.addFieldString(FIELD_ONE);
+            STypeString fieldTwo = baseType.addFieldString(FIELD_TWO);
+
+            fieldOne.asAtr().required(true);
+            fieldTwo.asAtr().required(true).visible(i -> false);
+
+        });
+        tester.startDummyPage();
+        tester.newFormTester().submit(tester.getDummyPage().getSingularValidationButton());
     }
 
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
-        form.submit(page.getSingularValidationButton());
-        Assert.assertTrue(findModelsByType(fieldOne).findFirst().get().getSInstance().hasValidationErrors());
-        Assert.assertFalse(findModelsByType(fieldTwo).findFirst().get().getSInstance().hasValidationErrors());
+        assertThatFieldValidationErros(FIELD_ONE).hasSize(1);
+        assertThatFieldValidationErros(FIELD_TWO).isEmpty();
     }
+
+    private IterableAssert<IValidationError> assertThatFieldValidationErros(String field) {
+        return tester.getAssertionsForm()
+                .getSubCompomentWithType(
+                        tester.findTypeBySimpleName(field).is(STypeString.class).getTarget()
+                )
+                .assertSInstance()
+                .assertThatValidationErrors();
+    }
+
+
 }

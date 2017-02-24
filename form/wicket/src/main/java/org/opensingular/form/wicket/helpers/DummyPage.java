@@ -78,7 +78,7 @@ public class DummyPage extends WebPage {
             SDocumentFactory factory = mockFormConfig.getDocumentFactory();
             currentInstance = (SIComposite) factory.createInstance(refType);
         }
-        instancePopulators.stream().forEach(populator -> populator.accept(currentInstance));
+        instancePopulators.forEach(populator -> populator.accept(currentInstance));
         return currentInstance;
     }
 
@@ -107,7 +107,7 @@ public class DummyPage extends WebPage {
     }
 
     public SIComposite getCurrentInstance() {
-        return (SIComposite) singularFormPanel.getInstance();
+        return currentInstance;
     }
 
     public void setInstanceCreator(IFunction<RefType, SIComposite> instanceCreator) {
