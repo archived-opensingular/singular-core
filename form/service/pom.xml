@@ -3,7 +3,7 @@
     <parent>
         <artifactId>singular-form</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.9-SNAPSHOT</version>
+        <version>1.5.9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,12 +15,12 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-core</artifactId>
-            <version>1.5.9-SNAPSHOT</version>
+            <version>1.5.9</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>1.5.9-SNAPSHOT</version>
+            <version>1.5.9</version>
         </dependency>
 
         <!-- HIBERNATE -->
