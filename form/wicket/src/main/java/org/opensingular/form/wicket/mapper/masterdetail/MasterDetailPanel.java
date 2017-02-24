@@ -359,22 +359,32 @@ public class MasterDetailPanel extends Panel {
 
 
     private BaseDataProvider<SInstance, ?> newDataProvider() {
-        return new BaseDataProvider<SInstance, Object>() {
-            @Override
-            public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return lista.getObject().iterator();
-            }
-
-            @Override
-            public long size() {
-                return lista.getObject().size();
-            }
-
-            @Override
-            public IModel<SInstance> model(SInstance object) {
-                return new SInstanceListItemModel<>(lista, lista.getObject().indexOf(object));
-            }
-        };
+        return new SIListDataProvider(lista);
     }
 
+    static class SIListDataProvider extends BaseDataProvider<SInstance, Object> {
+        private final IModel<SIList<SInstance>> lista;
+        public SIListDataProvider(IModel<SIList<SInstance>> lista) {
+            this.lista = lista;
+        }
+
+        @Override
+        public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
+            final SIList<SInstance> siList = lista.getObject();
+            final List<SInstance> list = new ArrayList<>();
+            for (int i = 0; (i < count) && (i + first < siList.size()); i++)
+                list.add(siList.get(i + first));
+            return list.iterator();
+        }
+
+        @Override
+        public long size() {
+            return lista.getObject().size();
+        }
+
+        @Override
+        public IModel<SInstance> model(SInstance object) {
+            return new SInstanceListItemModel<>(lista, lista.getObject().indexOf(object));
+        }
+    }
 }
