@@ -309,12 +309,6 @@
                     </plugin>
                 </plugins>
             </build>
-
-            <properties>
-                <project.scm.url>https://github.com/opensingular/singular-core/tree/master</project.scm.url>
-                <project.scm.connection>scm:git:https://github.com/opensingular/singular-core.git</project.scm.connection>
-                <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-core.git</project.scm.developerConnection>
-            </properties>
         </profile>
 
         <profile>
@@ -519,7 +513,7 @@
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.developerConnection>
+        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
