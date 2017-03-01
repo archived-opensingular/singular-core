@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.8</version>
+    <version>1.5.9-SNAPSHOT</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -515,7 +515,6 @@
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>1.5.8</singular.version>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.security.version>4.0.3.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
