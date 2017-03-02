@@ -1,6 +1,8 @@
 package org.opensingular.form.wicket.mapper.table;
 
+import org.apache.wicket.markup.html.form.Button;
 import org.junit.Before;
+import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -8,15 +10,6 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.TextField;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TableListWithCompositeTypeTest {
 
@@ -43,12 +36,11 @@ public class TableListWithCompositeTypeTest {
     public void setUp(){
         tester = new SingularDummyFormPageTester();
         tester.getDummyPage().setTypeBuilder(TableListWithCompositeTypeTest::buildBaseType);
+        tester.startDummyPage();
     }
 
     @Test
     public void testAddItem() {
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
 
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
@@ -70,8 +62,6 @@ public class TableListWithCompositeTypeTest {
 
     @Test
     public void testRemoveItem() {
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
 
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
@@ -92,8 +82,6 @@ public class TableListWithCompositeTypeTest {
 
     @Test
     public void testAddItemAndFillOptions() {
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
 
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
@@ -117,8 +105,6 @@ public class TableListWithCompositeTypeTest {
 
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
 
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);

@@ -1,25 +1,27 @@
 package org.opensingular.form.wicket.grid;
 
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+import org.junit.Test;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.util.STypeEMail;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
-import org.junit.Assert;
-import org.junit.Test;
 
-public class NewRowTest extends SingularFormBaseTest {
+import static org.fest.assertions.api.Assertions.assertThat;
 
-    STypeEMail email;
-    STypeString nome;
-    STypeInteger idade;
+public class NewRowTest {
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> mockType) {
+    private static STypeEMail email;
+    private static STypeString nome;
+    private static STypeInteger idade;
+
+    private SingularDummyFormPageTester tester;
+
+    private static void buildBaseType(STypeComposite<?> mockType) {
 
         nome = mockType.addFieldString("nome");
         nome.asAtr().label("Nome")
@@ -39,21 +41,26 @@ public class NewRowTest extends SingularFormBaseTest {
 
     @Test
     public void testIfEveryTypeIsInDiferentRow() {
-        BSRow row1 = findRowForType(nome);
-        BSRow row2 = findRowForType(idade);
-        BSRow row3 = findRowForType(email);
-        Assert.assertNotEquals(row1, row2);
-        Assert.assertNotEquals(row1, row3);
-        Assert.assertNotEquals(row2, row3);
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(NewRowTest::buildBaseType);
+        tester.startDummyPage();
+
+        BSRow nomeRow = findRowForType(nome);
+        BSRow idadeRow = findRowForType(idade);
+        BSRow emailRow = findRowForType(email);
+
+        assertThat(nomeRow).isNotEqualTo(idadeRow);
+        assertThat(nomeRow).isNotEqualTo(emailRow);
+        assertThat(emailRow).isNotEqualTo(idadeRow);
     }
 
     BSRow findRowForType(SType<?> type) {
-        return findFormComponentsByType(type).findFirst().get()
+        return tester.getAssertionsForm().getSubCompomentWithType(type).getTarget()
                 .visitParents(BSRow.class, new IVisitor<BSRow, BSRow>() {
                     @Override
                     public void component(BSRow row, IVisit<BSRow> visit) {
-                        visit.stop(row);
-                    }
+                                visit.stop(row);
+                            }
                 });
     }
 
