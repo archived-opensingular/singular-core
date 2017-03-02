@@ -1,22 +1,13 @@
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.document.SDocumentFactoryEmpty;
-import org.opensingular.form.io.TesteFormSerializationUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.*;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.io.TesteFormSerializationUtil;
 
 import java.io.Serializable;
 
@@ -72,19 +63,9 @@ public class InitListenerTest extends TestCaseForm {
     }
 
     private SInstance newInstance(SType t) {
-        return new SDocumentFactoryEmpty() {
-            @Override
-            protected void setupDocument(SDocument document) {
-                super.setupDocument(document);
-                document.bindLocalService("test", P.class, RefService.of(new P()));
-            }
-        }.createInstance(new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return t;
-            }
-        });
-
+        return SDocumentFactory.empty()
+                .extendAddingSetupStep(document -> document.bindLocalService("test", P.class, RefService.of(new P())))
+                .createInstance(RefType.of(() -> t));
     }
 
     @Test

@@ -169,7 +169,8 @@ public final class SFormUtil {
      * Retorna o nome completo do tipo sem precisar carregar a definição
      * mediante a leitura das anotações {@link SInfoType} e {@link SInfoPackage}.
      */
-    public static String getTypeName(Class<? extends SType<?>> typeClass) {
+    @Nonnull
+    public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
         Class<? extends SPackage> packageClass = getTypePackage(typeClass);
         String packageName = getInfoPackageNameOrException(packageClass);
         return packageName + '.' + getTypeSimpleName(typeClass);

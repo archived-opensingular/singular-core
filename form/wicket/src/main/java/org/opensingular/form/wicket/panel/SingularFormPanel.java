@@ -27,10 +27,7 @@ import org.apache.wicket.resource.JQueryPluginResourceReference;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.RefSDocumentFactory;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.form.document.*;
 import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -44,8 +41,10 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos.
@@ -59,7 +58,11 @@ public class SingularFormPanel extends Panel {
 
     private final SInstanceRootModel<SInstance> instanceModel = new SInstanceRootModel<>();
 
-    private ISupplier<SInstance> instanceCreator;
+    //Pode ser transient pois é usado apenas uma vez na inicialização do painel
+    private transient Supplier<SInstance> instanceCreator;
+
+    //Pode ser transient pois é usado apenas uma vez na inicialização do painel
+    private transient Consumer<SInstance> instanceInitializer;
 
     private ViewMode viewMode = ViewMode.EDIT;
 
@@ -71,8 +74,6 @@ public class SingularFormPanel extends Panel {
 
     private IBSComponentFactory<Component> preFormPanelFactory;
 
-    private ISupplier<SingularFormContextWicket> formContextWicketSupplier;
-
     private RefSDocumentFactory documentFactoryRef;
 
     /**
@@ -80,7 +81,7 @@ public class SingularFormPanel extends Panel {
      *
      * @param id o markup id wicket
      */
-    public SingularFormPanel(String id) {
+    public SingularFormPanel(@Nonnull String id) {
         this(id, false);
     }
 
@@ -90,7 +91,7 @@ public class SingularFormPanel extends Panel {
      * @param id        o markup id wicket
      * @param typeClass Tipo a ser utilizado para montar o formulário.
      */
-    public SingularFormPanel(String id, @Nonnull Class<? extends SType> typeClass) {
+    public SingularFormPanel(@Nonnull String id, @Nonnull Class<? extends SType> typeClass) {
         this(id, false);
         setInstanceFromType(typeClass);
     }
@@ -101,7 +102,7 @@ public class SingularFormPanel extends Panel {
      * @param id      o markup id wicket
      * @param refType Tipo a ser utilizado para montar o formulário.
      */
-    public SingularFormPanel(String id, @Nonnull RefType refType) {
+    public SingularFormPanel(@Nonnull String id, @Nonnull RefType refType) {
         this(id, false);
         setInstanceFromType(refType);
     }
@@ -112,9 +113,31 @@ public class SingularFormPanel extends Panel {
      * @param id        o markup id wicket
      * @param typeClass Tipo a ser utilizado para montar o formulário.
      */
-    public SingularFormPanel(String id, @Nonnull ISupplier<SType<?>> typeSupplier) {
+    public SingularFormPanel(@Nonnull String id, @Nonnull ISupplier<SType<?>> typeSupplier) {
         this(id, false);
         setInstanceFromType(typeSupplier);
+    }
+
+    /**
+     * Construtor do painel. <p>Veja {@link #setInstance(SInstance)}.</p>
+     *
+     * @param id        o markup id wicket
+     * @param instance Conteúdo do painel.
+     */
+    public SingularFormPanel(@Nonnull String id, @Nonnull SInstance instance) {
+        this(id, false);
+        setInstance(instance);
+    }
+
+    /**
+     * Construtor do painel. <p>Veja {@link #setInstance(SInstance)}.</p>
+     *
+     * @param id        o markup id wicket
+     * @param instanceCreator Criado da instância a ser trabalhada no painel.
+     */
+    public SingularFormPanel(@Nonnull String id, @Nonnull Supplier<SInstance> instanceCreator) {
+        this(id, false);
+        setInstanceCreator(instanceCreator);
     }
 
     /**
@@ -124,7 +147,7 @@ public class SingularFormPanel extends Panel {
      * @param singularFormConfig configuração para manipulação do documento a ser criado ou
      *                           recuperado.
      */
-    public SingularFormPanel(String id, boolean nested) {
+    public SingularFormPanel(@Nonnull String id, boolean nested) {
         super(id);
         this.nested = nested;
     }
@@ -160,6 +183,7 @@ public class SingularFormPanel extends Panel {
 
     /**
      * Define a instância a ser editada no painel. A mesma deve estar corretamente configurada para ser serializável.
+     * @param instance Conteúdo do painel.
      */
     public final void setInstance(@Nonnull SInstance instance) {
         Objects.requireNonNull(instance);
@@ -169,7 +193,9 @@ public class SingularFormPanel extends Panel {
         instanceModel.setObject(instance);
     }
 
-    public final void setInstanceCreator(@Nonnull ISupplier<SInstance> instanceCreator) {
+    /** Define o criador da instância a ser o conteúdo do painel. */
+    public final void setInstanceCreator(@Nonnull Supplier<SInstance> instanceCreator) {
+        Objects.requireNonNull(instanceCreator);
         this.instanceCreator = instanceCreator;
     }
 
@@ -193,6 +219,9 @@ public class SingularFormPanel extends Panel {
                                 ".onInitialize() seja invocado. Se a chamada deste método foi mediante super" +
                                 ".onInitialize(), a instância pode ser configurada imediatamente antes dessa chamada.");
             }
+        }
+        if (instanceInitializer != null) {
+            instanceInitializer.accept(instanceModel.getObject());
         }
         updateContainer();
     }
@@ -220,19 +249,9 @@ public class SingularFormPanel extends Panel {
         formContext.getUIBuilder().build(ctx, getViewMode());
     }
 
-    public void setFormContextWicketSupplier(ISupplier<SingularFormContextWicket> formContextWicketSupplier) {
-        this.formContextWicketSupplier = formContextWicketSupplier;
-    }
-
     private SingularFormContextWicket resolveFormConfigWicket() {
         SingularFormContextWicket formContextWicket = null;
-        if (formContextWicketSupplier != null) {
-            formContextWicket = formContextWicketSupplier.get();
-            if (formContextWicket == null) {
-                throw new SingularFormException("O formContextWicketSupplier configurado retornou null (" +
-                        formContextWicket.getClass().getName() + ")");
-            }
-        } else if (documentFactoryRef != null) {
+        if (documentFactoryRef != null) {
             ServiceRegistry registry = documentFactoryRef.get().getServiceRegistry();
             if (registry != null) {
                 formContextWicket = registry.lookupService(SingularFormContextWicket.class);
@@ -265,29 +284,42 @@ public class SingularFormPanel extends Panel {
         }
     }
 
-
+    /** Indica qual o modo de uso de anotação, sendo que o default é desativado.*/
+    @Nonnull
     public final AnnotationMode getAnnotationMode() {
         return annotationMode;
     }
 
-    public void setAnnotationMode(AnnotationMode annotationMode) {
-        this.annotationMode = annotationMode;
+    /** Define como o formulário deve se comportar em relação as anotações. */
+    public void setAnnotationMode(@Nonnull AnnotationMode annotationMode) {
+        this.annotationMode = Objects.requireNonNull(annotationMode);
     }
 
+    /** Retorna o model da instância sendo trabalhar pelo painel. */
+    @Nonnull
     public final IModel<? extends SInstance> getInstanceModel() {
         return instanceModel;
     }
 
+    /** Retorna a instância atual do painel (ou dispara exception se ainda estiver nula). */
+    @Nonnull
     public final SInstance getInstance() {
-        return getInstanceModel().getObject();
+        SInstance instance = getInstanceModel().getObject();
+        if (instance == null) {
+            throw new SingularFormException("A instância ainda não foi inicializada ou atribuida ao painel");
+        }
+        return instance;
     }
 
+    /** Retorna a configuração para exibição do formulário da instância (edição, readonly). O default é ser edição. */
+    @Nonnull
     public final ViewMode getViewMode() {
         return viewMode;
     }
 
-    public final void setViewMode(ViewMode viewMode) {
-        this.viewMode = viewMode;
+    /** Define como o formulário deve ser tratado (edição, readonly, etc.) .*/
+    public final void setViewMode(@Nonnull ViewMode viewMode) {
+        this.viewMode = Objects.requireNonNull(viewMode);
     }
 
     public final String getRootTypeSubtitle() {
@@ -298,33 +330,46 @@ public class SingularFormPanel extends Panel {
         this.preFormPanelFactory = preFormPanelFactory;
     }
 
-    /** Retorna a fábrica utilizada para criar instâncias a partir de um Type. Pode ser null. */
-    @Nullable
-    public void setDocumentFactory(RefSDocumentFactory documentFactoryRef ) {
-        this.documentFactoryRef = documentFactoryRef;
-    }
-
-    /** Retorna a fábrica utilizada para criar instâncias a partir de um Type. Pode ser null. */
-    @Nullable
-    public void setDocumentFactory(SDocumentFactory documentFactory) {
-        this.documentFactoryRef = documentFactory.getDocumentFactoryRef();
-    }
-
-    /** Retorna a fábrica utilizada para criar instâncias a partir de um Type. Pode ser null. */
-    @Nullable
-    public final SDocumentFactory getDocumentFactory() {
-        return getDocumentFactoryRef().get();
-    }
-
-    /** Retorna a fábrica utilizada para criar instâncias a partir de um Type. Pode ser null. */
-    @Nullable
-    public final RefSDocumentFactory getDocumentFactoryRef() {
-        if (documentFactoryRef == null) {
-            SInstance instance = getInstance();
-            if (instance != null) {
-                return instance.getDocument().getDocumentFactoryRef();
-            }
+    /**
+     * Definice um código a ser chamado para inicialziar a instância durante a chamada do método {@link #onInitialize()}
+     * do Wicket.
+     */
+    public final void setInstanceInitializer(Consumer<SInstance> instanceInitializer) {
+        if(instanceInitializer != null) {
+            throw new SingularFormException("O instanceInitializer ja está configurado");
         }
-        return documentFactoryRef;
+        this.instanceInitializer = instanceInitializer;
+    }
+
+    /** Define a fábrica para criar instâncias a ser utilizada pelo painel. */
+    public void setDocumentFactory(@Nonnull RefSDocumentFactory documentFactoryRef ) {
+        this.documentFactoryRef = Objects.requireNonNull(documentFactoryRef);
+    }
+
+    /** Define a fábrica para criar instâncias a ser utilizada pelo painel. */
+    public void setDocumentFactory(@Nonnull SDocumentFactory documentFactory) {
+        this.documentFactoryRef = Objects.requireNonNull(documentFactory).getDocumentFactoryRef();
+    }
+
+    /**
+     * Retorna a fábrica utilizada para criar instâncias a partir de um Type. Pode ser null se a instância ainda não
+     * tiver sido atribuida.
+     */
+    @Nonnull
+    public final Optional<SDocumentFactory> getDocumentFactory() {
+        return getDocumentFactoryRef().map(RefSDocumentFactory::get);
+    }
+
+    /**
+     * Retorna a fábrica utilizada para criar instâncias a partir de um Type. Pode ser null se a instância ainda não
+     * tiver sido atribuida.
+     */
+    @Nonnull
+    public final Optional<RefSDocumentFactory> getDocumentFactoryRef() {
+        if (documentFactoryRef == null) {
+            return Optional.ofNullable(getInstanceModel().getObject()).map(SInstance::getDocument).map(
+                    SDocument::getDocumentFactoryRef);
+        }
+        return Optional.of(documentFactoryRef);
     }
 }

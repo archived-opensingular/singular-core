@@ -6,10 +6,6 @@ import org.junit.runners.Parameterized;
 import org.opensingular.form.*;
 import org.opensingular.form.internal.xml.MElement;
 
-import java.util.Optional;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-
 /**
  * @author Daniel Bordin
  */
@@ -53,7 +49,7 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
         item.getField("name").asAtrAnnotation().text("ok");
         item.getField("qtd").asAtrAnnotation().text("qtd[1] is blank");
 
-        MElement xmlInstance = MformPersistenciaXML.toXML(instance);
+        MElement xmlInstance = MformPersistenciaXML.toXML(instance).get();
         MElement xmlAnnotation = MformPersistenciaXML.annotationToXml(instance).get();
 
         //It's expected to be only persisted the field with value

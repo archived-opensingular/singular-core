@@ -31,7 +31,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.component.SingularSaveButton;
@@ -167,12 +166,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 instanceModel.getObject().getDocument().persistFiles();//Tem que ser feito antes obrigatoriamente para poder atualizar os ids
-                MElement xml = MformPersistenciaXML.toXML(instanceModel.getObject());
-                if (xml != null) {
-                    currentModel.setXml(xml.toStringExato());
-                } else {
-                    currentModel.setXml(StringUtils.EMPTY);
-                }
+                String xml = MformPersistenciaXML.toStringXML(instanceModel.getObject()).orElse(StringUtils.EMPTY);
+                currentModel.setXml(xml);
                 currentModel.setDescription(instanceModel.getObject().toStringDisplay());
                 dao.save(currentModel);
                 backToCrudPage(this);
@@ -215,12 +210,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         final Component button = new SingularValidationButton("save-whitout-validate-btn", singularFormPanel.getInstanceModel()) {
             protected void save(IModel<? extends SInstance> instanceModel) {
                 instanceModel.getObject().getDocument().persistFiles();//Tem que ser feito antes obrigatoriamente para poder atualizar os ids
-                MElement rootXml = MformPersistenciaXML.toXML(instanceModel.getObject());
-                if (rootXml != null) {
-                    currentModel.setXml(rootXml.toStringExato());
-                } else {
-                    currentModel.setXml(StringUtils.EMPTY);
-                }
+                String rootXml = MformPersistenciaXML.toStringXML(instanceModel.getObject()).orElse(StringUtils.EMPTY);
+                currentModel.setXml(rootXml);
                 currentModel.setDescription(instanceModel.getObject().toStringDisplay());
                 addAnnotationsToModel(instanceModel.getObject());
                 dao.save(currentModel);

@@ -1,40 +1,11 @@
 package org.opensingular.form.io;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Map.Entry;
-import java.util.function.Function;
-
-import org.opensingular.form.InstanceSerializableRef;
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInfoPackage;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SPackage;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.TypeBuilder;
 import org.fest.assertions.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.opensingular.form.*;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -42,8 +13,13 @@ import org.opensingular.form.document.ServiceRegistry.Pair;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+
+import java.io.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TesteFormSerializationUtil extends TestCaseForm {
@@ -82,7 +58,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
     @Test
     public void testTipoCompostoByClass() {
-        SInstanceTesteEndereco instancia = (SInstanceTesteEndereco) SDocumentFactory.empty().createInstance(new RefTypeSeria());
+        SInstanceTesteEndereco instancia = (SInstanceTesteEndereco) SDocumentFactory.empty().createInstance(RefType.of(STypeTesteEndereco.class));
 
         instancia.setValue("bairro", "A2");
         instancia.setValue("numero", 10);
@@ -94,7 +70,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
     @Test
     public void testTipoCompostoByClassWithNullValue() {
-        SInstanceTesteEndereco instancia = (SInstanceTesteEndereco) SDocumentFactory.empty().createInstance(new RefTypeSeria());
+        SInstanceTesteEndereco instancia = (SInstanceTesteEndereco) SDocumentFactory.empty().createInstance(RefType.of(STypeTesteEndereco.class));
 
         instancia.setValue("bairro", "A2");
         instancia.setValue("rua", null);
@@ -121,16 +97,6 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         });
         bloco.setValue("ref.rua", null);
         testSerializacao(bloco);
-    }
-
-    public static class RefTypeSeria extends RefType {
-
-        @Override
-        protected SType<?> retrieve() {
-            SDictionary novo = SDictionary.create();
-            return novo.getType(STypeTesteEndereco.class);
-        }
-
     }
 
     @SInfoPackage(name = "p.teste.seria")
@@ -318,7 +284,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
         assertSame(tr1.ref1.get().getDictionary(), tr1.ref2.get().getDictionary());
 
-        TwoReferences tr2 = toAndFromByteArray(tr1);
+        TwoReferences tr2 = SingularIOUtils.serializeAndDeserialize(tr1);
 
         assertEquivalent(tr1.ref1.get().getDocument(), tr2.ref1.get().getDocument(), true);
         assertEquivalent(tr1.ref1.get(), tr2.ref1.get());
@@ -330,18 +296,15 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         public InstanceSerializableRef<?> ref2;
     }
 
-    private static void testSerializacaoComResolverSerializado(SInstance original) {
-        testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i), FormSerializationUtil::toInstance);
-    }
-
     public static void testSerializacao(InstanceSerializableRef<?> ref) {
-        SInstance instancia2 = toAndFromByteArray(ref).get();
+        SInstance instancia2 = SingularIOUtils.serializeAndDeserialize(ref).get();
         assertEquivalent(ref.get().getDocument(), instancia2.getDocument(), true);
         assertEquivalent(ref.get(), instancia2);
     }
 
+    /** Serializa e deserializa a instância e testa se a versão original e a deserializada possuem o mesmo conteúdo. */
     public static SInstance testSerializacao(SInstance original) {
-        return testSerializacao(original, FormSerializationUtil::toSerializedObject, fs -> FormSerializationUtil.toInstance(fs));
+        return testSerializacao(original, FormSerializationUtil::toSerializedObject, FormSerializationUtil::toInstance);
     }
 
     private static SInstance testSerializacao(SInstance original, Function<SInstance, FormSerialized> toSerial,
@@ -352,27 +315,12 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         assertEquivalent(original.getDocument(), instancia2.getDocument(), fs.getXml() != null);
         assertEquivalent(original, instancia2);
 
-        fs = toAndFromByteArray(fs);
+        fs = SingularIOUtils.serializeAndDeserialize(fs);
         instancia2 = fromSerial.apply(fs);
         assertEquivalent(original.getDocument(), instancia2.getDocument(), fs.getXml() != null);
         assertEquivalent(original, instancia2);
 
         return instancia2;
-    }
-
-    /** Serializa e deserializa o mesmo objeto. */
-    public static <T> T toAndFromByteArray(T obj) {
-        try {
-            ByteArrayOutputStream out1 = new ByteArrayOutputStream();
-            ObjectOutputStream out2 = new ObjectOutputStream(out1);
-            out2.writeObject(obj);
-            out2.close();
-
-            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out1.toByteArray()));
-            return (T) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static SInstance serializarEDeserializar(SInstance original) {

@@ -138,7 +138,7 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     }
 
     @Override
-    public RefSDocumentFactory getDocumentFactoryRef() {
+    protected RefSDocumentFactory createDocumentFactoryRef() {
         final MockSDocumentFactory documentFactory = this;
         return new RefSDocumentFactory() {
             @Override
@@ -157,7 +157,7 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     protected void setupDocument(SDocument document) {
     }
 
-    private class Context implements SingularFormContextWicket, Serializable {
+    private static class Context implements SingularFormContextWicket, Serializable {
         @Override
         public UIBuilderWicket getUIBuilder() {
             return new UIBuilderWicket();

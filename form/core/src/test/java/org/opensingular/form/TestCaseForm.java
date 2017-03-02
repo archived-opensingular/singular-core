@@ -1,12 +1,12 @@
 package org.opensingular.form;
 
+import junit.framework.TestCase;
+import org.junit.runners.Parameterized;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import junit.framework.TestCase;
-import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -201,12 +201,7 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory,
             Class<? extends SType<?>> typeClass) {
-        RefType refType = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return dictionaryFactory.get().getType(typeClass);
-            }
-        };
+        RefType refType = RefType.of(() -> dictionaryFactory.get().getType(typeClass));
         return SDocumentFactory.empty().createInstance(refType);
     }
 
@@ -216,15 +211,11 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory, String typeName,
             ConfiguratorTestPackage setupCode) {
-        RefType refType = new RefType() {
-
-            @Override
-            protected SType<?> retrieve() {
-                SDictionary dictionary = dictionaryFactory.get();
-                setupCode.setup(dictionary.createNewPackage("teste"));
-                return dictionary.getType(typeName);
-            }
-        };
+        RefType refType = RefType.of(() -> {
+            SDictionary dictionary = dictionaryFactory.get();
+            setupCode.setup(dictionary.createNewPackage("teste"));
+            return dictionary.getType(typeName);
+        });
         return SDocumentFactory.empty().createInstance(refType);
     }
 

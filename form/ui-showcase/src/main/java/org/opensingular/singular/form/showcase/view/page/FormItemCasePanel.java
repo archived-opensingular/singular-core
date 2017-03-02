@@ -119,7 +119,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
     }
 
     private void viewXml(AjaxRequestTarget target, SInstance instance) {
-        MElement xml = MformPersistenciaXML.toXML(instance);
+        MElement xml = MformPersistenciaXML.toXML(instance).orElse(null);
         final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
         xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(getXmlOutput(xml, true))));
         xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(getXmlOutput(xml, false))));

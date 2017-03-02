@@ -28,7 +28,6 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
@@ -41,7 +40,6 @@ import org.opensingular.singular.form.showcase.view.template.Content;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Optional;
 
 public class PrototypeContent extends Content {
 
@@ -92,9 +90,7 @@ public class PrototypeContent extends Content {
             }
 
             private String getXmlFromInstance(SIComposite instance) {
-                return Optional.ofNullable(MformPersistenciaXML.toXML(instance))
-                        .map(MElement::toStringExato)
-                        .orElse(null);
+                return MformPersistenciaXML.toStringXML(instance).orElse(null);
             }
         });
 

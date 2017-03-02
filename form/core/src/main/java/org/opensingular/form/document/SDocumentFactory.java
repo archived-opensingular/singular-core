@@ -18,10 +18,12 @@ package org.opensingular.form.document;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -46,12 +48,15 @@ import java.util.Objects;
  */
 public abstract class SDocumentFactory {
 
+    private RefSDocumentFactory factoryReference;
+
     /**
      * Cria um nova instancia configurada pela fábrica e já preparada para
      * serialização se necessário (ver
      * {@link FormSerializationUtil#checkIfSerializable(SInstance)}).
      */
-    public final SInstance createInstance(RefType rootType) {
+    @Nonnull
+    public final SInstance createInstance(@Nonnull RefType rootType) {
         return createInstance(rootType, true);
     }
 
@@ -60,6 +65,7 @@ public abstract class SDocumentFactory {
      * @param executeInitTypeSetup Se true, dispara as inicializações automáticas implementadas em
      * {@link SInstance#init()}. Usar como false quando a instância está sendo recuperada da persistência.
      */
+    @Nonnull
     public final SInstance createInstance(@Nonnull RefType rootType, boolean executeInitTypeSetup) {
         SType type = Objects.requireNonNull(rootType).get();
         SInstance instance = type.newInstance(false);
@@ -78,7 +84,25 @@ public abstract class SDocumentFactory {
      * posteriomente recupere a referência à fábrica a atual, que em geral não
      * faz sentido ser serializada em sim.
      */
-    public abstract RefSDocumentFactory getDocumentFactoryRef();
+    @Nonnull
+    public final RefSDocumentFactory getDocumentFactoryRef() {
+        if (factoryReference == null) {
+            factoryReference = createDocumentFactoryRef();
+            if (factoryReference.get() != this) {
+                throw new SingularFormException(
+                        "A refencia a criada em RefSDocumentFactory.createDocumentFactoryRef() deveria retornar a " +
+                                "mesma instância atual");
+            }
+        }
+        return factoryReference;
+    }
+
+    /**
+     * Deve ser implementada para conter a lógica de recuperação da fábrica conforme descrito em {@link
+     * #getDocumentFactoryRef()}.
+     */
+    @Nonnull
+    protected abstract RefSDocumentFactory createDocumentFactoryRef();
 
     /**
      * Retorna o registro de serviços para busca de serviços pelo documento que
@@ -88,23 +112,31 @@ public abstract class SDocumentFactory {
      *
      * @return Pode ser null
      */
+    @Nullable
     public abstract ServiceRegistry getServiceRegistry();
-
-    // public abstract SingularFormConfig<?> getFormConfig();
 
     /**
      * Método a ser sobreescrito com o objetivo de configurar um novo documento
      * criado. Por configuração, entende-se o registro de serviços no documento
      * e outros parâmetros do mesmo.
      */
-    protected abstract void setupDocument(SDocument document);
+    protected abstract void setupDocument(@Nonnull SDocument document);
 
     /**
      * Fábrica de conveniência que não faz nenhuma configuração na instância ou
      * documento ao criá-los.
      */
+    @Nonnull
     public static SDocumentFactory empty() {
         return SDocumentFactoryEmpty.getEmptyInstance();
+    }
+
+    /**
+     * Cria um nova fábrica com o passo de configuração indicado.
+     */
+    @Nonnull
+    public static SDocumentFactory of(@Nonnull IConsumer<SDocument> setupStep) {
+        return new SDocumentFactoryExtended(Objects.requireNonNull(setupStep));
     }
 
     /**
@@ -112,10 +144,11 @@ public abstract class SDocumentFactory {
      * informados. A nova configuração será executada na sequencia da configuração original.
      *
      * @param extraSetupStep Passo adicional de configuração a se executado no documento em complemento a factory
-     *                       atual.
-     * @return Nova fábrica com o passo novo
+     *                       atual. Por ser null.
+     * @return Nova fábrica com o passo novo. Retorna a mesma fábrica original se o extraSetupStep for null.
      */
-    public SDocumentFactory extendAddingSetupStep(IConsumer<SDocument> extraSetupStep) {
-        return new SDocumentExtended(this, extraSetupStep);
+    @Nonnull
+    public SDocumentFactory extendAddingSetupStep(@Nullable IConsumer<SDocument> extraSetupStep) {
+        return SDocumentFactoryExtended.extend(this, extraSetupStep);
     }
 }

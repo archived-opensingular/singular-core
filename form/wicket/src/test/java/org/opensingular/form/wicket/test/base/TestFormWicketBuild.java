@@ -22,11 +22,10 @@ import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.helpers.SingularWicketTester;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.panel.FormPanel;
-
-import java.util.function.Supplier;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.findContainerRelativePath;
 
@@ -51,14 +50,8 @@ public class TestFormWicketBuild  {
         });
     }
 
-    protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
-        RefType ref = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return typeSupplier.get();
-            }
-        };
-        return SDocumentFactory.empty().createInstance(ref);
+    protected static SInstance createIntance(ISupplier<SType<?>> typeSupplier) {
+        return SDocumentFactory.empty().createInstance(RefType.of(typeSupplier));
     }
 
     @Test
