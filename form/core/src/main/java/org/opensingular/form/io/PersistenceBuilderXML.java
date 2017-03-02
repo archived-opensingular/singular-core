@@ -69,7 +69,7 @@ public class PersistenceBuilderXML {
     public boolean isReturnNullXML() { return returnNullXML; }
 
     public MElement toXML(SInstance instancia) {
-        return MformPersistenciaXML.toXML(null, null, instancia, this);
+        return SFormXMLUtil.toXML(null, null, instancia, this);
     }
 
 }

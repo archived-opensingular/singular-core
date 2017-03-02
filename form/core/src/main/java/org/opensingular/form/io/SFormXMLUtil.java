@@ -41,12 +41,12 @@ import java.util.Set;
  *
  * @author Daniel C. Bordin
  */
-public class MformPersistenciaXML {
+public final class SFormXMLUtil {
 
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
 
-    private MformPersistenciaXML() {}
+    private SFormXMLUtil() {}
 
     /**
      * Cria uma instância não passível de serialização para do tipo com o

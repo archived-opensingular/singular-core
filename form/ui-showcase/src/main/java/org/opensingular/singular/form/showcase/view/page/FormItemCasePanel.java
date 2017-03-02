@@ -29,7 +29,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.wicket.component.BFModalBorder;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.component.SingularSaveButton;
@@ -119,7 +119,7 @@ public class FormItemCasePanel extends ItemCasePanel<CaseBaseForm> implements Si
     }
 
     private void viewXml(AjaxRequestTarget target, SInstance instance) {
-        MElement xml = MformPersistenciaXML.toXML(instance).orElse(null);
+        MElement xml = SFormXMLUtil.toXML(instance).orElse(null);
         final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
         xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(getXmlOutput(xml, true))));
         xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.TAB_PANEL_ID, $m.ofValue(getXmlOutput(xml, false))));

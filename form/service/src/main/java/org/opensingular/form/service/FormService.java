@@ -25,7 +25,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.persistence.*;
 import org.opensingular.form.persistence.dao.*;
 import org.opensingular.form.persistence.entity.*;
@@ -84,7 +84,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         Objects.requireNonNull(documentFactory);
         Objects.requireNonNull(formVersionEntity);
 
-        final SInstance instance     = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
+        final SInstance instance     = SFormXMLUtil.fromXML(refType, formVersionEntity.getXml(), documentFactory);
         final IConsumer loadListener = instance.getAttributeValue(SPackageBasic.ATR_LOAD_LISTENER);
 
         loadCurrentXmlAnnotationOrEmpty(instance.getDocument(), formVersionEntity);
@@ -230,7 +230,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     private void loadCurrentXmlAnnotationOrEmpty(SDocument document, FormVersionEntity formVersionEntity) {
         document.getDocumentAnnotations().clear();
         for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formVersionEntity).map(FormVersionEntity::getFormAnnotations).orElse(Collections.emptyList())) {
-            MformPersistenciaXML.annotationLoadFromXml(document,
+            SFormXMLUtil.annotationLoadFromXml(document,
                     Optional
                             .ofNullable(formAnnotationEntity.getAnnotationCurrentVersion())
                             .map(FormAnnotationVersionEntity::getXml)
@@ -293,7 +293,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Nonnull
     private String extractContent(@Nonnull SInstance instance) {
-        return MformPersistenciaXML.toStringXMLOrEmptyXML(instance);
+        return SFormXMLUtil.toStringXMLOrEmptyXML(instance);
     }
 
     @Override

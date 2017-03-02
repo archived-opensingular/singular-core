@@ -10,7 +10,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.internal.xml.MParser;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -53,7 +53,7 @@ public class STypeCompositeTest extends TestCaseForm {
         Assertions.assertThat(original.getDescendant(content).getValue()).isEqualTo("My second content");
 
         original.getDescendant(subStuff)
-                .setValue(MformPersistenciaXML.fromXML(subStuff, MParser.parse(backup)));
+                .setValue(SFormXMLUtil.fromXML(subStuff, MParser.parse(backup)));
 
         Assertions.assertThat(original.getDescendant(name).getValue()).isEqualTo("My second name");
         Assertions.assertThat(original.getDescendant(content).getValue()).isEqualTo("My first content");
@@ -61,7 +61,7 @@ public class STypeCompositeTest extends TestCaseForm {
     }
 
     private String xml(SIComposite original) {
-        return MformPersistenciaXML.toXML(original).get().toString();
+        return SFormXMLUtil.toXML(original).get().toString();
     }
 
 }

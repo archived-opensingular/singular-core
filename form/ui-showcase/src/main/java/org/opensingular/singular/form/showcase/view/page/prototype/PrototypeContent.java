@@ -28,7 +28,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
@@ -90,7 +90,7 @@ public class PrototypeContent extends Content {
             }
 
             private String getXmlFromInstance(SIComposite instance) {
-                return MformPersistenciaXML.toStringXML(instance).orElse(null);
+                return SFormXMLUtil.toStringXML(instance).orElse(null);
             }
         });
 
@@ -136,7 +136,7 @@ public class PrototypeContent extends Content {
         if (StringUtils.isBlank(xml)) {
             instance = singularFormConfig.getDocumentFactory().createInstance(refType);
         } else {
-            instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+            instance = SFormXMLUtil.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
         }
         return (SIComposite) instance;
     }

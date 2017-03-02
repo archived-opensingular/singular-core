@@ -30,10 +30,10 @@ public class TestMformPersistenciaXML extends TestCaseForm {
         xml.addElement("b", "3");
         xml.addElement("c").addElement("d", "4");
 
-        SIComposite instance = MformPersistenciaXML.fromXML(bloco, xml);
+        SIComposite instance = SFormXMLUtil.fromXML(bloco, xml);
         assertInstance(instance).isValueEquals("a", "1");
 
-        MElement novo = MformPersistenciaXML.toXML(instance).get();
+        MElement novo = SFormXMLUtil.toXML(instance).get();
 
         assertEquals("bloco", novo.getTagName());
         assertEquals("1", novo.getValor("a"));
@@ -60,12 +60,12 @@ public class TestMformPersistenciaXML extends TestCaseForm {
         item.setAttribute("id","2");
         item.addElement("a","5").setAttribute("id","4");
 
-        SIList<SIComposite> instance = MformPersistenciaXML.fromXML(list, xml);
+        SIList<SIComposite> instance = SFormXMLUtil.fromXML(list, xml);
         assertInstance(instance).isList(2);
         assertInstance(instance).isValueEquals("[0].a","1");
         assertInstance(instance).isValueEquals("[1].a","5");
 
-        MElement novo = MformPersistenciaXML.toXML(instance).get();
+        MElement novo = SFormXMLUtil.toXML(instance).get();
 
         assertEquals("itens", novo.getTagName());
         assertEquals("1", novo.getValor("item[1]/a"));
@@ -79,14 +79,14 @@ public class TestMformPersistenciaXML extends TestCaseForm {
     public void testResultForEmptySimpleType() {
         SIString simple = createTestDictionary().getType(STypeString.class).newInstance();
 
-        assertFalse(MformPersistenciaXML.toStringXML(simple).isPresent());
-        assertFalse(MformPersistenciaXML.toXML(simple).isPresent());
+        assertFalse(SFormXMLUtil.toStringXML(simple).isPresent());
+        assertFalse(SFormXMLUtil.toXML(simple).isPresent());
 
-        assertNotNull(MformPersistenciaXML.toStringXMLOrEmptyXML(simple));
-        new AssertionsXML(MformPersistenciaXML.toXMLOrEmptyXML(simple)).isName("String").isId(1).isEmptyNode();
+        assertNotNull(SFormXMLUtil.toStringXMLOrEmptyXML(simple));
+        new AssertionsXML(SFormXMLUtil.toXMLOrEmptyXML(simple)).isName("String").isId(1).isEmptyNode();
 
         String expectedXML= HEADER_XML + "<String id=\"1\" lastId=\"1\"></String>";
-        new AssertionsXML(MformPersistenciaXML.toXMLPreservingRuntimeEdition(simple)).isContentEquals(expectedXML);
+        new AssertionsXML(SFormXMLUtil.toXMLPreservingRuntimeEdition(simple)).isContentEquals(expectedXML);
     }
 
     @Test
@@ -96,13 +96,13 @@ public class TestMformPersistenciaXML extends TestCaseForm {
 
         String expectedXML= HEADER_XML + "<String id=\"1\" lastId=\"1\">X</String>";
 
-        assertEquals(MformPersistenciaXML.toStringXML(simple).get(), expectedXML);
-        assertEquals(MformPersistenciaXML.toStringXMLOrEmptyXML(simple), expectedXML);
+        assertEquals(SFormXMLUtil.toStringXML(simple).get(), expectedXML);
+        assertEquals(SFormXMLUtil.toStringXMLOrEmptyXML(simple), expectedXML);
 
 
 
-        new AssertionsXML(MformPersistenciaXML.toXML(simple)).isContentEquals(expectedXML);
-        new AssertionsXML(MformPersistenciaXML.toXMLOrEmptyXML(simple)).isContentEquals(expectedXML);
-        new AssertionsXML(MformPersistenciaXML.toXMLPreservingRuntimeEdition(simple)).isContentEquals(expectedXML);
+        new AssertionsXML(SFormXMLUtil.toXML(simple)).isContentEquals(expectedXML);
+        new AssertionsXML(SFormXMLUtil.toXMLOrEmptyXML(simple)).isContentEquals(expectedXML);
+        new AssertionsXML(SFormXMLUtil.toXMLPreservingRuntimeEdition(simple)).isContentEquals(expectedXML);
     }
 }

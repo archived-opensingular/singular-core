@@ -29,7 +29,7 @@ import org.apache.wicket.model.Model;
 import org.opensingular.form.*;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewBreadcrumb;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -157,7 +157,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
 
         private void saveState() {
-            MformPersistenciaXML.toStringXML(currentInstance.getObject()).ifPresent(x -> instanceBackupXml = x);
+            SFormXMLUtil.toStringXML(currentInstance.getObject()).ifPresent(x -> instanceBackupXml = x);
         }
 
         private void rollbackState() {
@@ -166,7 +166,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     listModel.getObject().remove(listModel.getObject().size() - 1);
                 } else {
                     MElement xml = MParser.parse(instanceBackupXml);
-                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getType(), xml);
+                    SInstance i = SFormXMLUtil.fromXML(currentInstance.getObject().getType(), xml);
                     currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {

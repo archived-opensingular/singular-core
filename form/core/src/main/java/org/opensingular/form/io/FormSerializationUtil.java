@@ -83,10 +83,10 @@ public class FormSerializationUtil {
      */
     private static FormSerialized toSerialized(SDocument document) {
         SInstance root = document.getRoot();
-        MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
+        MElement xml = SFormXMLUtil.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
         if (document.getDocumentAnnotations().hasAnnotations()) {
-            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getDocumentAnnotations().getAnnotations());
+            annotations = SFormXMLUtil.toXMLPreservingRuntimeEdition(document.getDocumentAnnotations().getAnnotations());
         }
 
         checkIfSerializable(root);
@@ -155,9 +155,9 @@ public class FormSerializationUtil {
      */
     public static SInstance toInstance(FormSerialized fs) {
         try {
-            SInstance root = MformPersistenciaXML.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
+            SInstance root = SFormXMLUtil.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
             deserializeServices(fs.getServices(), root.getDocument());
-            MformPersistenciaXML.annotationLoadFromXml(root.getDocument(), fs.getAnnotations());
+            SFormXMLUtil.annotationLoadFromXml(root.getDocument(), fs.getAnnotations());
             root.getDocument().setValidationErrors(fs.getValidationErrors());
             return defineRoot(fs, root);
         } catch (Exception e) {

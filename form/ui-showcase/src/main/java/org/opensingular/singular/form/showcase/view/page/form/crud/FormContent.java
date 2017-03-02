@@ -31,7 +31,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.component.SingularValidationButton;
@@ -134,7 +134,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         if (StringUtils.isBlank(xml)) {
             instance = singularFormConfig.getDocumentFactory().createInstance(refType);
         } else {
-            instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+            instance = SFormXMLUtil.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
         }
         return instance;
     }
@@ -142,7 +142,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private void loadAnnotationsIfNeeded(SDocument document) {
         String annotationsXml = currentModel.getAnnnotations();
         if (StringUtils.isNotBlank(annotationsXml)) {
-            MformPersistenciaXML.annotationLoadFromXml(document, currentModel.getAnnnotations());
+            SFormXMLUtil.annotationLoadFromXml(document, currentModel.getAnnnotations());
         }
     }
 
@@ -166,7 +166,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 instanceModel.getObject().getDocument().persistFiles();//Tem que ser feito antes obrigatoriamente para poder atualizar os ids
-                String xml = MformPersistenciaXML.toStringXML(instanceModel.getObject()).orElse(StringUtils.EMPTY);
+                String xml = SFormXMLUtil.toStringXML(instanceModel.getObject()).orElse(StringUtils.EMPTY);
                 currentModel.setXml(xml);
                 currentModel.setDescription(instanceModel.getObject().toStringDisplay());
                 dao.save(currentModel);
@@ -202,7 +202,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private void addAnnotationsToModel(SInstance instancia) {
-        Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(instancia);
+        Optional<String> xmlAnnotation = SFormXMLUtil.annotationToXmlString(instancia);
         currentModel.setAnnotations(xmlAnnotation.orElse(null));
     }
 
@@ -210,7 +210,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         final Component button = new SingularValidationButton("save-whitout-validate-btn", singularFormPanel.getInstanceModel()) {
             protected void save(IModel<? extends SInstance> instanceModel) {
                 instanceModel.getObject().getDocument().persistFiles();//Tem que ser feito antes obrigatoriamente para poder atualizar os ids
-                String rootXml = MformPersistenciaXML.toStringXML(instanceModel.getObject()).orElse(StringUtils.EMPTY);
+                String rootXml = SFormXMLUtil.toStringXML(instanceModel.getObject()).orElse(StringUtils.EMPTY);
                 currentModel.setXml(rootXml);
                 currentModel.setDescription(instanceModel.getObject().toStringDisplay());
                 addAnnotationsToModel(instanceModel.getObject());

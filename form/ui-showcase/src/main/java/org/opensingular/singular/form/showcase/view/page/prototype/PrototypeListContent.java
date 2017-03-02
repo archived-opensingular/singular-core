@@ -34,7 +34,7 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.wicket.component.BFModalBorder;
 import org.opensingular.form.wicket.component.SingularForm;
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
@@ -179,7 +179,7 @@ public class PrototypeListContent extends Content
     private SInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
         String xml = prototype.getXml();
         RefType refType = RefType.of(() -> dictionary.getType(SPackagePrototype.META_FORM_COMPLETE));
-        SIComposite instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+        SIComposite instance = SFormXMLUtil.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
         return new SInstanceRootModel<>(instance);
     }
 

@@ -14,7 +14,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.singular.form.showcase.SpringWicketTester;
 import org.opensingular.singular.form.showcase.dao.form.Prototype;
 import org.opensingular.singular.form.showcase.view.template.Content;
@@ -94,7 +94,7 @@ public class PrototypePageTest {
                         @Override
                         protected void loadOrBuildModel() {
                             this.prototype = new Prototype();
-                            MformPersistenciaXML.toStringXML(currentInstance).ifPresent(x -> this.prototype.setXml(x));
+                            SFormXMLUtil.toStringXML(currentInstance).ifPresent(x -> this.prototype.setXml(x));
                         }
                     };
                 }
