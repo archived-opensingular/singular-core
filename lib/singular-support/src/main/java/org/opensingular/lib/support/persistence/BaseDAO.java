@@ -25,11 +25,13 @@ import org.hibernate.criterion.Restrictions;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -49,20 +51,33 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         getSession().saveOrUpdate(novoObj);
     }
 
-    public T get(ID id) {
-        if (id == null) {
-            return null;
-        } else {
-            return (T) getSession().get(tipo, id);
-        }
+    @Nonnull
+    public Optional<T> get(@Nonnull ID id) {
+        Objects.requireNonNull(id);
+        return Optional.ofNullable((T) getSession().get(tipo, id));
     }
 
-    public T find(ID id) {
-        if (id == null) {
-            return null;
-        } else {
-            return (T) getSession().createCriteria(tipo).add(Restrictions.idEq(id)).uniqueResult();
+    public T getOrException(@Nonnull ID id) {
+        Optional<T> result = get(id);
+        if (result.isPresent()) {
+            return result.get();
         }
+        throw SingularException.rethrow("Não foi encontrado a entidade " + tipo.getName() + " com ID=" + id);
+    }
+
+    @Nonnull
+    public Optional<T> find(@Nonnull ID id) {
+        Objects.requireNonNull(id);
+        return Optional.ofNullable((T) getSession().createCriteria(tipo).add(Restrictions.idEq(id)).uniqueResult());
+    }
+
+    @Nonnull
+    public T findOrException(@Nonnull ID id) {
+        Optional<T> result = find(Objects.requireNonNull(id));
+        if (result.isPresent()) {
+            return result.get();
+        }
+        throw SingularException.rethrow("Não foi encontrado a entidade " + tipo.getName() + " com ID=" + id);
     }
 
     public List<T> listAll() {

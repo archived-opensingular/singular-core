@@ -10,11 +10,11 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
-public class TestMformPersistenciaXML extends TestCaseForm {
+public class TestFormXMLUtil extends TestCaseForm {
 
     private static final String HEADER_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
 
-    public TestMformPersistenciaXML(TestFormConfig testFormConfig) {
+    public TestFormXMLUtil(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 

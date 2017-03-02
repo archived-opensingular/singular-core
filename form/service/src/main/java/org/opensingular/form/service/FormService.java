@@ -241,22 +241,13 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     @Nonnull
     public FormEntity loadFormEntity(@Nonnull FormKey key) {
-        FormEntity entity = formDAO.find(checkKeyOrException(key, null).longValue());
-        if (entity == null) {
-            throw addInfo(new SingularFormPersistenceException("Form não encontrado")).add("key", key);
-        }
-        return entity;
+        return formDAO.findOrException(checkKeyOrException(key, null).longValue());
     }
 
     @Override
     @Nonnull
     public FormVersionEntity loadFormVersionEntity(@Nonnull Long versionId) {
-        FormVersionEntity e = formVersionDAO.find(Objects.requireNonNull(versionId));
-        if (e == null) {
-            throw addInfo(new SingularFormPersistenceException("FormVersion não encontrado")).add("versionId",
-                    versionId);
-        }
-        return e;
+        return formVersionDAO.findOrException(Objects.requireNonNull(versionId));
     }
 
     @Override

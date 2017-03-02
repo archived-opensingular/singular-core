@@ -16,39 +16,25 @@
 
 package org.opensingular.form.exemplos.notificacaosimplificada.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.opensingular.form.exemplos.notificacaosimplificada.dao.EnderecoEmpresaInternacionalDAO;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.CategoriaRegulatoriaMedicamento;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.EmbalagemPrimariaBasica;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.EtapaFabricacao;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.Farmacopeia;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.FormaFarmaceuticaBasica;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.LinhaCbpf;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.Substancia;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.UnidadeMedida;
+import org.opensingular.form.exemplos.notificacaosimplificada.dao.NotificacaoSimplificadaGenericDAO;
+import org.opensingular.form.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
+import org.opensingular.form.exemplos.notificacaosimplificada.domain.*;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.corporativo.PessoaJuridicaNS;
+import org.opensingular.form.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.generic.VocabularioControlado;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EmpresaInternacional;
 import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacional;
-import org.opensingular.form.exemplos.notificacaosimplificada.dao.NotificacaoSimplificadaGenericDAO;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacionalId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.opensingular.form.exemplos.notificacaosimplificada.dao.VocabularioControladoDAO;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.EmbalagemSecundaria;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.dto.VocabularioControladoDTO;
-import org.opensingular.form.exemplos.notificacaosimplificada.domain.geral.EnderecoEmpresaInternacionalId;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -309,7 +295,7 @@ public class DominioService {
         EnderecoEmpresaInternacionalId id = new EnderecoEmpresaInternacionalId();
         id.setEmpresaInternacional(emp);
         id.setSequencialEndereco(sequencial);
-        return enderecoEmpresaInternacionalDAO.get(id);
+        return enderecoEmpresaInternacionalDAO.get(id).orElse(null);
     }
     public List<PessoaJuridicaNS> empresaTerceirizada(String filtro) {
         return genericDAO.findByProperty(PessoaJuridicaNS.class, "razaoSocial", filtro, 5);
