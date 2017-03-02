@@ -15,7 +15,6 @@
  */
 package org.opensingular.form.service;
 
-import com.sun.istack.internal.NotNull;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SFormUtil;
@@ -333,7 +332,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     @Override
     @Nonnull
-    public Optional<FormVersionEntity> findCurrentFormVersion(@NotNull SDocument document) {
+    public Optional<FormVersionEntity> findCurrentFormVersion(@Nonnull SDocument document) {
         return findFormEntity(document).map(FormEntity::getCurrentFormVersionEntity);
     }
 
