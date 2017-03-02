@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Optional;
 
 
 public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends SimpleDAO {
@@ -142,4 +143,9 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         return criteria.list();
     }
 
+    /** Executa o critéria buscando apenas um resultado e garante que o resultado seja da classe especificada. */
+    protected final static <K> Optional<K> findUniqueResult(Class<K> expectedResultClass, Criteria criteria) {
+        Object result = criteria.setMaxResults(1).uniqueResult();
+        return Optional.ofNullable(expectedResultClass.cast(result));
+    }
 }

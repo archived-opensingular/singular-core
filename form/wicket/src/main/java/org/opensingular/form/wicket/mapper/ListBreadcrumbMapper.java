@@ -157,10 +157,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
 
         private void saveState() {
-            MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
-            if (xml != null) {
-                instanceBackupXml = xml.toString();
-            }
+            MformPersistenciaXML.toStringXML(currentInstance.getObject()).ifPresent(x -> instanceBackupXml = x);
         }
 
         private void rollbackState() {

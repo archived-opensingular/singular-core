@@ -192,7 +192,7 @@ class SearchModalBodyPanel extends Panel {
                 (parent, visit) -> visit.stop(parent));
 
         SingularFormPanel p = new SingularFormPanel(FORM_PANEL_ID, true);
-        p.setDocumentFactory(parentSingularFormPanel.getDocumentFactory());
+        p.setDocumentFactory(parentSingularFormPanel.getDocumentFactory().orElse(null));
         p.setInstanceFromType(RefType.of(() -> getConfig().getFilter()));
 
         return p;
