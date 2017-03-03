@@ -33,6 +33,7 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.lambda.IPredicate;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.io.Serializable;
@@ -40,6 +41,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class SValidationFeedbackHandler implements Serializable {
 
@@ -47,9 +49,9 @@ public class SValidationFeedbackHandler implements Serializable {
     };
 
     private final FeedbackFence feedbackFence;
-    private final List<IValidationError>                    currentErrors  = new ArrayList<>();
-    private final List<ISValidationFeedbackHandlerListener> listeners      = new ArrayList<>(1);
-    private final List<IModel<? extends SInstance>>         instanceModels = new ArrayList<>();
+    private final List<IValidationError> currentErrors = new ArrayList<>();
+    private final List<ISValidationFeedbackHandlerListener> listeners = new ArrayList<>(1);
+    private IModel<? extends List<IModel<? extends SInstance>>> instanceModels = $m.ofValue(new ArrayList<>());
 
     private SValidationFeedbackHandler(FeedbackFence feedbackFence) {
         this.feedbackFence = feedbackFence;
@@ -93,12 +95,17 @@ public class SValidationFeedbackHandler implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public SValidationFeedbackHandler addInstanceModel(IModel<? extends SInstance> instanceModel) {
-        this.instanceModels.add(instanceModel);
+        this.instanceModels.getObject().add(instanceModel);
         return this;
     }
 
     public SValidationFeedbackHandler addInstanceModels(List<IModel<? extends SInstance>> instanceModels) {
-        this.instanceModels.addAll(instanceModels);
+        this.instanceModels.getObject().addAll(instanceModels);
+        return this;
+    }
+
+    public SValidationFeedbackHandler setInstanceModels(IModel<? extends List<IModel<? extends SInstance>>> instanceModels) {
+        this.instanceModels = (instanceModels != null) ? instanceModels : $m.ofValue(new ArrayList<>());
         return this;
     }
 
@@ -296,8 +303,7 @@ public class SValidationFeedbackHandler implements Serializable {
         final List<SInstance>            rootInstance = new ArrayList<>();
 
         if (rootHandler != null) {
-            rootHandler
-                    .instanceModels
+            rootHandler.instanceModels.getObject()
                     .stream()
                     .filter(it -> it != null && it.getObject() != null)
                     .map(IModel::getObject)
