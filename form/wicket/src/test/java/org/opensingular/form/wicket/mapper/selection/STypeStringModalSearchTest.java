@@ -1,5 +1,10 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.util.tester.TagTester;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
@@ -12,18 +17,12 @@ import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.util.tester.TagTester;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
 @RunWith(Enclosed.class)
 public class STypeStringModalSearchTest {
@@ -58,7 +57,7 @@ public class STypeStringModalSearchTest {
         }
 
         void clickOpenLink() {
-            List<Component> search_link1 = findTag(form.getForm(), SearchModalPanel.MODAL_TRIGGER_ID, Button.class);
+            List<Button> search_link1 = findTag(form.getForm(), SearchModalPanel.MODAL_TRIGGER_ID, Button.class);
             ajaxClick(search_link1.get(0));
         }
 
@@ -104,7 +103,7 @@ public class STypeStringModalSearchTest {
         @Test
         public void changeValueWhenSelected() {
             clickOpenLink();
-            List<Component> link = findTag(tester.getLastRenderedPage(), "link", ActionAjaxLink.class);
+            List<ActionAjaxLink> link = findTag(tester.getLastRenderedPage(), "link", ActionAjaxLink.class);
             assertThat(link).hasSize(4);
 
             ajaxClick(link.get(3));

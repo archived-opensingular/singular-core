@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>1.5.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-form-wicket</artifactId>
@@ -151,6 +151,13 @@
             <groupId>net.vidageek</groupId>
             <artifactId>mirror</artifactId>
             <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert-core</artifactId>
+            <version>2.0M10</version>
             <scope>test</scope>
         </dependency>
 

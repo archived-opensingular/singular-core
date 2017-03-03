@@ -1,26 +1,25 @@
 package org.opensingular.form.wicket.mapper;
 
-import static org.fest.assertions.api.Assertions.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.wicket.IWicketComponentMapper;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import static org.opensingular.form.wicket.helpers.TestFinders.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.helpers.TestFinders.findId;
+import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
 @RunWith(Enclosed.class)
 public class DependsOnTest {
@@ -216,7 +215,7 @@ public class DependsOnTest {
         }
 
         protected List<DropDownChoice> options() {
-            return (List) findTag(form.getForm(), DropDownChoice.class);
+            return findTag(form.getForm(), DropDownChoice.class);
         }
 
         protected void selectOptionAt(String field, int index) {

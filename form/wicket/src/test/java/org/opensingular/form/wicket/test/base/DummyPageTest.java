@@ -1,28 +1,23 @@
 package org.opensingular.form.wicket.test.base;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SType;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.helpers.DummyPage;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
-
-import java.nio.charset.StandardCharsets;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.wicket.helpers.DummyPage;
+import org.opensingular.form.wicket.helpers.SingularWicketTester;
 
 public class DummyPageTest {
 
     @Test
     public void testPageRendering() {
-        WicketTester tester = new WicketTester();
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
+        WicketTester tester = new SingularWicketTester();
 
-        DummyPage dummyPage = new DummyPage() ;
+        DummyPage dummyPage = new DummyPage();
         dummyPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});
 
-        dummyPage.setInstanceCreator( (x) -> {
+        dummyPage.setInstanceCreator( (refType) -> {
             SDocumentFactory factory = dummyPage.mockFormConfig.getDocumentFactory();
-            RefType refType = new RefType() { protected SType<?> retrieve() { return x; } };
             return (SIComposite) factory.createInstance(refType);
         });
         tester.startPage(dummyPage);

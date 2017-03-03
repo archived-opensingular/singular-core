@@ -1,5 +1,7 @@
 package org.opensingular.form;
 
+import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
