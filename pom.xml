@@ -41,7 +41,8 @@
     <modules>
         <module>flow</module>
         <module>form</module>
-        <module>lib</module>
+		<module>flow-form</module>
+        <module>lib</module>	
         <module>resources</module>
         <module>ws</module>
     </modules>
