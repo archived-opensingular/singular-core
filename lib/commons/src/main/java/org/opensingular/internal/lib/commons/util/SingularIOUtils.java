@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 public class SingularIOUtils {
 
     private static final String[] SUFFIXES = {"B", "KB", "MB", "GB", "TB"};
+    private static final String[] TIME_SYMBOS = new String[]{"seconds", "minutes", "hours", "days"};
 
     private SingularIOUtils() {}
 
@@ -121,9 +122,7 @@ public class SingularIOUtils {
      */
     @Nonnull
     public static String humanReadableMiliSeconds(long mili) {
-        int[] unit = {60, 60, 24, 0};
-        String[] symbol = {"seconds", "minutes", "hours", "days"};
-
+        int[]    unit   = {60, 60, 24, 0};
         if (mili < 1000) return mili + " ms";
         double value = mili / 1000d;
         int pos = 0;
@@ -131,6 +130,6 @@ public class SingularIOUtils {
             value = value / unit[pos];
             pos++;
         }
-        return String.format("%.1f %s", value, symbol[pos]);
+        return String.format("%.1f %s", value, TIME_SYMBOS[pos]);
     }
 }

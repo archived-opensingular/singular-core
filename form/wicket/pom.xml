@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.5.8-SNAPSHOT</version>
+        <version>1.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-form-wicket</artifactId>
@@ -47,19 +47,19 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-core</artifactId>
-            <version>${singular.version}</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-wicket-utils</artifactId>
-            <version>${singular.version}</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>${singular.version}</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
 
         <!--  WICKET DEPENDENCIES -->
@@ -148,23 +148,18 @@
         </dependency>
 
         <dependency>
-            <groupId>org.easytesting</groupId>
-            <artifactId>fest-assert-core</artifactId>
-            <version>2.0M10</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert-core</artifactId>
             <version>2.0M10</version>
         </dependency>
+
     </dependencies>
 
 </project>

@@ -63,7 +63,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
         return findSubComponent(component -> ISInstanceAwareModel.optionalCast(component.getDefaultModel())
                 .map(ISInstanceAwareModel::getMInstancia)
                 .map(SInstance::getType)
-                .map(type::equals).orElse(false)).isNotNull();
+                .map(type::equals).orElse(Boolean.FALSE)).isNotNull();
     }
 
 
@@ -77,7 +77,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
                 .map(ISInstanceAwareModel::getMInstancia)
                 .map(SInstance::getType)
                 .map(SType::getNameSimple)
-                .map(nameSimple::equals).orElse(false)).isNotNull();
+                .map(nameSimple::equals).orElse(Boolean.FALSE)).isNotNull();
     }
 
     /**
