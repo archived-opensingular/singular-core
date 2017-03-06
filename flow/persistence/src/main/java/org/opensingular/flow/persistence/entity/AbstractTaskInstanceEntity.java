@@ -16,33 +16,16 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OrderBy;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.entity.*;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OrderBy;
-
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
 /**
  * The base persistent class for the TB_INSTANCIA_TAREFA database table.
@@ -166,7 +149,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     }
 
     @Override
-    public TASK_VERSION getTask() {
+    public TASK_VERSION getTaskVersion() {
         return task;
     }
 

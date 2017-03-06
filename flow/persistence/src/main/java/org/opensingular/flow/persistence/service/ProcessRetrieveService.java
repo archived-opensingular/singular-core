@@ -42,7 +42,7 @@ public class ProcessRetrieveService extends AbstractHibernateService {
     public ProcessInstanceEntity retrieveProcessInstanceByCod(@Nonnull Integer cod) {
         ProcessInstanceEntity pi =  getSession().retrieveOrException(ProcessInstanceEntity.class, cod);
         pi.getTasks().forEach(t -> {
-            Hibernate.initialize(t.getTask());
+            Hibernate.initialize(t.getTaskVersion());
             Hibernate.initialize(t.getAllocatedUser());
         });
         return pi;

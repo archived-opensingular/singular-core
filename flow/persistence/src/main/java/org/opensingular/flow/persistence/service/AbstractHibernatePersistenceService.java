@@ -156,7 +156,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, MUser responsibleUser) {
         responsibleUser = saveUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
-        IEntityTaskTransitionVersion transition = task.getTask().getTransition(transitionAbbreviation);
+        IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
 
         if (responsibleUser != null) {

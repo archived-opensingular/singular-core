@@ -18,6 +18,7 @@ package org.opensingular.form.persistence;
 
 import com.google.common.collect.Lists;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 
@@ -88,7 +89,6 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
 
     @Override
     public FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
-        //TODO: FORM_ANNOTATION_VERSION
-        return null;
+        throw new SingularFormException("Método não implementado");
     }
 }

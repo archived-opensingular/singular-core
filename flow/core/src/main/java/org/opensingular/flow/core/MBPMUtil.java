@@ -33,8 +33,8 @@ public class MBPMUtil {
     private MBPMUtil() {}
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTaskOrException().getEntityTaskInstance().getTask(),
-                s2.getLatestTaskOrException().getEntityTaskInstance().getTask(), definicao));
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(),
+                s2.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, ProcessDefinition<?> definicao) {
