@@ -21,8 +21,6 @@ import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 
-import javax.xml.ws.WebServiceException;
-
 public class BaseSingularRest {
 
     public static final String START_INSTANCE = "/startInstance";
@@ -66,10 +64,7 @@ public class BaseSingularRest {
                              String username,
                              Integer lastVersion) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(username);
-        if (user == null) {
-            throw new WebServiceException("Usuário não encontrado");
-        }
+        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
         if(lastVersion == null) {
             lastVersion = 0;
         }

@@ -85,7 +85,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     public final void setProcessGroupCod(String processGroupCod) {
         this.processGroupCod = processGroupCod;
     }
-    
+
+    @Nonnull
     public final String getProcessGroupCod() {
         if (processGroupCod == null) {
             throw new SingularFlowException("Não foi definido o ProcessGroupCod");

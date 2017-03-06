@@ -51,19 +51,19 @@ public final class Flow {
         setConf(conf, false);
     }
 
+    @Nonnull
     public static SingularFlowConfigurationBean getConfigBean() {
         Objects.requireNonNull(configBean, "Configuração do fluxo não realizada");
         return configBean;
     }
 
-    public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
+    @Nonnull
+    public static <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull Class<K> classe) {
         return getConfigBean().getProcessDefinition(classe);
     }
 
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
-     * @param key
-     * @return
      */
     @Nonnull
     public static Optional<ProcessDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {

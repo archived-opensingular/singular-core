@@ -17,8 +17,12 @@
 package org.opensingular.flow.core.service;
 
 import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SingularFlowException;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
+import java.util.Optional;
 
 public interface IUserService {
 
@@ -58,8 +62,16 @@ public interface IUserService {
         return mUser;
     }
 
-    default MUser saveUserIfNeeded(String codUsuario) {
-        return null;
+    @Nonnull
+    default Optional<MUser> saveUserIfNeeded(@Nonnull String codUsuario) {
+        Objects.requireNonNull(codUsuario);
+        return Optional.empty();
+    }
+
+    @Nonnull
+    default MUser saveUserIfNeededOrException(@Nonnull String codUsuario) {
+        return saveUserIfNeeded(codUsuario).orElseThrow(
+                () -> new SingularFlowException("usuario não encontrado codUsuario=" + codUsuario));
     }
 
     MUser findByCod(Integer cod);
