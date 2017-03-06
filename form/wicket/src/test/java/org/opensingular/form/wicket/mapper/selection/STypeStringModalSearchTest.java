@@ -107,7 +107,7 @@ public class STypeStringModalSearchTest {
             assertThat(link).hasSize(4);
 
             ajaxClick(link.get(3));
-            SIString selected = page.getCurrentInstance().getDescendant(selectType);
+            SIString selected = page.getInstance().getDescendant(selectType);
             assertThat(selected.getValue()).isEqualTo("banana");
         }
     }

@@ -17,6 +17,8 @@
 package org.opensingular.lib.commons.test;
 
 
+import java.util.Optional;
+
 /**
  * Classe com implementações padrãos para um objeto de apoio a assertivas, independente do tipo em questão.
  *
@@ -29,6 +31,10 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
 
     public AssertionsBase(T target) {
         this.target = target;
+    }
+
+    public AssertionsBase(Optional<? extends T> target) {
+        this.target = target.orElse(null);
     }
 
     /**
@@ -66,7 +72,7 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      */
     public final SELF isNull() {
         if (getTarget() != null) {
-            throw new AssertionError(errorMsg("Era essperado ser null."));
+            throw new AssertionError(errorMsg("Era esperado ser null."));
         }
         return (SELF) this;
     }

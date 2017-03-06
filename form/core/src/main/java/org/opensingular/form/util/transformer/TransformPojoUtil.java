@@ -16,23 +16,12 @@
 
 package org.opensingular.form.util.transformer;
 
+import org.opensingular.form.*;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
+import java.util.*;
 
 public class TransformPojoUtil {
 	
@@ -197,7 +186,7 @@ public class TransformPojoUtil {
 	 * @return a propria instancia com os valores preenchidos
 	 * @throws Exception quando o strictMode é true e temos um valor existente no mapa que não é encontrado na SInstance.
 	 */
-	public static SInstance mapToSInstace(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Object pojo, SInstance rootInstance, boolean strictMode) throws Exception{
+	public static SInstance mapToSInstace(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Object pojo, SInstance rootInstance, boolean strictMode) {
 		
 		Map<String, Object> mapOfObject = pojoReferenceDataMap.get(System.identityHashCode(pojo));
 		
@@ -207,7 +196,7 @@ public class TransformPojoUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void realMapToSInstance(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Object pojoDataMap, SInstance rootInstance, boolean strictMode) throws Exception{
+	private static void realMapToSInstance(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Object pojoDataMap, SInstance rootInstance, boolean strictMode) {
 		SType<?> type = rootInstance.getType();
 		if (type.isComposite()){
 			SIComposite composite = (SIComposite) rootInstance;
@@ -219,7 +208,7 @@ public class TransformPojoUtil {
 				Set<String> keySet = ((Map<String, Object>) pojoDataMap).keySet();
 				for (String string : keySet) {
 					if(!nomesAtributos.contains(string)){
-						throw new Exception("Valor existente no mapa não encontrado no SInstance.");
+						throw new SingularFormException("Valor existente no mapa não encontrado no SInstance.");
 					}
 				}
 			}
@@ -269,7 +258,7 @@ public class TransformPojoUtil {
 		}
 	}
 	
-	public static SInstance pojoToSInstance(Object objectToConvert, SInstance instance, boolean strictMode) throws Exception{
+	public static SInstance pojoToSInstance(Object objectToConvert, SInstance instance, boolean strictMode) {
 		Map<Integer, Map<String, Object>> pojoToMap = pojoToMap(objectToConvert);
 		return mapToSInstace(pojoToMap, objectToConvert, instance, strictMode);
 	}

@@ -59,16 +59,9 @@ public class PreviewContent extends Content {
         enclosing.setMultiPart(true);
         enclosing.setFileMaxSize(Bytes.MAX);
         enclosing.setMaxSize(Bytes.MAX);
-        enclosing.add(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
-            @Override
-            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                return SDocumentFactory.empty().createInstance(new RefType() {
-                    protected SType<?> retrieve() {
-                        return new TypeBuilder(PreviewContent.this.model.getObject()).createRootType();
-                    }
-                });
-            }
-        });
+        SingularFormPanel panel = new SingularFormPanel("singular-panel");
+        panel.setInstanceFromType(() -> new TypeBuilder(PreviewContent.this.model.getObject()).createRootType());
+        enclosing.add(panel);
         queue(enclosing);
         queue(new Link("cancel-btn") {
             @Override

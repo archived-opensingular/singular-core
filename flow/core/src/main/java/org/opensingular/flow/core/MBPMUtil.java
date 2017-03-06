@@ -33,8 +33,8 @@ public class MBPMUtil {
     private MBPMUtil() {}
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTask().getEntityTaskInstance().getTask(),
-                s2.getLatestTask().getEntityTaskInstance().getTask(), definicao));
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTaskOrException().getEntityTaskInstance().getTask(),
+                s2.getLatestTaskOrException().getEntityTaskInstance().getTask(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, ProcessDefinition<?> definicao) {
@@ -110,9 +110,9 @@ public class MBPMUtil {
                 .equals(entityTaskDefinition.getProcessVersion().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
-        MTask<?> task = processDefinition.getFlowMap().getTaskBybbreviation(entityTaskDefinition.getAbbreviation());
-        if (task != null) {
-            return task.getOrder();
+        Optional<MTask<?>> task = processDefinition.getFlowMap().getTaskByAbbreviation(entityTaskDefinition.getAbbreviation());
+        if (task.isPresent()) {
+            return task.get().getOrder();
         }
         if (entityTaskDefinition.isPeople()) {
             return 10000000 + PESO_TASK_PESSOA;

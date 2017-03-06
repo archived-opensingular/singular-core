@@ -41,18 +41,19 @@ import java.util.Set;
  *
  * @author Daniel C. Bordin
  */
-public class MformPersistenciaXML {
+public final class SFormXMLUtil {
 
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
 
-    private MformPersistenciaXML() {}
+    private SFormXMLUtil() {}
 
     /**
      * Cria uma instância não passível de serialização para do tipo com o
      * conteúdo persistido no XML informado.
      */
-    public static <T extends SInstance> T fromXML(SType<T> tipo, String xmlString) {
+    @Nonnull
+    public static <T extends SInstance> T fromXML(@Nonnull SType<T> tipo, @Nullable String xmlString) {
         return fromXMLInterno(tipo.newInstance(), parseXml(xmlString));
     }
 
@@ -60,7 +61,8 @@ public class MformPersistenciaXML {
      * Cria uma instância não passível de serialização para do tipo com o
      * conteúdo persistido no XML informado.
      */
-    public static <T extends SInstance> T fromXML(SType<T> tipo, MElement xml) {
+    @Nonnull
+    public static <T extends SInstance> T fromXML(@Nonnull SType<T> tipo, @Nullable MElement xml) {
         return fromXMLInterno(tipo.newInstance(), xml);
     }
 
@@ -68,7 +70,8 @@ public class MformPersistenciaXML {
      * Cria uma instância passível de serialização para o tipo referenciado e a
      * factory de documento informada.
      */
-    public static <T extends SInstance> T fromXML(RefType refType, @Nonnull String xmlString,
+    @Nonnull
+    public static <T extends SInstance> T fromXML(@Nonnull RefType refType, @Nullable String xmlString,
             @Nonnull SDocumentFactory documentFactory) {
         return fromXML(refType, parseXml(xmlString), documentFactory);
     }
@@ -77,6 +80,7 @@ public class MformPersistenciaXML {
      * Cria uma instância passível de serialização para o tipo referenciado e a
      * factory de documento informada.
      */
+    @Nonnull
     public static <T extends SInstance> T fromXML(@Nonnull RefType refType, @Nullable MElement xml,
             @Nonnull SDocumentFactory documentFactory) {
         SInstance novo = documentFactory.createInstance(refType, false);
@@ -84,6 +88,7 @@ public class MformPersistenciaXML {
     }
 
     /** Preenche a instância criada com o xml fornecido. */
+    @Nonnull
     private static <T extends SInstance> T fromXMLInterno(@Nonnull T novo, @Nullable MElement xml) {
         Integer lastId = 0;
         if (xml != null) {
@@ -171,37 +176,75 @@ public class MformPersistenciaXML {
     }
 
     /**
-     * Gera uma string XML representando a instância de forma apropriada para
-     * persitência permanente (ex: para armazenamento em banco de dados). Já
-     * trata escapes de caracteres especiais dentro dos valores.
+     * Gera uma string XML representando a instância de forma apropriada para persitência permanente (ex: para
+     * armazenamento em banco de dados). Já trata escapes de caracteres especiais dentro dos valores.
+     * @return Se a instância não conter nenhum valor, então retorna um resultado null no Optional
      */
-    public static Optional<String> toStringXML(SInstance instancia) {
-        MElement xml = toXML(instancia);
-        return xml == null ? Optional.empty() : Optional.of(xml.toStringExato());
-    }
-
-    public static MElement toXML(SInstance instancia) {
-        return new PersistenceBuilderXML().withPersistNull(false).toXML(instancia);
+    @Nonnull
+    public static Optional<String> toStringXML(@Nonnull SInstance instance) {
+        return toXML(instance).map(MElement::toStringExato);
     }
 
     /**
-     * Gera uma string XML representando os dados da instância e o atributos de
-     * runtime para persistência temporária (provavelemnte temporariamente
-     * durante a tela de edição).
+     * Gera uma string XML representando a instância de forma apropriada para persitência permanente (ex: para
+     * armazenamento em banco de dados). Já trata escapes de caracteres especiais dentro dos valores.
+     * @return Se a instância não conter nenhum valor, então retorna um XML com apenas o nome do tipo da instância.
      */
-    public static MElement toXMLPreservingRuntimeEdition(SInstance instancia) {
-        return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).toXML(instancia);
+    @Nonnull
+    public static String toStringXMLOrEmptyXML(@Nonnull SInstance instance) {
+        return toXMLOrEmptyXML(instance).toStringExato();
     }
 
-    static MElement toXML(MElement pai, String nomePai, SInstance instancia, PersistenceBuilderXML builder) {
+    /**
+     * Gera um XML representando a instância de forma apropriada para persitência permanente (ex: para armazenamento em
+     * banco de dados).
+     * @return Se a instância não conter nenhum valor, então retorna um resultado null no Optional
+     */
+    @Nonnull
+    public static Optional<MElement> toXML(@Nonnull SInstance instancia) {
+        return Optional.ofNullable(createDefaultBuilder().toXML(instancia));
+    }
+
+    /**
+     * Gera uma string XML representando a instância de forma apropriada para persitência permanente (ex: para
+     * armazenamento em banco de dados).
+     * @return Se a instância não conter nenhum valor, então retorna um XML com apenas o nome do tipo da instância.
+     */
+    @Nonnull
+    public static MElement toXMLOrEmptyXML(@Nonnull SInstance instancia) {
+        return createDefaultBuilder().withReturnNullXML(false).toXML(instancia);
+    }
+
+    /** Cria uma configuração default para a geração de XML. */
+    private static PersistenceBuilderXML createDefaultBuilder() {
+        return new PersistenceBuilderXML().withPersistNull(false);
+    }
+
+    /**
+     * Gera uma string XML representando os dados da instância e o atributos de runtime para persistência temporária
+     * (provavelemnte temporariamente durante a tela de edição).
+     */
+    @Nonnull
+    public static MElement toXMLPreservingRuntimeEdition(@Nonnull SInstance instancia) {
+        return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).withReturnNullXML(false)
+                .toXML(instancia);
+    }
+
+    @Nullable
+    static MElement toXML(MElement pai, String nomePai, @Nonnull SInstance instancia,
+            @Nonnull PersistenceBuilderXML builder) {
 
         MDocument xmlDocument = (pai == null) ? MDocument.newInstance() : pai.getMDocument();
         ConfXMLGeneration conf = new ConfXMLGeneration(builder, xmlDocument);
 
         MElement xmlResultado = toXML(conf, instancia);
         if (xmlResultado == null) {
-            return pai;
-        } else if (nomePai != null) {
+            if (builder.isReturnNullXML()) {
+                return pai;
+            }
+            xmlResultado = conf.createMElement(instancia);
+        }
+        if (nomePai != null) {
             MElement novo = xmlDocument.createMElement(nomePai);
             novo.addElement(xmlResultado);
             xmlResultado = novo;
@@ -277,28 +320,32 @@ public class MformPersistenciaXML {
     }
 
     /** Gera um XML representando as anotações se existirem. */
-    public static Optional<String> annotationToXmlString(SInstance instance) {
+    @Nonnull
+    public static Optional<String> annotationToXmlString(@Nonnull SInstance instance) {
         return annotationToXml(instance).map(MElement::toStringExato);
     }
 
     /** Gera um XML representando as anotações se existirem. */
-    public static Optional<MElement> annotationToXml(SInstance instance) {
+    @Nonnull
+    public static Optional<MElement> annotationToXml(@Nonnull SInstance instance) {
         return annotationToXml(instance, null);
     }
 
     /** Gera um XML representando as anotações se existirem. */
-    public static Optional<MElement> annotationToXml(SInstance instance, String classifier) {
+    @Nonnull
+    public static Optional<MElement> annotationToXml(@Nonnull SInstance instance, @Nullable String classifier) {
         return annotationToXml(instance.getDocument(), classifier);
     }
 
     /** Gera um XML representando as anotações se existirem. */
-    public static Optional<MElement> annotationToXml(SDocument document, String classifier) {
+    @Nonnull
+    public static Optional<MElement> annotationToXml(@Nonnull SDocument document, @Nullable String classifier) {
         DocumentAnnotations documentAnnotations = document.getDocumentAnnotations();
         if (documentAnnotations.hasAnnotations()) {
             if (classifier != null) {
-                return Optional.of(toXML(documentAnnotations.persistentAnnotationsClassified(classifier)));
+                return toXML(documentAnnotations.persistentAnnotationsClassified(classifier));
             } else {
-                return Optional.of(toXML(documentAnnotations.getAnnotations()));
+                return toXML(documentAnnotations.getAnnotations());
             }
         }
         return Optional.empty();

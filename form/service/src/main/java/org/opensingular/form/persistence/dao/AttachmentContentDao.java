@@ -20,9 +20,11 @@ import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
+import javax.annotation.Nonnull;
 import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Optional;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
 
@@ -50,9 +52,11 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
         return insert(createContent(is, length, hashSha1));
     }
 
-    public void delete(Long codContent) {
-        T contentEntity = find(codContent);
-        delete(contentEntity);
+    public void delete(@Nonnull Long codContent) {
+        Optional<T> contentEntity = find(codContent);
+        if(contentEntity.isPresent()) {
+            delete(contentEntity.get());
+        }
     }
 
     protected T createContent(InputStream in, long length, String hashSha1) {

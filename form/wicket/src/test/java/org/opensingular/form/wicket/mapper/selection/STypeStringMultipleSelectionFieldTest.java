@@ -67,7 +67,7 @@ public class STypeStringMultipleSelectionFieldTest {
         public void submitsSelectedValue() {
             form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
             form.submit();
-            List value = (List) page.getCurrentInstance().getValue(fieldType.getNameSimple());
+            List value = (List) page.getInstance().getValue(fieldType.getNameSimple());
             assertThat(value).containsOnly("orange");
         }
     }
@@ -112,7 +112,7 @@ public class STypeStringMultipleSelectionFieldTest {
         buildPage();
         form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
         form.submit("save-btn");
-        List value = (List) page.getCurrentInstance().getValue(fieldType.getNameSimple());
+        List value = (List) page.getInstance().getValue(fieldType.getNameSimple());
         assertThat(value).containsOnly("orange");
     }
 */

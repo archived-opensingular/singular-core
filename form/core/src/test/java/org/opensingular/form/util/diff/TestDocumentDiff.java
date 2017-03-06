@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.*;
-import org.opensingular.form.io.TesteFormSerializationUtil;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -31,7 +30,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeA;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeB;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeC;
-import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -666,8 +665,7 @@ public class TestDocumentDiff extends TestCaseForm {
         AssertionsDiff diff = diff(iC3, iC1, 3).assertChanged(2);
         diff = diff.compact(3).assertChanged(2);
 
-        AssertionsDiff diff2 = new AssertionsDiff(
-                TesteFormSerializationUtil.toAndFromByteArray(diff.getDocumentDiff()));
+        AssertionsDiff diff2 = new AssertionsDiff(SingularIOUtils.serializeAndDeserialize(diff.getDocumentDiff()));
         diff2.assertChangedWithInstancesNull(2).assertNames("TestCompositeC", "Composite C");
         diff2.get(0).assertDeletedWithInstancesNull(0).assertNames("name", "Name", "personA.name", "Person A : Name");
         diff2.get(1).assertChangedWithInstancesNull(2).assertNames("personB", "Person B");

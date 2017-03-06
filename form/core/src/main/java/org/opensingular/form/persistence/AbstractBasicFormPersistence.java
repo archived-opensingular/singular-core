@@ -18,10 +18,12 @@ package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Daniel C. Bordin
@@ -34,7 +36,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     private final Constructor<KEY> keyConstructor;
     private final Method convertMethod;
 
-    public AbstractBasicFormPersistence(Class<KEY> keyClass) {
+    public AbstractBasicFormPersistence(@Nonnull Class<KEY> keyClass) {
         this.keyClass = Objects.requireNonNull(keyClass);
         this.keyConstructor = findConstructorString(keyClass);
         this.convertMethod = findConvertMethod(keyClass);
@@ -97,70 +99,104 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     }
 
     @Override
-    public void delete(FormKey key) {
-        deleteInternal(checkKey(key, null, " o parâmetro key não fosse null"));
+    public void delete(@Nonnull FormKey key) {
+        deleteInternal(checkKeyOrException(key, null));
     }
 
     @Override
-    public void update(INSTANCE instance, Integer inclusionActor) {
-        KEY key = readKeyAttribute(instance, " a instância tivesse o atributo FormKey preenchido");
+    public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        KEY key = readKeyAttributeOrException(instance);
         updateInternal(key, instance, inclusionActor);
     }
 
     @Override
-    public FormKey insertOrUpdate(INSTANCE instance, Integer inclusionActor) {
-        KEY key = readKeyAttribute(instance, null);
-        if (key == null) {
-            key = insertImpl(instance, inclusionActor);
-        } else {
-            updateInternal(key, instance, inclusionActor);
+    @Nonnull
+    public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        Optional<KEY> key = readKeyAttributeOptional(instance);
+        if (key.isPresent()) {
+            updateInternal(key.get(), instance, inclusionActor);
+            return key.get();
         }
-        return key;
+        return insertImpl(instance, inclusionActor);
     }
 
     @Override
-    public FormKey insert(INSTANCE instance, Integer inclusionActor) {
+    @Nonnull
+    public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
         }
         return insertImpl(instance, inclusionActor);
     }
 
-    private KEY insertImpl(INSTANCE instance, Integer inclusionActor) {
+    @Nonnull
+    private KEY insertImpl(@Nonnull INSTANCE instance, Integer inclusionActor) {
         KEY key = insertInternal(instance, inclusionActor);
-        checkKey(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
+        checkKeyOrException(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
         return key;
     }
 
-    protected abstract void updateInternal(KEY key, INSTANCE instance, Integer inclusionActor);
+    protected abstract void updateInternal(@Nonnull KEY key, @Nonnull INSTANCE instance, Integer inclusionActor);
 
-    protected abstract void deleteInternal(KEY key);
+    protected abstract void deleteInternal(@Nonnull KEY key);
 
-    protected abstract KEY insertInternal(INSTANCE instance, Integer inclusionActor);
+    @Nonnull
+    protected abstract KEY insertInternal(@Nonnull INSTANCE instance, Integer inclusionActor);
 
     //-------------------------------------------------
     // Métodos de apoio
     //-------------------------------------------------
 
     /**
-     * Lê o {@link FormKey} de uma instância e verifica se é da classe esperada. Se for diferente de null e não for da
-     * classe espera, então dispara uma Exception.
+     * Lê obrigatoriamente o {@link FormKey} de uma instância e verifica se é da classe esperada. Se for diferente de
+     * null e não for da classe espera, então dispara uma Exception. Se for null, dispara exception.
      */
-    protected KEY readKeyAttribute(INSTANCE instance, String msgRequired) {
+    @Nonnull
+    protected KEY readKeyAttributeOrException(@Nonnull INSTANCE instance) {
+        Optional<KEY> key = readKeyAttributeOptional(instance);
+        if (! key.isPresent()) {
+            throw addInfo(new SingularFormPersistenceException(
+                    "Era esperado que a instância tivesse o atributo FormKey preenchido")).add("key", null).add(
+                    instance);
+        }
+        return key.get();
+    }
+
+    /**
+     * Lê opcionalmente o {@link FormKey} de uma instância e verifica se é da classe esperada. Se for diferente de
+     * null e não for da classe espera, então dispara uma Exception.
+     */
+    @Nonnull
+    private Optional<KEY> readKeyAttributeOptional(@Nonnull INSTANCE instance) {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null"));
         }
-        FormKey key = instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
-        return checkKey(key, instance, msgRequired);
+        Optional<FormKey> key = Optional.ofNullable(instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
+        if (key.isPresent()) {
+            return Optional.of(checkKeyOrException(key.get(), instance));
+        }
+        return Optional.empty();
     }
 
-    protected KEY checkKey(FormKey key, INSTANCE instance, String msgRequired) {
+    /**
+     * Verifica se a chave não e nula e é da classe esperada, fazendo o cast para o tipo certo. Caso contrario dispara
+     * uma exception.
+     */
+    @Nonnull
+    protected final KEY checkKeyOrException(FormKey key, INSTANCE instance) {
+        return checkKeyOrException(key, instance, " o parâmetro key não fosse null");
+    }
+
+    /**
+     * Verifica se a chave não e nula e é da classe esperada, fazendo o cast para o tipo certo. Caso contrario dispara
+     * uma exception.
+     */
+    @Nonnull
+    protected final KEY checkKeyOrException(FormKey key, INSTANCE instance, String msgRequired) {
         if (key == null) {
-            if (msgRequired != null) {
-                throw addInfo(new SingularFormPersistenceException("Era esperado que " + msgRequired)).add("key", null)
-                        .add(instance);
-            }
+            throw addInfo(new SingularFormPersistenceException("Era esperado que " + msgRequired)).add("key", null)
+                    .add(instance);
         } else if (!keyClass.isInstance(key)) {
             throw addInfo(new SingularFormPersistenceException(
                     "A chave encontrada incompatível: (key= " + key + ") é da classe " + key.getClass().getName() +
@@ -170,15 +206,16 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     }
 
     @Override
-    public boolean isPersistent(INSTANCE instance) {
-        return readKeyAttribute(instance, null) != null;
+    public final boolean isPersistent(@Nonnull INSTANCE instance) {
+        return readKeyAttributeOptional(instance).isPresent();
     }
 
     /**
      * Método chamado para adicionar informção do serviço de persistência à exception. Pode ser ser sobreescito para
      * acrescimo de maiores informações.
      */
-    protected SingularFormPersistenceException addInfo(SingularFormPersistenceException exception) {
+    @Nonnull
+    protected SingularFormPersistenceException addInfo(@Nonnull SingularFormPersistenceException exception) {
         exception.add("persitence", toString());
         return exception;
     }

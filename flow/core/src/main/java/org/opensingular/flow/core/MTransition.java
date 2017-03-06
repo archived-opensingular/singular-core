@@ -27,6 +27,7 @@ import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,7 +196,9 @@ public class MTransition {
             .validate((K) ctx.getProcessInstance(), params, result));
     }
 
-    final VarInstanceMap<?> newTransationParameters(TransitionRef transitionRef) {
+    @Nonnull
+    final VarInstanceMap<?> newTransitionParameters(@Nonnull TransitionRef transitionRef) {
+        Objects.requireNonNull(transitionRef);
         VarInstanceMap<?> params = getParameters().newInstanceMap();
         if (parametersInitializer != null) {
             parametersInitializer.init(transitionRef, params);
@@ -203,15 +206,8 @@ public class MTransition {
         return params;
     }
 
-    public VarInstanceMap<?> newTransationParameters(ProcessInstance processInstance) {
-        VarInstanceMap<?> params = getParameters().newInstanceMap();
-        if (parametersInitializer != null) {
-            parametersInitializer.init(new TransitionRef(processInstance, this), params);
-        }
-        return params;
-    }
-
-    final ValidationResult validate(TransitionRef transitionRef, VarInstanceMap<?> parameters) {
+    @Nonnull
+    final ValidationResult validate(@Nonnull TransitionRef transitionRef, VarInstanceMap<?> parameters) {
         ValidationResult validationResult = new ValidationResult();
         if (parametersValidator != null) {
             parametersValidator.validate(transitionRef, parameters, validationResult);
@@ -219,12 +215,9 @@ public class MTransition {
         return validationResult;
     }
 
-    public ValidationResult validate(ProcessInstance instancia, VarInstanceMap<?> parameters) {
-        ValidationResult validationResult = new ValidationResult();
-        if (parametersValidator != null) {
-            parametersValidator.validate(new TransitionRef(instancia, this), parameters, validationResult);
-        }
-        return validationResult;
+    @Nonnull
+    public ValidationResult validate(@Nonnull TaskInstance instancia, VarInstanceMap<?> parameters) {
+        return validate(new TransitionRef(instancia, this), parameters);
     }
 
     public final VarDefinitionMap<?> getParameters() {

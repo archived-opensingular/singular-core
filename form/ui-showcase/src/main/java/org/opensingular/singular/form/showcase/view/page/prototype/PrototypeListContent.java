@@ -16,18 +16,6 @@
 
 package org.opensingular.singular.form.showcase.view.page.prototype;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -40,26 +28,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
-import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.wicket.component.BFModalBorder;
 import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
-import org.opensingular.singular.form.showcase.dao.form.Prototype;
-import org.opensingular.singular.form.showcase.dao.form.PrototypeDAO;
-import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
-import org.opensingular.singular.form.showcase.view.template.Content;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
@@ -68,6 +47,24 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.tab.BSTabPanel;
+import org.opensingular.singular.form.showcase.dao.form.Prototype;
+import org.opensingular.singular.form.showcase.dao.form.PrototypeDAO;
+import org.opensingular.singular.form.showcase.view.SingularWicketContainer;
+import org.opensingular.singular.form.showcase.view.template.Content;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class PrototypeListContent extends Content
         implements SingularWicketContainer<PrototypeListContent, Void> {
@@ -181,12 +178,8 @@ public class PrototypeListContent extends Content
 
     private SInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
         String xml = prototype.getXml();
-        RefType refType = new RefType() {
-            protected SType<?> retrieve() {
-                return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
-            }
-        };
-        SIComposite instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+        RefType refType = RefType.of(() -> dictionary.getType(SPackagePrototype.META_FORM_COMPLETE));
+        SIComposite instance = SFormXMLUtil.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
         return new SInstanceRootModel<>(instance);
     }
 

@@ -55,7 +55,7 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
      * deserialização.
      */
     @Override
-    public RefSDocumentFactory getDocumentFactoryRef() {
+    public RefSDocumentFactory createDocumentFactoryRef() {
         return new SpringRefSDocumentFactory(this);
     }
 

@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.annotation;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.apache.commons.lang3.BooleanUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -30,7 +25,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.AtrAnnotation.DefaultAnnotationClassifier;
@@ -38,13 +32,19 @@ import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SIAnnotationModel;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -155,11 +155,11 @@ public class AnnotationComponent extends Panel {
     }
 
     protected static String getTitle(ISInstanceAwareModel<SIComposite> referenced) {
-        final String annotationLabel = referenced.getMInstancia().asAtrAnnotation().label();
+        final String annotationLabel = referenced.getSInstance().asAtrAnnotation().label();
         if (isNotBlank(annotationLabel))
             return annotationLabel;
 
-        final String referencedLabel = referenced.getMInstancia().asAtr().getLabel();
+        final String referencedLabel = referenced.getSInstance().asAtr().getLabel();
         if (isNotBlank(referencedLabel))
             return String.format("Comentários sobre %s", referencedLabel);
 

@@ -30,8 +30,8 @@ import org.opensingular.form.document.ServiceRegistry;
 public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
 
     @Override
-    public RefSDocumentFactory getDocumentFactoryRef() {
-        return new SpringRefEmptySDocumentFactory();
+    protected RefSDocumentFactory createDocumentFactoryRef() {
+        return new SpringRefEmptySDocumentFactory(this);
     }
 
     @Override
@@ -44,6 +44,10 @@ public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
     }
 
     private static final class SpringRefEmptySDocumentFactory extends RefSDocumentFactory {
+
+        public SpringRefEmptySDocumentFactory(SpringSDocumentFactoryEmpty factory) {
+            super(factory);
+        }
 
         @Override
         protected SDocumentFactory retrieve() {

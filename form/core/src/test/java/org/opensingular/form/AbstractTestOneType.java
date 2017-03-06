@@ -19,12 +19,7 @@ public abstract class AbstractTestOneType<TYPE extends SType<?>, INSTANCE extend
 
     protected final INSTANCE newInstance() {
         final Class<TYPE> c = typeClass;
-        RefType refType = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return createTestDictionary().getType(c);
-            }
-        };
+        RefType refType = RefType.of(() -> createTestDictionary().getType(c));
         return (INSTANCE) SDocumentFactory.empty().createInstance(refType);
     }
 }

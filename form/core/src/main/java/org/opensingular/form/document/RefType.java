@@ -16,6 +16,7 @@
 
 package org.opensingular.form.document;
 
+import org.opensingular.form.SDictionary;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.internal.util.SerializableReference;
@@ -58,10 +59,10 @@ public abstract class RefType extends SerializableReference<SType<?>> {
     }
 
     /**
-     * Produz um referencia a partir de um provedor serializável mais simples.
-     * @param supplier
-     * @return
+     * Produz uma referencia a partir de um provedor serializável mais simples.
+     * @param supplier Provedor do tipo, o qual nunca deva gerar um valor null
      */
+    @Nonnull
     public static RefType of(@Nonnull ISupplier<SType<?>> supplier) {
         Objects.requireNonNull(supplier);
         return new RefType() {
@@ -73,6 +74,22 @@ public abstract class RefType extends SerializableReference<SType<?>> {
                     throw new SingularFormException(supplier.getClass().getName() + ".get() retornou null");
                 }
                 return type;
+            }
+        };
+    }
+
+    /**
+     * Cria uma referência para a classe informada, que simplesmente criar um novo dicionário e um tipo a partir da
+     * classe informada sempre que necessário recriar o tipo.
+     */
+    @Nonnull
+    public static RefType of(@Nonnull Class<? extends SType> typeClass) {
+        Objects.requireNonNull(typeClass);
+        return new RefType() {
+            @Override
+            @Nonnull
+            protected SType<?> retrieve() {
+                return SDictionary.create().getType(typeClass);
             }
         };
     }

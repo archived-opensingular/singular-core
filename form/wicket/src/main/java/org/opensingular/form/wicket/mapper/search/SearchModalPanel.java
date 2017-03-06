@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
-import org.opensingular.form.wicket.component.BFModalWindow;
-import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -32,6 +24,14 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.Objects;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewSearchModal;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import org.opensingular.form.wicket.component.BFModalWindow;
+import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
 public class SearchModalPanel extends Panel {
 
@@ -53,7 +53,7 @@ public class SearchModalPanel extends Panel {
         this.valueModel = new AbstractSInstanceAwareModel<String>() {
             @Override
             public String getObject() {
-                final SInstance mi = getMInstancia();
+                final SInstance mi = getSInstance();
                 if (mi != null && mi.getValue() != null) {
                     if (!mi.isEmptyOfData()) {
                         if (mi.asAtr().getDisplayString() != null) {
@@ -69,7 +69,7 @@ public class SearchModalPanel extends Panel {
             }
 
             @Override
-            public SInstance getMInstancia() {
+            public SInstance getSInstance() {
                 return ctx.getModel().getObject();
             }
         };

@@ -1,5 +1,9 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.Button;
+import org.junit.Assert;
+import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
@@ -11,10 +15,6 @@ import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.Button;
-import org.junit.Assert;
-import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -107,7 +107,7 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
 
         tester.executeAjaxEvent(links.get(0), "click");
 
-        final SIComposite currentInstance = page.getCurrentInstance();
+        final SIComposite currentInstance = page.getInstance();
         final SIComposite notebok         = (SIComposite) currentInstance.getField(notebook.getNameSimple());
 
         Assert.assertEquals(notebok.getField("marca").getValue(), "Apple");

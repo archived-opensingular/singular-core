@@ -15,7 +15,6 @@
  */
 package org.opensingular.form.service;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
@@ -23,105 +22,107 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.BasicAnnotationPersistence;
 import org.opensingular.form.persistence.BasicFormPersistence;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.entity.FormAnnotationEntity;
-import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 
+import javax.annotation.Nonnull;
+import java.util.Optional;
+
 /**
- * Service for Form instances
+ * Service de persistência básicos de Form instances
  */
 
 //TODO deveria extender FormPersistence e AnnotationPersistence
 public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnnotationPersistence {
 
     /**
-     * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco {@param key}.
+     * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco (formKey).
      * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
      * versão.
-     * @param key
-     * @param refType
-     * @param documentFactory
-     * @return
      */
-    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
+    @Nonnull
+    SInstance newTransientSInstance(@Nonnull FormKey formKey, @Nonnull RefType refType,
+            @Nonnull SDocumentFactory documentFactory);
 
     /**
-     * Carrega uma nova SInstance a partir de uma versão {@param versionId} de um formulário salvo em banco {@param key}.
+     * Carrega uma nova SInstance a partir de uma versão (versionId) de um formulário salvo em banco (formKey).
      * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
      * versão.
-     * @param key
-     * @param refType
-     * @param documentFactory
-     * @return
      */
-    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId);
+    @Nonnull
+    SInstance newTransientSInstance(@Nonnull FormKey formKey, @Nonnull RefType refType,
+            @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId);
 
 
     /**
-     * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco {@param key}.
+     * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco (formKey).
      * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
      * versão.
-     * @param key
-     * @param refType
-     * @param documentFactory
      * @param keepAnnotations informa se as anotações da versão utilizada como base devem ser mantidas
-     * @return
      */
-    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations);
+    @Nonnull
+    SInstance newTransientSInstance(@Nonnull FormKey formKey, @Nonnull RefType refType,
+            @Nonnull SDocumentFactory documentFactory, boolean keepAnnotations);
 
     /**
-     * Carrega uma nova SInstance a partir de uma versão {@param versionId} de um formulário salvo em banco {@param key}.
+     * Carrega uma nova SInstance a partir de uma versão (versionId) de um formulário salvo em banco (formKey).
      * Essa SIstance não mantém rastrabilidade com o banco de dados e será salva como um novo formulário e uma nova
      * versão.
-     * @param key
-     * @param refType
-     * @param documentFactory
      * @param keepAnnotations informa se as anotações da versão utilizada como base devem ser mantidas
-     * @return
      */
-    SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations);
+    @Nonnull
+    SInstance newTransientSInstance(@Nonnull FormKey formKey, @Nonnull RefType refType,
+            @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId, boolean keepAnnotations);
 
     /**
      * Carrega uma SInstance a partir da última versão de um formulário salvo em banco.
      * Essa SInstance é capaz de ser novamente salva em banco pois mantém
      * a rastreabilidade com seu registro em banco através do Atributo FormKey
-     * @param key
-     * @param refType
-     * @param documentFactory
-     * @return
      */
-    SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory);
+    @Nonnull
+    SInstance loadSInstance(@Nonnull FormKey formKey, @Nonnull RefType refType,
+            @Nonnull SDocumentFactory documentFactory);
 
     /**
-     * Carrega uma SInstance a partir de uma  versão {@param versionId} de um formulário salvo em banco {@param key}.
+     * Carrega uma SInstance a partir de uma  versão (versionId) de um formulário salvo em banco (formKey).
      * Essa SInstance é capaz de ser novamente salva em banco pois mantém
      * a rastreabilidade com seu registro em banco através do Atributo FormKey
-     * @param key
-     * @param refType
-     * @param documentFactory
-     * @return
      */
-    SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId);
+    @Nonnull
+    SInstance loadSInstance(@Nonnull FormKey formKey, @Nonnull RefType refType,
+            @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId);
 
-    FormEntity loadFormEntity(FormKey key);
+    /** Encontra a FormEntity associada a chave informada ou dispara Exception senão encontrar. */
+    @Nonnull
+    FormEntity loadFormEntity(@Nonnull FormKey key);
 
-    FormVersionEntity loadFormVersionEntity(Long versionId);
-
-    String extractContent(SInstance instance);
+    /** Encontra a {@link FormVersionEntity} correspondente ao id informado ou dispara Exception senão encontrar. */
+    @Nonnull
+    FormVersionEntity loadFormVersionEntity(@Nonnull Long versionId);
 
     /**
-     * busca a form version entity pelo documento
+     * Busca a form version entity associado ao documento
      * @param document o documento do form
-     * @return a entidade ou null caso nao encontre
+     * @return a entidade ou Option null caso nao encontre
      */
-    FormEntity findFormEntity(SDocument document);
+    @Nonnull
+    Optional<FormEntity> findFormEntity(@Nonnull SDocument document);
+
+    /**
+     * Busca a form version entity associado ao documento da instância.
+     * @return a entidade ou Option null caso nao encontre
+     */
+    @Nonnull
+    default Optional<FormEntity> findFormEntity(@Nonnull SInstance instance) {
+        return findFormEntity(instance.getDocument());
+    }
 
     /**
      * procura a FormVersionEntity a partir do documento (instancia raiz)
      * @param document documento do formulario
      * @return a entidade
      */
-    FormVersionEntity findCurrentFormVersion(SDocument document);
+    @Nonnull
+    Optional<FormVersionEntity> findCurrentFormVersion(@Nonnull SDocument document);
 
 }

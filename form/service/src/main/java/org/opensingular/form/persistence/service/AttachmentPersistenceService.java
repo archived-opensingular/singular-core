@@ -30,15 +30,13 @@ import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularUtil;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -78,7 +76,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     @Override
     public AttachmentRef getAttachment(String fileId) {
         if (StringUtils.isNumeric(fileId)) {
-            return new AttachmentRef(attachmentDao.find(Long.valueOf(fileId)));
+            return new AttachmentRef(attachmentDao.findOrException(Long.valueOf(fileId)));
         }
         return null;
     }
@@ -96,20 +94,22 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         return new AttachmentRef(attachmentEntity);
     }
 
-    public T getAttachmentEntity(IAttachmentRef ref) {
-        return attachmentDao.find(Long.valueOf(ref.getId()));
+    @Nonnull
+    public T getAttachmentEntity(@Nonnull IAttachmentRef ref) {
+        return getAttachmentEntity(ref.getId());
     }
 
-    public T getAttachmentEntity(String id) {
-        return attachmentDao.find(Long.valueOf(id));
+    @Nonnull
+    public T getAttachmentEntity(@Nonnull String id) {
+        return attachmentDao.findOrException(Long.valueOf(id));
     }
 
     public void loadAttachmentContent(Long codContent, OutputStream fos) {
-        C content = attachmentContentDao.find(codContent);
-        if (content == null) {
+        Optional<C> content = attachmentContentDao.find(codContent);
+        if (! content.isPresent()) {
             throw SingularException.rethrow("Attachment Content not found id=" + codContent);
         }
-        try (InputStream in = content.getContent().getBinaryStream()) {
+        try (InputStream in = content.get().getContent().getBinaryStream()) {
             IOUtils.copy(in, fos);
         } catch (SQLException | IOException e) {
             throw SingularException.rethrow("couldn't copy content to outputstream", e);

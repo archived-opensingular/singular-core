@@ -3,12 +3,11 @@ package org.opensingular.form.io;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import org.opensingular.form.helpers.AssertionsSForm;
-import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SType;
 import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.helpers.AssertionsSForm;
+import org.opensingular.form.helpers.AssertionsSType;
 
 /**
  * Testa se o correto funcionamento da conversão de um XSD em Stype. Mais
@@ -114,7 +113,7 @@ public class TestFormXSDUtil extends TestCaseForm {
 
     private AssertionsSType parseXsd(String xsd) {
         PackageBuilder sPackage = createTestDictionary().createNewPackage("test.xsd");
-        SType<?> type = FormXsdUtil.xsdToSType(sPackage, xsd);
+        SType<?> type = FormXSDUtil.xsdToSType(sPackage, xsd);
         return AssertionsSForm.assertType(type).isNotNull();
     }
 }

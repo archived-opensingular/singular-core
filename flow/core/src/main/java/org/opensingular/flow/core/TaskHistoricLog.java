@@ -18,6 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public final class TaskHistoricLog {
@@ -36,6 +37,7 @@ public final class TaskHistoricLog {
         Flow.notifyListeners(n -> n.notifyLogToUsers(this, users));
     }
 
+    @Nonnull
     public ProcessInstance getProcessInstance() {
         return Flow.getProcessInstance(history.getTaskInstance().getProcessInstance());
     }

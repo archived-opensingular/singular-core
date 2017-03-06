@@ -16,6 +16,7 @@
 
 package org.opensingular.form.io;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
@@ -24,8 +25,9 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.ServiceRegistry;
 import org.opensingular.form.internal.xml.MElement;
-import org.apache.commons.lang3.StringUtils;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -81,10 +83,10 @@ public class FormSerializationUtil {
      */
     private static FormSerialized toSerialized(SDocument document) {
         SInstance root = document.getRoot();
-        MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
+        MElement xml = SFormXMLUtil.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
         if (document.getDocumentAnnotations().hasAnnotations()) {
-            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getDocumentAnnotations().getAnnotations());
+            annotations = SFormXMLUtil.toXMLPreservingRuntimeEdition(document.getDocumentAnnotations().getAnnotations());
         }
 
         checkIfSerializable(root);
@@ -153,9 +155,9 @@ public class FormSerializationUtil {
      */
     public static SInstance toInstance(FormSerialized fs) {
         try {
-            SInstance root = MformPersistenciaXML.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
+            SInstance root = SFormXMLUtil.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
             deserializeServices(fs.getServices(), root.getDocument());
-            MformPersistenciaXML.annotationLoadFromXml(root.getDocument(), fs.getAnnotations());
+            SFormXMLUtil.annotationLoadFromXml(root.getDocument(), fs.getAnnotations());
             root.getDocument().setValidationErrors(fs.getValidationErrors());
             return defineRoot(fs, root);
         } catch (Exception e) {
@@ -187,5 +189,17 @@ public class FormSerializationUtil {
             msg += " with subPath '" + fs.getFocusFieldPath() + '\'';
         }
         return new SingularFormException(msg, e);
+    }
+
+    /**
+     * Serializa a instancia para um array de bytes em memória e deserializa na sequencia, retornando o resultado. Útil
+     * para teste de serialização de uma instância.
+     */
+    @Nonnull
+    public static SInstance serializeAndDeserialize(@Nonnull SInstance original) {
+        // Testa sem transformar em array de bytes
+        FormSerialized fs = FormSerializationUtil.toSerializedObject(original);
+        FormSerialized fs2 = SingularIOUtils.serializeAndDeserialize(fs);
+        return FormSerializationUtil.toInstance(fs2);
     }
 }

@@ -57,7 +57,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         tester.assertInvisible(removeFileButton.getPageRelativePath());
 
         // Verifica se não existe arqiovps
-        assertThat(model.getMInstancia().isEmptyOfData()).isTrue();
+        assertThat(model.getSInstance().isEmptyOfData()).isTrue();
 
         File file = createTempFileAndSetOnField(uploadField);
 
@@ -65,7 +65,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         executeAjaxFormSubmitBehavior(uploadField);
 
         //Verifica se o valor do model mudou
-        assertThat(model.getMInstancia().isEmptyOfData()).isFalse();
+        assertThat(model.getSInstance().isEmptyOfData()).isFalse();
 
         //Verifica se a visibilidade mudou
         tester.assertInvisible(choose.getPageRelativePath());
@@ -88,14 +88,14 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         executeAjaxFormSubmitBehavior(uploadField);
 
         // Verifica se é instancia de SInstance
-        assertThat(model.getMInstancia()).is(new Condition<SInstance>() {
+        assertThat(model.getSInstance()).is(new Condition<SInstance>() {
             @Override
             public boolean matches(SInstance value) {
                 return value instanceof SIAttachment;
             }
         });
 
-        SIAttachment attachment = (SIAttachment) model.getMInstancia();
+        SIAttachment attachment = (SIAttachment) model.getSInstance();
         assertThat(attachment.getFileName()).isEqualTo(file.getName());
 
         file.deleteOnExit();

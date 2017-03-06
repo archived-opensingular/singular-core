@@ -46,66 +46,47 @@ import java.util.Optional;
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
-
-    protected ViewMode viewMode = ViewMode.EDIT;
-
-    protected AnnotationMode annotationMode = AnnotationMode.NONE;
-
-    protected transient SIComposite currentInstance;
-
-    protected IConsumer<STypeComposite> typeBuilder;
-
-    protected IFunction<RefType, SIComposite> instanceCreator;
-
+    protected           IConsumer<STypeComposite>     typeBuilder;
+    protected           IFunction<RefType, SIComposite> instanceCreator;
     private final List<IConsumer<SIComposite>> instancePopulators = new ArrayList<>();
 
     private SingularFormWicket<?> form = new SingularFormWicket<>("form");
 
-    private SingularFormPanel<String> singularFormPanel        = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
-        @Override
-        protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            Optional<RefType> baseType = mockFormConfig.getTypeLoader().loadRefType("mockType");
-            if (baseType.isPresent()) {
-                RefType refType = baseType.get();
-                if (refType.get().isComposite()) {
-                    typeBuilder.accept((STypeComposite) refType.get());
-                }
-                if (instanceCreator != null) {
-                    currentInstance = instanceCreator.apply(refType);
-                } else{
-                    SDocumentFactory factory = mockFormConfig.getDocumentFactory();
-                    currentInstance = (SIComposite) factory.createInstance(refType);
-                }
-                instancePopulators.forEach(populator -> populator.accept(currentInstance));
-            }
-            return currentInstance;
-        }
+    private final SingularFormPanel singularFormPanel = new SingularFormPanel("singularFormPanel");
 
-        @Override
-        public ViewMode getViewMode() {
-            return viewMode;
-        }
-
-        @Override
-        public AnnotationMode getAnnotationMode() {
-            return annotationMode;
-        }
-    };
-    private SingularValidationButton  singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getRootInstance()) {
+    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getInstanceModel()) {
         @Override
         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
         }
     };
 
     public DummyPage() {
+        singularFormPanel.setAnnotationMode(AnnotationMode.NONE);
+        singularFormPanel.setInstanceCreator(this::createInstance);
         add(form.add(singularFormPanel, singularValidationButton));
+    }
+
+    private SInstance createInstance() {
+        SIComposite currentInstance;
+        RefType refType = mockFormConfig.getTypeLoader().loadRefTypeOrException("mockType");
+        if (refType.get().isComposite()) {
+            typeBuilder.accept((STypeComposite) refType.get());
+        }
+        if (instanceCreator != null) {
+            currentInstance = instanceCreator.apply(refType);
+        } else{
+            SDocumentFactory factory = mockFormConfig.getDocumentFactory();
+            currentInstance = (SIComposite) factory.createInstance(refType);
+        }
+        instancePopulators.forEach(populator -> populator.accept(currentInstance));
+        return currentInstance;
     }
 
     public Form<?> getForm() {
         return form;
     }
 
-    public SingularFormPanel<String> getSingularFormPanel() {
+    public SingularFormPanel getSingularFormPanel() {
         return singularFormPanel;
     }
 
@@ -114,27 +95,23 @@ public class DummyPage extends WebPage {
     }
 
     public void setAsVisualizationView() {
-        viewMode = ViewMode.READ_ONLY;
+        singularFormPanel.setViewMode(ViewMode.READ_ONLY);
     }
 
     public void setAsEditView() {
-        viewMode = ViewMode.EDIT;
+        singularFormPanel.setViewMode(ViewMode.EDIT);
     }
 
     public void enableAnnotation() {
-        annotationMode = AnnotationMode.EDIT;
+        singularFormPanel.setAnnotationMode(AnnotationMode.EDIT);
     }
 
-    public SIComposite getCurrentInstance() {
-        return currentInstance;
+    public SIComposite getInstance() {
+        return (SIComposite) singularFormPanel.getInstance();
     }
 
     public void setInstanceCreator(IFunction<RefType, SIComposite> instanceCreator) {
         this.instanceCreator = instanceCreator;
-    }
-
-    final IFunction<RefType, SIComposite> getInstanceCreator() {
-        return instanceCreator;
     }
 
     public void setTypeBuilder(IConsumer<STypeComposite> typeBuilder) {
@@ -161,7 +138,7 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     }
 
     @Override
-    public RefSDocumentFactory getDocumentFactoryRef() {
+    protected RefSDocumentFactory createDocumentFactoryRef() {
         final MockSDocumentFactory documentFactory = this;
         return new RefSDocumentFactory() {
             @Override
@@ -180,15 +157,10 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
     protected void setupDocument(SDocument document) {
     }
 
-    private class Context implements SingularFormContextWicket, Serializable {
+    private static class Context implements SingularFormContextWicket, Serializable {
         @Override
         public UIBuilderWicket getUIBuilder() {
             return new UIBuilderWicket();
-        }
-
-        @Override
-        public ServiceRegistry getServiceRegistry() {
-            return defaultServiceRegistry;
         }
     }
 }

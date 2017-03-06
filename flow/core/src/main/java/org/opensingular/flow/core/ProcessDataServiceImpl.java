@@ -16,31 +16,16 @@
 
 package org.opensingular.flow.core;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.service.IPersistenceService;
+import org.opensingular.flow.core.service.IProcessDataService;
+
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.service.IProcessDataService;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
-import org.opensingular.flow.core.service.IPersistenceService;
-
-import com.google.common.collect.Lists;
 
 public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProcessDataService<I> {
 
@@ -53,11 +38,15 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
 
     @Override
     public final I retrieveInstance(Integer entityCod) {
-        IEntityProcessInstance entityProcessInstance = getPersistenceService().retrieveProcessInstanceByCod(entityCod);
-        if (entityProcessInstance != null) {
-            return processDefinition.convertToProcessInstance(entityProcessInstance);
-        }
-        return null;
+        return retrieveInstanceOpt(entityCod).orElseThrow(
+                () -> new SingularFlowException("Nao foi encontrada a instancia de processo cod=" + entityCod));
+    }
+
+    @Override
+    @Nonnull
+    public final Optional<I> retrieveInstanceOpt(@Nonnull Integer entityCod) {
+        return getPersistenceService().retrieveProcessInstanceByCod(entityCod)
+                .map(i -> processDefinition.convertToProcessInstance(i));
     }
 
     @Override

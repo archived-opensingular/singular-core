@@ -1,20 +1,5 @@
 package org.opensingular.singular.form.showcase.view.page.prototype;
 
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SType;
-import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.io.MformPersistenciaXML;
-import org.opensingular.singular.form.showcase.view.page.prototype.PrototypeContent;
-import org.opensingular.singular.form.showcase.view.page.prototype.PrototypePage;
-import org.opensingular.singular.form.showcase.view.page.prototype.SPackagePrototype;
-import org.opensingular.singular.form.showcase.SpringWicketTester;
-import org.opensingular.singular.form.showcase.dao.form.Prototype;
-import org.opensingular.singular.form.showcase.view.template.Content;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.tester.FormTester;
@@ -24,14 +9,23 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.io.SFormXMLUtil;
+import org.opensingular.singular.form.showcase.SpringWicketTester;
+import org.opensingular.singular.form.showcase.dao.form.Prototype;
+import org.opensingular.singular.form.showcase.view.template.Content;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import static org.opensingular.form.wicket.helpers.TestFinders.findOnForm;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.helpers.TestFinders.findOnForm;
 
 @Ignore("Problems with maven environment")
 @RunWith(Enclosed.class)
@@ -58,12 +52,8 @@ public class PrototypePageTest {
         }
 
         private void createInstance() {
-            SDocumentFactory documentFactory = singularFormConfig.getDocumentFactory();
-            currentInstance = (SIComposite) documentFactory.createInstance(new RefType() {
-                protected SType<?> retrieve() {
-                    return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
-                }
-            });
+            RefType refType = RefType.of(() -> dictionary.getType(SPackagePrototype.META_FORM_COMPLETE));
+            currentInstance = (SIComposite) singularFormConfig.getDocumentFactory().createInstance(refType);
         }
 
         @Test
@@ -104,10 +94,7 @@ public class PrototypePageTest {
                         @Override
                         protected void loadOrBuildModel() {
                             this.prototype = new Prototype();
-                            MElement xml = MformPersistenciaXML.toXML(currentInstance);
-                            if (xml != null) {
-                                this.prototype.setXml(xml.toStringExato());
-                            }
+                            SFormXMLUtil.toStringXML(currentInstance).ifPresent(x -> this.prototype.setXml(x));
                         }
                     };
                 }

@@ -45,13 +45,13 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
     }
 
     @Override
-    public SInstance getMInstancia() {
+    public SInstance getSInstance() {
         return model.getObject();
     }
 
     @Override
     public Serializable getObject() {
-        SInstance instance = getMInstancia();
+        SInstance instance = getSInstance();
         if (instance.isEmptyOfData()) {
             return null;
         }
@@ -66,7 +66,7 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
 
     @Override
     public void setObject(Serializable object) {
-        SInstance instance = getMInstancia();
+        SInstance instance = getSInstance();
         if (object == null) {
             instance.clearInstance();
         } else {

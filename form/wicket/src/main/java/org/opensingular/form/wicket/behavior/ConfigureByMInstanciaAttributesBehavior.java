@@ -100,7 +100,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         if (component != null) {
             IModel<?> model = component.getDefaultModel();
             if (model != null && ISInstanceAwareModel.class.isAssignableFrom(model.getClass())) {
-                return ((ISInstanceAwareModel<?>) model).getMInstancia();
+                return ((ISInstanceAwareModel<?>) model).getSInstance();
             }
         }
         return null;

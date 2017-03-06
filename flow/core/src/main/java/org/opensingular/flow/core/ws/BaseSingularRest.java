@@ -21,9 +21,6 @@ import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 
-import javax.xml.ws.WebServiceException;
-import java.util.Objects;
-
 public class BaseSingularRest {
 
     public static final String START_INSTANCE = "/startInstance";
@@ -41,7 +38,7 @@ public class BaseSingularRest {
     }
 
     public Long startInstance(String processAbbreviation) {
-        ProcessDefinition processo = Flow.getProcessDefinitionWith(processAbbreviation);
+        ProcessDefinition processo = Flow.getProcessDefinition(processAbbreviation);
         ProcessInstance processInstance = processo.newInstance();
         processInstance.start();
         return processInstance.getEntityCod().longValue();
@@ -67,19 +64,16 @@ public class BaseSingularRest {
                              String username,
                              Integer lastVersion) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(username);
-        if (user == null) {
-            throw new WebServiceException("Usuário não encontrado");
-        }
+        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
         if(lastVersion == null) {
             lastVersion = 0;
         }
-        processInstance.getCurrentTask().relocateTask(user, user, false, "", lastVersion);
+        processInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion);
     }
 
     private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
-        ProcessInstance processInstance = Flow.getProcessDefinitionWith(processAbbreviation).getDataService().retrieveInstance(codProcessInstance.intValue());
-        return Objects.requireNonNull(processInstance);
+        ProcessDefinition<ProcessInstance> processDefinition = Flow.getProcessDefinition(processAbbreviation);
+        return Flow.getProcessInstance(processDefinition, (Integer) codProcessInstance.intValue());
     }
     
 }

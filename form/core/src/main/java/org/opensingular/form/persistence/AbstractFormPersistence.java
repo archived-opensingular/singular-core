@@ -18,6 +18,8 @@ package org.opensingular.form.persistence;
 
 import org.opensingular.form.SIComposite;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +44,8 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     }
 
     @Override
-    public INSTANCE load(FormKey key) {
+    @Nonnull
+    public INSTANCE load(@Nonnull FormKey key) {
         INSTANCE instance = loadImpl(key);
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("Não foi encontrada a instância")).add("Key", key);
@@ -50,14 +53,16 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
         return instance;
     }
 
-    public Optional<INSTANCE> loadOpt(FormKey key) {
+    @Nonnull
+    public Optional<INSTANCE> loadOpt(@Nonnull FormKey key) {
         return Optional.ofNullable(loadImpl(key));
     }
 
-    private INSTANCE loadImpl(FormKey key) {
-        INSTANCE instance = loadInternal(checkKey(key, null, " o parâmetro key não fosse null"));
+    @Nullable
+    private INSTANCE loadImpl(@Nonnull FormKey key) {
+        INSTANCE instance = loadInternal(checkKeyOrException(key, null));
         if (instance != null) {
-            KEY key2 = readKeyAttribute(instance, " a instância carregada tivesse o atributo FormKey preenchido");
+            KEY key2 = readKeyAttributeOrException(instance);
             if (!key2.equals(key)) {
                 throw addInfo(new SingularFormPersistenceException(
                         "FormKey da instância encontrada, não é igual à solicitada")).add("Key Esperado", key).add(
@@ -68,19 +73,23 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     }
 
     @Override
+    @Nonnull
     public List<INSTANCE> loadAll(long first, long max) {
         return loadAllInternal(first, max);
     }
 
     @Override
+    @Nonnull
     public List<INSTANCE> loadAll() {
         return loadAllInternal();
     }
 
     protected abstract INSTANCE loadInternal(KEY key);
 
+    @Nonnull
     protected abstract List<INSTANCE> loadAllInternal();
 
+    @Nonnull
     protected abstract List<INSTANCE> loadAllInternal(long first, long max);
 
 

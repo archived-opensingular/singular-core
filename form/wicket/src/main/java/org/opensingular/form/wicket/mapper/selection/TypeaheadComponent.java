@@ -148,8 +148,8 @@ public class TypeaheadComponent extends Panel {
             private Serializable lastValue;
 
             @Override
-            public SInstance getMInstancia() {
-                return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getMInstancia).orElse(null);
+            public SInstance getSInstance() {
+                return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getSInstance).orElse(null);
             }
 
             @Override
@@ -175,13 +175,13 @@ public class TypeaheadComponent extends Panel {
             public void setObject(String key) {
                 if (StringUtils.isEmpty(key)) {
                     getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, Boolean.TRUE);
-                    getMInstancia().clearInstance();
+                    getSInstance().clearInstance();
                 } else {
                     final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
                     if (val != null) {
-                        instance().asAtrProvider().getConverter().fillInstance(getMInstancia(), val);
+                        instance().asAtrProvider().getConverter().fillInstance(getSInstance(), val);
                     } else {
-                        getMInstancia().clearInstance();
+                        getSInstance().clearInstance();
                     }
                 }
             }
@@ -323,7 +323,7 @@ public class TypeaheadComponent extends Panel {
     }
 
     private SInstance instance() {
-        return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getMInstancia).orElse(null);
+        return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getSInstance).orElse(null);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

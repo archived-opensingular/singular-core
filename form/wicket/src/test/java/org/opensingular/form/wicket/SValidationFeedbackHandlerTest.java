@@ -20,12 +20,12 @@ import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.helpers.SingularWicketTester;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.test.base.TestPanel;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.panel.FormPanel;
 
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static org.junit.Assert.assertFalse;
 
@@ -49,13 +49,8 @@ public class SValidationFeedbackHandlerTest {
         });
     }
 
-    protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
-        RefType ref = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return typeSupplier.get();
-            }
-        };
+    protected static SInstance createIntance(ISupplier<SType<?>> typeSupplier) {
+        RefType ref = RefType.of(typeSupplier);
         return SDocumentFactory.empty().createInstance(ref);
     }
 

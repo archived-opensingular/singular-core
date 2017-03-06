@@ -17,10 +17,11 @@
 package org.opensingular.flow.persistence.service;
 
 import org.hibernate.Hibernate;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import javax.annotation.Nonnull;
 
 @Transactional(readOnly = true)
 public class ProcessRetrieveService extends AbstractHibernateService {
@@ -37,8 +38,9 @@ public class ProcessRetrieveService extends AbstractHibernateService {
      * Transformar em DTO essa busca da vários problemas de lazy para o historico (HistoricoContent)
      */
     @Deprecated
-    public ProcessInstanceEntity retrieveProcessInstanceByCod(Integer cod) {
-        ProcessInstanceEntity pi =  getSession().retrieve(ProcessInstanceEntity.class, cod);
+    @Nonnull
+    public ProcessInstanceEntity retrieveProcessInstanceByCod(@Nonnull Integer cod) {
+        ProcessInstanceEntity pi =  getSession().retrieveOrException(ProcessInstanceEntity.class, cod);
         pi.getTasks().forEach(t -> {
             Hibernate.initialize(t.getTask());
             Hibernate.initialize(t.getAllocatedUser());
