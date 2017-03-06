@@ -91,7 +91,7 @@ public class MTaskJava extends MTask<MTaskJava> {
         Object result = blockImpl.call(instancias);
 
         if (result == null) {
-            long qtdAlterado = instancias.stream().filter(i -> !equals(i.getEstado())).count();
+            long qtdAlterado = instancias.stream().filter(i -> !equals(i.getState().orElse(null))).count();
             result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
         return result;

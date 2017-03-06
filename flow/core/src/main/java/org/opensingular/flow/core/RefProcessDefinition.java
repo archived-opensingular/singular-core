@@ -16,7 +16,9 @@
 
 package org.opensingular.flow.core;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -30,21 +32,28 @@ public abstract class RefProcessDefinition implements Serializable, Supplier<Pro
 
     private transient ProcessDefinition<?> processDefinition;
 
+    @Nonnull
     protected abstract ProcessDefinition<?> reload();
 
     @Override
     public final ProcessDefinition<?> get() {
         if (processDefinition == null) {
             processDefinition = reload();
+            if (processDefinition == null) {
+                throw new SingularFlowException(getClass().getName() + ".reload() retornou null");
+            }
         }
         return processDefinition;
     }
 
-    public static RefProcessDefinition of(Class<? extends ProcessDefinition<?>> processDefinitionClass) {
+    @Nonnull
+    public static RefProcessDefinition of(@Nonnull Class<? extends ProcessDefinition<?>> processDefinitionClass) {
+        Objects.requireNonNull(processDefinitionClass);
         return ProcessDefinitionCache.getDefinition(processDefinitionClass).getSerializableReference();
     }
 
-    public static RefProcessDefinition of(ProcessDefinition<?> definition) {
-        return definition.getSerializableReference();
+    @Nonnull
+    public static RefProcessDefinition of(@Nonnull ProcessDefinition<?> definition) {
+        return Objects.requireNonNull(definition).getSerializableReference();
     }
 }

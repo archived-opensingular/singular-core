@@ -78,7 +78,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                                         ProcessDefinition<?> definicaoProcessoMBPM, MTaskWait task) {
         if (task.hasExecutionDateStrategy()) {
             for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
-                TaskInstance instanciaTarefa = instancia.getCurrentTask();
+                TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
                 Date         dataExecucao    = task.getExecutionDate(instancia, instanciaTarefa);
                 if (!dataExecucao.equals(instanciaTarefa.getTargetEndDate())) {
                     instanciaTarefa.setTargetEndDate(dataExecucao);
@@ -97,7 +97,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         return task -> {
             // Preenche Data Alvo para os casos que estiverem null
             for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
-                TaskInstance instanciaTarefa = instancia.getCurrentTask();
+                TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
                 if (instanciaTarefa.getTargetEndDate() == null) {
                     Date alvo = task.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
                     if (alvo != null) {
@@ -113,7 +113,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
 
     private void executeAutomaticActions(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM, MTask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
         for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
-            TaskInstance instanciaTarefa = instancia.getCurrentTask();
+            TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
             for (IConditionalTaskAction acao : acoesAutomaticas) {
                 if (acao.getPredicate().test(instanciaTarefa)) {
                     log.append(instancia.getFullId()).append(": Condicao Atingida '")

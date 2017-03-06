@@ -1,35 +1,12 @@
 package org.opensingular.flow.test;
 
-import static org.fest.assertions.api.Assertions.*;
-
-import java.util.Date;
-
-import javax.inject.Inject;
-
-import org.opensingular.flow.core.DefinitionInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import org.opensingular.lib.commons.base.SingularPropertiesImpl;
-import org.opensingular.flow.core.ExecutionContext;
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessDefinitionCache;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.*;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
@@ -38,6 +15,16 @@ import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
+import org.opensingular.lib.commons.base.SingularPropertiesImpl;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.inject.Inject;
+import java.util.Date;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @ActiveProfiles("mssql")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -86,13 +73,13 @@ public class RelocationTest  {
         ProcessInstance id = p.newInstance();
         id.start();
 
-        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", null);
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
 
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 1);
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
     }
 
     @Test public void rejectssRelocationTaskUserWithWrongVersionLock(){
@@ -100,14 +87,14 @@ public class RelocationTest  {
         ProcessInstance id = p.newInstance();
         id.start();
 
-        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", 0);
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
 
         thrown.expectMessage("Your Task Version Number is Outdated.");
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 0);
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
     }
 
 
@@ -116,12 +103,12 @@ public class RelocationTest  {
         ProcessInstance id = p.newInstance();
         id.start();
 
-        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         Actor u1 = testDAO.getSomeUser(1);
-        TaskInstance t = id.getCurrentTask();
+        TaskInstance t = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
 
         session.flush();
         session.evict(t.getEntityTaskInstance());
@@ -135,21 +122,21 @@ public class RelocationTest  {
 
         session.flush();
 
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
     }
 
     @Test public void acceptsRelocationWithValidVersionNumber(){
-        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         Actor u1 = testDAO.getSomeUser(1);
-        TaskInstance t = id.getCurrentTask();
+        TaskInstance t = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
 
         Actor u2 = testDAO.getSomeUser(2);
         t.relocateTask(u2, u2, false, "Just want to watch the world burn", t.getEntityTaskInstance().getVersionStamp());
 
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u2);
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u2);
     }
 
     Session session;
@@ -170,16 +157,16 @@ public class RelocationTest  {
     }
 
     @Test public void endAllocation(){
-        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         Actor u1 = testDAO.getSomeUser(1);
-        TaskInstance t = id.getCurrentTask();
+        TaskInstance t = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
-        assertThat(id.getCurrentTask().getAllocatedUser()).isEqualTo(u1);
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
 
         t.endLastAllocation();
 
-        assertThat(id.getCurrentTask().getAllocatedUser()).isNull();
+        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
     }
 
     private void save(TaskInstanceEntity o) {
@@ -189,7 +176,7 @@ public class RelocationTest  {
     }
 
     private TaskInstanceEntity nTE(ProcessInstance id) {
-        TaskInstanceEntity t = id.getCurrentTask().getEntityTaskInstance();
+        TaskInstanceEntity t = id.getCurrentTaskOrException().getEntityTaskInstance();
         TaskInstanceEntity o = new TaskInstanceEntity();
         o.setTask((TaskVersionEntity) t.getTask());
         o.setProcessInstance(t.getProcessInstance());

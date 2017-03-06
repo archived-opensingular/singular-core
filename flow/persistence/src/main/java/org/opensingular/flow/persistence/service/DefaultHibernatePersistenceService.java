@@ -16,33 +16,13 @@
 
 package org.opensingular.flow.persistence.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
-import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.entity.IEntityVariableType;
-import org.opensingular.flow.persistence.entity.Actor;
-import org.opensingular.flow.persistence.entity.CategoryEntity;
-import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.persistence.entity.ProcessVersionEntity;
-import org.opensingular.flow.persistence.entity.RoleDefinitionEntity;
-import org.opensingular.flow.persistence.entity.RoleInstanceEntity;
-import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
-import org.opensingular.flow.persistence.entity.TaskHistoricTypeEntity;
-import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
-import org.opensingular.flow.persistence.entity.TaskVersionEntity;
-import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
-import org.opensingular.flow.persistence.entity.VariableTypeInstance;
+import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.persistence.entity.*;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
+
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public class DefaultHibernatePersistenceService extends
         AbstractHibernatePersistenceService<CategoryEntity, ProcessDefinitionEntity,
@@ -131,8 +111,9 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    protected VariableInstanceEntity retrieveVariableInstanceByCod(Integer cod) {
-        return getSession().retrieve(VariableInstanceEntity.class, cod);
+    @Nonnull
+    protected Optional<VariableInstanceEntity> retrieveVariableInstanceByCod(@Nonnull Integer cod) {
+        return getSession().retrieve(VariableInstanceEntity.class, Objects.requireNonNull(cod));
     }
 
     @Override

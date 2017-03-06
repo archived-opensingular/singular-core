@@ -16,17 +16,6 @@
 
 package org.opensingular.flow.persistence.entity.util;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
@@ -34,6 +23,14 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.jdbc.Work;
 import org.opensingular.flow.core.SingularFlowException;
+
+import javax.annotation.Nonnull;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public class SessionWrapper {
@@ -125,9 +122,9 @@ public class SessionWrapper {
         if (ids != null && ids.length > 0) {
             for (Serializable id : ids) {
                 if (id != null) {
-                    Serializable obj = retrieve(tipo, id);
-                    if (obj != null) {
-                        getSession().delete(obj);
+                    Optional<? extends Serializable> obj = retrieve(tipo, id);
+                    if (obj.isPresent()) {
+                        getSession().delete(obj.get());
                     }
                 }
             }
@@ -136,9 +133,9 @@ public class SessionWrapper {
     }
 
     public void deleteByPk(Class<? extends Serializable> tipo, Serializable id) {
-        Serializable obj = retrieve(tipo, id);
-        if (obj != null) {
-            delete(obj);
+        Optional<? extends Serializable> obj = retrieve(tipo, id);
+        if (obj.isPresent()) {
+            delete(obj.get());
         }
     }
 
@@ -199,19 +196,20 @@ public class SessionWrapper {
      *            Identificador do objeto a ser recuperado
      * @return Objeto referente ao identificador informado
      */
-    public <T> T retrieve(Class<T> classe, Serializable id) {
+    @Nonnull
+    public <T> Optional<T> retrieve(@Nonnull Class<T> classe, @Nonnull Serializable id) {
         try {
-            Object o = getSession().get(classe, id);
-            return classe.cast(o);
+            Object o = getSession().get(Objects.requireNonNull(classe), Objects.requireNonNull(id));
+            return Optional.of(classe.cast(o));
         } catch (ObjectNotFoundException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
-    public <T> T retrieveOrException(Class<T> classe, Serializable id) {
-        Object o = getSession().get(classe, id);
-        Objects.requireNonNull(o, "Não foi encontrado " + classe.getName() + " de pk=" + id);
-        return classe.cast(o);
+    @Nonnull
+    public <T> T retrieveOrException(@Nonnull Class<T> classe, @Nonnull Serializable id) {
+        return retrieve(classe, id).orElseThrow(
+                () -> new SingularFlowException("Não foi encontrado " + classe.getName() + " de pk=" + id));
     }
 
     public <T> List<T> retrieve(Class<T> classe, Collection<? extends Serializable> ids) {
@@ -220,7 +218,7 @@ public class SessionWrapper {
         }
         List<T> lista = new ArrayList<>(ids.size());
         for (Serializable id : ids) {
-            T t = retrieve(classe, id);
+            T t = retrieveOrException(classe, id);
             if (t != null) {
                 lista.add(t);
             }

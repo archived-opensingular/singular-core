@@ -33,10 +33,8 @@ import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -103,24 +101,25 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     protected abstract String[] getDefinitionsPackages();
 
-    public <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> processClass) {
+    @Nonnull
+    public <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull Class<K> processClass) {
         return ProcessDefinitionCache.getDefinition(processClass);
     }
 
     /**
      * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
      */
-    protected ProcessDefinition<?> getProcessDefinition(String key) {
+    @Nonnull
+    protected ProcessDefinition<?> getProcessDefinition(@Nonnull String key) {
         return getDefinitionCache().getDefinition(key);
     }
 
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
-     * @param key
-     * @return
      */
-    protected ProcessDefinition<?> getProcessDefinitionUnchecked(String key) {
-        return getDefinitionCache().getDefinitionUnchecked(key);
+    @Nonnull
+    protected Optional<ProcessDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {
+        return getDefinitionCache().getDefinitionOpt(key);
     }
 
     public List<ProcessDefinition<?>> getDefinitions() {
@@ -129,62 +128,98 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // ------- Método de recuperação de instâncias --------------------
 
-    private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
-        IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
-        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcessVersion().getAbbreviation());
-        return def.convertToProcessInstance(dadosInstanciaProcesso);
+    /** Retorna a ProcessInstance referente a código infomado ou dispara exception senão encontrar. */
+    @Nonnull
+    private ProcessInstance getProcessInstance(@Nonnull Integer entityCod) {
+        return getProcessInstanceOpt(entityCod).orElseThrow(() -> new SingularFlowException(msgNotFound(entityCod)));
     }
 
-    protected ProcessInstance getProcessInstance(IEntityProcessInstance entityProcessInstance) {
-        return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
+    /** Retorna a ProcessInstance referente a entidade infomado ou dispara exception senão encontrar. */
+    @Nonnull
+    protected ProcessInstance getProcessInstance(@Nonnull IEntityProcessInstance entityProcessInstance) {
+        Objects.requireNonNull(entityProcessInstance);
+        return getProcessInstance(entityProcessInstance.getCod());
     }
 
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> instanceClass, IEntityProcessInstance entityProcessInstance) {
-        return (X) getProcessInstanceByEntityCod(entityProcessInstance.getCod());
+    @Nonnull
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(
+            @Nonnull Class<T> processClass, @Nonnull IEntityProcessInstance entityProcessInstance) {
+        Objects.requireNonNull(entityProcessInstance);
+        return (X) getProcessInstance(getProcessDefinition(processClass), entityProcessInstance.getCod());
     }
 
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
-        return getProcessDefinition(processClass).getDataService().retrieveInstance(cod);
+    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(
+            @Nonnull K processDefinition, @Nonnull Integer cod) {
+        return getProcessInstanceOpt(processDefinition, cod).orElseThrow(
+                () -> new SingularFlowException(msgNotFound(cod)));
     }
 
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstanceOrException(Class<T> processClass, String id) {
-        X instance = getProcessInstance(processClass, id);
-        if (instance == null) {
-            throw new SingularFlowException("Não foi encontrada a instancia '" + id + "' do tipo " + processClass.getName());
-        }
-        return instance;
+    @Nonnull
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
+        return getProcessInstanceOpt(processClass, cod).orElseThrow(() -> new SingularFlowException(msgNotFound(cod)));
     }
 
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
+    @Nonnull
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(
+            @Nonnull Class<T> processClass, @Nonnull String id) {
+        return getProcessInstanceOpt(processClass, id).orElseThrow(() -> new SingularFlowException(msgNotFound(id)));
+    }
+
+    @Nonnull
+    protected <X extends ProcessInstance> X getProcessInstance(@Nonnull String id) {
+        return (X) getProcessInstanceOpt(id).orElseThrow(() -> new SingularFlowException(msgNotFound(id)));
+    }
+
+    @Nonnull
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
+        Objects.requireNonNull(processClass);
+        return getProcessInstanceOpt(getProcessDefinition(processClass), cod);
+    }
+
+    @Nonnull
+    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(
+            @Nonnull K processDefinition, @Nonnull Integer cod) {
+        Objects.requireNonNull(processDefinition);
+        Objects.requireNonNull(cod);
+        return processDefinition.getDataService().retrieveInstanceOpt(cod);
+    }
+
+
+    @Nonnull
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(@Nonnull Class<T> processClass, @Nonnull String id) {
         if (StringUtils.isNumeric(id)) {
-            return getProcessInstance(processClass, Integer.valueOf(id));
-        } else {
-            return (X) getProcessInstance(id);
+            return getProcessInstanceOpt(processClass, Integer.valueOf(id));
         }
+        Optional<ProcessInstance> instance = getProcessInstanceOpt(id);
+        if (instance.isPresent()) {
+            getProcessDefinition(processClass).checkIfCompatible(instance.get());
+        }
+        return (Optional<X>) instance;
     }
 
-    protected ProcessInstance getProcessInstance(String processInstanceID) {
-        if (processInstanceID == null) {
-            return null;
-        }
+    @Nonnull
+    protected <X extends ProcessInstance> Optional<X> getProcessInstanceOpt(@Nonnull String processInstanceID) {
+        Objects.requireNonNull(processInstanceID);
         MappingId mapeamento = parseId(processInstanceID);
-        if (mapeamento.abbreviation == null) {
-            return getProcessInstanceByEntityCod(mapeamento.cod);
-        } else {
-            final ProcessDefinition<?> def = getProcessDefinition(mapeamento.abbreviation);
-            if (def == null) {
-                throw new SingularFlowException("Não existe definição de processo '" + mapeamento.abbreviation + "'");
-            }
-            return def.getDataService().retrieveInstance(mapeamento.cod);
+        Optional<ProcessInstance> instance = getProcessInstanceOpt(mapeamento.cod);
+        if (instance.isPresent() && mapeamento.abbreviation != null) {
+            getProcessDefinition(mapeamento.abbreviation).checkIfCompatible(instance.get());
         }
+        return (Optional<X>) instance;
     }
 
-    protected ProcessInstance getProcessInstanceOrException(String processInstanceID) {
-        ProcessInstance instance = getProcessInstance(processInstanceID);
-        if (instance == null) {
-            throw new SingularFlowException("Não foi encontrada a instancia '" + processInstanceID + "'");
-        }
-        return instance;
+    /** Retorna a ProcessInstance referente a código infomado. */
+    @Nonnull
+    private Optional<ProcessInstance> getProcessInstanceOpt(@Nonnull Integer entityCod) {
+        return getPersistenceService().retrieveProcessInstanceByCod(entityCod)
+                .map(entity -> {
+                    ProcessDefinition<?> def = getProcessDefinition(entity.getProcessVersion().getAbbreviation());
+                    return def.convertToProcessInstance(entity);
+                });
+    }
+
+    private static String msgNotFound(Object id) {
+        return "Nao foi encontrada a instancia de processo com id=" + id;
     }
 
     // ------- Manipulação de ID --------------------------------------

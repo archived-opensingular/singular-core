@@ -200,7 +200,7 @@ public abstract class MTask<K extends MTask<?>> {
         return transitions;
     }
 
-    public MTransition getTransicaoOrException(String transitionName) {
+    public MTransition getTransitionOrException(String transitionName) {
         MTransition transicao = getTransition(transitionName);
         if (transicao == null) {
             throw new SingularFlowException(createErrorMsg("Transition '" + transitionName + "' is not defined"));

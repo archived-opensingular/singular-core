@@ -16,22 +16,28 @@
 
 package org.opensingular.flow.core.service;
 
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.MTask;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import java.util.Optional;
 
 /**
  * Service to provide an interface to retrieve data about the process runtime
  */
 public interface IProcessDataService<I extends ProcessInstance> {
 
-    I retrieveInstance(Integer entityCod);
+    @Nonnull
+    I retrieveInstance(@Nonnull Integer entityCod);
+
+    @Nonnull
+    Optional<I> retrieveInstanceOpt(@Nonnull Integer entityCod);
 
     List<I> retrieveActiveInstancesCreatedBy(MUser user);
 

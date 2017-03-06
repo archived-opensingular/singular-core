@@ -26,6 +26,7 @@ import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
@@ -134,10 +135,9 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return def;
     }
 
+    @Nonnull
     protected final IEntityProcessGroup retrieveProcessGroup() {
-        IEntityProcessGroup group = getSession().retrieve(getClassProcessGroup(), Flow.getConfigBean().getProcessGroupCod());
-        Objects.requireNonNull(group);
-        return group;
+        return getSession().retrieveOrException(getClassProcessGroup(), Flow.getConfigBean().getProcessGroupCod());
     }
 
     protected Class<? extends IEntityProcessGroup> getClassProcessGroup() {

@@ -22,7 +22,6 @@ import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 
 import javax.xml.ws.WebServiceException;
-import java.util.Objects;
 
 public class BaseSingularRest {
 
@@ -41,7 +40,7 @@ public class BaseSingularRest {
     }
 
     public Long startInstance(String processAbbreviation) {
-        ProcessDefinition processo = Flow.getProcessDefinitionWith(processAbbreviation);
+        ProcessDefinition processo = Flow.getProcessDefinition(processAbbreviation);
         ProcessInstance processInstance = processo.newInstance();
         processInstance.start();
         return processInstance.getEntityCod().longValue();
@@ -74,12 +73,12 @@ public class BaseSingularRest {
         if(lastVersion == null) {
             lastVersion = 0;
         }
-        processInstance.getCurrentTask().relocateTask(user, user, false, "", lastVersion);
+        processInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion);
     }
 
     private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
-        ProcessInstance processInstance = Flow.getProcessDefinitionWith(processAbbreviation).getDataService().retrieveInstance(codProcessInstance.intValue());
-        return Objects.requireNonNull(processInstance);
+        ProcessDefinition<ProcessInstance> processDefinition = Flow.getProcessDefinition(processAbbreviation);
+        return Flow.getProcessInstance(processDefinition, (Integer) codProcessInstance.intValue());
     }
     
 }

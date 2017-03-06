@@ -149,6 +149,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @return o {@link FlowMap}.
      */
+    @Nonnull
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
@@ -167,12 +168,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * <p>
      * Retorna o serviço de consulta das instâncias deste tipo de processo.
-     * </p>
-     *
-     * @return o serviço de consulta.
      */
+    @Nonnull
     public IProcessDataService<I> getDataService() {
         if (processDataService == null) {
             processDataService = new ProcessDataServiceImpl<>(this);
@@ -649,22 +647,35 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * <p>
      * Retorna a instância correspondente à entidade fornecida.
-     * </p>
-     *
-     * @param dadosInstancia
-     *            a entidade fornecida.
-     * @return a instância.
      */
-    protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
-        if(dadosInstancia.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(getKey())){
-            Objects.requireNonNull(dadosInstancia);
-            I novo = newUnbindedInstance();
-            novo.setInternalEntity(dadosInstancia);
-            return novo;
-        } else {
-            throw new SingularFlowException(createErrorMsg("A entidade com id "+dadosInstancia.getCod()+" não pertence ao processo."));
+    @Nonnull
+    protected final I convertToProcessInstance(@Nonnull IEntityProcessInstance dadosInstancia) {
+        Objects.requireNonNull(dadosInstancia);
+        checkIfKeysAreCompatible(this, dadosInstancia);
+
+        I novo = newUnbindedInstance();
+        novo.setInternalEntity(dadosInstancia);
+        return novo;
+    }
+
+    /** Verifica se a entidade da instancia de processo pertence a definição de processo. Senão dispara Exception. */
+    private static void checkIfKeysAreCompatible(ProcessDefinition<?> definition, IEntityProcessInstance instance) {
+        if(! instance.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(definition.getKey())){
+            throw new SingularFlowException(
+                    "A instancia de processo com id " + instance.getCod() + " não pertence a definição de processo " +
+                            definition.getName());
+        }
+    }
+
+    /** Verifica se a instancia de processo pertence a definição de processo. Senão dispara Exception. */
+    final void checkIfCompatible(ProcessInstance instance) {
+        checkIfKeysAreCompatible(this, instance.getEntity());
+        if (!processInstanceClass.isInstance(instance)) {
+            throw new SingularFlowException(
+                    "A instancia de processo com id=" + instance.getFullId() + " deveria ser da classe " +
+                            processInstanceClass.getName() + " mas na verdade é da classe " +
+                            instance.getClass().getName());
         }
     }
 

@@ -16,28 +16,18 @@
 
 package org.opensingular.flow.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>Esta classe representa o mapa de fluxo de uma dada definição de processo.</p>
@@ -384,8 +374,8 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
      */
-    public MTask<?> getTaskBybbreviation(String abbreviation) {
-        return tasksByAbbreviation.get(abbreviation);
+    public Optional<MTask<?>> getTaskByAbbreviation(String abbreviation) {
+        return Optional.ofNullable(tasksByAbbreviation.get(abbreviation));
     }
 
     /**
@@ -409,8 +399,8 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
      */
-    public MTaskPeople getPeopleTaskByAbbreviation(String abbreviation) {
-        return castCheck(getTaskBybbreviation(abbreviation), MTaskPeople.class, abbreviation);
+    public Optional<MTaskPeople> getPeopleTaskByAbbreviation(String abbreviation) {
+        return getTaskByAbbreviation(abbreviation).map(task -> castCheck(task, MTaskPeople.class, abbreviation));
     }
 
     /**

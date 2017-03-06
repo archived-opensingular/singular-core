@@ -16,49 +16,46 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.variable.ValidationResult;
+import org.opensingular.flow.core.variable.VarInstanceMap;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class TransitionRef {
 
-    private ProcessInstance processInstance;
-
-    private TaskInstance taskInstance;
+    private TaskInstance originTaskInstance;
 
     private final MTransition transition;
 
-    public TransitionRef(ProcessInstance processInstance, MTransition transition) {
-        this.processInstance = processInstance;
+    public TransitionRef(@Nonnull TaskInstance originTaskInstance, @Nonnull MTransition transition) {
+        Objects.requireNonNull(originTaskInstance);
+        Objects.requireNonNull(transition);
+        this.originTaskInstance = originTaskInstance;
         this.transition = transition;
     }
 
-    public TransitionRef(TaskInstance taskInstance, MTransition transition) {
-        this.taskInstance = taskInstance;
-        this.transition = transition;
-    }
-
+    @Nonnull
     public ProcessInstance getProcessInstance() {
-        if (processInstance == null) {
-            processInstance = taskInstance.getProcessInstance();
-        }
-        return processInstance;
+        return originTaskInstance.getProcessInstance();
     }
 
-    public TaskInstance getTaskInstance() {
-        if (taskInstance == null) {
-            return processInstance.getCurrentTask();
-        }
-        return taskInstance;
+    @Nonnull
+    public TaskInstance getOriginTaskInstance() {
+        return originTaskInstance;
     }
 
+    @Nonnull
     public MTransition getTransition() {
         return transition;
     }
 
+    @Nonnull
     public VarInstanceMap<?> newTransationParameters() {
-        return transition.newTransationParameters(this);
+        return transition.newTransitionParameters(this);
     }
 
+    @Nonnull
     public ValidationResult validate(VarInstanceMap<?> transitionParameters) {
         return transition.validate(this, transitionParameters);
     }

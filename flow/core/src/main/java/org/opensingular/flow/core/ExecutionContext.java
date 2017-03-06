@@ -49,7 +49,7 @@ public class ExecutionContext {
 
     public TaskInstance getTaskInstance() {
         if (taskInstance == null) {
-            return processInstance.getCurrentTask();
+            return processInstance.getCurrentTaskOrException();
         }
         return taskInstance;
     }

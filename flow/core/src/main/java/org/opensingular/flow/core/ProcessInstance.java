@@ -26,6 +26,7 @@ import org.opensingular.flow.core.view.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Predicate;
@@ -69,6 +70,7 @@ public class ProcessInstance implements Serializable {
      * @param <K> o tipo da definição de processo.
      * @return a definição de processo desta instância.
      */
+    @Nonnull
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
             throw SingularException.rethrow(
@@ -127,25 +129,23 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Realiza a montagem necessária para execução da transição especificada a
      * partir da tarefa atual desta instância.
-     * </p>
      *
      * @param transitionName a transição especificada.
      * @return a montagem resultante.
      */
+    @Nonnull
     public TransitionCall prepareTransition(String transitionName) {
-        return getCurrentTask().prepareTransition(transitionName);
+        return getCurrentTaskOrException().prepareTransition(transitionName);
     }
 
     final @Nonnull IEntityProcessInstance getInternalEntity() {
         if (entity == null) {
             if(codEntity != null) {
-                IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
+                IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCodOrException(codEntity);
                 IEntityProcessDefinition entityProcessDefinition = getProcessDefinition().getEntityProcessDefinition();
-                if (newfromDB != null && !entityProcessDefinition.equals(
-                        newfromDB.getProcessVersion().getProcessDefinition())) {
+                if (!entityProcessDefinition.equals(newfromDB.getProcessVersion().getProcessDefinition())) {
                     throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity +
                             " se refere a definição de processo " +
                             newfromDB.getProcessVersion().getProcessDefinition().getKey() +
@@ -160,14 +160,6 @@ public class ProcessInstance implements Serializable {
             }
         }
         return entity;
-    }
-
-    private @Nonnull TaskInstance getCurrentTaskOrException() {
-        TaskInstance current = getCurrentTask();
-        if (current == null) {
-            throw SingularException.rethrow(createErrorMsg("Não há um task atual para essa instancia"));
-        }
-        return current;
     }
 
     final void setInternalEntity(IEntityProcessInstance entity) {
@@ -200,30 +192,27 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
-     * Retorna o tarefa corrente desta instância de processo.
-     * </p>
-     *
-     * @return a tarefa corrente.
+     * Retorna o tipo da tarefa corrente desta instância de processo. Pode não encotrar se a tarefa em banco não
+     * tiver correspondência com o fluxo do processo em memória (tarefa legada).
      */
-    public MTask<?> getEstado() {
+    public Optional<MTask<?>> getState() {
         if (estadoAtual == null) {
-            TaskInstance current = getCurrentTask();
-            if (current != null) {
-                estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getAbbreviation());
+            Optional<TaskInstance> current = getCurrentTask();
+            if (current.isPresent()) {
+                estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
             } else if (isFinished()) {
                 current = getLatestTask();
-                if (current != null && current.isFinished()) {
-                    estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getAbbreviation());
+                if (current.isPresent()&& current.get().isFinished()) {
+                    estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
                 } else {
-                    throw SingularException.rethrow(createErrorMsg(
+                    throw new SingularFlowException(createErrorMsg(
                         "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
                 }
             } else {
-                throw SingularException.rethrow(createErrorMsg("getEstado() não pode ser invocado para essa instância"));
+                throw new SingularFlowException(createErrorMsg("getState() não pode ser invocado para essa instância"));
             }
         }
-        return estadoAtual;
+        return Optional.ofNullable(estadoAtual);
     }
 
     /**
@@ -250,24 +239,17 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Retorna o nome da tarefa atual desta instância de processo.
-     * </p>
      *
-     * @return o nome da tarefa atual; ou {@code null} caso não haja uma tarefa
-     * atual.
+     * @return o nome da tarefa atual; ou {@code null} caso não haja uma tarefa atual.
      */
-    public String getCurrentTaskName() {
-        MTask<?> estado = getEstado();
-        if (estado != null) {
-            return estado.getName();
+    @Nonnull
+    public Optional<String> getCurrentTaskName() {
+        Optional<String> name = getState().map(MTask::getName);
+        if (! name.isPresent()) {
+            name = getCurrentTask().map(TaskInstance::getName);
         }
-        TaskInstance tarefaAtual = getCurrentTask();
-        if (tarefaAtual != null) {
-            // Uma situação legada, que não existe mais no fluxo mapeado
-            return tarefaAtual.getName();
-        }
-        return null;
+        return name;
     }
 
     /**
@@ -306,61 +288,63 @@ public class ProcessInstance implements Serializable {
      * {@code false} caso contrário.
      */
     public final boolean canExecuteTask(MUser user) {
-        if (getEstado() == null) {
+        Optional<MTask<?>> currentState = getState();
+        if (! currentState.isPresent()) {
             return false;
         }
-        IEntityTaskType tt = getEstado().getTaskType();
+        IEntityTaskType tt = currentState.get().getTaskType();
         if (tt.isPeople() || tt.isWait()) {
-            return (isAllocated(user.getCod()))
-                || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user));
-
+            if (isAllocated(user.getCod())) {
+                return  true;
+            }
+            Optional<TaskAccessStrategy<ProcessInstance>> strategy = getAccessStrategy();
+            return strategy.isPresent() && strategy.get().canExecute(this, user);
         }
         return false;
     }
 
     /**
-     * <p>
      * Verifica de o usuário especificado pode visualizar a tarefa corrente
      * desta instância de processo.
-     * </p>
      *
      * @param user o usuário especificado.
      * @return {@code true} caso o usuário possa visualizar a tarefa corrente;
      * {@code false} caso contrário.
      */
-    public boolean canVisualize(MUser user) {
-        MTask<?> tt = getLatestTask().getFlowTask();
-        if (tt.isPeople() || tt.isWait()) {
-            if (hasAllocatedUser() && isAllocated(user.getCod())) {
+    public boolean canVisualize(@Nonnull MUser user) {
+        Objects.requireNonNull(user);
+        Optional<MTask<?>> tt = getLatestTaskOrException().getFlowTask();
+        if (tt.isPresent()) {
+            if ((tt.get().isPeople() || tt.get().isWait()) && hasAllocatedUser() && isAllocated(user.getCod())) {
                 return true;
             }
-
         }
-        return getAccessStrategy() != null && getAccessStrategy().canVisualize(this, user);
+        Optional<TaskAccessStrategy<ProcessInstance>> strategey = getAccessStrategy();
+        return strategey.isPresent() && strategey.get().canVisualize(this, user);
     }
 
     /**
-     * <p>
      * Retorna os códigos de usuários com direito de execução da tarefa corrente
      * desta instância de processo.
-     * </p>
      *
      * @return os códigos de usuários com direitos de execução.
      */
     public Set<Integer> getFirstLevelUsersCodWithAccess() {
-        return getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
+        return getAccessStrategy()
+                .map(strategy -> strategy.getFirstLevelUsersCodWithAccess(this))
+                .orElse(Collections.emptySet());
     }
 
     /**
-     * <p>
      * Retorna os usuários com direito de execução da tarefa corrente desta
      * instância de processo.
-     * </p>
      *
      * @return os usuários com direitos de execução.
      */
     public List<MUser> listAllocableUsers() {
-        return getAccessStrategy().listAllocableUsers(this);
+        return getAccessStrategy()
+                .map(strategy -> (List<MUser>) strategy.listAllocableUsers(this))
+                .orElse(Collections.emptyList());
     }
 
     /**
@@ -384,8 +368,8 @@ public class ProcessInstance implements Serializable {
     }
 
     @SuppressWarnings("rawtypes")
-    private TaskAccessStrategy getAccessStrategy() {
-        return getEstado().getAccessStrategy();
+    private Optional<TaskAccessStrategy<ProcessInstance>> getAccessStrategy() {
+        return getState().map( task -> task.getAccessStrategy());
     }
 
     /**
@@ -403,7 +387,7 @@ public class ProcessInstance implements Serializable {
         if (codEntity == null && getInternalEntity().getCod() == null) {
             return saveEntity();
         }
-        entity = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
+        entity = getPersistenceService().retrieveProcessInstanceByCodOrException(codEntity);
         return entity;
     }
 
@@ -488,9 +472,10 @@ public class ProcessInstance implements Serializable {
      *
      * @param task a tarefa especificada.
      */
-    public final void forceStateUpdate(MTask<?> task) {
-        final TaskInstance tarefaOrigem = getLatestTask();
-        List<MUser> pessoasAnteriores = getResponsaveisDiretos();
+    public final void forceStateUpdate(@Nonnull MTask<?> task) {
+        Objects.requireNonNull(task);
+        final TaskInstance tarefaOrigem = getLatestTaskOrException();
+        List<MUser> pessoasAnteriores = getDirectlyResponsibles();
         final Date agora = new Date();
         TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);
         if (tarefaOrigem != null) {
@@ -499,7 +484,9 @@ public class ProcessInstance implements Serializable {
         }
         FlowEngine.initTask(this, task, tarefaNova);
         ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
-        task.notifyTaskStart(getLatestTask(task), execucaoMTask);
+
+        TaskInstance taskNew2 = getLatestTask(task).orElseThrow(() -> new SingularFlowException("Erro Interno"));
+        task.notifyTaskStart(taskNew2, execucaoMTask);
         if (task.isImmediateExecution()) {
             executeTransition();
         }
@@ -511,22 +498,22 @@ public class ProcessInstance implements Serializable {
      * especificadas.
      * </p>
      *
-     * @param tarefaOrigem a tarefa de origem.
+     * @param originTaskInstance a tarefa de origem.
      * @param transicaoOrigem a transição disparada.
      * @param task a tarefa alvo.
      * @param agora o momento da transição.
      * @return a tarefa corrente depois da transição.
      */
-    protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem,
+    protected final TaskInstance updateState(TaskInstance originTaskInstance, MTransition transicaoOrigem,
             @Nonnull MTask<?> task, Date agora) {
         synchronized (this) {
-            if (tarefaOrigem != null) {
-                tarefaOrigem.endLastAllocation();
+            if (originTaskInstance != null) {
+                originTaskInstance.endLastAllocation();
                 String transitionName = null;
                 if (transicaoOrigem != null) {
                     transitionName = transicaoOrigem.getAbbreviation();
                 }
-                getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, Flow.getUserIfAvailable());
+                getPersistenceService().completeTask(originTaskInstance.getEntityTaskInstance(), transitionName, Flow.getUserIfAvailable());
             }
             IEntityTaskVersion situacaoNova = getProcessDefinition().getEntityTaskVersion(task);
 
@@ -593,8 +580,9 @@ public class ProcessInstance implements Serializable {
         return Flow.generateID(this);
     }
 
-    private TaskInstance getTaskInstance(final IEntityTaskInstance tarefa) {
-        return tarefa != null ? new TaskInstance(this, tarefa) : null;
+    @Nonnull
+    private TaskInstance getTaskInstance(@Nonnull IEntityTaskInstance tarefa) {
+        return new TaskInstance(this, Objects.requireNonNull(tarefa));
     }
 
     /**
@@ -686,18 +674,13 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
-     * Retorna os responsáveis diretos.
-     * </p>
-     *
-     * @return os responsáveis diretos.
+     * Retorna a lista de usuário diretamente responsáveis pela tarefa atual (se existir tarefa atual). Pode retorna
+     * uma lista vazia se não houver tarefa taual ou se a tarefa não tive nenhum responsavel direto ou se nao fizer
+     * sentido ter responsável direto (ex.: task Java).
      */
-    public List<MUser> getResponsaveisDiretos() {
-        TaskInstance tarefa = getCurrentTask();
-        if (tarefa != null) {
-            return tarefa.getDirectlyResponsibles();
-        }
-        return Collections.emptyList();
+    @Nonnull
+    public List<MUser> getDirectlyResponsibles() {
+        return getCurrentTask().map(TaskInstance::getDirectlyResponsibles).orElse(Collections.emptyList());
     }
 
     private void addUserRole(MProcessRole mProcessRole, MUser user) {
@@ -727,9 +710,9 @@ public class ProcessInstance implements Serializable {
                 addUserRole(mProcessRole, newUser);
                 getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, null, newUser);
 
-                final TaskInstance latestTask = getLatestTask();
-                if (latestTask != null) {
-                    latestTask.log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
+                Optional<TaskInstance> latestTask = getLatestTask();
+                if (latestTask.isPresent()) {
+                    latestTask.get().log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 }
             }
         } else if (newUser == null || !previousUser.equals(newUser)) {
@@ -740,12 +723,12 @@ public class ProcessInstance implements Serializable {
             }
 
             getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, previousUser, newUser);
-            final TaskInstance latestTask = getLatestTask();
-            if (latestTask != null) {
+            Optional<TaskInstance> latestTask = getLatestTask();
+            if (latestTask.isPresent()) {
                 if (newUser != null) {
-                    latestTask.log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
+                    latestTask.get().log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 } else {
-                    latestTask.log("Papel removido", mProcessRole.getName());
+                    latestTask.get().log("Papel removido", mProcessRole.getName());
                 }
             }
         }
@@ -909,99 +892,96 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Retorna a mais nova tarefa que atende a condição informada.
-     * </p>
-     *
      * @param condicao a condição informada.
-     * @return a tarefa; ou {@code null} caso não encontre a tarefa.
      */
-    public TaskInstance getLatestTask(Predicate<TaskInstance> condicao) {
+    @Nonnull
+    public Optional<TaskInstance> getLatestTask(@Nonnull Predicate<TaskInstance> condicao) {
+        Objects.requireNonNull(condicao);
         List<? extends IEntityTaskInstance> lista = getEntity().getTasks();
         for (int i = lista.size() - 1; i != -1; i--) {
             TaskInstance task = getTaskInstance(lista.get(i));
             if (condicao.test(task)) {
-                return task;
+                return Optional.of(task);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    /**
-     * <p>
-     * Retorna a tarefa atual.
-     * </p>
-     *
-     * @return a tarefa atual.
-     */
-    public TaskInstance getCurrentTask() {
+    /** Retorna a tarefa atual (tarefa ativa). */
+    @Nonnull
+    public Optional<TaskInstance> getCurrentTask() {
         return getLatestTask(t -> t.isActive());
     }
 
+    /** Retorna a tarefa atual (tarefa ativa) ou dispara exception senão existir. */
+    @Nonnull
+    public TaskInstance getCurrentTaskOrException() {
+        return getCurrentTask().orElseThrow(
+                () -> new SingularFlowException(createErrorMsg("Não há tarefa atual para essa instancia de processo")));
+    }
+
     /**
-     * <p>
      * Retorna a mais nova tarefa encerrada ou ativa.
-     * </p>
-     *
-     * @return a mais nova tarefa encerrada ou ativa.
      */
-    public TaskInstance getLatestTask() {
+    @Nonnull
+    public Optional<TaskInstance> getLatestTask() {
         return getLatestTask(t -> true);
     }
 
-    private TaskInstance getLatestTask(String abbreviation) {
+    /** Retorna a mais nova tarefa encerrada ou ativa. */
+    @Nonnull
+    public TaskInstance getLatestTaskOrException() {
+        return getLatestTask().orElseThrow(
+                () -> new SingularFlowException(createErrorMsg("Não há nenhuma tarefa no processo")));
+    }
+
+    private Optional<TaskInstance> getLatestTask(String abbreviation) {
         return getLatestTask(t -> t.getAbbreviation().equalsIgnoreCase(abbreviation));
     }
 
     /**
-     * <p>
      * Encontra a mais nova tarefa encerrada ou ativa com a sigla da referência.
-     * </p>
-     *
      * @param taskRef a referência.
-     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
-    public TaskInstance getLatestTask(ITaskDefinition taskRef) {
+    @Nonnull
+    public Optional<TaskInstance> getLatestTask(@Nonnull ITaskDefinition taskRef) {
         return getLatestTask(taskRef.getKey());
     }
 
     /**
-     * <p>
      * Encontra a mais nova tarefa encerrada ou ativa do tipo informado.
-     * </p>
-     *
      * @param tipo o tipo informado.
-     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
-    public TaskInstance getLatestTask(MTask<?> tipo) {
+    @Nonnull
+    public Optional<TaskInstance> getLatestTask(@Nonnull MTask<?> tipo) {
+        Objects.requireNonNull(tipo);
         return getLatestTask(tipo.getAbbreviation());
     }
 
-    private TaskInstance getFinishedTask(String abbreviation) {
+    @Nonnull
+    private Optional<TaskInstance> getFinishedTask(@Nonnull String abbreviation) {
+        Objects.requireNonNull(abbreviation);
         return getLatestTask(t -> t.isFinished() && t.getAbbreviation().equalsIgnoreCase(abbreviation));
     }
 
     /**
-     * <p>
      * Encontra a mais nova tarefa encerrada e com a mesma sigla da referência.
-     * </p>
-     *
      * @param taskRef a referência.
-     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
-    public TaskInstance getFinishedTask(ITaskDefinition taskRef) {
+    @Nonnull
+    public Optional<TaskInstance> getFinishedTask(@Nonnull ITaskDefinition taskRef) {
+        Objects.requireNonNull(taskRef);
         return getFinishedTask(taskRef.getKey());
     }
 
     /**
-     * <p>
      * Encontra a mais nova tarefa encerrada e com a mesma sigla do tipo.
-     * </p>
-     *
      * @param tipo o tipo.
-     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
-    public TaskInstance getFinishedTask(MTask<?> tipo) {
+    @Nonnull
+    public Optional<TaskInstance> getFinishedTask(@Nonnull MTask<?> tipo) {
+        Objects.requireNonNull(tipo);
         return getFinishedTask(tipo.getAbbreviation());
     }
 
@@ -1010,13 +990,10 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Configura o contexto de execução.
-     * </p>
-     *
      * @param execucaoTask o novo contexto de execução.
      */
-    final void setExecutionContext(ExecutionContext execucaoTask) {
+    final void setExecutionContext(@Nullable ExecutionContext execucaoTask) {
         if (this.executionContext != null && execucaoTask != null) {
             throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
         }

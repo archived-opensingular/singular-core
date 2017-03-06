@@ -16,9 +16,12 @@
 
 package org.opensingular.lib.commons.base;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * The base class of all runtime exceptions for Singular.
@@ -105,6 +108,22 @@ public class SingularException extends RuntimeException {
     }
 
     /**
+     * Adiciona uma nova linha de informação extra na exception a ser exibida junto com a mensagem a partir doSupplier,
+     * mas protegendo a geração caso o Supplier provoque uma Exception.
+     */
+    @Nonnull
+    public SingularException add(@Nullable String label, @Nullable Supplier<?> valueSupplier) {
+        Object value;
+        try {
+            value = valueSupplier == null ? null : valueSupplier.get();
+        } catch (Exception e) {
+            //Ignora a exception para não bloquear a geração da Exception atual
+            return this;
+        }
+        return add(0, label, value);
+    }
+
+    /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.
      *
      * @param level Nível de indentação da informação
@@ -161,7 +180,7 @@ public class SingularException extends RuntimeException {
      */
     private static final class InfoEntry implements Serializable {
 
-        public final int    level;
+        public final int level;
         public final String label;
         public final String value;
 
