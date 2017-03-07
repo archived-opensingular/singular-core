@@ -56,7 +56,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     /** Retorna um supplier que recuperará dinamicamente o bean a partir do contexto de aplicação atual. */
-    public static <T> ISupplier<T> supplierOfBean(Class<T> beanClass) {
+    public static <T> ISupplier<T> supplierOf(Class<T> beanClass) {
         return () -> ApplicationContextProvider.get().getBean(beanClass);
     }
 

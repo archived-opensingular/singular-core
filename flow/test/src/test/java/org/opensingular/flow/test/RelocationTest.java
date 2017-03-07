@@ -178,7 +178,7 @@ public class RelocationTest  {
     private TaskInstanceEntity nTE(ProcessInstance id) {
         TaskInstanceEntity t = id.getCurrentTaskOrException().getEntityTaskInstance();
         TaskInstanceEntity o = new TaskInstanceEntity();
-        o.setTask((TaskVersionEntity) t.getTask());
+        o.setTask((TaskVersionEntity) t.getTaskVersion());
         o.setProcessInstance(t.getProcessInstance());
         o.setBeginDate(new Date());
         return o;

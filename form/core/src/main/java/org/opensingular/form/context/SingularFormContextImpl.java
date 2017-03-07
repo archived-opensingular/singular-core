@@ -18,11 +18,6 @@ package org.opensingular.form.context;
 
 public abstract class SingularFormContextImpl implements SingularFormContext {
 
-    private final InternalSingularFormConfig config;
-
-
-    public SingularFormContextImpl(InternalSingularFormConfig config) {
-        this.config = config;
-    }
+    public SingularFormContextImpl(InternalSingularFormConfig config) {}
 
 }

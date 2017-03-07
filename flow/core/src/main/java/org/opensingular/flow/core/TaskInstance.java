@@ -121,7 +121,7 @@ public class TaskInstance {
     }
 
     private IEntityTaskVersion getTaskVersion() {
-        return entityTask.getTask();
+        return entityTask.getTaskVersion();
     }
 
     @Nonnull

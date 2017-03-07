@@ -149,7 +149,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         return (X) getProcessInstance(getProcessDefinition(processClass), entityProcessInstance.getCod());
     }
 
-    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(
+    public <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(
             @Nonnull K processDefinition, @Nonnull Integer cod) {
         return getProcessInstanceOpt(processDefinition, cod).orElseThrow(
                 () -> new SingularFlowException(msgNotFound(cod)));
@@ -178,7 +178,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     @Nonnull
-    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(
+    public <X extends ProcessInstance, K extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(
             @Nonnull K processDefinition, @Nonnull Integer cod) {
         Objects.requireNonNull(processDefinition);
         Objects.requireNonNull(cod);
