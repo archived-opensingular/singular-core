@@ -127,11 +127,11 @@ public class DummyPage extends WebPage {
     }
 }
 
-class MockSDocumentFactory extends SDocumentFactory implements Serializable {
+class MockSDocumentFactory extends SDocumentFactory {
 
-    private final transient DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
+    private final DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
 
-    private final transient SingularFormContextWicket singularFormContextWicket = new Context();
+    private final SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
         defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, () -> singularFormContextWicket);
@@ -139,13 +139,7 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
 
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
-        final MockSDocumentFactory documentFactory = this;
-        return new RefSDocumentFactory() {
-            @Override
-            protected SDocumentFactory retrieve() {
-                return documentFactory;
-            }
-        };
+        return new RefMockDocumentFactory(this);
     }
 
     @Override
@@ -162,6 +156,19 @@ class MockSDocumentFactory extends SDocumentFactory implements Serializable {
         public UIBuilderWicket getUIBuilder() {
             return new UIBuilderWicket();
         }
+    }
+}
+
+class RefMockDocumentFactory extends  RefSDocumentFactory {
+
+    public RefMockDocumentFactory(MockSDocumentFactory factory) {
+        super(factory);
+    }
+
+    @Nonnull
+    @Override
+    protected SDocumentFactory retrieve() {
+        return new MockSDocumentFactory();
     }
 }
 
