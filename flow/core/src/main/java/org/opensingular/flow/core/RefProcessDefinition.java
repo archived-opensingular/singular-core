@@ -38,10 +38,8 @@ public abstract class RefProcessDefinition implements Serializable, Supplier<Pro
     @Override
     public final ProcessDefinition<?> get() {
         if (processDefinition == null) {
-            processDefinition = reload();
-            if (processDefinition == null) {
-                throw new SingularFlowException(getClass().getName() + ".reload() retornou null");
-            }
+            processDefinition = Objects.requireNonNull(reload(),
+                    () -> getClass().getName() + ".reload() retornou null");
         }
         return processDefinition;
     }
