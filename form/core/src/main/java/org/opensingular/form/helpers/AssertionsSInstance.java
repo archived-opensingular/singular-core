@@ -1,5 +1,16 @@
-package org.opensingular.form;
+package org.opensingular.form.helpers;
 
+import org.fest.assertions.api.Assertions;
+import org.fest.assertions.api.DateAssert;
+import org.fest.assertions.api.IterableAssert;
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.validation.IValidationError;
+
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -18,10 +29,6 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
     @Override
     protected String errorMsg(String msg) {
         return "Na instância '" + getTarget().getName() + "': " + msg;
-    }
-
-    protected String errorMsg(String msg, Object expected, Object current) {
-        return errorMsg(msg + ":\n Esperado  : " + expected + "\n Encontrado: " + current);
     }
 
     /**
@@ -142,4 +149,17 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         }
         return this;
     }
+
+    public IterableAssert<IValidationError> assertThatValidationErrors(){
+        return Assertions.assertThat(getTarget().getValidationErrors());
+    }
+
+    public DateAssert assertDateValue() {
+        Object value = getTarget().getValue();
+        if (value instanceof Date) {
+            return Assertions.assertThat((Date) value);
+        }
+        throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
+    }
+
 }

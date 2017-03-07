@@ -1,21 +1,21 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
 @RunWith(Enclosed.class)
 public class STypeStringKeyValueRadioTest {
@@ -49,7 +49,7 @@ public class STypeStringKeyValueRadioTest {
     public static class Default extends Base {
         @Test
         public void rendersARadioChoiceWithInformedLabels() {
-            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+            List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
             assertThat(inputs).hasSize(1);
             final RadioChoice radioChoice = inputs.get(0);
             assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(0), 0)).isEqualTo("IMG");
@@ -69,7 +69,7 @@ public class STypeStringKeyValueRadioTest {
 
         @Test
         public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection() {
-            List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
+            List<RadioChoice> inputs = findTag(form.getForm(), RadioChoice.class);
             assertThat(inputs).hasSize(1);
             final RadioChoice radioChoice = inputs.get(0);
             assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(0), 0)).isEqualTo("IMG");

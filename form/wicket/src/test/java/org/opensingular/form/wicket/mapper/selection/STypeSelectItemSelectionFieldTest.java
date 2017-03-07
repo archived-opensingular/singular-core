@@ -1,5 +1,11 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
@@ -8,18 +14,12 @@ import org.opensingular.form.provider.AtrProvider;
 import org.opensingular.form.provider.SSimpleProvider;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findId;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class STypeSelectItemSelectionFieldTest {
@@ -63,7 +63,7 @@ public class STypeSelectItemSelectionFieldTest {
         }
 
         protected List<DropDownChoice> options() {
-            return (List) findTag(form.getForm(), DropDownChoice.class);
+            return findTag(form.getForm(), DropDownChoice.class);
         }
     }
 

@@ -27,7 +27,6 @@ import org.opensingular.form.SType;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -39,55 +38,40 @@ public class TestFinders {
     private TestFinders() {}
 
     public static Optional<String> findId(MarkupContainer container, String leafName) {
-        Iterator<Component> it = container.iterator();
-        while (it.hasNext()) {
-            Optional<String> found = findInComponent(leafName, it.next());
-            if (found.isPresent()) {
-                return found;
+        for (Component component : container) {
+            if (component.getId().equals(leafName)) {
+                return Optional.of(leafName);
+            } else if (component instanceof MarkupContainer) {
+                Optional<String> found = findId((MarkupContainer) component, leafName);
+                if (found.isPresent()) {
+                    return Optional.of(component.getId() + ":" + found.get());
+                }
             }
         }
         return Optional.empty();
     }   
 
-    private static Optional<String> findInComponent(String leafName, Component c) {
-        if (c.getId().equals(leafName)) {
-            return Optional.of(leafName);
-        } else if (c instanceof MarkupContainer) {
-            Optional<String> found = findId((MarkupContainer) c, leafName);
-            if (found.isPresent()) {
-                return Optional.of(c.getId() + ":" + found.get());
-            }
-        }
-        return Optional.empty();
-    }
-
-    public static List<Component> findTag(MarkupContainer container, String id, Class<? extends Component> tag) {
-        List<Component> tags = findTag(container, tag);
+    public static <T extends Component> List<T> findTag(MarkupContainer container, String id, Class<T> tag) {
+        List<T> tags = findTag(container, tag);
         return tags.stream().filter((c) -> c.getId().equals(id)).collect(Collectors.toList());
     }
 
-    public static List<Component> findTag(MarkupContainer container,
-                                          Class<? extends Component> tag) {
-        List<Component> result = Lists.newArrayList();
+    public static <T extends Component> List<T> findTag(MarkupContainer container, Class<T> tag) {
+        List<T> result = Lists.newArrayList();
         findTag(tag, result, container);
         return result;
     }
     
-    private static void findTag(Class<? extends Component> tag, List<Component> result, MarkupContainer c) {
-        Iterator<Component> it = c.iterator();
-        while (it.hasNext()) {
-            findInComponent(tag, result, it.next());
+    private static <T extends  Component> void findTag(Class<T> tag, List<T> result, MarkupContainer container) {
+        for (Component component : container) {
+            if (tag.isInstance(component)) {
+                result.add(tag.cast(component));
+            } else if (component instanceof MarkupContainer) {
+                findTag(tag, result, (MarkupContainer) component);
+            }
         }
     }
     
-    private static void findInComponent(Class<? extends Component> tag, List<Component> result, Component c) {
-        if (tag.isInstance(c)) {
-            result.add(c);
-        } else if (c instanceof MarkupContainer) {
-            findTag(tag, result, (MarkupContainer) c);
-        }
-    }
-
     public static Component findFirstComponentWithId(MarkupContainer container, String id) {
         return container.visitChildren(Component.class, (IVisitor<Component, Component>) (object, visit) -> {
             if (object.getId().equals(id)) {

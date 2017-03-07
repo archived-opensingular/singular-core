@@ -1,24 +1,20 @@
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.opensingular.form.*;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SMultiSelectionByCheckboxView;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findId;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class STypeStringMultipleSelectionFieldTest {
@@ -33,7 +29,7 @@ public class STypeStringMultipleSelectionFieldTest {
         }
 
         protected List<CheckBoxMultipleChoice> options() {
-            return (List) findTag(form.getForm(), CheckBoxMultipleChoice.class);
+            return findTag(form.getForm(), CheckBoxMultipleChoice.class);
         }
     }
 

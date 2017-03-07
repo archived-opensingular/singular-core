@@ -16,15 +16,6 @@
 
 package org.opensingular.form.wicket.helpers;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractChoice;
@@ -33,13 +24,20 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
+import org.opensingular.form.*;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/**
+ * @deprecated Passar a usar {@link SingularAbstractFormTest}
+ */
+@Deprecated
 public abstract class SingularFormBaseTest {
 
     protected DummyPage    page;
@@ -52,8 +50,7 @@ public abstract class SingularFormBaseTest {
 
     @Before
     public void setUp() {
-        tester = new WicketTester();
-        tester.getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
+        tester = new SingularWicketTester(false);
         page = new DummyPage();
         page.setTypeBuilder(this::buildBaseType);
         page.setInstanceCreator(this::createAndPopulateInstance);
@@ -97,18 +94,13 @@ public abstract class SingularFormBaseTest {
         return "form:" + TestFinders.findId(form.getForm(), leafName).orElse(null);
     }
 
-    protected SIComposite createInstance(final SType x) {
+    protected final SIComposite createInstance(final RefType refType) {
         SDocumentFactory factory = page.mockFormConfig.getDocumentFactory();
-        RefType refType = new RefType() {
-            protected SType<?> retrieve() {
-                return x;
-            }
-        };
         return (SIComposite) factory.createInstance(refType);
     }
 
-    protected SIComposite createAndPopulateInstance(final SType x) {
-        SIComposite instance = createInstance(x);
+    protected final SIComposite createAndPopulateInstance(final RefType refType ) {
+        SIComposite instance = createInstance(refType);
         populateInstance(instance);
         return instance;
     }

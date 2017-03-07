@@ -1,20 +1,20 @@
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 
 import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findId;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @Ignore("We have to figure out how to deal with this case of TypeAhead")
 @RunWith(Enclosed.class)
@@ -41,7 +41,7 @@ public class STypeStringSelectionFieldTest {
         public void rendersAnDropDownWithSpecifiedOptions() {
             tester.assertEnabled(formField(form, "favoriteFruit"));
             form.submit();
-            List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
+            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
             assertThat(options).hasSize(1);
             DropDownChoice choices = options.get(0);
             assertThat(getkeysFromSelection(choices)).containsExactly("strawberry", "apple", "orange", "banana");
@@ -66,7 +66,7 @@ public class STypeStringSelectionFieldTest {
 
         @Test
         public void hasADefaultProvider() {
-            List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
+            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
             assertThat(options).hasSize(1);
             DropDownChoice choices = options.get(0);
             assertThat(getkeysFromSelection(choices)).containsExactly("strawberry", "apple", "orange", "banana");
@@ -88,7 +88,7 @@ public class STypeStringSelectionFieldTest {
 
         @Test
         public void rendersAnDropDownWithDanglingOptions() {
-            List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
+            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
             assertThat(options).hasSize(1);
             DropDownChoice choices = options.get(0);
             assertThat(getkeysFromSelection(choices)).containsExactly("avocado", "strawberry", "apple", "orange", "banana");
