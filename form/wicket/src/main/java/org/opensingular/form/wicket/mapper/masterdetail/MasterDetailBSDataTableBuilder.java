@@ -17,28 +17,20 @@
 package org.opensingular.form.wicket.mapper.masterdetail;
 
 import com.google.common.collect.Lists;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.validation.IValidationError;
-import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BSPaginationPanel;
 import org.opensingular.lib.wicket.util.datatable.BSPaginationToolbar;
-import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -74,7 +66,7 @@ class MasterDetailBSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> extend
                             @Override
                             protected NumberedPageLink newNumberedPageLink(ListItem<Long> item) {
                                 NumberedPageLink link = super.newNumberedPageLink(item);
-                                item.add($b.classAppender("has-errors",
+                                item.add($b.classAppender("has-error",
                                         $m.get(() -> (!SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(item)).isEmpty()))));
 
                                 SValidationFeedbackHandler.bindTo(new FeedbackFence(item))
