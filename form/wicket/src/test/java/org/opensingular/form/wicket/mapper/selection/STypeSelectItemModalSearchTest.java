@@ -1,50 +1,51 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.Button;
+import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.converter.ValueToSICompositeConverter;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.provider.Config;
 import org.opensingular.form.provider.FilteredProvider;
 import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
-import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.Button;
-import org.junit.Assert;
-import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
+public class STypeSelectItemModalSearchTest {
 
-    private STypeComposite<SIComposite> notebook;
+    private static STypeComposite<SIComposite> notebook;
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> baseType) {
+    private static final String MARCA = "marca";
+    private static final String MEMORIA = "memoria";
+    private static final String DISCO = "disco";
+    private static final String SISTEMA_OPERACIONAL = "sistemaOperacional";
 
+    private static void buildBaseType(STypeComposite<?> baseType) {
         notebook = baseType.addFieldComposite("notebook");
 
-        notebook.addFieldString("marca");
-        notebook.addFieldString("memoria");
-        notebook.addFieldString("disco");
-        notebook.addFieldString("sistemaOperacional");
+        notebook.addFieldString(MARCA);
+        notebook.addFieldString(MEMORIA);
+        notebook.addFieldString(DISCO);
+        notebook.addFieldString(SISTEMA_OPERACIONAL);
 
         notebook.withView(new SViewSearchModal());
         notebook.asAtrProvider().filteredProvider(new FilteredProvider<Notebook>() {
             @Override
             public void configureProvider(Config cfg) {
-                cfg.getFilter().addFieldString("marca");
-                cfg.getFilter().addFieldString("sistemaOperacional");
-                cfg.result().addColumn("marca", "Marca")
-                        .addColumn("memoria", "Memoria")
-                        .addColumn("disco", "Disco")
-                        .addColumn("sistemaOperacional", "Sistema Operacional");
+                cfg.getFilter().addFieldString(MARCA);
+                cfg.getFilter().addFieldString(SISTEMA_OPERACIONAL);
+                cfg.result().addColumn(MARCA, "Marca")
+                        .addColumn(MEMORIA, "Memoria")
+                        .addColumn(DISCO, "Disco")
+                        .addColumn(SISTEMA_OPERACIONAL, "Sistema Operacional");
             }
 
             @Override
@@ -54,10 +55,10 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
         });
 
         notebook.asAtrProvider().converter((ValueToSICompositeConverter<Notebook>) (ins, note) -> {
-            ins.setValue("marca", note.marca);
-            ins.setValue("memoria", note.memoria);
-            ins.setValue("disco", note.disco);
-            ins.setValue("sistemaOperacional", note.sistemaOperacional);
+            ins.setValue(MARCA, note.marca);
+            ins.setValue(MEMORIA, note.memoria);
+            ins.setValue(DISCO, note.disco);
+            ins.setValue(SISTEMA_OPERACIONAL, note.sistemaOperacional);
         });
     }
 
@@ -94,27 +95,20 @@ public class STypeSelectItemModalSearchTest extends SingularFormBaseTest {
 
     @Test
     public void testSelection() {
+        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(STypeSelectItemModalSearchTest::buildBaseType);
+        tester.startDummyPage();
 
-        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
-
+        Button link = (Button) tester.getAssertionsForm().findSubComponent(al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID)).getTarget();
         tester.executeAjaxEvent(link, "click");
 
-        List<AjaxLink> links = findOnForm(ActionAjaxLink.class, form.getForm(),
-                al -> al.getId().equals("link"))
-                .collect(Collectors.toList());
+        AjaxLink ajaxLink = (AjaxLink) tester.getAssertionsForm().findSubComponent(al -> al.getId().equals("link")).getTarget();
+        tester.executeAjaxEvent(ajaxLink, "click");
 
-        tester.executeAjaxEvent(links.get(0), "click");
-
-        final SIComposite currentInstance = page.getCurrentInstance();
-        final SIComposite notebok         = (SIComposite) currentInstance.getField(notebook.getNameSimple());
-
-        Assert.assertEquals(notebok.getField("marca").getValue(), "Apple");
-        Assert.assertEquals(notebok.getField("memoria").getValue(), "4GB");
-        Assert.assertEquals(notebok.getField("disco").getValue(), "1T");
-        Assert.assertEquals(notebok.getField("sistemaOperacional").getValue(), "OSX");
-
-
+        AssertionsSInstance noteBookAssertion = tester.getAssertionsForm().getSubCompomentWithType(notebook).assertSInstance();
+        noteBookAssertion.field(MARCA).isValueEquals("Apple");
+        noteBookAssertion.field(MEMORIA).isValueEquals("4GB");
+        noteBookAssertion.field(DISCO).isValueEquals("1T");
+        noteBookAssertion.field(SISTEMA_OPERACIONAL).isValueEquals("OSX");
     }
 }

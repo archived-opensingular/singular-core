@@ -1,99 +1,106 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.opensingular.form.wicket.helpers.TestFinders.findId;
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
 @Ignore("We have to figure out how to deal with this case of TypeAhead")
-@RunWith(Enclosed.class)
 public class STypeStringSelectionFieldTest {
+    private SingularDummyFormPageTester tester;
 
-    private static class Base extends SingularFormBaseTest {
-        protected STypeString selectType;
+    private static STypeString selectType;
 
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            selectType = baseType.addFieldString("favoriteFruit");
-        }
-
+    private static void buildBaseType(STypeComposite<?> baseType) {
+        selectType = baseType.addFieldString("favoriteFruit");
+        selectType.selectionOf("strawberry", "apple", "orange", "banana");
     }
 
-    public static class Default extends Base {
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-            selectType.selectionOf("strawberry", "apple", "orange", "banana");
-        }
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(STypeStringSelectionFieldTest::buildBaseType);
+    }
 
-        @Test
-        public void rendersAnDropDownWithSpecifiedOptions() {
-            tester.assertEnabled(formField(form, "favoriteFruit"));
-            form.submit();
-            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
-            assertThat(options).hasSize(1);
-            DropDownChoice choices = options.get(0);
-            assertThat(getkeysFromSelection(choices)).containsExactly("strawberry", "apple", "orange", "banana");
-            assertThat(getDisplaysFromSelection(choices)).containsExactly("strawberry", "apple", "orange", "banana");
-        }
+    @Test
+    public void rendersAnDropDownWithSpecifiedOptions() {
+        tester.startDummyPage();
+        tester.assertEnabled(tester.getAssertionsForm()
+                .getSubCompomentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
-        @Test
-        public void submitsSelectedValue() {
-            form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
-            form.submit();
-            Object value = page.getCurrentInstance().getValue(selectType.getNameSimple());
-            assertThat(value).isEqualTo("orange");
+        tester.newFormTester().submit();
+
+        DropDownChoice choices = containsOnlyOneDropDownAndReturnIfFinds();
+        List<String> chaves   = new ArrayList<>();
+        List<String> displays = new ArrayList<>();
+        getValuesOfDropDownIfExists(chaves, displays);
+
+        assertThat(chaves).containsExactly("strawberry", "apple", "orange", "banana");
+        assertThat(displays).containsExactly("strawberry", "apple", "orange", "banana");
+    }
+
+    @Test
+    public void submitsSelectedValue() {
+        tester.startDummyPage();
+
+        tester.newFormTester()
+                .select(getFormRelativePath((FormComponent)
+                        tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget()), 2)
+                .submit();
+
+        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().isValueEquals("orange");
+    }
+
+    private String getFormRelativePath(FormComponent component) {
+        return component.getPath().replace(component.getForm().getRootForm().getPath() + ":", StringUtils.EMPTY);
+    }
+
+    @Test
+    public void hasADefaultProvider() {
+        tester.startDummyPage();
+
+        DropDownChoice choices = containsOnlyOneDropDownAndReturnIfFinds();
+        List<String> chaves   = new ArrayList<>();
+        List<String> displays = new ArrayList<>();
+        getValuesOfDropDownIfExists(chaves, displays);
+
+        assertThat(chaves).containsExactly("strawberry", "apple", "orange", "banana");
+        assertThat(displays).containsExactly("strawberry", "apple", "orange", "banana");
+    }
+
+    @Test
+    public void rendersAnDropDownWithDanglingOptions() {
+        tester.getDummyPage().addInstancePopulator(instance ->instance.setValue(selectType.getNameSimple(), "avocado"));
+        tester.startDummyPage();
+
+        List<String> chaves   = new ArrayList<>();
+        List<String> displays = new ArrayList<>();
+        getValuesOfDropDownIfExists(chaves, displays);
+
+        assertThat(chaves).containsExactly("avocado", "strawberry", "apple", "orange", "banana");
+        assertThat(displays).containsExactly("avocado", "strawberry", "apple", "orange", "banana");
+    }
+
+    private void getValuesOfDropDownIfExists(List<String> chaves, List<String> displays) {
+        DropDownChoice choices = containsOnlyOneDropDownAndReturnIfFinds();
+        for (Object choice : choices.getChoices()) {
+            chaves.add(choices.getChoiceRenderer().getIdValue(choice, choices.getChoices().indexOf(choice)));
+            displays.add(String.valueOf(choices.getChoiceRenderer().getDisplayValue(choice)));
         }
     }
 
-    public static class WithDefaultProvider extends Base {
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-            selectType.selectionOf("strawberry", "apple", "orange", "banana");
-        }
-
-        @Test
-        public void hasADefaultProvider() {
-            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
-            assertThat(options).hasSize(1);
-            DropDownChoice choices = options.get(0);
-            assertThat(getkeysFromSelection(choices)).containsExactly("strawberry", "apple", "orange", "banana");
-            assertThat(getDisplaysFromSelection(choices)).containsExactly("strawberry", "apple", "orange", "banana");
-        }
+    private DropDownChoice containsOnlyOneDropDownAndReturnIfFinds() {
+        return (DropDownChoice) tester.getAssertionsForm()
+                .getSubComponents(DropDownChoice.class).isSize(1).get(0).getTarget();
     }
-
-    public static class WithPreloadedValues extends Base {
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-            selectType.selectionOf("strawberry", "apple", "orange", "banana");
-        }
-
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            instance.setValue(selectType.getNameSimple(), "avocado");
-        }
-
-        @Test
-        public void rendersAnDropDownWithDanglingOptions() {
-            List<DropDownChoice> options = findTag(form.getForm(), DropDownChoice.class);
-            assertThat(options).hasSize(1);
-            DropDownChoice choices = options.get(0);
-            assertThat(getkeysFromSelection(choices)).containsExactly("avocado", "strawberry", "apple", "orange", "banana");
-            assertThat(getDisplaysFromSelection(choices)).containsExactly("avocado", "strawberry", "apple", "orange", "banana");
-        }
-    }
-
 }
