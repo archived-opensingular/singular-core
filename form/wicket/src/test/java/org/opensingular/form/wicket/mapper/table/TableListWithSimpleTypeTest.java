@@ -30,12 +30,11 @@ public class TableListWithSimpleTypeTest {
     public void setUp(){
         tester = new SingularDummyFormPageTester();
         tester.getDummyPage().setTypeBuilder(TableListWithSimpleTypeTest::buildBaseType);
+        tester.startDummyPage();
     }
 
     @Test
     public void testAddItem(){
-        tester.startDummyPage();
-
         tester.getAssertionsForm().getSubCompomentWithType(nomes).assertSInstance().isList(0);
 
         final Button addButton = findAddButton();
@@ -52,8 +51,6 @@ public class TableListWithSimpleTypeTest {
 
     @Test
     public void testRemoveItem(){
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
 
         tester.getAssertionsForm().getSubCompomentWithType(nomes).assertSInstance().isList(0);
@@ -69,8 +66,6 @@ public class TableListWithSimpleTypeTest {
 
     @Test
     public void testAddItemAndFillOptions() {
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
         tester.getAssertionsForm().getSubCompomentWithType(nomes).assertSInstance().isList(0);
 
@@ -87,8 +82,6 @@ public class TableListWithSimpleTypeTest {
 
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
-        tester.startDummyPage();
-
         final Button addButton = findAddButton();
 
         tester.getAssertionsForm().getSubCompomentWithType(nomes).assertSInstance().isList(0);
