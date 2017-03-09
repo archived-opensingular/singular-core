@@ -1,120 +1,104 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.opensingular.form.*;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.opensingular.form.wicket.helpers.TestFinders.findId;
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
-@RunWith(Enclosed.class)
 public class STypeStringMultipleSelectionFieldTest {
+    private SingularDummyFormPageTester tester;
 
-    private static class Base extends SingularFormBaseTest {
+    private static STypeList fieldType;
 
-        protected STypeList fieldType;
+    private static void buildBaseType(STypeComposite<?> baseType) {
+        fieldType = baseType.addFieldListOf("favoriteFruit", STypeString.class);
 
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            fieldType = baseType.addFieldListOf("favoriteFruit", STypeString.class);
-        }
-
-        protected List<CheckBoxMultipleChoice> options() {
-            return findTag(form.getForm(), CheckBoxMultipleChoice.class);
-        }
+        fieldType.withView(SMultiSelectionByCheckboxView::new);
+        fieldType.selectionOf("strawberry", "apple", "orange");
     }
 
-    public static class Default extends Base {
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-            fieldType.withView(SMultiSelectionByCheckboxView::new);
-            fieldType.selectionOf("strawberry", "apple", "orange");
-        }
-
-        @Test
-        public void renders() {
-            tester.assertEnabled(formField(form, "favoriteFruit"));
-            assertThat(options()).hasSize(1);
-        }
-
-        @Test
-        public void rendersAListWithSpecifiedOptions() {
-            final CheckBoxMultipleChoice choices  = options().get(0);
-            final List<String>           chaves   = new ArrayList<>();
-            final List<String>           displays = new ArrayList<>();
-
-            for (Object choice : choices.getChoices()) {
-                chaves.add(choices.getChoiceRenderer().getIdValue(choice, choices.getChoices().indexOf(choice)));
-                displays.add(String.valueOf(choices.getChoiceRenderer().getDisplayValue(choice)));
-            }
-
-            assertThat(chaves).containsExactly("strawberry", "apple", "orange");
-            assertThat(displays).containsExactly("strawberry", "apple", "orange");
-        }
-
-        @Test
-        public void submitsSelectedValue() {
-            form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
-            form.submit();
-            List value = (List) page.getCurrentInstance().getValue(fieldType.getNameSimple());
-            assertThat(value).containsOnly("orange");
-        }
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(STypeStringMultipleSelectionFieldTest::buildBaseType);
     }
 
-    public static class WithDanglingSelectedOption extends Base {
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-            fieldType.withView(SMultiSelectionByCheckboxView::new);
-            fieldType.selectionOf("strawberry", "apple");
-        }
+    @Test
+    public void renders(){
+        tester.startDummyPage();
+        tester.assertEnabled(
+                tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            SIList    campo   = (SIList) instance.getField(fieldType.getNameSimple());
-            SInstance element = campo.addNew();
-            element.setValue("avocado");
-        }
-
-        @Test
-        public void rendersAListWithDanglingOptions() {
-            final CheckBoxMultipleChoice choices  = options().get(0);
-            final List<String>           chaves   = new ArrayList<>();
-            final List<String>           displays = new ArrayList<>();
-
-            for (Object choice : choices.getChoices()) {
-                chaves.add(choices.getChoiceRenderer().getIdValue(choice, choices.getChoices().indexOf(choice)));
-                displays.add(String.valueOf(choices.getChoiceRenderer().getDisplayValue(choice)));
-            }
-
-            assertThat(chaves).containsExactly("avocado", "strawberry", "apple");
-            assertThat(displays).containsExactly("avocado", "strawberry", "apple");
-        }
-
+        tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).isSize(1);
     }
 
-    /*
+    @Test
+    public void rendersAListWithSpecifiedOptions() {
+        tester.startDummyPage();
+        CheckBoxMultipleChoice choices = (CheckBoxMultipleChoice)
+                tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(0).getTarget();
+
+        List<String> chaves   = new ArrayList<>();
+        List<String> displays = new ArrayList<>();
+
+        for (Object choice : choices.getChoices()) {
+            chaves.add(choices.getChoiceRenderer().getIdValue(choice, choices.getChoices().indexOf(choice)));
+            displays.add(String.valueOf(choices.getChoiceRenderer().getDisplayValue(choice)));
+        }
+
+        assertThat(chaves).containsExactly("strawberry", "apple", "orange");
+        assertThat(displays).containsExactly("strawberry", "apple", "orange");
+    }
+
     @Test
     public void submitsSelectedValue() {
-        setupPage();
-        selectBaseType.withSelectionOf("strawberry", "apple", "orange");
-        buildPage();
-        form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
-        form.submit("save-btn");
-        List value = (List) page.getCurrentInstance().getValue(fieldType.getNameSimple());
-        assertThat(value).containsOnly("orange");
+        tester.startDummyPage();
+        tester.newFormTester()
+                .select(getFormRelativePath((FormComponent)
+                        tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget()), 2)
+                .submit();
+        List result = (List) tester.getAssertionsForm()
+                .getSubCompomentWithType(fieldType).assertSInstance().isList(1).getTarget().getValue();
+        assertThat(result).containsOnly("orange");
     }
-*/
 
+    @Test
+    public void rendersAListWithDanglingOptions() {
+        tester.getDummyPage().addInstancePopulator(instance ->{
+            SIList campo = (SIList) instance.getField(fieldType.getNameSimple());
+            SInstance element = campo.addNew();
+            element.setValue("avocado");
+        });
+        tester.startDummyPage();
+
+        CheckBoxMultipleChoice choices = (CheckBoxMultipleChoice)
+                tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(0).getTarget();
+        List<String> chaves = new ArrayList<>();
+        List<String> displays = new ArrayList<>();
+
+        for (Object choice : choices.getChoices()) {
+            chaves.add(choices.getChoiceRenderer().getIdValue(choice, choices.getChoices().indexOf(choice)));
+            displays.add(String.valueOf(choices.getChoiceRenderer().getDisplayValue(choice)));
+        }
+
+        assertThat(chaves).containsExactly("avocado", "strawberry", "apple", "orange");
+        assertThat(displays).containsExactly("avocado", "strawberry", "apple", "orange");
+    }
+
+    private String getFormRelativePath(FormComponent component) {
+        return component.getPath().replace(component.getForm().getRootForm().getPath() + ":", StringUtils.EMPTY);
+    }
 }
