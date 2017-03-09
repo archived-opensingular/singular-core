@@ -28,8 +28,10 @@ import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.validation.IValidationError;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -55,9 +57,9 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Informações encontradas na persitência, mas sem correspondência no tipo na instância atual.
      */
-    private List<MElement>                     unreadInfo;
+    private List<MElement> unreadInfo;
     private InstanceSerializableRef<SInstance> serializableRef;
-    private ISInstanceListener.EventCollector  eventCollector;
+    private ISInstanceListener.EventCollector eventCollector;
 
     public SType<?> getType() {
         return type;
@@ -179,11 +181,75 @@ public abstract class SInstance implements SAttributeEnabled {
 
     public abstract Object getValue();
 
+    public <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends STypeSimple<TI, VAL>,
+            TI extends SISimple<VAL>,
+            VAL extends Serializable> void setValue(
+                    VAL value,
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        getField(rootTypeClass, targetTypeFunction).setValue(value);
+    }
+    public <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SISimple<VAL>,
+            VAL extends Serializable> VAL getValue(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        return (VAL) getField(rootTypeClass, targetTypeFunction).getValue();
+    }
+    public <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SISimple<VAL>,
+            VAL extends Serializable> Optional<VAL> findValue(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        return findField(rootTypeClass, targetTypeFunction).map(f -> (VAL) f.getValue());
+    }
+
+    private <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SInstance> TI getField(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        return findField(rootTypeClass, targetTypeFunction).get();
+    }
+
+    private <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SInstance> Optional<TI> findField(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        final RI rootInstance = (RI) this;
+        final RT rootType = (RT) rootInstance.getType();
+        final TT targetType = targetTypeFunction.apply(rootType);
+        if (rootType == targetType) {
+            return Optional.of((TI) rootInstance);
+        } else if (rootInstance instanceof SIComposite) {
+            return ((SIComposite) rootInstance).findDescendant(targetType);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
     <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
         return convert(getValue(), resultClass);
     }
 
-    /** Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade. */
+    /**
+     * Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade.
+     */
     public abstract void clearInstance();
 
     /**
@@ -588,8 +654,8 @@ public abstract class SInstance implements SAttributeEnabled {
      * escrevendo-o.
      */
     StringBuilder toStringInternal() {
-        StringBuilder sb   = new StringBuilder();
-        String        name = getClass().getName();
+        StringBuilder sb = new StringBuilder();
+        String name = getClass().getName();
         if (name.startsWith(SInstance.class.getPackage().getName())) {
             sb.append(getClass().getSimpleName());
         } else {

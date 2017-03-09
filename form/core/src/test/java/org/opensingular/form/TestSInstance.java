@@ -4,15 +4,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.MformPersistenciaXML;
 import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
-public class TestMInstance extends TestCaseForm {
+public class TestSInstance extends TestCaseForm {
 
-    public TestMInstance(TestFormConfig testFormConfig) {
+    public TestSInstance(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
