@@ -1,17 +1,18 @@
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.provider.TextQueryProvider;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.wicket.Component;
 import org.apache.wicket.request.Url;
 import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.provider.TextQueryProvider;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.nio.charset.StandardCharsets;
@@ -21,16 +22,24 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
-public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
+public class BloodhoundDataBehaviorTest {
 
-    STypeString string;
+    private SingularDummyFormPageTester tester;
+    private static STypeString string;
+
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(BloodhoundDataBehaviorTest::buildBaseType);
+        tester.startDummyPage();
+    }
 
     private void executeBloodhoundDataBehavior() {
         executeBloodhoundDataBehavior(null);
     }
 
     private void executeBloodhoundDataBehavior(String query) {
-        final Component                    typeaheadComponent      =  findFirstFormComponentsByType(page.getForm(), string).getParent().getParent();
+        final Component typeaheadComponent = tester.getAssertionsForm().getSubComponents(TypeaheadComponent.class).get(0).getTarget();
         final List<BloodhoundDataBehavior> bloodhoundDataBehaviors = typeaheadComponent.getBehaviors(BloodhoundDataBehavior.class);
         Assert.assertThat("O componente possui mais de um ou nenhum BloodhoundDataBehavior", bloodhoundDataBehaviors, Matchers.hasSize(1));
         String url = String.valueOf(bloodhoundDataBehaviors.get(0).getCallbackUrl());
@@ -78,14 +87,13 @@ public class BloodhoundDataBehaviorTest extends SingularFormBaseTest {
         return value;
     }
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> baseType) {
+    private static void buildBaseType(STypeComposite<?> baseType) {
         string = baseType.addFieldString("string");
         string.selectionOf(String.class).selfIdAndDisplay().filteredProvider(createProvider());
         string.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
     }
 
-    private TextQueryProvider createProvider() {
+    private static TextQueryProvider createProvider() {
         return (TextQueryProvider) (instance, filter) -> {
             if (filter == null) filter = "";
             final List<String> emails = new ArrayList<>();

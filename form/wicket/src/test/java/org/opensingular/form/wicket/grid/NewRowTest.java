@@ -59,8 +59,8 @@ public class NewRowTest {
                 .visitParents(BSRow.class, new IVisitor<BSRow, BSRow>() {
                     @Override
                     public void component(BSRow row, IVisit<BSRow> visit) {
-                                visit.stop(row);
-                            }
+                        visit.stop(row);
+                    }
                 });
     }
 

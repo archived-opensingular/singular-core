@@ -2078,6 +2078,17 @@ Theme Panel
   color: #e82724;
   background-color: rgba(226, 70, 89, 0.08); }
 
+.list-detail-body .table tfoot .pagination .has-error > a {
+  border: 1px solid #fdd5df;
+  color: #e82724;
+  background-color: rgba(226, 70, 89, 0.08); }
+
+.list-detail-body .table tfoot .pagination .has-error.active > a,
+.list-detail-body .table tfoot .pagination .has-error:hover > a {
+  border: 1px solid #fdd5df;
+  color: #e82724;
+  background-color: #fdd5df; }
+
 .list-detail-input.has-error > .list-detail-footer > button {
   border: 1px solid #e82724;
   color: #e82724; }

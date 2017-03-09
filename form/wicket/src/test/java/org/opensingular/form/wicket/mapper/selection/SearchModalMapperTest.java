@@ -1,5 +1,10 @@
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.TextField;
+import org.junit.Test;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.Config;
@@ -8,28 +13,21 @@ import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
-public class SearchModalMapperTest extends SingularFormBaseTest {
+public class SearchModalMapperTest {
 
-    private STypeString mandatoryField;
-    private STypeString dependentField;
+    private static STypeString mandatoryField;
+    private static STypeString dependentField;
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> baseType) {
-
+    private static void buildBaseType(STypeComposite<?> baseType) {
         mandatoryField = baseType.addFieldString("mandatoryField", true);
 
         mandatoryField.withView(new SViewSearchModal());
@@ -47,40 +45,35 @@ public class SearchModalMapperTest extends SingularFormBaseTest {
         });
         dependentField = baseType.addFieldString("dependentField");
         dependentField.asAtr().dependsOn(mandatoryField);
-        dependentField.asAtr().visible(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
+        dependentField.asAtr()
+                .visible(ins -> StringUtils.isNotEmpty(ins.findNearestValue(mandatoryField, String.class).orElse(null)));
 
     }
 
     @Test
     public void testIfChooseValueInModelUpdatesDependentComponent() {
+        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(SearchModalMapperTest::buildBaseType);
+        tester.startDummyPage();
 
-        FormComponent dependentFieldComp = findFormComponentsByType(dependentField)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o componente dependente"));
-
-        FormComponent mandatoryFieldComp = findFormComponentsByType(mandatoryField)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o componente mandatorio"));
+        Component mandatoryFieldComp = tester.getAssertionsForm().getSubComponents(TextField.class)
+                .get(0).asTextField().getTarget();
+        Component dependentFieldComp = tester.getAssertionsForm().getSubComponents(TextField.class)
+                .get(1).asTextField().getTarget();
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
-        Button link = findOnForm(Button.class, form.getForm(), al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o link para abertura da modal"));
+        Button openModalButton = (Button) tester.getAssertionsForm()
+                .findSubComponent(b -> b.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID)).getTarget();
+        tester.executeAjaxEvent(openModalButton, "click");
 
-        tester.executeAjaxEvent(link, "click");
+        AssertionsWComponentList links = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);
+        tester.executeAjaxEvent(links.get(0).getTarget(), "click");
 
-        List<AjaxLink> links = findOnForm(ActionAjaxLink.class, form.getForm(),
-                al -> al.getId().equals("link"))
-                .collect(Collectors.toList());
-
-        tester.executeAjaxEvent(links.get(0), "click");
-
-        tester.assertModelValue(mandatoryFieldComp.getPageRelativePath(), "1");
+        tester.getAssertionsForm().getSubCompomentWithType(mandatoryField).assertSInstance().isValueEquals("1");
 
         tester.executeAjaxEvent(mandatoryFieldComp, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
 
         tester.assertVisible(dependentFieldComp.getPageRelativePath());
-
     }
 }
