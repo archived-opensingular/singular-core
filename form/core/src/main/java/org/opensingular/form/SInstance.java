@@ -181,6 +181,19 @@ public abstract class SInstance implements SAttributeEnabled {
 
     public abstract Object getValue();
 
+    /**
+     * Resolves a field instance and sets its value.
+     * @param value new value
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @param <VAL> value
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
     public <RT extends SType<RI>,
             RI extends SInstance,
             TT extends STypeSimple<TI, VAL>,
@@ -192,6 +205,19 @@ public abstract class SInstance implements SAttributeEnabled {
 
         getField(rootTypeClass, targetTypeFunction).setValue(value);
     }
+
+    /**
+     * Resolves a field instance and returns its value, or null if empty.
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @param <VAL> value
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
     public <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
@@ -202,6 +228,19 @@ public abstract class SInstance implements SAttributeEnabled {
 
         return (VAL) getField(rootTypeClass, targetTypeFunction).getValue();
     }
+
+    /**
+     * Resolves a field instance and returns its optional value.
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @param <VAL> value
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
     public <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
@@ -213,6 +252,18 @@ public abstract class SInstance implements SAttributeEnabled {
         return findField(rootTypeClass, targetTypeFunction).map(f -> (VAL) f.getValue());
     }
 
+
+    /**
+     * Resolves a field instance and returns it, or null if empty.
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
     private <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
@@ -223,6 +274,17 @@ public abstract class SInstance implements SAttributeEnabled {
         return findField(rootTypeClass, targetTypeFunction).get();
     }
 
+    /**
+     * Resolves a field instance and returns it as an Optional (empty if type not found as a descendant).
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
     private <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
