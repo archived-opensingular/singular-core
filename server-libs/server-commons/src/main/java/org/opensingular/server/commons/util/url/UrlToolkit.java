@@ -1,4 +1,4 @@
-package org.opensingular.server.commons.spring.security.config.cas.util;
+package org.opensingular.server.commons.util.url;
 
 import org.apache.wicket.request.Url;
 
@@ -6,7 +6,7 @@ public class UrlToolkit {
 
     private Url url;
 
-    public UrlToolkit(Url url) {
+    UrlToolkit(Url url) {
         this.url = url;
     }
 

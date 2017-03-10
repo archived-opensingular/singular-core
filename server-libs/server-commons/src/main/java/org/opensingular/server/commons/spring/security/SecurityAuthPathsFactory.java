@@ -1,6 +1,7 @@
 package org.opensingular.server.commons.spring.security;
 
 import org.opensingular.server.commons.config.IServerContext;
+import org.opensingular.server.commons.util.url.UrlToolkitBuilder;
 import org.opensingular.server.commons.wicket.SingularApplication;
 import org.opensingular.server.commons.wicket.SingularSession;
 
@@ -18,7 +19,9 @@ public class SecurityAuthPathsFactory {
 
         ServletContext servletContext = singularApplication.getServletContext();
 
-        return new SecurityAuthPaths(serverContext.getUrlPath(), servletContext.getContextPath());
+        UrlToolkitBuilder urlToolkitBuilder = new UrlToolkitBuilder();
+
+        return new SecurityAuthPaths(serverContext.getUrlPath(), servletContext.getContextPath(), urlToolkitBuilder);
     }
 
 }

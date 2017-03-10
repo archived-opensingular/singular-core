@@ -20,18 +20,21 @@ package org.opensingular.server.commons.spring.security;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.opensingular.server.commons.spring.security.config.cas.util.UrlToolkit;
+import org.opensingular.server.commons.util.url.UrlToolkit;
+import org.opensingular.server.commons.util.url.UrlToolkitBuilder;
 
 import java.io.Serializable;
 
 public class SecurityAuthPaths implements Serializable {
 
-    private final String urlPath;
-    private final String contextPath;
+    private final String            urlPath;
+    private final String            contextPath;
+    private final UrlToolkitBuilder urlToolkitBuilder;
 
-    public SecurityAuthPaths(String urlPath, String contextPath) {
+    public SecurityAuthPaths(String urlPath, String contextPath, UrlToolkitBuilder urlToolkitBuilder) {
         this.urlPath = urlPath;
         this.contextPath = contextPath;
+        this.urlToolkitBuilder = urlToolkitBuilder;
     }
 
     public String getLoginPath() {
@@ -49,7 +52,7 @@ public class SecurityAuthPaths implements Serializable {
     private String mountLogoutPathWithRequectCycle(RequestCycle requestCycle, String baseUrl) {
         Request    request    = requestCycle.getRequest();
         Url        url        = request.getUrl();
-        UrlToolkit urlToolkit = new UrlToolkit(url);
+        UrlToolkit urlToolkit = urlToolkitBuilder.build(url);
         baseUrl = urlToolkit.concatServerAdressWithContext(baseUrl);
         baseUrl += "?service=" + urlToolkit.concatServerAdressWithContext(contextPath);
         return baseUrl;
