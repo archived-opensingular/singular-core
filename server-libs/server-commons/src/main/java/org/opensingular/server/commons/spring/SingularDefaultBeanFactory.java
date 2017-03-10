@@ -37,6 +37,8 @@ import org.opensingular.server.commons.auth.DatabaseAdminCredentialChecker;
 import org.opensingular.server.commons.cache.SingularKeyGenerator;
 import org.opensingular.server.commons.file.FileInputStreamAndHashFactory;
 import org.opensingular.server.commons.flow.renderer.remote.YFilesFlowRemoteRenderer;
+import org.opensingular.server.commons.metadata.DefaultSingularServerMetadata;
+import org.opensingular.server.commons.metadata.SingularServerMetadata;
 import org.opensingular.server.commons.persistence.dao.EmailAddresseeDao;
 import org.opensingular.server.commons.persistence.dao.EmailDao;
 import org.opensingular.server.commons.persistence.dao.ParameterDAO;
@@ -283,6 +285,11 @@ public class SingularDefaultBeanFactory {
     @Bean
     public AdminCredentialChecker adminCredentialChecker(ParameterService parameterService){
         return new DatabaseAdminCredentialChecker(parameterService, null);
+    }
+
+    @Bean
+    public SingularServerMetadata singularServerMetadata() {
+        return new DefaultSingularServerMetadata();
     }
 
 }

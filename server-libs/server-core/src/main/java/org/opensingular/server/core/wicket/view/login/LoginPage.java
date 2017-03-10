@@ -16,6 +16,10 @@
 
 package org.opensingular.server.core.wicket.view.login;
 
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.opensingular.server.commons.spring.security.SecurityUtil;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.devutils.stateless.StatelessComponent;
@@ -52,6 +56,13 @@ public class LoginPage extends WebPage {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+
+        add(new Link<Void>("baseurlAnchor") {
+            @Override
+            public void onClick() {
+                throw new RedirectToUrlException(RequestCycle.get().getRequest().getFilterPath());
+            }
+        });
 
         WebMarkupContainer loginForm = new WebMarkupContainer("form");
         loginForm.add($b.attr("action", SecurityUtil.getLoginPath()));

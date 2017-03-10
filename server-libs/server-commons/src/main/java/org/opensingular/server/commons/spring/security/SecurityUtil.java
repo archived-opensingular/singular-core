@@ -17,24 +17,54 @@
 package org.opensingular.server.commons.spring.security;
 
 
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.opensingular.server.commons.spring.security.config.cas.util.UrlToolkit;
 import org.opensingular.server.commons.wicket.SingularApplication;
 import org.opensingular.server.commons.wicket.SingularSession;
 
 public class SecurityUtil {
 
-    private SecurityUtil() {
+    private final SingularSession singularSession;
+    private final SingularApplication singularApplication;
 
+    private SecurityUtil(SingularSession singularSession, SingularApplication singularApplication) {
+        this.singularSession = singularSession;
+        this.singularApplication = singularApplication;
     }
 
-    public static String getLoginPath() {
-        return SingularApplication.get().getServletContext().getContextPath() +
-                SingularSession.get().getUserDetails().getServerContext().getUrlPath() +
-                "/login";
+    public String getLoginPath() {
+        return getContextPath() + getUrlPath() + "/login";
     }
 
-    public static String getLogoutPath() {
-        return SingularApplication.get().getServletContext().getContextPath() +
-                SingularSession.get().getUserDetails().getServerContext().getUrlPath() +
-                "/logout";
+    public String getLogoutPath(RequestCycle requestCycle) {
+
+        String contextPath = getContextPath();
+        String basicUrl    = contextPath + getUrlPath() + "/logout";
+
+        if (requestCycle != null) {
+            basicUrl = mountLogoutPathWithRequectCycle(requestCycle, contextPath, basicUrl);
+        }
+
+        return basicUrl;
     }
+
+    private String mountLogoutPathWithRequectCycle(RequestCycle requestCycle, String contextPath, String basicUrl) {
+        Request    request    = requestCycle.getRequest();
+        Url        url        = request.getUrl();
+        UrlToolkit urlToolkit = new UrlToolkit(url);
+        basicUrl = urlToolkit.concatServerAdressWithContext(basicUrl);
+        basicUrl += "?service=" + urlToolkit.concatServerAdressWithContext(contextPath);
+        return basicUrl;
+    }
+
+    private String getUrlPath() {
+        return singularSession.getUserDetails().getServerContext().getUrlPath();
+    }
+
+    private  String getContextPath() {
+        return singularApplication.getServletContext().getContextPath();
+    }
+
 }

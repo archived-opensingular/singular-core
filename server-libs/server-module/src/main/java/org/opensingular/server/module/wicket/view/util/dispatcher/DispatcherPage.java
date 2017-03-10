@@ -51,6 +51,7 @@ import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.flow.SingularServerTaskPageStrategy;
 import org.opensingular.server.commons.flow.SingularWebRef;
 import org.opensingular.server.commons.form.FormActions;
+import org.opensingular.server.commons.metadata.SingularServerMetadata;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
 import org.opensingular.server.commons.service.FormPetitionService;
 import org.opensingular.server.commons.service.PetitionService;
@@ -95,6 +96,9 @@ public abstract class DispatcherPage extends WebPage {
 
     @Inject
     private FormPetitionService<?> formPetitionService;
+
+    @Inject
+    private SingularServerMetadata singularServerMetadata;
 
     public DispatcherPage() {
         initPage();
@@ -298,7 +302,7 @@ public abstract class DispatcherPage extends WebPage {
         final StringValue diffValue        = getParam(r, DIFF);
 
         if (action.isEmpty()) {
-            throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + "/singular");
+            throw new RedirectToUrlException(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl()) + singularServerMetadata.getServerBaseUrl());
         }
 
         final FormActions formAction = resolveFormAction(action);

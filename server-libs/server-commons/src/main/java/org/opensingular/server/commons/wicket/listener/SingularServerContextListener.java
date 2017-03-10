@@ -60,7 +60,7 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
 
     private void resetLogin(RequestCycle cycle) {
         final Url    url         = cycle.getUrlRenderer().getBaseUrl();
-        final String redirectURL = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + SecurityUtil.getLogoutPath();
+        final String redirectURL = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + SecurityUtil.getLogoutPath(cycle);
         throw new RedirectToUrlException(redirectURL);
     }
 
