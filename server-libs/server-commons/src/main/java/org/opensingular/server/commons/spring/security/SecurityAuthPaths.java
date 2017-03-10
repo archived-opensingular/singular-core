@@ -31,7 +31,7 @@ public class SecurityAuthPaths implements Serializable {
     private final String            contextPath;
     private final UrlToolkitBuilder urlToolkitBuilder;
 
-    public SecurityAuthPaths(String urlPath, String contextPath, UrlToolkitBuilder urlToolkitBuilder) {
+    public SecurityAuthPaths(String contextPath, String urlPath,UrlToolkitBuilder urlToolkitBuilder) {
         this.urlPath = urlPath;
         this.contextPath = contextPath;
         this.urlToolkitBuilder = urlToolkitBuilder;

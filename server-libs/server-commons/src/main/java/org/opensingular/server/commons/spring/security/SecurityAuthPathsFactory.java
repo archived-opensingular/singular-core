@@ -21,7 +21,7 @@ public class SecurityAuthPathsFactory {
 
         UrlToolkitBuilder urlToolkitBuilder = new UrlToolkitBuilder();
 
-        return new SecurityAuthPaths(serverContext.getUrlPath(), servletContext.getContextPath(), urlToolkitBuilder);
+        return new SecurityAuthPaths(servletContext.getContextPath(), serverContext.getUrlPath(), urlToolkitBuilder);
     }
 
 }
