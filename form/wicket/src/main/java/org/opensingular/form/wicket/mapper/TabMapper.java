@@ -87,9 +87,7 @@ public class TabMapper extends DefaultCompositeMapper {
                 tabComponent.add($b.classAppender("has-errors",
                         $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
                                 .map(IModel::getObject)
-                                .filter(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty())
-                                .findAny()
-                                .isPresent())));
+                                .anyMatch(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty()))));
             }
 
             @Override
