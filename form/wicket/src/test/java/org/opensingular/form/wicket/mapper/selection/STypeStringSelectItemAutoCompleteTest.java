@@ -3,149 +3,102 @@ package org.opensingular.form.wicket.mapper.selection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+
+import java.util.Arrays;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
-@RunWith(Enclosed.class)
 public class STypeStringSelectItemAutoCompleteTest {
 
-    //TODO: Testar modo read only
+    private static final String[] OPTIONS = {"Bruce Wayne", "Clark Kent", "Wally West", "Oliver Queen"};
+    private static final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
 
-    private abstract static class Base extends SingularFormBaseTest {
+    private static STypeString base;
 
-        final String[] OPTIONS = {"Bruce Wayne", "Clark Kent", "Wally West", "Oliver Queen"};
-        final String[] KEYS    = {"Batman", "Superman", "Flash", "Green Arrow"};
+    private SingularDummyFormPageTester tester;
 
-        protected STypeString base;
-
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            base = baseType.addFieldString("myHero");
-            base.autocompleteOf(String.class)
-                    .id(v -> KEYS[ArrayUtils.indexOf(OPTIONS, v)])
-                    .selfDisplay()
-                    .simpleConverter()
-                    .simpleProviderOf(OPTIONS);
-        }
-
-        protected SIString fieldInstance() {
-            return baseInstance(page.getInstance());
-        }
-
-        protected SIString baseInstance(SIComposite instance) {
-            return instance.getDescendant(base);
-        }
-
-        protected TextField fieldComponent() {
-            return findTag(form.getForm(), TextField.class).get(0);
-        }
-
-        protected TextField valueComponent() {
-            return findOnForm(TextField.class, page.getForm(), (c) -> c.getId().equals("value_field")).findFirst().orElse(null);
-        }
-
-        protected Component readOnlyComponent() {
-            return findFirstComponentWithId(form.getForm(), "output");
-        }
-
+    private static void buildBaseType(STypeComposite<?> baseType) {
+        base = baseType.addFieldString("myHero");
+        base.autocompleteOf(String.class)
+                .id(v -> KEYS[ArrayUtils.indexOf(OPTIONS, v)])
+                .selfDisplay()
+                .simpleConverter()
+                .simpleProviderOf(OPTIONS);
     }
 
-    public static class Default extends Base {
-
-        @Test
-        public void renderOptions() {
-            for (String o : OPTIONS) {
-                tester.assertContains(o);
-            }
-        }
-
-        @Test
-        public void renderField() {
-            assertThat(findTag(form.getForm(), TextField.class)).hasSize(2);
-        }
-
-        @Test
-        public void submitsSelected() {
-            form.setValue(valueComponent(), KEYS[3]);
-            form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[3]);
-        }
-
+    private Component valueComponent() {
+        return tester.getAssertionsForm().findSubComponent((c) -> c.getId().equals("value_field")).getTarget();
     }
 
-    public static class ReadOnly extends Base {
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            baseInstance(instance).setValue("Tony Stark");
-            page.setAsVisualizationView();
-        }
-
-        @Test
-        public void renderValue() {
-            assertThat(readOnlyComponent().getDefaultModelObjectAsString())
-                    .isEqualTo("Tony Stark");
-        }
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(STypeStringSelectItemAutoCompleteTest::buildBaseType);
     }
 
-    public static class KeyValueSelection extends Base {
+    @Test
+    public void renderLabelsNotKeys() {
+        tester.startDummyPage();
 
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
-        }
-
-        @Test
-        public void renderLabelsNotKeys() {
-            for (String o : OPTIONS) {
-                tester.assertContains(o);
-            }
-        }
-
-        @Test
-        public void submitsSelectedKeyInstead() {
-            form.setValue(valueComponent(), KEYS[2]);
-            form.submit();
-            assertThat(fieldInstance().getValue()).isEqualTo(OPTIONS[2]);
-        }
-
-        @Test
-        public void justIgnoresIfTheSelectedLabelHasNoMatch() {
-            form.setValue(fieldComponent(), "Tony Stark");
-            form.submit();
-            assertThat(fieldInstance().getValue()).isNullOrEmpty();
-        }
+        Arrays.asList(OPTIONS).forEach(option -> tester.assertContains(option));
     }
 
-    public static class ReadOnlyKeyValue extends Base {
-        final String[] KEYS = {"Batman", "Superman", "Flash", "Green Arrow"};
+    @Test
+    public void renderField() {
+        tester.startDummyPage();
 
-        @Override
-        protected void buildBaseType(STypeComposite<?> baseType) {
-            super.buildBaseType(baseType);
+        tester.getAssertionsForm().getSubComponents(TextField.class).isSize(2);
+    }
+
+    @Test
+    public void submitsSelectedValueInsteadOfKey() {
+        tester.startDummyPage();
+
+        tester.newFormTester()
+                .setValue(valueComponent(), KEYS[3])
+                .submit();
+        tester.getAssertionsForm().getSubCompomentWithType(base).assertSInstance().isValueEquals(OPTIONS[3]);
+    }
+
+    @Test
+    public void renderValueReadOnlyMode() {
+        tester.getDummyPage().addInstancePopulator(instance->instance.getDescendant(base).setValue("Tony Stark"));
+        tester.getDummyPage().setAsVisualizationView();
+        tester.startDummyPage();
+
+        assertThat(
+                tester.getAssertionsForm().getSubCompomentWithId("output").getTarget().getDefaultModelObjectAsString())
+                .isEqualTo("Tony Stark");
+    }
+
+    @Test
+    public void justIgnoresIfTheSelectedLabelHasNoMatch() {
+        tester.startDummyPage();
+
+        tester.newFormTester()
+                .setValue(valueComponent(), "Tony Stark")
+                .submit();
+        tester.getAssertionsForm().getSubCompomentWithType(base).assertSInstance().isValueNull();
+    }
+
+    @Test
+    public void readOnlyKeyValueWithDynamicMode() {
+        tester.getDummyPage().setTypeBuilder(tb->{
+            buildBaseType(tb);
             base.withView(new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
-        }
+        });
+        tester.getDummyPage().addInstancePopulator(instance->instance.getDescendant(base).setValue("Clark Kent"));
+        tester.getDummyPage().setAsVisualizationView();
+        tester.startDummyPage();
 
-        @Override
-        protected void populateInstance(SIComposite instance) {
-            baseInstance(instance).setValue("Clark Kent");
-            page.setAsVisualizationView();
-        }
-
-        @Test
-        public void renderValue() {
-            assertThat(readOnlyComponent().getDefaultModelObjectAsString()).isEqualTo("Clark Kent");
-        }
-
+        assertThat(
+                tester.getAssertionsForm().getSubCompomentWithId("output").getTarget().getDefaultModelObjectAsString())
+                .isEqualTo("Clark Kent");
     }
 }

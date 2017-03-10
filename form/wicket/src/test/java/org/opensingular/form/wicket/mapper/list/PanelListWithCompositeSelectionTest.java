@@ -1,156 +1,144 @@
 package org.opensingular.form.wicket.mapper.list;
 
 
+import org.apache.wicket.markup.html.form.Button;
+import org.junit.Before;
+import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
 
 
-public class PanelListWithCompositeSelectionTest extends SingularFormBaseTest {
+public class PanelListWithCompositeSelectionTest {
 
-    STypeComposite<?> compositeSelection;
+    private static STypeList<STypeComposite<SIComposite>, SIComposite> mockList;
+    private static STypeComposite mockTypeComposite;
+    private static STypeComposite<?> compositeSelection;
+    private static STypeString id;
+    private static STypeString description;
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> mockType) {
+    private SingularDummyFormPageTester tester;
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
+    private static void buildBaseType(STypeComposite<?> mockType) {
+        mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
         mockList.asAtr().label("Mock Type Composite");
         mockList.withView(SViewListByForm::new);
 
-        final STypeComposite mockTypeCompostite = mockList.getElementsType();
+        mockTypeComposite = mockList.getElementsType();
+        compositeSelection = mockTypeComposite.addFieldComposite("compositeSelection");
 
-        compositeSelection = mockTypeCompostite.addFieldComposite("compositeSelection");
-
-        final STypeString id          = compositeSelection.addFieldString("id");
-        final STypeString description = compositeSelection.addFieldString("description");
+        id          = compositeSelection.addFieldString("id");
+        description = compositeSelection.addFieldString("description");
 
         compositeSelection.selection()
                 .id(id)
                 .display(description)
                 .simpleProvider(builder -> {
-                    builder.add().set(id, "a");
-                    builder.add().set(description, "v_1");
-                    builder.add().set(id, "b");
-                    builder.add().set(description, "v_2");
-                    builder.add().set(id, "c");
-                    builder.add().set(description, "v_3");
+                    builder.add().set(id, "a").set(description, "v_1");
+                    builder.add().set(id, "b").set(description, "v_2");
+                    builder.add().set(id, "c").set(description, "v_3");
                 });
+    }
+
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setAsEditView();
+        tester.getDummyPage().setTypeBuilder(PanelListWithCompositeSelectionTest::buildBaseType);
+        tester.startDummyPage();
     }
 
     @Test
     public void testAddItem() {
-
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(2);
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 3);
-
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(3);
     }
 
     @Test
     public void testRemoveItem() {
-
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
-        final Button removeButton = findOnForm(Button.class, form.getForm(), b -> b.getClass().getName().contains("RemoverButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de remover"));
+        final Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
 
         tester.executeAjaxEvent(removeButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
-
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
     }
 
-    @Test @Ignore("We have to figure out how to deal with this case of TypeAhead")
+    @Test
     public void testAddItemAndFillOptions() {
-
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
-        AbstractSingleSelectChoice choice = (AbstractSingleSelectChoice) findFormComponentsByType(form.getForm(), compositeSelection)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o select composto"));
+        List<SIString> listCompositeTypes = (List<SIString>) tester.getAssertionsForm()
+                .getSubCompomentWithType(mockList)
+                .getSubCompomentWithType(mockTypeComposite)
+                .getSubCompomentWithType(compositeSelection)
+                .assertSInstance().getTarget().getValue();
+        listCompositeTypes.get(0).setValue("a");
 
-        form.select(getFormRelativePath(choice), 0);
-        form.submit();
+        tester.newFormTester().submit();
 
-        Assert.assertNotNull(choice.getValue());
-
+        tester.getAssertionsForm()
+                .getSubCompomentWithType(mockList)
+                .getSubCompomentWithType(mockTypeComposite)
+                .getSubCompomentWithType(compositeSelection)
+                .assertSInstance().isValueEquals(listCompositeTypes);
     }
 
-    @Test @Ignore("We have to figure out how to deal with this case of TypeAhead")
+    @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
-
         final Button addButton = findAddButton();
 
-        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
-        final DropDownChoice choice = (DropDownChoice) findFormComponentsByType(form.getForm(), compositeSelection)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o select composto"));
-
-        int index = 0;
-
-        String value = choice.getChoiceRenderer().getIdValue(choice.getChoices().get(index), index);
-        form.select(getFormRelativePath(choice), index);
+        List<SIString> listCompositeTypes = (List<SIString>) tester.getAssertionsForm()
+                .getSubCompomentWithType(mockList)
+                .getSubCompomentWithType(mockTypeComposite)
+                .getSubCompomentWithType(compositeSelection)
+                .assertSInstance().getTarget().getValue();
+        listCompositeTypes.get(0).setValue("a");
 
         tester.executeAjaxEvent(addButton, "click");
-        stream = findFormComponentsByType(form.getForm(), compositeSelection);
-        Assert.assertTrue(stream.collect(Collectors.toList()).size() == 2);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(2);
 
-        Assert.assertEquals(value, choice.getValue());
-
+        tester.getAssertionsForm()
+                .getSubCompomentWithType(mockList)
+                .getSubCompomentWithType(mockTypeComposite)
+                .getSubCompomentWithType(compositeSelection)
+                .assertSInstance().isValueEquals(listCompositeTypes);
     }
-
 
     private Button findAddButton() {
-        return findOnForm(Button.class, form.getForm(), b -> b.getClass().getName().contains("AddButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
+        return (Button) tester.getAssertionsForm()
+                .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
     }
 
 }

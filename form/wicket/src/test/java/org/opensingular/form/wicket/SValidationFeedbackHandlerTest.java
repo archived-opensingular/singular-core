@@ -1,96 +1,26 @@
 package org.opensingular.form.wicket;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.curriculo.SPackageCurriculo;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.component.SingularForm;
-import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
-import org.opensingular.form.wicket.helpers.SingularWicketTester;
-import org.opensingular.form.wicket.model.SInstanceRootModel;
-import org.opensingular.form.wicket.test.base.TestPanel;
-import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
-import org.opensingular.lib.wicket.util.panel.FormPanel;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertFalse;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class SValidationFeedbackHandlerTest {
-    WicketTester                      tester;
-    protected SDictionary             dicionario;
-    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
-
-    @Before
-    public void setUpDicionario() {
-        dicionario = SDictionary.create();
-    }
-
-    @Before
-    public void setUp() {
-        tester = new SingularWicketTester(false, new WebApplication() {
-            @Override
-            public Class<? extends Page> getHomePage() {
-                return null;
-            }
-        });
-    }
-
-    protected static SInstance createIntance(ISupplier<SType<?>> typeSupplier) {
-        RefType ref = RefType.of(typeSupplier);
-        return SDocumentFactory.empty().createInstance(ref);
-    }
-
-    private TestPanel buildTestPanel(BSGrid rootContainer) {
-        SingularForm<Object> form = new SingularForm<>("form");
-
-        TestPanel testPanel = new TestPanel("body-child") {
-            @Override
-            public Component buildContainer(String id) {
-                return new FormPanel(id, form) {
-                    @Override
-                    protected Component newFormBody(String id) {
-                        return new BSContainer<>(id).appendTag("div", rootContainer);
-                    }
-                };
-            }
-        };
-        return testPanel;
-    }
 
     @Test
     public void testBasic() {
-        BSGrid    rootContainer = new BSGrid("teste");
-        TestPanel testPanel     = buildTestPanel(rootContainer);
-        tester.startComponentInPage(testPanel);
+        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(tb->tb.addFieldString("string"));
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
 
-        SIComposite instancia = (SIComposite) createIntance(() -> {
-            dicionario.loadPackage(SPackageCurriculo.class);
-            return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
-        });
+        Set<? extends SInstance> lowerBound = SValidationFeedbackHandler.collectLowerBoundInstances(
+                new FeedbackFence(tester.getDummyPage().getSingularFormPanel().getParent()));
 
-        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instancia);
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
-        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDIT);
-
-//        Visits.visit(testPanel, (c, v) -> {
-//            System.out.println(c.getMetaData(SValidationFeedbackHandler.MDK) + " " + c.getPageRelativePath());
-//        });
-
-        Set<? extends SInstance> lowerBound = SValidationFeedbackHandler.collectLowerBoundInstances(new FeedbackFence(testPanel));
-        assertFalse(lowerBound.isEmpty());
+        assertThat(lowerBound.isEmpty()).isFalse();
     }
 }

@@ -9,9 +9,9 @@ import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
-public class TestMInstance extends TestCaseForm {
+public class TestSInstance extends TestCaseForm {
 
-    public TestMInstance(TestFormConfig testFormConfig) {
+    public TestSInstance(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
