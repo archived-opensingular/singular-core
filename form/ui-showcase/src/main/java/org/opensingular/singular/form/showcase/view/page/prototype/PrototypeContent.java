@@ -28,8 +28,9 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
+import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
@@ -72,7 +73,7 @@ public class PrototypeContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
 
-        SingularForm<?> newItemForm = new SingularForm<>("prototype_form");
+        SingularFormWicket<?> newItemForm = new SingularFormWicket<>("prototype_form");
         newItemForm.setMultiPart(true);
         newItemForm.setFileMaxSize(Bytes.MAX);
         newItemForm.setMaxSize(Bytes.MAX);

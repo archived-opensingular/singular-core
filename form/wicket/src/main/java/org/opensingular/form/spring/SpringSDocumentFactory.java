@@ -25,6 +25,8 @@ import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.io.Serializable;
+
 /**
  * Implementação padrão da fábrica de documento para uso junto com o Spring.
  * Essa factory já tem a capacidade de integrar com o Spring para prover
@@ -34,7 +36,7 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean {
+public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean, Serializable {
 
     private String springBeanName;
 

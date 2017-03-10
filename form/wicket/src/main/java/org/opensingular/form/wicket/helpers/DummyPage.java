@@ -25,7 +25,7 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.*;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -50,7 +50,7 @@ public class DummyPage extends WebPage {
     protected           IFunction<RefType, SIComposite> instanceCreator;
     private final List<IConsumer<SIComposite>> instancePopulators = new ArrayList<>();
 
-    private SingularForm<?> form = new SingularForm<>("form");
+    private SingularFormWicket<?> form = new SingularFormWicket<>("form");
 
     private final SingularFormPanel singularFormPanel = new SingularFormPanel("singularFormPanel");
 

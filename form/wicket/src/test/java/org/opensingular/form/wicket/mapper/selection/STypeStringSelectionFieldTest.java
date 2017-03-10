@@ -38,6 +38,7 @@ public class STypeStringSelectionFieldTest {
 
         tester.newFormTester().submit();
 
+        DropDownChoice choices = containsOnlyOneDropDownAndReturnIfFinds();
         List<String> chaves   = new ArrayList<>();
         List<String> displays = new ArrayList<>();
         getValuesOfDropDownIfExists(chaves, displays);
@@ -66,6 +67,7 @@ public class STypeStringSelectionFieldTest {
     public void hasADefaultProvider() {
         tester.startDummyPage();
 
+        DropDownChoice choices = containsOnlyOneDropDownAndReturnIfFinds();
         List<String> chaves   = new ArrayList<>();
         List<String> displays = new ArrayList<>();
         getValuesOfDropDownIfExists(chaves, displays);

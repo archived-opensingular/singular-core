@@ -46,12 +46,6 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
  * Must declare a {@link GenericGenerator} with name {@link AbstractProcessDefinitionEntity#PK_GENERATOR_NAME}.
  * </p>
  * <code>@GenericGenerator(name = AbstractProcessDefinitionEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
- *
- * @param <IEntityProcessGroup>
- * @param <IEntityCategory>
- * @param <IEntityTaskDefinition>
- * @param <IEntityRoleDefinition>
- * @param <IEntityProcessVersion>
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_PROCESSO")
