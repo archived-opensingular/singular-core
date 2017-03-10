@@ -21,10 +21,12 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageableItems;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +42,9 @@ public class BSPaginationPanel extends Panel {
         super(id);
         this.pageable = pageable;
 
-        add(new OffsetLink("previous", -1));
+        add(new OffsetLink("previous", getPageable(), -1));
 
-        add(new FirstLink("first"));
+        add(new FirstLink("first", getPageable()));
         add(new WebMarkupContainer("firstEllipse")
             .add($b.visibleIf($m.get(() -> (getCurrentPage() - getMiddlePagesRadius()) > 1))));
 
@@ -50,21 +52,22 @@ public class BSPaginationPanel extends Panel {
             @Override
             protected void populateItem(ListItem<Long> item) {
                 item
-                    .add(new PageNavLink("page") {
-                        @Override
-                        protected long getTargetPage() {
-                            return item.getModelObject();
-                        }
-                    }.setBody($m.get(() -> 1 + item.getModelObject())))
+                    .add(newNumberedPageLink(item))
                     .add($b.classAppender("active", $m.get(() -> item.getModelObject() == getCurrentPage())));
             }
         });
 
         add(new WebMarkupContainer("lastEllipse")
             .add($b.visibleIf($m.get(() -> (getCurrentPage() + getMiddlePagesRadius()) < getLastPage() - 1))));
-        add(new LastLink("last"));
+        add(new LastLink("last", getPageable()));
 
-        add(new OffsetLink("next", +1));
+        add(new OffsetLink("next", getPageable(), +1));
+    }
+
+    protected NumberedPageLink newNumberedPageLink(ListItem<Long> item) {
+        NumberedPageLink link = new NumberedPageLink("page", getPageable(), item.getModel());
+        link.setBody($m.get(() -> 1 + item.getModelObject()));
+        return link;
     }
 
     @SuppressWarnings("unchecked")
@@ -101,8 +104,8 @@ public class BSPaginationPanel extends Panel {
     }
 
     private final class LastLink extends PageNavLink {
-        private LastLink(String id) {
-            super(id);
+        private <P extends Component & IPageableItems> LastLink(String id, P pageable) {
+            super(id, pageable);
             setBody($m.get(() -> getLastPage() + 1));
         }
         @Override
@@ -116,8 +119,8 @@ public class BSPaginationPanel extends Panel {
     }
 
     private final class FirstLink extends PageNavLink {
-        private FirstLink(String id) {
-            super(id);
+        private <P extends Component & IPageableItems> FirstLink(String id, P pageable) {
+            super(id, pageable);
         }
         @Override
         protected long getTargetPage() {
@@ -131,13 +134,13 @@ public class BSPaginationPanel extends Panel {
 
     private final class OffsetLink extends PageNavLink {
         private final int pageDelta;
-        private OffsetLink(String id, int pageDelta) {
-            super(id);
+        private <P extends Component & IPageableItems> OffsetLink(String id, P pageable, int pageDelta) {
+            super(id, pageable);
             this.pageDelta = pageDelta;
         }
         @Override
         protected long getTargetPage() {
-            return getPageable().getCurrentPage() + ((long) pageDelta);
+            return this.getPageable().getCurrentPage() + ((long) pageDelta);
         }
         @Override
         public boolean isEnabledInHierarchy() {
@@ -145,26 +148,43 @@ public class BSPaginationPanel extends Panel {
         }
     }
 
-    private abstract class PageNavLink extends AjaxLink<Void> {
-        private PageNavLink(String id) {
+    public static final class NumberedPageLink extends PageNavLink {
+        private final IModel<Long> pageIndex;
+        private <P extends Component & IPageableItems> NumberedPageLink(String id, P pageable, IModel<Long> pageIndex) {
+            super(id, pageable);
+            this.pageIndex = pageIndex;
+        }
+        @Override
+        protected long getTargetPage() {
+            return pageIndex.getObject();
+        }
+    }
+
+    private static abstract class PageNavLink extends AjaxLink<Void> {
+        private final IPageableItems pageable;
+        private <P extends Component & IPageableItems> PageNavLink(String id, P pageable) {
             super(id);
+            this.pageable = pageable;
         }
         protected abstract long getTargetPage();
         protected boolean isLinkVisible() {
             return true;
         }
+        protected IPageableItems getPageable() { return pageable; }
+        protected Component getPageableComponent() { return (Component) getPageable(); }
+
         @Override
         public void onClick(AjaxRequestTarget target) {
             if (isEnabledInHierarchy()) {
                 getPageable().setCurrentPage(getTargetPage());
-                target.add(getPageable());
+                target.add(getPageableComponent());
             }
         }
         @Override
         protected void onConfigure() {
             super.onConfigure();
             setVisible(isLinkVisible());
-            setEnabled(getCurrentPage() != getTargetPage());
+            setEnabled(pageable.getCurrentPage() != getTargetPage());
         }
     }
 
