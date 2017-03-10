@@ -33,7 +33,7 @@ public abstract class SpringSecurityInitializer {
     public static final Logger logger            = LoggerFactory.getLogger(SpringSecurityInitializer.class);
 
     public void init(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext, String springMVCServletMapping, IServerContext[] serverContexts) {
-        addRestSecurity(applicationContext);
+//        addRestSecurity(applicationContext);
         addSpringSecurityFilter(ctx, applicationContext, springMVCServletMapping);
         for (IServerContext context : serverContexts) {
             logger.info(SINGULAR_SECURITY, "Securing (Spring Security) context:", context.getContextPath());
