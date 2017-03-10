@@ -16,7 +16,11 @@
 
 package org.opensingular.server.commons.wicket.view.template;
 
-import org.opensingular.server.commons.spring.security.SecurityUtil;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.opensingular.server.commons.spring.security.SecurityAuthPaths;
+import org.opensingular.server.commons.spring.security.SecurityAuthPathsFactory;
 import org.opensingular.server.commons.wicket.SingularSession;
 import org.opensingular.lib.wicket.util.template.SkinOptions;
 import org.opensingular.lib.wicket.util.template.SkinOptions.Skin;
@@ -59,8 +63,16 @@ public class TopMenu extends Panel {
         queue(avatar);
         avatar.setVisible(avatarSrc.isPresent());
 
-        WebMarkupContainer logout = new WebMarkupContainer("logout");
-        logout.add($b.attr("href", SecurityUtil.getLogoutPath()));
+        SecurityAuthPathsFactory securityAuthPathsFactory = new SecurityAuthPathsFactory();
+        SecurityAuthPaths        securityAuthPaths        = securityAuthPathsFactory.get();
+
+        Link logout = new Link("logout") {
+            @Override
+            public void onClick() {
+                throw new RedirectToUrlException(securityAuthPaths.getLogoutPath(RequestCycle.get()));
+            }
+        };
+
         queue(logout);
 
 

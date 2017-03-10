@@ -52,6 +52,7 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.server.commons.exception.SingularServerException;
 import org.opensingular.server.commons.exception.SingularServerFormValidationError;
 import org.opensingular.server.commons.flow.metadata.ServerContextMetaData;
+import org.opensingular.server.commons.metadata.SingularServerMetadata;
 import org.opensingular.server.commons.persistence.entity.form.DraftEntity;
 import org.opensingular.server.commons.persistence.entity.form.FormPetitionEntity;
 import org.opensingular.server.commons.persistence.entity.form.PetitionEntity;
@@ -92,6 +93,9 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
     @Named("formConfigWithDatabase")
     protected SFormConfig<String> singularFormConfig;
 
+    @Inject
+    private SingularServerMetadata singularServerMetadata;
+
     protected final Class<T>            petitionClass;
     protected final FormPageConfig      config;
     protected       IModel<T>           currentModel;
@@ -102,7 +106,7 @@ public abstract class AbstractFormPage<T extends PetitionEntity> extends Templat
 
     public AbstractFormPage(Class<T> petitionClass, FormPageConfig config) {
         if (config == null) {
-            throw new RedirectToUrlException("/singular");
+            throw new RedirectToUrlException(singularServerMetadata.getServerBaseUrl());
         }
         this.petitionClass = Objects.requireNonNull(petitionClass);
         this.config = Objects.requireNonNull(config);

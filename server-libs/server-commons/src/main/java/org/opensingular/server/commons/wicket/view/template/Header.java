@@ -17,8 +17,11 @@
 package org.opensingular.server.commons.wicket.view.template;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.opensingular.lib.wicket.util.template.SkinOptions;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
@@ -50,7 +53,12 @@ public class Header extends Panel {
         add(new WebMarkupContainer("_TopAction")
                 .add($b.attrAppender("class", "hide", " ", $m.ofValue(!withTopAction))));
         add(configureTopMenu("_TopMenu"));
-        add(new WebMarkupContainer("brandLogo"));
+        add(new Link<Void>("baseurlAnchor") {
+            @Override
+            public void onClick() {
+                throw new RedirectToUrlException(RequestCycle.get().getRequest().getFilterPath());
+            }
+        });
     }
 
     protected TopMenu configureTopMenu(String id) {

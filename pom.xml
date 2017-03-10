@@ -7,7 +7,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular-server</artifactId>
 
-    <version>1.5.12-SNAPSHOT</version>
+    <version>1.5.13-SNAPSHOT</version>
     <name>[singular-server]</name>
     <description>Singular server</description>
     <url>http://opensingular.org</url>
@@ -345,7 +345,7 @@
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <wicket.version>7.1.0</wicket.version>
-        <singular.version>1.5.12-SNAPSHOT</singular.version>
+        <singular.version>1.5.13-SNAPSHOT</singular.version>
         <cas.version>4.0.4</cas.version>
         <cas.client.version>3.4.1</cas.client.version>
     </properties>

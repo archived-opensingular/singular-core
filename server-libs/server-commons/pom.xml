@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-server-libs</artifactId>
-        <version>1.5.12-SNAPSHOT</version>
+        <version>1.5.13-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-server-commons</artifactId>

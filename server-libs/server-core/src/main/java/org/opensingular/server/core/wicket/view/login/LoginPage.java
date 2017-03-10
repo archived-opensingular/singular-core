@@ -16,7 +16,10 @@
 
 package org.opensingular.server.core.wicket.view.login;
 
-import org.opensingular.server.commons.spring.security.SecurityUtil;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.opensingular.server.commons.spring.security.SecurityAuthPaths;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.devutils.stateless.StatelessComponent;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -29,6 +32,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.opensingular.server.commons.spring.security.SecurityAuthPathsFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
@@ -53,8 +57,18 @@ public class LoginPage extends WebPage {
     protected void onInitialize() {
         super.onInitialize();
 
+        add(new Link<Void>("baseurlAnchor") {
+            @Override
+            public void onClick() {
+                throw new RedirectToUrlException(RequestCycle.get().getRequest().getFilterPath());
+            }
+        });
+
+        SecurityAuthPathsFactory securityAuthPathsFactory = new SecurityAuthPathsFactory();
+        SecurityAuthPaths        securityAuthPaths        = securityAuthPathsFactory.get();
+
         WebMarkupContainer loginForm = new WebMarkupContainer("form");
-        loginForm.add($b.attr("action", SecurityUtil.getLoginPath()));
+        loginForm.add($b.attr("action", securityAuthPaths.getLoginPath()));
         add(loginForm);
 
         WebMarkupContainer loginError = new WebMarkupContainer("loginErrorC");
