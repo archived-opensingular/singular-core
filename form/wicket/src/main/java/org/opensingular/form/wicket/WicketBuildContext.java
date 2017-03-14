@@ -318,7 +318,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc, MarkupContainer container) {
-        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id,  new FeedbackFence(container)), listenerFunc);
+        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id, new FeedbackFence(container)), listenerFunc);
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
@@ -374,6 +374,12 @@ public class WicketBuildContext implements Serializable {
 
     public void popBreadCrumb() {
         getBreadCrumbs().remove(getBreadCrumbs().size() - 1);
+    }
+
+    public void updateExternalContainer(AjaxRequestTarget ajaxRequestTarget) {
+        if (ajaxRequestTarget != null) {
+            ajaxRequestTarget.add(this.getExternalContainer());
+        }
     }
 
     private static final class InitRootContainerBehavior extends Behavior {

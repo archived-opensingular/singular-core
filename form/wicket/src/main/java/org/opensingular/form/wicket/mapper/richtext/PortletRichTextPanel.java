@@ -17,14 +17,12 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
@@ -32,6 +30,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 
 import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
@@ -39,25 +38,10 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
-
-    private static String HTML_NEW_TAB;
-
-    static {
-        HTML_NEW_TAB = Optional.ofNullable(PortletRichTextPanel.class.getResourceAsStream("PortletRichTextNewTab.html"))
-                .map(in -> {
-                    try {
-                        return JavaScriptUtils.javaScriptEscape(IOUtils.toString(in, StandardCharsets.UTF_8.name()));
-                    } catch (IOException e) {
-                        throw new SingularFormException("Não foi possivel extrair o conteudo html", e);
-                    }
-                }).orElse(StringUtils.EMPTY);
-    }
 
     private HiddenField hiddenInput;
     private Label       htmlContent;
@@ -73,12 +57,16 @@ public class PortletRichTextPanel extends Panel implements Loggable {
             params.put("htmlContainer", htmlContent.getMarkupId());
             params.put("hiddenInput", hiddenInput.getMarkupId());
             params.put("hash", hash);
-            params.put("html", HTML_NEW_TAB);
+            params.put("html", richTextNewTabHtml().retrieveHtml());
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), hash));
         } catch (IOException e) {
             getLogger().error(e.getMessage(), e);
         }
+    }
+
+    public RichTextNewTabHtml richTextNewTabHtml() {
+        return new RichTextNewTabHtml(RequestCycle.get().getRequest().getFilterPath());
     }
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
