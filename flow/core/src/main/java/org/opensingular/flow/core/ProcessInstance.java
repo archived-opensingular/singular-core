@@ -16,9 +16,19 @@
 
 package org.opensingular.flow.core;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
@@ -28,9 +38,15 @@ import org.opensingular.lib.commons.base.SingularException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -87,7 +103,7 @@ public class ProcessInstance implements Serializable {
      * @return A tarefa atual da instância depois da inicialização.
      */
     public TaskInstance start() {
-        return start(getVariaveis());
+        return start(getVariables());
     }
 
     public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
@@ -201,7 +217,7 @@ public class ProcessInstance implements Serializable {
             if (current.isPresent()) {
                 estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
             } else if (isFinished()) {
-                current = getLatestTask();
+                current = getTaskNewer();
                 if (current.isPresent()&& current.get().isFinished()) {
                     estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
                 } else {
@@ -485,7 +501,7 @@ public class ProcessInstance implements Serializable {
         FlowEngine.initTask(this, task, tarefaNova);
         ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
 
-        TaskInstance taskNew2 = getLatestTask(task).orElseThrow(() -> new SingularFlowException("Erro Interno"));
+        TaskInstance taskNew2 = getTaskNewer(task).orElseThrow(() -> new SingularFlowException("Erro Interno"));
         task.notifyTaskStart(taskNew2, execucaoMTask);
         if (task.isImmediateExecution()) {
             executeTransition();
@@ -710,7 +726,7 @@ public class ProcessInstance implements Serializable {
                 addUserRole(mProcessRole, newUser);
                 getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, null, newUser);
 
-                Optional<TaskInstance> latestTask = getLatestTask();
+                Optional<TaskInstance> latestTask = getTaskNewer();
                 if (latestTask.isPresent()) {
                     latestTask.get().log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 }
@@ -723,7 +739,7 @@ public class ProcessInstance implements Serializable {
             }
 
             getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, previousUser, newUser);
-            Optional<TaskInstance> latestTask = getLatestTask();
+            Optional<TaskInstance> latestTask = getTaskNewer();
             if (latestTask.isPresent()) {
                 if (newUser != null) {
                     latestTask.get().log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
@@ -739,11 +755,11 @@ public class ProcessInstance implements Serializable {
      * Configura o valor variável especificada.
      * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
-     * @param valor o valor a ser configurado.
+     * @param variableName o nome da variável especificada.
+     * @param value o valor a ser configurado.
      */
-    public void setVariavel(String nomeVariavel, Object valor) {
-        getVariaveis().setValor(nomeVariavel, valor);
+    public void setVariable(String variableName, Object value) {
+        getVariables().setValue(variableName, value);
     }
 
     /**
@@ -751,11 +767,11 @@ public class ProcessInstance implements Serializable {
      * Retorna o valor da variável do tipo {@link Date} especificada.
      * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param variableName o nome da variável especificada.
      * @return o valor da variável.
      */
-    public final Date getValorVariavelData(String nomeVariavel) {
-        return getVariaveis().getValorData(nomeVariavel);
+    public final Date getVariableValueDate(String variableName) {
+        return getVariables().getValueDate(variableName);
     }
 
     /**
@@ -763,11 +779,11 @@ public class ProcessInstance implements Serializable {
      * Retorna o valor da variável do tipo {@link Boolean} especificada.
      * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param variableName o nome da variável especificada.
      * @return o valor da variável.
      */
-    public final Boolean getValorVariavelBoolean(String nomeVariavel) {
-        return getVariaveis().getValorBoolean(nomeVariavel);
+    public final Boolean getVariableValueBoolean(String variableName) {
+        return getVariables().getValueBoolean(variableName);
     }
 
     /**
@@ -775,11 +791,11 @@ public class ProcessInstance implements Serializable {
      * Retorna o valor da variável do tipo {@link String} especificada.
      * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param variableName o nome da variável especificada.
      * @return o valor da variável.
      */
-    public final String getValorVariavelString(String nomeVariavel) {
-        return getVariaveis().getValorString(nomeVariavel);
+    public final String getVariableValueString(String variableName) {
+        return getVariables().getValueString(variableName);
     }
 
     /**
@@ -787,11 +803,11 @@ public class ProcessInstance implements Serializable {
      * Retorna o valor da variável do tipo {@link Integer} especificada.
      * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param variableName o nome da variável especificada.
      * @return o valor da variável.
      */
-    public final Integer getValorVariavelInteger(String nomeVariavel) {
-        return getVariaveis().getValorInteger(nomeVariavel);
+    public final Integer getVariableValueInteger(String variableName) {
+        return getVariables().getValueInteger(variableName);
     }
 
     /**
@@ -800,11 +816,11 @@ public class ProcessInstance implements Serializable {
      * </p>
      *
      * @param <T> o tipo da variável especificada.
-     * @param nomeVariavel o nome da variável especificada.
+     * @param variableName o nome da variável especificada.
      * @return o valor da variável.
      */
-    public final <T> T getValorVariavel(String nomeVariavel) {
-        return getVariaveis().getValor(nomeVariavel);
+    public final <T> T getVariableValue(String variableName) {
+        return getVariables().getValeu(variableName);
     }
 
     /**
@@ -814,7 +830,7 @@ public class ProcessInstance implements Serializable {
      *
      * @return o mapa das variáveis.
      */
-    public final VarInstanceMap<?> getVariaveis() {
+    public final VarInstanceMap<?> getVariables() {
         if (variables == null) {
             variables = new VarInstanceTableProcess(this);
         }
@@ -833,7 +849,7 @@ public class ProcessInstance implements Serializable {
             return;
         }
 
-        ValidationResult result = getVariaveis().validar();
+        ValidationResult result = getVariables().validar();
         if (result.hasErros()) {
             throw new SingularFlowException(createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result));
         }
@@ -878,17 +894,27 @@ public class ProcessInstance implements Serializable {
             && tarefa.getAllocatedUser().getCod().equals(codPessoa));
     }
 
-    /**
-     * <p>
-     * Retorna a lista de todas as tarefas. Ordena da mais antiga para a mais
-     * nova.
-     * </p>
-     *
-     * @return a lista de tarefas (<i>null safe</i>).
-     */
-    public List<TaskInstance> getTasks() {
+    /** Retorna a lista de todas as tarefas ordenadas da mais antiga para a mais nova. */
+    @Nonnull
+    public List<TaskInstance> getTasksOlderFirst() {
+        return getTasksOlderFirstAsStream().collect(Collectors.toList());
+    }
+
+    /** Retorna a lista de todas as tarefas ordenadas da mais antiga para a mais nova. */
+    @Nonnull
+    public Stream<TaskInstance> getTasksOlderFirstAsStream() {
         IEntityProcessInstance demanda = getEntity();
-        return demanda.getTasks().stream().map(this::getTaskInstance).collect(Collectors.toList());
+        return demanda.getTasks().stream().map(this::getTaskInstance);
+    }
+
+    /** Retorna a lista de todas as tarefas ordenadas da mais nova para a mais antiga. */
+    public Stream<TaskInstance> getTasksNewerFirstAsStream() {
+        IEntityProcessInstance demanda = getEntity();
+        return Lists.reverse(demanda.getTasks()).stream().map(this::getTaskInstance);
+    }
+
+    public Stream<TaskInstance> getTasksNewerFirstAsStream(ITaskDefinition... taskType) {
+        return getTasksNewerFirstAsStream().filter(TaskPredicates.simpleTaskType(taskType));
     }
 
     /**
@@ -896,7 +922,7 @@ public class ProcessInstance implements Serializable {
      * @param condicao a condição informada.
      */
     @Nonnull
-    public Optional<TaskInstance> getLatestTask(@Nonnull Predicate<TaskInstance> condicao) {
+    public Optional<TaskInstance> getTaskNewer(@Nonnull Predicate<TaskInstance> condicao) {
         Objects.requireNonNull(condicao);
         List<? extends IEntityTaskInstance> lista = getEntity().getTasks();
         for (int i = lista.size() - 1; i != -1; i--) {
@@ -911,7 +937,7 @@ public class ProcessInstance implements Serializable {
     /** Retorna a tarefa atual (tarefa ativa). */
     @Nonnull
     public Optional<TaskInstance> getCurrentTask() {
-        return getLatestTask(t -> t.isActive());
+        return getTaskNewer(t -> t.isActive());
     }
 
     /** Retorna a tarefa atual (tarefa ativa) ou dispara exception senão existir. */
@@ -925,19 +951,15 @@ public class ProcessInstance implements Serializable {
      * Retorna a mais nova tarefa encerrada ou ativa.
      */
     @Nonnull
-    public Optional<TaskInstance> getLatestTask() {
-        return getLatestTask(t -> true);
+    public Optional<TaskInstance> getTaskNewer() {
+        return getTaskNewer(t -> true);
     }
 
     /** Retorna a mais nova tarefa encerrada ou ativa. */
     @Nonnull
     public TaskInstance getLatestTaskOrException() {
-        return getLatestTask().orElseThrow(
+        return getTaskNewer().orElseThrow(
                 () -> new SingularFlowException(createErrorMsg("Não há nenhuma tarefa no processo")));
-    }
-
-    private Optional<TaskInstance> getLatestTask(String abbreviation) {
-        return getLatestTask(t -> t.getAbbreviation().equalsIgnoreCase(abbreviation));
     }
 
     /**
@@ -945,8 +967,8 @@ public class ProcessInstance implements Serializable {
      * @param taskRef a referência.
      */
     @Nonnull
-    public Optional<TaskInstance> getLatestTask(@Nonnull ITaskDefinition taskRef) {
-        return getLatestTask(taskRef.getKey());
+    public Optional<TaskInstance> getTaskNewer(@Nonnull ITaskDefinition taskRef) {
+        return getTaskNewer(TaskPredicates.simpleTaskType(taskRef));
     }
 
     /**
@@ -954,15 +976,8 @@ public class ProcessInstance implements Serializable {
      * @param tipo o tipo informado.
      */
     @Nonnull
-    public Optional<TaskInstance> getLatestTask(@Nonnull MTask<?> tipo) {
-        Objects.requireNonNull(tipo);
-        return getLatestTask(tipo.getAbbreviation());
-    }
-
-    @Nonnull
-    private Optional<TaskInstance> getFinishedTask(@Nonnull String abbreviation) {
-        Objects.requireNonNull(abbreviation);
-        return getLatestTask(t -> t.isFinished() && t.getAbbreviation().equalsIgnoreCase(abbreviation));
+    public Optional<TaskInstance> getTaskNewer(@Nonnull MTask<?> tipo) {
+        return getTaskNewer(TaskPredicates.simpleTaskType(tipo));
     }
 
     /**
@@ -971,8 +986,7 @@ public class ProcessInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getFinishedTask(@Nonnull ITaskDefinition taskRef) {
-        Objects.requireNonNull(taskRef);
-        return getFinishedTask(taskRef.getKey());
+        return getTaskNewer(TaskPredicates.simpleFinished().and(TaskPredicates.simpleTaskType(taskRef)));
     }
 
     /**
@@ -981,8 +995,7 @@ public class ProcessInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getFinishedTask(@Nonnull MTask<?> tipo) {
-        Objects.requireNonNull(tipo);
-        return getFinishedTask(tipo.getAbbreviation());
+        return getTaskNewer(TaskPredicates.simpleFinished().and(TaskPredicates.simpleTaskType(tipo)));
     }
 
     protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {

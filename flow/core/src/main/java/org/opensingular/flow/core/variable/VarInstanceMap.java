@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.core.variable;
 
+import org.opensingular.flow.core.SingularFlowException;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
-
-import org.opensingular.flow.core.SingularFlowException;
 
 public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K> {
 
@@ -56,7 +56,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         return getVariavel(ref) != null;
     }
 
-    public default void setValor(String ref, Object valor) {
+    public default void setValue(String ref, Object valor) {
         getVariavelOrException(ref).setValue(valor);
     }
 
@@ -70,12 +70,12 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     }
 
     @SuppressWarnings("unchecked")
-    public default <T extends Object> T getValor(String ref) {
+    public default <T extends Object> T getValeu(String ref) {
         return (T) getVariavelOrException(ref).getValue();
     }
 
     @SuppressWarnings("unchecked")
-    public default <T> T getValor(String ref, T valorDefault) {
+    public default <T> T getValeu(String ref, T valorDefault) {
         Object v = getVariavelOrException(ref).getValue();
         if (v == null) {
             return valorDefault;
@@ -160,15 +160,15 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     // Métodos de conveniência para leitura
     // ----------------------------------------------------------
 
-    public default String getValorString(String ref) {
+    public default String getValueString(String ref) {
         return getValorTipo(ref, String.class, null);
     }
 
-    public default String getValorString(String ref, String valorDefault) {
+    public default String getValueString(String ref, String valorDefault) {
         return getValorTipo(ref, String.class, valorDefault);
     }
 
-    public default Integer getValorInteger(String ref) {
+    public default Integer getValueInteger(String ref) {
         return getValorTipo(ref, Integer.class);
     }
 
@@ -176,11 +176,11 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         return getValorTipo(ref, Double.class);
     }
 
-    public default Boolean getValorBoolean(String ref) {
+    public default Boolean getValueBoolean(String ref) {
         return getValorTipo(ref, Boolean.class);
     }
 
-    public default boolean getValorBoolean(String ref, boolean valorDefault) {
+    public default boolean getValueBoolean(String ref, boolean valorDefault) {
         Boolean b = getValorTipo(ref, Boolean.class);
         if (b == null) {
             return valorDefault;
@@ -188,7 +188,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         return b;
     }
 
-    public default Date getValorData(String ref) {
+    public default Date getValueDate(String ref) {
         return getValorTipo(ref, Date.class);
     }
 
