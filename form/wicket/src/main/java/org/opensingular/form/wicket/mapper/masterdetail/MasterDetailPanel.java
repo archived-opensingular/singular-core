@@ -34,7 +34,7 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
@@ -61,7 +61,6 @@ import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -75,7 +74,7 @@ public class MasterDetailPanel extends Panel {
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
 
-    private SingularForm<?>                 form;
+    private SingularFormWicket<?>           form;
     private WebMarkupContainer              head;
     private Label                           headLabel;
     private WebMarkupContainer              body;
@@ -111,7 +110,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void createComponents() {
-        form = new SingularForm<>("form");
+        form = new SingularFormWicket<>("form");
         head = new WebMarkupContainer("head");
         headLabel = newHeadLabel();
         body = new WebMarkupContainer("body");
@@ -349,7 +348,7 @@ public class MasterDetailPanel extends Panel {
                     }
 
                     @Override
-                    public SInstance getMInstancia() {
+                    public SInstance getSInstance() {
                         return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };

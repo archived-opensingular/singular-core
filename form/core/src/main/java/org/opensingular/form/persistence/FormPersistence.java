@@ -18,7 +18,9 @@ package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Serviço de persistência para alteração e recuperação de instâncias. Se diferencia de {@link BasicFormPersistence} ao
@@ -31,15 +33,19 @@ public interface FormPersistence<INSTANCE extends SInstance> extends BasicFormPe
     /**
      * Recupera a instância correspondete a chava ou dispara Exception se não encontrar.
      */
-    public INSTANCE load(FormKey key);
+    @Nonnull
+    public INSTANCE load(@Nonnull FormKey key);
 
     /**
      * Tentar recupeara a instância correspondente a chave, mas pode retornar resultado vazio.
      */
-    public Optional<INSTANCE> loadOpt(FormKey key);
+    @Nonnull
+    public Optional<INSTANCE> loadOpt(@Nonnull FormKey key);
 
+    @Nonnull
     public List<INSTANCE> loadAll(long first, long max);
 
+    @Nonnull
     public List<INSTANCE> loadAll();
 
     public long countAll();

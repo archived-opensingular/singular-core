@@ -16,12 +16,16 @@
 
 package org.opensingular.form.persistence;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.RefType;
 import com.google.common.collect.Lists;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Persitencia de instância baseada em mapa em memória.
@@ -40,7 +44,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    protected void updateInternal(FormKeyInt key, INSTANCE instance, Integer inclusionActor) {
+    protected void updateInternal(@Nonnull FormKeyInt key, @Nonnull INSTANCE instance, Integer inclusionActor) {
         if (!collection.containsKey(key)) {
             throw addInfo(new SingularFormPersistenceException("Não existe uma isntância com a chave informada")).add(
                     "key", key);
@@ -49,12 +53,13 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
-    protected void deleteInternal(FormKeyInt key) {
+    protected void deleteInternal(@Nonnull FormKeyInt key) {
         collection.remove(key);
     }
 
     @Override
-    protected FormKeyInt insertInternal(INSTANCE instance, Integer inclusionActor) {
+    @Nonnull
+    protected FormKeyInt insertInternal(@Nonnull INSTANCE instance, Integer inclusionActor) {
         FormKeyInt key = new FormKeyInt(++id);
         collection.put(key, instance);
         return key;
@@ -66,11 +71,13 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     }
 
     @Override
+    @Nonnull
     protected List<INSTANCE> loadAllInternal() {
         return Lists.newArrayList(collection.values());
     }
 
     @Override
+    @Nonnull
     protected List<INSTANCE> loadAllInternal(long first, long max) {
         return loadAllInternal().subList((int) first, (int) Math.min(first + max, countAll()));
     }
@@ -82,7 +89,6 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
 
     @Override
     public FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
-        //TODO: FORM_ANNOTATION_VERSION
-        return null;
+        throw new SingularFormException("Método não implementado");
     }
 }

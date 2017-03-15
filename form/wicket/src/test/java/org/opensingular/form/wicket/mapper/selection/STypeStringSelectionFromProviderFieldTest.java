@@ -44,7 +44,7 @@ public class STypeStringSelectionFromProviderFieldTest {
         protected Object getSelectKeyFromValue(String value) {
             SIString mvalue = selectType.newInstance();
             mvalue.setValue(value);
-            return page.getCurrentInstance().getField("favoriteFruit").asAtrProvider().getIdFunction().apply(value);
+            return page.getInstance().getField("favoriteFruit").asAtrProvider().getIdFunction().apply(value);
         }
 
         List<?> getReferenceOptionsKeys() {

@@ -1,7 +1,13 @@
 package org.opensingular.flow.test;
 
 
-import org.opensingular.flow.test.definicao.Peticao;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.ExecuteWaitingTasksJob;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinitionCache;
@@ -11,29 +17,15 @@ import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
+import org.opensingular.flow.test.definicao.Peticao;
 import org.opensingular.flow.test.support.TestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runners.MethodSorters;
 
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public abstract class PeticaoTest extends TestSupport {
@@ -122,7 +114,7 @@ public abstract class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
         assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
-        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
+        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTaskOrException().getEndDate());
     }
 
 //
@@ -134,7 +126,7 @@ public abstract class PeticaoTest extends TestSupport {
 //        ip.executeTransition(Peticao.APROVAR_TECNICO);
 //
 //        assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
-//        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
+//        assertNull("Tarefa não deveria ter uma data de fim", ip.getTaskNewer().getEndDate());
 //    }
 
     @Test
@@ -143,7 +135,7 @@ public abstract class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.INDEFERIR);
 
         assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
-        assertNotNull("Tarefa deveria ter uma data de fim", ip.getLatestTask().getEndDate());
+        assertNotNull("Tarefa deveria ter uma data de fim", ip.getLatestTaskOrException().getEndDate());
     }
 
     @Test
@@ -152,7 +144,7 @@ public abstract class PeticaoTest extends TestSupport {
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstanceEntity currentTask = ip.getCurrentTask().getEntityTaskInstance();
+        TaskInstanceEntity currentTask = ip.getCurrentTaskOrException().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
 
@@ -230,14 +222,14 @@ public abstract class PeticaoTest extends TestSupport {
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user1);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.getCurrentTask().relocateTask(null, user2, false, "Testando...");
+        ip.getCurrentTaskOrException().relocateTask(null, user2, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.getCurrentTask().relocateTask(Flow.getUserIfAvailable(), user1, false, "Testando...");
+        ip.getCurrentTaskOrException().relocateTask(Flow.getUserIfAvailable(), user1, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(4);
@@ -258,9 +250,9 @@ public abstract class PeticaoTest extends TestSupport {
         Actor user2 = testDAO.getSomeUser(2);
 
         ProcessInstance ip = startInstance();
-        ip.getCurrentTask().relocateTask(null, user1, false, "Primeira...");
-        ip.getCurrentTask().relocateTask(null, user2, false, "Segunda...");
-        ip.getCurrentTask().relocateTask(null, user1, false, "Volta para o inicial...");
+        ip.getCurrentTaskOrException().relocateTask(null, user1, false, "Primeira...");
+        ip.getCurrentTaskOrException().relocateTask(null, user2, false, "Segunda...");
+        ip.getCurrentTaskOrException().relocateTask(null, user1, false, "Volta para o inicial...");
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(3);
         assertNull(String.format("Descrição: %s Causa: %s finalizada incorretamente",
@@ -286,7 +278,7 @@ public abstract class PeticaoTest extends TestSupport {
         ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstanceEntity currentTask = ip.getCurrentTask().getEntityTaskInstance();
+        TaskInstanceEntity currentTask = ip.getCurrentTaskOrException().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
         new ExecuteWaitingTasksJob(null).run();
@@ -316,7 +308,7 @@ public abstract class PeticaoTest extends TestSupport {
     private void assertLatestTaskName(String expectedCurrentTaskName, ProcessInstance instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
-                instanciaPeticao.getLatestTask().getName());
+                instanciaPeticao.getLatestTaskOrException().getName());
     }
 
     private void addDaysToTaskTargetDate(TaskInstanceEntity taskInstance, int days) {

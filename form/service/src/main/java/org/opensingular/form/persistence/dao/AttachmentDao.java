@@ -16,13 +16,6 @@
 
 package org.opensingular.form.persistence.dao;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -32,6 +25,13 @@ import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
@@ -63,10 +63,10 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     public void delete(Long id) {
-        final T t = get(id);
-        if (t != null) {
-            Long codContent = t.getCodContent();
-            delete(t);
+        Optional<T> t = get(id);
+        if (t.isPresent()) {
+            Long codContent = t.get().getCodContent();
+            delete(codContent);
             attachmentContentDao.delete(codContent);
         }
     }
@@ -114,9 +114,11 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     @Override
-    public T find(Long aLong) {
-        T t = super.find(aLong);
-        Hibernate.initialize(t);
+    public Optional<T> find(Long aLong) {
+        Optional<T> t = super.find(aLong);
+        if (t.isPresent()) {
+            Hibernate.initialize(t);
+        }
         return t;
     }
 }

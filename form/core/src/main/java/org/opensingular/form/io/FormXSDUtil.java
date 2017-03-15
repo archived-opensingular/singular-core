@@ -33,9 +33,9 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class FormXsdUtil {
+public class FormXSDUtil {
 
-    private FormXsdUtil() {
+    private FormXSDUtil() {
     }
 
     public static SType<?> xsdToSType(PackageBuilder packageForNewTypes, InputStream in) {
@@ -49,7 +49,7 @@ public class FormXsdUtil {
     }
 
     public static SType<?> xsdToSType(PackageBuilder packageForNewTypes, String xsdDefinition) {
-        return xsdToSType(packageForNewTypes, MformPersistenciaXML.parseXml(xsdDefinition));
+        return xsdToSType(packageForNewTypes, SFormXMLUtil.parseXml(xsdDefinition));
     }
 
     private static SType<?> xsdToSType(PackageBuilder packageForNewTypes, MElement root) {

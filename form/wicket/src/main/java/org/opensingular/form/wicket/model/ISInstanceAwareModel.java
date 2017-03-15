@@ -16,32 +16,34 @@
 
 package org.opensingular.form.wicket.model;
 
-import org.opensingular.form.SInstance;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
 
 import java.util.Optional;
 
 public interface ISInstanceAwareModel<T> extends IModel<T> {
-    SInstance getMInstancia();
+    SInstance getSInstance();
 
-    static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model){
-        if(model != null && ISInstanceAwareModel.class.isAssignableFrom(model.getClass())){
+    static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model) {
+        if (model instanceof ISInstanceAwareModel) {
             return Optional.of((ISInstanceAwareModel<X>) model);
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     static IModel<SInstance> getInstanceModel(ISInstanceAwareModel<?> model) {
         return new ISInstanceAwareModel<SInstance>() {
             public SInstance getObject() {
-                return getMInstancia();
+                return getSInstance();
             }
-            public SInstance getMInstancia() {
-                return model.getMInstancia();
+
+            public SInstance getSInstance() {
+                return model.getSInstance();
             }
+
             @Override
             public void setObject(SInstance object) {}
+
             @Override
             public void detach() {}
         };

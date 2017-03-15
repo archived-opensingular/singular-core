@@ -12,8 +12,6 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-import java.math.BigDecimal;
-
 public class MasterDetailMapperTest {
 
     private static STypeList<STypeComposite<SIComposite>, SIComposite> listBaseType;
@@ -48,10 +46,12 @@ public class MasterDetailMapperTest {
         test.getDummyPage().addInstancePopulator(MasterDetailMapperTest::populateInstance);
         test.startDummyPage();
 
-        AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubCompomentWithType(listBaseType).getSubCompomentWithType(listElementType);
+        AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubCompomentWithType(listBaseType)
+                .getSubCompomentWithType(listElementType);
 
-        compositeAssertion.getSubCompomentWithType(date).assertSInstance().isValueEquals(java.time.YearMonth.of(2016,01));
-//        compositeAssertion.getSubCompomentWithType(number).assertSInstance().isValueEquals(new BigDecimal(2.5));
+        compositeAssertion.getSubCompomentWithType(date).assertSInstance().isValueEquals(
+                java.time.YearMonth.of(2016, 01));
+        //        compositeAssertion.getSubCompomentWithType(number).assertSInstance().isValueEquals(new BigDecimal(2.5));
 //        compositeAssertion.getSubCompomentWithType(cpf).assertSInstance().isValueEquals("000.111.222-33");
 
     }

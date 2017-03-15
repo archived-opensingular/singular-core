@@ -20,7 +20,7 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.io.FormXsdUtil;
+import org.opensingular.form.io.FormXSDUtil;
 import org.opensingular.singular.form.showcase.component.CaseBaseForm;
 import org.opensingular.singular.form.showcase.component.ResourceRef;
 
@@ -54,7 +54,7 @@ public abstract class XsdCaseBase extends CaseBaseForm {
         PackageBuilder pb = dicionario.createNewPackage(packageName);
         ResourceRef ref = getMainSourceResourceName().orElseThrow(
                 () -> new SingularFormException("Não foi definido o o arquivo XSD de exemplo"));
-        return FormXsdUtil.xsdToSType(pb, ref.getContent());
+        return FormXSDUtil.xsdToSType(pb, ref.getContent());
 
     }
 

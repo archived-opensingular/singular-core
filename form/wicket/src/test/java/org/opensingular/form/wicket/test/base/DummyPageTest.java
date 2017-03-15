@@ -1,6 +1,5 @@
 package org.opensingular.form.wicket.test.base;
 
-import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.document.SDocumentFactory;
@@ -11,7 +10,7 @@ public class DummyPageTest {
 
     @Test
     public void testPageRendering() {
-        WicketTester tester = new SingularWicketTester();
+        SingularWicketTester tester = new SingularWicketTester();
 
         DummyPage dummyPage = new DummyPage();
         dummyPage.setTypeBuilder((x) -> {x.addFieldString("mockString");});
@@ -22,5 +21,9 @@ public class DummyPageTest {
         });
         tester.startPage(dummyPage);
         tester.assertRenderedPage(DummyPage.class);
+
+        tester.getAssertionsForm().isNotNull();
+        tester.getAssertionsForm().getSubCompomentWithId("mockString");
+        tester.getAssertionsForSubComp("mockString").isNotNull();
     }
 }

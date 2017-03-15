@@ -18,6 +18,8 @@ package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
 
+import javax.annotation.Nonnull;
+
 /**
  * Serviço com as operações básicas de persistência de formulário, mas sem as funções de recuperação e listagem.
  *
@@ -45,12 +47,13 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      *
      * @return Nunca Null
      */
-    FormKey insert(INSTANCE instance, Integer inclusionActor);
+    @Nonnull
+    FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor);
 
     /**
      * Apaga a instância correspondente a chave informada.
      */
-    void delete(FormKey key);
+    void delete(@Nonnull FormKey key);
 
     /**
      * Atualiza a instância na base de dados, com base no atributo FormmKey contido na instância informada.
@@ -58,26 +61,27 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * @param instance A mesma deverá conter o atributo FormKey, para tanto deverá ter sido recuperada pela própria
      *                 persitência.
      */
-    void update(INSTANCE instance, Integer inclusionActor);
+    void update(@Nonnull INSTANCE instance, Integer inclusionActor);
 
     /**
      * Atualiza ou insere a instância de acordo se a mesma ja tiver ou não um FormKey associado (como atributo da instância).
      * @return Chave da instância criada ou atualizada.
      */
-    FormKey insertOrUpdate(INSTANCE instance, Integer inclusionActor);
-
+    @Nonnull
+    FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor);
 
     /**
      * Informa se a SInstance passada por parâmetro possui uma chave associada.
      * Caso contrário é considerado um formulário não persistence
      */
-    boolean isPersistent(INSTANCE instance);
+    boolean isPersistent(@Nonnull INSTANCE instance);
 
     /**
      * Salva as alterações na versão atual e incrementa versão do formulário
      * e replica as anotações em suas versões iniciais
      */
-    default FormKey newVersion(INSTANCE instance, Integer inclusionActor){
+    @Nonnull
+    default FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor){
         return newVersion(instance, inclusionActor, true);
     }
 
@@ -85,5 +89,6 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      * Salva as alterações na versão atual e incrementa versão do formulário
      * e das anotações vinculadas
      */
-    FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
+    @Nonnull
+    FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
 }

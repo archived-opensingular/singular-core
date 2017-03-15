@@ -19,8 +19,10 @@ package org.opensingular.flow.test;
 import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.service.IUserService;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Optional;
 
 @Named
 public class TestUserService implements IUserService {
@@ -45,8 +47,9 @@ public class TestUserService implements IUserService {
     }
 
     @Override
-    public MUser saveUserIfNeeded(String codUsuario) {
-        return (MUser)testDAO.getSomeUser(Integer.parseInt(codUsuario));
+    @Nonnull
+    public Optional<MUser> saveUserIfNeeded(@Nonnull String codUsuario) {
+        return Optional.ofNullable(testDAO.getSomeUser(Integer.parseInt(codUsuario)));
     }
 
     @Override

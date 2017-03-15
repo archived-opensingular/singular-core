@@ -26,15 +26,15 @@ import org.apache.wicket.util.visit.Visits;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class SingularForm<T> extends Form<T> {
+public class SingularFormWicket<T> extends Form<T> {
     //TODO (by Daniel Bordin) Entender por que esse método copia vários método da classe Form do Wicket. Isso pode
     // dar problema com novas versões do wicket. Entender o racional e verificar senão há uma solução melhor.
 
-    public SingularForm(String id, IModel<T> model) {
+    public SingularFormWicket(String id, IModel<T> model) {
         super(id, model);
     }
 
-    public SingularForm(String id) {
+    public SingularFormWicket(String id) {
         super(id);
     }
 
@@ -111,15 +111,15 @@ public class SingularForm<T> extends Form<T> {
 
     private void convertWithoutValidateNestedForms()
     {
-        Visits.visitPostOrder(this, (IVisitor<SingularForm<?>, Void>) (form, visit) -> {
-            if (SingularForm.this.equals(form)) {
+        Visits.visitPostOrder(this, (IVisitor<SingularFormWicket<?>, Void>) (form, visit) -> {
+            if (SingularFormWicket.this.equals(form)) {
                 // skip self, only process children
                 visit.stop();
             } else if (form.isSubmitted()) {
                 form.convertWithoutValidateComponents();
                 form.onValidate();
             }
-        }, new ClassVisitFilter(SingularForm.class));
+        }, new ClassVisitFilter(SingularFormWicket.class));
     }
 
     protected void convertWithoutValidateComponents() {
@@ -131,7 +131,7 @@ public class SingularForm<T> extends Form<T> {
                 public void validate(final FormComponent<?> formComponent)
                 {
                     final Form<?> form = formComponent.getForm();
-                    if ((!(form instanceof SingularForm<?>) || (SingularForm.this.equals(form)))
+                    if ((!(form instanceof SingularFormWicket<?>) || (SingularFormWicket.this.equals(form)))
                         && form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
                     {
                         formComponent.convertInput();
@@ -159,8 +159,8 @@ public class SingularForm<T> extends Form<T> {
     //@formatter:on
 
     private void invokeOnValidateModelObjects(Form<?> form) {
-        if (form instanceof SingularForm<?>) {
-            ((SingularForm<?>) form).onValidateModelObjects();
+        if (form instanceof SingularFormWicket<?>) {
+            ((SingularFormWicket<?>) form).onValidateModelObjects();
         } else {
             try {
                 Form.class.getMethod("onValidateModelObjects").invoke(form);

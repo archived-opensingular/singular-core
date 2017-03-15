@@ -18,6 +18,8 @@ package org.opensingular.flow.core;
 
 import org.opensingular.lib.commons.base.SingularException;
 
+import javax.annotation.Nullable;
+
 /**
  * The base class of all runtime exceptions for Singular-Flow.
  *
@@ -64,5 +66,22 @@ public class SingularFlowException extends SingularException{
      */
     public SingularFlowException(String msg, Throwable cause) {
         super(msg, cause);
+    }
+
+    /** Cria uma nova Exception com complementos de dados da taskInstance informada. */
+    public SingularFlowException(@Nullable String cause, @Nullable TaskInstance target) {
+        super(cause);
+        add(target);
+    }
+
+    /** Adiciona as informações sobre a task na exception. */
+    private void add(@Nullable TaskInstance task) {
+        if (task != null) {
+            add("task.id", task.getId());
+            add("task.fullId", () -> task.getFullId());
+            add("task.process", () -> task.getProcessInstance().getFullId());
+            add("task.name", task.getName());
+            add("task.abbreviation", task.getAbbreviation());
+        }
     }
 }

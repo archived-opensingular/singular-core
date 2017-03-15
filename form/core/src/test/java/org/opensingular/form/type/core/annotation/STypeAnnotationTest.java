@@ -1,19 +1,14 @@
 package org.opensingular.form.type.core.annotation;
 
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
+import org.fest.assertions.api.Assertions;
+import org.junit.Before;
+import org.junit.Test;
+import org.opensingular.form.*;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.io.FormSerialized;
 import org.opensingular.form.type.core.STypeString;
-import org.fest.assertions.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.List;
 
@@ -98,12 +93,7 @@ public class STypeAnnotationTest {
     }
 
     @Test public void loadsAnnotationsToAnewObject(){
-        RefType ref = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return baseCompositeField;
-            }
-        };
+        RefType ref = RefType.of(() -> baseCompositeField);
         SIComposite instance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
@@ -122,12 +112,7 @@ public class STypeAnnotationTest {
 
 
     @Test public void youCanRePersistTheAnnotationAsMuchAsYouWant(){
-        RefType ref = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return baseCompositeField;
-            }
-        };
+        RefType ref = RefType.of(() -> baseCompositeField);
         SIComposite instance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");

@@ -16,8 +16,9 @@
 
 package org.opensingular.singular.form.showcase.view.page.form.crud.services;
 
-import org.opensingular.form.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
+import org.opensingular.form.RefService;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.exemplos.notificacaosimplificada.spring.NotificaoSimplificadaSpringConfiguration;
 import org.opensingular.form.spring.SpringSDocumentFactory;
 import org.opensingular.form.spring.SpringServiceRegistry;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -29,8 +30,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.opensingular.form.RefService.of;
-import static org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentPersistenceHandler.newTemporaryHandler;
+import static org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentPersistenceHandler
+        .newTemporaryHandler;
 
 @Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
@@ -44,13 +45,13 @@ public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
     @Override
     protected void setupDocument(SDocument document) {
         try {
-            document.setAttachmentPersistenceTemporaryHandler(of(newTemporaryHandler()));
+            document.setAttachmentPersistenceTemporaryHandler(RefService.of(newTemporaryHandler()));
         } catch (IOException e) {
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not create temporary file folder, using memory instead", e);
-            document.setAttachmentPersistenceTemporaryHandler(of(new InMemoryAttachmentPersistenceHandler()));
+            document.setAttachmentPersistenceTemporaryHandler(RefService.of(new InMemoryAttachmentPersistenceHandler()));
         }
         document.setAttachmentPersistencePermanentHandler(
-                of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
+                RefService.of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
         document.addServiceRegistry(NOTIFICACAO_SIMPLIFICADA_SPRING_CONFIG);
     }
 

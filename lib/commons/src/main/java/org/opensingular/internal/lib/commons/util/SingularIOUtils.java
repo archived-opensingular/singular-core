@@ -17,6 +17,7 @@
 package org.opensingular.internal.lib.commons.util;
 
 import javax.annotation.Nonnull;
+import java.io.*;
 
 /**
  * Métodos utilitários relacionados a arquivos e manipulação de IO.
@@ -131,5 +132,20 @@ public class SingularIOUtils {
             pos++;
         }
         return String.format("%.1f %s", value, TIME_SYMBOS[pos]);
+    }
+
+    /** Serializa e deserializa o mesmo objeto retornando o resultado da deserialização. Útil na automação de testes.*/
+    public static <T> T serializeAndDeserialize(@Nonnull T obj) {
+        try {
+            ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+            ObjectOutputStream out2 = new ObjectOutputStream(out1);
+            out2.writeObject(obj);
+            out2.close();
+
+            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out1.toByteArray()));
+            return (T) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

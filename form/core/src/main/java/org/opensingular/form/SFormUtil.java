@@ -169,7 +169,8 @@ public final class SFormUtil {
      * Retorna o nome completo do tipo sem precisar carregar a definição
      * mediante a leitura das anotações {@link SInfoType} e {@link SInfoPackage}.
      */
-    public static String getTypeName(Class<? extends SType<?>> typeClass) {
+    @Nonnull
+    public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
         Class<? extends SPackage> packageClass = getTypePackage(typeClass);
         String packageName = getInfoPackageNameOrException(packageClass);
         return packageName + '.' + getTypeSimpleName(typeClass);
@@ -177,11 +178,11 @@ public final class SFormUtil {
 
     public static String getTypeSimpleName(Class<? extends SType<?>> typeClass) {
         SInfoType infoType = getInfoType(typeClass);
-        if (StringUtils.isBlank(infoType.name())) {
-            throw new SingularFormException("O tipo " + typeClass.getName() + " não define o nome do tipo por meio da anotação @"
-                    + SInfoType.class.getSimpleName());
+        String typeName = infoType.name();
+        if (StringUtils.isBlank(typeName)) {
+            typeName = typeClass.getSimpleName();
         }
-        return infoType.name();
+        return typeName;
     }
 
     public static Optional<String> getTypeLabel(Class<? extends SType> typeClass) {
@@ -222,8 +223,7 @@ public final class SFormUtil {
     static String getInfoPackageNameOrException(Class<? extends SPackage> packageClass) {
         String packageName = getInfoPackageName(packageClass);
         if (packageName == null) {
-            throw new SingularFormException("A classe " + packageClass.getName() + " não define o nome do pacote por meio da anotação @"
-                    + SInfoPackage.class.getSimpleName());
+            packageName = packageClass.getSimpleName();
         }
         return packageName;
     }

@@ -4,15 +4,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
-public class TestMInstance extends TestCaseForm {
+public class TestSInstance extends TestCaseForm {
 
-    public TestMInstance(TestFormConfig testFormConfig) {
+    public TestSInstance(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -48,9 +47,9 @@ public class TestMInstance extends TestCaseForm {
         pedido.setValue("itens[0].urgente", true);
         assertId(pedido.getField("itens[0].urgente"), 12, 12);
 
-        MElement xml = MformPersistenciaXML.toXML(pedido);
+        MElement xml = SFormXMLUtil.toXML(pedido).orElse(null);
 
-        SIComposite pedido2 = (SIComposite) MformPersistenciaXML.fromXML(tipoPedido, xml);
+        SIComposite pedido2 = (SIComposite) SFormXMLUtil.fromXML(tipoPedido, xml);
         assertId(pedido2, 1, 12);
         assertId(pedido2.getField("nome"), 13, 13);
         assertId(pedido2.getField("prioridade"), 8, 13);

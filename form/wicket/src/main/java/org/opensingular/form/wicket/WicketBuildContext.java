@@ -195,7 +195,7 @@ public class WicketBuildContext implements Serializable {
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
             ISInstanceAwareModel<?> selectedModel = (ISInstanceAwareModel<?>) defaultModel;
-            // final SType<?> tipo = selectedModel.getMInstancia().getType();
+            // final SType<?> tipo = selectedModel.getSInstance().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
                     formComponent,
@@ -251,7 +251,7 @@ public class WicketBuildContext implements Serializable {
     protected static String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            SInstance instancia = ((ISInstanceAwareModel<?>) model).getSInstance();
             return instancia.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
@@ -265,7 +265,7 @@ public class WicketBuildContext implements Serializable {
     protected static String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance    instancia = ((ISInstanceAwareModel<?>) model).getMInstancia();
+            SInstance    instancia = ((ISInstanceAwareModel<?>) model).getSInstance();
             List<String> labels    = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.asAtr().getLabel());
@@ -318,7 +318,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public SValidationFeedbackPanel createFeedbackPanel(String id, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc, MarkupContainer container) {
-        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id,  new FeedbackFence(container)), listenerFunc);
+        return createFeedbackPanel(() -> new SValidationFeedbackPanel(id, new FeedbackFence(container)), listenerFunc);
     }
 
     public SValidationFeedbackCompactPanel createFeedbackCompactPanel(String id) {
@@ -374,6 +374,12 @@ public class WicketBuildContext implements Serializable {
 
     public void popBreadCrumb() {
         getBreadCrumbs().remove(getBreadCrumbs().size() - 1);
+    }
+
+    public void updateExternalContainer(AjaxRequestTarget ajaxRequestTarget) {
+        if (ajaxRequestTarget != null) {
+            ajaxRequestTarget.add(this.getExternalContainer());
+        }
     }
 
     private static final class InitRootContainerBehavior extends Behavior {

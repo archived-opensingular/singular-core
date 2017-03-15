@@ -22,7 +22,7 @@ public abstract class AbstractSInstanceModel<I extends SInstance>
     implements ISInstanceAwareModel<I> {
 
     @Override
-    public final SInstance getMInstancia() {
+    public final SInstance getSInstance() {
         return getObject();
     }
 

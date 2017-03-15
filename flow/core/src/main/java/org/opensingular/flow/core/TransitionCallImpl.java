@@ -37,7 +37,7 @@ class TransitionCallImpl implements TransitionCall {
 
     @Override
     public void go() {
-        transition.getTaskInstance().executeTransition(transition.getTransition().getName(), vars);
+        transition.getOriginTaskInstance().executeTransition(transition.getTransition().getName(), vars);
     }
 
 }

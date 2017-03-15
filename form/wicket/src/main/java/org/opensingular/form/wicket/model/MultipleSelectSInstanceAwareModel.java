@@ -16,10 +16,10 @@
 
 package org.opensingular.form.wicket.model;
 
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
-import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
     }
 
     @Override
-    public SInstance getMInstancia() {
+    public SInstance getSInstance() {
         return model.getObject();
     }
 

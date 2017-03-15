@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.reflections.Reflections;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -91,15 +92,23 @@ public final class ProcessDefinitionCache {
         }
     }
 
-    public static <T extends ProcessDefinition<?>> T getDefinition(Class<T> definitionClass) {
+    @Nonnull
+    public static <T extends ProcessDefinition<?>> T getDefinition(@Nonnull Class<T> definitionClass) {
+        Objects.requireNonNull(definitionClass);
         ProcessDefinition<?> def = definitionsByClass.getUnchecked(definitionClass);
+        if (def == null) {
+            throw new SingularFlowException(
+                    "Não foi encontrada a definiçao de processo referente a classe " + definitionClass.getName());
+        }
         return definitionClass.cast(def);
     }
 
     /**
      * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
      */
-    public ProcessDefinition<?> getDefinition(String key) {
+    @Nonnull
+    public ProcessDefinition<?> getDefinition(@Nonnull String key) {
+        Objects.requireNonNull(key);
         ProcessDefinition<?> processDefinition = definitionsByKey.get(key);
         if(processDefinition == null){
             throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " +
@@ -111,10 +120,13 @@ public final class ProcessDefinitionCache {
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
      */
-    public ProcessDefinition<?> getDefinitionUnchecked(String key) {
-        return definitionsByKey.get(key);
+    @Nonnull
+    public Optional<ProcessDefinition<?>> getDefinitionOpt(@Nonnull String key) {
+        Objects.requireNonNull(key);
+        return Optional.ofNullable(definitionsByKey.get(key));
     }
 
+    @Nonnull
     public List<ProcessDefinition<?>> getDefinitions() {
         return definitions;
     }

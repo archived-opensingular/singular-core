@@ -3,11 +3,8 @@ package org.opensingular.form.helpers;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
 import org.fest.assertions.api.IterableAssert;
-import org.opensingular.form.ICompositeInstance;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
+import org.opensingular.form.*;
+import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.IValidationError;
 
 import java.util.Date;
@@ -154,12 +151,24 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         return Assertions.assertThat(getTarget().getValidationErrors());
     }
 
+    /**
+     * Cria uma nova assertiva para o valor da instância, se a instância contiver um valor Date. Senão o valor for
+     * diferente de null e não for Date, então dispara exception.
+     */
     public DateAssert assertDateValue() {
         Object value = getTarget().getValue();
-        if (value instanceof Date) {
+        if (value instanceof Date || value == null) {
             return Assertions.assertThat((Date) value);
         }
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
     }
 
+    /** Cria uma nova assertiva a partir do resultado da serialização e deserialização da instância atual. */
+    public AssertionsSInstance serializeAndDeserialize() {
+        isNotNull();
+        AssertionsSInstance a = new AssertionsSInstance(FormSerializationUtil.serializeAndDeserialize(getTarget()));
+        a.isNotSameAs(getTarget());
+        a.is(getTarget().getClass());
+        return a;
+    }
 }

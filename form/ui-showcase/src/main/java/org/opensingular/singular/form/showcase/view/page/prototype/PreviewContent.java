@@ -25,7 +25,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.base.SingularUtil;
@@ -55,20 +55,13 @@ public class PreviewContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        SingularForm<?> enclosing = new SingularForm<>("just-a-form");
+        SingularFormWicket<?> enclosing = new SingularFormWicket<>("just-a-form");
         enclosing.setMultiPart(true);
         enclosing.setFileMaxSize(Bytes.MAX);
         enclosing.setMaxSize(Bytes.MAX);
-        enclosing.add(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
-            @Override
-            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                return SDocumentFactory.empty().createInstance(new RefType() {
-                    protected SType<?> retrieve() {
-                        return new TypeBuilder(PreviewContent.this.model.getObject()).createRootType();
-                    }
-                });
-            }
-        });
+        SingularFormPanel panel = new SingularFormPanel("singular-panel");
+        panel.setInstanceFromType(() -> new TypeBuilder(PreviewContent.this.model.getObject()).createRootType());
+        enclosing.add(panel);
         queue(enclosing);
         queue(new Link("cancel-btn") {
             @Override

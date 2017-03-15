@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Ignore("We have to figure out how to deal with this case of TypeAhead")
 public class STypeStringSelectionFieldTest {
     private SingularDummyFormPageTester tester;
 

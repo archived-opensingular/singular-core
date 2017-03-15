@@ -16,49 +16,23 @@
 
 package org.opensingular.flow.persistence.service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.stream.Stream;
-
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-
-import com.google.common.base.Throwables;
-
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.TaskType;
-import org.opensingular.flow.core.entity.IEntityByCod;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.hibernate.criterion.*;
+import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.entity.*;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.variable.VarType;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Stream;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
         extends AbstractHibernateService implements
@@ -73,7 +47,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     // -------------------------------------------------------
 
     @Override
-    public PROCESS_INSTANCE retrieveProcessInstanceByCod(Integer cod) {
+    @Nonnull
+    public Optional<PROCESS_INSTANCE> retrieveProcessInstanceByCod(@Nonnull Integer cod) {
+        Objects.requireNonNull(cod);
         return getSession().retrieve(getClassProcessInstance(), cod);
     }
     
@@ -137,7 +113,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     protected abstract TASK_INSTANCE newTaskInstance(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion);
 
     @Override
-    public TASK_INSTANCE retrieveTaskInstanceByCod(Integer cod) {
+    @Nonnull
+    public Optional<TASK_INSTANCE> retrieveTaskInstanceByCod(@Nonnull Integer cod) {
         Objects.requireNonNull(cod);
         return getSession().retrieve(getClassTaskInstance(), cod);
     }
@@ -179,7 +156,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, MUser responsibleUser) {
         responsibleUser = saveUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
-        IEntityTaskTransitionVersion transition = task.getTask().getTransition(transitionAbbreviation);
+        IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
 
         if (responsibleUser != null) {
@@ -271,17 +248,25 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     // Variable
     // -------------------------------------------------------
 
-    protected abstract VARIABLE_INSTANCE retrieveVariableInstanceByCod(Integer cod);
+    @Nonnull
+    protected abstract Optional<VARIABLE_INSTANCE> retrieveVariableInstanceByCod(@Nonnull Integer cod);
+
+    @Nonnull
+    protected VARIABLE_INSTANCE retrieveVariableInstanceByCodOrException(@Nonnull Integer cod) {
+        return retrieveVariableInstanceByCod(cod).orElseThrow(
+                () -> new SingularFlowException("Não foi encontrado a variável cod=" + cod));
+    }
 
     protected abstract VARIABLE_INSTANCE newVariableInstance(PROCESS_INSTANCE processInstance, String name);
 
     @Override
-    public Integer updateVariableValue(PROCESS_INSTANCE processInstance, VarInstance mVariavel, Integer dbVariableCod) {
+    @Nullable
+    public Integer updateVariableValue(@Nonnull PROCESS_INSTANCE processInstance, @Nonnull VarInstance mVariavel, @Nullable Integer dbVariableCod) {
         SessionWrapper ss = getSession();
         Object valorAjustado = mVariavel.getValue();
         VARIABLE_INSTANCE variavel = null;
         if (dbVariableCod != null) {
-            variavel = retrieveVariableInstanceByCod(dbVariableCod);
+            variavel = retrieveVariableInstanceByCodOrException(dbVariableCod);
         }
 
         if (valorAjustado == null || isVazio(valorAjustado)) {

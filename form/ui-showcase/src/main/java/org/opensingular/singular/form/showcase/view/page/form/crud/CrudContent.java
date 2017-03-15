@@ -36,7 +36,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.internal.xml.MParser;
 import org.opensingular.form.wicket.component.BFModalBorder;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.SFeedbackPanel;
@@ -110,8 +110,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         super.onInitialize();
 
-        add(new SingularForm<>("optionsForm").add(setUpTemplatesOptions()));
-        add(new SingularForm<>("delete-form").add(deleteModal));
+        add(new SingularFormWicket<>("optionsForm").add(setUpTemplatesOptions()));
+        add(new SingularFormWicket<>("delete-form").add(deleteModal));
         add(setUpInsertButton());
         listTable = setupDataTable();
         add(listTable);
@@ -152,7 +152,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private MarkupContainer setUpInsertButton() {
-        return new SingularForm<>("form").add(new AjaxButton("insert") {
+        return new SingularFormWicket<>("form").add(new AjaxButton("insert") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 PageParameters params = new PageParameters().add(FormPage.TYPE_NAME, selectedTemplate.getObject().getTypeName());

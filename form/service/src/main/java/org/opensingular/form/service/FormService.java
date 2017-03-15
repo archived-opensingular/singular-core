@@ -24,38 +24,19 @@ import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.io.MformPersistenciaXML;
-import org.opensingular.form.persistence.dao.FormAnnotationDAO;
-import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
-import org.opensingular.form.persistence.dao.FormDAO;
-import org.opensingular.form.persistence.dao.FormTypeDAO;
-import org.opensingular.form.persistence.dao.FormVersionDAO;
-import org.opensingular.form.persistence.entity.FormAnnotationEntity;
-import org.opensingular.form.persistence.entity.FormAnnotationPK;
-import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
-import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormTypeEntity;
-import org.opensingular.form.persistence.entity.FormVersionEntity;
-import org.opensingular.form.persistence.AbstractBasicFormPersistence;
-import org.opensingular.form.persistence.AnnotationKey;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormKeyLong;
-import org.opensingular.form.persistence.SPackageFormPersistence;
-import org.opensingular.form.persistence.SingularFormPersistenceException;
-import org.opensingular.form.type.core.annotation.DocumentAnnotations;
+import org.opensingular.form.io.SFormXMLUtil;
+import org.opensingular.form.persistence.*;
+import org.opensingular.form.persistence.dao.*;
+import org.opensingular.form.persistence.entity.*;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -83,19 +64,26 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
+    @Nonnull
     public FormKey insert(SInstance instance, Integer inclusionActor) {
         return super.insert(instance, inclusionActor);
     }
 
     @Override
-    public FormKey insertOrUpdate(SInstance instance, Integer inclusionActor) {
+    @Nonnull
+    public FormKey insertOrUpdate(@Nonnull SInstance instance, Integer inclusionActor) {
         return super.insertOrUpdate(instance, inclusionActor);
     }
 
-    private SInstance internalLoadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory,
-                                            FormVersionEntity formVersionEntity) {
+    @Nonnull
+    private SInstance internalLoadSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory,
+                                            @Nonnull FormVersionEntity formVersionEntity) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(refType);
+        Objects.requireNonNull(documentFactory);
+        Objects.requireNonNull(formVersionEntity);
 
-        final SInstance instance     = MformPersistenciaXML.fromXML(refType, formVersionEntity.getXml(), documentFactory);
+        final SInstance instance     = SFormXMLUtil.fromXML(refType, formVersionEntity.getXml(), documentFactory);
         final IConsumer loadListener = instance.getAttributeValue(SPackageBasic.ATR_LOAD_LISTENER);
 
         loadCurrentXmlAnnotationOrEmpty(instance.getDocument(), formVersionEntity);
@@ -109,54 +97,62 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
+    @Nonnull
+    public SInstance newTransientSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory) {
         final SInstance instance = loadSInstance(key, refType, documentFactory);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
         return instance;
     }
 
     @Override
-    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId) {
-        final SInstance instance = loadSInstance(key, refType, documentFactory, versionId);
+    @Nonnull
+    public SInstance newTransientSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId) {
+        SInstance instance = loadSInstance(key, refType, documentFactory, versionId);
         instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
         return instance;
     }
 
     @Override
-    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, boolean keepAnnotations) {
+    @Nonnull
+    public SInstance newTransientSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory, boolean keepAnnotations) {
         SInstance instance = newTransientSInstance(key, refType, documentFactory);
         instance.getDocument().getDocumentAnnotations().clear();
         return instance;
     }
 
     @Override
-    public SInstance newTransientSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId, boolean keepAnnotations) {
+    @Nonnull
+    public SInstance newTransientSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId, boolean keepAnnotations) {
         SInstance instance = newTransientSInstance(key, refType, documentFactory, versionId);
         instance.getDocument().getDocumentAnnotations().clear();
         return instance;
     }
 
     @Override
-    public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory) {
+    @Nonnull
+    public SInstance loadSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory) {
         final FormEntity entity = loadFormEntity(key);
         return internalLoadSInstance(key, refType, documentFactory, entity.getCurrentFormVersionEntity());
     }
 
 
     @Override
-    public SInstance loadSInstance(FormKey key, RefType refType, SDocumentFactory documentFactory, Long versionId) {
-        final FormVersionEntity formVersionEntity = loadFormVersionEntity(versionId);
+    @Nonnull
+    public SInstance loadSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId) {
+        Objects.requireNonNull(versionId);
+        FormVersionEntity formVersionEntity = loadFormVersionEntity(versionId);
         return internalLoadSInstance(key, refType, documentFactory, formVersionEntity);
     }
 
     @Override
-    protected FormKeyLong insertInternal(SInstance instance, Integer inclusionActor) {
-        final FormEntity entity = saveNewFormEntity(instance);
+    protected FormKeyLong insertInternal(@Nonnull SInstance instance, Integer inclusionActor) {
+        FormEntity entity = saveNewFormEntity(instance);
         saveOrUpdateFormVersion(instance, entity, new FormVersionEntity(), inclusionActor, KEEP_ANNOTATIONS);
         return new FormKeyLong(entity.getCod());
     }
 
-    private FormEntity saveNewFormEntity(SInstance instance) {
+    @Nonnull
+    private FormEntity saveNewFormEntity(@Nonnull SInstance instance) {
         final FormEntity entity = new FormEntity();
         entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType()));
         formDAO.saveOrUpdate(entity);
@@ -177,7 +173,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return formTypeEntity;
     }
 
-    private void saveOrUpdateFormVersion(final SInstance instance, final FormEntity entity, final FormVersionEntity formVersionEntity, Integer inclusionActor, boolean keepAnnotations) {
+    private void saveOrUpdateFormVersion(@Nonnull SInstance instance, @Nonnull FormEntity entity,
+            @Nonnull FormVersionEntity formVersionEntity, Integer inclusionActor, boolean keepAnnotations) {
         formVersionEntity.setFormEntity(entity);
         formVersionEntity.setXml(extractContent(instance));
         formVersionEntity.setInclusionActor(inclusionActor);
@@ -189,7 +186,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         formDAO.saveOrUpdate(entity);
     }
 
-    private void saveOrUpdateFormAnnotation(SInstance instance, FormVersionEntity formVersionEntity, Integer inclusionActor) {
+    private void saveOrUpdateFormAnnotation(@Nonnull SInstance instance, @Nonnull FormVersionEntity formVersionEntity, Integer inclusionActor) {
         Map<String, String> classifiedAnnotationsXML = extractAnnotations(instance);
         Map<String, FormAnnotationEntity> classifiedAnnotationsEntities = Optional.ofNullable(formVersionEntity.getFormAnnotations())
                 .orElse(new ArrayList<>(0))
@@ -231,8 +228,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
 
     private void loadCurrentXmlAnnotationOrEmpty(SDocument document, FormVersionEntity formVersionEntity) {
         document.getDocumentAnnotations().clear();
-        for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formVersionEntity).map(FormVersionEntity::getFormAnnotations).orElse(new ArrayList<>(0))) {
-            MformPersistenciaXML.annotationLoadFromXml(document,
+        for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formVersionEntity).map(FormVersionEntity::getFormAnnotations).orElse(Collections.emptyList())) {
+            SFormXMLUtil.annotationLoadFromXml(document,
                     Optional
                             .ofNullable(formAnnotationEntity.getAnnotationCurrentVersion())
                             .map(FormAnnotationVersionEntity::getXml)
@@ -241,32 +238,30 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public FormEntity loadFormEntity(FormKey key) {
-        final FormEntity entity = formDAO.find(checkKey(key, null, "a chave não fosse nula").longValue());
-        if (entity == null) {
-            throw addInfo(new SingularFormPersistenceException("Form não encontrado")).add("key", key);
-        } else {
-            return entity;
-        }
+    @Nonnull
+    public FormEntity loadFormEntity(@Nonnull FormKey key) {
+        return formDAO.findOrException(checkKeyOrException(key, null).longValue());
     }
 
     @Override
-    public FormVersionEntity loadFormVersionEntity(Long versionId) {
-        return formVersionDAO.find(versionId);
+    @Nonnull
+    public FormVersionEntity loadFormVersionEntity(@Nonnull Long versionId) {
+        return formVersionDAO.findOrException(Objects.requireNonNull(versionId));
     }
 
     @Override
-    protected void updateInternal(FormKeyLong key, SInstance instance, Integer inclusionActor) {
+    @Nonnull
+    protected void updateInternal(@Nonnull FormKeyLong key, @Nonnull SInstance instance, Integer inclusionActor) {
         updateInternal(loadFormEntity(key), instance, inclusionActor);
     }
 
-    protected void updateInternal(FormEntity entity, SInstance instance, Integer inclusionActor) {
+    protected void updateInternal(@Nonnull FormEntity entity, @Nonnull SInstance instance, Integer inclusionActor) {
         saveOrUpdateFormVersion(instance, entity, entity.getCurrentFormVersionEntity(), inclusionActor, KEEP_ANNOTATIONS);
         formDAO.saveOrUpdate(entity);
     }
 
     @Override
-    protected void deleteInternal(FormKeyLong key) {
+    protected void deleteInternal(@Nonnull FormKeyLong key) {
         throw new UnsupportedOperationException("Metodo nao implementado");
     }
 
@@ -276,7 +271,8 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
      * @param instance
      * @return
      */
-    private Map<String, String> extractAnnotations(SInstance instance) {
+    @Nonnull
+    private Map<String, String> extractAnnotations(@Nonnull SInstance instance) {
         DocumentAnnotations documentAnnotations = instance.getDocument().getDocumentAnnotations();
         Map<String, String> mapClassifierXml  = new HashMap<>();
         for (Map.Entry<String, SIList<SIAnnotation>> entry : documentAnnotations.persistentAnnotationsClassified().entrySet()) {
@@ -285,20 +281,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return mapClassifierXml;
     }
 
-    public String extractContent(SInstance instance) {
-        if (instance == null) {
-            return null;
-        }
-        final MElement mElement = MformPersistenciaXML.toXML(instance);
-        if (mElement != null) {
-            return mElement.toStringExato();
-        } else {
-            //Retorna um xml vazio valido
-            //todo verificar se é a melhor solução
-            return Optional.of(instance)
-                    .map(x -> MElement.newInstance(x.getName()))
-                    .map(MElement::toString).orElse(StringUtils.EMPTY);
-        }
+    @Nonnull
+    private String extractContent(@Nonnull SInstance instance) {
+        return SFormXMLUtil.toStringXMLOrEmptyXML(instance);
     }
 
     @Override
@@ -307,8 +292,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public FormKey newVersion(SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
-        FormKey    formKey    = readKeyAttribute(instance, null);
+    @Nonnull
+    public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
+        FormKey    formKey    = readKeyAttributeOrException(instance);
         FormEntity formEntity = loadFormEntity(formKey);
         saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), inclusionActor, keepAnnotations);
         return formKey;
@@ -345,20 +331,15 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     }
 
     @Override
-    public FormVersionEntity findCurrentFormVersion(SDocument document) {
-        FormEntity form = findFormEntity(document);
-        if (form != null) {
-            return form.getCurrentFormVersionEntity();
-        }
-        return null;
+    @Nonnull
+    public Optional<FormVersionEntity> findCurrentFormVersion(@Nonnull SDocument document) {
+        return findFormEntity(document).map(FormEntity::getCurrentFormVersionEntity);
     }
 
     @Override
-    public FormEntity findFormEntity(SDocument document) {
+    @Nonnull
+    public Optional<FormEntity> findFormEntity(@Nonnull SDocument document) {
         FormKey key = document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
-        if (key != null) {
-            return loadFormEntity(key);
-        }
-        return null;
+        return key == null ? Optional.empty() : Optional.of(loadFormEntity(key));
     }
 }

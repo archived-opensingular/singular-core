@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.helpers;
 
 import org.opensingular.form.context.SFormConfig;
+import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.TypeLoader;
 
@@ -25,12 +26,12 @@ import java.io.Serializable;
 /** FormConfig para implementação de JUnit. */
 public class MockFormConfig implements SFormConfig<String>, Serializable {
 
-    private final MockSDocumentFactory documentFactory = new MockSDocumentFactory();
+    private final RefSDocumentFactory documentFactory = new MockSDocumentFactory().getDocumentFactoryRef();
     private final MockTypeLoader       mockTypeLoader  = new MockTypeLoader();
 
     @Override
     public SDocumentFactory getDocumentFactory() {
-        return documentFactory;
+        return documentFactory.get();
     }
 
     @Override

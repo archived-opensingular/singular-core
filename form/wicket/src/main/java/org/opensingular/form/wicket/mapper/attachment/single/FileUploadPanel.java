@@ -106,7 +106,7 @@ public class FileUploadPanel extends Panel implements Loggable {
             }
 
             @Override
-            public SInstance getMInstancia() {
+            public SInstance getSInstance() {
                 return model.getObject();
             }
             //@formatter:on

@@ -21,11 +21,11 @@ package org.opensingular.form.document;
  *
  * @author Daniel C. Bordin
  */
-public class SDocumentFactoryEmpty extends SDocumentFactory {
+final class SDocumentFactoryEmpty extends SDocumentFactory {
 
     private static SDocumentFactoryEmpty instance;
 
-    protected SDocumentFactoryEmpty() {}
+    private SDocumentFactoryEmpty() {}
 
     synchronized static SDocumentFactory getEmptyInstance() {
         if (instance == null) {
@@ -35,8 +35,8 @@ public class SDocumentFactoryEmpty extends SDocumentFactory {
     }
 
     @Override
-    public RefSDocumentFactory getDocumentFactoryRef() {
-        return new RefEmptySDocumentFactory();
+    protected RefSDocumentFactory createDocumentFactoryRef() {
+        return new RefEmptySDocumentFactory(this);
     }
 
     @Override
@@ -49,6 +49,10 @@ public class SDocumentFactoryEmpty extends SDocumentFactory {
     }
 
     private static final class RefEmptySDocumentFactory extends RefSDocumentFactory {
+
+        public RefEmptySDocumentFactory(SDocumentFactoryEmpty factory) {
+            super(factory);
+        }
 
         @Override
         protected SDocumentFactory retrieve() {
