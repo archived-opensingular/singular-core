@@ -106,4 +106,8 @@ public class SingularPredicates {
         return i -> Value.of(i, type) == null || Boolean.FALSE.equals(Value.of(i, type));
     }
 
+    public static Predicate<SInstance> typeValueIsTrueAndNotNull(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
+        return i -> Value.of(i, type) != null &&  Boolean.TRUE.equals(Value.of(i, type));
+    }
+
 }
