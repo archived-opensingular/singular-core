@@ -295,13 +295,15 @@ public abstract class SInstance implements SAttributeEnabled {
         final RI rootInstance = (RI) this;
         final RT rootType = (RT) rootInstance.getType();
         final TT targetType = targetTypeFunction.apply(rootType);
-        if (rootType == targetType) {
+
+        if (!STypes.listAscendants(targetType, true).contains(rootType))
+            throw new NoSuchElementException();
+        else if (rootType == targetType)
             return Optional.of((TI) rootInstance);
-        } else if (rootInstance instanceof SIComposite) {
+        else if (rootInstance instanceof SIComposite)
             return ((SIComposite) rootInstance).findDescendant(targetType);
-        } else {
+        else
             return Optional.empty();
-        }
     }
 
 

@@ -112,9 +112,15 @@ public class TestSInstance_getValue extends TestCaseForm {
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void test_invalid_target_type() {
+    public void test_invalid_target_type_get() {
         SIComposite form = myPackage.form.newInstance();
         form.getValue(MyTypeForm.class, t -> myPackage.resolveType(STypeDate.class));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void test_invalid_target_type_find() {
+        SIComposite form = myPackage.form.newInstance();
+        form.findValue(MyTypeForm.class, t -> myPackage.resolveType(STypeDate.class));
     }
 
     ///////////////////////////////////////////////////////////////////////////
