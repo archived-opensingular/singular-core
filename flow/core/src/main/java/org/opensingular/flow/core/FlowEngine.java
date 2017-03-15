@@ -17,7 +17,16 @@
 package org.opensingular.flow.core;
 
 import com.google.common.base.Joiner;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarDefinition;
@@ -219,7 +228,7 @@ class FlowEngine {
             for (VarInstance variavel : paramIn) {
                 String ref = variavel.getRef();
                 if (instancia.getProcessDefinition().getVariables().contains(ref)) {
-                    instancia.setVariavel(ref, variavel.getValue());
+                    instancia.setVariable(ref, variavel.getValue());
                 }
             }
         }

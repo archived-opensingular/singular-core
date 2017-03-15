@@ -32,7 +32,7 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -94,7 +94,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
         singularFormPanel.setInstanceCreator(this::createInstance);
 
-        SingularForm<?> form = new SingularForm<>("save-form");
+        SingularFormWicket<?> form = new SingularFormWicket<>("save-form");
         form.setMultiPart(true);
         form.setFileMaxSize(Bytes.MAX);
         form.setMaxSize(Bytes.MAX);

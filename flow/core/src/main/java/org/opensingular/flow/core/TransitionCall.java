@@ -58,7 +58,7 @@ public interface TransitionCall {
      * transição.
      */
     public default TransitionCall setValor(String ref, Object value) {
-        vars().setValor(ref, value);
+        vars().setValue(ref, value);
         return this;
     }
 

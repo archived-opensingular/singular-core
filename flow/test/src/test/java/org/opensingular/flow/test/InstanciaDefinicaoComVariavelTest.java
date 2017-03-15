@@ -1,17 +1,17 @@
 package org.opensingular.flow.test;
 
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.test.definicao.DefinicaoComVariaveis;
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
-import org.opensingular.flow.persistence.entity.VariableTypeInstance;
-import org.opensingular.flow.test.support.TestSupport;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
+import org.opensingular.flow.persistence.entity.VariableTypeInstance;
+import org.opensingular.flow.test.definicao.DefinicaoComVariaveis;
+import org.opensingular.flow.test.support.TestSupport;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,8 +32,8 @@ public abstract class InstanciaDefinicaoComVariavelTest extends TestSupport {
     public void teste1UsoDeVariaveis() {
         ProcessInstance pi = new DefinicaoComVariaveis().newInstance();
         pi.start();
-        String nome = pi.getValorVariavel("nome");
-        BigDecimal qualquerCoisa = pi.getValorVariavel("qualquerCoisa");
+        String nome = pi.getVariableValue("nome");
+        BigDecimal qualquerCoisa = pi.getVariableValue("qualquerCoisa");
         assertEquals(nome, DefinicaoComVariaveis.STRING_USADA_NO_TESTE);
         assertEquals(qualquerCoisa, DefinicaoComVariaveis.BIGDECIMAL_USADO_NO_TESTE);
     }

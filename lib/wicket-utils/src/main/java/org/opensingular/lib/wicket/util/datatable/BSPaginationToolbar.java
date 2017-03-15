@@ -24,7 +24,6 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class BSPaginationToolbar extends AbstractToolbar {
 
-    private BSPaginationPanel pagination;
     private WebMarkupContainer paginator;
     private WebMarkupContainer itensPerPageSelector;
     private Long initialRowsPerPage;
@@ -32,9 +31,9 @@ public class BSPaginationToolbar extends AbstractToolbar {
     public BSPaginationToolbar(DataTable<?, ?> table) {
         super(table);
         paginator = new WebMarkupContainer("paginator");
-        pagination = newPagination("pagination", table);
+        BSPaginationPanel pagination = newPagination("pagination", table);
         add(paginator);
-        paginator.add(this.pagination);
+        paginator.add(pagination);
         itensPerPageSelector = $b.addAjaxUpdate(
                 new BSItemsPerPageDropDown("itemsPerPage", getTable()),
                 (a, c) -> a.add(getTable()))
