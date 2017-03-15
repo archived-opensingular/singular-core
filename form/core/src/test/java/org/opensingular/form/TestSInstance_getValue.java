@@ -96,7 +96,7 @@ public class TestSInstance_getValue extends TestCaseForm {
         assertEquals("ABC", str.getValue(STypeString.class, t1 -> t1));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = SingularInvalidFieldTypeException.class)
     public void test_sibling_type_getValue() {
         MyTypeForm myForm = myPackage.resolveType(MyTypeForm.class);
         SIComposite str = myForm.homeAddress.newInstance();
@@ -105,19 +105,19 @@ public class TestSInstance_getValue extends TestCaseForm {
         assertNull(value);
     }
 
-    @Test(expected = ClassCastException.class)
+    @Test(expected = SingularInvalidTypeException.class)
     public void test_wrong_root_type() {
         SIComposite form = myPackage.form.newInstance();
         form.getValue(MyTypeAddress.class, t -> t.city.name);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = SingularInvalidFieldTypeException.class)
     public void test_invalid_target_type_get() {
         SIComposite form = myPackage.form.newInstance();
         form.getValue(MyTypeForm.class, t -> myPackage.resolveType(STypeDate.class));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = SingularInvalidFieldTypeException.class)
     public void test_invalid_target_type_find() {
         SIComposite form = myPackage.form.newInstance();
         form.findValue(MyTypeForm.class, t -> myPackage.resolveType(STypeDate.class));
