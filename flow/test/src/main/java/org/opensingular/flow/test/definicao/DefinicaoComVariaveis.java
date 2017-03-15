@@ -77,14 +77,14 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
     }
 
     public void setVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-        instancia.setVariavel("nome", STRING_USADA_NO_TESTE);
-        instancia.setVariavel("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
+        instancia.setVariable("nome", STRING_USADA_NO_TESTE);
+        instancia.setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
 
         instancia.saveEntity();
     }
 
     public void printVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-        System.out.println("########### nome          #####>" + instancia.getValorVariavel("nome"));
-        System.out.println("########### qualquerCoisa #####>" + instancia.getValorVariavel("qualquerCoisa"));
+        System.out.println("########### nome          #####>" + instancia.getVariableValue("nome"));
+        System.out.println("########### qualquerCoisa #####>" + instancia.getVariableValue("qualquerCoisa"));
     }
 }

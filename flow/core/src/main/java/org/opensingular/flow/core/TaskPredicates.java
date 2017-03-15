@@ -16,16 +16,58 @@
 
 package org.opensingular.flow.core;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.opensingular.flow.core.builder.ITaskDefinition;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class TaskPredicates {
 
     private TaskPredicates() {}
+
+
+    /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
+    @Nonnull
+    public static Predicate<TaskInstance> simpleTaskType(@Nonnull ITaskDefinition taskRef) {
+        Objects.requireNonNull(taskRef);
+        return simpleTaskType(taskRef.getKey());
+    }
+
+    /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla).*/
+    @Nonnull
+    static Predicate<TaskInstance> simpleTaskType(@Nonnull String abbreviation) {
+        Objects.requireNonNull(abbreviation);
+        return t -> t.getAbbreviation().equalsIgnoreCase(abbreviation);
+    }
+
+    /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
+    @Nonnull
+    public static Predicate<TaskInstance> simpleTaskType(@Nonnull MTask<?> tipo) {
+        Objects.requireNonNull(tipo);
+        return simpleTaskType(tipo.getAbbreviation());
+    }
+
+    @Nonnull
+    public static Predicate<TaskInstance> simpleTaskType(@Nonnull ITaskDefinition... taskTypes) {
+        if (taskTypes.length == 1) {
+            return simpleTaskType(taskTypes[0]);
+        }
+        Set<String> keys = Stream.of(taskTypes).map(ITaskDefinition::getKey).collect(ImmutableSet.toImmutableSet());
+        return t -> keys.contains(t.getAbbreviation());
+    }
+
+    /** Cria um predicado que retorna as tarefas que são do tipo fim. */
+    public static Predicate<TaskInstance> simpleFinished() {
+        return t -> t.isFinished();
+    }
 
     public static ITaskPredicate disabledCreator() {
         return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !Flow.canBeAllocated(taskInstance.getProcessInstance().getUserCreator()));

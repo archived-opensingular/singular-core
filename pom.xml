@@ -42,7 +42,7 @@
         <module>flow</module>
         <module>form</module>
 		<module>flow-form</module>
-        <module>lib</module>	
+        <module>lib</module>
         <module>resources</module>
         <module>ws</module>
     </modules>
@@ -217,7 +217,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>21.0</version>
         </dependency>
 
         <dependency>
@@ -271,7 +271,8 @@
         <url>${project.scm.url}</url>
         <connection>${project.scm.connection}</connection>
         <developerConnection>${project.scm.developerConnection}</developerConnection>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <profiles>
         <profile>
@@ -317,12 +318,6 @@
                     </plugin>
                 </plugins>
             </build>
-
-            <properties>
-                <project.scm.url>https://github.com/opensingular/singular-core/tree/master</project.scm.url>
-                <project.scm.connection>scm:git:https://github.com/opensingular/singular-core.git</project.scm.connection>
-                <project.scm.developerConnection>scm:git:https://github.com/opensingular/singular-core.git</project.scm.developerConnection>
-            </properties>
         </profile>
 
         <profile>
@@ -529,8 +524,8 @@
         <sonar.issue.ignore.multicriteria.s49.resourceKey>**/SingularIOUtils.java</sonar.issue.ignore.multicriteria.s49.resourceKey>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
-        <project.scm.connection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.developerConnection>
+        <project.scm.connection>scm:git:http://10.0.0.22/SINGULAR/singular-core.git</project.scm.connection>
+        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/SINGULAR/singular-core.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>

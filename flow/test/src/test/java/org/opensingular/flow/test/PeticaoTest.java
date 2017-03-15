@@ -1,10 +1,18 @@
 package org.opensingular.flow.test;
 
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.ExecuteWaitingTasksJob;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
@@ -118,7 +126,7 @@ public abstract class PeticaoTest extends TestSupport {
 //        ip.executeTransition(Peticao.APROVAR_TECNICO);
 //
 //        assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
-//        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
+//        assertNull("Tarefa não deveria ter uma data de fim", ip.getTaskNewer().getEndDate());
 //    }
 
     @Test
