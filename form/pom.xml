@@ -17,8 +17,6 @@
         <module>core</module>
         <module>service</module>
         <module>wicket</module>
-        <module>ui-showcase</module>
-        <module>form-samples</module>
     </modules>
 
 </project>

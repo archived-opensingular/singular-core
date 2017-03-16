@@ -36,7 +36,7 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean, Serializable {
+public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
 

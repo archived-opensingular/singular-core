@@ -226,7 +226,9 @@ public abstract class SInstance implements SAttributeEnabled {
                     Class<RT> rootTypeClass,
                     IFunction<RT, TT> targetTypeFunction) {
 
-        return (VAL) getField(rootTypeClass, targetTypeFunction).getValue();
+        return (VAL) findField(rootTypeClass, targetTypeFunction)
+                .map(it -> it.getValue())
+                .orElse(null);
     }
 
     /**
@@ -292,16 +294,21 @@ public abstract class SInstance implements SAttributeEnabled {
                     Class<RT> rootTypeClass,
                     IFunction<RT, TT> targetTypeFunction) {
 
+        if (!rootTypeClass.isAssignableFrom(this.getType().getClass()))
+            throw new SingularInvalidTypeException(this, rootTypeClass);
+;
         final RI rootInstance = (RI) this;
         final RT rootType = (RT) rootInstance.getType();
         final TT targetType = targetTypeFunction.apply(rootType);
-        if (rootType == targetType) {
+
+        if (!STypes.listAscendants(targetType, true).contains(rootType))
+            throw new SingularInvalidFieldTypeException(rootType, targetType);
+        else if (rootType == targetType)
             return Optional.of((TI) rootInstance);
-        } else if (rootInstance instanceof SIComposite) {
+        else if (rootInstance instanceof SIComposite)
             return ((SIComposite) rootInstance).findDescendant(targetType);
-        } else {
+        else
             return Optional.empty();
-        }
     }
 
 
