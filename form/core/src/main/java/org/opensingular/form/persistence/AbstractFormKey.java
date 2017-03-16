@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractFormKey<T extends Serializable> implements FormKey {
 
+    @Nonnull
     private final T value;
 
     public AbstractFormKey(String persistenceString) {
