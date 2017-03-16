@@ -24,7 +24,14 @@ import java.util.Optional;
 
 
 @SInfoType(name = "STypePersistentComposite", spackage = SPackageFormPersistence.class)
-public class STypePersistentComposite extends STypeComposite<SIComposite> {
+public class STypePersistentComposite<T extends SIComposite> extends STypeComposite<T> {
+
+    public STypePersistentComposite() {
+    }
+
+    public STypePersistentComposite(Class<T> instanceClass) {
+        super(instanceClass);
+    }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
