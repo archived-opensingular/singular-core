@@ -63,6 +63,10 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         setTreeProvider(treeProvider);
     }
 
+    public static <T> BSDataTableBuilder<T, ?, ?> create() {
+        return new BSDataTableBuilder<>();
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <C extends IColumn<T, S>> BSDataTableBuilder<T, S, C> appendColumn(C column) {
         ((List) columns).add(column);
