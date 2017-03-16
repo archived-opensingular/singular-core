@@ -66,9 +66,17 @@ public class TestConversorToolkit {
     @Test
     public void testIntFromObject() {
         Double doubleVal = 123.12;
-        int value = ConversorToolkit.getInt(doubleVal);
+        Integer value = ConversorToolkit.getInt(doubleVal);
 
-        Assert.assertEquals(value, 123);
+        Assert.assertEquals(value, (Integer) 123);
+
+        Object test = "123";
+        value = ConversorToolkit.getInt(test);
+        Assert.assertEquals(value, (Integer) 123);
+
+        test = null;
+        value = ConversorToolkit.getInt(test);
+        Assert.assertNull(value);
     }
 
     @Test
@@ -90,6 +98,17 @@ public class TestConversorToolkit {
     }
 
     @Test
+    public void testGetDateFromDataAndFromHora() throws ParseException {
+        final String dateString = "01/01/2017";
+
+//        Date data = ConversorToolkit.getDateFromData(dateString);
+
+//        Calendar calendar = ConversorToolkit.getCalendar(dateString);
+//        Date dateFromHora = ConversorToolkit.getDateFromHora(Long.toString(calendar.getTimeInMillis()));
+
+    }
+
+    @Test
     public void testPrintDataHora(){
         final String stringDate = "01/01/2017";
         Calendar calendar = ConversorToolkit.getCalendar(stringDate);
@@ -98,16 +117,31 @@ public class TestConversorToolkit {
         String printDataHora = ConversorToolkit.printDataHora(date);
         String printDataHoraShort = ConversorToolkit.printDataHoraShort(date);
         String printDataHoraShortAbreviada = ConversorToolkit.printDataHoraShortAbreviada(date);
+
         String printDate = ConversorToolkit.printDate(date);
         String printDateShort = ConversorToolkit.printDateShort(date);
-        String printDateNotNull = ConversorToolkit.printDateNotNull(null);
+        String printDateShortNull = ConversorToolkit.printDateShort(null);
+
+        String printDateNull = ConversorToolkit.printDateNotNull(null);
+        String printDateNotNull = ConversorToolkit.printDateNotNull(date);
+
+        String printDateNullWithFormat = ConversorToolkit.printDateNotNull(null, "short");
+        String printDateNotNullWithFormat = ConversorToolkit.printDateNotNull(date, "short");
 
         Assert.assertEquals(printDataHora, "01/01/2017 00:00:00");
         Assert.assertEquals(printDataHoraShort, "01/01/17 00:00");
         Assert.assertEquals(printDataHoraShortAbreviada, "01/01/17");
+
         Assert.assertEquals(printDate, "01/01/2017");
         Assert.assertEquals(printDateShort, "01/01/17");
-        Assert.assertEquals(printDateNotNull, "");
+        Assert.assertNull(printDateShortNull);
+
+        Assert.assertEquals(printDateNull, "");
+        Assert.assertEquals(printDateNotNull, "01/01/2017");
+
+        Assert.assertEquals(printDateNullWithFormat, "");
+        Assert.assertEquals(printDateNotNullWithFormat, "01/01/17");
+
     }
 
     @Test
@@ -117,13 +151,27 @@ public class TestConversorToolkit {
 
         Assert.assertEquals(result, "123,45");
 
-        String numberDoublePrimitive = ConversorToolkit.printNumber(123.450, 2);
+        double doubleValue = 123.450;
+        String numberDoublePrimitive = ConversorToolkit.printNumber(doubleValue);
+        String numberDoublePrimitiveWithDecimal = ConversorToolkit.printNumber(doubleValue, 2);
+        String numberDoublePrimitiveWithDecimalNull = ConversorToolkit.printNumber(null, 2);
         String numberDouble = ConversorToolkit.printNumber(new Double(123.45));
         String numberDoubleNull = ConversorToolkit.printNumber(null);
 
         Assert.assertEquals(numberDoublePrimitive, "123,45");
+        Assert.assertEquals(numberDoublePrimitiveWithDecimal, "123,45");
+        Assert.assertEquals(numberDoublePrimitiveWithDecimalNull, "");
         Assert.assertEquals(numberDouble, "123,45");
         Assert.assertNull(numberDoubleNull);
+    }
+
+    @Test
+    public void testQuebrarLinhasHtml(){
+        final String msgToHtml = "Bom dia,\n estou aqui testando a quebra de linha.\n Muito obrigado pelo apoio.\n Até.";
+
+        String stringConvertida = ConversorToolkit.quebrarLinhasHTML(msgToHtml);
+
+        Assert.assertFalse(stringConvertida.contains("\n"));
     }
 
 }

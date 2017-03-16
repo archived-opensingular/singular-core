@@ -932,49 +932,4 @@ public class TestMElement {
         Assert.assertEquals(0, dataWithNullOption.compareTo(calendarDay3.getTime()));
     }
 
-    @Test
-    public void convertToBase64(){// TODO
-        String stringTest = "Valores para testar";
-
-        MElement mElement = MElement.newInstance("mElement");
-        mElement.addElement("testValue", stringTest);
-
-        byte[] bytesMElement = mElement.getByteBASE64("testValue");
-        byte[] bytesJavaDefault = java.util.Base64.getEncoder().encode(stringTest.getBytes());
-
-        Assert.assertArrayEquals(bytesMElement, bytesJavaDefault);
-
-//        Base64.getDecoder().
-    }
-
-    @Test
-    public void convertFromBase64ToString(){ // TODO
-        String stringTest = "Valores para testar";
-
-        MElement mElement = MElement.newInstance("mElement");
-        mElement.addElement("testValue", stringTest);
-
-        byte[] bytesMElement = mElement.getByteBASE64("testValue");
-        byte[] bytesJavaDefault = java.util.Base64.getEncoder().encode(stringTest.getBytes());
-
-        String resultado = MElementWrapper.toBASE64(bytesMElement);
-
-
-
-        String resultMElement = Base64.getEncoder().encodeToString(bytesMElement);
-        String resultDefault = Base64.getEncoder().encodeToString(bytesJavaDefault);
-
-        assertEquals(resultDefault, resultMElement);
-    }
-
-    @Test
-    public void teste(){
-        String stringTest = "Valores para testar";
-
-        String resultMElement = MElementWrapper.toBASE64(stringTest.getBytes());
-        String resultDefault = Base64.getEncoder().encodeToString(stringTest.getBytes());
-
-
-        assertEquals(resultDefault, resultMElement);
-    }
 }

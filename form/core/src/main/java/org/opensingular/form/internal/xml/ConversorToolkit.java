@@ -178,7 +178,7 @@ public final class ConversorToolkit {
         if (valor == null) {
             throw new NumberFormatException("Valor null");
         }
-        if (valor.equals("-")) {
+        if ("-".equals(valor)) {
             return 0;
         }
         try {
