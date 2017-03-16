@@ -57,6 +57,8 @@ public interface SingularProperties {
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
 
+//    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
+
     static SingularProperties get() {
         return SingularPropertiesImpl.get();
     }
