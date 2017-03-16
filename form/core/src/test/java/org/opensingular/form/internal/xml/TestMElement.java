@@ -16,6 +16,7 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,8 +25,9 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.sql.Timestamp;
-import java.util.GregorianCalendar;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.Base64;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
@@ -217,26 +219,15 @@ public class TestMElement {
     }
 
     /**
-     * Verifica ser os métodos de set e get para java.util.Date, java.sql.Date,
-     * java.sql.Timestamp e GregorianCalendar funcionan.
+     * Verifica se os métodos de set e get para java.util.Date e GregorianCalendar funcionam.
      */
     @Test
     public void testSetGetDatas() {
         GregorianCalendar agoraGc = new GregorianCalendar(2001, 2, 31, 23, 59, 49);
         agoraGc.set(GregorianCalendar.MILLISECOND, 123);
-        java.sql.Timestamp agoraTS = new java.sql.Timestamp(agoraGc.getTimeInMillis());
-        agoraTS.setNanos(123456780);
-        java.sql.Date agoraDateSQL = new java.sql.Date(agoraGc.getTimeInMillis());
         java.util.Date agoraDate = new java.util.Date(agoraGc.getTimeInMillis());
 
         MElement xml;
-
-        //Teste ler e escrever timestampo
-        xml = MElement.newInstance("T");
-        xml.addElement("V1", agoraTS);
-
-        assertEquals("string timestamp", xml.getValor("V1"), "2001-03-31T23:59:49.12345678");
-        assertEquals("timestamp gravado lido", xml.getTimestamp("V1"), agoraTS);
 
         //Teste ler e escrever Calendar
         xml = MElement.newInstance("T");
@@ -252,44 +243,11 @@ public class TestMElement {
         assertEquals("string util.date errada", xml.getValor("V"), "2001-03-31T23:59:49.123");
         assertEquals("util.date gravado lido", xml.getDate("V"), agoraDate);
 
-        //Teste ler e escrever java.sql.Date
-        xml = MElement.newInstance("T");
-        xml.addElement("V", agoraDateSQL);
-
-        assertEquals("string sql.date errada", xml.getValor("V"), "2001-03-31T23:59:49.123");
-        assertEquals("sql.date gravado lido", xml.getDateSQL("V"), agoraDateSQL);
-
-        //Teste ler e escrever java.sql.Date (apenas dia)
-        agoraGc = new GregorianCalendar(2001, 0, 31);
-        agoraDateSQL = new java.sql.Date(agoraGc.getTimeInMillis());
-        xml = MElement.newInstance("T");
-        xml.addElement("V", agoraDateSQL);
-
-        assertEquals("string sql.date errada", xml.getValor("V"), "2001-01-31");
-        assertEquals("sql.date gravado lido", xml.getDateSQL("V"), agoraDateSQL);
-
-        //Teste ler e escrever java.sql.Date (apenas hora)
-        agoraGc = new GregorianCalendar(2001, 0, 31, 10, 41, 32);
-        agoraDateSQL = new java.sql.Date(agoraGc.getTimeInMillis());
-        xml = MElement.newInstance("T");
-        xml.addElement("V", agoraDateSQL);
-
-        assertEquals("string sql.date errada", xml.getValor("V"), "2001-01-31T10:41:32");
-        assertEquals("sql.date gravado lido", xml.getDateSQL("V"), agoraDateSQL);
-
-        //Teste ler e escrever java.sql.Date (apenas hora)
-        xml.addElement("V2", "2001-01-31 10:41:32");
-        assertEquals("Leitura com espaço", xml.getDateSQL("V2"), agoraDateSQL);
-
         //Testa adicionar data como string
         xml.addDate("V3", "08/01/2003");
         assertEquals("data errada", xml.getValor("V3"), "2003-01-08");
 
         //Testa formatação
-        assertEquals("formatação errada", xml.formatDate("V2"), "31/01/2001");
-        assertEquals("formatação errada", xml.formatDate("V2", "short"), "31/01/01");
-        assertEquals("formatação errada", xml.formatDate("V2", "medium"), "31/01/2001");
-
         assertEquals("formatação errada", xml.formatDate("V3"), "08/01/2003");
         assertEquals("formatação errada", xml.formatDate("V3", "short"), "08/01/03");
         assertEquals("formatação errada", xml.formatDate("V3", "medium"), "08/01/2003");
@@ -303,10 +261,6 @@ public class TestMElement {
     public void testGetFormatado() {
         GregorianCalendar agoraGc = new GregorianCalendar(2001, 2, 31, 23, 59, 49);
         agoraGc.set(GregorianCalendar.MILLISECOND, 123);
-        java.sql.Timestamp agoraTS = new java.sql.Timestamp(agoraGc.getTimeInMillis());
-        agoraTS.setNanos(123456780);
-        //java.sql.Date agoraDateSQL = new
-        // java.sql.Date(agoraGc.getTimeInMillis());
         //java.util.Date agoraDate = new
         // java.util.Date(agoraGc.getTimeInMillis());
 
@@ -314,21 +268,14 @@ public class TestMElement {
 
         //getDateFormatado
         xml = MElement.newInstance("T");
-        xml.addElement("V", agoraTS);
         xml.addElement("V2", 12312);
         xml.addElement("V3", 12312.123);
 
-        //System.out.println(xml.getValor("V"));
-        //System.out.println(xml.getDate("V"));
-        //System.out.println(xml.getFormatadoDate("V"));
-        //System.out.println(xml.getFormatadoHora("V"));
         //System.out.println(xml.getFormatadoNumber("V2", 0));
         //System.out.println(xml.getFormatadoNumber("V2", 2));
         //System.out.println(xml.getFormatadoNumber("V3", 0));
         //System.out.println(xml.getFormatadoNumber("V3", 2));
 
-        assertEquals(xml.formatDate("V"), "31/03/2001");
-        assertEquals(xml.formatHour("V"), "23:59:49");
         assertEquals(xml.formatNumber("V2", 0), "12.312");
         assertEquals(xml.formatNumber("V2", 2), "12.312,00");
         assertEquals(xml.formatNumber("V3", 0), "12.312");
@@ -402,12 +349,6 @@ public class TestMElement {
         }
         try {
             raiz.addElement("campo", (String) null);
-            fail("Deveria ter ocorrido um erro em campo com valor null");
-        } catch (IllegalArgumentException e) {
-            //ok
-        }
-        try {
-            raiz.addElement("campo", (Timestamp) null);
             fail("Deveria ter ocorrido um erro em campo com valor null");
         } catch (IllegalArgumentException e) {
             //ok
@@ -886,4 +827,154 @@ public class TestMElement {
         isIgual(parsed, original);
     }
 
+    @Test
+    public void addDiferentTypesOfElements(){
+        Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
+
+        MElement raiz = MElement.newInstance("raiz");
+
+        raiz.addElement("bytesOfString", "valor".getBytes());
+        raiz.addElement("calendar", calendar);
+        raiz.addElement("date", calendar.getTime());
+        raiz.addElement("longValue", (long)123);
+        raiz.addElement("doubles", 123.45);
+        raiz.addElement("simpleString", "valores");
+        raiz.addElement("outraString", "valor", "val");
+        raiz.addElement("doublePrecision", 123456.700, 1);
+
+//        byte[] bytesOfStrings = raiz.getByteBASE64("bytesOfString");
+//        Assert.assertEquals(bytesOfStrings, MElementWrapper.fromBASE64("valor"));
+
+        GregorianCalendar calendarMElement = raiz.getCalendar("calendar");
+        Assert.assertEquals(0, calendar.compareTo(calendarMElement));
+
+        Date date = raiz.getDate("date");
+        Assert.assertEquals(0, date.compareTo(calendar.getTime()));
+
+        long longValue = raiz.getLong("longValue");
+        Assert.assertEquals(longValue, (long)123);
+
+        double doubles = raiz.getDouble("doubles");
+        Assert.assertEquals(doubles, 123.45, 0);
+
+        String simpleString = raiz.getValor("simpleString");
+        Assert.assertEquals(simpleString, "valores");
+
+        String outraString = raiz.getValor("outraString");
+        Assert.assertEquals(outraString, "valor");
+
+        double doublePrecision = raiz.getDouble("doublePrecision");
+        Assert.assertEquals(doublePrecision, 123456.7, 0);
+
+
+        raiz.addElement("dateIgnoringDefault", calendar.getTime(), calendar.getTime());
+        Date dateIgnoringDefault = raiz.getDate("dateIgnoringDefault");
+        Assert.assertEquals(0, dateIgnoringDefault.compareTo(calendar.getTime()));
+
+        raiz.addElement("dateUsingDefault", null, calendar.getTime());
+        Date dateUsingDefault = raiz.getDate("dateUsingDefault");
+        Assert.assertEquals(0, dateUsingDefault.compareTo(calendar.getTime()));
+
+        Date dataNull = null;
+        raiz.addElement("dateUsingDefaultWithAllNull", null, dataNull);
+        Date dateUsingDefaultWithAllNull = raiz.getDate("dateUsingDefaultWithAllNull");
+        Assert.assertNull(dateUsingDefaultWithAllNull);
+    }
+
+    @Test
+    public void addBoolean(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addBoolean("boolean", true);
+
+        boolean aBoolean = raiz.getBoolean("boolean");
+        Assert.assertTrue(aBoolean);
+    }
+
+    @Test
+    public void addInt(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "123");
+        raiz.addInt("intDefault", "456", "789");
+        raiz.addInt("intDefaultNull", null, "852");
+        raiz.addInt("intWithObject", "789", new Integer(741));
+        raiz.addInt("intWithObjectNull", null, new Integer(741));
+
+        int inteiro = raiz.getInt("inteiro");
+        int intDefault = raiz.getInt("intDefault");
+        int intDefaultNull = raiz.getInt("intDefaultNull");
+        int intWithObject = raiz.getInt("intWithObject");
+        int intWithObjectNull = raiz.getInt("intWithObjectNull");
+
+        Assert.assertEquals(inteiro, 123);
+        Assert.assertEquals(intDefault, 456);
+        Assert.assertEquals(intDefaultNull, 852);
+        Assert.assertEquals(intWithObject, 789);
+        Assert.assertEquals(intWithObjectNull, 741);
+    }
+
+    @Test
+    public void addDate(){
+        Calendar calendarDay1 = ConversorToolkit.getCalendar("01/01/2017");
+        Calendar calendarDay2 = ConversorToolkit.getCalendar("02/01/2017");
+        Calendar calendarDay3 = ConversorToolkit.getCalendar("03/01/2017");
+
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addDate("dataSimple", "01/01/2017");
+        raiz.addDate("dataWithDefaultOption", "02/01/2017", "03/01/2017");
+        raiz.addDate("dataWithNullOption", null, "03/01/2017");
+
+        Date dataSimple = raiz.getDate("dataSimple");
+        Date dataWithDefaultOption = raiz.getDate("dataWithDefaultOption");
+        Date dataWithNullOption = raiz.getDate("dataWithNullOption");
+
+        Assert.assertEquals(0, dataSimple.compareTo(calendarDay1.getTime()));
+        Assert.assertEquals(0, dataWithDefaultOption.compareTo(calendarDay2.getTime()));
+        Assert.assertEquals(0, dataWithNullOption.compareTo(calendarDay3.getTime()));
+    }
+
+    @Test
+    public void convertToBase64(){// TODO
+        String stringTest = "Valores para testar";
+
+        MElement mElement = MElement.newInstance("mElement");
+        mElement.addElement("testValue", stringTest);
+
+        byte[] bytesMElement = mElement.getByteBASE64("testValue");
+        byte[] bytesJavaDefault = java.util.Base64.getEncoder().encode(stringTest.getBytes());
+
+        Assert.assertArrayEquals(bytesMElement, bytesJavaDefault);
+
+//        Base64.getDecoder().
+    }
+
+    @Test
+    public void convertFromBase64ToString(){ // TODO
+        String stringTest = "Valores para testar";
+
+        MElement mElement = MElement.newInstance("mElement");
+        mElement.addElement("testValue", stringTest);
+
+        byte[] bytesMElement = mElement.getByteBASE64("testValue");
+        byte[] bytesJavaDefault = java.util.Base64.getEncoder().encode(stringTest.getBytes());
+
+        String resultado = MElementWrapper.toBASE64(bytesMElement);
+
+
+
+        String resultMElement = Base64.getEncoder().encodeToString(bytesMElement);
+        String resultDefault = Base64.getEncoder().encodeToString(bytesJavaDefault);
+
+        assertEquals(resultDefault, resultMElement);
+    }
+
+    @Test
+    public void teste(){
+        String stringTest = "Valores para testar";
+
+        String resultMElement = MElementWrapper.toBASE64(stringTest.getBytes());
+        String resultDefault = Base64.getEncoder().encodeToString(stringTest.getBytes());
+
+
+        assertEquals(resultDefault, resultMElement);
+    }
 }

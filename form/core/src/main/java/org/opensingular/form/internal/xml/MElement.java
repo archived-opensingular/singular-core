@@ -346,7 +346,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona o elemento como o valor informado como objeto fazendo as devidas
      * converções se necessário. Trata os seguintes objetos de forma especial:
-     * Integer, Long, Double, java.util.Date, java.sql.Date, java.sql.Timestamp.
+     * Integer, Long, Double, java.util.Date.
      *
      * @param nome do elemento a ser criado
      * @param o Objeto a ser convertido para texto
@@ -645,40 +645,6 @@ public abstract class MElement implements Element, Serializable {
      * @return O MElement resultado.
      */
     public final MElement addElement(String nome, java.util.Date valor, java.util.Date valorDefault) {
-        if (valor != null) {
-            return addElement(nome, ConversorDataISO8601.format(valor));
-        } else if (valorDefault != null) {
-            return addElement(nome, ConversorDataISO8601.format(valorDefault));
-        }
-        return null;
-    }
-
-    /**
-     * Adiciona um element como o nome e a data informada no formato ISO 8601.
-     *
-     * @param nome do MElement a ser criado
-     * @param valor Se for null, um exception é disparada.
-     * @return O MElement resultado.
-     */
-    public final MElement addElement(String nome, java.sql.Date valor) {
-        if (valor == null) {
-            return addElement(nome, (String) null);
-        } else {
-            return addElement(nome, ConversorDataISO8601.format(valor));
-        }
-    }
-
-    /**
-     * Adiciona um no como o nome informado e com o valor informado ou com o
-     * default na ausencia do primeiro. Se o default também for null, então o no
-     * não é adicionado.
-     *
-     * @param nome do MElement a ser criado
-     * @param valor -
-     * @param valorDefault a ser utilizado se valor==null
-     * @return O MElement resultado.
-     */
-    public final MElement addElement(String nome, java.sql.Date valor, java.sql.Date valorDefault) {
         if (valor != null) {
             return addElement(nome, ConversorDataISO8601.format(valor));
         } else if (valorDefault != null) {
