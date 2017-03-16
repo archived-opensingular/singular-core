@@ -25,9 +25,21 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.persistence.*;
-import org.opensingular.form.persistence.dao.*;
-import org.opensingular.form.persistence.entity.*;
+import org.opensingular.form.persistence.AbstractBasicFormPersistence;
+import org.opensingular.form.persistence.AnnotationKey;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyLong;
+import org.opensingular.form.persistence.dao.FormAnnotationDAO;
+import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
+import org.opensingular.form.persistence.dao.FormDAO;
+import org.opensingular.form.persistence.dao.FormTypeDAO;
+import org.opensingular.form.persistence.dao.FormVersionDAO;
+import org.opensingular.form.persistence.entity.FormAnnotationEntity;
+import org.opensingular.form.persistence.entity.FormAnnotationPK;
+import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
+import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormTypeEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
@@ -36,7 +48,13 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -87,7 +105,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         final IConsumer loadListener = instance.getAttributeValue(SPackageBasic.ATR_LOAD_LISTENER);
 
         loadCurrentXmlAnnotationOrEmpty(instance.getDocument(), formVersionEntity);
-        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        FormKey.set(instance, key);
 
         if (loadListener != null) {
             loadListener.accept(instance);
@@ -100,7 +118,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Nonnull
     public SInstance newTransientSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory) {
         final SInstance instance = loadSInstance(key, refType, documentFactory);
-        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
+        FormKey.set(instance, null);
         return instance;
     }
 
@@ -108,7 +126,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Nonnull
     public SInstance newTransientSInstance(@Nonnull FormKey key, @Nonnull RefType refType, @Nonnull SDocumentFactory documentFactory, @Nonnull Long versionId) {
         SInstance instance = loadSInstance(key, refType, documentFactory, versionId);
-        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, null);
+        FormKey.set(instance, null);
         return instance;
     }
 
@@ -339,7 +357,6 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     @Nonnull
     public Optional<FormEntity> findFormEntity(@Nonnull SDocument document) {
-        FormKey key = document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
-        return key == null ? Optional.empty() : Optional.of(loadFormEntity(key));
+        return FormKey.fromOpt(document).map(key -> loadFormEntity(key));
     }
 }

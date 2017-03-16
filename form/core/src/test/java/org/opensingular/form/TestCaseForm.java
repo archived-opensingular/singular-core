@@ -6,6 +6,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.io.Serializable;
@@ -155,44 +156,31 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         }
     }
 
+    @Deprecated
     public static void assertException(Runnable acao, String trechoMsgEsperada) {
-        assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
+        SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
     }
 
+    @Deprecated
     public static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
-        assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
+        SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
     }
 
+    @Deprecated
     public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
-        assertException(acao, exceptionEsperada, null, null);
+        SingularTestUtil.assertException(acao, exceptionEsperada, null, null);
     }
 
+    @Deprecated
     public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada,
             String trechoMsgEsperada) {
-        assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
+        SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
     }
 
+    @Deprecated
     public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
-        try {
-            acao.run();
-            String msg = "Não ocorreu nenhuma Exception. Era esperado " + exceptionEsperada.getSimpleName() + "'";
-            if (trechoMsgEsperada != null) {
-                msg += " com mensagem contendo '" + trechoMsgEsperada + "'";
-            }
-            if (msgFailException != null) {
-                msg += ", pois " + msgFailException;
-            }
-            fail(msg);
-        } catch (Exception e) {
-            if (exceptionEsperada.isInstance(e)) {
-                if (trechoMsgEsperada == null || (e.getMessage() != null && e.getMessage().contains(trechoMsgEsperada))) {
-                    return;
-                }
-            }
-            throw e;
-        }
-
+        SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, msgFailException);
     }
 
     public SInstance createSerializableTestInstance(Class<? extends SType<?>> typeClass) {
