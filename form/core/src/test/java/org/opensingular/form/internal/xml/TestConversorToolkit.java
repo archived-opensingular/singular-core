@@ -98,17 +98,6 @@ public class TestConversorToolkit {
     }
 
     @Test
-    public void testGetDateFromDataAndFromHora() throws ParseException {
-        final String dateString = "01/01/2017";
-
-//        Date data = ConversorToolkit.getDateFromData(dateString);
-
-//        Calendar calendar = ConversorToolkit.getCalendar(dateString);
-//        Date dateFromHora = ConversorToolkit.getDateFromHora(Long.toString(calendar.getTimeInMillis()));
-
-    }
-
-    @Test
     public void testPrintDataHora(){
         final String stringDate = "01/01/2017";
         Calendar calendar = ConversorToolkit.getCalendar(stringDate);

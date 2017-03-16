@@ -842,9 +842,6 @@ public class TestMElement {
         raiz.addElement("outraString", "valor", "val");
         raiz.addElement("doublePrecision", 123456.700, 1);
 
-//        byte[] bytesOfStrings = raiz.getByteBASE64("bytesOfString");
-//        Assert.assertEquals(bytesOfStrings, MElementWrapper.fromBASE64("valor"));
-
         GregorianCalendar calendarMElement = raiz.getCalendar("calendar");
         Assert.assertEquals(0, calendar.compareTo(calendarMElement));
 
@@ -882,12 +879,38 @@ public class TestMElement {
     }
 
     @Test
+    public void testAddElementObjects(){
+        Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
+        MElement raiz = MElement.newInstance("raiz");
+
+        Object longObj = new Long(123456);
+        raiz.addElement("longObj", longObj);
+        Assert.assertEquals(raiz.getLong("longObj"), 123456);
+
+        Object calendarObj = calendar;
+        raiz.addElement("calendarObj", calendarObj);
+        Assert.assertEquals(0, raiz.getCalendar("calendarObj").compareTo(calendar));
+
+        Object dateObj = calendar.getTime();
+        raiz.addElement("dateObj", dateObj);
+        Assert.assertEquals(0, raiz.getDate("dateObj").compareTo((Date) dateObj));
+
+        Object stringObj = "testValue";
+        raiz.addElement("stringObj", stringObj);
+        Assert.assertEquals(raiz.getValor("stringObj"), stringObj);
+
+        raiz.addElement("stringObjDefault", stringObj, "testValue2");
+        Assert.assertEquals(raiz.getValor("stringObjDefault"), stringObj);
+    }
+
+    @Test
     public void addBoolean(){
         MElement raiz = MElement.newInstance("raiz");
-        raiz.addBoolean("boolean", true);
+        raiz.addBoolean("booleanTrue", true);
+        raiz.addBoolean("booleanFalse", false);
 
-        boolean aBoolean = raiz.getBoolean("boolean");
-        Assert.assertTrue(aBoolean);
+        Assert.assertTrue(raiz.getBoolean("booleanTrue"));
+        Assert.assertFalse(raiz.getBoolean("booleanFalse"));
     }
 
     @Test
@@ -932,4 +955,13 @@ public class TestMElement {
         Assert.assertEquals(0, dataWithNullOption.compareTo(calendarDay3.getTime()));
     }
 
+    @Test
+    public void testPutValuesOnBase64(){
+        MElement mElement = MElement.newInstance("mElement");
+        mElement.addElement("test", "elementos".getBytes());
+
+        String valorFinal = new String(mElement.getByteBASE64("test"));
+
+        assertEquals("elementos", valorFinal);
+    }
 }
