@@ -19,12 +19,23 @@ package org.opensingular.form.internal.xml;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.TypeInfo;
+import org.w3c.dom.UserDataHandler;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -307,7 +318,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         if (value == null) {
             return null;
         }
-        return Base64.encodeBytes(value);
+        return java.util.Base64.getEncoder().encodeToString(value);
     }
 
     /**
@@ -328,7 +339,23 @@ public class MElementWrapper extends MElement implements EWrapper {
         if (in == null) {
             throw new IllegalArgumentException("inputstream está null");
         }
-        return Base64.encodeFromInputStream(in);
+        return encodeFromInputStream(in);
+    }
+
+    private static String encodeFromInputStream(InputStream in){
+        BufferedReader buff = new BufferedReader(new InputStreamReader(in));
+
+        StringBuilder builder = new StringBuilder();
+        String line;
+        try {
+            while((line = buff.readLine()) != null){
+                builder.append(line+"\r\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Error encoding from the input stream");
+        }
+
+        return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes());
     }
 
     /**
@@ -341,7 +368,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         if (stringValue == null) {
             return null;
         }
-        return Base64.decode(stringValue);
+        return java.util.Base64.getDecoder().decode(stringValue);
     }
 
     /**
@@ -356,7 +383,12 @@ public class MElementWrapper extends MElement implements EWrapper {
         if (stringValue == null || out == null) {
             throw new IllegalArgumentException("parametro null");
         }
-        Base64.decodeToOutputStream(stringValue, out);
+
+        try {
+            out.write(java.util.Base64.getDecoder().decode(stringValue));
+        } catch (IOException e) {
+            System.err.println("Error decoding from the output stream");
+        }
     }
 
     /**
