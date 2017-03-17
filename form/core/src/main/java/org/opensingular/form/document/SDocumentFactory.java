@@ -24,6 +24,7 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -46,7 +47,7 @@ import java.util.Objects;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SDocumentFactory {
+public abstract class SDocumentFactory implements Serializable {
 
     private RefSDocumentFactory factoryReference;
 
