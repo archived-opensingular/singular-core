@@ -344,7 +344,7 @@ public class MElementWrapper extends MElement implements EWrapper {
     }
 
     private static String encodeFromInputStream(InputStream in){
-        BufferedReader buff = new BufferedReader(new InputStreamReader(in));
+        BufferedReader buff = new BufferedReader(new InputStreamReader(in, Charset.defaultCharset()));
 
         StringBuilder builder = new StringBuilder();
         String line;
