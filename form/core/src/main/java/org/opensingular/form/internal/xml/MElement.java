@@ -1132,21 +1132,6 @@ public abstract class MElement implements Element, Serializable {
     }
 
     /**
-     * Transforma o valor do campo para java.sql.Date. Espera um campo no
-     * formato "yyyy-mm-dd hh:mm:ss.fffffffff".
-     *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
-     * @return -
-     */
-    public final java.sql.Date getDateSQL(String xPath) {
-        String valor = getValor(xPath);
-        if (valor == null) {
-            return null;
-        }
-        return ConversorDataISO8601.getDateSQL(valor);
-    }
-
-    /**
      * Transforma o valor do campo para Calendar. Espera um campo no formato
      * "yyyy-mm-dd hh:mm:ss.fffffffff".
      *

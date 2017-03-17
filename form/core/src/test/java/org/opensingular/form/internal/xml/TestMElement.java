@@ -16,21 +16,30 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.Base64;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * JUnit para test do da classe MElement.
@@ -911,6 +920,10 @@ public class TestMElement {
 
         Assert.assertTrue(raiz.getBoolean("booleanTrue"));
         Assert.assertFalse(raiz.getBoolean("booleanFalse"));
+
+        Assert.assertTrue(raiz.getBoolean("booleanTrue", true));
+        Assert.assertFalse(raiz.getBoolean("booleanFalse", false));
+        Assert.assertFalse(raiz.getBoolean("bool", false));
     }
 
     @Test
@@ -921,18 +934,25 @@ public class TestMElement {
         raiz.addInt("intDefaultNull", null, "852");
         raiz.addInt("intWithObject", "789", new Integer(741));
         raiz.addInt("intWithObjectNull", null, new Integer(741));
+        raiz.addInt("intWithDefaultPrimitive", "123", 741);
+        raiz.addInt("intWithDefaultNullPrimitive", null, 741);
+
 
         int inteiro = raiz.getInt("inteiro");
         int intDefault = raiz.getInt("intDefault");
         int intDefaultNull = raiz.getInt("intDefaultNull");
         int intWithObject = raiz.getInt("intWithObject");
         int intWithObjectNull = raiz.getInt("intWithObjectNull");
+        int intWithDefaultPrimitive = raiz.getInt("intWithDefaultPrimitive");
+        int intWithDefaultNullPrimitive = raiz.getInt("intWithDefaultNullPrimitive");
 
         Assert.assertEquals(inteiro, 123);
         Assert.assertEquals(intDefault, 456);
         Assert.assertEquals(intDefaultNull, 852);
         Assert.assertEquals(intWithObject, 789);
         Assert.assertEquals(intWithObjectNull, 741);
+        Assert.assertEquals(intWithDefaultPrimitive, 123);
+        Assert.assertEquals(intWithDefaultNullPrimitive, 741);
     }
 
     @Test
@@ -956,12 +976,38 @@ public class TestMElement {
     }
 
     @Test
+    public void testGetWithDefaultValue(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        raiz.addInt("inteiro", "123");
+        Assert.assertEquals(123, raiz.getInt("inteiro", 456));
+        Assert.assertEquals(456, raiz.getInt("inteiroNotExist", 456));
+
+        raiz.addElement("longValue", (long)123);
+        Assert.assertEquals((long)123, raiz.getLong("longValue", 456));
+        Assert.assertEquals((long)456, raiz.getLong("longValueNotExist", 456));
+
+        raiz.addElement("doubleVal", new Double(123.45));
+        Assert.assertEquals(new Double(123.45), raiz.getDouble("doubleVal"), 0);
+        Assert.assertNull(raiz.getDoubleObject("pathNotExistent"));
+    }
+
+    @Test
     public void testPutValuesOnBase64(){
         MElement mElement = MElement.newInstance("mElement");
         mElement.addElement("test", "elementos".getBytes());
 
         String valorFinal = new String(mElement.getByteBASE64("test"));
-
         assertEquals("elementos", valorFinal);
+
+
+        String stringToTest = "Um teste com linha\r\n e outra linha.\r\n testes.";
+        InputStream inputStreamTest = IOUtils.toInputStream(stringToTest,
+                Charset.defaultCharset());
+        mElement.addElement("inputStream", inputStreamTest);
+
+        byte[] inputStreams = mElement.getByteBASE64("inputStream");
+        String result = new String(inputStreams, Charset.defaultCharset());
+        Assert.assertEquals(stringToTest, result);
     }
 }

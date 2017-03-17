@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Objects;
 
 /**
@@ -349,13 +350,16 @@ public class MElementWrapper extends MElement implements EWrapper {
         String line;
         try {
             while((line = buff.readLine()) != null){
-                builder.append(line+"\r\n");
+                builder.append(line);
+                if(buff.ready()){
+                    builder.append("\r\n");
+                }
             }
         } catch (IOException e) {
             System.err.println("Error encoding from the input stream");
         }
 
-        return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes());
+        return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(Charset.defaultCharset()));
     }
 
     /**
