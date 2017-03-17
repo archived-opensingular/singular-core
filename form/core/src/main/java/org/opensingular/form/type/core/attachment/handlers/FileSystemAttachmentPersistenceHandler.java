@@ -28,7 +28,12 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.util.TempFileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.util.Collection;
@@ -54,7 +59,8 @@ import java.util.logging.Logger;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
+public class FileSystemAttachmentPersistenceHandler
+        implements IAttachmentPersistenceHandler<FileSystemAttachmentRef>, Serializable {
 
     protected static final String INFO_SUFFIX = ".INFO";
 

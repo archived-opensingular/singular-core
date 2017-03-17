@@ -18,7 +18,9 @@ package org.opensingular.form;
 
 import org.opensingular.form.io.ServiceRefTransientValue;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -73,11 +75,14 @@ public interface RefService<T> extends Serializable, Supplier<T> {
     }
 
     /**
-     * Cria uma ServiceRef para o valor informado mas que descarta o valor caso
-     * a refência seja serializada. Tipicamente é utilizado para referência do
-     * tipo cache ou que pode ser recalculada depois.
+     * Cria uma ServiceRef para o valor informado mas que descartado no caso da refência seja serializada.
+     * <p> No uso em conjunto com {@link org.opensingular.form.document.SDocument#lookupService(Class)}, significa
+     * que essa referência será descartada na volta da deserialziação e será procurada um referêncaia ao recurso no
+     * contexto de recursos superior (se existir tal contexto).</p>
+     * <p>Tipicamente é utilizado para referências do tipo cache ou que pode ser recalculada depois.</p>
      */
-    public static <T> ServiceRefTransientValue<T> ofToBeDescartedIfSerialized(T value) {
-        return new ServiceRefTransientValue<>(value);
+    @Nonnull
+    public static <T> ServiceRefTransientValue<T> ofToBeDescartedIfSerialized(@Nonnull T value) {
+        return new ServiceRefTransientValue<>(Objects.requireNonNull(value));
     }
 }

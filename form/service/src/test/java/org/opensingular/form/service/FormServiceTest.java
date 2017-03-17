@@ -4,7 +4,11 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -40,8 +44,6 @@ public abstract class FormServiceTest {
     protected SDocumentFactory  documentFactory;
     protected RefType tipoPessoaRef = RefType.of(() -> tipoPessoa);
     private SDocument                     document;
-    private IAttachmentPersistenceHandler tempHandler;
-    private IAttachmentPersistenceHandler persistentHandler;
 
     @Before
     public void setUp() {
@@ -52,10 +54,10 @@ public abstract class FormServiceTest {
         tipoPessoa.asAtrAnnotation().setAnnotated();
 
         documentFactory = SDocumentFactory.of(doc -> {
-            tempHandler = mock(IAttachmentPersistenceHandler.class);
-            persistentHandler = mock(IAttachmentPersistenceHandler.class);
-            doc.setAttachmentPersistenceTemporaryHandler(RefService.of(tempHandler));
-            doc.setAttachmentPersistencePermanentHandler(RefService.of(persistentHandler));
+            IAttachmentPersistenceHandler<?> tempHandler = mock(IAttachmentPersistenceHandler.class);
+            IAttachmentPersistenceHandler<?> persistentHandler = mock(IAttachmentPersistenceHandler.class);
+            doc.setAttachmentPersistenceTemporaryHandler(RefService.ofToBeDescartedIfSerialized(tempHandler));
+            doc.setAttachmentPersistencePermanentHandler(RefService.ofToBeDescartedIfSerialized(persistentHandler));
         });
         TransactionSynchronizationManager.bindResource(this.sessionFactory, new SessionHolder(sessionFactory.openSession()));
     }
