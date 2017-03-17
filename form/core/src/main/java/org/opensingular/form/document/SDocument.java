@@ -171,6 +171,7 @@ public class SDocument {
     /**
      * Obtêm a instância que representa o documento com um todo.
      */
+    @Nonnull
     public SInstance getRoot() {
         if (root == null) {
             throw new SingularFormException("Instancia raiz não foi configurada");
