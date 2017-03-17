@@ -1,30 +1,21 @@
 package org.opensingular.form.type.core.attachment;
 
-import static org.opensingular.form.type.core.attachment.AttachmentTestUtil.writeBytesToTempFile;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.Collection;
-
+import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.google.common.io.ByteStreams;
-
 import org.opensingular.form.SingularFormException;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.*;
+import static org.opensingular.form.type.core.attachment.AttachmentTestUtil.writeBytesToTempFile;
 
 public abstract class TestCasePersistenceHandlerBase {
 
@@ -65,28 +56,20 @@ public abstract class TestCasePersistenceHandlerBase {
         for (int i = 0; i < conteudos.length; i++) {
             refs[i] = getHandler().addAttachment(writeBytesToTempFile(conteudos[i]), conteudos[i].length, fileNames[i]);
         }
-        IAttachmentPersistenceHandler handler2 = deserialize(serialize(getHandler()));
 
         for (int i = 0; i < conteudos.length; i++) {
-            IAttachmentRef ref = handler2.getAttachment(refs[i].getId());
-            assertThat(ref).isNotNull();
-            assertThat(ByteStreams.toByteArray(ref.getInputStream())).isEqualTo(conteudos[i]);
-            assertThat(ref.getHashSHA1()).isEqualTo(hashs[i]);
+            IAttachmentRef ref = refs[i];
+            IAttachmentRef ref2 = SingularIOUtils.serializeAndDeserialize(ref);
+            IAttachmentRef ref3 = getHandler().getAttachment(ref.getId());
+
+            assertThat(ref2).isNotNull();
+            assertThat(ByteStreams.toByteArray(ref2.getInputStream())).isEqualTo(conteudos[i]);
+            assertThat(ref2.getHashSHA1()).isEqualTo(hashs[i]);
+
+            assertThat(ref3).isNotNull();
+            assertThat(ByteStreams.toByteArray(ref3.getInputStream())).isEqualTo(conteudos[i]);
+            assertThat(ref3.getHashSHA1()).isEqualTo(hashs[i]);
         }
-    }
-
-    private byte[] serialize(IAttachmentPersistenceHandler handler) throws IOException {
-        ByteArrayOutputStream outB = new ByteArrayOutputStream();
-        ObjectOutputStream    outO = new ObjectOutputStream(outB);
-        outO.writeObject(handler);
-        outO.close();
-
-        return outB.toByteArray();
-    }
-
-    private IAttachmentPersistenceHandler deserialize(byte[] serialized) throws IOException, ClassNotFoundException {
-        ObjectInputStream inO = new ObjectInputStream(new ByteArrayInputStream(serialized));
-        return (IAttachmentPersistenceHandler) inO.readObject();
     }
 
     @Test

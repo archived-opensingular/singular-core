@@ -5,7 +5,18 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.InstanceSerializableRef;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -15,7 +26,12 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
@@ -229,12 +245,12 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
         instancia.getDocument().bindLocalService("A", String.class, RefService.of("AA"));
         SInstance instancia2 = testSerializacao(instancia);
-        Assert.assertEquals("AA", instancia2.getDocument().lookupService("A", String.class));
+        Assert.assertEquals("AA", instancia2.getDocument().lookupService("A", String.class).get());
 
         // Testa itens não mantido entre serializações
         instancia.getDocument().bindLocalService("B", String.class, RefService.ofToBeDescartedIfSerialized("BB"));
         instancia2 = serializarEDeserializar(instancia);
-        assertNull(instancia2.getDocument().lookupService("B", String.class));
+        assertNull(instancia2.getDocument().lookupService("B", String.class).orElse(null));
 
     }
 
@@ -350,8 +366,8 @@ public class TesteFormSerializationUtil extends TestCaseForm {
         }
 
         for (Entry<String, Pair> service : original.getLocalServices().entrySet()) {
-            Object originalService = original.lookupService(service.getKey(), Object.class);
-            Object copyService = copy.lookupService(service.getKey(), Object.class);
+            Object originalService = original.lookupService(service.getKey(), Object.class).orElse(null);
+            Object copyService = copy.lookupService(service.getKey(), Object.class).orElse(null);
             if (originalService == null) {
                 assertNull(copyService);
             } else if (copyService == null && !(service.getValue().provider instanceof ServiceRefTransientValue)) {

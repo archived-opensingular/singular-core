@@ -21,8 +21,6 @@ import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersis
 import org.opensingular.form.type.core.attachment.helper.IAttachmentPersistenceHelper;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -42,7 +40,7 @@ import java.util.Collection;
  *
  * @author Daniel C. Bordin
  */
-public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> extends Serializable {
+public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> {
 
     /**
      * Salvo os dados informado e associa-o ao documento (formulário) atual.

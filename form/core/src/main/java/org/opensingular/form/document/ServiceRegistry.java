@@ -17,9 +17,12 @@
 package org.opensingular.form.document;
 
 import org.opensingular.form.RefService;
+import org.opensingular.form.SingularFormException;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service Registry which provides a ḿeans to register and lookup for services.
@@ -47,24 +50,20 @@ public interface ServiceRegistry {
     Map<String, Pair> services();
 
 
-    /**
-     * Tries to find a service based on its class;
-     *
-     * @return <code>Null</code> if not found.
-     */
-    public <T> T lookupService(Class<T> targetClass);
+    /** Tries to find a service based on its class; */
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass);
 
-    /**
-     * Tries to find a service based on its name, casting to the desired type;
-     *
-     * @return <code>Null</code> if not found.
-     */
-    <T> T lookupService(String name, Class<T> targetClass);
+    public default <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
+        return lookupService(targetClass).orElseThrow(
+                () -> new SingularFormException("Bean of class " + targetClass + " not found"));
+    }
 
-    /**
-     * Tries to find a service based on its name;
-     * 
-     * @return <code>Null</code> if not found.
-     */
-    Object lookupService(String name);
+    /** Tries to find a service based on its name, casting to the desired type; */
+    @Nonnull
+    <T> Optional<T> lookupService(@Nonnull String name, @Nonnull Class<T> targetClass);
+
+    /** Tries to find a service based on its name; */
+    @Nonnull
+    Optional<Object> lookupService(@Nonnull String name);
 }

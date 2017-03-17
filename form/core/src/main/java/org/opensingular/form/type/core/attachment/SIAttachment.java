@@ -76,14 +76,14 @@ public class SIAttachment extends SIComposite {
     }
 
     public IAttachmentRef getAttachmentRef() {
-        IAttachmentRef ref = null;
         if (getDocument().isAttachmentPersistenceTemporaryHandlerSupported()) {
-            ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
+            IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
+            if (ref != null) {
+                return ref;
+            }
         }
-        if (ref == null && getDocument().isAttachmentPersistencePermanentHandlerSupported()) {
-            ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(getFileId());
-        }
-        return ref;
+        return getDocument().getAttachmentPersistencePermanentHandler()
+                .map(h -> h.getAttachment(getFileId())).orElse(null);
     }
 
     /**
