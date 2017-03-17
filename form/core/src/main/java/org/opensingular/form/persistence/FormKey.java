@@ -16,7 +16,14 @@
 
 package org.opensingular.form.persistence;
 
+import org.opensingular.form.SInstance;
+import org.opensingular.form.document.SDocument;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Representa um identificador que é único para um formulário dentro de um mesmo ambiente de persitência. As instâncias
@@ -31,7 +38,46 @@ public interface FormKey extends Serializable {
      * Gera uma representação string da chave. Deve ser evitado converter em String, mas é interessante quando, por
      * exemplo, estiver montando URLSs.
      */
+    @Nonnull
     public String toStringPersistence();
 
 
+    /**
+     * Retorna a {@link FormKey} do {@link SDocument} da instância, se o identificado
+     * existir, ou dispara exception senão exisitr.
+     */
+    @Nonnull
+    public static FormKey from(@Nonnull SInstance instance) {
+        return from(Objects.requireNonNull(instance).getDocument());
+    }
+
+    /**
+     * Retorna a {@link FormKey} do {@link SDocument}, se o identificado existir, ou dispara exception senão exisitr.
+     */
+    @Nonnull
+    public static FormKey from(@Nonnull SDocument document) {
+        return fromOpt(document).orElseThrow(() -> new SingularNoFormKeyException(document.getRoot()));
+    }
+
+    /** Retorna a {@link FormKey} do {@link SDocument} da instância, se o identificado existir. */
+    @Nonnull
+    public static Optional<FormKey> fromOpt(@Nonnull SInstance instance) {
+        return fromOpt(Objects.requireNonNull(instance).getDocument());
+    }
+
+    /** Retorna a {@link FormKey} do {@link SDocument}, se o identificado existir. */
+    static Optional<FormKey> fromOpt(SDocument document) {
+        Objects.requireNonNull(document);
+        return Optional.ofNullable((FormKey) document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
+    }
+
+    /**
+     * Atribui na instância a chave de persistência informada. Esse método deve ser usado por cautela para não quebrar a
+     * camada de persistência.
+     */
+    static void set(@Nonnull SInstance instance, @Nullable FormKey formKey) {
+        Objects.requireNonNull(instance);
+        SInstance root = instance.getDocument().getRoot();
+        root.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, formKey);
+    }
 }

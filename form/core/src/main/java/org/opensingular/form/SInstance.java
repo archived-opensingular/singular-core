@@ -32,7 +32,14 @@ import org.opensingular.lib.commons.lambda.IFunction;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class SInstance implements SAttributeEnabled {
@@ -479,7 +486,8 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
      */
-    public Optional<SInstance> getAttribute(String fullName) {
+    @Nonnull
+    public Optional<SInstance> getAttribute(@Nonnull String fullName) {
         return attributes == null ? Optional.empty() : Optional.ofNullable(attributes.get(fullName));
     }
 

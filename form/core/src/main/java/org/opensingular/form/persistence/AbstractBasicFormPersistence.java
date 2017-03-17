@@ -17,6 +17,7 @@
 package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
+import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
@@ -133,7 +134,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     private KEY insertImpl(@Nonnull INSTANCE instance, Integer inclusionActor) {
         KEY key = insertInternal(instance, inclusionActor);
         checkKeyOrException(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
-        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, key);
+        FormKey.set(instance, key);
         return key;
     }
 
@@ -172,7 +173,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null"));
         }
-        Optional<FormKey> key = Optional.ofNullable(instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
+        Optional<FormKey> key = FormKey.fromOpt(instance);
         if (key.isPresent()) {
             return Optional.of(checkKeyOrException(key.get(), instance));
         }
@@ -185,7 +186,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
      */
     @Nonnull
     protected final KEY checkKeyOrException(FormKey key, INSTANCE instance) {
-        return checkKeyOrException(key, instance, " o parâmetro key não fosse null");
+        return checkKeyOrException(key, instance, null);
     }
 
     /**
@@ -195,8 +196,11 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     @Nonnull
     protected final KEY checkKeyOrException(FormKey key, INSTANCE instance, String msgRequired) {
         if (key == null) {
-            throw addInfo(new SingularFormPersistenceException("Era esperado que " + msgRequired)).add("key", null)
-                    .add(instance);
+            SingularException e = addInfo(new SingularNoFormKeyException(instance)).add("key", null);
+            if (msgRequired != null) {
+                e.add("complement", "Era esperado que " + msgRequired);
+            }
+            throw e;
         } else if (!keyClass.isInstance(key)) {
             throw addInfo(new SingularFormPersistenceException(
                     "A chave encontrada incompatível: (key= " + key + ") é da classe " + key.getClass().getName() +
