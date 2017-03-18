@@ -20,7 +20,16 @@ import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.service.IPersistenceService;
@@ -35,7 +44,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,7 +123,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      */
     protected ProcessDefinition(Class<I> processInstanceClass, VarService varService) {
         if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
-            throw new SingularFlowException("A definição de fluxo deve ser anotada com " + DefinitionInfo.class.getName());
+            throw new SingularFlowException(
+                    "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
+                            DefinitionInfo.class.getName());
         }
         String flowKey = this.getClass().getAnnotation(DefinitionInfo.class).value();
         Objects.requireNonNull(flowKey, "key");

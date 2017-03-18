@@ -18,7 +18,7 @@ import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
 import org.opensingular.flow.test.definicao.Peticao;
-import org.opensingular.flow.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestFlowSupport;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public abstract class PeticaoTest extends TestSupport {
+public class PeticaoTest extends TestFlowSupport {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

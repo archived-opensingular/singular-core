@@ -1,20 +1,20 @@
 package org.opensingular.flow.test;
 
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.test.definicao.Peticao;
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.flow.test.support.TestSupport;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.test.definicao.Peticao;
+import org.opensingular.flow.test.support.TestFlowSupport;
 
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertNotNull;
 
-public abstract class PersistenceTest extends TestSupport {
+public class PersistenceTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
