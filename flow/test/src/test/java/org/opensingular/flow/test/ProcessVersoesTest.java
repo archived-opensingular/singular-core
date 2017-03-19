@@ -31,13 +31,13 @@ public class ProcessVersoesTest extends TestFlowSupport {
     @Test
     public void testarMudancaVersao() {
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start1 = processVersao1.start();
 
         DefinicaoProcessVersoes.changeFlowToVersao2();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
@@ -51,7 +51,7 @@ public class ProcessVersoesTest extends TestFlowSupport {
     @Test
     public void testarMudancaVersaoApenasPapeis() {
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start1 = processVersao1.start();
 
         List<? extends IEntityRoleDefinition> rolesBefore = new ArrayList<>(
@@ -60,7 +60,7 @@ public class ProcessVersoesTest extends TestFlowSupport {
         DefinicaoProcessVersoes.changeFlowToVersao1ComPapeis();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
@@ -76,11 +76,11 @@ public class ProcessVersoesTest extends TestFlowSupport {
     public void nadaMudou() {
 
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start1 = processVersao1.start();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();

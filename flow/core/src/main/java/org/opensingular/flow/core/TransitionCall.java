@@ -41,7 +41,7 @@ public interface TransitionCall {
      * Set o valor na variável ou cria a variável senão existir.
      */
     public default TransitionCall addParamString(String ref, String value) {
-        vars().addValorString(ref, value);
+        vars().addValueString(ref, value);
         return this;
     }
 
@@ -49,7 +49,7 @@ public interface TransitionCall {
      * Set o valor na variável ou cria a variável senão existir.
      */
     public default TransitionCall addParam(String ref, VarType type, Object value) {
-        vars().addValor(ref, type, value);
+        vars().addValue(ref, type, value);
         return this;
     }
 

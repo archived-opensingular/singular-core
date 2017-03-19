@@ -121,7 +121,7 @@ public class PeticaoTest extends TestFlowSupport {
 //    @Test
 //    public void testeComUsuarioCriador() {
 //        Peticao p = new Peticao();
-//        ProcessInstance ip = p.newInstance();
+//        ProcessInstance ip = p.newPreStartInstance();
 //        p
 //        ip.executeTransition(Peticao.APROVAR_TECNICO);
 //
@@ -293,7 +293,7 @@ public class PeticaoTest extends TestFlowSupport {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     private ProcessInstance startInstance() {
         Peticao p = new Peticao();
-        ProcessInstance id = p.newInstance();
+        ProcessInstance id = p.newPreStartInstance();
         id.start();
         return id;
     }

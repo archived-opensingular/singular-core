@@ -39,7 +39,7 @@ public class BaseSingularRest {
 
     public Long startInstance(String processAbbreviation) {
         ProcessDefinition processo = Flow.getProcessDefinition(processAbbreviation);
-        ProcessInstance processInstance = processo.newInstance();
+        ProcessInstance processInstance = processo.newPreStartInstance();
         processInstance.start();
         return processInstance.getEntityCod().longValue();
     }

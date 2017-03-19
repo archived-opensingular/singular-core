@@ -11,6 +11,7 @@ import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
 import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.opensingular.flow.test.TestDAO;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
@@ -51,6 +52,10 @@ public abstract class TestFlowSupport {
 
     @Inject
     protected SessionFactory sessionFactory;
+
+    protected static AssertionsProcessInstance assertions(ProcessInstance target) {
+        return new AssertionsProcessInstance(target);
+    }
 
     @BeforeClass
     public static void invalidateCache(){

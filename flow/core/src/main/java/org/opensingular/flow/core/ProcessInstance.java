@@ -90,7 +90,7 @@ public class ProcessInstance implements Serializable {
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
             throw SingularException.rethrow(
-                    "A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newInstance() a partir da definição do processo.");
+                    "A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newPreStartInstance() a partir da definição do processo.");
         }
         return (K) processDefinitionRef.get();
     }
@@ -820,7 +820,7 @@ public class ProcessInstance implements Serializable {
      * @return o valor da variável.
      */
     public final <T> T getVariableValue(String variableName) {
-        return getVariables().getValeu(variableName);
+        return getVariables().getValue(variableName);
     }
 
     /**
@@ -849,7 +849,7 @@ public class ProcessInstance implements Serializable {
             return;
         }
 
-        ValidationResult result = getVariables().validar();
+        ValidationResult result = getVariables().validate();
         if (result.hasErros()) {
             throw new SingularFlowException(createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result));
         }

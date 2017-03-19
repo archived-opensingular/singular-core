@@ -26,7 +26,17 @@ import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -82,6 +92,7 @@ public class FlowMap {
      *
      * @return as tarefas definidas.
      */
+    @Nonnull
     public Collection<MTask<?>> getTasks() {
         return tasksByName.values();
     }
@@ -91,6 +102,7 @@ public class FlowMap {
      *
      * @return todas as tarefas definidas.
      */
+    @Nonnull
     public Collection<MTask<?>> getAllTasks() {
         return CollectionUtils.union(getTasks(), getEndTasks());
     }
@@ -98,17 +110,19 @@ public class FlowMap {
     /**
      * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#PEOPLE}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#PEOPLE}.
+     * @return as tarefas definidas do tipo {@link TaskType#PEOPLE} ou uma lista vazia.
      */
+    @Nonnull
     public Collection<MTaskPeople> getPeopleTasks() {
         return (Collection<MTaskPeople>) getTasks(TaskType.PEOPLE);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA}.</p>
+     * Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA}.
      *
-     * @return as tarefas definidas do tipo {@link TaskType#JAVA}.
+     * @return as tarefas definidas do tipo {@link TaskType#JAVA} ou uma lista vazia.
      */
+    @Nonnull
     public Collection<MTaskJava> getJavaTasks() {
         return (Collection<MTaskJava>) getTasks(TaskType.JAVA);
     }
@@ -116,18 +130,20 @@ public class FlowMap {
     /**
      * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#WAIT}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#WAIT}.
+     * @return as tarefas definidas do tipo {@link TaskType#WAIT} ou uma lista vazia.
      */
+    @Nonnull
     public Collection<MTaskWait> getWaitTasks() {
         return (Collection<MTaskWait>) getTasks(TaskType.WAIT);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo especificado.</p>
+     * Retorna as tarefas definidas neste mapa do tipo especificado.
      *
      * @param IEntityTaskType o tipo especificado.
-     * @return as tarefas definidas do tipo especificado.
+     * @return as tarefas definidas do tipo especificado ou uma lista vazia
      */
+    @Nonnull
     public Collection<? extends MTask<?>> getTasks(IEntityTaskType IEntityTaskType) {
         final Builder<MTask<?>> builder = ImmutableList.builder();
         for (final MTask mTask : getTasks()) {
@@ -143,6 +159,7 @@ public class FlowMap {
      *
      * @return as tarefas definidas do tipo fim.
      */
+    @Nonnull
     public Collection<MTaskEnd> getEndTasks() {
         return endTasks.values();
     }

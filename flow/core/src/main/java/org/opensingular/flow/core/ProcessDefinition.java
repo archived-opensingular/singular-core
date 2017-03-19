@@ -283,6 +283,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return scheduledJob;
     }
 
+    @Nonnull
     final Collection<ProcessScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
@@ -697,19 +698,17 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * <p>
      * Retorna uma nova instância vazia deste processo pronta para ser
      * configurada em um novo fluxo.
-     * </p>
-     *
-     * @return a nova instância (<i>null safe</i>).
      */
-    public I newInstance() {
+    @Nonnull
+    public I newPreStartInstance() {
         I novo = newUnbindedInstance();
         novo.setInternalEntity(createProcessInstance());
         return novo;
     }
 
+    @Nonnull
     private I newUnbindedInstance() {
         I novo;
         try {

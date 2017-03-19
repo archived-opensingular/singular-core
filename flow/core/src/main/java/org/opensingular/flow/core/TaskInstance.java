@@ -18,14 +18,30 @@ package org.opensingular.flow.core;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class TaskInstance {
 
@@ -172,6 +188,21 @@ public class TaskInstance {
 
     public boolean isWait() {
         return getFlowTask().map(MTask::isWait).orElseGet(() -> getTaskVersion().isWait());
+    }
+
+    /** Verifica se o tipo da tarefa corresponde ao informado. */
+    public boolean isTask(@Nonnull ITaskDefinition expectedTaskType) {
+        Objects.requireNonNull(expectedTaskType);
+        Optional<MTask<?>> taskType = getFlowTask();
+        if (taskType.isPresent()) {
+            return taskType.get().is(expectedTaskType);
+        }
+        return getAbbreviation().equalsIgnoreCase(expectedTaskType.getKey());
+    }
+
+    /** Verifica se o tipo da tarefa corresponde a sigla informada. */
+    public boolean isTask(@Nonnull String expectedTaskTypeAbbreviation) {
+        return getAbbreviation().equalsIgnoreCase(expectedTaskTypeAbbreviation);
     }
 
     // TODO Daniel: Existe duas formas de fazer uma transicao. O método abaixo e

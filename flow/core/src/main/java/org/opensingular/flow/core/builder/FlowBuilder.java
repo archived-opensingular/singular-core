@@ -16,32 +16,31 @@
 
 package org.opensingular.flow.core.builder;
 
-import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import org.opensingular.flow.core.IExecutionDateStrategy;
-import org.opensingular.flow.core.MProcessRole;
-import org.opensingular.flow.core.MTaskEnd;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.StartedTaskListener;
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.DashboardView;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.IRoleChangeListener;
 import org.opensingular.flow.core.ITaskPredicate;
+import org.opensingular.flow.core.MProcessRole;
 import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MTaskEnd;
 import org.opensingular.flow.core.MTaskJava;
 import org.opensingular.flow.core.MTaskPeople;
 import org.opensingular.flow.core.MTaskWait;
 import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.RoleAccessStrategy;
 import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.flow.core.UserRoleSettingStrategy;
 import org.opensingular.flow.core.defaults.EmptyUserRoleSettingStrategy;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
+import org.opensingular.lib.commons.base.SingularUtil;
+
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BTask, BUILDER_JAVA extends BJava<?>, BUILDER_PEOPLE extends BPeople<?>, BUILDER_WAIT extends BWait<?>, BUILDER_END extends BEnd<?>, BUILDER_TRANSITION extends BTransition<?>, BUILDER_PAPEL extends BProcessRole<?>, TASK_DEF extends ITaskDefinition> {
 
@@ -75,7 +74,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return flowMap;
     }
 
-    public void setStartTask(TASK_DEF taskDefinition) {
+    public void setStart(TASK_DEF taskDefinition) {
         MAPA flowMap = getFlowMap();
         flowMap.setStartTask(flowMap.getTask(taskDefinition));
     }
