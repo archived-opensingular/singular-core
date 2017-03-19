@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import com.google.common.base.Joiner;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -36,7 +35,6 @@ import org.opensingular.flow.core.variable.VarInstanceMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
@@ -102,8 +100,8 @@ class FlowEngine {
             } finally {
                 processInstance.setExecutionContext(null);
             }
-            String nomeTransicao = execucaoTask.getTransition();
-            transition = searchTransition(newTaskInstance, nomeTransicao);
+
+            transition = resolveDefaultTransitionIfNecessary(newTaskInstance, execucaoTask.getTransition());
             destinyTask = transition.getDestination();
             originTaskInstance = newTaskInstance;
         }
@@ -156,7 +154,7 @@ class FlowEngine {
             Date targetDate = taskDestiny.getExecutionDate(instance, taskInstance);
             taskInstance.setTargetEndDate(targetDate);
             if (targetDate.before(new Date())) {
-                instance.executeTransition();
+                instance.prepareTransition().go();
             }
         } else if (taskDestiny.getTargetDateExecutionStrategy() != null) {
             Date targetDate = taskDestiny.getTargetDateExecutionStrategy().apply(instance, taskInstance);
@@ -177,50 +175,24 @@ class FlowEngine {
             instance.setExecutionContext(null);
         }
 
-        executeTransition(instance, execucaoTask.getTransition(), null);
+        executeTransition(instance.getCurrentTaskOrException(), execucaoTask.getTransition(), null);
     }
 
     @Nonnull
-    static TaskInstance executeTransition(@Nonnull ProcessInstance instancia, @Nullable String transitionName, @Nullable VarInstanceMap<?> param) {
-        return executeTransition(instancia.getCurrentTaskOrException(), transitionName, param);
-    }
-
-    @Nonnull
-    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable String transitionName, @Nullable VarInstanceMap<?> param) {
-        MTransition transicao = searchTransition(tarefaAtual, transitionName);
+    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable MTransition transition, @Nullable VarInstanceMap<?> param) {
+        transition = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
         tarefaAtual.endLastAllocation();
-        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
+        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transition, transition.getDestination(), param);
     }
 
+
     @Nonnull
-    private static MTransition searchTransition(@Nonnull TaskInstance tarefaAtual, @Nullable String nomeTransicao) {
-
-        final MTask<?> estadoAtual = tarefaAtual.getFlowTaskOrException();
-        final MTransition transicao;
-        final List<MTransition> transitions = estadoAtual.getTransitions();
-
-        if (nomeTransicao == null) {
-            if (transitions.size() == 1) {
-                transicao = transitions.get(0);
-            } else {
-
-                MTransition defaultTransition = estadoAtual.getDefaultTransition();
-
-                if (transitions.size() > 1 && defaultTransition != null) {
-                    transicao = defaultTransition;
-                } else {
-                    throw new SingularFlowException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
-                }
-            }
-        } else {
-            transicao = estadoAtual.getTransition(nomeTransicao);
-            if (transicao == null) {
-                throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName()
-                        + "] não possui a transição '" + nomeTransicao + "' solicitada. As opções são: {"
-                        + Joiner.on(',').join(transitions) + '}');
-            }
+    private static MTransition resolveDefaultTransitionIfNecessary(@Nonnull TaskInstance tarefaAtual,
+            @Nullable MTransition transition) {
+        if (transition != null) {
+            return transition;
         }
-        return transicao;
+        return tarefaAtual.getFlowTaskOrException().resolveDefaultTransitionOrException();
     }
 
     private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {

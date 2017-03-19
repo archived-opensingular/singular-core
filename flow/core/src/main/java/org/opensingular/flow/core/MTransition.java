@@ -53,12 +53,11 @@ public class MTransition {
 
     private ITaskPredicate predicate;
 
-    protected MTransition(MTask<?> origin, String name, MTask<?> destination, TransitionType type) {
-        Objects.requireNonNull(destination);
+    protected MTransition(MTask<?> origin, String name, @Nonnull MTask<?> destination, @Nonnull TransitionType type) {
         this.origin = origin;
         this.name = name;
-        this.destination = destination;
-        this.type = type;
+        this.destination = Objects.requireNonNull(destination);
+        this.type = Objects.requireNonNull(type);
         this.abbreviation = SingularUtil.convertToJavaIdentity(name, true);
     }
 
@@ -168,12 +167,11 @@ public class MTransition {
     }
 
     public MTransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
-        if(this.parametersInitializer == null){
-            this.parametersInitializer = parametersInitializer;
-            return this;
-        } else {
+        if(this.parametersInitializer != null){
             throw new SingularFlowException("Parameters Initializer already set");
         }
+        this.parametersInitializer = parametersInitializer;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -182,12 +180,11 @@ public class MTransition {
     }
 
     public MTransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
-        if(this.parametersValidator == null){
-            this.parametersValidator = parametersValidator;
-            return this;
-        } else {
+        if(this.parametersValidator != null){
             throw new SingularFlowException("Parameters Validator already set");
         }
+        this.parametersValidator = parametersValidator;
+        return this;
     }
 
     @SuppressWarnings("unchecked")

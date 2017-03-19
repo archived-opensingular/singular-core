@@ -112,44 +112,20 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
-     * Executa a próxima transição desta instância de processo.
-     * </p>
+     * Realiza a montagem necessária para execução da transição default da tarefa atual desta instância.
+     * Senão for encontrada uma tarefa atual ou a tarefa não possui um transação default, dispara exception.
      */
-    public void executeTransition() {
-        FlowEngine.executeTransition(this, null, null);
+    @Nonnull
+    public TransitionCall prepareTransition() {
+        return getCurrentTaskOrException().prepareTransition();
     }
 
     /**
-     * <p>
-     * Executa a transição especificada desta instância de processo.
-     * </p>
+     * Realiza a montagem necessária para execução da transição especificada a partir da tarefa atual desta instância.
+     * Senão for encontrada uma tarefa atual ou transição correspodente ao nome informado, dispara exception.
      *
      * @param transitionName a transição especificada.
-     */
-    public void executeTransition(String transitionName) {
-        FlowEngine.executeTransition(this, transitionName, null);
-    }
-
-    /**
-     * <p>
-     * Executa a transição especificada desta instância de processo passando as
-     * variáveis fornecidas.
-     * </p>
-     *
-     * @param transitionName a transição especificada.
-     * @param param as variáveis fornecidas.
-     */
-    public void executeTransition(String transitionName, VarInstanceMap<?> param) {
-        FlowEngine.executeTransition(this, transitionName, param);
-    }
-
-    /**
-     * Realiza a montagem necessária para execução da transição especificada a
-     * partir da tarefa atual desta instância.
-     *
-     * @param transitionName a transição especificada.
-     * @return a montagem resultante.
+     * @see TaskInstance#prepareTransition(String)
      */
     @Nonnull
     public TransitionCall prepareTransition(String transitionName) {
@@ -504,7 +480,7 @@ public class ProcessInstance implements Serializable {
         TaskInstance taskNew2 = getTaskNewer(task).orElseThrow(() -> new SingularFlowException("Erro Interno"));
         task.notifyTaskStart(taskNew2, execucaoMTask);
         if (task.isImmediateExecution()) {
-            executeTransition();
+            prepareTransition().go();
         }
     }
 

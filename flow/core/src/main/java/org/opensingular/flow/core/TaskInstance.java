@@ -31,7 +31,6 @@ import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
 
 import javax.annotation.Nonnull;
@@ -205,17 +204,22 @@ public class TaskInstance {
         return getAbbreviation().equalsIgnoreCase(expectedTaskTypeAbbreviation);
     }
 
-    // TODO Daniel: Existe duas formas de fazer uma transicao. O método abaixo e
-    // executeTransitaion(). Decidir por apenas um ficar público. Sugiro o
-    // prepareTransition
+    /** Prepara para execução a transação default da instância. Senão existir transição default, dispara exception. */
+    @Nonnull
+    public TransitionCall prepareTransition() {
+        return new TransitionCall(
+                new TransitionRef(this, getFlowTaskOrException().resolveDefaultTransitionOrException()));
+    }
+
+    /**
+     * Prepara para execução a transação da instancia correspodente ao nome infomado. Senão existir transição com o nome
+     * informado, dispara exception.
+     */
     @Nonnull
     public TransitionCall prepareTransition(@Nonnull String transitionName) {
         Objects.requireNonNull(transitionName);
-        return new TransitionCallImpl(getTransition(transitionName));
-    }
-
-    public TransitionRef getTransition(String transitionName) {
-        return new TransitionRef(this, getFlowTaskOrException().getTransitionOrException(transitionName));
+        return new TransitionCall(
+                new TransitionRef(this, getFlowTaskOrException().getTransitionOrException(transitionName)));
     }
 
     public void relocateTask(MUser author, MUser user,
@@ -366,18 +370,6 @@ public class TaskInstance {
         Objects.requireNonNull(accessStrategy,"Estratégia de acesso da task " + abbreviation + " não foi definida");
 
         return accessStrategy.getFirstLevelUsersCodWithAccess(processInstance);
-    }
-
-    public void executeTransition() {
-        FlowEngine.executeTransition(this, null, null);
-    }
-
-    public void executeTransition(String destino) {
-        FlowEngine.executeTransition(this, destino, null);
-    }
-
-    public void executeTransition(String destino, VarInstanceMap<?> param) {
-        FlowEngine.executeTransition(this, destino, param);
     }
 
     public boolean isAllocated() {

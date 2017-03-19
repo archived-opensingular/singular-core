@@ -48,7 +48,7 @@ public class BaseSingularRest {
                                          Long codProcessInstance,
                                           String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        processInstance.executeTransition();
+        processInstance.prepareTransition().go();
     }
 
     public void executeTransition(String processAbbreviation,
@@ -56,7 +56,7 @@ public class BaseSingularRest {
                                   String transitionName,
                                   String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        processInstance.executeTransition(transitionName);
+        processInstance.prepareTransition(transitionName).go();
     }
 
     public void relocateTask(String processAbbreviation,

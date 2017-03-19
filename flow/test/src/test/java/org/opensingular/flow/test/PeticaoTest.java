@@ -64,15 +64,15 @@ public class PeticaoTest extends TestFlowSupport {
         thrown.expect(SingularFlowException.class);
 
         ProcessInstance instanciaPeticao = startInstance();
-        instanciaPeticao.executeTransition();
+        instanciaPeticao.prepareTransition().go();
     }
 
     @Test
     public void executeHappyPath() {
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
-        ip.executeTransition(Peticao.APROVAR_GERENTE);
-        ip.executeTransition(Peticao.PUBLICAR);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
+        ip.prepareTransition(Peticao.APROVAR_GERENTE).go();
+        ip.prepareTransition(Peticao.PUBLICAR).go();
 
         assertLatestTaskName(PUBLICADO.getName(), ip);
     }
@@ -80,8 +80,8 @@ public class PeticaoTest extends TestFlowSupport {
     @Test
     public void grantApplication() {
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
-        ip.executeTransition(Peticao.DEFERIR);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
+        ip.prepareTransition(Peticao.DEFERIR).go();
 
         assertLatestTaskName(DEFERIDO.getName(), ip);
     }
@@ -89,7 +89,7 @@ public class PeticaoTest extends TestFlowSupport {
     @Test
     public void rejectApplication() {
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.INDEFERIR);
+        ip.prepareTransition(Peticao.INDEFERIR).go();
 
         assertLatestTaskName(INDEFERIDO.getName(), ip);
     }
@@ -97,13 +97,13 @@ public class PeticaoTest extends TestFlowSupport {
     @Test
     public void fuzzyFlow() {
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
-        ip.executeTransition(Peticao.SOLICITAR_AJUSTE_ANALISE);
-        ip.executeTransition(Peticao.COLOCAR_EM_EXIGENCIA);
-        ip.executeTransition(Peticao.CUMPRIR_EXIGENCIA);
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
-        ip.executeTransition(Peticao.APROVAR_GERENTE);
-        ip.executeTransition(Peticao.PUBLICAR);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
+        ip.prepareTransition(Peticao.SOLICITAR_AJUSTE_ANALISE).go();
+        ip.prepareTransition(Peticao.COLOCAR_EM_EXIGENCIA).go();
+        ip.prepareTransition(Peticao.CUMPRIR_EXIGENCIA).go();
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
+        ip.prepareTransition(Peticao.APROVAR_GERENTE).go();
+        ip.prepareTransition(Peticao.PUBLICAR).go();
 
         assertLatestTaskName(PUBLICADO.getName(), ip);
     }
@@ -111,7 +111,7 @@ public class PeticaoTest extends TestFlowSupport {
     @Test
     public void naoDeveriaTerDataDeFim() {
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
 
         assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
         assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTaskOrException().getEndDate());
@@ -132,7 +132,7 @@ public class PeticaoTest extends TestFlowSupport {
     @Test
     public void deveriaTerDataDeFim() {
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.INDEFERIR);
+        ip.prepareTransition(Peticao.INDEFERIR).go();
 
         assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
         assertNotNull("Tarefa deveria ter uma data de fim", ip.getLatestTaskOrException().getEndDate());
@@ -142,7 +142,7 @@ public class PeticaoTest extends TestFlowSupport {
     public void expirarAprovaGerente() {
         ProcessInstance ip = startInstance();
         System.out.println("Id - " + ip.getId());
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
 
         TaskInstanceEntity currentTask = ip.getCurrentTaskOrException().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
@@ -158,7 +158,7 @@ public class PeticaoTest extends TestFlowSupport {
         Actor user1 = testDAO.getSomeUser(1);
         ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
         assertTrue("Usuário não tem permissao", ip.canExecuteTask(user1));
     }
 
@@ -225,7 +225,7 @@ public class PeticaoTest extends TestFlowSupport {
         ip.getCurrentTaskOrException().relocateTask(null, user2, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
@@ -276,7 +276,7 @@ public class PeticaoTest extends TestFlowSupport {
         assertNotNull(counterHistory);
 
         ProcessInstance ip = startInstance();
-        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
 
         TaskInstanceEntity currentTask = ip.getCurrentTaskOrException().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
