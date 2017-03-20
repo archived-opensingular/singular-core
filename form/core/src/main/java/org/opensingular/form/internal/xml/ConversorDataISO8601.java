@@ -358,7 +358,7 @@ public final class ConversorDataISO8601 {
     public static boolean isISO8601(String valor) {
         //                01234567890123456789012345678
         //                1999-05-31T13:20:00.000-05:00
-        String mascara = "????-??-??T??:??:??.?????????";
+        String mascara = "????-??-??T??:??:??.???-??:??";
         if ((valor == null) || valor.length() < 10 || valor.length() > mascara.length()) {
             return false;
         }
