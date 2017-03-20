@@ -28,24 +28,24 @@ import java.util.stream.Stream;
 public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K> {
 
 
-    public K getVariavel(String ref);
+    public K getVariable(String ref);
 
     public Collection<K> asCollection();
 
-    public K addDefinicao(VarDefinition def);
+    public K addDefinition(VarDefinition def);
 
     public int size();
 
     public boolean isEmpty();
 
-    public default void addDefinicoes(VarDefinitionMap<?> definicoes) {
-        for (VarDefinition def : definicoes) {
-            addDefinicao(def);
+    public default void addDefinitions(VarDefinitionMap<?> definitions) {
+        for (VarDefinition def : definitions) {
+            addDefinition(def);
         }
     }
 
-    public default K getVariavelOrException(String ref) {
-        K cp = getVariavel(ref);
+    public default K getVariableOrException(String ref) {
+        K cp = getVariable(ref);
         if (cp == null) {
             throw new IllegalArgumentException("Variável '" + ref + "' não está definida");
         }
@@ -53,11 +53,11 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     }
 
     public default boolean contains(String ref) {
-        return getVariavel(ref) != null;
+        return getVariable(ref) != null;
     }
 
     public default void setValue(String ref, Object valor) {
-        getVariavelOrException(ref).setValue(valor);
+        getVariableOrException(ref).setValue(valor);
     }
 
     public default Stream<K> stream() {
@@ -70,40 +70,40 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     }
 
     @SuppressWarnings("unchecked")
-    public default <T extends Object> T getValeu(String ref) {
-        return (T) getVariavelOrException(ref).getValue();
+    public default <T extends Object> T getValue(String ref) {
+        return (T) getVariableOrException(ref).getValue();
     }
 
     @SuppressWarnings("unchecked")
-    public default <T> T getValeu(String ref, T valorDefault) {
-        Object v = getVariavelOrException(ref).getValue();
+    public default <T> T getValue(String ref, T defaultValue) {
+        Object v = getVariableOrException(ref).getValue();
         if (v == null) {
-            return valorDefault;
+            return defaultValue;
         }
         return (T) v;
     }
 
-    public default <T> T getValorTipo(String ref, Class<T> classeTipo) {
-        return getValorTipo(ref, classeTipo, null);
+    public default <T> T getValueType(String ref, Class<T> typeClass) {
+        return getValueType(ref, typeClass, null);
     }
 
-    public default <T> T getValorTipo(String ref, Class<T> classeTipo, T valorDefault) {
-        K cp = getVariavelOrException(ref);
+    public default <T> T getValueType(String ref, Class<T> typeClass, T defaultValue) {
+        K cp = getVariableOrException(ref);
         Object o = cp.getValue();
         if (o == null) {
-            return valorDefault;
-        } else if (classeTipo.isInstance(o)) {
-            return classeTipo.cast(o);
+            return defaultValue;
+        } else if (typeClass.isInstance(o)) {
+            return typeClass.cast(o);
         }
-        throw new SingularFlowException("'" + ref + "' é do tipo " + o.getClass().getName() + " e o esperado era " + classeTipo.getName());
+        throw new SingularFlowException("'" + ref + "' é do tipo " + o.getClass().getName() + " e o esperado era " + typeClass.getName());
     }
 
     public default void addValues(VarInstanceMap<?> vars, boolean createMissingTypes) {
         for (VarInstance var : vars) {
-            VarInstance localVar = getVariavel(var.getRef());
+            VarInstance localVar = getVariable(var.getRef());
             if (localVar == null) {
                 if (createMissingTypes) {
-                    localVar = addDefinicao(var.getDefinition().copy());
+                    localVar = addDefinition(var.getDefinition().copy());
                     localVar.setValue(var.getValue());
                 }
             } else {
@@ -116,42 +116,42 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     // Métodos de conveniência para criação dinâmica de váriáveis
     // ----------------------------------------------------------
 
-    public default void addValor(String ref, VarType type, Object value) {
-        K var = getVariavel(ref);
+    public default void addValue(String ref, VarType type, Object value) {
+        K var = getVariable(ref);
         if (var == null) {
-            var = addDefinicao(getVarService().newDefinition(ref, ref, type));
+            var = addDefinition(getVarService().newDefinition(ref, ref, type));
         }
         var.setValue(value);
     }
 
-    public default void addValorString(String ref, String value) {
-        K var = getVariavel(ref);
+    public default void addValueString(String ref, String value) {
+        K var = getVariable(ref);
         if (var == null) {
-            var = addDefinicao(getVarService().newDefinitionString(ref, ref, null));
+            var = addDefinition(getVarService().newDefinitionString(ref, ref, null));
         }
         var.setValue(value);
     }
 
-    public default void addValorDate(String ref, Date value) {
-        K var = getVariavel(ref);
+    public default void addValueDate(String ref, Date value) {
+        K var = getVariable(ref);
         if (var == null) {
-            var = addDefinicao(getVarService().newDefinitionDate(ref, ref));
+            var = addDefinition(getVarService().newDefinitionDate(ref, ref));
         }
         var.setValue(value);
     }
 
-    public default void addValorInteger(String ref, Integer value) {
-        K var = getVariavel(ref);
+    public default void addValueInteger(String ref, Integer value) {
+        K var = getVariable(ref);
         if (var == null) {
-            var = addDefinicao(getVarService().newDefinitionInteger(ref, ref));
+            var = addDefinition(getVarService().newDefinitionInteger(ref, ref));
         }
         var.setValue(value);
     }
 
-    public default void addValorBoolean(String ref, Boolean value) {
-        K var = getVariavel(ref);
+    public default void addValueBoolean(String ref, Boolean value) {
+        K var = getVariable(ref);
         if (var == null) {
-            var = addDefinicao(getVarService().newDefinitionBoolean(ref, ref));
+            var = addDefinition(getVarService().newDefinitionBoolean(ref, ref));
         }
         var.setValue(value);
     }
@@ -161,38 +161,46 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     // ----------------------------------------------------------
 
     public default String getValueString(String ref) {
-        return getValorTipo(ref, String.class, null);
+        return getValueType(ref, String.class, null);
     }
 
-    public default String getValueString(String ref, String valorDefault) {
-        return getValorTipo(ref, String.class, valorDefault);
+    public default String getValueString(String ref, String defaultValue) {
+        return getValueType(ref, String.class, defaultValue);
     }
 
     public default Integer getValueInteger(String ref) {
-        return getValorTipo(ref, Integer.class);
+        return getValueType(ref, Integer.class);
     }
 
-    public default Double getValorDouble(String ref) {
-        return getValorTipo(ref, Double.class);
+    public default Integer getValueInteger(String ref, Integer defaultValue) {
+        return getValueType(ref, Integer.class, defaultValue);
+    }
+
+    public default Double getValueDouble(String ref) {
+        return getValueType(ref, Double.class);
+    }
+
+    public default Double getValueDouble(String ref, Double defaultValue) {
+        return getValueType(ref, Double.class, defaultValue);
     }
 
     public default Boolean getValueBoolean(String ref) {
-        return getValorTipo(ref, Boolean.class);
+        return getValueType(ref, Boolean.class);
     }
 
-    public default boolean getValueBoolean(String ref, boolean valorDefault) {
-        Boolean b = getValorTipo(ref, Boolean.class);
+    public default boolean getValueBoolean(String ref, boolean defaultValue) {
+        Boolean b = getValueType(ref, Boolean.class);
         if (b == null) {
-            return valorDefault;
+            return defaultValue;
         }
         return b;
     }
 
     public default Date getValueDate(String ref) {
-        return getValorTipo(ref, Date.class);
+        return getValueType(ref, Date.class);
     }
 
-    public default ValidationResult validar() {
+    public default ValidationResult validate() {
         ValidationResult result = new ValidationResult();
         for (VarInstance cp : this) {
             if (cp.isRequired() && cp.getValue() == null) {
@@ -211,7 +219,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     public static final VarInstanceMap<?> EMPTY_INSTANCE = new VarInstanceMap<VarInstance>() {
 
         @Override
-        public VarInstance getVariavel(String ref) {
+        public VarInstance getVariable(String ref) {
             return null;
         }
 
@@ -236,7 +244,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         }
 
         @Override
-        public VarInstance addDefinicao(VarDefinition def) {
+        public VarInstance addDefinition(VarDefinition def) {
             throw new SingularFlowException("Método não suportado");
         }
 

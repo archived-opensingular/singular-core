@@ -58,7 +58,7 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         ITaskDefinition END = () -> "Aprovado";
         f.addEnd(END);
 
-        f.setStartTask(SET_VARIAVEL);
+        f.setStart(SET_VARIAVEL);
         f.from(SET_VARIAVEL).go(APROVAR);
         f.from(APROVAR).go(PRINT);
         f.from(PRINT).go(END);
@@ -67,7 +67,7 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
     }
 
     public ProcessInstance start() {
-        ProcessInstance instancia = newInstance();
+        ProcessInstance instancia = newPreStartInstance();
         instancia.start();
         return instancia;
     }

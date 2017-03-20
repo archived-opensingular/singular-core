@@ -76,7 +76,7 @@ public class MTaskJava extends MTask<MTaskJava> {
     @Override
     public void execute(ExecutionContext execucaoTask) {
         if (taskImpl == null) {
-            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não foi configurado o código de execução da tarefa"));
+            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não foi configurado o código de execução da tarefa"), this);
         }
         Object result = taskImpl.call(execucaoTask);
         if (result instanceof String) {
@@ -86,7 +86,7 @@ public class MTaskJava extends MTask<MTaskJava> {
 
     public Object executarByBloco(Collection<? extends ProcessInstance> instancias) {
         if (blockImpl == null) {
-            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."));
+            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."), this);
         }
         Object result = blockImpl.call(instancias);
 

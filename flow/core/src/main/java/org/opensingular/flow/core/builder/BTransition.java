@@ -16,10 +16,12 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.TransitionAccessStrategy;
 import org.opensingular.flow.core.MTransition;
 import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.TransitionAccessStrategy;
 import org.opensingular.flow.core.TransitionAccessStrategyImpl;
+
+import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface BTransition<SELF extends BTransition<SELF>> {
@@ -30,6 +32,12 @@ public interface BTransition<SELF extends BTransition<SELF>> {
 
     public default SELF self() {
         return (SELF) this;
+    }
+
+    default SELF with(Consumer<SELF> consumer) {
+        SELF self = self();
+        consumer.accept(self);
+        return self;
     }
 
     public default SELF markAsDefault() {

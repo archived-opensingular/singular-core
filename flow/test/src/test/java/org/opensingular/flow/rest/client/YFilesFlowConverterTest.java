@@ -1,28 +1,5 @@
 package org.opensingular.flow.rest.client;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.opensingular.flow.core.DefinitionInfo;
-import org.opensingular.flow.core.ExecutionContext;
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
-import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
-import org.opensingular.flow.test.TestDAO;
-import org.opensingular.lib.commons.base.SingularPropertiesImpl;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //
 //import javax.inject.Inject;
 //
@@ -116,7 +93,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //            flow.addPeopleTask(PTask.DO1, new NullTaskAccessStrategy());
 ////
 //            flow.addEnd(PTask.END);
-//            flow.setStartTask(PTask.START);
+//            flow.setStart(PTask.START);
 ////
 //            flow.from(PTask.START).go("Go To 1",PTask.DO1);
 ////        flow.from(PTask.START).go(PTask.DO2);

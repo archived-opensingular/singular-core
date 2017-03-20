@@ -67,7 +67,7 @@ public class FormSerializationUtil {
     }
 
     private static void defineFocusField(SInstance instance, FormSerialized fs) {
-        if (instance.getDocument().getRoot() != instance) {
+        if (instance.getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
         }
     }

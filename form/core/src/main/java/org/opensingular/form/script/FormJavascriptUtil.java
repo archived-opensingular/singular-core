@@ -22,7 +22,11 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
-import javax.script.*;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.function.Supplier;
 
 /**
@@ -74,7 +78,7 @@ public class FormJavascriptUtil {
         CompiledScript compiled = compile(script);
         try {
             SDocument document = instance.getDocument();
-            RuntimeDocumentScript runtime = document.lookupLocalService(RuntimeDocumentScript.class);
+            RuntimeDocumentScript runtime = document.lookupLocalService(RuntimeDocumentScript.class).orElse(null);
             if (runtime == null) {
                 runtime = new RuntimeDocumentScript(document);
                 document.bindLocalService(RuntimeDocumentScript.class, RefService.ofToBeDescartedIfSerialized(runtime));

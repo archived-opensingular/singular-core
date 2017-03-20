@@ -1,28 +1,26 @@
 package org.opensingular.flow.test;
 
-import org.opensingular.flow.test.definicao.DefinicaoProcessVersoes;
-import org.opensingular.flow.test.definicao.ProcessVersoes;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.test.support.TestSupport;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.opensingular.flow.test.definicao.DefinicaoProcessVersoes;
+import org.opensingular.flow.test.definicao.ProcessVersoes;
+import org.opensingular.flow.test.support.TestFlowSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public abstract class ProcessVersoesTest extends TestSupport {
+public class ProcessVersoesTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
@@ -33,13 +31,13 @@ public abstract class ProcessVersoesTest extends TestSupport {
     @Test
     public void testarMudancaVersao() {
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start1 = processVersao1.start();
 
         DefinicaoProcessVersoes.changeFlowToVersao2();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
@@ -53,7 +51,7 @@ public abstract class ProcessVersoesTest extends TestSupport {
     @Test
     public void testarMudancaVersaoApenasPapeis() {
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start1 = processVersao1.start();
 
         List<? extends IEntityRoleDefinition> rolesBefore = new ArrayList<>(
@@ -62,7 +60,7 @@ public abstract class ProcessVersoesTest extends TestSupport {
         DefinicaoProcessVersoes.changeFlowToVersao1ComPapeis();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
@@ -78,11 +76,11 @@ public abstract class ProcessVersoesTest extends TestSupport {
     public void nadaMudou() {
 
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start1 = processVersao1.start();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newPreStartInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();

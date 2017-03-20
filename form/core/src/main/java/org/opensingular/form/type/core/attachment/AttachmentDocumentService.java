@@ -16,15 +16,16 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import org.opensingular.form.RefService;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.SInstances;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.SDocument;
 
 import java.io.File;
+import java.util.Optional;
 
 /**
  * Faz a gestão da referência a anexos mantidos por um documento. Se entender
@@ -71,12 +72,13 @@ class AttachmentDocumentService {
     }
 
     private static AttachmentDocumentService lookup(SDocument document) {
-        AttachmentDocumentService service = document.lookupLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class);
-        if (service == null) {
-            service = new AttachmentDocumentService(document);
-            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class, RefService.ofToBeDescartedIfSerialized(service));
+        Optional<AttachmentDocumentService> service = document.lookupLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class);
+        if (service.isPresent()) {
+            return service.get();
         }
-        return service;
+        AttachmentDocumentService service2 = new AttachmentDocumentService(document);
+        document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class, RefService.ofToBeDescartedIfSerialized(service2));
+        return service2;
     }
 
     public IAttachmentRef addContent(String currentReferenceId, File content, long length, String name, SDocument document) {

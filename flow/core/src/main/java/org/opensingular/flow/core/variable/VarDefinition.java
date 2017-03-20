@@ -18,7 +18,7 @@ package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.property.MetaDataRef;
 
-import java.io.Serializable;
+import javax.annotation.Nonnull;
 
 public interface VarDefinition {
 
@@ -26,6 +26,7 @@ public interface VarDefinition {
 
     public String getName();
 
+    @Nonnull
     public VarType getType();
 
     public void setRequired(boolean value);
@@ -46,6 +47,10 @@ public interface VarDefinition {
 
     public default String toPersistenceString(VarInstance varInstance) {
         return getType().toPersistenceString(varInstance);
+    }
+
+    public default Object fromPersistenceString(String persistenceValue) {
+        return getType().fromPersistenceString(persistenceValue);
     }
 
     public <T> VarDefinition setMetaDataValue(MetaDataRef<T> propRef, T value);

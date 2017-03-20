@@ -3,7 +3,15 @@ package org.opensingular.form.type.core;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
@@ -38,7 +46,7 @@ public class InitListenerTest extends TestCaseForm {
 
         field1.withInitListener((x) -> {
             assertThat(x.getDocument()).isNotNull();
-            assertThat(x.getDocument().lookupService(P.class)).isNotNull();
+            assertThat(x.getDocument().lookupService(P.class).orElse(null)).isNotNull();
             x.setValue("abacate");
         });
 
