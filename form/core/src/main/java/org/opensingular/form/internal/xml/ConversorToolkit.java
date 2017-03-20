@@ -18,7 +18,6 @@ package org.opensingular.form.internal.xml;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -63,10 +62,6 @@ public final class ConversorToolkit {
 
     public static Calendar getCalendar(String data) {
         return getCalendar(getDateFromData(data));
-    }
-
-    public static Calendar getCalendar(Timestamp ts) {
-        return getCalendar(new java.util.Date(ts.getTime()));
     }
 
     public static Calendar getCalendar(java.util.Date data) {
