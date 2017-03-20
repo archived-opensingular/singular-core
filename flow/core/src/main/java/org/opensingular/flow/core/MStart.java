@@ -16,12 +16,16 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.variable.VarInstanceMap;
+
+import javax.annotation.Nonnull;
+
 /**
  * Representa um ponto de inicialização de um fluxo do processo.
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
-public class MStart {
+public class MStart extends MParametersEnabled {
 
     private final MTask<?> task;
 
@@ -36,17 +40,31 @@ public class MStart {
         return task;
     }
 
-    public <I extends ProcessInstance, D extends ProcessDefinition<I>> IStartInitializer<I, D> getStartInitializer() {
+    public <I extends ProcessInstance> IStartInitializer<I> getStartInitializer() {
         return startInitializer;
     }
 
-    public <I extends ProcessInstance, D extends ProcessDefinition<I>> void setStartInitializer(
-            IStartInitializer<I, D> startInitializer) {
+    public <I extends ProcessInstance> void setStartInitializer(IStartInitializer<I> startInitializer) {
         this.startInitializer = startInitializer;
     }
 
+    @Nonnull
+    final VarInstanceMap<?> newCallParameters() {
+        VarInstanceMap<?> params = getParameters().newInstanceMap();
+        //        if (parametersInitializer != null) {
+        //            parametersInitializer.init(transitionRef, params);
+        //        }
+        return params;
+    }
+
+
+    @Override
+    FlowMap getFlowMap() {
+        return task.getFlowMap();
+    }
+
     @FunctionalInterface
-    public static interface IStartInitializer<I extends ProcessInstance, D extends ProcessDefinition<I>> {
-        public I startInstance(D processDefinition);
+    public static interface IStartInitializer<I extends ProcessInstance> {
+        public void startInstance(I instance, StartCall<I> startCall);
     }
 }

@@ -42,6 +42,26 @@ class FlowEngine {
 
     private FlowEngine() {}
 
+    static void preStart(StartCall<?> startCall) {
+
+    }
+
+    /**
+     * Cria uma nova instância mediante chamada a {@link MStart#setStartInitializer(MStart.IStartInitializer)}. Senão
+     * existir o inicializador, criar uma nova instância e chama {@link ProcessInstance#start()}.
+     */
+    @Nonnull
+    final static <I extends ProcessInstance> I createAndStart(@Nonnull StartCall<I> startCall) {
+        MStart start = startCall.getStart();
+        I instance = startCall.getProcessDefinition().newPreStartInstance();
+        if (start.getStartInitializer() != null) {
+             start.getStartInitializer().startInstance(instance, (StartCall<ProcessInstance>) startCall);
+        } else {
+            instance.start();
+        }
+        return instance;
+    }
+
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();
         MStart start = instancia.getProcessDefinition().getFlowMap().getStart();
@@ -86,11 +106,11 @@ class FlowEngine {
                 if (transition != null) {
                     validarParametrosInput(originTaskInstance, transition, paramIn);
                 }
-                ExecutionContext execucaoTask = new ExecutionContext(processInstance, originTaskInstance, paramIn, transition);
+                ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
                 newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
                 return newTaskInstance;
             }
-            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, originTaskInstance, paramIn, transition);
+            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
             newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
 
             processInstance.setExecutionContext(execucaoTask);
@@ -101,6 +121,8 @@ class FlowEngine {
                 }
                 destinyTask.execute(execucaoTask);
                 getPersistenceService().flushSession();
+            } catch(Exception e) {
+                throw new SingularFlowException("Error running task '" + destinyTask.getName()+"'", e).add(destinyTask);
             } finally {
                 processInstance.setExecutionContext(null);
             }

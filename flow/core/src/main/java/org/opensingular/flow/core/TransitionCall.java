@@ -17,7 +17,6 @@
 package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.variable.VarInstanceMap;
-import org.opensingular.flow.core.variable.VarType;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -28,59 +27,24 @@ import java.util.Objects;
  *
  * @author Daniel C. Bordin
  */
-public final class TransitionCall {
+public final class TransitionCall extends CallWithParameters<TransitionCall> {
 
     private final TransitionRef transition;
-
-    private VarInstanceMap<?> vars;
 
     TransitionCall(@Nonnull TransitionRef transition) {
         this.transition = Objects.requireNonNull(transition);
     }
 
-    /**
-     * Retorna o mapa de parametros da chamada atual.
-     */
-    @Nonnull
-    public VarInstanceMap<?> vars() {
-        if (vars == null) {
-            vars = transition.newTransationParameters();
-        }
-        return vars;
+    @Override
+    protected VarInstanceMap<?> newParameters() {
+        return transition.newTransationParameters();
     }
 
     /**
      * Executa a transição sobre a task sendo referenciada.
      */
     public void go() {
-        FlowEngine.executeTransition(transition.getOriginTaskInstance(), transition.getTransition(), vars);
+        FlowEngine.executeTransition(transition.getOriginTaskInstance(), transition.getTransition(), parameters());
     }
 
-    /**
-     * Set o valor na variável ou cria a variável senão existir.
-     */
-    @Nonnull
-    public TransitionCall addParamString(String ref, String value) {
-        vars().addValueString(ref, value);
-        return this;
-    }
-
-    /**
-     * Set o valor na variável ou cria a variável senão existir.
-     */
-    @Nonnull
-    public TransitionCall addParam(String ref, VarType type, Object value) {
-        vars().addValue(ref, type, value);
-        return this;
-    }
-
-    /**
-     * Set o valor na variável ou lança exception se a variável não existir na
-     * transição.
-     */
-    @Nonnull
-    public TransitionCall setValue(String ref, Object value) {
-        vars().setValue(ref, value);
-        return this;
-    }
 }

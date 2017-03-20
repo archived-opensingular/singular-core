@@ -49,7 +49,7 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
     }
 
     public AssertionsProcessInstance isAtTask(ITaskDefinition expectedCurrentTaskType) {
-        currentTask().isTask(expectedCurrentTaskType);
+        currentTask().isAtTask(expectedCurrentTaskType);
         return this;
     }
 

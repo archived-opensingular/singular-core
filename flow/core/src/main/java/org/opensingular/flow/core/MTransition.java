@@ -22,8 +22,6 @@ import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.ValidationResult;
-import org.opensingular.flow.core.variable.VarDefinition;
-import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
 
@@ -34,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class MTransition {
+public class MTransition extends MParametersEnabled {
 
     private final MTask<?> origin;
     private final String name;
@@ -47,7 +45,6 @@ public class MTransition {
 
     private MetaData metaData;
 
-    private VarDefinitionMap<?>              parameters;
     private ITransitionParametersInitializer parametersInitializer;
     private ITransitionParametersValidator   parametersValidator;
 
@@ -218,21 +215,9 @@ public class MTransition {
         return validate(new TransitionRef(instancia, this), parameters);
     }
 
-    public final VarDefinitionMap<?> getParameters() {
-        if (parameters == null) {
-            parameters = getFlowMap().getVarService().newVarDefinitionMap();
-        }
-        return parameters;
-    }
-
-    public MTransition addParamFromProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
-        if (defVar == null) {
-            throw new SingularFlowException(
-                    getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."),
-                    getFlowMap());
-        }
-        getParameters().addVariable(defVar.copy()).setRequired(required);
+    @Override
+    public MTransition addParamBindedToProcessVariable(String ref, boolean required) {
+        super.addParamBindedToProcessVariable(ref, required);
         return this;
     }
 
@@ -244,7 +229,9 @@ public class MTransition {
         return predicate;
     }
 
-    private FlowMap getFlowMap() {
+
+    @Override
+    FlowMap getFlowMap() {
         return destination.getFlowMap();
     }
 
