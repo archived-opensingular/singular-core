@@ -16,7 +16,6 @@
 
 package org.opensingular.form.internal.xml;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -53,38 +52,6 @@ public final class ConversorDataISO8601 {
 
     private ConversorDataISO8601() {}
 
-    public static String format(java.sql.Date d) {
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(d);
-
-        int hora = gc.get(Calendar.HOUR_OF_DAY);
-        int minuto = gc.get(Calendar.MINUTE);
-        int segundo = gc.get(Calendar.SECOND);
-        int mili = gc.get(Calendar.MILLISECOND);
-        byte prescisao = DIA;
-        if ((hora != 0) || (minuto != 0) || (segundo != 0)) {
-            prescisao = SEGUNDO;
-        }
-        if (mili != 0) {
-            prescisao = MILI;
-        }
-        return format(
-                gc.get(Calendar.YEAR),
-                gc.get(Calendar.MONTH) + 1,
-                gc.get(Calendar.DAY_OF_MONTH),
-                hora,
-                minuto,
-                segundo,
-                mili,
-                0,
-                prescisao);
-    }
-
-    public static java.sql.Date getDateSQL(String s) {
-        GregorianCalendar gc = getCalendar(s);
-        return new java.sql.Date(gc.getTime().getTime());
-    }
-
     public static String format(java.util.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
@@ -109,32 +76,6 @@ public final class ConversorDataISO8601 {
 
     public static java.util.Date getDate(String s) {
         return getCalendar(s).getTime();
-    }
-
-    public static String format(Timestamp t) {
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(t);
-        return format(
-                gc.get(Calendar.YEAR),
-                gc.get(Calendar.MONTH) + 1,
-                gc.get(Calendar.DAY_OF_MONTH),
-                gc.get(Calendar.HOUR_OF_DAY),
-                gc.get(Calendar.MINUTE),
-                gc.get(Calendar.SECOND),
-                0,
-                t.getNanos(),
-                NANO);
-    }
-
-    public static Timestamp getTimestamp(String s) {
-        int[] t = valueOf(s);
-        GregorianCalendar gc =
-                new GregorianCalendar(t[ANO], t[MES] - 1, t[DIA], t[HORA], t[MINUTO], t[SEGUNDO]);
-        Timestamp ts = new Timestamp(gc.getTime().getTime());
-        if (t[NANO] != 0) {
-            ts.setNanos(t[NANO]);
-        }
-        return ts;
     }
 
     public static String format(Calendar gc) {
