@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -25,30 +24,23 @@ import org.opensingular.flow.core.builder.BTransition;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
-import org.opensingular.flow.test.support.TestFlowSupport;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestProcessInicializationWithoutParameters extends TestFlowSupport {
+public class TestProcessInicializationWithoutParameters extends TestFlowExecutionSupport {
 
     public static final String FLAG = "flag";
 
     private static boolean startInitializerCalled;
 
-    @Before
-    public void setUp() {
-        assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean, true);
-    }
-
     @Test
     public void simpleStart() {
-        ProcessInstance pi = new ProcessWithInitialization().createAndStart();
+        startInitializerCalled = false;
+        ProcessInstance pi = new ProcessWithInitialization().prepareStartCall().createAndStart();
 
         assertTrue(startInitializerCalled);
         assertions(pi).isAtTask(Steps.Second).isVariableValue(FLAG, 11);
@@ -56,11 +48,6 @@ public class TestProcessInicializationWithoutParameters extends TestFlowSupport 
         pi = reload(pi);
         assertions(pi).isAtTask(Steps.Second).isVariableValue(FLAG, 11);
     }
-
-    private ProcessInstance reload(ProcessInstance pi) {
-        return mbpmBean.getProcessInstance(pi.getFullId());
-    }
-
 
     @DefinitionInfo("WithoutParameters")
     public static class ProcessWithInitialization extends ProcessDefinition<ProcessInstance> {
@@ -93,9 +80,8 @@ public class TestProcessInicializationWithoutParameters extends TestFlowSupport 
             return f.build();
         }
 
-        private ProcessInstance processInitializer(ProcessWithInitialization processDefinition) {
+        private ProcessInstance processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
             startInitializerCalled = true;
-            ProcessInstance instance = processDefinition.newPreStartInstance();
             instance.getVariables().setValue(FLAG, 1);
             instance.start();
             return instance;

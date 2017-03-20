@@ -25,7 +25,12 @@ public interface BTask {
 
     public MTask<?> getTask();
 
-    public BTransition<?> go(ITaskDefinition taskRefDestiny);
+    /**
+     * Cria uma nova transição da task atual para a task destino informada
+     */
+    public default BTransition<?> go(ITaskDefinition taskRefDestiny) {
+        return go(taskRefDestiny.getName(), taskRefDestiny);
+    }
 
     public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
 

@@ -59,8 +59,16 @@ public interface VarDefinitionMap<K extends VarDefinition> extends VarServiceEna
         return addVariable(ref, ref, tipo);
     }
 
+    public default K addVariableBoolean(String ref) {
+        return addVariableBoolean(ref, ref);
+    }
+
     public default K addVariableBoolean(String ref, String name) {
         return addVariable(getVarService().newDefinitionBoolean(ref, name));
+    }
+
+    public default K addVariableDouble(String ref) {
+        return addVariableDouble(ref, ref);
     }
 
     public default K addVariableDouble(String ref, String name) {

@@ -190,7 +190,7 @@ public class TaskInstance {
     }
 
     /** Verifica se o tipo da tarefa corresponde ao informado. */
-    public boolean isTask(@Nonnull ITaskDefinition expectedTaskType) {
+    public boolean isAtTask(@Nonnull ITaskDefinition expectedTaskType) {
         Objects.requireNonNull(expectedTaskType);
         Optional<MTask<?>> taskType = getFlowTask();
         if (taskType.isPresent()) {
@@ -200,7 +200,7 @@ public class TaskInstance {
     }
 
     /** Verifica se o tipo da tarefa corresponde a sigla informada. */
-    public boolean isTask(@Nonnull String expectedTaskTypeAbbreviation) {
+    public boolean isAtTask(@Nonnull String expectedTaskTypeAbbreviation) {
         return getAbbreviation().equalsIgnoreCase(expectedTaskTypeAbbreviation);
     }
 

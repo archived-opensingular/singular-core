@@ -75,7 +75,7 @@ public class ExecutionContext {
         if (transitionName == null) {
             this.transition = null;
         } else {
-            this.transition = taskInstance.getFlowTaskOrException().getTransitionOrException(transitionName);
+            this.transition = getTaskInstance().getFlowTaskOrException().getTransitionOrException(transitionName);
         }
     }
 
