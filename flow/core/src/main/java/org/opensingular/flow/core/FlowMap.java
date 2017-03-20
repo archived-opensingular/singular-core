@@ -26,7 +26,17 @@ import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +57,7 @@ public class FlowMap {
 
     private final Map<String, MProcessRole> rolesByAbbreviation = new HashMap<>();
 
-    private MTask<?> startTask;
+    private MStart start;
 
     private IRoleChangeListener roleChangeListener;
 
@@ -82,6 +92,7 @@ public class FlowMap {
      *
      * @return as tarefas definidas.
      */
+    @Nonnull
     public Collection<MTask<?>> getTasks() {
         return tasksByName.values();
     }
@@ -91,6 +102,7 @@ public class FlowMap {
      *
      * @return todas as tarefas definidas.
      */
+    @Nonnull
     public Collection<MTask<?>> getAllTasks() {
         return CollectionUtils.union(getTasks(), getEndTasks());
     }
@@ -98,17 +110,19 @@ public class FlowMap {
     /**
      * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#PEOPLE}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#PEOPLE}.
+     * @return as tarefas definidas do tipo {@link TaskType#PEOPLE} ou uma lista vazia.
      */
+    @Nonnull
     public Collection<MTaskPeople> getPeopleTasks() {
         return (Collection<MTaskPeople>) getTasks(TaskType.PEOPLE);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA}.</p>
+     * Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA}.
      *
-     * @return as tarefas definidas do tipo {@link TaskType#JAVA}.
+     * @return as tarefas definidas do tipo {@link TaskType#JAVA} ou uma lista vazia.
      */
+    @Nonnull
     public Collection<MTaskJava> getJavaTasks() {
         return (Collection<MTaskJava>) getTasks(TaskType.JAVA);
     }
@@ -116,18 +130,20 @@ public class FlowMap {
     /**
      * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#WAIT}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#WAIT}.
+     * @return as tarefas definidas do tipo {@link TaskType#WAIT} ou uma lista vazia.
      */
+    @Nonnull
     public Collection<MTaskWait> getWaitTasks() {
         return (Collection<MTaskWait>) getTasks(TaskType.WAIT);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo especificado.</p>
+     * Retorna as tarefas definidas neste mapa do tipo especificado.
      *
      * @param IEntityTaskType o tipo especificado.
-     * @return as tarefas definidas do tipo especificado.
+     * @return as tarefas definidas do tipo especificado ou uma lista vazia
      */
+    @Nonnull
     public Collection<? extends MTask<?>> getTasks(IEntityTaskType IEntityTaskType) {
         final Builder<MTask<?>> builder = ImmutableList.builder();
         for (final MTask mTask : getTasks()) {
@@ -143,6 +159,7 @@ public class FlowMap {
      *
      * @return as tarefas definidas do tipo fim.
      */
+    @Nonnull
     public Collection<MTaskEnd> getEndTasks() {
         return endTasks.values();
     }
@@ -300,8 +317,8 @@ public class FlowMap {
      * @param initialTask a definição da tarefa que corresponde à inicial.
      * @return a tarefa inicial.
      */
-    public MTask<?> setStartTask(ITaskDefinition initialTask) {
-        return setStartTask(getTask(initialTask));
+    public MStart setStart(ITaskDefinition initialTask) {
+        return setStart(getTask(initialTask));
     }
 
     /**
@@ -310,13 +327,15 @@ public class FlowMap {
      * @param task a tarefa inicial.
      * @return a tarefa inicial.
      */
-    public MTask<?> setStartTask(MTask<?> task) {
+    public MStart setStart(MTask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
-            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"));
+            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"), this);
+        } else if (start != null) {
+            throw new SingularFlowException(createErrorMsg("The start point is already setted"), this);
         }
-        startTask = task;
-        return task;
+        start = new MStart(task);
+        return start;
     }
 
     /**
@@ -334,11 +353,11 @@ public class FlowMap {
      *
      * @return a tarefa inicial.
      */
-    public MTask<?> getStartTask() {
-        if (startTask == null) {
-            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"));
+    public MStart getStart() {
+        if (start == null) {
+            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"), this);
         }
-        return startTask;
+        return start;
     }
 
     /**
@@ -388,7 +407,8 @@ public class FlowMap {
     public MTask<?> getTaskByAbbreviationOrException(String abbreviation) {
         MTask<?> t = tasksByAbbreviation.get(abbreviation);
         if (t == null) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"));
+            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"),
+                    this);
         }
         return t;
     }
@@ -471,8 +491,8 @@ public class FlowMap {
      */
     public void verifyConsistency() {
         verifyTasksConsistency();
-        if(startTask == null){
-            throw new SingularFlowException(createErrorMsg("There is no initial task set"));
+        if(start == null){
+            throw new SingularFlowException(createErrorMsg("There is no initial task set"), this);
         }
         checkRouteToTheEnd();
     }

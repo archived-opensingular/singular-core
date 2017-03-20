@@ -53,12 +53,11 @@ public class MTransition {
 
     private ITaskPredicate predicate;
 
-    protected MTransition(MTask<?> origin, String name, MTask<?> destination, TransitionType type) {
-        Objects.requireNonNull(destination);
+    protected MTransition(MTask<?> origin, String name, @Nonnull MTask<?> destination, @Nonnull TransitionType type) {
         this.origin = origin;
         this.name = name;
-        this.destination = destination;
-        this.type = type;
+        this.destination = Objects.requireNonNull(destination);
+        this.type = Objects.requireNonNull(type);
         this.abbreviation = SingularUtil.convertToJavaIdentity(name, true);
     }
 
@@ -104,7 +103,8 @@ public class MTransition {
             this.rolesToDefineUser.add(papel);
             return this;
         } else {
-            throw new SingularFlowException("Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks");
+            throw new SingularFlowException(
+                    "Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks", origin);
         }
     }
 
@@ -168,12 +168,11 @@ public class MTransition {
     }
 
     public MTransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
-        if(this.parametersInitializer == null){
-            this.parametersInitializer = parametersInitializer;
-            return this;
-        } else {
+        if(this.parametersInitializer != null){
             throw new SingularFlowException("Parameters Initializer already set");
         }
+        this.parametersInitializer = parametersInitializer;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -182,12 +181,11 @@ public class MTransition {
     }
 
     public MTransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
-        if(this.parametersValidator == null){
-            this.parametersValidator = parametersValidator;
-            return this;
-        } else {
+        if(this.parametersValidator != null){
             throw new SingularFlowException("Parameters Validator already set");
         }
+        this.parametersValidator = parametersValidator;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -230,7 +228,9 @@ public class MTransition {
     public MTransition addParamFromProcessVariable(String ref, boolean required) {
         VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
-            throw new SingularFlowException(getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."));
+            throw new SingularFlowException(
+                    getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."),
+                    getFlowMap());
         }
         getParameters().addVariable(defVar.copy()).setRequired(required);
         return this;
@@ -250,7 +250,7 @@ public class MTransition {
 
     @Override
     public String toString() {
-        return name + "(" + destination.getName() + ")";
+        return name + "(go to task:" + destination.getName() + ")";
     }
 
     public TransitionType getType() {

@@ -77,7 +77,6 @@ public interface FormKey extends Serializable {
      */
     static void set(@Nonnull SInstance instance, @Nullable FormKey formKey) {
         Objects.requireNonNull(instance);
-        SInstance root = instance.getDocument().getRoot();
-        root.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, formKey);
+        instance.getRoot().setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, formKey);
     }
 }

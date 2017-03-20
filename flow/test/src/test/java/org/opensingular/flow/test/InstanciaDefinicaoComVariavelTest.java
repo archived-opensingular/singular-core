@@ -11,7 +11,7 @@ import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableTypeInstance;
 import org.opensingular.flow.test.definicao.DefinicaoComVariaveis;
-import org.opensingular.flow.test.support.TestSupport;
+import org.opensingular.flow.test.support.TestFlowSupport;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public abstract class InstanciaDefinicaoComVariavelTest extends TestSupport {
+public class InstanciaDefinicaoComVariavelTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
@@ -30,7 +30,7 @@ public abstract class InstanciaDefinicaoComVariavelTest extends TestSupport {
 
     @Test
     public void teste1UsoDeVariaveis() {
-        ProcessInstance pi = new DefinicaoComVariaveis().newInstance();
+        ProcessInstance pi = new DefinicaoComVariaveis().newPreStartInstance();
         pi.start();
         String nome = pi.getVariableValue("nome");
         BigDecimal qualquerCoisa = pi.getVariableValue("qualquerCoisa");

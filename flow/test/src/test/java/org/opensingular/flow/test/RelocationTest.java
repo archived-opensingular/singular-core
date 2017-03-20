@@ -3,10 +3,21 @@ package org.opensingular.flow.test;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
@@ -58,7 +69,7 @@ public class RelocationTest  {
         session.beginTransaction();
 
         P p = new P();
-        id = p.newInstance();
+        id = p.newPreStartInstance();
         id.start();
     }
 
@@ -70,7 +81,7 @@ public class RelocationTest  {
 
     @Test public void relocatesTaskUser(){
         P p = new P();
-        ProcessInstance id = p.newInstance();
+        ProcessInstance id = p.newPreStartInstance();
         id.start();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
@@ -84,7 +95,7 @@ public class RelocationTest  {
 
     @Test public void rejectssRelocationTaskUserWithWrongVersionLock(){
         P p = new P();
-        ProcessInstance id = p.newInstance();
+        ProcessInstance id = p.newPreStartInstance();
         id.start();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
@@ -100,7 +111,7 @@ public class RelocationTest  {
 
     @Test public void rejectsRelocationWithInvalidVersionNumber(){
         P p = new P();
-        ProcessInstance id = p.newInstance();
+        ProcessInstance id = p.newPreStartInstance();
         id.start();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
@@ -210,7 +221,7 @@ public class RelocationTest  {
             flow.addPeopleTask(PTask.DO1, new NullTaskAccessStrategy());
 
             flow.addEnd(PTask.END);
-            flow.setStartTask(PTask.START);
+            flow.setStart(PTask.START);
 
             flow.from(PTask.START).go(PTask.DO1);
 //        flow.from(PTask.START).go(PTask.DO2);

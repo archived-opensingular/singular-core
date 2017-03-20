@@ -1,23 +1,9 @@
 package org.opensingular.form.document;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.mockito.Mockito;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
@@ -32,13 +18,23 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {
 
     private STypeComposite<?>             groupingType;
     private SIAttachment                  fileFieldInstance;
     private SDocument                     document;
-    private IAttachmentPersistenceHandler tempHandler, persistentHandler;
+    private IAttachmentPersistenceHandler<IAttachmentRef> tempHandler, persistentHandler;
 
     public TestSDocumentPersistentServices(TestFormConfig testFormConfig) {
         super(testFormConfig);
@@ -68,8 +64,8 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         tempHandler = mock(IAttachmentPersistenceHandler.class);
         persistentHandler = mock(IAttachmentPersistenceHandler.class);
-        document.setAttachmentPersistenceTemporaryHandler(RefService.of(tempHandler));
-        document.bindLocalService("filePersistence", IAttachmentPersistenceHandler.class, RefService.of(persistentHandler));
+        document.setAttachmentPersistenceTemporaryHandler(RefService.ofToBeDescartedIfSerialized(tempHandler));
+        document.bindLocalService("filePersistence", IAttachmentPersistenceHandler.class, RefService.ofToBeDescartedIfSerialized(persistentHandler));
     }
 
     @Test

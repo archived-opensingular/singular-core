@@ -18,6 +18,9 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.variable.VarInstanceMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class ExecutionContext {
 
     private final ProcessInstance processInstance;
@@ -26,7 +29,7 @@ public class ExecutionContext {
 
     private final VarInstanceMap<?> input;
 
-    private String transition;
+    private MTransition transition;
 
     public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?> input) {
         this(processInstance, taskInstance, input, null);
@@ -36,7 +39,7 @@ public class ExecutionContext {
         this.processInstance = processInstance;
         this.taskInstance = taskInstance;
         this.input = input == null ? VarInstanceMap.empty() : input;
-        this.transition = transition != null ? transition.getName() : null;
+        this.transition = transition;
     }
 
     public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?> input) {
@@ -54,12 +57,26 @@ public class ExecutionContext {
         return taskInstance;
     }
 
-    public String getTransition() {
+    @Nullable
+    public MTransition getTransition() {
         return transition;
     }
 
-    public void setTransition(String transition) {
-        this.transition = transition;
+    public boolean isTransition(@Nonnull String transitionName) {
+        return transition != null && transition.getName().equals(transitionName);
+    }
+
+
+    /**
+     * Define a transição a ser executada na sequencia. Dispara exception senão exisite a transição com o nome informado
+     * na tarefa atual.
+     */
+    public void setTransition(@Nullable String transitionName) {
+        if (transitionName == null) {
+            this.transition = null;
+        } else {
+            this.transition = taskInstance.getFlowTaskOrException().getTransitionOrException(transitionName);
+        }
     }
 
     public VarInstanceMap<?> getInput() {

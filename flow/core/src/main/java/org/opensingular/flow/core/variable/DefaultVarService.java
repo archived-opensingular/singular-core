@@ -19,6 +19,7 @@ package org.opensingular.flow.core.variable;
 import org.opensingular.flow.core.variable.type.VarTypeBoolean;
 import org.opensingular.flow.core.variable.type.VarTypeDate;
 import org.opensingular.flow.core.variable.type.VarTypeDouble;
+import org.opensingular.flow.core.variable.type.VarTypeInteger;
 import org.opensingular.flow.core.variable.type.VarTypeString;
 
 public class DefaultVarService implements VarService {
@@ -71,7 +72,7 @@ public class DefaultVarService implements VarService {
 
     @Override
     public VarDefinition newDefinitionInteger(String ref, String name) {
-        return null;
+        return new VarDefinitionImpl(ref, name, new VarTypeInteger(), false);
     }
 
     @Override

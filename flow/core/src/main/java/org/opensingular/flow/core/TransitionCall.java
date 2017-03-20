@@ -19,37 +19,58 @@ package org.opensingular.flow.core;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.variable.VarType;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 /**
  * Representa a montagem (preparação) para execução de uma transanção a partir
  * de uma Task específica.
  *
  * @author Daniel C. Bordin
  */
-public interface TransitionCall {
+public final class TransitionCall {
+
+    private final TransitionRef transition;
+
+    private VarInstanceMap<?> vars;
+
+    TransitionCall(@Nonnull TransitionRef transition) {
+        this.transition = Objects.requireNonNull(transition);
+    }
 
     /**
      * Retorna o mapa de parametros da chamada atual.
      */
-    public VarInstanceMap<?> vars();
+    @Nonnull
+    public VarInstanceMap<?> vars() {
+        if (vars == null) {
+            vars = transition.newTransationParameters();
+        }
+        return vars;
+    }
 
     /**
      * Executa a transição sobre a task sendo referenciada.
      */
-    public void go();
+    public void go() {
+        FlowEngine.executeTransition(transition.getOriginTaskInstance(), transition.getTransition(), vars);
+    }
 
     /**
      * Set o valor na variável ou cria a variável senão existir.
      */
-    public default TransitionCall addParamString(String ref, String value) {
-        vars().addValorString(ref, value);
+    @Nonnull
+    public TransitionCall addParamString(String ref, String value) {
+        vars().addValueString(ref, value);
         return this;
     }
 
     /**
      * Set o valor na variável ou cria a variável senão existir.
      */
-    public default TransitionCall addParam(String ref, VarType type, Object value) {
-        vars().addValor(ref, type, value);
+    @Nonnull
+    public TransitionCall addParam(String ref, VarType type, Object value) {
+        vars().addValue(ref, type, value);
         return this;
     }
 
@@ -57,9 +78,9 @@ public interface TransitionCall {
      * Set o valor na variável ou lança exception se a variável não existir na
      * transição.
      */
-    public default TransitionCall setValor(String ref, Object value) {
+    @Nonnull
+    public TransitionCall setValue(String ref, Object value) {
         vars().setValue(ref, value);
         return this;
     }
-
 }

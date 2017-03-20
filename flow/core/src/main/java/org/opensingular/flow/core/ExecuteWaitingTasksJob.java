@@ -85,7 +85,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                 }
                 if (hoje.after(dataExecucao)) {
                     log.append("Executando transição da instância: ").append(instancia.getFullId()).append('\n');
-                    instancia.executeTransition();
+                    instancia.prepareTransition().go();
                     mbpmBean.getPersistenceService().commitTransaction();
                 }
 

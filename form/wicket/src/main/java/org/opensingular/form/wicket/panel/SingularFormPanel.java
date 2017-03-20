@@ -27,7 +27,11 @@ import org.apache.wicket.resource.JQueryPluginResourceReference;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.*;
+import org.opensingular.form.document.RefSDocumentFactory;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.document.ServiceRegistry;
 import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -254,7 +258,7 @@ public class SingularFormPanel extends Panel {
         if (documentFactoryRef != null) {
             ServiceRegistry registry = documentFactoryRef.get().getServiceRegistry();
             if (registry != null) {
-                formContextWicket = registry.lookupService(SingularFormContextWicket.class);
+                formContextWicket = registry.lookupService(SingularFormContextWicket.class).orElse(null);
             }
         }
         if (formContextWicket == null) {

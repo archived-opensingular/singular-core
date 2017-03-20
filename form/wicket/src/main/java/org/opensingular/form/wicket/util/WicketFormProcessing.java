@@ -28,7 +28,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.validation.InstanceValidationContext;
@@ -176,7 +180,7 @@ public class WicketFormProcessing implements Loggable {
      */
     private static void evaluateUpdateListeners(SInstance i) {
         SInstances
-                .streamDescendants(SInstances.getRootInstance(i), true)
+                .streamDescendants(i.getRoot(), true)
                 .filter(isDependantOf(i))
                 .filter(WicketFormProcessing::isNotOrphan)
                 .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))

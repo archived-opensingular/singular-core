@@ -18,7 +18,12 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 
@@ -83,7 +88,7 @@ public class MBPMUtil {
             task.setOrder(0);
         }
         Deque<MTask<?>> deque = new ArrayDeque<>();
-        orderedVisit(0, flowMap.getStartTask(), deque);
+        orderedVisit(0, flowMap.getStart().getTask(), deque);
         flowMap.getTasks().stream().filter(task -> task.getOrder() == 0)
                 .forEach(task -> task.setOrder(calculateWeight(task) + 1000000));
     }
@@ -136,7 +141,7 @@ public class MBPMUtil {
         } else if (tt.isEnd()) {
             return PESO_TASK_FIM;
         }
-        throw new SingularFlowException(task.getTaskType() + " não tratado");
+        throw new SingularFlowException(task.getTaskType() + " não tratado", task);
     }
 
 
