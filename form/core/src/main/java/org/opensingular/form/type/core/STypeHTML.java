@@ -16,9 +16,10 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.util.HtmlSanitizer;
 
 @SInfoType(name = "HTML", spackage = SPackageCore.class)
 public class STypeHTML extends STypeSimple<SIHTML, String> {
@@ -36,4 +37,17 @@ public class STypeHTML extends STypeSimple<SIHTML, String> {
         asAtrBootstrap().colPreference(12);
     }
 
+    @Override
+    public String convert(Object value) {
+        if (value instanceof String) {
+            return fromString((String) value);
+        } else {
+            return super.convert(value);
+        }
+    }
+
+    @Override
+    public String fromString(String value) {
+        return HtmlSanitizer.sanitize(value);
+    }
 }
