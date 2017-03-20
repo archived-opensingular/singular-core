@@ -16,14 +16,25 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.MProcessRole;
+import org.opensingular.flow.core.MStart;
+import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.MTaskEnd;
+import org.opensingular.flow.core.MTaskJava;
+import org.opensingular.flow.core.MTaskPeople;
+import org.opensingular.flow.core.MTaskWait;
+import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarType;
 
 import java.util.Objects;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BTask, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
+        FlowBuilder<ProcessDefinition<?>, FlowMap, BTask, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BStart<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
 
     public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
         super(processDefinition);
@@ -60,6 +71,11 @@ public class FlowBuilderImpl extends
     }
 
     @Override
+    protected BStart<?> newStart(MStart start) {
+        return new ImplBStart<>(this, start);
+    }
+
+    @Override
     protected BTransition<?> newTransition(MTransition transition) {
         return new ImplBTransition<>(this, transition);
     }
@@ -71,10 +87,10 @@ public class FlowBuilderImpl extends
 
     public static class ImplBTask<SELF extends ImplBTask<SELF, TASK>, TASK extends MTask<?>> implements BuilderTaskSelf<SELF, TASK> {
 
-        private final FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder;
+        private final FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder;
         private final TASK task;
 
-        public ImplBTask(FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder, TASK task) {
+        public ImplBTask(FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder, TASK task) {
             this.flowBuilder = flowBuilder;
             this.task = task;
         }
@@ -126,6 +142,22 @@ public class FlowBuilderImpl extends
     protected static class ImplBEnd<SELF extends ImplBEnd<SELF>> extends ImplBTask<SELF, MTaskEnd> implements BEnd<SELF> {
         public ImplBEnd(FlowBuilderImpl flowBuilder, MTaskEnd task) {
             super(flowBuilder, task);
+        }
+    }
+
+    protected static class ImplBStart<SELF extends ImplBStart<SELF>> implements BStart<SELF> {
+
+        private final FlowBuilderImpl flowBuilder;
+        private final MStart start;
+
+        public ImplBStart(FlowBuilderImpl flowBuilder, MStart start) {
+            this.flowBuilder = flowBuilder;
+            this.start = start;
+        }
+
+        @Override
+        public MStart getStart() {
+            return start;
         }
     }
 

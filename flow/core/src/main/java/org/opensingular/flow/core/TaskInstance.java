@@ -59,7 +59,7 @@ public class TaskInstance {
         if (!processInstance.getEntity().equals(task.getProcessInstance())) {
             throw new SingularFlowException(processInstance.createErrorMsg(
                     "O objeto " + task.getClass().getSimpleName() + " " + task + " não é uma tarefa filha do objeto " +
-                            processInstance.getClass().getSimpleName() + " em questão"));
+                            processInstance.getClass().getSimpleName() + " em questão"), processInstance);
         }
         this.processInstance = processInstance;
         this.entityTask = task;

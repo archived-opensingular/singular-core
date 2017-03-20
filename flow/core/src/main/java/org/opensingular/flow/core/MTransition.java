@@ -103,7 +103,8 @@ public class MTransition {
             this.rolesToDefineUser.add(papel);
             return this;
         } else {
-            throw new SingularFlowException("Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks");
+            throw new SingularFlowException(
+                    "Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks", origin);
         }
     }
 
@@ -227,7 +228,9 @@ public class MTransition {
     public MTransition addParamFromProcessVariable(String ref, boolean required) {
         VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
-            throw new SingularFlowException(getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."));
+            throw new SingularFlowException(
+                    getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."),
+                    getFlowMap());
         }
         getParameters().addVariable(defVar.copy()).setRequired(required);
         return this;
@@ -247,7 +250,7 @@ public class MTransition {
 
     @Override
     public String toString() {
-        return name + "(" + destination.getName() + ")";
+        return name + "(go to task:" + destination.getName() + ")";
     }
 
     public TransitionType getType() {

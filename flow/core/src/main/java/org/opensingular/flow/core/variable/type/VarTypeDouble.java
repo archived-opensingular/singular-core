@@ -22,7 +22,7 @@ import org.opensingular.flow.core.variable.VarType;
 
 import java.util.Locale;
 
-public class VarTypeDouble implements VarType {
+public class VarTypeDouble implements VarType<Double> {
 
     @Override
     public String getName() {
@@ -42,5 +42,10 @@ public class VarTypeDouble implements VarType {
     @Override
     public String toPersistenceString(VarInstance varInstance) {
         return Double.toString((Double) varInstance.getValue());
+    }
+
+    @Override
+    public Double fromPersistenceString(String persistenceValue) {
+        return persistenceValue == null ? null : Double.valueOf(persistenceValue);
     }
 }

@@ -22,7 +22,7 @@ import org.opensingular.flow.core.variable.VarType;
 
 import java.math.BigDecimal;
 
-public class VarTypeDecimal implements VarType {
+public class VarTypeDecimal implements VarType<BigDecimal> {
 
     @Override
     public String getName() {
@@ -48,4 +48,8 @@ public class VarTypeDecimal implements VarType {
         return valor.toPlainString();
     }
 
+    @Override
+    public BigDecimal fromPersistenceString(String persistenceValue) {
+        return persistenceValue == null ? null : new BigDecimal(persistenceValue);
+    }
 }

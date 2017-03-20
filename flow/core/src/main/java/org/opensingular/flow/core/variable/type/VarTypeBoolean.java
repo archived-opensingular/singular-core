@@ -20,7 +20,7 @@ import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarType;
 
-public class VarTypeBoolean implements VarType {
+public class VarTypeBoolean implements VarType<Boolean> {
 
     @Override
     public String getName() {
@@ -40,5 +40,10 @@ public class VarTypeBoolean implements VarType {
     @Override
     public String toPersistenceString(VarInstance varInstance) {
         return Boolean.toString((Boolean) varInstance.getValue());
+    }
+
+    @Override
+    public Boolean fromPersistenceString(String persistenceValue) {
+        return persistenceValue == null ? null : Boolean.valueOf(persistenceValue);
     }
 }

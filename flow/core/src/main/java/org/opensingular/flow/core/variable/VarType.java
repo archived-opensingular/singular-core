@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.variable;
 
-public interface VarType {
+public interface VarType<TYPE> {
 
     public String getName();
 
@@ -25,4 +25,6 @@ public interface VarType {
     public String toDisplayString(Object valor, VarDefinition varDefinition);
 
     public String toPersistenceString(VarInstance varInstance);
+
+    TYPE fromPersistenceString(String persistenceValue);
 }

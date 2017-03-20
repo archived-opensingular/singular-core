@@ -198,10 +198,11 @@ public class ProcessInstance implements Serializable {
                     estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
                 } else {
                     throw new SingularFlowException(createErrorMsg(
-                        "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
+                            "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por " +
+                                    "estar finalizado"), this);
                 }
             } else {
-                throw new SingularFlowException(createErrorMsg("getState() não pode ser invocado para essa instância"));
+                throw new SingularFlowException(createErrorMsg("getState() não pode ser invocado para essa instância"), this);
             }
         }
         return Optional.ofNullable(estadoAtual);
@@ -477,7 +478,7 @@ public class ProcessInstance implements Serializable {
         FlowEngine.initTask(this, task, tarefaNova);
         ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
 
-        TaskInstance taskNew2 = getTaskNewer(task).orElseThrow(() -> new SingularFlowException("Erro Interno"));
+        TaskInstance taskNew2 = getTaskNewer(task).orElseThrow(() -> new SingularFlowException("Erro Interno", this));
         task.notifyTaskStart(taskNew2, execucaoMTask);
         if (task.isImmediateExecution()) {
             prepareTransition().go();
@@ -693,7 +694,7 @@ public class ProcessInstance implements Serializable {
     public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
         MProcessRole mProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
         if (mProcessRole == null) {
-            throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation);
+            throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation, this);
         }
         MUser previousUser = getUserWithRole(mProcessRole.getAbbreviation());
 
@@ -827,7 +828,8 @@ public class ProcessInstance implements Serializable {
 
         ValidationResult result = getVariables().validate();
         if (result.hasErros()) {
-            throw new SingularFlowException(createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result));
+            throw new SingularFlowException(
+                    createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result), this);
         }
     }
 
@@ -920,7 +922,8 @@ public class ProcessInstance implements Serializable {
     @Nonnull
     public TaskInstance getCurrentTaskOrException() {
         return getCurrentTask().orElseThrow(
-                () -> new SingularFlowException(createErrorMsg("Não há tarefa atual para essa instancia de processo")));
+                () -> new SingularFlowException(createErrorMsg("Não há tarefa atual para essa instancia de processo"),
+                        this));
     }
 
     /**
@@ -935,7 +938,7 @@ public class ProcessInstance implements Serializable {
     @Nonnull
     public TaskInstance getLatestTaskOrException() {
         return getTaskNewer().orElseThrow(
-                () -> new SingularFlowException(createErrorMsg("Não há nenhuma tarefa no processo")));
+                () -> new SingularFlowException(createErrorMsg("Não há nenhuma tarefa no processo"), this));
     }
 
     /**
@@ -984,7 +987,8 @@ public class ProcessInstance implements Serializable {
      */
     final void setExecutionContext(@Nullable ExecutionContext execucaoTask) {
         if (this.executionContext != null && execucaoTask != null) {
-            throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
+            throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"),
+                    this);
         }
         this.executionContext = execucaoTask;
     }

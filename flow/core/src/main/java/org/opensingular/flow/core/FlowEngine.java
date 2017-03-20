@@ -44,7 +44,8 @@ class FlowEngine {
 
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();
-        return updateState(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);
+        MStart start = instancia.getProcessDefinition().getFlowMap().getStart();
+        return updateState(instancia, null, null, start.getTask(), paramIn);
     }
 
     @Nonnull
@@ -53,22 +54,25 @@ class FlowEngine {
             @Nullable VarInstanceMap<?> paramIn) {
         Objects.requireNonNull(processInstance);
         Objects.requireNonNull(destinyTask);
-        boolean primeiroLoop = true;
         while (true) {
             if (transition != null && originTaskInstance == null) {
                 throw new SingularFlowException(
                         "Não pode ser solicitada execução de uma transição específica (transition=" +
-                                transition.getName() + ") sem uma instancia de tarefa de origem (tarefaOrigem null)");
+                                transition.getName() + ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
             }
             Date agora = new Date();
             final TaskInstance newTaskInstance = processInstance.updateState(originTaskInstance, transition, destinyTask, agora);
 
-            if (primeiroLoop) {
+            if (paramIn != null) {
                 inserirParametrosDaTransicao(processInstance, paramIn);
 
-                getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), originTaskInstance, newTaskInstance, paramIn);
-
-                primeiroLoop = false;
+                if (originTaskInstance != null) {
+                    //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
+                    // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
+                    // impede). O problema é uqe originTaskInstance é obrigatório
+                    getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), originTaskInstance,
+                            newTaskInstance, paramIn);
+                }
             }
 
             getPersistenceService().flushSession();
@@ -104,6 +108,7 @@ class FlowEngine {
             transition = resolveDefaultTransitionIfNecessary(newTaskInstance, execucaoTask.getTransition());
             destinyTask = transition.getDestination();
             originTaskInstance = newTaskInstance;
+            paramIn = null;
         }
     }
 
@@ -195,13 +200,11 @@ class FlowEngine {
         return tarefaAtual.getFlowTaskOrException().resolveDefaultTransitionOrException();
     }
 
-    private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
-        if (paramIn != null) {
-            for (VarInstance variavel : paramIn) {
-                String ref = variavel.getRef();
-                if (instancia.getProcessDefinition().getVariables().contains(ref)) {
-                    instancia.setVariable(ref, variavel.getValue());
-                }
+    private static void inserirParametrosDaTransicao(@Nonnull ProcessInstance instancia, @Nonnull VarInstanceMap<?> paramIn) {
+        for (VarInstance variavel : paramIn) {
+            String ref = variavel.getRef();
+            if (instancia.getProcessDefinition().getVariables().contains(ref)) {
+                instancia.setVariable(ref, variavel.getValue());
             }
         }
     }
@@ -220,15 +223,17 @@ class FlowEngine {
         for (VarDefinition p : transicao.getParameters()) {
             if (p.isRequired()) {
                 if (!parametroPresentes(paramIn, p)) {
-                    throw new SingularFlowException("O parametro obrigatório '" + p.getRef()
-                            + "' não foi informado na chamada da transição "
-                        + transicao.getName());
+                    throw new SingularFlowException(
+                            "O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição " +
+                                    transicao.getName(), taskInstance);
                 }
             }
         }
         ValidationResult errors = transicao.validate(taskInstance, paramIn);
         if (errors.hasErros()) {
-            throw new SingularFlowException("Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]");
+            throw new SingularFlowException(
+                    "Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]",
+                    taskInstance);
         }
     }
 

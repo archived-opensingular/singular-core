@@ -16,14 +16,16 @@
 
 package org.opensingular.flow.core.variable.type;
 
-import org.opensingular.flow.core.variable.VarInstance;
+import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.variable.VarDefinition;
+import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarType;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class VarTypeDate implements VarType {
+public class VarTypeDate implements VarType<Date> {
 
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private SimpleDateFormat timeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -53,5 +55,12 @@ public class VarTypeDate implements VarType {
         return Integer.toString((Integer) varInstance.getValue());
     }
 
-
+    @Override
+    public Date fromPersistenceString(String persistenceValue) {
+        try {
+            return persistenceValue == null ? null : timeFormatter.parse(persistenceValue);
+        } catch (ParseException e) {
+            throw new SingularFlowException("Erro convertendo valor persistido", e);
+        }
+    }
 }

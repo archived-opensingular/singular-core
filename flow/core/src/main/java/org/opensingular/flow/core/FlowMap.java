@@ -57,7 +57,7 @@ public class FlowMap {
 
     private final Map<String, MProcessRole> rolesByAbbreviation = new HashMap<>();
 
-    private MTask<?> startTask;
+    private MStart start;
 
     private IRoleChangeListener roleChangeListener;
 
@@ -317,8 +317,8 @@ public class FlowMap {
      * @param initialTask a definição da tarefa que corresponde à inicial.
      * @return a tarefa inicial.
      */
-    public MTask<?> setStartTask(ITaskDefinition initialTask) {
-        return setStartTask(getTask(initialTask));
+    public MStart setStart(ITaskDefinition initialTask) {
+        return setStart(getTask(initialTask));
     }
 
     /**
@@ -327,13 +327,15 @@ public class FlowMap {
      * @param task a tarefa inicial.
      * @return a tarefa inicial.
      */
-    public MTask<?> setStartTask(MTask<?> task) {
+    public MStart setStart(MTask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
-            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"));
+            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"), this);
+        } else if (start != null) {
+            throw new SingularFlowException(createErrorMsg("The start point is already setted"), this);
         }
-        startTask = task;
-        return task;
+        start = new MStart(task);
+        return start;
     }
 
     /**
@@ -351,11 +353,11 @@ public class FlowMap {
      *
      * @return a tarefa inicial.
      */
-    public MTask<?> getStartTask() {
-        if (startTask == null) {
-            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"));
+    public MStart getStart() {
+        if (start == null) {
+            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"), this);
         }
-        return startTask;
+        return start;
     }
 
     /**
@@ -405,7 +407,8 @@ public class FlowMap {
     public MTask<?> getTaskByAbbreviationOrException(String abbreviation) {
         MTask<?> t = tasksByAbbreviation.get(abbreviation);
         if (t == null) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"));
+            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"),
+                    this);
         }
         return t;
     }
@@ -488,8 +491,8 @@ public class FlowMap {
      */
     public void verifyConsistency() {
         verifyTasksConsistency();
-        if(startTask == null){
-            throw new SingularFlowException(createErrorMsg("There is no initial task set"));
+        if(start == null){
+            throw new SingularFlowException(createErrorMsg("There is no initial task set"), this);
         }
         checkRouteToTheEnd();
     }
