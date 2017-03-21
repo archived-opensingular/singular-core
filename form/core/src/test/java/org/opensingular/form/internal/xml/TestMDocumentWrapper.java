@@ -4,7 +4,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
 
@@ -76,6 +78,49 @@ public class TestMDocumentWrapper {
         Assert.assertFalse(wrapper.isDefaultNamespace("test"));
 
         Assert.assertFalse(wrapper.isSupported("feature", "1.0"));
+
+        Assert.assertNull(wrapper.getXmlEncoding());
+
+        Assert.assertNull(wrapper.getInputEncoding());
+
+        Assert.assertTrue(wrapper.getImplementation() instanceof DOMImplementation);
+
+        Assert.assertTrue(wrapper.getDocumentElement() instanceof Element);
+
+        Assert.assertNull(wrapper.getElementById(""));
+
+        Assert.assertNull(wrapper.getOwnerDocument());
+
+        Assert.assertFalse(wrapper.hasAttributes());
+
+        Assert.assertNull(wrapper.getTextContent());
+
+        Assert.assertNull(wrapper.getFeature("feature", "1.0"));
+
+        Assert.assertNull(wrapper.getUserData("key"));
+    }
+
+    @Test
+    public void testNodeMethods(){
+        MDocument document = MDocument.newInstance();
+        MElement pai = document.createRaiz("raiz");
+        pai.addElement("nome", "joaquim");
+
+        MElement element = pai.addElement("sobrenome", "tadeu da cruz");
+
+        MDocumentWrapper wrapper = new MDocumentWrapper(document);
+
+        Assert.assertEquals(0, wrapper.getElementsByTagNameNS("", "").getLength());
+
+        Assert.assertEquals("raiz", wrapper.getLastChild().getNodeName());
+
+        Assert.assertEquals(1, wrapper.getChildNodes().getLength());
+
+        Assert.assertTrue(wrapper.hasChildNodes());
+
+        Assert.assertFalse(wrapper.isSameNode(element));
+
+        Assert.assertFalse(wrapper.isEqualNode(pai));
     }
 
     @Test
@@ -132,9 +177,7 @@ public class TestMDocumentWrapper {
         MElement element = MElement.newInstance("elemento");
         element.setNodeValue("valor");
 
-        Node node = wrapper.adoptNode(element);
-
-        System.out.println();
+        Assert.assertNull(wrapper.adoptNode(element));
     }
 
 }
