@@ -18,18 +18,14 @@ package org.opensingular.flow.core.variable.type;
 
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.variable.VarType;
 
-public class VarTypeBoolean implements VarType {
+import javax.annotation.Nonnull;
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
+public class VarTypeBoolean extends VarTypeBase<Boolean> {
 
-    @Override
-    public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
+
+    public VarTypeBoolean() {
+        super(Boolean.class);
     }
 
     @Override
@@ -39,6 +35,16 @@ public class VarTypeBoolean implements VarType {
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Boolean.toString((Boolean) varInstance.getValue());
+        return Boolean.toString(convert(varInstance.getValue()));
+    }
+
+    @Override
+    public Boolean fromPersistenceString(String persistenceValue) {
+        return persistenceValue == null ? null : Boolean.valueOf(persistenceValue);
+    }
+
+    @Override
+    protected Boolean convertNotDirectCompatible(@Nonnull Object original) {
+        return null;
     }
 }

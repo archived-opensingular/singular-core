@@ -34,7 +34,11 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -60,7 +64,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     final void start() {
         for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
-            for (final MTaskJava task : Optional.ofNullable(processDefinition.getFlowMap()).map(FlowMap::getJavaTasks).orElse(new ArrayList<>(0))) {
+            for (MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
                 if (!task.isImmediateExecution()) {
                     getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }

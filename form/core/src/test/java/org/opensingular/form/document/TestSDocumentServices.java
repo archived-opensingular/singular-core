@@ -1,16 +1,18 @@
 package org.opensingular.form.document;
 
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+
+import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -59,14 +61,14 @@ public class TestSDocumentServices extends TestCaseForm {
         final Object provider = new Object();
         document.bindLocalService("something", Object.class, ref(provider)); 
         
-        assertThat(document.lookupService("something", Object.class))
+        assertThat(document.lookupService("something", Object.class).orElse(null))
             .isSameAs(provider);
     }
     
     @Test public void doesNotConfusesNames(){
         document.bindLocalService("something", Object.class, ref(new Object())); 
         
-        assertThat(document.lookupService("nothing", Object.class))
+        assertThat(document.lookupService("nothing", Object.class).orElse(null))
             .isNull();
     }
     
@@ -75,8 +77,7 @@ public class TestSDocumentServices extends TestCaseForm {
         final Object provider = new Object();
         document.bindLocalService(Object.class, ref(provider)); 
         
-        assertThat(document.lookupService(Object.class))
-            .isSameAs(provider);
+        assertThat(document.lookupService(Object.class).orElse(null)).isSameAs(provider);
     }
     
     @SuppressWarnings("unchecked")
@@ -84,8 +85,7 @@ public class TestSDocumentServices extends TestCaseForm {
         final Integer provider = new Integer(1);
         document.bindLocalService(Integer.class, ref(provider)); 
         
-        assertThat(document.lookupService(Number.class))
-            .isSameAs(provider);
+        assertThat(document.lookupService(Number.class).orElse(null)).isSameAs(provider);
     }
     
     @SuppressWarnings("unchecked")
@@ -102,30 +102,27 @@ public class TestSDocumentServices extends TestCaseForm {
     @Test public void doesNotAceptsSubclasses(){
         document.bindLocalService(Object.class, ref(new Object())); 
         
-        assertThat(document.lookupService(String.class))
-            .isNull();
+        assertThat(document.lookupService(String.class).orElse(null)).isNull();
     }
     
     @Test public void usesAddedRegistriesForLookupByName(){
-        final Object provider = new Object();
+        Object provider = new Object();
         ServiceRegistry registry = mock(ServiceRegistry.class);
         when(registry.lookupService("another", Object.class)).
-            thenReturn(provider);
+            thenReturn(Optional.of(provider));
         document.addServiceRegistry(registry);
         
-        assertThat(document.lookupService("another", Object.class))
+        assertThat(document.lookupService("another", Object.class).orElse(null))
             .isEqualTo(provider);
     }
     
     @Test public void usesAddedRegistriesForLookupByClass(){
-        final Object provider = new Object();
+        Object provider = new Object();
         ServiceRegistry registry = mock(ServiceRegistry.class);
-        when(registry.lookupService(Object.class)).
-            thenReturn(provider);
+        when(registry.lookupService(Object.class)).thenReturn(Optional.of(provider));
         document.addServiceRegistry(registry);
         
-        assertThat(document.lookupService(Object.class))
-            .isEqualTo(provider);
+        assertThat(document.lookupService(Object.class).orElse(null)).isEqualTo(provider);
     }
 
 }

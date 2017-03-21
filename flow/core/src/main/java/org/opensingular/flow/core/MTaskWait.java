@@ -17,7 +17,6 @@
 package org.opensingular.flow.core;
 
 import java.util.Date;
-import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
@@ -40,7 +39,7 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
     @Override
     public <T extends ProcessInstance> MTaskWait withTargetDate(IExecutionDateStrategy<T> targetDateExecutionStrategy) {
         if(executionDateStrategy != null){
-            throw new SingularFlowException("Tarefas agendadas não suportam data alvo.");
+            throw new SingularFlowException("Tarefas agendadas não suportam data alvo.", this);
         }
         super.withTargetDate(targetDateExecutionStrategy);
         return this;
@@ -64,11 +63,13 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
     @Override
     void verifyConsistency() {
         super.verifyConsistency();
-        if (getExecutionPage() != null) {
-            Objects.requireNonNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
+        if (getExecutionPage() != null && getAccessStrategy() == null) {
+            throw new SingularFlowException(
+                    createErrorMsg("Não foi definida a estrategia de verificação de acesso da tarefa"), this);
         }
         if(getTransitions().size() > 1 && getDefaultTransition() == null && hasExecutionDateStrategy()){
-            throw new SingularFlowException(createErrorMsg("A transição default não foi definida"));
+            throw new SingularFlowException(createErrorMsg("A transição default não foi definida"), this)
+                    .addTransitions(this);
         }
     }
 }

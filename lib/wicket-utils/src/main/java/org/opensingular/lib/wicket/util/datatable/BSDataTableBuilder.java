@@ -20,6 +20,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
@@ -63,6 +64,10 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         setTreeProvider(treeProvider);
     }
 
+    public static <T> BSDataTableBuilder<T, ?, ?> create() {
+        return new BSDataTableBuilder<>();
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <C extends IColumn<T, S>> BSDataTableBuilder<T, S, C> appendColumn(C column) {
         ((List) columns).add(column);
@@ -75,39 +80,41 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         return this;
     }
 
-    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(
-            IModel<String> displayModel,
-            IFunction<T, Object> propertyFunction) {
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, IFunction<T, Object> propertyFunction) {
         return appendColumn(new BSPropertyColumn<>(displayModel, propertyFunction));
     }
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, IFunction<T, Object> propertyFunction) {
+        return appendPropertyColumn(Model.of(headerTitle), propertyFunction);
+    }
 
-    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(
-            IModel<String> displayModel,
-            String propertyExpression) {
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, String propertyExpression) {
         return appendColumn(new BSPropertyColumn<>(displayModel, propertyExpression));
     }
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, String propertyExpression) {
+        return appendPropertyColumn(Model.of(headerTitle), propertyExpression);
+    }
 
-    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(
-            IModel<String> displayModel,
-            S sortProperty,
-            IFunction<T, Object> propertyFunction) {
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, IFunction<T, Object> propertyFunction) {
         return appendColumn(new BSPropertyColumn<>(displayModel, sortProperty, propertyFunction));
     }
-
-    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(
-            IModel<String> displayModel,
-            S sortProperty,
-            String propertyExpression) {
-        BSPropertyColumn<T, S> column = new BSPropertyColumn<>(displayModel, sortProperty, propertyExpression);
-        return appendColumn(column);
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, IFunction<T, Object> propertyFunction) {
+        return appendPropertyColumn(Model.of(headerTitle), sortProperty, propertyFunction);
     }
 
-    public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendActionColumn(
-            IModel<String> displayModel,
-            BSActionColumnCallback<T, S> callback) {
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression) {
+        return appendColumn(new BSPropertyColumn<>(displayModel, sortProperty, propertyExpression));
+    }
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, String propertyExpression) {
+        return appendPropertyColumn(Model.of(headerTitle), sortProperty, propertyExpression);
+    }
+
+    public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendActionColumn(IModel<String> displayModel, BSActionColumnCallback<T, S> callback) {
         BSActionColumn<T, S> column = new BSActionColumn<>(displayModel);
         callback.accept(column);
         return appendColumn(column);
+    }
+    public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendActionColumn(String headerTitle, BSActionColumnCallback<T, S> callback) {
+        return appendActionColumn(Model.of(headerTitle), callback);
     }
 
     public BSDataTableBuilder<T, S, ?> setDataProvider(ISortableDataProvider<T, S> dataProvider) {

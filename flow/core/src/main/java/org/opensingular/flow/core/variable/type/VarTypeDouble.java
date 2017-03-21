@@ -18,29 +18,35 @@ package org.opensingular.flow.core.variable.type;
 
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.variable.VarType;
 
 import java.util.Locale;
 
-public class VarTypeDouble implements VarType {
+public class VarTypeDouble extends VarTypeBase<Double> {
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
-
-    @Override
-    public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
+    public VarTypeDouble() {
+        super(Double.class);
     }
 
     @Override
     public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return String.format(new Locale("pt","BR"), "%1$,.2f", valor);
+        return String.format(new Locale("pt","BR"), "%1$,.2f", convert(valor));
     }
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Double.toString((Double) varInstance.getValue());
+        return Double.toString(convert(varInstance.getValue()));
+    }
+
+    @Override
+    public Double fromPersistenceString(String persistenceValue) {
+        return persistenceValue == null ? null : Double.valueOf(persistenceValue);
+    }
+
+    @Override
+    protected Double convertNotDirectCompatible(Object original) {
+        if (original instanceof Number) {
+            return ((Number) original).doubleValue();
+        }
+        return null;
     }
 }

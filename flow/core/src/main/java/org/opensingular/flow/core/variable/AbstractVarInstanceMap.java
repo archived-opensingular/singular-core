@@ -16,11 +16,11 @@
 
 package org.opensingular.flow.core.variable;
 
+import org.opensingular.flow.core.SingularFlowException;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-
-import org.opensingular.flow.core.SingularFlowException;
 
 public abstract class AbstractVarInstanceMap<K extends VarInstance> implements VarInstanceMap<K> {
 
@@ -35,19 +35,19 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
     public AbstractVarInstanceMap(VarInstanceMap<?> instances) {
         varService = VarService.getVarService(instances);
         for (VarInstance var : instances) {
-            addDefinicao(var.getDefinition()).setValue(var.getValue());
+            addDefinition(var.getDefinition()).setValue(var.getValue());
         }
     }
 
     public AbstractVarInstanceMap(VarDefinitionMap<?> definitions) {
         varService = VarService.getVarService(definitions);
         for (VarDefinition def : definitions) {
-            addDefinicao(def);
+            addDefinition(def);
         }
     }
 
     @Override
-    public K addDefinicao(VarDefinition def) {
+    public K addDefinition(VarDefinition def) {
         K v = newVarInstance(def);
         addInstance(v);
         return v;
@@ -68,7 +68,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
     }
 
     protected K newVarInstance(VarDefinition def) {
-        throw new SingularFlowException("Esse metodo ou addDefinicao() deve ser sobre escrito");
+        throw new SingularFlowException("Esse metodo ou addDefinition() deve ser sobre escrito");
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
     }
 
     @Override
-    public K getVariavel(String ref) {
+    public K getVariable(String ref) {
         if (variaveis == null) {
             return null;
         }

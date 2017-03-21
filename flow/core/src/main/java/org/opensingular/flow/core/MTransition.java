@@ -22,8 +22,6 @@ import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.ValidationResult;
-import org.opensingular.flow.core.variable.VarDefinition;
-import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
 
@@ -34,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class MTransition {
+public class MTransition extends MParametersEnabled {
 
     private final MTask<?> origin;
     private final String name;
@@ -47,18 +45,16 @@ public class MTransition {
 
     private MetaData metaData;
 
-    private VarDefinitionMap<?>              parameters;
     private ITransitionParametersInitializer parametersInitializer;
     private ITransitionParametersValidator   parametersValidator;
 
     private ITaskPredicate predicate;
 
-    protected MTransition(MTask<?> origin, String name, MTask<?> destination, TransitionType type) {
-        Objects.requireNonNull(destination);
+    protected MTransition(MTask<?> origin, String name, @Nonnull MTask<?> destination, @Nonnull TransitionType type) {
         this.origin = origin;
         this.name = name;
-        this.destination = destination;
-        this.type = type;
+        this.destination = Objects.requireNonNull(destination);
+        this.type = Objects.requireNonNull(type);
         this.abbreviation = SingularUtil.convertToJavaIdentity(name, true);
     }
 
@@ -104,7 +100,8 @@ public class MTransition {
             this.rolesToDefineUser.add(papel);
             return this;
         } else {
-            throw new SingularFlowException("Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks");
+            throw new SingularFlowException(
+                    "Only automatic user allocation is allowed in " + origin.getTaskType() + " tasks", origin);
         }
     }
 
@@ -168,12 +165,11 @@ public class MTransition {
     }
 
     public MTransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
-        if(this.parametersInitializer == null){
-            this.parametersInitializer = parametersInitializer;
-            return this;
-        } else {
+        if(this.parametersInitializer != null){
             throw new SingularFlowException("Parameters Initializer already set");
         }
+        this.parametersInitializer = parametersInitializer;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -182,12 +178,11 @@ public class MTransition {
     }
 
     public MTransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
-        if(this.parametersValidator == null){
-            this.parametersValidator = parametersValidator;
-            return this;
-        } else {
+        if(this.parametersValidator != null){
             throw new SingularFlowException("Parameters Validator already set");
         }
+        this.parametersValidator = parametersValidator;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -220,19 +215,9 @@ public class MTransition {
         return validate(new TransitionRef(instancia, this), parameters);
     }
 
-    public final VarDefinitionMap<?> getParameters() {
-        if (parameters == null) {
-            parameters = getFlowMap().getVarService().newVarDefinitionMap();
-        }
-        return parameters;
-    }
-
-    public MTransition addParamFromProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
-        if (defVar == null) {
-            throw new SingularFlowException(getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."));
-        }
-        getParameters().addVariable(defVar.copy()).setRequired(required);
+    @Override
+    public MTransition addParamBindedToProcessVariable(String ref, boolean required) {
+        super.addParamBindedToProcessVariable(ref, required);
         return this;
     }
 
@@ -244,13 +229,15 @@ public class MTransition {
         return predicate;
     }
 
-    private FlowMap getFlowMap() {
+
+    @Override
+    FlowMap getFlowMap() {
         return destination.getFlowMap();
     }
 
     @Override
     public String toString() {
-        return name + "(" + destination.getName() + ")";
+        return name + "(go to task:" + destination.getName() + ")";
     }
 
     public TransitionType getType() {

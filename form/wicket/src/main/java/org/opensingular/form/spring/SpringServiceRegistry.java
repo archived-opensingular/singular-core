@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class provides a {@link ServiceRegistry} that relays service lookup
@@ -49,29 +50,29 @@ public class SpringServiceRegistry implements ServiceRegistry,
     }
 
     @Override
-    public <T> T lookupService(String name, Class<T> targetClass) {
+    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
         try {
-            return applicationContext.getBean(name, targetClass);
+            return Optional.ofNullable(applicationContext.getBean(name, targetClass));
         } catch (NoSuchBeanDefinitionException ex) {
-            return null;
+            return Optional.empty();
         }
     }
 
     @Override
-    public <T> T lookupService(Class<T> targetClass) {
+    public <T> Optional<T> lookupService(Class<T> targetClass) {
         try {
-            return applicationContext.getBean(targetClass);
+            return Optional.ofNullable(applicationContext.getBean(targetClass));
         } catch (NoSuchBeanDefinitionException ex) {
-            return null;
+            return Optional.empty();
         }
     }
 
     @Override
-    public Object lookupService(String name) {
+    public Optional<Object> lookupService(String name) {
         try {
-            return applicationContext.getBean(name);
+            return Optional.ofNullable(applicationContext.getBean(name));
         } catch (NoSuchBeanDefinitionException ex) {
-            return null;
+            return Optional.empty();
         }
     }
 

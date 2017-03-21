@@ -16,21 +16,24 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.TransitionAccessStrategy;
+import org.opensingular.flow.core.MParametersEnabled;
 import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.TransitionAccessStrategy;
 import org.opensingular.flow.core.TransitionAccessStrategyImpl;
+import org.opensingular.flow.core.property.MetaDataRef;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public interface BTransition<SELF extends BTransition<SELF>> {
+public interface BTransition<SELF extends BTransition<SELF>> extends BParametersEnabled<SELF> {
 
     public abstract MTransition getTransition();
 
-    public FlowBuilder getFlowBuilder();
-
-    public default SELF self() {
-        return (SELF) this;
+    public default MParametersEnabled getParametersEnabled() {
+        return getTransition();
     }
+
+    public FlowBuilder getFlowBuilder();
 
     public default SELF markAsDefault() {
         getTransition().getOrigin().setDefaultTransition(getTransition());
@@ -52,22 +55,6 @@ public interface BTransition<SELF extends BTransition<SELF>> {
         return self();
     }
     
-    // depois de avaliar a assinatura com ITaskDefinition e refatorar Alocpro,
-    // apagar esse método
-    @Deprecated
-    public default SELF thenGo(BTask destination) {
-        MTransition transition = getTransition().thenGo(destination.getTask());
-        return (SELF) getFlowBuilder().newTransition(transition);
-    }
-
-    // depois de avaliar a assinatura com ITaskDefinition e refatorar Alocpro,
-    // apagar esse método
-    @Deprecated
-    public default SELF thenGo(String actionName, BTask destination) {
-        MTransition transition = getTransition().thenGo(actionName, destination.getTask());
-        return (SELF) getFlowBuilder().newTransition(transition);
-    }
-
     public default SELF withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         getTransition().withAccessControl(accessStrategy);
         return self();
@@ -75,6 +62,21 @@ public interface BTransition<SELF extends BTransition<SELF>> {
 
     public default SELF defineUserRoleInTransition(BProcessRole<?> processRole) {
         getTransition().defineUserRoleInTransition(processRole.getProcessRole());
+        return self();
+    }
+
+    public default <K extends ProcessInstance> SELF setParametersInitializer(MTransition.ITransitionParametersProcessInitializer<K> parametrosInicializer) {
+        getTransition().setParametersInitializer(parametrosInicializer);
+        return self();
+    }
+
+    public default <K extends ProcessInstance> SELF setParametersValidator(MTransition.ITransitionParametersProcessValidator<K> parametrosValidator) {
+        getTransition().setParametersValidator(parametrosValidator);
+        return self();
+    }
+
+    public default <T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getTransition().setMetaDataValue(propRef, value);
         return self();
     }
 }

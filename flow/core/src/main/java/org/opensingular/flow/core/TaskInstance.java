@@ -18,14 +18,29 @@ package org.opensingular.flow.core;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class TaskInstance {
 
@@ -44,7 +59,7 @@ public class TaskInstance {
         if (!processInstance.getEntity().equals(task.getProcessInstance())) {
             throw new SingularFlowException(processInstance.createErrorMsg(
                     "O objeto " + task.getClass().getSimpleName() + " " + task + " não é uma tarefa filha do objeto " +
-                            processInstance.getClass().getSimpleName() + " em questão"));
+                            processInstance.getClass().getSimpleName() + " em questão"), processInstance);
         }
         this.processInstance = processInstance;
         this.entityTask = task;
@@ -174,17 +189,37 @@ public class TaskInstance {
         return getFlowTask().map(MTask::isWait).orElseGet(() -> getTaskVersion().isWait());
     }
 
-    // TODO Daniel: Existe duas formas de fazer uma transicao. O método abaixo e
-    // executeTransitaion(). Decidir por apenas um ficar público. Sugiro o
-    // prepareTransition
+    /** Verifica se o tipo da tarefa corresponde ao informado. */
+    public boolean isAtTask(@Nonnull ITaskDefinition expectedTaskType) {
+        Objects.requireNonNull(expectedTaskType);
+        Optional<MTask<?>> taskType = getFlowTask();
+        if (taskType.isPresent()) {
+            return taskType.get().is(expectedTaskType);
+        }
+        return getAbbreviation().equalsIgnoreCase(expectedTaskType.getKey());
+    }
+
+    /** Verifica se o tipo da tarefa corresponde a sigla informada. */
+    public boolean isAtTask(@Nonnull String expectedTaskTypeAbbreviation) {
+        return getAbbreviation().equalsIgnoreCase(expectedTaskTypeAbbreviation);
+    }
+
+    /** Prepara para execução a transação default da instância. Senão existir transição default, dispara exception. */
+    @Nonnull
+    public TransitionCall prepareTransition() {
+        return new TransitionCall(
+                new TransitionRef(this, getFlowTaskOrException().resolveDefaultTransitionOrException()));
+    }
+
+    /**
+     * Prepara para execução a transação da instancia correspodente ao nome infomado. Senão existir transição com o nome
+     * informado, dispara exception.
+     */
     @Nonnull
     public TransitionCall prepareTransition(@Nonnull String transitionName) {
         Objects.requireNonNull(transitionName);
-        return new TransitionCallImpl(getTransition(transitionName));
-    }
-
-    public TransitionRef getTransition(String transitionName) {
-        return new TransitionRef(this, getFlowTaskOrException().getTransitionOrException(transitionName));
+        return new TransitionCall(
+                new TransitionRef(this, getFlowTaskOrException().getTransitionOrException(transitionName)));
     }
 
     public void relocateTask(MUser author, MUser user,
@@ -335,18 +370,6 @@ public class TaskInstance {
         Objects.requireNonNull(accessStrategy,"Estratégia de acesso da task " + abbreviation + " não foi definida");
 
         return accessStrategy.getFirstLevelUsersCodWithAccess(processInstance);
-    }
-
-    public void executeTransition() {
-        FlowEngine.executeTransition(this, null, null);
-    }
-
-    public void executeTransition(String destino) {
-        FlowEngine.executeTransition(this, destino, null);
-    }
-
-    public void executeTransition(String destino, VarInstanceMap<?> param) {
-        FlowEngine.executeTransition(this, destino, param);
     }
 
     public boolean isAllocated() {
