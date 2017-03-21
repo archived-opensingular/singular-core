@@ -18,18 +18,13 @@ package org.opensingular.flow.core.variable.type;
 
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.variable.VarType;
 
-public class VarTypeString implements VarType<String> {
+import javax.annotation.Nonnull;
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
+public class VarTypeString extends VarTypeBase<String> {
 
-    @Override
-    public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
+    public VarTypeString() {
+        super(String.class);
     }
 
     @Override
@@ -47,4 +42,8 @@ public class VarTypeString implements VarType<String> {
         return persistenceValue;
     }
 
+    @Override
+    protected String convertNotDirectCompatible(@Nonnull Object original) {
+        return original.toString();
+    }
 }

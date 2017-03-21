@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.MParametersEnabled;
 import org.opensingular.flow.core.MStart;
-import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 
 import java.util.function.Consumer;
@@ -27,9 +27,13 @@ import java.util.function.Consumer;
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
-public interface BStart<SELF extends BStart<SELF>> {
+public interface BStart<SELF extends BStart<SELF>> extends BParametersEnabled<SELF> {
 
     public abstract MStart getStart();
+
+    public default MParametersEnabled getParametersEnabled() {
+        return getStart();
+    }
 
     public default SELF self() {
         return (SELF) this;
@@ -41,8 +45,7 @@ public interface BStart<SELF extends BStart<SELF>> {
         return self;
     }
 
-    default <I extends ProcessInstance, D extends ProcessDefinition<I>> SELF withInitializer(
-            MStart.IStartInitializer<I, D> startInitializer) {
+    default <I extends ProcessInstance> SELF withInitializer(MStart.IStartInitializer<I> startInitializer) {
         getStart().setStartInitializer(startInitializer);
         return self();
     }

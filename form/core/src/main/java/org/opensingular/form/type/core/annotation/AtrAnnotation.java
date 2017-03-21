@@ -22,6 +22,7 @@ import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.type.basic.SPackageBasic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -172,5 +173,10 @@ public class AtrAnnotation extends STranslatorForAttribute {
      */
     public boolean hasAnyAnnotable() {
         return getAnnotationService().hasAnyAnnotable(target());
+    }
+
+    public AtrAnnotation setNotAnnotated(){
+        setAttributeValue(SPackageBasic.ATR_ANNOTATED, Collections.emptyList());
+        return this;
     }
 }

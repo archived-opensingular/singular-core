@@ -214,5 +214,9 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
      *
      * @param listener - listener a ser adicionado
      */
-    public abstract void addListenerToAllTasks(StartedTaskListener listener);
+    public void addListenerToAllTasks(StartedTaskListener listener) {
+        for (MTask<?> mTask : getFlowMap().getAllTasks()) {
+            mTask.addStartedTaskListener(listener);
+        }
+    }
 }

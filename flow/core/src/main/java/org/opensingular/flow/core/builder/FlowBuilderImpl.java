@@ -26,10 +26,6 @@ import org.opensingular.flow.core.MTaskPeople;
 import org.opensingular.flow.core.MTaskWait;
 import org.opensingular.flow.core.MTransition;
 import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.core.StartedTaskListener;
-import org.opensingular.flow.core.property.MetaDataRef;
-import org.opensingular.flow.core.variable.VarType;
 
 import java.util.Objects;
 
@@ -109,15 +105,9 @@ public class FlowBuilderImpl extends
          * Cria uma nova transição da task atual para a task destino informada
          * com o nome informado.
          */
+        @Override
         public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny) {
             return getFlowBuilder().addTransition(this, actionName, taskRefDestiny);
-        }
-
-        /**
-         * Cria uma nova transição da task atual para a task destino informada
-         */
-        public BTransition<?> go(ITaskDefinition taskRefDestiny) {
-            return go(taskRefDestiny.getName(), taskRefDestiny);
         }
     }
 
@@ -181,89 +171,6 @@ public class FlowBuilderImpl extends
         public FlowBuilder getFlowBuilder() {
             return flowBuilder;
         }
-
-        public SELF addParamFromProcessVariable(String ref, boolean obrigatorio) {
-            getTransition().addParamFromProcessVariable(ref, obrigatorio);
-            return self();
-        }
-
-        public SELF addParamString(String ref, boolean obrigatorio, Integer tamanho) {
-            return addParamString(ref, ref, obrigatorio, tamanho);
-        }
-
-        public SELF addParamString(String ref, boolean obrigatorio) {
-            return addParamString(ref, ref, obrigatorio, null);
-        }
-
-        public SELF addParamString(String ref, String nome, boolean obrigatorio) {
-            return addParamString(ref, nome, obrigatorio, null);
-        }
-
-        public SELF addParamString(String ref, String nome, boolean obrigatorio, Integer tamanho) {
-            getTransition().getParameters().addVariableString(ref, nome, tamanho).setRequired(obrigatorio);
-            return self();
-        }
-
-        public SELF addParamStringMultipleLines(String ref, String nome, boolean obrigatorio) {
-            return addParamStringMultipleLines(ref, nome, obrigatorio, null);
-        }
-
-        public SELF addParamStringMultipleLines(String ref, String nome, boolean obrigatorio, Integer tamanho) {
-            getTransition().getParameters().addVariableStringMultipleLines(ref, nome, tamanho).setRequired(obrigatorio);
-            return self();
-        }
-
-        public SELF addParamInteger(String ref, boolean obrigatorio) {
-            return addParamInteger(ref, ref, obrigatorio);
-        }
-
-        public SELF addParamInteger(String ref, String nome, boolean obrigatorio) {
-            getTransition().getParameters().addVariableInteger(ref, nome).setRequired(obrigatorio);
-            return self();
-        }
-
-        public SELF addParamDouble(String ref, boolean obrigatorio) {
-            return addParamDouble(ref, ref, obrigatorio);
-        }
-
-        public SELF addParamDouble(String ref, String nome, boolean obrigatorio) {
-            getTransition().getParameters().addVariableDouble(ref, nome).setRequired(obrigatorio);
-            return self();
-        }
-
-        public SELF addParamDate(String ref, boolean obrigatorio) {
-            return addParamDate(ref, ref, obrigatorio);
-        }
-
-        public SELF addParamDate(String ref, String nome, boolean obrigatorio) {
-            getTransition().getParameters().addVariableDate(ref, nome).setRequired(obrigatorio);
-            return self();
-        }
-
-        public SELF addParam(String ref, VarType tipo, boolean obrigatorio) {
-            return addParam(ref, ref, tipo, obrigatorio);
-        }
-
-        public SELF addParam(String ref, String nome, VarType varType, boolean obrigatorio) {
-            getTransition().getParameters().addVariable(ref, nome, varType).setRequired(obrigatorio);
-            return self();
-        }
-
-        public <K extends ProcessInstance> SELF setParametersInitializer(MTransition.ITransitionParametersProcessInitializer<K> parametrosInicializer) {
-            getTransition().setParametersInitializer(parametrosInicializer);
-            return self();
-        }
-
-        public <K extends ProcessInstance> SELF setParametersValidator(MTransition.ITransitionParametersProcessValidator<K> parametrosValidator) {
-            getTransition().setParametersValidator(parametrosValidator);
-            return self();
-        }
-
-        public <T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
-            getTransition().setMetaDataValue(propRef, value);
-            return self();
-        }
-
     }
 
     public static class ImplBProcessRole<SELF extends ImplBProcessRole<SELF>> implements BProcessRole<SELF> {
@@ -281,10 +188,4 @@ public class FlowBuilderImpl extends
         }
     }
 
-    @Override
-    public void addListenerToAllTasks(StartedTaskListener listener) {
-        for (MTask<?> mTask : getFlowMap().getAllTasks()) {
-            mTask.addStartedTaskListener(listener);
-        }
-    }
 }

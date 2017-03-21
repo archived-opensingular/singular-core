@@ -46,8 +46,8 @@ public class AssertionsTaskInstance extends AssertionsBase<TaskInstance, Asserti
         return msg;
     }
 
-    public AssertionsTaskInstance isTask(ITaskDefinition expectedType) {
-        if(!getTargetOrException().isTask(expectedType)) {
+    public AssertionsTaskInstance isAtTask(ITaskDefinition expectedType) {
+        if(!getTargetOrException().isAtTask(expectedType)) {
             Optional<MTask<?>> currentTtype = getTargetOrException().getFlowTask();
             if (currentTtype.isPresent()) {
                 throw new AssertionError(

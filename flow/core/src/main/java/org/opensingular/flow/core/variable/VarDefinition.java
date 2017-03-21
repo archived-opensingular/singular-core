@@ -59,4 +59,7 @@ public interface VarDefinition {
 
     public <T> T getMetaDataValue(MetaDataRef<T> propRef);
 
+    public default Object convert(Object value) {
+        return getType().convert(value);
+    }
 }

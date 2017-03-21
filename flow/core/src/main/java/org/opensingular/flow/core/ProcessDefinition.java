@@ -711,20 +711,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return novo;
     }
 
-    /**
-     * Cria uma nova instância mediante chamada a {@link MStart#setStartInitializer(MStart.IStartInitializer)}. Senão
-     * existir o inicializador, criar uma nova instância e chama {@link ProcessInstance#start()}.
-     */
-    @Nonnull
-    public final I createAndStart() {
-        MStart start = getFlowMap().getStart();
-        if (start.getStartInitializer() != null) {
-            return (I) start.getStartInitializer().startInstance((ProcessDefinition<ProcessInstance>) this);
-        }
-        I instance = newPreStartInstance();
-        instance.start();
-        return instance;
+    public StartCall<I> prepareStartCall() {
+        return new StartCall<I>(this, getFlowMap().getStart());
     }
+
 
     @Nonnull
     private I newUnbindedInstance() {

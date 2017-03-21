@@ -18,32 +18,35 @@ package org.opensingular.flow.core.variable.type;
 
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.variable.VarType;
 
-public class VarTypeInteger implements VarType<Integer> {
+import javax.annotation.Nonnull;
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
+public class VarTypeInteger extends VarTypeBase<Integer> {
 
-    @Override
-    public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
+    public VarTypeInteger() {
+        super(Integer.class);
     }
 
     @Override
     public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return Integer.toString((Integer) valor);
+        return Integer.toString(convert(valor));
     }
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Integer.toString((Integer) varInstance.getValue());
+        return Integer.toString(convert(varInstance.getValue()));
     }
 
     @Override
     public Integer fromPersistenceString(String persistenceValue) {
         return persistenceValue == null ? null : Integer.valueOf(persistenceValue);
+    }
+
+    @Override
+    protected Integer convertNotDirectCompatible(@Nonnull Object original) {
+        if (original instanceof Number) {
+            return ((Number) original).intValue();
+        }
+        return null;
     }
 }
