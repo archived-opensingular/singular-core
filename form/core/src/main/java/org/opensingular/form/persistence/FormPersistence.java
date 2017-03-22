@@ -34,19 +34,21 @@ public interface FormPersistence<INSTANCE extends SInstance> extends BasicFormPe
      * Recupera a instância correspondete a chava ou dispara Exception se não encontrar.
      */
     @Nonnull
-    public INSTANCE load(@Nonnull FormKey key);
+    INSTANCE load(@Nonnull FormKey key);
 
     /**
      * Tentar recupeara a instância correspondente a chave, mas pode retornar resultado vazio.
      */
     @Nonnull
-    public Optional<INSTANCE> loadOpt(@Nonnull FormKey key);
+    Optional<INSTANCE> loadOpt(@Nonnull FormKey key);
 
     @Nonnull
-    public List<INSTANCE> loadAll(long first, long max);
+    List<INSTANCE> loadAll(long first, long max);
 
     @Nonnull
-    public List<INSTANCE> loadAll();
+    List<INSTANCE> loadAll();
 
-    public long countAll();
+    long countAll();
+
+    INSTANCE createInstance();
 }

@@ -832,4 +832,9 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         return Collections.emptyList();
     }
+
+    public SInstance getDocumentRoot(){
+        return document.getRoot();
+    }
+
 }

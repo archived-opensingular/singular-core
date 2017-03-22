@@ -45,6 +45,7 @@ public class SpringFormPersistenceInMemory<T extends SType<I>, I extends SICompo
         return (T) dictionary.get().getType(typeFullName);
     }
 
+    @Override
     public I createInstance() {
         return (I) documentFactory.createInstance(getRefType());
     }
