@@ -38,7 +38,7 @@ public class VarTypeInteger extends VarTypeBase<Integer> {
     }
 
     @Override
-    public Integer fromPersistenceString(String persistenceValue) {
+    public Integer fromPersistenceStringImpl(String persistenceValue) {
         return persistenceValue == null ? null : Integer.valueOf(persistenceValue);
     }
 

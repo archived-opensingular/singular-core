@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.opensingular.flow.test.support.TestFlowSupport;
 
@@ -36,6 +37,9 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
 
     /** Recarrega a instância de processo a partir do BD. */
     protected ProcessInstance reload(ProcessInstance pi) {
+        Session session = sessionFactory.getCurrentSession();
+        session.flush();
+        session.clear();
         return mbpmBean.getProcessInstance(pi.getFullId());
     }
 

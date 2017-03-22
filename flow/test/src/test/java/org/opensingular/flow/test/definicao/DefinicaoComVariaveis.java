@@ -66,12 +66,6 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         return f.build();
     }
 
-    public ProcessInstance start() {
-        ProcessInstance instancia = newPreStartInstance();
-        instancia.start();
-        return instancia;
-    }
-
     public void print(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("legal");
     }

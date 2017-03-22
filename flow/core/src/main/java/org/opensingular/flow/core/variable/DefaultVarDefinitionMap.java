@@ -42,7 +42,7 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
     }
 
     @Override
-    public VarInstanceMap<?> newInstanceMap() {
+    public VarInstanceMap<?,?> newInstanceMap() {
         return new VarInstanceMapImpl(this);
     }
 

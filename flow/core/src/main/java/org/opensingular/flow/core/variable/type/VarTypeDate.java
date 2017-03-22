@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.variable.type;
 
-import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.variable.SingularFlowConvertingValueException;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
 
@@ -50,11 +50,11 @@ public class VarTypeDate extends VarTypeBase<Date> {
     }
 
     @Override
-    public Date fromPersistenceString(String persistenceValue) {
+    public Date fromPersistenceStringImpl(String persistenceValue) {
         try {
             return persistenceValue == null ? null : timeFormatter.parse(persistenceValue);
         } catch (ParseException e) {
-            throw new SingularFlowException("Erro convertendo valor persistido", e);
+            throw SingularFlowConvertingValueException.rethrow(e, this, persistenceValue);
         }
     }
 

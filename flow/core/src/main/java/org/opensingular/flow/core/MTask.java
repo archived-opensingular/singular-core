@@ -216,9 +216,9 @@ public abstract class MTask<K extends MTask<?>> {
     /** Recupera a transição com o nome informado ou dispara exception senão encontrar. */
     @Nonnull
     public MTransition getTransitionOrException(@Nonnull String transitionName) {
-        return getTransition(transitionName).orElseThrow(
-                () -> new SingularFlowException(createErrorMsg("Transição não encontrada '" + transitionName + "'"),
-                        this).addTransitions(this));
+        return getTransition(transitionName).orElseThrow(() -> new SingularFlowTransactionNotFoundException(
+                createErrorMsg("Transição '" + transitionName + "' não encontrada em '" + getName() + "'"), this)
+                .addTransitions(this));
     }
 
     /** Descobre qual a transição default ou dispara exception senão encontrar. */
@@ -232,7 +232,7 @@ public abstract class MTask<K extends MTask<?>> {
         } else if (defaultTransition != null) {
             return defaultTransition;
         }
-        throw new SingularFlowException(createErrorMsg(
+        throw new SingularFlowTransactionNotFoundException(createErrorMsg(
                 "possui várias transações e não definiu transicao default. Defina a transação default ou explicite " +
                         "qual transação deve ser executada."),
                 this).addTransitions(this);

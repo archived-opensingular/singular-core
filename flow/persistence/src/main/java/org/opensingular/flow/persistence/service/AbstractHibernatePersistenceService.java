@@ -19,9 +19,32 @@ package org.opensingular.flow.persistence.service;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.*;
-import org.opensingular.flow.core.*;
-import org.opensingular.flow.core.entity.*;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.TaskType;
+import org.opensingular.flow.core.entity.IEntityByCod;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
@@ -31,7 +54,12 @@ import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
@@ -305,7 +333,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask,
-            VarInstanceMap<?> instanceMap) {
+            VarInstanceMap<?,?> instanceMap) {
         if (instanceMap != null) {
             SessionWrapper ss = getSession();
 

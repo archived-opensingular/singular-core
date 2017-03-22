@@ -65,12 +65,12 @@ public interface BTransition<SELF extends BTransition<SELF>> extends BParameters
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersInitializer(MTransition.ITransitionParametersProcessInitializer<K> parametrosInicializer) {
+    public default <K extends ProcessInstance> SELF setParametersInitializer(MTransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
         getTransition().setParametersInitializer(parametrosInicializer);
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersValidator(MTransition.ITransitionParametersProcessValidator<K> parametrosValidator) {
+    public default <K extends ProcessInstance> SELF setParametersValidator(MTransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
         getTransition().setParametersValidator(parametrosValidator);
         return self();
     }

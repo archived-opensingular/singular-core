@@ -42,10 +42,6 @@ class FlowEngine {
 
     private FlowEngine() {}
 
-    static void preStart(StartCall<?> startCall) {
-
-    }
-
     /**
      * Cria uma nova instância mediante chamada a {@link MStart#setStartInitializer(MStart.IStartInitializer)}. Senão
      * existir o inicializador, criar uma nova instância e chama {@link ProcessInstance#start()}.
@@ -53,7 +49,12 @@ class FlowEngine {
     @Nonnull
     final static <I extends ProcessInstance> I createAndStart(@Nonnull StartCall<I> startCall) {
         MStart start = startCall.getStart();
+        ValidationResult result = startCall.validate();
+        if (result.hasErros()) {
+            throw new SingularFlowInvalidParametersException(startCall, result);
+        }
         I instance = startCall.getProcessDefinition().newPreStartInstance();
+        copyMarkedParametersToInstanceVariables(instance, startCall);
         if (start.getStartInitializer() != null) {
              start.getStartInitializer().startInstance(instance, (StartCall<ProcessInstance>) startCall);
         } else {
@@ -62,16 +63,23 @@ class FlowEngine {
         return instance;
     }
 
-    public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
-        instancia.validadeStart();
-        MStart start = instancia.getProcessDefinition().getFlowMap().getStart();
-        return updateState(instancia, null, null, start.getTask(), paramIn);
+    public static TaskInstance start(ProcessInstance instance, VarInstanceMap<?,?> paramIn) {
+        validateVariables(instance);
+        MStart start = instance.getProcessDefinition().getFlowMap().getStart();
+        return updateState(instance, null, null, start.getTask(), paramIn);
+    }
+
+    private static void validateVariables(ProcessInstance instance) {
+        ValidationResult result = instance.getVariables().validate();
+        if (result.hasErros()) {
+            throw new SingularFlowInvalidParametersException(instance.getProcessDefinition(), result);
+        }
     }
 
     @Nonnull
     private static <P extends ProcessInstance> TaskInstance updateState(final @Nonnull P processInstance,
             @Nullable TaskInstance originTaskInstance, @Nullable MTransition transition, @Nonnull MTask<?> destinyTask,
-            @Nullable VarInstanceMap<?> paramIn) {
+            @Nullable VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(processInstance);
         Objects.requireNonNull(destinyTask);
         while (true) {
@@ -84,7 +92,7 @@ class FlowEngine {
             final TaskInstance newTaskInstance = processInstance.updateState(originTaskInstance, transition, destinyTask, agora);
 
             if (paramIn != null) {
-                inserirParametrosDaTransicao(processInstance, paramIn);
+                copyMarkedParametersToInstanceVariables(processInstance, paramIn);
 
                 if (originTaskInstance != null) {
                     //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
@@ -206,7 +214,7 @@ class FlowEngine {
     }
 
     @Nonnull
-    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable MTransition transition, @Nullable VarInstanceMap<?> param) {
+    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable MTransition transition, @Nullable VarInstanceMap<?,?> param) {
         transition = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
         tarefaAtual.endLastAllocation();
         return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transition, transition.getDestination(), param);
@@ -219,14 +227,29 @@ class FlowEngine {
         if (transition != null) {
             return transition;
         }
-        return tarefaAtual.getFlowTaskOrException().resolveDefaultTransitionOrException();
+        try {
+            return tarefaAtual.getFlowTaskOrException().resolveDefaultTransitionOrException();
+        } catch (SingularFlowTransactionNotFoundException e) {
+            e.add("complement",
+                    "A execução da task deve explicitamente definir qual transação deve ser seguida ou o fluxo dever " +
+                            "ser configurado para ter uma transição como default (a ser usada quando não for " +
+                            "especificada uma transação)");
+            throw e;
+        }
     }
 
-    private static void inserirParametrosDaTransicao(@Nonnull ProcessInstance instancia, @Nonnull VarInstanceMap<?> paramIn) {
+    /**
+     * Copia para a instancia os paramentros que estiverem marcados com bind automáticos (copia automática) para as
+     * variaveis da instância. Além de marcados, devem ter o mesmo nome.
+     */
+    private static void copyMarkedParametersToInstanceVariables(@Nonnull ProcessInstance instance,
+            @Nonnull VarInstanceMap<?, ?> paramIn) {
         for (VarInstance variavel : paramIn) {
-            String ref = variavel.getRef();
-            if (instancia.getProcessDefinition().getVariables().contains(ref)) {
-                instancia.setVariable(ref, variavel.getValue());
+            if (MParametersEnabled.isAutoBindedToProcessVariable(variavel.getDefinition())) {
+                String ref = variavel.getRef();
+                if (instance.getProcessDefinition().getVariables().contains(ref)) {
+                    instance.setVariable(ref, variavel.getValue());
+                }
             }
         }
     }
@@ -237,7 +260,7 @@ class FlowEngine {
                 .getConfigBean().getPersistenceService();
     }
 
-    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull MTransition transicao, VarInstanceMap<?> paramIn) {
+    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull MTransition transicao, VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(taskInstance);
         if (transicao.getParameters().isEmpty()) {
             return;
@@ -259,7 +282,7 @@ class FlowEngine {
         }
     }
 
-    private static boolean parametroPresentes(VarInstanceMap<?> parametros, VarDefinition parametroEsperado) {
+    private static boolean parametroPresentes(VarInstanceMap<?,?> parametros, VarDefinition parametroEsperado) {
         if (parametros == null) {
             return false;
         }

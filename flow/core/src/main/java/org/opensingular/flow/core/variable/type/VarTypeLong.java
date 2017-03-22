@@ -39,7 +39,7 @@ public class VarTypeLong extends VarTypeBase<Long> {
     }
 
     @Override
-    public Long fromPersistenceString(String persistenceValue) {
+    public Long fromPersistenceStringImpl(String persistenceValue) {
         return persistenceValue == null ? null : Long.valueOf(persistenceValue);
     }
 
