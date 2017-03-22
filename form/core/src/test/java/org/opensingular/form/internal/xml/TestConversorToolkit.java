@@ -2,6 +2,7 @@ package org.opensingular.form.internal.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.form.SingularFormException;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -9,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class TestConversorToolkit {
 
@@ -52,6 +54,18 @@ public class TestConversorToolkit {
         Assert.assertTrue(doubleValue2 instanceof Double);
 
         Assert.assertEquals(doubleValue, doubleValue2);
+
+        Assert.assertEquals(0, ConversorToolkit.getDouble("-"), 0);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testGetDoubleErrorNullValue(){
+        ConversorToolkit.getDouble(null);
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetDoubleErrorInvalidValue(){
+        ConversorToolkit.getDouble("123+54");
     }
 
     @Test
@@ -79,6 +93,16 @@ public class TestConversorToolkit {
         Assert.assertNull(value);
     }
 
+    @Test(expected = NumberFormatException.class)
+    public void testGetIntWithEmptyValue(){
+        ConversorToolkit.getInt(null);
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetIntWithInvalidValue(){
+        ConversorToolkit.getInt("123-87");
+    }
+
     @Test
     public void testGetDateFormat() {
         final String date = "01/01/2017";
@@ -99,8 +123,7 @@ public class TestConversorToolkit {
 
     @Test
     public void testPrintDataHora(){
-        final String stringDate = "01/01/2017";
-        Calendar calendar = ConversorToolkit.getCalendar(stringDate);
+        Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
         Date date = calendar.getTime();
 
         String printDataHora = ConversorToolkit.printDataHora(date);
@@ -131,6 +154,14 @@ public class TestConversorToolkit {
         Assert.assertEquals(printDateNullWithFormat, "");
         Assert.assertEquals(printDateNotNullWithFormat, "01/01/17");
 
+        Assert.assertNull(ConversorToolkit.printDataHoraShort(null));
+        Assert.assertNull(ConversorToolkit.printDate(null));
+
+        Calendar calendar2 = ConversorToolkit.getCalendar("01/01/2017");
+        calendar2.set(Calendar.HOUR_OF_DAY, 10);
+        Assert.assertEquals("01/01/17 10:00", ConversorToolkit.printDataHoraShortAbreviada(calendar2.getTime()));
+
+
     }
 
     @Test
@@ -141,17 +172,13 @@ public class TestConversorToolkit {
         Assert.assertEquals(result, "123,45");
 
         double doubleValue = 123.450;
-        String numberDoublePrimitive = ConversorToolkit.printNumber(doubleValue);
-        String numberDoublePrimitiveWithDecimal = ConversorToolkit.printNumber(doubleValue, 2);
-        String numberDoublePrimitiveWithDecimalNull = ConversorToolkit.printNumber(null, 2);
-        String numberDouble = ConversorToolkit.printNumber(new Double(123.45));
-        String numberDoubleNull = ConversorToolkit.printNumber(null);
 
-        Assert.assertEquals(numberDoublePrimitive, "123,45");
-        Assert.assertEquals(numberDoublePrimitiveWithDecimal, "123,45");
-        Assert.assertEquals(numberDoublePrimitiveWithDecimalNull, "");
-        Assert.assertEquals(numberDouble, "123,45");
-        Assert.assertNull(numberDoubleNull);
+        Assert.assertEquals(ConversorToolkit.printNumber(doubleValue), "123,45");
+        Assert.assertEquals(ConversorToolkit.printNumber(doubleValue, 2), "123,45");
+        Assert.assertEquals(ConversorToolkit.printNumber(null, 2), "");
+        Assert.assertEquals(ConversorToolkit.printNumber(new Double(123.45)), "123,45");
+        Assert.assertEquals(ConversorToolkit.printNumber(new Double(123.45), 2), "123,45");
+        Assert.assertNull(ConversorToolkit.printNumber(null));
     }
 
     @Test
@@ -161,6 +188,30 @@ public class TestConversorToolkit {
         String stringConvertida = ConversorToolkit.quebrarLinhasHTML(msgToHtml);
 
         Assert.assertFalse(stringConvertida.contains("\n"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetDateFromDataError(){
+        String iso8601 = "1999-05-31T13:20:00.000-05:00";
+        ConversorToolkit.getDateFromData(iso8601);
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testChecarNull(){
+        ConversorToolkit.getDateFromData(null);
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testMethods(){
+        Date dateFromData = ConversorToolkit.getDateFromData("01 01 17");
+
+        Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
+        Calendar calendarObtained = Calendar.getInstance();
+        calendarObtained.setTime(dateFromData);
+
+        Assert.assertEquals(0, calendarObtained.compareTo(calendar));
+
+        ConversorToolkit.getDateFromData("01?01?17");
     }
 
 }

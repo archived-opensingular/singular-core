@@ -1133,7 +1133,7 @@ public class TestMElement {
 
         Assert.assertTrue(raiz.getBoolean("inteiro"));
 
-        raiz.getBoolean("inteiro");
+        raiz.is("inteiro");
     }
 
     @Test(expected = SingularFormException.class)
@@ -1144,7 +1144,7 @@ public class TestMElement {
 
         Assert.assertTrue(raiz.getBoolean("inteiro", false));
 
-        raiz.getBoolean("inteiro", false);
+        raiz.is("inteiro", false);
     }
 
     @Test
