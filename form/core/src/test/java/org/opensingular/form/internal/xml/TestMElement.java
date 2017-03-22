@@ -21,6 +21,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -1009,5 +1011,175 @@ public class TestMElement {
         byte[] inputStreams = mElement.getByteBASE64("inputStream");
         String result = new String(inputStreams, Charset.defaultCharset());
         Assert.assertEquals(stringToTest, result);
+    }
+
+    @Test
+    public void testNewInstanceByClass(){
+        MElement element = MElement.newInstance(String.class);
+        Assert.assertEquals("java-lang-String", element.getNodeName());
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testToMElementWithNode(){
+        MElement element = MElement.newInstance("raiz");
+        MElement nodeMElement = element.addElement("node1");
+
+        Node node = null;
+
+        Assert.assertNull(MElement.toMElement(node));
+
+        Assert.assertTrue(MElement.toMElement(element.getNode("node1")) instanceof MElement);
+
+        Assert.assertTrue(MElement.toMElement( (Node) nodeMElement) instanceof MElement);
+
+        MDocument document = MDocument.newInstance();
+
+        MElement.toMElement(document); // throws exception
+    }
+
+    @Test(expected = SingularException.class)
+    public void testToMElementWithMElement(){
+        MElement element = MElement.newInstance("raiz");
+
+        MElement.toMElement(element);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddIntWithNullValue(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddIntWithEmptyValue(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "");
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testAddIntWithDefaultValueNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        Assert.assertNull(raiz.addInt("inteiro", null, null));
+
+        Assert.assertNull(raiz.addInt("inteiro", null, ""));
+
+        raiz.addInt("inteiro", null, 123.45); // throws exception
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddDateNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addDate("date", null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddDateWithDefaultOptionAndValueNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        Assert.assertNull(raiz.addDate("date", null, null));
+
+        Date date = null;
+        raiz.addElement("date", date);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddCalendarWithValueNull(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        Calendar calendar = null;
+        raiz.addElement("calendar", calendar);
+    }
+
+    @Test
+    public void testIsNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addElement("elemento", "valor");
+
+        Assert.assertFalse(raiz.isNull("elemento"));
+        Assert.assertTrue(raiz.isNull("elem"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testGets(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        MElement inteiro = raiz.addInt("inteiro", "100");
+        Assert.assertEquals(100, inteiro.getInt());
+
+        MElement longValue = raiz.addInt("longValue", "100");
+        Assert.assertEquals(100, longValue.getLong());
+
+        Assert.assertEquals("100", raiz.getValor("inteiro", "50"));
+        Assert.assertEquals("50", raiz.getValor("int", "50"));
+
+        raiz.addElement("doubleObj", "100.5");
+        Assert.assertEquals(new Double("100.5"), raiz.getDoubleObject("doubleObj"));
+
+        Assert.assertEquals("100,5", raiz.formatNumber("doubleObj"));
+
+        Assert.assertNull(raiz.getCalendar("caminhoInvalido"));
+
+        MElement doubleNull = raiz.addElement("doubleNull");
+        doubleNull.getDouble(); // throws exception
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetBooleanMethods(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "100");
+        raiz.addBoolean("bool", true);
+
+        Assert.assertTrue(raiz.getBoolean("inteiro"));
+
+        raiz.getBoolean("inteiro");
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetBooleanMethodsWithDefaultOption(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "100");
+        raiz.addBoolean("bool", true);
+
+        Assert.assertTrue(raiz.getBoolean("inteiro", false));
+
+        raiz.getBoolean("inteiro", false);
+    }
+
+    @Test
+    public void testFormat(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        Assert.assertEquals("", raiz.formatDate("caminhoInvalido"));
+        Assert.assertEquals("", raiz.formatDate("caminhoInvalido", ""));
+
+        Assert.assertEquals("", raiz.formatHour("caminhoInvalido"));
+
+        raiz.addDate("dateHour", "01/01/2017");
+        Assert.assertEquals("00:00:00", raiz.formatHour("dateHour"));
+    }
+
+    @Test
+    public void testToJSONString(){
+        MElement raiz = MElement.newInstance("raiz");
+        Assert.assertEquals("{}", raiz.toJSONString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetBrothers(){
+        MElement raiz = MElement.newInstance("raiz");
+        MElement filho1 = raiz.addElement("filho1", "123");
+        MElement filho2 = raiz.addElement("filho2", "123456");
+        MElement filho2Copy = raiz.addElement("filho2", "0");
+
+        Assert.assertEquals(filho2.getNodeName(), filho1.getProximoIrmao().getNodeName());
+        Assert.assertEquals(filho1.getNodeName(), filho2.getIrmaoAnterior().getNodeName());
+
+        Assert.assertEquals(filho2.getValor(), filho2Copy.getGemeoAnterior().getValor());
+        Assert.assertEquals(filho2Copy.getValor(), filho2.getProximoGemeo().getValor());
+
+        Assert.assertEquals(filho2Copy.getValor(), raiz.getUltimoFilho().getValor());
+
+        Assert.assertEquals(filho1.getValor(), raiz.getPrimeiroFilho("filho1").getValor());
+
+        raiz.getPrimeiroFilho(null);
     }
 }
