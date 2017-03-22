@@ -44,7 +44,7 @@ public class VarTypeDecimal extends VarTypeBase<BigDecimal> {
     }
 
     @Override
-    public BigDecimal fromPersistenceString(String persistenceValue) {
+    public BigDecimal fromPersistenceStringImpl(String persistenceValue) {
         return persistenceValue == null ? null : new BigDecimal(persistenceValue);
     }
 

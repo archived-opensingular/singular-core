@@ -24,8 +24,7 @@ public class PersistenceTest extends TestFlowSupport {
 
     @Test
     public void testJoinTableCurrentTask() {
-        ProcessInstance pi = new Peticao().newPreStartInstance();
-        pi.start();
+        ProcessInstance pi = new Peticao().prepareStartCall().createAndStart();
         Integer cod = pi.getEntity().getCod();
         sessionFactory.getCurrentSession().flush();
         //Clear da sessão para evidenciar a consulta como única.

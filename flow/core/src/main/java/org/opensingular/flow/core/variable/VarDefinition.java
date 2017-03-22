@@ -49,8 +49,12 @@ public interface VarDefinition {
         return getType().toPersistenceString(varInstance);
     }
 
-    public default Object fromPersistenceString(String persistenceValue) {
-        return getType().fromPersistenceString(persistenceValue);
+    public default Object fromPersistenceString(String persistenceValue) throws SingularFlowConvertingValueException {
+        try {
+            return getType().fromPersistenceString(persistenceValue);
+        } catch(Exception e) {
+            throw SingularFlowConvertingValueException.rethrow(e, this, persistenceValue);
+        }
     }
 
     public <T> VarDefinition setMetaDataValue(MetaDataRef<T> propRef, T value);
@@ -59,7 +63,11 @@ public interface VarDefinition {
 
     public <T> T getMetaDataValue(MetaDataRef<T> propRef);
 
-    public default Object convert(Object value) {
-        return getType().convert(value);
+    public default Object convert(Object value) throws SingularFlowConvertingValueException {
+        try {
+            return getType().convert(value);
+        } catch(Exception e) {
+            throw SingularFlowConvertingValueException.rethrow(e, this, value);
+        }
     }
 }

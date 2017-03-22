@@ -65,6 +65,6 @@ public interface VarInstance {
         return getDefinition().getType();
     }
 
-    void setChangeListner(VarInstanceMap<?> changeListener);
+    void setChangeListner(VarInstanceMap<?,?> changeListener);
 
 }

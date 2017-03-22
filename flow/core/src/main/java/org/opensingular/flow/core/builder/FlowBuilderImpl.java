@@ -68,7 +68,7 @@ public class FlowBuilderImpl extends
 
     @Override
     protected BStart<?> newStart(MStart start) {
-        return new ImplBStart<>(this, start);
+        return new ImplBStart<>(start);
     }
 
     @Override
@@ -137,11 +137,9 @@ public class FlowBuilderImpl extends
 
     protected static class ImplBStart<SELF extends ImplBStart<SELF>> implements BStart<SELF> {
 
-        private final FlowBuilderImpl flowBuilder;
         private final MStart start;
 
-        public ImplBStart(FlowBuilderImpl flowBuilder, MStart start) {
-            this.flowBuilder = flowBuilder;
+        public ImplBStart(MStart start) {
             this.start = start;
         }
 

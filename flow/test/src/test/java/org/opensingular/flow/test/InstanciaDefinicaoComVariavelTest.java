@@ -30,8 +30,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestFlowSupport {
 
     @Test
     public void teste1UsoDeVariaveis() {
-        ProcessInstance pi = new DefinicaoComVariaveis().newPreStartInstance();
-        pi.start();
+        ProcessInstance pi = new DefinicaoComVariaveis().prepareStartCall().createAndStart();
         String nome = pi.getVariableValue("nome");
         BigDecimal qualquerCoisa = pi.getVariableValue("qualquerCoisa");
         assertEquals(nome, DefinicaoComVariaveis.STRING_USADA_NO_TESTE);

@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.opensingular.flow.core;
+
+import org.opensingular.flow.core.variable.ValidationResult;
+
+/**
+ * Exception referente a passagem incorreta de parâmentros, em geral em um start de processo ou execução de transição.
+ *
+ * @author Daniel C. Bordin on 21/03/2017.
+ */
+public class SingularFlowInvalidParametersException extends SingularFlowException {
+    SingularFlowInvalidParametersException(StartCall<?> startCall, ValidationResult result) {
+        super("Erro nos parâmetros passados para inicialização do processo '" +
+                startCall.getProcessDefinition().getName() + "'" + appendIfOneErro(result));
+        add(startCall.getProcessDefinition());
+        if (result.errors().size() > 1) {
+            add(result);
+        }
+    }
+
+    public SingularFlowInvalidParametersException(ProcessDefinition<?> processDefinition, ValidationResult result) {
+        super("Erro ao iniciar processo '" + processDefinition.getName() + "': variáveis inválidas" +
+                appendIfOneErro(result));
+        add(processDefinition);
+        if (result.errors().size() > 1) {
+            add(result);
+        }
+    }
+
+    private static String appendIfOneErro(ValidationResult result) {
+        if (result.errors().size() == 1) {
+            return ": " + result.errors().get(0);
+        }
+        return "";
+    }
+
+    private void add(ValidationResult result) {
+        int i = 1;
+        for (String msg : result.errors()) {
+            add("Erro " + i++, msg);
+        }
+    }
+}

@@ -293,9 +293,7 @@ public class PeticaoTest extends TestFlowSupport {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     private ProcessInstance startInstance() {
         Peticao p = new Peticao();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
-        return id;
+        return p.prepareStartCall().createAndStart();
     }
 
     private void assertEqualsInstance(ProcessInstance instance1, ProcessInstance instance2) {

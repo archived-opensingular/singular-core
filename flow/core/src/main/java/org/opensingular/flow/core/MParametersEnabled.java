@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 
@@ -26,10 +27,14 @@ import org.opensingular.flow.core.variable.VarDefinitionMap;
  */
 public abstract class MParametersEnabled {
 
+    private static MetaDataRef<Boolean> AUTO_BIND_VARIABLE = new MetaDataRef("autoBindToProcessVariable",
+            Boolean.class);
+
     private VarDefinitionMap<?> parameters;
 
     abstract FlowMap getFlowMap();
 
+    /** Retorna as definições de variáveis associadas a esse tipo de transição. */
     public final VarDefinitionMap<?> getParameters() {
         if (parameters == null) {
             parameters = getFlowMap().getVarService().newVarDefinitionMap();
@@ -48,8 +53,15 @@ public abstract class MParametersEnabled {
                     getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."),
                     getFlowMap());
         }
-        getParameters().addVariable(defVar.copy()).setRequired(required);
+        VarDefinition newVarDef = getParameters().addVariable(defVar.copy());
+        newVarDef.setRequired(required);
+        newVarDef.setMetaDataValue(AUTO_BIND_VARIABLE, Boolean.TRUE);
         return this;
+    }
+
+    /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
+    final static boolean isAutoBindedToProcessVariable(VarDefinition varDef) {
+        return varDef.getMetaDataValue(AUTO_BIND_VARIABLE, Boolean.FALSE);
     }
 
 }

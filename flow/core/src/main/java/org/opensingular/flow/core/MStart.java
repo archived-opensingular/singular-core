@@ -16,12 +16,13 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.variable.VarInstanceMap;
+import org.opensingular.flow.core.variable.ValidationResult;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.Serializable;
 
 /**
- * Representa um ponto de inicialização de um fluxo do processo.
+ * Representa um ponto de inicialização de um fluxo do processo e as configurações do mesmo.
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
@@ -30,6 +31,8 @@ public class MStart extends MParametersEnabled {
     private final MTask<?> task;
 
     private IStartInitializer startInitializer;
+
+    private IStartValidator startValidator;
 
     MStart(MTask<?> task) {
         this.task = task;
@@ -40,31 +43,57 @@ public class MStart extends MParametersEnabled {
         return task;
     }
 
+    /**
+     * Retorna o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
+     * antes do processo ser executado.
+     */
+    @Nullable
     public <I extends ProcessInstance> IStartInitializer<I> getStartInitializer() {
         return startInitializer;
     }
 
+    /**
+     * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
+     * antes do processo ser executado.
+     */
     public <I extends ProcessInstance> void setStartInitializer(IStartInitializer<I> startInitializer) {
         this.startInitializer = startInitializer;
     }
 
-    @Nonnull
-    final VarInstanceMap<?> newCallParameters() {
-        VarInstanceMap<?> params = getParameters().newInstanceMap();
-        //        if (parametersInitializer != null) {
-        //            parametersInitializer.init(transitionRef, params);
-        //        }
-        return params;
+    /**
+     * Retorna o validador deste start point a ser executado antes que a instância seja criada. O validador é
+     * executado antes do inicializador definido em {@link #setStartInitializer(IStartInitializer)} .
+     */
+    @Nullable
+    public <I extends ProcessInstance> IStartValidator<I> getStartValidator() {
+        return startValidator;
     }
 
+    /**
+     * Define o validador deste start point a ser executado antes que a instância seja criada. O validador é
+     * executado antes do inicializador definido em {@link #setStartInitializer(IStartInitializer)} .
+     */
+    public <I extends ProcessInstance> void setStartValidator(IStartValidator<I> startValidator) {
+        this.startValidator = startValidator;
+    }
 
     @Override
     FlowMap getFlowMap() {
         return task.getFlowMap();
     }
 
+    /**
+     * Call back para inicializar os parâmetros de inicialização antes que {@link StartCall} seja disponibilziado para
+     * configuração.
+     */
     @FunctionalInterface
     public static interface IStartInitializer<I extends ProcessInstance> {
         public void startInstance(I instance, StartCall<I> startCall);
+    }
+
+    /** Validador da chamada de start antes que a instancia do processo seja criada. */
+    @FunctionalInterface
+    public interface IStartValidator<I extends ProcessInstance> extends Serializable {
+        public void validate(StartCall<I> startCall, ValidationResult validationResult);
     }
 }

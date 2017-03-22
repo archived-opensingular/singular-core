@@ -173,8 +173,8 @@ public class MTransition extends MParametersEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends ProcessInstance> MTransition setParametersInitializer(ITransitionParametersProcessInitializer<K> initializerByProcess) {
-        return setParametersInitializer((ITransitionParametersInitializer) (ctx, params) -> initializerByProcess.init((K) ctx.getProcessInstance(), params));
+    public <K extends ProcessInstance> MTransition setParametersInitializer(ITransitionParametersInitializerProcess<K> initializerByProcess) {
+        return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializerByProcess.init(params, (K) ctx.getProcessInstance()));
     }
 
     public MTransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
@@ -186,32 +186,32 @@ public class MTransition extends MParametersEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersProcessValidator<K> validatorByProcess) {
-        return setParametersValidator((ITransitionParametersValidator) (ctx, params, result) -> validatorByProcess
-            .validate((K) ctx.getProcessInstance(), params, result));
+    public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersValidatorProcess<K> validatorByProcess) {
+        return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validatorByProcess
+            .validate(params, result, (K) ctx.getProcessInstance()));
     }
 
     @Nonnull
-    final VarInstanceMap<?> newTransitionParameters(@Nonnull TransitionRef transitionRef) {
+    final VarInstanceMap<?,?> newTransitionParameters(@Nonnull TransitionRef transitionRef) {
         Objects.requireNonNull(transitionRef);
-        VarInstanceMap<?> params = getParameters().newInstanceMap();
+        VarInstanceMap<?,?> params = getParameters().newInstanceMap();
         if (parametersInitializer != null) {
-            parametersInitializer.init(transitionRef, params);
+            parametersInitializer.init(params, transitionRef);
         }
         return params;
     }
 
     @Nonnull
-    final ValidationResult validate(@Nonnull TransitionRef transitionRef, VarInstanceMap<?> parameters) {
+    final ValidationResult validate(@Nonnull TransitionRef transitionRef, VarInstanceMap<?,?> parameters) {
         ValidationResult validationResult = new ValidationResult();
         if (parametersValidator != null) {
-            parametersValidator.validate(transitionRef, parameters, validationResult);
+            parametersValidator.validate(parameters, validationResult, transitionRef);
         }
         return validationResult;
     }
 
     @Nonnull
-    public ValidationResult validate(@Nonnull TaskInstance instancia, VarInstanceMap<?> parameters) {
+    final ValidationResult validate(@Nonnull TaskInstance instancia, VarInstanceMap<?,?> parameters) {
         return validate(new TransitionRef(instancia, this), parameters);
     }
 
@@ -246,22 +246,22 @@ public class MTransition extends MParametersEnabled {
 
     @FunctionalInterface
     public interface ITransitionParametersInitializer extends Serializable {
-        void init(TransitionRef context, VarInstanceMap<?> params);
+        void init(VarInstanceMap<?,?> params, TransitionRef context);
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersProcessInitializer<K extends ProcessInstance> extends Serializable {
-        void init(K processInstance, VarInstanceMap<?> params);
+    public interface ITransitionParametersInitializerProcess<K extends ProcessInstance> extends Serializable {
+        void init(VarInstanceMap<?,?> params, K processInstance);
     }
 
     @FunctionalInterface
     public interface ITransitionParametersValidator extends Serializable {
-        public void validate(TransitionRef context, VarInstanceMap<?> params, ValidationResult validationResult);
+        public void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, TransitionRef context);
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersProcessValidator<K extends ProcessInstance> extends Serializable {
-        void validate(K processInstance, VarInstanceMap<?> params, ValidationResult validationResult);
+    public interface ITransitionParametersValidatorProcess<K extends ProcessInstance> extends Serializable {
+        void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, K processInstance);
     }
 
 }

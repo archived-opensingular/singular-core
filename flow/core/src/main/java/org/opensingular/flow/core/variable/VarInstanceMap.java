@@ -18,14 +18,17 @@ package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.SingularFlowException;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K> {
+public interface VarInstanceMap<K extends VarInstance, SELF extends VarInstanceMap<K,SELF>> extends VarServiceEnabled, Serializable, Iterable<K> {
 
 
     public K getVariable(String ref);
@@ -37,6 +40,10 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     public int size();
 
     public boolean isEmpty();
+
+    public default SELF self() {
+        return (SELF) this;
+    }
 
     public default void addDefinitions(VarDefinitionMap<?> definitions) {
         for (VarDefinition def : definitions) {
@@ -56,8 +63,10 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         return getVariable(ref) != null;
     }
 
-    public default void setValue(String ref, Object valor) {
+    /** Set o valor na variável ou lança exception se a variável for desconhecida (não definida). */
+    public default SELF setValue(String ref, Object valor) {
         getVariableOrException(ref).setValue(valor);
+        return self();
     }
 
     public default Stream<K> stream() {
@@ -75,7 +84,9 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     }
 
     @SuppressWarnings("unchecked")
-    public default <T> T getValue(String ref, T defaultValue) {
+    @Nonnull
+    public default <T> T getValue(@Nonnull String ref, @Nonnull T defaultValue) {
+        Objects.requireNonNull(defaultValue);
         Object v = getVariableOrException(ref).getValue();
         if (v == null) {
             return defaultValue;
@@ -98,7 +109,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         throw new SingularFlowException("'" + ref + "' é do tipo " + o.getClass().getName() + " e o esperado era " + typeClass.getName());
     }
 
-    public default void addValues(VarInstanceMap<?> vars, boolean createMissingTypes) {
+    public default void addValues(VarInstanceMap<?,?> vars, boolean createMissingTypes) {
         for (VarInstance var : vars) {
             VarInstance localVar = getVariable(var.getRef());
             if (localVar == null) {
@@ -116,44 +127,50 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
     // Métodos de conveniência para criação dinâmica de váriáveis
     // ----------------------------------------------------------
 
-    public default void addValue(String ref, VarType type, Object value) {
+    /** Seta o valor na variável ou cria a variável senão existir. */
+    public default SELF addValue(String ref, VarType type, Object value) {
         K var = getVariable(ref);
         if (var == null) {
             var = addDefinition(getVarService().newDefinition(ref, ref, type));
         }
         var.setValue(value);
+        return self();
     }
 
-    public default void addValueString(String ref, String value) {
+    public default SELF addValueString(String ref, String value) {
         K var = getVariable(ref);
         if (var == null) {
             var = addDefinition(getVarService().newDefinitionString(ref, ref, null));
         }
         var.setValue(value);
+        return self();
     }
 
-    public default void addValueDate(String ref, Date value) {
+    public default SELF addValueDate(String ref, Date value) {
         K var = getVariable(ref);
         if (var == null) {
             var = addDefinition(getVarService().newDefinitionDate(ref, ref));
         }
         var.setValue(value);
+        return self();
     }
 
-    public default void addValueInteger(String ref, Integer value) {
+    public default SELF addValueInteger(String ref, Integer value) {
         K var = getVariable(ref);
         if (var == null) {
             var = addDefinition(getVarService().newDefinitionInteger(ref, ref));
         }
         var.setValue(value);
+        return self();
     }
 
-    public default void addValueBoolean(String ref, Boolean value) {
+    public default SELF addValueBoolean(String ref, Boolean value) {
         K var = getVariable(ref);
         if (var == null) {
             var = addDefinition(getVarService().newDefinitionBoolean(ref, ref));
         }
         var.setValue(value);
+        return self();
     }
 
     // ----------------------------------------------------------
@@ -184,6 +201,14 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         return getValueType(ref, Double.class, defaultValue);
     }
 
+    public default BigDecimal getValueBigDecimal(String ref) {
+        return getValueType(ref, BigDecimal.class);
+    }
+
+    public default BigDecimal getValueBigDecimal(String ref, BigDecimal defaultValue) {
+        return getValueType(ref, BigDecimal.class, defaultValue);
+    }
+
     public default Boolean getValueBoolean(String ref) {
         return getValueType(ref, Boolean.class);
     }
@@ -212,11 +237,13 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
 
     public void onValueChanged(VarInstance changedVar);
 
-    public static VarInstanceMap<?> empty() {
+    public static VarInstanceMap<?,?> empty() {
         return EMPTY_INSTANCE;
     }
 
-    public static final VarInstanceMap<?> EMPTY_INSTANCE = new VarInstanceMap<VarInstance>() {
+    public static final VarInstanceMap<?,?> EMPTY_INSTANCE = new VarInstanceMapEmpty();
+
+    static final class VarInstanceMapEmpty implements VarInstanceMap<VarInstance,VarInstanceMapEmpty> {
 
         @Override
         public VarInstance getVariable(String ref) {

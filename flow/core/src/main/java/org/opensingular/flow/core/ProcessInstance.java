@@ -30,7 +30,6 @@ import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
@@ -69,7 +68,7 @@ public class ProcessInstance implements Serializable {
 
     private transient ExecutionContext executionContext;
 
-    private transient VarInstanceMap<?> variables;
+    private transient VarInstanceMap<?,?> variables;
 
     final void setProcessDefinition(ProcessDefinition<?> processDefinition) {
         if (processDefinitionRef != null) {
@@ -96,19 +95,14 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Inicia esta instância de processo.
-     * </p>
      *
      * @return A tarefa atual da instância depois da inicialização.
      */
+    @Deprecated
     public TaskInstance start() {
-        return start(getVariables());
-    }
-
-    public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
         getPersistedDescription(); // Força a geração da descrição
-        return FlowEngine.start(this, varInstanceMap);
+        return FlowEngine.start(this, getVariables());
     }
 
     /**
@@ -807,30 +801,11 @@ public class ProcessInstance implements Serializable {
      *
      * @return o mapa das variáveis.
      */
-    public final VarInstanceMap<?> getVariables() {
+    public final VarInstanceMap<?,?> getVariables() {
         if (variables == null) {
             variables = new VarInstanceTableProcess(this);
         }
         return variables;
-    }
-
-    /**
-     * <p>
-     * Valida esta instância de processo.
-     * </p>
-     *
-     * @throws SingularFlowException caso a validação falhe.
-     */
-    protected void validadeStart() {
-        if (variables == null && !getProcessDefinition().getVariables().hasRequired()) {
-            return;
-        }
-
-        ValidationResult result = getVariables().validate();
-        if (result.hasErros()) {
-            throw new SingularFlowException(
-                    createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result), this);
-        }
     }
 
     /**
