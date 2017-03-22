@@ -186,7 +186,7 @@ public class WicketFormProcessing implements Loggable {
      */
     private static Set<SInstance> evaluateUpdateListenersAndCollect(SInstance i) {
         return SInstances
-                .streamDescendants(SInstances.getRootInstance(i), true)
+                .streamDescendants(i.getRoot(), true)
                 .filter(isDependantOf(i))
                 .filter(WicketFormProcessing::isNotOrphan)
                 .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
