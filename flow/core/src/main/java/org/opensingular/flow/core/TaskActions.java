@@ -31,7 +31,7 @@ public class TaskActions {
     public static IConditionalTaskAction executeTransition(final ITaskPredicate predicate, final String destinationName) {
         TaskActionImpl executeTransition = new TaskActionImpl("Executar Transicao", taskInstance ->{
             taskInstance.log("Transição Automática", "motivo: " + predicate.getDescription(taskInstance));
-            taskInstance.getProcessInstance().executeTransition(destinationName);
+            taskInstance.prepareTransition(destinationName).go();
         });
         executeTransition.setCompleteDescription("Executar Transicao '" + destinationName + "'");
         

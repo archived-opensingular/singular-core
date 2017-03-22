@@ -17,6 +17,8 @@
 package org.opensingular.lib.commons.test;
 
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -40,7 +42,17 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
     /**
      * Objeto alvo das assertivas.
      */
+    @Nullable
     public final T getTarget() {
+        return target;
+    }
+
+    /**
+     * Objeto alvo das assertivas.
+     */
+    @Nonnull
+    public final T getTargetOrException() {
+        isNotNull();
         return target;
     }
 
@@ -48,7 +60,7 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      * Retorna o objeto alvo das assertivas já com cast para o tipo da classe informado ou dá uma exception se o objeto
      * não foi da classe informado. Se for null, também gera exception.
      */
-    public final <TT> TT getTarget(Class<TT> expectedClass) {
+    public final <TT> TT getTarget(@Nonnull Class<TT> expectedClass) {
         if (!expectedClass.isInstance(target)) {
             throw new AssertionError(errorMsg("Não é da classe " + expectedClass.getName(), expectedClass,
                     target == null ? null : target.getClass()));
@@ -64,7 +76,17 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
     protected abstract String errorMsg(String msg);
 
     protected final String errorMsg(String msg, Object expected, Object current) {
-        return errorMsg(msg + ":\n Esperado  : " + expected + "\n Encontrado: " + current);
+        boolean showClass = (expected != null) && (current != null) && expected.getClass() != current.getClass();
+        StringBuilder sb = new StringBuilder();
+        sb.append(msg).append(":\n Esperado  : ").append(expected);
+        if (showClass) {
+            sb.append(" (").append(expected.getClass()).append(")");
+        }
+        sb.append("\n Encontrado: ").append(current);
+        if (showClass) {
+            sb.append(" (").append(current.getClass()).append(")");
+        }
+        return errorMsg(sb.toString());
     }
 
     /**

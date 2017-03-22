@@ -22,7 +22,15 @@ import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "serial", "unchecked" })
@@ -156,7 +164,8 @@ public abstract class MTask<K extends MTask<?>> {
 
     public void setDefaultTransition(MTransition defaultTransition) {
         if(this.defaultTransition != null){
-            throw new SingularFlowException(createErrorMsg("Default Transition already defined"));
+            throw new SingularFlowException(createErrorMsg("Default transition already defined"), this).addTransitions(
+                    this);
         }
         this.defaultTransition = defaultTransition;
     }
@@ -167,7 +176,9 @@ public abstract class MTask<K extends MTask<?>> {
 
     private MTransition addTransition(MTransition transition) {
         if (transitionsByName.containsKey(transition.getName().toLowerCase())) {
-            throw new SingularFlowException(createErrorMsg("Transition with name '" + transition.getName() + "' already defined"));
+            throw new SingularFlowException(
+                    createErrorMsg("Transition with name '" + transition.getName() + "' already defined"), this)
+                    .addTransitions(this);
         }
         transitions.add(transition);
         transitionsByName.put(transition.getName().toLowerCase(), transition);
@@ -193,23 +204,45 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public void execute(ExecutionContext execucaoTask) {
-        throw new SingularFlowException("Operation not supported");
+        throw new SingularFlowException("Operation not supported", this);
     }
 
+    /** Lista de transições partindo da task atual. */
+    @Nonnull
     public List<MTransition> getTransitions() {
         return transitions;
     }
 
-    public MTransition getTransitionOrException(String transitionName) {
-        MTransition transicao = getTransition(transitionName);
-        if (transicao == null) {
-            throw new SingularFlowException(createErrorMsg("Transition '" + transitionName + "' is not defined"));
-        }
-        return transicao;
+    /** Recupera a transição com o nome informado ou dispara exception senão encontrar. */
+    @Nonnull
+    public MTransition getTransitionOrException(@Nonnull String transitionName) {
+        return getTransition(transitionName).orElseThrow(
+                () -> new SingularFlowException(createErrorMsg("Transição não encontrada '" + transitionName + "'"),
+                        this).addTransitions(this));
     }
 
-    public MTransition getTransition(String transitionName) {
-        return transitionsByName.get(transitionName.toLowerCase());
+    /** Descobre qual a transição default ou dispara exception senão encontrar. */
+    @Nonnull
+    final MTransition resolveDefaultTransitionOrException() {
+        List<MTransition> transitions = getTransitions();
+        if (transitions.size() == 1) {
+            return transitions.get(0);
+        } else if (transitions.size() == 0) {
+            throw new SingularFlowException(createErrorMsg("não definiu nenhuma transicao"), this);
+        } else if (defaultTransition != null) {
+            return defaultTransition;
+        }
+        throw new SingularFlowException(createErrorMsg(
+                "possui várias transações e não definiu transicao default. Defina a transação default ou explicite " +
+                        "qual transação deve ser executada."),
+                this).addTransitions(this);
+    }
+
+    /** Recupera a transição com o nome informado. */
+    @Nonnull
+    public Optional<MTransition> getTransition(@Nonnull String transitionName) {
+        Objects.requireNonNull(transitionName);
+        return Optional.ofNullable(transitionsByName.get(transitionName.toLowerCase()));
     }
 
     public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask) {
@@ -254,7 +287,7 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     final String createErrorMsg(String message) {
-        return getFlowMap().getProcessDefinition() + ":" + this + " -> " + message;
+        return "Processo '" + getFlowMap().getProcessDefinition().getName() + "' : Task '" +name + "' -> " + message;
     }
 
     void verifyConsistency() {

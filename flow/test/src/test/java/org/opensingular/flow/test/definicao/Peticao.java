@@ -16,8 +16,6 @@
 
 package org.opensingular.flow.test.definicao;
 
-import java.util.Calendar;
-
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
@@ -30,14 +28,9 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
+import java.util.Calendar;
+
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.*;
 
 @DefinitionInfo("Peticoes")
 public class Peticao extends ProcessDefinition<ProcessInstance> {
@@ -100,7 +93,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         flow.addEnd(INDEFERIDO);
         flow.addEnd(DEFERIDO);
         flow.addEnd(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
-        flow.setStartTask(NOTIFICAR_NOVA_INSTANCIA);
+        flow.setStart(NOTIFICAR_NOVA_INSTANCIA);
 
         flow.from(NOTIFICAR_NOVA_INSTANCIA).go(ENVIAR_PARA_ANALISE, AGUARDANDO_ANALISE);
         flow.from(AGUARDANDO_ANALISE).go(COLOCAR_EM_EXIGENCIA, EM_EXIGENCIA);

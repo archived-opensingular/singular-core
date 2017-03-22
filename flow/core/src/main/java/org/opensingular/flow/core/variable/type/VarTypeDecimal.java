@@ -18,34 +18,42 @@ package org.opensingular.flow.core.variable.type;
 
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.variable.VarType;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 
-public class VarTypeDecimal implements VarType {
+public class VarTypeDecimal extends VarTypeBase<BigDecimal> {
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
-
-    @Override
-    public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
+    public VarTypeDecimal() {
+        super(BigDecimal.class);
     }
 
     @Override
     public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return ((BigDecimal) valor).toPlainString();
+        return convert(valor).toPlainString();
     }
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        BigDecimal  valor = (BigDecimal) varInstance.getValue();
+        BigDecimal  valor = convert(varInstance.getValue());
         if (valor == null){
             return null;
         }
         return valor.toPlainString();
     }
 
+    @Override
+    public BigDecimal fromPersistenceString(String persistenceValue) {
+        return persistenceValue == null ? null : new BigDecimal(persistenceValue);
+    }
+
+    @Nullable
+    @Override
+    protected BigDecimal convertNotDirectCompatible(@Nonnull Object original) {
+        if (original instanceof Number) {
+            return new BigDecimal(original.toString());
+        }
+        return null;
+    }
 }

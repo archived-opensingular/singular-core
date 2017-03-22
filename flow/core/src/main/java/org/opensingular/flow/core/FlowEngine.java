@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import com.google.common.base.Joiner;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -36,7 +35,6 @@ import org.opensingular.flow.core.variable.VarInstanceMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
@@ -44,9 +42,30 @@ class FlowEngine {
 
     private FlowEngine() {}
 
+    static void preStart(StartCall<?> startCall) {
+
+    }
+
+    /**
+     * Cria uma nova instância mediante chamada a {@link MStart#setStartInitializer(MStart.IStartInitializer)}. Senão
+     * existir o inicializador, criar uma nova instância e chama {@link ProcessInstance#start()}.
+     */
+    @Nonnull
+    final static <I extends ProcessInstance> I createAndStart(@Nonnull StartCall<I> startCall) {
+        MStart start = startCall.getStart();
+        I instance = startCall.getProcessDefinition().newPreStartInstance();
+        if (start.getStartInitializer() != null) {
+             start.getStartInitializer().startInstance(instance, (StartCall<ProcessInstance>) startCall);
+        } else {
+            instance.start();
+        }
+        return instance;
+    }
+
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();
-        return updateState(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);
+        MStart start = instancia.getProcessDefinition().getFlowMap().getStart();
+        return updateState(instancia, null, null, start.getTask(), paramIn);
     }
 
     @Nonnull
@@ -55,22 +74,25 @@ class FlowEngine {
             @Nullable VarInstanceMap<?> paramIn) {
         Objects.requireNonNull(processInstance);
         Objects.requireNonNull(destinyTask);
-        boolean primeiroLoop = true;
         while (true) {
             if (transition != null && originTaskInstance == null) {
                 throw new SingularFlowException(
                         "Não pode ser solicitada execução de uma transição específica (transition=" +
-                                transition.getName() + ") sem uma instancia de tarefa de origem (tarefaOrigem null)");
+                                transition.getName() + ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
             }
             Date agora = new Date();
             final TaskInstance newTaskInstance = processInstance.updateState(originTaskInstance, transition, destinyTask, agora);
 
-            if (primeiroLoop) {
+            if (paramIn != null) {
                 inserirParametrosDaTransicao(processInstance, paramIn);
 
-                getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), originTaskInstance, newTaskInstance, paramIn);
-
-                primeiroLoop = false;
+                if (originTaskInstance != null) {
+                    //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
+                    // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
+                    // impede). O problema é uqe originTaskInstance é obrigatório
+                    getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), originTaskInstance,
+                            newTaskInstance, paramIn);
+                }
             }
 
             getPersistenceService().flushSession();
@@ -84,11 +106,11 @@ class FlowEngine {
                 if (transition != null) {
                     validarParametrosInput(originTaskInstance, transition, paramIn);
                 }
-                ExecutionContext execucaoTask = new ExecutionContext(processInstance, originTaskInstance, paramIn, transition);
+                ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
                 newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
                 return newTaskInstance;
             }
-            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, originTaskInstance, paramIn, transition);
+            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
             newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
 
             processInstance.setExecutionContext(execucaoTask);
@@ -99,13 +121,16 @@ class FlowEngine {
                 }
                 destinyTask.execute(execucaoTask);
                 getPersistenceService().flushSession();
+            } catch(Exception e) {
+                throw new SingularFlowException("Error running task '" + destinyTask.getName()+"'", e).add(destinyTask);
             } finally {
                 processInstance.setExecutionContext(null);
             }
-            String nomeTransicao = execucaoTask.getTransition();
-            transition = searchTransition(newTaskInstance, nomeTransicao);
+
+            transition = resolveDefaultTransitionIfNecessary(newTaskInstance, execucaoTask.getTransition());
             destinyTask = transition.getDestination();
             originTaskInstance = newTaskInstance;
+            paramIn = null;
         }
     }
 
@@ -156,7 +181,7 @@ class FlowEngine {
             Date targetDate = taskDestiny.getExecutionDate(instance, taskInstance);
             taskInstance.setTargetEndDate(targetDate);
             if (targetDate.before(new Date())) {
-                instance.executeTransition();
+                instance.prepareTransition().go();
             }
         } else if (taskDestiny.getTargetDateExecutionStrategy() != null) {
             Date targetDate = taskDestiny.getTargetDateExecutionStrategy().apply(instance, taskInstance);
@@ -177,59 +202,31 @@ class FlowEngine {
             instance.setExecutionContext(null);
         }
 
-        executeTransition(instance, execucaoTask.getTransition(), null);
+        executeTransition(instance.getCurrentTaskOrException(), execucaoTask.getTransition(), null);
     }
 
     @Nonnull
-    static TaskInstance executeTransition(@Nonnull ProcessInstance instancia, @Nullable String transitionName, @Nullable VarInstanceMap<?> param) {
-        return executeTransition(instancia.getCurrentTaskOrException(), transitionName, param);
-    }
-
-    @Nonnull
-    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable String transitionName, @Nullable VarInstanceMap<?> param) {
-        MTransition transicao = searchTransition(tarefaAtual, transitionName);
+    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable MTransition transition, @Nullable VarInstanceMap<?> param) {
+        transition = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
         tarefaAtual.endLastAllocation();
-        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
+        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transition, transition.getDestination(), param);
     }
+
 
     @Nonnull
-    private static MTransition searchTransition(@Nonnull TaskInstance tarefaAtual, @Nullable String nomeTransicao) {
-
-        final MTask<?> estadoAtual = tarefaAtual.getFlowTaskOrException();
-        final MTransition transicao;
-        final List<MTransition> transitions = estadoAtual.getTransitions();
-
-        if (nomeTransicao == null) {
-            if (transitions.size() == 1) {
-                transicao = transitions.get(0);
-            } else {
-
-                MTransition defaultTransition = estadoAtual.getDefaultTransition();
-
-                if (transitions.size() > 1 && defaultTransition != null) {
-                    transicao = defaultTransition;
-                } else {
-                    throw new SingularFlowException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
-                }
-            }
-        } else {
-            transicao = estadoAtual.getTransition(nomeTransicao);
-            if (transicao == null) {
-                throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName()
-                        + "] não possui a transição '" + nomeTransicao + "' solicitada. As opções são: {"
-                        + Joiner.on(',').join(transitions) + '}');
-            }
+    private static MTransition resolveDefaultTransitionIfNecessary(@Nonnull TaskInstance tarefaAtual,
+            @Nullable MTransition transition) {
+        if (transition != null) {
+            return transition;
         }
-        return transicao;
+        return tarefaAtual.getFlowTaskOrException().resolveDefaultTransitionOrException();
     }
 
-    private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
-        if (paramIn != null) {
-            for (VarInstance variavel : paramIn) {
-                String ref = variavel.getRef();
-                if (instancia.getProcessDefinition().getVariables().contains(ref)) {
-                    instancia.setVariable(ref, variavel.getValue());
-                }
+    private static void inserirParametrosDaTransicao(@Nonnull ProcessInstance instancia, @Nonnull VarInstanceMap<?> paramIn) {
+        for (VarInstance variavel : paramIn) {
+            String ref = variavel.getRef();
+            if (instancia.getProcessDefinition().getVariables().contains(ref)) {
+                instancia.setVariable(ref, variavel.getValue());
             }
         }
     }
@@ -248,15 +245,17 @@ class FlowEngine {
         for (VarDefinition p : transicao.getParameters()) {
             if (p.isRequired()) {
                 if (!parametroPresentes(paramIn, p)) {
-                    throw new SingularFlowException("O parametro obrigatório '" + p.getRef()
-                            + "' não foi informado na chamada da transição "
-                        + transicao.getName());
+                    throw new SingularFlowException(
+                            "O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição " +
+                                    transicao.getName(), taskInstance);
                 }
             }
         }
         ValidationResult errors = transicao.validate(taskInstance, paramIn);
         if (errors.hasErros()) {
-            throw new SingularFlowException("Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]");
+            throw new SingularFlowException(
+                    "Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]",
+                    taskInstance);
         }
     }
 

@@ -22,17 +22,15 @@ import org.opensingular.flow.core.variable.VarInstanceMap;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class TransitionRef {
+public final class TransitionRef {
 
-    private TaskInstance originTaskInstance;
+    private final TaskInstance originTaskInstance;
 
     private final MTransition transition;
 
     public TransitionRef(@Nonnull TaskInstance originTaskInstance, @Nonnull MTransition transition) {
-        Objects.requireNonNull(originTaskInstance);
-        Objects.requireNonNull(transition);
-        this.originTaskInstance = originTaskInstance;
-        this.transition = transition;
+        this.originTaskInstance = Objects.requireNonNull(originTaskInstance);
+        this.transition = Objects.requireNonNull(transition);
     }
 
     @Nonnull

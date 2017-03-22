@@ -72,17 +72,26 @@ public abstract class SInstance implements SAttributeEnabled {
         return type;
     }
 
+    /** Retorna o documento ao qual pertence a instância atual. */
+    @Nonnull
     public SDocument getDocument() {
         return document;
+    }
+
+    /** Retorna a instância raiz da instância atual.
+     *  @see SDocument#getRoot()
+     */
+    @Nonnull
+    public SInstance getRoot() {
+        return document.getRoot();
     }
 
     /**
      * Retorna um ID único dentre as instâncias do mesmo documento. Um ID nunca
      * é reutilizado, mesmo se a instancia for removida de dentro do documento.
      * Funcionamento semelhante a uma sequence de banco de dados.
-     *
-     * @return Nunca Null
      */
+    @Nonnull
     public Integer getId() {
         if (id == null) {
             id = document.nextId();
@@ -823,4 +832,9 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         return Collections.emptyList();
     }
+
+    public SInstance getDocumentRoot(){
+        return document.getRoot();
+    }
+
 }

@@ -69,7 +69,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 ITaskDefinition end = () -> "End";
                 flow.addEnd(end);
 
-                flow.setStartTask(start);
+                flow.setStart(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -96,7 +96,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 ITaskDefinition end = () -> "End";
                 flow.addEnd(end);
 
-                flow.setStartTask(start);
+                flow.setStart(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -123,7 +123,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 ITaskDefinition end = () -> "End 2";
                 flow.addEnd(end);
 
-                flow.setStartTask(start);
+                flow.setStart(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);

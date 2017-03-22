@@ -20,7 +20,16 @@ import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.service.IPersistenceService;
@@ -35,7 +44,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,13 +123,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      */
     protected ProcessDefinition(Class<I> processInstanceClass, VarService varService) {
         if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
-            throw new SingularFlowException("A definição de fluxo deve ser anotada com " + DefinitionInfo.class.getName());
+            throw new SingularFlowException(
+                    "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
+                            DefinitionInfo.class.getName(), this);
         }
         String flowKey = this.getClass().getAnnotation(DefinitionInfo.class).value();
         Objects.requireNonNull(flowKey, "key");
         Objects.requireNonNull(processInstanceClass, "processInstanceClass");
         if (getClass().getSimpleName().equalsIgnoreCase(flowKey)) {
-            throw new SingularFlowException("A o nome simples da classe do processo(" + getClass().getSimpleName() + ") não pode ser igual a chave definida em @DefinitionInfo.");
+            throw new SingularFlowException("O nome simples da classe do processo(" + getClass().getSimpleName() +
+                    ") não pode ser igual a chave definida em @DefinitionInfo.", this);
         }
         this.key = flowKey;
         this.processInstanceClass = processInstanceClass;
@@ -158,7 +176,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             }
             configureActions(novo);
             if (novo.getProcessDefinition() != this) {
-                throw new SingularFlowException("Mapa com definiçao trocada");
+                throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
             novo.verifyConsistency();
             MBPMUtil.calculateTaskOrder(novo);
@@ -260,12 +278,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
 
         if (scheduledJobsByName.containsKey(name)) {
-            throw new SingularFlowException("A Job with name '" + name + "' is already defined.");
+            throw new SingularFlowException("A Job with name '" + name + "' is already defined.", this);
         }
         scheduledJobsByName.put(name, scheduledJob);
         return scheduledJob;
     }
 
+    @Nonnull
     final Collection<ProcessScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
@@ -351,7 +370,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         IEntityProcessVersion version = getPersistenceService().retrieveProcessVersionByCod(entityVersionCod);
         if (version == null) {
             entityVersionCod = null;
-            throw new SingularFlowException(createErrorMsg("Definicao demanda inconsistente com o BD: codigo não encontrado"));
+            throw new SingularFlowException(
+                    createErrorMsg("Definicao demanda inconsistente com o BD: codigo não encontrado"), this);
         }
 
         return version;
@@ -385,7 +405,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         Objects.requireNonNull(task);
         IEntityTaskVersion version = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
         if (version == null) {
-            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
+            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"), this);
         }
         return version;
     }
@@ -474,7 +494,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
         IEntityTaskDefinition taskDefinition = getEntityTaskDefinition(taskAbbreviation);
         if (taskDefinition == null) {
-            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation));
+            throw new SingularFlowException(
+                    createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation), this);
         }
         return taskDefinition;
     }
@@ -664,7 +685,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if(! instance.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(definition.getKey())){
             throw new SingularFlowException(
                     "A instancia de processo com id " + instance.getCod() + " não pertence a definição de processo " +
-                            definition.getName());
+                            definition.getName(), definition);
         }
     }
 
@@ -675,24 +696,27 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             throw new SingularFlowException(
                     "A instancia de processo com id=" + instance.getFullId() + " deveria ser da classe " +
                             processInstanceClass.getName() + " mas na verdade é da classe " +
-                            instance.getClass().getName());
+                            instance.getClass().getName(), instance);
         }
     }
 
     /**
-     * <p>
      * Retorna uma nova instância vazia deste processo pronta para ser
      * configurada em um novo fluxo.
-     * </p>
-     *
-     * @return a nova instância (<i>null safe</i>).
      */
-    public I newInstance() {
+    @Nonnull
+    public I newPreStartInstance() {
         I novo = newUnbindedInstance();
         novo.setInternalEntity(createProcessInstance());
         return novo;
     }
 
+    public StartCall<I> prepareStartCall() {
+        return new StartCall<I>(this, getFlowMap().getStart());
+    }
+
+
+    @Nonnull
     private I newUnbindedInstance() {
         I novo;
         try {
@@ -707,12 +731,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         } catch (Exception e) {
             throw new SingularFlowException(e.getMessage(), e);
         }
-        throw new SingularFlowException(
-                createErrorMsg("Construtor sem parametros  ausente: " + getProcessInstanceClass().getSimpleName() + "()"));
+        throw new SingularFlowException(createErrorMsg(
+                "Construtor sem parametros ausente: " + getProcessInstanceClass().getSimpleName() + "()"), this);
     }
 
     final IEntityProcessInstance createProcessInstance() {
-        IEntityTaskVersion initialState =  getEntityTaskVersion(getFlowMap().getStartTask());
+        IEntityTaskVersion initialState =  getEntityTaskVersion(getFlowMap().getStart().getTask());
         return getPersistenceService().createProcessInstance(getEntityProcessVersion(), initialState);
     }
 

@@ -97,7 +97,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         getSession().evict(o);
     }
 
-    public <T> List<T> findByProperty(String propertyName, String value) {
+    public List<T> findByProperty(String propertyName, String value) {
         return findByProperty(propertyName, value, null, null);
     }
 

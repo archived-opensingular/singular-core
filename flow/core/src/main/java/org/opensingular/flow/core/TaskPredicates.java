@@ -45,7 +45,7 @@ public class TaskPredicates {
     @Nonnull
     static Predicate<TaskInstance> simpleTaskType(@Nonnull String abbreviation) {
         Objects.requireNonNull(abbreviation);
-        return t -> t.getAbbreviation().equalsIgnoreCase(abbreviation);
+        return t -> t.isAtTask(abbreviation);
     }
 
     /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
