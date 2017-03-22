@@ -94,4 +94,9 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     public FormKey newVersion(INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
         throw new SingularFormException("Método não implementado");
     }
+
+    @Override
+    public INSTANCE createInstance() {
+        throw new SingularFormException("Método não implementado");
+    }
 }
