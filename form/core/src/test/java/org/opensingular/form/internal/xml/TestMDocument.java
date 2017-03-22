@@ -3,6 +3,7 @@ package org.opensingular.form.internal.xml;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -16,6 +17,11 @@ public class TestMDocument {
 
         Document documentByMDocument = MDocument.newInstance();
         Assert.assertTrue(MDocument.toMDocument(documentByMDocument) instanceof MDocument);
+    }
+
+    @Test(expected = SingularException.class)
+    public void testToMDocumentByMDocument(){
+        MDocument.toMDocument(MDocument.newInstance());
     }
 
     @Test(expected = SingularFormException.class)
@@ -61,5 +67,21 @@ public class TestMDocument {
         Assert.assertEquals("filho", mElementNSWithBar.getNode("filho").getNodeName());
 
         document.getParentNode();
+    }
+
+    @Test(expected =  SingularFormException.class)
+    public void testCreateElementNSThrowException(){
+        MDocument document = MDocument.newInstance();
+        document.createMElementNS("qualquerUm", "/testeNome");
+    }
+
+    @Test
+    public void testCreateElementNS(){
+        MDocument document = MDocument.newInstance();
+        MElement element = document.createMElementNS("qualquerUm", "testeNome:essecodigoteste");
+
+        Assert.assertEquals("testeNome", element.getPrefix());
+        Assert.assertEquals("essecodigoteste", element.getLocalName());
+        Assert.assertEquals("testeNome:essecodigoteste", element.getNodeName());
     }
 }

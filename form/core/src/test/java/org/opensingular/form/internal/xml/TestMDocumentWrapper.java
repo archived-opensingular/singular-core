@@ -98,6 +98,12 @@ public class TestMDocumentWrapper {
         Assert.assertNull(wrapper.getFeature("feature", "1.0"));
 
         Assert.assertNull(wrapper.getUserData("key"));
+
+        Assert.assertNull(wrapper.getLocalName());
+
+        Assert.assertEquals(0, wrapper.getElementsByTagName("tag").getLength());
+
+        wrapper.normalize();
     }
 
     @Test
@@ -121,6 +127,14 @@ public class TestMDocumentWrapper {
         Assert.assertFalse(wrapper.isSameNode(element));
 
         Assert.assertFalse(wrapper.isEqualNode(pai));
+
+        wrapper.getDomConfig();
+
+        wrapper.normalizeDocument();
+
+        wrapper.getDomConfig();
+
+//        wrapper.getdo
     }
 
     @Test

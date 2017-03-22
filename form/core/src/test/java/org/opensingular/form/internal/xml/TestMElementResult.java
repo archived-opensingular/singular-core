@@ -67,6 +67,18 @@ public class TestMElementResult {
 
         result.removeAttribute("atr");
         Assert.assertEquals("", result.getAttribute("atr"));
+
+
+        result.setAttribute("attr", "valor");
+        Attr attr = result.getAttributeNode("attr");
+
+        Assert.assertEquals("valor", attr.getValue());
+
+        result.setAttributeNode(attr);
+        result.removeAttributeNode(attr);
+
+        Assert.assertEquals("", result.getAttribute("attr"));
+        Assert.assertEquals(0, result.getElementsByTagName("arg1").getLength());
     }
 
     @Test
@@ -81,18 +93,20 @@ public class TestMElementResult {
         Assert.assertEquals("arg3", result.getAttributeNS("arg1", "arg2"));
         Assert.assertTrue(result.hasAttributeNS("arg1", "arg2"));
 
-//        result.removeAttributeNS("arg1", "arg2");
-//        Assert.assertEquals("", result.getAttributeNS("arg1", "arg2"));
+        Attr attributeNodeNS = result.getAttributeNodeNS("arg1", "arg2");
+        Assert.assertEquals("arg3", attributeNodeNS.getValue());
 
-        result.getAttributeNodeNS("", "");
-        // TODO terminar metodos com NS
-        result.getAttributeNS("arg1", "arg2");
+        result.removeAttributeNS("arg1", "arg2");
+        Assert.assertEquals("", result.getAttributeNS("arg1", "arg2"));
+
+        Assert.assertEquals(0, result.getElementsByTagNameNS("arg0", "arg2").getLength());
     }
 
     @Test
     public void testNodeMethods(){
         MElement pai = MElement.newInstance("raiz");
         pai.addElement("nome", "joaquim");
+        pai.addElement("nome", "joao");
         pai.addElement("idade", "10");
 
         MElementResult result = new MElementResult(pai.getChildNodes());
@@ -106,5 +120,43 @@ public class TestMElementResult {
 
         Assert.assertEquals("joaquim", result.getFirstChild().getNodeValue());
         Assert.assertTrue(result.hasChildNodes());
+
+        Assert.assertEquals(1, result.getChildNodes().getLength());
+
+        Assert.assertEquals("joao", result.getNextSibling().getLastChild().getNodeValue());
+
+        Assert.assertNull(result.getPreviousSibling());
+
+        result.normalize();
+    }
+
+    @Test
+    public void testSomeMethods(){
+        MElement pai = MElement.newInstance("raiz");
+        pai.addElement("nome", "joaquim");
+        pai.addElement("nome", "joao");
+        MElement idade = pai.addElement("idade", "10");
+
+        MElementResult result = new MElementResult(pai.getChildNodes());
+        result.next();
+
+        Assert.assertNull(result.getNamespaceURI());
+        Assert.assertNull(result.getBaseURI());
+        Assert.assertNull(result.getPrefix());
+        Assert.assertNull(result.getSchemaTypeInfo().getTypeNamespace());
+        Assert.assertNull(result.lookupNamespaceURI("uri"));
+        Assert.assertNull(result.lookupPrefix("uri"));
+        Assert.assertNull(result.getFeature("feature", "1.0"));
+        Assert.assertNull(result.getUserData("key"));
+
+        Assert.assertFalse(result.isSupported("feature", "1.0"));
+        Assert.assertEquals("nome", result.getLocalName());
+        Assert.assertEquals("joaquim", result.getTextContent());
+
+        Assert.assertFalse(result.isSameNode(idade));
+        Assert.assertFalse(result.isEqualNode(idade));
+
+        Assert.assertFalse(result.isDefaultNamespace("test"));
+
     }
 }

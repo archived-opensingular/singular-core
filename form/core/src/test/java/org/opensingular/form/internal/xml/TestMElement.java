@@ -17,6 +17,7 @@
 package org.opensingular.form.internal.xml;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.xerces.dom.NodeImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -975,6 +976,7 @@ public class TestMElement {
         Assert.assertEquals(0, dataSimple.compareTo(calendarDay1.getTime()));
         Assert.assertEquals(0, dataWithDefaultOption.compareTo(calendarDay2.getTime()));
         Assert.assertEquals(0, dataWithNullOption.compareTo(calendarDay3.getTime()));
+
     }
 
     @Test
@@ -1016,6 +1018,7 @@ public class TestMElement {
     @Test
     public void testNewInstanceByClass(){
         MElement element = MElement.newInstance(String.class);
+
         Assert.assertEquals("java-lang-String", element.getNodeName());
     }
 
@@ -1163,7 +1166,7 @@ public class TestMElement {
         Assert.assertEquals("{}", raiz.toJSONString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetBrothers(){
         MElement raiz = MElement.newInstance("raiz");
         MElement filho1 = raiz.addElement("filho1", "123");
@@ -1180,6 +1183,7 @@ public class TestMElement {
 
         Assert.assertEquals(filho1.getValor(), raiz.getPrimeiroFilho("filho1").getValor());
 
-        raiz.getPrimeiroFilho(null);
+
     }
+    // TODO terminar testes MElement
 }
