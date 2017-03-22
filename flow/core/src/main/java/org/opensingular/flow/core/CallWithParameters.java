@@ -16,25 +16,29 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.variable.VarDefinition;
+import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
-import org.opensingular.flow.core.variable.VarType;
+import org.opensingular.flow.core.variable.VarService;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
  * Representa um chamada (execução de açõe no fluxo) que pode receber parametros para sua execução.
  *
  * @author Daniel C. Bordin on 20/03/2017.
  */
-public abstract class CallWithParameters<SELF extends CallWithParameters<SELF>> {
+public abstract class CallWithParameters<SELF extends CallWithParameters<SELF>>
+        implements VarInstanceMap<VarInstance, SELF> {
 
-    private VarInstanceMap<?> parameters;
+    private VarInstanceMap<?,?> parameters;
 
     /**
      * Retorna o mapa de parametros da chamada atual.
      */
     @Nonnull
-    public VarInstanceMap<?> parameters() {
+    public VarInstanceMap<?,?> getParameters() {
         if (parameters == null) {
             parameters = newParameters();
         }
@@ -42,33 +46,40 @@ public abstract class CallWithParameters<SELF extends CallWithParameters<SELF>> 
     }
 
     /** Cria um novo conjunto de paramétros para a chamada. */
-    protected abstract VarInstanceMap<?> newParameters();
+    protected abstract VarInstanceMap<?,?> newParameters();
 
-    /**
-     * Set o valor na variável ou cria a variável senão existir.
-     */
-    @Nonnull
-    public SELF addParamString(String ref, String value) {
-        parameters().addValueString(ref, value);
-        return (SELF) this;
+    @Override
+    public VarService getVarService() {
+        return getParameters().getVarService();
     }
 
-    /**
-     * Set o valor na variável ou cria a variável senão existir.
-     */
-    @Nonnull
-    public SELF addParam(String ref, VarType type, Object value) {
-        parameters().addValue(ref, type, value);
-        return (SELF) this;
+    @Override
+    public VarInstance getVariable(String ref) {
+        return getParameters().getVariable(ref);
     }
 
-    /**
-     * Set o valor na variável ou lança exception se a variável não existir na
-     * transição.
-     */
-    @Nonnull
-    public SELF setValue(String ref, Object value) {
-        parameters().setValue(ref, value);
-        return (SELF) this;
+    @Override
+    public Collection<VarInstance> asCollection() {
+        return (Collection<VarInstance>) getParameters().asCollection();
+    }
+
+    @Override
+    public VarInstance addDefinition(VarDefinition def) {
+        return getParameters().addDefinition(def);
+    }
+
+    @Override
+    public int size() {
+        return getParameters().size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getParameters().isEmpty();
+    }
+
+    @Override
+    public void onValueChanged(VarInstance changedVar) {
+        getParameters().onValueChanged(changedVar);
     }
 }

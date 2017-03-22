@@ -69,8 +69,7 @@ public class RelocationTest  {
         session.beginTransaction();
 
         P p = new P();
-        id = p.newPreStartInstance();
-        id.start();
+        id = p.prepareStartCall().createAndStart();
     }
 
     @After
@@ -81,8 +80,7 @@ public class RelocationTest  {
 
     @Test public void relocatesTaskUser(){
         P p = new P();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
+        ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -95,8 +93,7 @@ public class RelocationTest  {
 
     @Test public void rejectssRelocationTaskUserWithWrongVersionLock(){
         P p = new P();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
+        ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -111,8 +108,7 @@ public class RelocationTest  {
 
     @Test public void rejectsRelocationWithInvalidVersionNumber(){
         P p = new P();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
+        ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 

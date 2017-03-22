@@ -45,8 +45,25 @@ public interface BStart<SELF extends BStart<SELF>> extends BParametersEnabled<SE
         return self;
     }
 
+    /**
+     * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
+     * antes do processo ser executado.
+     *
+     * @see MStart#setStartInitializer(MStart.IStartInitializer)
+     */
     default <I extends ProcessInstance> SELF withInitializer(MStart.IStartInitializer<I> startInitializer) {
         getStart().setStartInitializer(startInitializer);
+        return self();
+    }
+
+    /**
+     * Define o validador deste start point a ser executado antes que a instância seja criada. O validador é
+     * executado antes do inicializador definido em {@link #setStartInitializer(MStart.IStartInitializer)} .
+     *
+     * @see MStart#setStartValidator(MStart.IStartValidator)
+     */
+    default <I extends ProcessInstance> SELF withValidator(MStart.IStartValidator<I> startValidator) {
+        getStart().setStartValidator(startValidator);
         return self();
     }
 }

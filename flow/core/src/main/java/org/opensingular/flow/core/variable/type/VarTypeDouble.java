@@ -38,7 +38,7 @@ public class VarTypeDouble extends VarTypeBase<Double> {
     }
 
     @Override
-    public Double fromPersistenceString(String persistenceValue) {
+    public Double fromPersistenceStringImpl(String persistenceValue) {
         return persistenceValue == null ? null : Double.valueOf(persistenceValue);
     }
 

@@ -24,7 +24,7 @@ public abstract class AbstractVarInstance implements VarInstance {
 
     private final VarDefinition definition;
 
-    private VarInstanceMap<?> changeListener;
+    private VarInstanceMap<?,?> changeListener;
 
     public AbstractVarInstance(VarDefinition definition) {
         this.definition = definition;
@@ -55,7 +55,7 @@ public abstract class AbstractVarInstance implements VarInstance {
     }
 
     @Override
-    public void setChangeListner(VarInstanceMap<?> changeListener) {
+    public void setChangeListner(VarInstanceMap<?,?> changeListener) {
         this.changeListener = changeListener;
     }
 

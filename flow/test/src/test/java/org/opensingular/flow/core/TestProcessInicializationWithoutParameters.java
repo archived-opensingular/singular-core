@@ -80,11 +80,10 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
             return f.build();
         }
 
-        private ProcessInstance processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
+        private void processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
             startInitializerCalled = true;
             instance.getVariables().setValue(FLAG, 1);
             instance.start();
-            return instance;
         }
 
 
