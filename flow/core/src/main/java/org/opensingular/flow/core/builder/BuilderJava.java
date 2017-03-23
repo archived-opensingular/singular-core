@@ -31,7 +31,7 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
     }
 
     default SELF setBpmnTypeAsEmail() {
-        getTask().setMetaDataValue(IFlowRenderer.SEND_EMAIL, true);
+        getTask().setMetaDataValue(IFlowRenderer.SEND_EMAIL, Boolean.TRUE);
         return self();
     }
 
