@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import java.io.Serializable;
 import java.util.Objects;
 
-public final class MProcessRole implements Serializable {
+public final class SProcessRole implements Serializable {
 
     private final String abbreviation;
 
@@ -30,7 +30,7 @@ public final class MProcessRole implements Serializable {
     private final UserRoleSettingStrategy<ProcessInstance> userRoleSettingStrategy;
 
     @SuppressWarnings("unchecked")
-    MProcessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
+    SProcessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(abbreviation);
         Objects.requireNonNull(userRoleSettingStrategy);
@@ -58,7 +58,7 @@ public final class MProcessRole implements Serializable {
 
     @Override
     public String toString() {
-        return "MProcessRole [abbreviation=" + abbreviation + ", name=" + name
+        return "SProcessRole [abbreviation=" + abbreviation + ", name=" + name
                 + ", automaticUserAllocation=" + automaticUserAllocation
                 + ", userRoleSettingStrategy=" + userRoleSettingStrategy + "]";
     }

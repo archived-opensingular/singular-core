@@ -50,7 +50,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         final Date today = new Date();
 
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
-            for (final MTaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
+            for (final STaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
                 executeTaskIfNecessary(mbpmBean, log, today, definicaoProcessoMBPM, task);
             }
         }
@@ -62,7 +62,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         }
 
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
-            for (MTask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
+            for (STask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
                 List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
                 if (!acoesAutomaticas.isEmpty()) {
                     executeAutomaticActions(mbpmBean, log, definicaoProcessoMBPM, task, acoesAutomaticas);
@@ -75,7 +75,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
     }
 
     private void executeTaskIfNecessary(SingularFlowConfigurationBean mbpmBean, StringBuilder log, Date hoje,
-                                        ProcessDefinition<?> definicaoProcessoMBPM, MTaskWait task) {
+                                        ProcessDefinition<?> definicaoProcessoMBPM, STaskWait task) {
         if (task.hasExecutionDateStrategy()) {
             for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                 TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
@@ -93,7 +93,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         }
     }
 
-    private Consumer<MTaskPeople> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM) {
+    private Consumer<STaskPeople> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM) {
         return task -> {
             // Preenche Data Alvo para os casos que estiverem null
             for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
@@ -111,7 +111,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         };
     }
 
-    private void executeAutomaticActions(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM, MTask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
+    private void executeAutomaticActions(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
         for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
             TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
             for (IConditionalTaskAction acao : acoesAutomaticas) {

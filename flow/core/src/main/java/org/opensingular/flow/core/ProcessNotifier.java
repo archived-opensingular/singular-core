@@ -21,14 +21,14 @@ import java.util.List;
 public interface ProcessNotifier {
 
     //TODO sugestão: responsibleUser -> userInCharge
-    public default void notifyUserTaskRelocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser,
-                                                 MUser removedUser) {
+    public default void notifyUserTaskRelocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify, SUser allocatedUser,
+                                                 SUser removedUser) {
 
     }
 
     //TODO sugestão: responsibleUser -> userInCharge
-    public default void notifyUserTaskAllocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser,
-                                                 MUser removedUser, String justification) {
+    public default void notifyUserTaskAllocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify, SUser allocatedUser,
+                                                 SUser removedUser, String justification) {
 
     }
 
@@ -40,7 +40,7 @@ public interface ProcessNotifier {
 
     }
 
-    public default <X extends MUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify) {
+    public default <X extends SUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify) {
 
     }
 

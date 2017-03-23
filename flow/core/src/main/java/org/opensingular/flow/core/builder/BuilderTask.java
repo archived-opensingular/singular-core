@@ -16,30 +16,31 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.flow.core.property.MetaDataRef;
 
-public interface BTask {
+public interface BuilderTask {
 
-    public MTask<?> getTask();
+    public STask<?> getTask();
 
     /**
      * Cria uma nova transição da task atual para a task destino informada
      */
-    public default BTransition<?> go(ITaskDefinition taskRefDestiny) {
+    public default BuilderTransition<?> go(ITaskDefinition taskRefDestiny) {
         return go(taskRefDestiny.getName(), taskRefDestiny);
     }
 
-    public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
+    public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
 
-    public BTask addAccessStrategy(TaskAccessStrategy<?> estrategiaAcesso);
+    public BuilderTask addAccessStrategy(TaskAccessStrategy<?> estrategiaAcesso);
 
-    public BTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
+    public BuilderTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
 
-    public BTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
+    public BuilderTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
 
-    public <T> BTask setMetaDataValue(MetaDataRef<T> propRef, T value);
+    public <T> BuilderTask setMetaDataValue(MetaDataRef<T> propRef, T value);
 
 }

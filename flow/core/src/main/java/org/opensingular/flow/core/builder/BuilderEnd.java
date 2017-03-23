@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.MTaskEnd;
+import org.opensingular.flow.core.STaskEnd;
 
-public interface BEnd<SELF extends BEnd<SELF>> extends BuilderTaskSelf<SELF, MTaskEnd> {
+public interface BuilderEnd<SELF extends BuilderEnd<SELF>> extends BuilderTaskSelf<SELF, STaskEnd> {
 
 }

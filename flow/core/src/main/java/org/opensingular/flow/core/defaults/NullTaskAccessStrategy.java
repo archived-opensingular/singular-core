@@ -16,10 +16,10 @@
 
 package org.opensingular.flow.core.defaults;
 
-import org.opensingular.flow.core.MTask;
-import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.STask;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.TaskAccessStrategy;
 
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.Set;
 public class NullTaskAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
     @Override
-    public boolean canExecute(ProcessInstance instance, MUser user) {
+    public boolean canExecute(ProcessInstance instance, SUser user) {
         return true;
     }
 
@@ -39,12 +39,12 @@ public class NullTaskAccessStrategy extends TaskAccessStrategy<ProcessInstance> 
     }
 
     @Override
-    public List<? extends MUser> listAllocableUsers(ProcessInstance instancia) {
+    public List<? extends SUser> listAllocableUsers(ProcessInstance instancia) {
         return Collections.emptyList();
     }
 
     @Override
-    public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+    public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
         return Collections.emptyList();
     }
 }

@@ -26,20 +26,20 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
-public class MStart extends MParametersEnabled {
+public class SStart extends SParametersEnabled {
 
-    private final MTask<?> task;
+    private final STask<?> task;
 
     private IStartInitializer startInitializer;
 
     private IStartValidator startValidator;
 
-    MStart(MTask<?> task) {
+    SStart(STask<?> task) {
         this.task = task;
     }
 
     /** Task a ser executada a partir desse ponto de inicialização. */
-    public MTask<?> getTask() {
+    public STask<?> getTask() {
         return task;
     }
 

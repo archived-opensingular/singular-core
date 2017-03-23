@@ -17,9 +17,9 @@
 package org.opensingular.flow.core.ws;
 
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SUser;
 
 public class BaseSingularRest {
 
@@ -63,7 +63,7 @@ public class BaseSingularRest {
                              String username,
                              Integer lastVersion) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
+        SUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
         if(lastVersion == null) {
             lastVersion = 0;
         }

@@ -19,11 +19,11 @@ package org.opensingular.flow.core;
 import java.util.Date;
 
 @SuppressWarnings("unchecked")
-public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
+public class STaskWait extends STaskUserExecutable<STaskWait> {
 
     private final IExecutionDateStrategy<ProcessInstance> executionDateStrategy;
 
-    public MTaskWait(FlowMap flowMap, String name, String abbreviation, IExecutionDateStrategy<?> executionDateStrategy) {
+    public STaskWait(FlowMap flowMap, String name, String abbreviation, IExecutionDateStrategy<?> executionDateStrategy) {
         super(flowMap, name, abbreviation);
         this.executionDateStrategy = (IExecutionDateStrategy<ProcessInstance>) executionDateStrategy;
     }
@@ -37,7 +37,7 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
     }
 
     @Override
-    public <T extends ProcessInstance> MTaskWait withTargetDate(IExecutionDateStrategy<T> targetDateExecutionStrategy) {
+    public <T extends ProcessInstance> STaskWait withTargetDate(IExecutionDateStrategy<T> targetDateExecutionStrategy) {
         if(executionDateStrategy != null){
             throw new SingularFlowException("Tarefas agendadas não suportam data alvo.", this);
         }

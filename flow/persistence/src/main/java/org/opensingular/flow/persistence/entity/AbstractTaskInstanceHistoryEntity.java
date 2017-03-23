@@ -16,7 +16,12 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.Date;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -26,14 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import java.util.Date;
 
 /**
  * The base persistent class for the TB_HISTORICO_INSTANCIA_TAREFA database table.
@@ -48,7 +46,7 @@ import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
  */
 @MappedSuperclass
 @Table(name = "TB_HISTORICO_INSTANCIA_TAREFA")
-public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK_INSTANCE extends IEntityTaskInstance, TASK_HISTORIC_TYPE extends IEntityTaskHistoricType> extends BaseEntity<Integer> implements IEntityTaskInstanceHistory {
+public abstract class AbstractTaskInstanceHistoryEntity<USER extends SUser, TASK_INSTANCE extends IEntityTaskInstance, TASK_HISTORIC_TYPE extends IEntityTaskHistoricType> extends BaseEntity<Integer> implements IEntityTaskInstanceHistory {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_HISTORICO_ALOCACAO";
 

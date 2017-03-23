@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TestProcessWithFlowDecisionAsFirstStep.ProcessWithFlowDecisionAsFirstStep.StepsDE;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 /**

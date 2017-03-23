@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.MParametersEnabled;
-import org.opensingular.flow.core.MStart;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SParametersEnabled;
+import org.opensingular.flow.core.SStart;
 
 import java.util.function.Consumer;
 
@@ -27,11 +27,11 @@ import java.util.function.Consumer;
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
-public interface BStart<SELF extends BStart<SELF>> extends BParametersEnabled<SELF> {
+public interface BuilderStart<SELF extends BuilderStart<SELF>> extends BuilderParametersEnabled<SELF> {
 
-    public abstract MStart getStart();
+    public abstract SStart getStart();
 
-    public default MParametersEnabled getParametersEnabled() {
+    public default SParametersEnabled getParametersEnabled() {
         return getStart();
     }
 
@@ -49,20 +49,20 @@ public interface BStart<SELF extends BStart<SELF>> extends BParametersEnabled<SE
      * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
      * antes do processo ser executado.
      *
-     * @see MStart#setStartInitializer(MStart.IStartInitializer)
+     * @see SStart#setStartInitializer(SStart.IStartInitializer)
      */
-    default <I extends ProcessInstance> SELF withInitializer(MStart.IStartInitializer<I> startInitializer) {
+    default <I extends ProcessInstance> SELF withInitializer(SStart.IStartInitializer<I> startInitializer) {
         getStart().setStartInitializer(startInitializer);
         return self();
     }
 
     /**
      * Define o validador deste start point a ser executado antes que a instância seja criada. O validador é
-     * executado antes do inicializador definido em {@link #setStartInitializer(MStart.IStartInitializer)} .
+     * executado antes do inicializador definido em {@link #setStartInitializer(SStart.IStartInitializer)} .
      *
-     * @see MStart#setStartValidator(MStart.IStartValidator)
+     * @see SStart#setStartValidator(SStart.IStartValidator)
      */
-    default <I extends ProcessInstance> SELF withValidator(MStart.IStartValidator<I> startValidator) {
+    default <I extends ProcessInstance> SELF withValidator(SStart.IStartValidator<I> startValidator) {
         getStart().setStartValidator(startValidator);
         return self();
     }

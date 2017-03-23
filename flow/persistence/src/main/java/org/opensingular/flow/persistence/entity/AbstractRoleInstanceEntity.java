@@ -16,7 +16,12 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.Date;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -28,14 +33,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import java.util.Date;
 
 /**
  * The base persistent class for the TB_INSTANCIA_PAPEL database table.
@@ -51,7 +49,7 @@ import org.opensingular.flow.core.entity.IEntityRoleInstance;
  */
 @MappedSuperclass
 @Table(name = "TB_INSTANCIA_PAPEL")
-public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INSTANCE extends IEntityProcessInstance, ROLE_DEF extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleInstance {
+public abstract class AbstractRoleInstanceEntity<USER extends SUser, PROCESS_INSTANCE extends IEntityProcessInstance, ROLE_DEF extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PAPEL";
 

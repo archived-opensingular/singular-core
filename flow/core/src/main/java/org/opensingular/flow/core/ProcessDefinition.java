@@ -19,7 +19,6 @@ package org.opensingular.flow.core;
 import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -152,20 +151,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
 
     /**
-     * <p>
-     * Método responsável pela criação do mapa de fluxo.
-     * </p>
-     *
-     * @return o mapa de fluxo para este processo.
+     * Método a ser implementado com a criação do fluxo do processo.
      */
+    @Nonnull
     protected abstract FlowMap createFlowMap();
 
     /**
-     * <p>
      * Retorna o {@link FlowMap} para esta definição de processo.
-     * </p>
-     *
-     * @return o {@link FlowMap}.
      */
     @Nonnull
     public synchronized final FlowMap getFlowMap() {
@@ -174,12 +166,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             if (novo == null){
                 novo = new FlowMap(this);
             }
-            configureActions(novo);
             if (novo.getProcessDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
             novo.verifyConsistency();
-            MBPMUtil.calculateTaskOrder(novo);
+            SFlowUtil.calculateTaskOrder(novo);
             flowMap = novo;
         }
         return flowMap;
@@ -393,7 +384,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @throws SingularException
      *             caso não encontre a tarefa.
      */
-    public MTask<?> getTask(ITaskDefinition taskDefinition) {
+    public STask<?> getTask(ITaskDefinition taskDefinition) {
         return getFlowMap().getTask(taskDefinition);
     }
 
@@ -401,7 +392,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
     }
 
-    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull MTask<?> task) {
+    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
         IEntityTaskVersion version = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
         if (version == null) {
@@ -447,7 +438,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            a tarefa informada.
      * @return a entidade persistente.
      */
-    public final IEntityTaskDefinition getEntityTaskDefinition(MTask<?> task) {
+    public final IEntityTaskDefinition getEntityTaskDefinition(STask<?> task) {
         return getEntityTaskDefinitionOrException(task.getAbbreviation());
     }
 
@@ -568,7 +559,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            o usuário especificado.
      * @return o <i>link resolver</i>.
      */
-    public final Lnk getCreatePageFor(MUser user) {
+    public final Lnk getCreatePageFor(SUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
     }
 
@@ -613,7 +604,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa
      *         ser configurado; {@code false} caso contrário.
      */
-    public boolean canBeCreatedBy(MUser user) {
+    public boolean canBeCreatedBy(SUser user) {
         return isCreatedByUser();
     }
 
@@ -650,7 +641,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return metaData;
     }
 
-    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends MTask<?>> stream) {
+    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends STask<?>> stream) {
         return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
     }
 
@@ -797,9 +788,5 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         result = getCategory().hashCode();
         result = 31 * result + getName().hashCode();
         return result;
-    }
-
-    protected void configureActions(FlowMap flowMap){
-
     }
 }

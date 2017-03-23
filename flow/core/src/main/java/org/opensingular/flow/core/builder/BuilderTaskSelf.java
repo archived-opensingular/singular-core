@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
-import org.opensingular.flow.core.MTask;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 import java.util.function.Consumer;
 
-public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK extends MTask<?>> extends BTask {
+public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK extends STask<?>> extends BuilderTask {
 
     @Override
     TASK getTask();

@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -16,20 +16,18 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.lib.commons.base.SingularUtil;
 
-public class MTaskEnd extends MTask<MTaskEnd> {
+@FunctionalInterface
+public interface ITaskDefinition {
 
-    public MTaskEnd(FlowMap mapa, String nome, String abbreviation) {
-        super(mapa, nome, abbreviation);
+    String getName();
+
+    default String getKey() {
+        return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
     }
 
-    @Override
-    public IEntityTaskType getTaskType() {
-        return TaskType.END;
-    }
-
-    @Override
-    public boolean canReallocate() {
-        return false;
+    default boolean isNameEquals(String name) {
+        return getName().equals(name);
     }
 }

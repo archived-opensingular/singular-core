@@ -38,7 +38,7 @@ public final class TransitionCall extends CallWithParameters<TransitionCall> {
 
     /**
      *  Verifica se os parâmetros atuais da chamada atende os requisitos da chamada.
-     *  @see MTransition#setParametersValidator(MTransition.ITransitionParametersValidator)
+     *  @see STransition#setParametersValidator(STransition.ITransitionParametersValidator)
      */
     @Override
     public ValidationResult validate() {

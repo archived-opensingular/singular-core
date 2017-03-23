@@ -23,7 +23,7 @@ package org.opensingular.flow.core;
  */
 public class SingularFlowTransactionNotFoundException extends SingularFlowException {
 
-    public SingularFlowTransactionNotFoundException(String errorMsg, MTask<?> task) {
+    public SingularFlowTransactionNotFoundException(String errorMsg, STask<?> task) {
         super(errorMsg, task);
     }
 }

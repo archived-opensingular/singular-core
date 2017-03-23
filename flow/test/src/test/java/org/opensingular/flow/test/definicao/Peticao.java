@@ -19,13 +19,14 @@ package org.opensingular.flow.test.definicao;
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SProcessRole;
 import org.opensingular.flow.core.TaskPredicates;
-import org.opensingular.flow.core.builder.BProcessRole;
+import org.opensingular.flow.core.builder.BuilderProcessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 
 import java.util.Calendar;
@@ -81,8 +82,8 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
 
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
-        BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
-        BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
+        BuilderProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
+        BuilderProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
 
         flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);

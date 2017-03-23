@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.MParametersEnabled;
+import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.variable.VarType;
 
 import java.util.function.Consumer;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  *
  * @author Daniel C. Bordin on 20/03/2017.
  */
-public interface BParametersEnabled<SELF extends BParametersEnabled<SELF>> {
+public interface BuilderParametersEnabled<SELF extends BuilderParametersEnabled<SELF>> {
 
     public default SELF self() {
         return (SELF) this;
@@ -37,7 +37,7 @@ public interface BParametersEnabled<SELF extends BParametersEnabled<SELF>> {
         return self;
     }
 
-    public abstract MParametersEnabled getParametersEnabled();
+    public abstract SParametersEnabled getParametersEnabled();
 
     /**
      * Adiciona um parâmetro que automaticamente atualiza a variável do processo. O parâmetro têm as mesmas

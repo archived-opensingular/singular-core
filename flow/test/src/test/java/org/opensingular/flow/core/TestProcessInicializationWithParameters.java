@@ -19,9 +19,8 @@ package org.opensingular.flow.core;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.ProcessWithInitialization.Steps;
-import org.opensingular.flow.core.builder.BStart;
+import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.math.BigDecimal;
@@ -134,7 +133,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             return f.build();
         }
 
-        private void setupStartParameters(BStart<?> start) {
+        private void setupStartParameters(BuilderStart<?> start) {
             start.addParamBindedToProcessVariable(PARAM_FLAG, true);
             start.addParamBindedToProcessVariable(PARAM_BIG, true);
             start.addParamDate(PARAM_DT, false);

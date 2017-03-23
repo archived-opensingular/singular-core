@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-public class MTaskJava extends MTask<MTaskJava> {
+public class STaskJava extends STask<STaskJava> {
 
     private IScheduleData scheduleData;
 
@@ -32,7 +32,7 @@ public class MTaskJava extends MTask<MTaskJava> {
     @SuppressWarnings("rawtypes")
     private ImplTaskBlock blockImpl;
 
-    public MTaskJava(FlowMap mapa, String nome, String abbreviation) {
+    public STaskJava(FlowMap mapa, String nome, String abbreviation) {
         super(mapa, nome, abbreviation);
     }
 
@@ -54,7 +54,7 @@ public class MTaskJava extends MTask<MTaskJava> {
         return scheduleData;
     }
 
-    public <T extends ProcessInstance> MTaskJava callBlock(ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
+    public <T extends ProcessInstance> STaskJava callBlock(ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
         Objects.requireNonNull(implBloco);
         Objects.requireNonNull(scheduleData);
         this.blockImpl = implBloco;
@@ -62,7 +62,7 @@ public class MTaskJava extends MTask<MTaskJava> {
         return this;
     }
 
-    public MTaskJava call(ImplTaskJava impl) {
+    public STaskJava call(ImplTaskJava impl) {
         Objects.requireNonNull(impl);
         taskImpl = impl;
         return this;
