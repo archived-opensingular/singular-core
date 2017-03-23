@@ -17,7 +17,6 @@
 package org.opensingular.form.internal.xml;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.xerces.dom.NodeImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;

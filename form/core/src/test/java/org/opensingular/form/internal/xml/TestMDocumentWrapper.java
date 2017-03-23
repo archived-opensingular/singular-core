@@ -133,8 +133,6 @@ public class TestMDocumentWrapper {
         wrapper.normalizeDocument();
 
         wrapper.getDomConfig();
-
-//        wrapper.getdo
     }
 
     @Test
@@ -193,5 +191,4 @@ public class TestMDocumentWrapper {
 
         Assert.assertNull(wrapper.adoptNode(element));
     }
-
 }

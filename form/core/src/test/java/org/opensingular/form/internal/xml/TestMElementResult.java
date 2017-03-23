@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NodeList;
 
-import java.util.Iterator;
-
 public class TestMElementResult {
 
     @Test

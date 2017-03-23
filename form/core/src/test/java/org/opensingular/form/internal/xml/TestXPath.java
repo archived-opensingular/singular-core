@@ -20,7 +20,6 @@ package org.opensingular.form.internal.xml;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DocumentFragment;
