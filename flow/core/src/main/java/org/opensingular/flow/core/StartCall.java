@@ -30,9 +30,9 @@ public final class StartCall<I extends ProcessInstance> extends CallWithParamete
 
     private final ProcessDefinition<I> processDefinition;
 
-    private final MStart start;
+    private final SStart start;
 
-    StartCall(ProcessDefinition<I> processDefinition, MStart start) {this.processDefinition = processDefinition;
+    StartCall(ProcessDefinition<I> processDefinition, SStart start) {this.processDefinition = processDefinition;
         this.start = start;
         if (start.getFlowMap().getProcessDefinition() != processDefinition) {
             throw new SingularFlowException("Erro interno: processDefinition diferentes").add(
@@ -51,7 +51,7 @@ public final class StartCall<I extends ProcessInstance> extends CallWithParamete
 
     /**
      *  Verifica se os parâmetros atuais da chamada atende os requisitos da chamada.
-     *  @see MStart#setStartValidator(MStart.IStartValidator)
+     *  @see SStart#setStartValidator(SStart.IStartValidator)
      */
     @Override
     public ValidationResult validate() {
@@ -69,7 +69,7 @@ public final class StartCall<I extends ProcessInstance> extends CallWithParamete
     }
 
     /** Definição desse ponto de inicialização segunda a definiçao do próprio processo. */
-    public MStart getStart() {
+    public SStart getStart() {
         return start;
     }
 

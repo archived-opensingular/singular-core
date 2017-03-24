@@ -16,18 +16,16 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.STaskPeople;
 
-@FunctionalInterface
-public interface ITaskDefinition {
+public interface BuilderPeople<SELF extends BuilderPeople<SELF>> extends BuilderUserExecutable<SELF, STaskPeople> {
 
-    String getName();
-
-    default String getKey() {
-        return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
+    public default SELF notifyStartToResponsibleUser() {
+        return addStartedTaskListener((instanciaTarefa, execucaoTask) -> Flow.notifyListeners(n -> n.notifyStartToResponsibleUser(instanciaTarefa, execucaoTask)));
     }
 
-    default boolean isNameEquals(String name) {
-        return getName().equals(name);
+    public default SELF notifyStartToInterestedUser() {
+        return addStartedTaskListener((instanciaTarefa, execucaoTask) -> Flow.notifyListeners(n -> n.notifyStartToInterestedUser(instanciaTarefa, execucaoTask)));
     }
 }

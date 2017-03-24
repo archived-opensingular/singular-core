@@ -18,14 +18,14 @@ package org.opensingular.flow.core;
 
 
 @SuppressWarnings("unchecked")
-public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> extends MTask<K> {
+public abstract class STaskUserExecutable<K extends STaskUserExecutable<?>> extends STask<K> {
 
     private ITaskPageStrategy executionPage;
     private ITaskPageStrategy backPage;
     private ITaskPageStrategy pageAfterTask;
     private IExecutionDateStrategy<? extends ProcessInstance> targetDateExecutionStrategy;
 
-    public MTaskUserExecutable(FlowMap flowMap, String name, String abbreviation) {
+    public STaskUserExecutable(FlowMap flowMap, String name, String abbreviation) {
         super(flowMap, name, abbreviation);
     }
 

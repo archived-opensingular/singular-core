@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import java.io.Serializable;
 
 //TODO renomear para algo mais representativo para o singular.
-public interface MUser extends Comparable<MUser>, Serializable {
+public interface SUser extends Comparable<SUser>, Serializable {
 
     Integer getCod();
 
@@ -35,16 +35,16 @@ public interface MUser extends Comparable<MUser>, Serializable {
 
     String getCodUsuario();
 
-    default boolean is(MUser user2) {
+    default boolean is(SUser user2) {
         return (user2 != null) && getCod().equals(user2.getCod());
     }
 
-    default boolean isNot(MUser user2) {
+    default boolean isNot(SUser user2) {
         return !(is(user2));
     }
 
     @Override
-    default int compareTo(MUser p) {
+    default int compareTo(SUser p) {
         return getSimpleName().compareTo(p.getSimpleName());
     }
 }

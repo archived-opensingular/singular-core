@@ -25,7 +25,7 @@ import org.opensingular.flow.core.variable.VarDefinitionMap;
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
-public abstract class MParametersEnabled {
+public abstract class SParametersEnabled {
 
     private static MetaDataRef<Boolean> AUTO_BIND_VARIABLE = new MetaDataRef("autoBindToProcessVariable",
             Boolean.class);
@@ -46,7 +46,7 @@ public abstract class MParametersEnabled {
      * Adiciona um parâmetro que automaticamente atualiza a variável do processo. O parâmetro têm as mesmas
      * definições da variável.
      */
-    public MParametersEnabled addParamBindedToProcessVariable(String ref, boolean required) {
+    public SParametersEnabled addParamBindedToProcessVariable(String ref, boolean required) {
         VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
             throw new SingularFlowException(

@@ -24,7 +24,7 @@ public class TaskActions {
 
     private TaskActions() {}
 
-    public static IConditionalTaskAction executeTransition(final ITaskPredicate predicate, final MTransition transicao) {
+    public static IConditionalTaskAction executeTransition(final ITaskPredicate predicate, final STransition transicao) {
         return executeTransition(predicate, transicao.getName());
     }
 

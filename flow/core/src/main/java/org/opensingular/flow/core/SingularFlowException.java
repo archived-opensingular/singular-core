@@ -94,19 +94,19 @@ public class SingularFlowException extends SingularException{
     }
 
     /** Cria uma nova Exception com complementos de dados da definição de task informada. */
-    public SingularFlowException(@Nullable String cause, @Nullable MTask<?> target) {
+    public SingularFlowException(@Nullable String cause, @Nullable STask<?> target) {
         super(cause);
         add(target);
     }
 
-    public SingularFlowException addTransitions(@Nonnull MTask<?> task) {
+    public SingularFlowException addTransitions(@Nonnull STask<?> task) {
         add("transições disponíveis na task", Joiner.on(", ").join(task.getTransitions()));
         return this;
     }
 
 
     /** Adiciona informações sobre a definição da task relacionada a exception. */
-    public SingularFlowException add(@Nullable MTask<?> task) {
+    public SingularFlowException add(@Nullable STask<?> task) {
         if (task != null) {
             add(task.getFlowMap().getProcessDefinition());
             add("taskDefinition", task.getName() + " (class " + task.getClass().getSimpleName() + ")");

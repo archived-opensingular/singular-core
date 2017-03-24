@@ -17,10 +17,10 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.IExecutionDateStrategy;
-import org.opensingular.flow.core.MTaskWait;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.STaskWait;
 
-public interface BWait<SELF extends BWait<SELF>> extends BUserExecutable<SELF, MTaskWait> {
+public interface BuilderWait<SELF extends BuilderWait<SELF>> extends BuilderUserExecutable<SELF, STaskWait> {
 
     @Override
     public default <T extends ProcessInstance> SELF withTargetDate(IExecutionDateStrategy<T> estrategiaDataAlvo) {

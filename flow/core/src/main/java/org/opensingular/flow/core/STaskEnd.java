@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core.builder;
+package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.MProcessRole;
 
-public interface BProcessRole<SELF extends BProcessRole<SELF>> {
+public class STaskEnd extends STask<STaskEnd> {
 
-    public MProcessRole getProcessRole();
+    public STaskEnd(FlowMap mapa, String nome, String abbreviation) {
+        super(mapa, nome, abbreviation);
+    }
+
+    @Override
+    public IEntityTaskType getTaskType() {
+        return TaskType.END;
+    }
+
+    @Override
+    public boolean canReallocate() {
+        return false;
+    }
 }

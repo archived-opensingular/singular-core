@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TestProcessInicializationDefault.ProcessWithDefaultInitialization.StepsDI;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.

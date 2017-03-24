@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.test;
 
-import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.service.IUserService;
 
 import javax.annotation.Nonnull;
@@ -32,28 +32,28 @@ public class TestUserService implements IUserService {
     private TestDAO testDAO;
 
     @Override
-    public MUser getUserIfAvailable() {
-        return (MUser)testDAO.getSomeUser(1);
+    public SUser getUserIfAvailable() {
+        return (SUser)testDAO.getSomeUser(1);
     }
 
     @Override
-    public boolean canBeAllocated(MUser user) {
+    public boolean canBeAllocated(SUser user) {
         return false;
     }
 
     @Override
-    public MUser findUserByCod(String username) {
-        return (MUser)testDAO.getSomeUser(1);
+    public SUser findUserByCod(String username) {
+        return (SUser)testDAO.getSomeUser(1);
     }
 
     @Override
     @Nonnull
-    public Optional<MUser> saveUserIfNeeded(@Nonnull String codUsuario) {
+    public Optional<SUser> saveUserIfNeeded(@Nonnull String codUsuario) {
         return Optional.ofNullable(testDAO.getSomeUser(Integer.parseInt(codUsuario)));
     }
 
     @Override
-    public MUser findByCod(Integer cod) {
-        return (MUser)testDAO.getSomeUser(1);
+    public SUser findByCod(Integer cod) {
+        return (SUser)testDAO.getSomeUser(1);
     }
 }

@@ -16,19 +16,19 @@
 
 package org.opensingular.flow.core.entity;
 
-import java.util.Date;
+import org.opensingular.flow.core.SUser;
 
-import org.opensingular.flow.core.MUser;
+import java.util.Date;
 
 public interface IEntityRoleInstance extends IEntityByCod<Integer> {
 
     IEntityRoleDefinition getRole();
 
-    MUser getUser();
+    SUser getUser();
 
     Date getCreateDate();
 
-    MUser getAllocatorUser();
+    SUser getAllocatorUser();
 
     IEntityProcessInstance getProcessInstance();
 

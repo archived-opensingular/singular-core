@@ -18,11 +18,26 @@ package org.opensingular.flow.persistence.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +58,7 @@ import java.util.List;
  */
 @MappedSuperclass
 @Table(name = "TB_INSTANCIA_TAREFA")
-public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity<Integer> implements IEntityTaskInstance {
+public abstract class AbstractTaskInstanceEntity<USER extends SUser, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity<Integer> implements IEntityTaskInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_TAREFA";
 
@@ -163,7 +178,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     }
 
     @Override
-    public void setAllocatedUser(MUser allocatedUser) {
+    public void setAllocatedUser(SUser allocatedUser) {
         this.allocatedUser = (USER) allocatedUser;
     }
 
@@ -173,7 +188,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
     }
 
     @Override
-    public void setResponsibleUser(MUser responsibleUser) {
+    public void setResponsibleUser(SUser responsibleUser) {
         this.responsibleUser = (USER) responsibleUser;
     }
 

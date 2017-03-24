@@ -18,12 +18,12 @@ package org.opensingular.flow.core;
 
 import java.util.Objects;
 
-public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
+public class STaskPeople extends STaskUserExecutable<STaskPeople> {
 
     private boolean canReallocate = true;
 
-    public MTaskPeople(FlowMap mapa, String nome, String abbreviation) {
-        super(mapa, nome, abbreviation);
+    public STaskPeople(FlowMap flowMap, String name, String abbreviation) {
+        super(flowMap, name, abbreviation);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
         return canReallocate;
     }
 
-    public MTaskPeople setCanReallocate(boolean canReallocate) {
+    public STaskPeople setCanReallocate(boolean canReallocate) {
         this.canReallocate = canReallocate;
         return this;
     }

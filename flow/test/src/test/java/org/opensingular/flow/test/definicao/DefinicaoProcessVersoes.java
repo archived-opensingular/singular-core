@@ -18,10 +18,10 @@ package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.builder.BProcessRole;
+import org.opensingular.flow.core.builder.BuilderProcessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
 
 @DefinitionInfo("DefVersoes")
@@ -58,7 +58,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
+                BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start";
                 flow.addJavaTask(start).call((ProcessVersoes p) -> {});
@@ -85,7 +85,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
+                BuilderProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
                 ITaskDefinition start = () -> "Start";
                 flow.addJavaTask(start).call((ProcessVersoes p) -> {});
@@ -112,7 +112,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
+                BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start 2";
                 flow.addJavaTask(start).call((ProcessVersoes p) -> {});

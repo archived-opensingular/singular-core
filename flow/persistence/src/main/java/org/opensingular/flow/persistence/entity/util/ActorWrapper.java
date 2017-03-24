@@ -16,15 +16,15 @@
 
 package org.opensingular.flow.persistence.entity.util;
 
-import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.persistence.entity.Actor;
 
 public class ActorWrapper {
 
     private ActorWrapper() {}
 
-    public static MUser wrap(final Actor actor) {
-        return new MUser() {
+    public static SUser wrap(final Actor actor) {
+        return new SUser() {
 
             @Override
             public Integer getCod() {

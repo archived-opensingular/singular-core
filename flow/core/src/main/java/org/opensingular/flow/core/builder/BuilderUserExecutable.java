@@ -17,12 +17,12 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.IExecutionDateStrategy;
-import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.flow.core.ITaskPageStrategy;
-import org.opensingular.flow.core.MTaskUserExecutable;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.STaskUserExecutable;
+import org.opensingular.flow.core.TaskAccessStrategy;
 
-public interface BUserExecutable<SELF extends BUserExecutable<SELF, TASK>, TASK extends MTaskUserExecutable<?>> extends BuilderTaskSelf<SELF, TASK> {
+public interface BuilderUserExecutable<SELF extends BuilderUserExecutable<SELF, TASK>, TASK extends STaskUserExecutable<?>> extends BuilderTaskSelf<SELF, TASK> {
 
     @Override
     public default SELF addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
