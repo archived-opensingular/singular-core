@@ -70,7 +70,7 @@ public class PackageBuilder {
     }
 
     public <T extends SType<?>> T createType(Class<T> newTypeClass) {
-        return sPackage.registerType(MapByName.newInstance(newTypeClass), newTypeClass);
+        return sPackage.registerType(newTypeClass);
     }
 
     @SuppressWarnings("unchecked")

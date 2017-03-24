@@ -24,6 +24,7 @@ import org.opensingular.form.view.ViewResolver;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Objects;
 
 public class SDictionary {
 
@@ -90,7 +91,8 @@ public class SDictionary {
      *
      * @return O pacote carregado
      */
-    public <T extends SPackage> T loadPackage(Class<T> packageClass) {
+    @Nonnull
+    public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
         }
@@ -128,14 +130,27 @@ public class SDictionary {
         return typeRef;
     }
 
-    public <T extends SType<?>> T getTypeOptional(Class<T> typeClass) {
+    public <T extends SType<?>> T getTypeOptional(@Nonnull Class<T> typeClass) {
+        Objects.requireNonNull(typeClass);
         T tipoRef = types.get(typeClass);
         if (tipoRef == null) {
             Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
-            loadPackage(classPacote);
+            SPackage typePackage = loadPackage(classPacote);
             tipoRef = types.get(typeClass);
+            if (tipoRef == null) {
+                //O tipo é de carga lazy e não se auto registrou no pacote, então regista agora
+                tipoRef = registeLazyTypeIntoPackage(typePackage, typeClass);
+            }
         }
         return tipoRef;
+    }
+
+    /** Adiciona o tipo informado no pacote. */
+    @Nonnull
+    private <T extends SType<?>> T registeLazyTypeIntoPackage(@Nonnull SPackage typePackage, @Nonnull Class<T> typeClass) {
+        Objects.requireNonNull(typeClass);
+        Objects.requireNonNull(typeClass);
+        return typePackage.registerType(typeClass);
     }
 
     public SType<?> getType(String fullNamePath) {

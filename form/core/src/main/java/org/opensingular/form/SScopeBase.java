@@ -21,7 +21,11 @@ import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -106,6 +110,11 @@ public abstract class SScopeBase implements SScope {
         }
         throw new SingularFormException(pathReader.getErrorMsg(this,
                 "Não foi encontrado o tipo '" + pathReader.getToken() + "' em '" + getName() + "'"), this);
+    }
+
+    /** Registro o tipo informado neste escopo. */
+    final <T extends SType<?>> T registerType(Class<T> typeClass) {
+        return registerType(MapByName.newInstance(typeClass), typeClass);
     }
 
     final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {
