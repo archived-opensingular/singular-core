@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core.defaults;
 
-import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.UserRoleSettingStrategy;
 
 import java.util.Collections;
@@ -26,7 +26,7 @@ import java.util.List;
 public class EmptyUserRoleSettingStrategy extends UserRoleSettingStrategy<ProcessInstance> {
 
     @Override
-    public List<? extends MUser> listAllocableUsers(ProcessInstance processInstance) {
+    public List<? extends SUser> listAllocableUsers(ProcessInstance processInstance) {
             return Collections.emptyList();
     }
 

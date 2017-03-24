@@ -19,9 +19,32 @@ package org.opensingular.flow.persistence.service;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.*;
-import org.opensingular.flow.core.*;
-import org.opensingular.flow.core.entity.*;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.TaskType;
+import org.opensingular.flow.core.entity.IEntityByCod;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
@@ -31,7 +54,12 @@ import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
@@ -79,10 +107,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         throw new UnsupportedOperationException("Apenas o AlocPro tem suporte a instância pai.");
     }
 
-    protected abstract ROLE_USER newEntityRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, MUser user, MUser allocator);
+    protected abstract ROLE_USER newEntityRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, SUser user, SUser allocator);
 
     @Override
-    public ROLE_USER setInstanceUserRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, MUser user) {
+    public ROLE_USER setInstanceUserRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, SUser user) {
         user = saveUserIfNeeded(user);
 
         ROLE_USER entityRole = newEntityRole(instance, role, user, Flow.getUserIfAvailable());
@@ -100,8 +128,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.refresh(processInstance);
     }
 
-    public MUser saveUserIfNeeded(MUser mUser) {
-        return Flow.getConfigBean().getUserService().saveUserIfNeeded(mUser);
+    public SUser saveUserIfNeeded(SUser sUser) {
+        return Flow.getConfigBean().getUserService().saveUserIfNeeded(sUser);
     }
 
     protected abstract Class<TASK_INSTANCE> getClassTaskInstance();
@@ -153,7 +181,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     @Override
-    public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, MUser responsibleUser) {
+    public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, SUser responsibleUser) {
         responsibleUser = saveUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
         IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
@@ -173,7 +201,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     @Override
-    public void relocateTask(TASK_INSTANCE taskInstance, MUser user) {
+    public void relocateTask(TASK_INSTANCE taskInstance, SUser user) {
         user = saveUserIfNeeded(user);
         taskInstance.setAllocatedUser(user);
 
@@ -181,11 +209,11 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     protected abstract IEntityTaskInstanceHistory newTaskInstanceHistory(TASK_INSTANCE task, IEntityTaskHistoricType taskHistoryType,
-            MUser allocatedUser, MUser responsibleUser);
+            SUser allocatedUser, SUser responsibleUser);
 
     @Override
-    public IEntityTaskInstanceHistory saveTaskHistoricLog(TASK_INSTANCE task, String typeDescription, String detail, MUser allocatedUser,
-            MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance) {
+    public IEntityTaskInstanceHistory saveTaskHistoricLog(TASK_INSTANCE task, String typeDescription, String detail, SUser allocatedUser,
+            SUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance) {
         IEntityTaskHistoricType taskHistoryType = retrieveOrCreateTaskHistoricType(typeDescription);
 
         responsibleUser = saveUserIfNeeded(responsibleUser);
@@ -305,7 +333,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask,
-            VarInstanceMap<?> instanceMap) {
+            VarInstanceMap<?,?> instanceMap) {
         if (instanceMap != null) {
             SessionWrapper ss = getSession();
 
@@ -394,7 +422,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         return c.list();
     }
 
-    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, MUser creatingUser, Boolean active) {
+    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, SUser creatingUser, Boolean active) {
         Objects.requireNonNull(process);
         Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
         c.createAlias("PI.processVersion", "DEF");

@@ -50,6 +50,9 @@ public interface VarService extends Serializable {
     @Nonnull
     VarDefinition newDefinitionDouble(String ref, String name);
 
+    @Nonnull
+    VarDefinition newDefinitionBigDecimal(String ref, String name);
+
     static VarService basic() {
         return DefaultVarService.DEFAULT_VAR_SERVICE;
     }

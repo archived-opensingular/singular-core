@@ -80,11 +80,11 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
         StringBuilder sb = new StringBuilder();
         sb.append(msg).append(":\n Esperado  : ").append(expected);
         if (showClass) {
-            sb.append(" (").append(expected.getClass()).append(")");
+            sb.append(" (").append(expected.getClass()).append(')');
         }
         sb.append("\n Encontrado: ").append(current);
         if (showClass) {
-            sb.append(" (").append(current.getClass()).append(")");
+            sb.append(" (").append(current.getClass()).append(')');
         }
         return errorMsg(sb.toString());
     }

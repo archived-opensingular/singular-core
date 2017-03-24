@@ -16,9 +16,16 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OrderBy;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,18 +39,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OrderBy;
-
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The base persistent class for the TB_INSTANCIA_PROCESSO database table.
@@ -62,7 +60,7 @@ import org.opensingular.flow.core.entity.IEntityVariableInstance;
 @MappedSuperclass
 @SuppressWarnings("unchecked")
 @Table(name = "TB_INSTANCIA_PROCESSO")
-public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity<Integer> implements IEntityProcessInstance {
+public abstract class AbstractProcessInstanceEntity<USER extends SUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity<Integer> implements IEntityProcessInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PROCESSO";
 

@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.service;
 
-import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.SingularFlowException;
 
 import javax.annotation.Nonnull;
@@ -44,9 +44,9 @@ public interface IUserService {
     /**
      * Retorna o usuário logado na aplicação caso exista, caso contrário retorna null
      *
-     * @return Retorna uma instancia de MUser corretamente construída ou null
+     * @return Retorna uma instancia de SUser corretamente construída ou null
      */
-    public MUser getUserIfAvailable();
+    public SUser getUserIfAvailable();
 
     /**
      * Verifica se o flow pode alocar uma task para o usuário passado como
@@ -54,30 +54,30 @@ public interface IUserService {
      *
      * @return Retorna true caso possa e false caso contrário
      */
-    public boolean canBeAllocated(MUser user);
+    public boolean canBeAllocated(SUser user);
 
-    public MUser findUserByCod(String username);
+    public SUser findUserByCod(String username);
 
-    default MUser saveUserIfNeeded(MUser mUser) {
-        return mUser;
+    default SUser saveUserIfNeeded(SUser sUser) {
+        return sUser;
     }
 
     @Nonnull
-    default Optional<MUser> saveUserIfNeeded(@Nonnull String codUsuario) {
+    default Optional<SUser> saveUserIfNeeded(@Nonnull String codUsuario) {
         Objects.requireNonNull(codUsuario);
         return Optional.empty();
     }
 
     @Nonnull
-    default MUser saveUserIfNeededOrException(@Nonnull String codUsuario) {
+    default SUser saveUserIfNeededOrException(@Nonnull String codUsuario) {
         return saveUserIfNeeded(codUsuario).orElseThrow(
                 () -> new SingularFlowException("usuario não encontrado codUsuario=" + codUsuario));
     }
 
-    MUser findByCod(Integer cod);
+    SUser findByCod(Integer cod);
 
     public default Integer getUserCodIfAvailable() {
-        MUser mUser = getUserIfAvailable();
-        return mUser != null ? mUser.getCod() : null;
+        SUser sUser = getUserIfAvailable();
+        return sUser != null ? sUser.getCod() : null;
     }
 }

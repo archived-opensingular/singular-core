@@ -17,13 +17,28 @@
 package org.opensingular.flow.core;
 
 import com.google.common.collect.Lists;
-import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,7 +65,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     @Override
-    public final List<I> retrieveActiveInstancesCreatedBy(MUser pessoa) {
+    public final List<I> retrieveActiveInstancesCreatedBy(SUser pessoa) {
         Objects.requireNonNull(pessoa);
         return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, Boolean.TRUE));
     }
@@ -61,13 +76,13 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     @Override
-    public final List<I> retrieveEndedInstancesCreatedBy(MUser pessoa) {
+    public final List<I> retrieveEndedInstancesCreatedBy(SUser pessoa) {
         Objects.requireNonNull(pessoa);
         return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, Boolean.FALSE));
     }
 
     @Override
-    public final List<I> retrieveAllInstancesIn(MTask<?> task) {
+    public final List<I> retrieveAllInstancesIn(STask<?> task) {
         IEntityTaskDefinition obterSituacaoPara = getEntityTask(task);
         return retrieveAllInstancesIn(obterSituacaoPara != null ? Lists.newArrayList(obterSituacaoPara) : null);
     }
@@ -134,7 +149,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
 
     @Override
     public final List<I> retrieveActiveInstancesWithPeople() {
-        return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(MTask::isPeople)));
+        return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(STask::isPeople)));
     }
 
     protected final IEntityProcessDefinition getEntityProcessDefinition() {
@@ -142,7 +157,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
 
     }
 
-    protected final IEntityTaskDefinition getEntityTask(MTask<?> task) {
+    protected final IEntityTaskDefinition getEntityTask(STask<?> task) {
         return processDefinition.getEntityTaskDefinition(task);
     }
 
@@ -150,11 +165,11 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.getFlowMap();
     }
 
-    protected final List<IEntityTaskDefinition> convertToEntityTask(Collection<? extends MTask<?>> collection) {
+    protected final List<IEntityTaskDefinition> convertToEntityTask(Collection<? extends STask<?>> collection) {
         return convertToEntityTask(collection.stream());
     }
 
-    protected final List<IEntityTaskDefinition> convertToEntityTask(Stream<? extends MTask<?>> stream) {
+    protected final List<IEntityTaskDefinition> convertToEntityTask(Stream<? extends STask<?>> stream) {
         return stream.map(t -> processDefinition.getEntityTaskDefinition(t)).collect(Collectors.toList());
     }
 

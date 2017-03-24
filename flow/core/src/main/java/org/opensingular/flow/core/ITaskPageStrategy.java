@@ -21,6 +21,6 @@ import org.opensingular.flow.core.view.WebRef;
 @FunctionalInterface
 public interface ITaskPageStrategy {
 
-    public WebRef getPageFor(TaskInstance taskInstance, MUser user);
+    public WebRef getPageFor(TaskInstance taskInstance, SUser user);
 
 }

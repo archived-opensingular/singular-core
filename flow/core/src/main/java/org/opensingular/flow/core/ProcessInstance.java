@@ -18,7 +18,6 @@ package org.opensingular.flow.core;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -30,7 +29,6 @@ import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.view.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
@@ -65,11 +63,11 @@ public class ProcessInstance implements Serializable {
 
     private transient IEntityProcessInstance entity;
 
-    private transient MTask<?> estadoAtual;
+    private transient STask<?> estadoAtual;
 
     private transient ExecutionContext executionContext;
 
-    private transient VarInstanceMap<?> variables;
+    private transient VarInstanceMap<?,?> variables;
 
     final void setProcessDefinition(ProcessDefinition<?> processDefinition) {
         if (processDefinitionRef != null) {
@@ -96,19 +94,14 @@ public class ProcessInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Inicia esta instância de processo.
-     * </p>
      *
      * @return A tarefa atual da instância depois da inicialização.
      */
+    @Deprecated
     public TaskInstance start() {
-        return start(getVariables());
-    }
-
-    public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
         getPersistedDescription(); // Força a geração da descrição
-        return FlowEngine.start(this, varInstanceMap);
+        return FlowEngine.start(this, getVariables());
     }
 
     /**
@@ -187,7 +180,7 @@ public class ProcessInstance implements Serializable {
      * Retorna o tipo da tarefa corrente desta instância de processo. Pode não encotrar se a tarefa em banco não
      * tiver correspondência com o fluxo do processo em memória (tarefa legada).
      */
-    public Optional<MTask<?>> getState() {
+    public Optional<STask<?>> getState() {
         if (estadoAtual == null) {
             Optional<TaskInstance> current = getCurrentTask();
             if (current.isPresent()) {
@@ -238,7 +231,7 @@ public class ProcessInstance implements Serializable {
      */
     @Nonnull
     public Optional<String> getCurrentTaskName() {
-        Optional<String> name = getState().map(MTask::getName);
+        Optional<String> name = getState().map(STask::getName);
         if (! name.isPresent()) {
             name = getCurrentTask().map(TaskInstance::getName);
         }
@@ -280,8 +273,8 @@ public class ProcessInstance implements Serializable {
      * @return {@code true} caso o usuário possa executar a tarefa corrente;
      * {@code false} caso contrário.
      */
-    public final boolean canExecuteTask(MUser user) {
-        Optional<MTask<?>> currentState = getState();
+    public final boolean canExecuteTask(SUser user) {
+        Optional<STask<?>> currentState = getState();
         if (! currentState.isPresent()) {
             return false;
         }
@@ -304,9 +297,9 @@ public class ProcessInstance implements Serializable {
      * @return {@code true} caso o usuário possa visualizar a tarefa corrente;
      * {@code false} caso contrário.
      */
-    public boolean canVisualize(@Nonnull MUser user) {
+    public boolean canVisualize(@Nonnull SUser user) {
         Objects.requireNonNull(user);
-        Optional<MTask<?>> tt = getLatestTaskOrException().getFlowTask();
+        Optional<STask<?>> tt = getLatestTaskOrException().getFlowTask();
         if (tt.isPresent()) {
             if ((tt.get().isPeople() || tt.get().isWait()) && hasAllocatedUser() && isAllocated(user.getCod())) {
                 return true;
@@ -334,9 +327,9 @@ public class ProcessInstance implements Serializable {
      *
      * @return os usuários com direitos de execução.
      */
-    public List<MUser> listAllocableUsers() {
+    public List<SUser> listAllocableUsers() {
         return getAccessStrategy()
-                .map(strategy -> (List<MUser>) strategy.listAllocableUsers(this))
+                .map(strategy -> (List<SUser>) strategy.listAllocableUsers(this))
                 .orElse(Collections.emptyList());
     }
 
@@ -393,7 +386,7 @@ public class ProcessInstance implements Serializable {
      * @param roleAbbreviation a sigla do papel especificado.
      * @return o usuário atribuído ao papel.
      */
-    public final MUser getUserWithRole(String roleAbbreviation) {
+    public final SUser getUserWithRole(String roleAbbreviation) {
         final IEntityRoleInstance entityRole = getEntity().getRoleUserByAbbreviation(roleAbbreviation);
         if (entityRole != null) {
             return entityRole.getUser();
@@ -433,7 +426,7 @@ public class ProcessInstance implements Serializable {
     /**
      * Retorna o usuário que criou esta instância de processo.
      */
-    public final MUser getUserCreator() {
+    public final SUser getUserCreator() {
         return getInternalEntity().getUserCreator();
     }
 
@@ -465,10 +458,10 @@ public class ProcessInstance implements Serializable {
      *
      * @param task a tarefa especificada.
      */
-    public final void forceStateUpdate(@Nonnull MTask<?> task) {
+    public final void forceStateUpdate(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
         final TaskInstance tarefaOrigem = getLatestTaskOrException();
-        List<MUser> pessoasAnteriores = getDirectlyResponsibles();
+        List<SUser> pessoasAnteriores = getDirectlyResponsibles();
         final Date agora = new Date();
         TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);
         if (tarefaOrigem != null) {
@@ -497,8 +490,8 @@ public class ProcessInstance implements Serializable {
      * @param agora o momento da transição.
      * @return a tarefa corrente depois da transição.
      */
-    protected final TaskInstance updateState(TaskInstance originTaskInstance, MTransition transicaoOrigem,
-            @Nonnull MTask<?> task, Date agora) {
+    protected final TaskInstance updateState(TaskInstance originTaskInstance, STransition transicaoOrigem,
+            @Nonnull STask<?> task, Date agora) {
         synchronized (this) {
             if (originTaskInstance != null) {
                 originTaskInstance.endLastAllocation();
@@ -672,14 +665,14 @@ public class ProcessInstance implements Serializable {
      * sentido ter responsável direto (ex.: task Java).
      */
     @Nonnull
-    public List<MUser> getDirectlyResponsibles() {
+    public List<SUser> getDirectlyResponsibles() {
         return getCurrentTask().map(TaskInstance::getDirectlyResponsibles).orElse(Collections.emptyList());
     }
 
-    private void addUserRole(MProcessRole mProcessRole, MUser user) {
-        if (getUserWithRole(mProcessRole.getAbbreviation()) == null) {
+    private void addUserRole(SProcessRole sProcessRole, SUser user) {
+        if (getUserWithRole(sProcessRole.getAbbreviation()) == null) {
             getPersistenceService().setInstanceUserRole(getEntity(),
-                getProcessDefinition().getEntityProcessDefinition().getRole(mProcessRole.getAbbreviation()), user);
+                getProcessDefinition().getEntityProcessDefinition().getRole(sProcessRole.getAbbreviation()), user);
         }
     }
 
@@ -691,37 +684,37 @@ public class ProcessInstance implements Serializable {
      * @param roleAbbreviation o papel especificado.
      * @param newUser o novo usuário atribuído ao papel.
      */
-    public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
-        MProcessRole mProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
-        if (mProcessRole == null) {
+    public final void addOrReplaceUserRole(final String roleAbbreviation, SUser newUser) {
+        SProcessRole sProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
+        if (sProcessRole == null) {
             throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation, this);
         }
-        MUser previousUser = getUserWithRole(mProcessRole.getAbbreviation());
+        SUser previousUser = getUserWithRole(sProcessRole.getAbbreviation());
 
         if (previousUser == null) {
             if (newUser != null) {
-                addUserRole(mProcessRole, newUser);
-                getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, null, newUser);
+                addUserRole(sProcessRole, newUser);
+                getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, null, newUser);
 
                 Optional<TaskInstance> latestTask = getTaskNewer();
                 if (latestTask.isPresent()) {
-                    latestTask.get().log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
+                    latestTask.get().log("Papel definido", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName()));
                 }
             }
         } else if (newUser == null || !previousUser.equals(newUser)) {
             IEntityProcessInstance entityTmp = getEntity();
-            getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(mProcessRole.getAbbreviation()));
+            getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(sProcessRole.getAbbreviation()));
             if (newUser != null) {
-                addUserRole(mProcessRole, newUser);
+                addUserRole(sProcessRole, newUser);
             }
 
-            getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, previousUser, newUser);
+            getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, previousUser, newUser);
             Optional<TaskInstance> latestTask = getTaskNewer();
             if (latestTask.isPresent()) {
                 if (newUser != null) {
-                    latestTask.get().log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
+                    latestTask.get().log("Papel alterado", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName()));
                 } else {
-                    latestTask.get().log("Papel removido", mProcessRole.getName());
+                    latestTask.get().log("Papel removido", sProcessRole.getName());
                 }
             }
         }
@@ -807,30 +800,11 @@ public class ProcessInstance implements Serializable {
      *
      * @return o mapa das variáveis.
      */
-    public final VarInstanceMap<?> getVariables() {
+    public final VarInstanceMap<?,?> getVariables() {
         if (variables == null) {
             variables = new VarInstanceTableProcess(this);
         }
         return variables;
-    }
-
-    /**
-     * <p>
-     * Valida esta instância de processo.
-     * </p>
-     *
-     * @throws SingularFlowException caso a validação falhe.
-     */
-    protected void validadeStart() {
-        if (variables == null && !getProcessDefinition().getVariables().hasRequired()) {
-            return;
-        }
-
-        ValidationResult result = getVariables().validate();
-        if (result.hasErros()) {
-            throw new SingularFlowException(
-                    createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result), this);
-        }
     }
 
     /**
@@ -853,7 +827,7 @@ public class ProcessInstance implements Serializable {
      * 
      * @return a lista de usuários (<i>null safe</i>).
      */
-    public Set<MUser> getAllocatedUsers() {
+    public Set<SUser> getAllocatedUsers() {
         return getEntity().getTasks().stream().filter(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null).map(tarefa -> tarefa.getAllocatedUser()).collect(Collectors.toSet());
     }
 
@@ -955,7 +929,7 @@ public class ProcessInstance implements Serializable {
      * @param tipo o tipo informado.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer(@Nonnull MTask<?> tipo) {
+    public Optional<TaskInstance> getTaskNewer(@Nonnull STask<?> tipo) {
         return getTaskNewer(TaskPredicates.simpleTaskType(tipo));
     }
 
@@ -973,7 +947,7 @@ public class ProcessInstance implements Serializable {
      * @param tipo o tipo.
      */
     @Nonnull
-    public Optional<TaskInstance> getFinishedTask(@Nonnull MTask<?> tipo) {
+    public Optional<TaskInstance> getFinishedTask(@Nonnull STask<?> tipo) {
         return getTaskNewer(TaskPredicates.simpleFinished().and(TaskPredicates.simpleTaskType(tipo)));
     }
 

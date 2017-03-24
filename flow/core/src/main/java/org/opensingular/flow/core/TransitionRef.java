@@ -16,9 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.variable.ValidationResult;
-import org.opensingular.flow.core.variable.VarInstanceMap;
-
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
@@ -26,9 +23,9 @@ public final class TransitionRef {
 
     private final TaskInstance originTaskInstance;
 
-    private final MTransition transition;
+    private final STransition transition;
 
-    public TransitionRef(@Nonnull TaskInstance originTaskInstance, @Nonnull MTransition transition) {
+    public TransitionRef(@Nonnull TaskInstance originTaskInstance, @Nonnull STransition transition) {
         this.originTaskInstance = Objects.requireNonNull(originTaskInstance);
         this.transition = Objects.requireNonNull(transition);
     }
@@ -44,17 +41,7 @@ public final class TransitionRef {
     }
 
     @Nonnull
-    public MTransition getTransition() {
+    public STransition getTransition() {
         return transition;
-    }
-
-    @Nonnull
-    public VarInstanceMap<?> newTransationParameters() {
-        return transition.newTransitionParameters(this);
-    }
-
-    @Nonnull
-    public ValidationResult validate(VarInstanceMap<?> transitionParameters) {
-        return transition.validate(this, transitionParameters);
     }
 }
