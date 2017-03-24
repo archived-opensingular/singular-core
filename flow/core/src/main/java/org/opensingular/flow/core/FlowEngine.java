@@ -122,7 +122,9 @@ class FlowEngine {
                 destinyTask.execute(execucaoTask);
                 getPersistenceService().flushSession();
             } catch(Exception e) {
-                throw new SingularFlowException("Error running task '" + destinyTask.getName()+"'", e).add(destinyTask);
+                SingularFlowException sse = new SingularFlowException("Error running task '" + destinyTask.getName()+"'", e);
+                sse.add(destinyTask);
+                throw sse;
             } finally {
                 processInstance.setExecutionContext(null);
             }
