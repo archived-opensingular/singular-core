@@ -16,19 +16,36 @@
 
 package org.opensingular.form.internal.xml;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.*;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Timestamp;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * JUnit para test do da classe MElement.
@@ -217,26 +234,15 @@ public class TestMElement {
     }
 
     /**
-     * Verifica ser os métodos de set e get para java.util.Date, java.sql.Date,
-     * java.sql.Timestamp e GregorianCalendar funcionan.
+     * Verifica se os métodos de set e get para java.util.Date e GregorianCalendar funcionam.
      */
     @Test
     public void testSetGetDatas() {
         GregorianCalendar agoraGc = new GregorianCalendar(2001, 2, 31, 23, 59, 49);
         agoraGc.set(GregorianCalendar.MILLISECOND, 123);
-        java.sql.Timestamp agoraTS = new java.sql.Timestamp(agoraGc.getTimeInMillis());
-        agoraTS.setNanos(123456780);
-        java.sql.Date agoraDateSQL = new java.sql.Date(agoraGc.getTimeInMillis());
         java.util.Date agoraDate = new java.util.Date(agoraGc.getTimeInMillis());
 
         MElement xml;
-
-        //Teste ler e escrever timestampo
-        xml = MElement.newInstance("T");
-        xml.addElement("V1", agoraTS);
-
-        assertEquals("string timestamp", xml.getValor("V1"), "2001-03-31T23:59:49.12345678");
-        assertEquals("timestamp gravado lido", xml.getTimestamp("V1"), agoraTS);
 
         //Teste ler e escrever Calendar
         xml = MElement.newInstance("T");
@@ -252,44 +258,11 @@ public class TestMElement {
         assertEquals("string util.date errada", xml.getValor("V"), "2001-03-31T23:59:49.123");
         assertEquals("util.date gravado lido", xml.getDate("V"), agoraDate);
 
-        //Teste ler e escrever java.sql.Date
-        xml = MElement.newInstance("T");
-        xml.addElement("V", agoraDateSQL);
-
-        assertEquals("string sql.date errada", xml.getValor("V"), "2001-03-31T23:59:49.123");
-        assertEquals("sql.date gravado lido", xml.getDateSQL("V"), agoraDateSQL);
-
-        //Teste ler e escrever java.sql.Date (apenas dia)
-        agoraGc = new GregorianCalendar(2001, 0, 31);
-        agoraDateSQL = new java.sql.Date(agoraGc.getTimeInMillis());
-        xml = MElement.newInstance("T");
-        xml.addElement("V", agoraDateSQL);
-
-        assertEquals("string sql.date errada", xml.getValor("V"), "2001-01-31");
-        assertEquals("sql.date gravado lido", xml.getDateSQL("V"), agoraDateSQL);
-
-        //Teste ler e escrever java.sql.Date (apenas hora)
-        agoraGc = new GregorianCalendar(2001, 0, 31, 10, 41, 32);
-        agoraDateSQL = new java.sql.Date(agoraGc.getTimeInMillis());
-        xml = MElement.newInstance("T");
-        xml.addElement("V", agoraDateSQL);
-
-        assertEquals("string sql.date errada", xml.getValor("V"), "2001-01-31T10:41:32");
-        assertEquals("sql.date gravado lido", xml.getDateSQL("V"), agoraDateSQL);
-
-        //Teste ler e escrever java.sql.Date (apenas hora)
-        xml.addElement("V2", "2001-01-31 10:41:32");
-        assertEquals("Leitura com espaço", xml.getDateSQL("V2"), agoraDateSQL);
-
         //Testa adicionar data como string
         xml.addDate("V3", "08/01/2003");
         assertEquals("data errada", xml.getValor("V3"), "2003-01-08");
 
         //Testa formatação
-        assertEquals("formatação errada", xml.formatDate("V2"), "31/01/2001");
-        assertEquals("formatação errada", xml.formatDate("V2", "short"), "31/01/01");
-        assertEquals("formatação errada", xml.formatDate("V2", "medium"), "31/01/2001");
-
         assertEquals("formatação errada", xml.formatDate("V3"), "08/01/2003");
         assertEquals("formatação errada", xml.formatDate("V3", "short"), "08/01/03");
         assertEquals("formatação errada", xml.formatDate("V3", "medium"), "08/01/2003");
@@ -303,10 +276,6 @@ public class TestMElement {
     public void testGetFormatado() {
         GregorianCalendar agoraGc = new GregorianCalendar(2001, 2, 31, 23, 59, 49);
         agoraGc.set(GregorianCalendar.MILLISECOND, 123);
-        java.sql.Timestamp agoraTS = new java.sql.Timestamp(agoraGc.getTimeInMillis());
-        agoraTS.setNanos(123456780);
-        //java.sql.Date agoraDateSQL = new
-        // java.sql.Date(agoraGc.getTimeInMillis());
         //java.util.Date agoraDate = new
         // java.util.Date(agoraGc.getTimeInMillis());
 
@@ -314,21 +283,14 @@ public class TestMElement {
 
         //getDateFormatado
         xml = MElement.newInstance("T");
-        xml.addElement("V", agoraTS);
         xml.addElement("V2", 12312);
         xml.addElement("V3", 12312.123);
 
-        //System.out.println(xml.getValor("V"));
-        //System.out.println(xml.getDate("V"));
-        //System.out.println(xml.getFormatadoDate("V"));
-        //System.out.println(xml.getFormatadoHora("V"));
         //System.out.println(xml.getFormatadoNumber("V2", 0));
         //System.out.println(xml.getFormatadoNumber("V2", 2));
         //System.out.println(xml.getFormatadoNumber("V3", 0));
         //System.out.println(xml.getFormatadoNumber("V3", 2));
 
-        assertEquals(xml.formatDate("V"), "31/03/2001");
-        assertEquals(xml.formatHour("V"), "23:59:49");
         assertEquals(xml.formatNumber("V2", 0), "12.312");
         assertEquals(xml.formatNumber("V2", 2), "12.312,00");
         assertEquals(xml.formatNumber("V3", 0), "12.312");
@@ -402,12 +364,6 @@ public class TestMElement {
         }
         try {
             raiz.addElement("campo", (String) null);
-            fail("Deveria ter ocorrido um erro em campo com valor null");
-        } catch (IllegalArgumentException e) {
-            //ok
-        }
-        try {
-            raiz.addElement("campo", (Timestamp) null);
             fail("Deveria ter ocorrido um erro em campo com valor null");
         } catch (IllegalArgumentException e) {
             //ok
@@ -886,4 +842,384 @@ public class TestMElement {
         isIgual(parsed, original);
     }
 
+    @Test
+    public void addDiferentTypesOfElements(){
+        Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
+
+        MElement raiz = MElement.newInstance("raiz");
+
+        raiz.addElement("bytesOfString", "valor".getBytes());
+        raiz.addElement("calendar", calendar);
+        raiz.addElement("date", calendar.getTime());
+        raiz.addElement("longValue", (long)123);
+        raiz.addElement("doubles", 123.45);
+        raiz.addElement("simpleString", "valores");
+        raiz.addElement("outraString", "valor", "val");
+        raiz.addElement("doublePrecision", 123456.700, 1);
+
+        GregorianCalendar calendarMElement = raiz.getCalendar("calendar");
+        Assert.assertEquals(0, calendar.compareTo(calendarMElement));
+
+        Date date = raiz.getDate("date");
+        Assert.assertEquals(0, date.compareTo(calendar.getTime()));
+
+        long longValue = raiz.getLong("longValue");
+        Assert.assertEquals(longValue, (long)123);
+
+        double doubles = raiz.getDouble("doubles");
+        Assert.assertEquals(doubles, 123.45, 0);
+
+        String simpleString = raiz.getValor("simpleString");
+        Assert.assertEquals(simpleString, "valores");
+
+        String outraString = raiz.getValor("outraString");
+        Assert.assertEquals(outraString, "valor");
+
+        double doublePrecision = raiz.getDouble("doublePrecision");
+        Assert.assertEquals(doublePrecision, 123456.7, 0);
+
+
+        raiz.addElement("dateIgnoringDefault", calendar.getTime(), calendar.getTime());
+        Date dateIgnoringDefault = raiz.getDate("dateIgnoringDefault");
+        Assert.assertEquals(0, dateIgnoringDefault.compareTo(calendar.getTime()));
+
+        raiz.addElement("dateUsingDefault", null, calendar.getTime());
+        Date dateUsingDefault = raiz.getDate("dateUsingDefault");
+        Assert.assertEquals(0, dateUsingDefault.compareTo(calendar.getTime()));
+
+        Date dataNull = null;
+        raiz.addElement("dateUsingDefaultWithAllNull", null, dataNull);
+        Date dateUsingDefaultWithAllNull = raiz.getDate("dateUsingDefaultWithAllNull");
+        Assert.assertNull(dateUsingDefaultWithAllNull);
+    }
+
+    @Test
+    public void testAddElementObjects(){
+        Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
+        MElement raiz = MElement.newInstance("raiz");
+
+        Object longObj = new Long(123456);
+        raiz.addElement("longObj", longObj);
+        Assert.assertEquals(raiz.getLong("longObj"), 123456);
+
+        Object calendarObj = calendar;
+        raiz.addElement("calendarObj", calendarObj);
+        Assert.assertEquals(0, raiz.getCalendar("calendarObj").compareTo(calendar));
+
+        Object dateObj = calendar.getTime();
+        raiz.addElement("dateObj", dateObj);
+        Assert.assertEquals(0, raiz.getDate("dateObj").compareTo((Date) dateObj));
+
+        Object stringObj = "testValue";
+        MElement stringObjElement = raiz.addElement("stringObj", stringObj);
+        Assert.assertEquals(raiz.getValor("stringObj"), stringObj);
+
+        MElement newStringObjDefault = raiz.addElement("stringObjDefault", stringObj, "testValue2");
+        Assert.assertEquals(raiz.getValor("stringObjDefault"), stringObj);
+
+        newStringObjDefault.addElement(stringObjElement);
+        Assert.assertEquals("stringObj", newStringObjDefault.getNode("stringObj").getNodeName());
+
+        raiz.addElement("bytes", (Object) "valores".getBytes());
+        Assert.assertNotNull(raiz.getElement("bytes"));
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetValorTextException(){
+        MDocument document = MDocument.newInstance();
+        MElement.getValorTexto(document);
+    }
+
+    @Test
+    public void addBoolean(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addBoolean("booleanTrue", true);
+        raiz.addBoolean("booleanFalse", false);
+
+        Assert.assertTrue(raiz.getBoolean("booleanTrue"));
+        Assert.assertFalse(raiz.getBoolean("booleanFalse"));
+
+        Assert.assertTrue(raiz.getBoolean("booleanTrue", true));
+        Assert.assertFalse(raiz.getBoolean("booleanFalse", false));
+        Assert.assertFalse(raiz.getBoolean("bool", false));
+    }
+
+    @Test
+    public void addInt(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "123");
+        raiz.addInt("intDefault", "456", "789");
+        raiz.addInt("intDefaultNull", null, "852");
+        raiz.addInt("intWithObject", "789", new Integer(741));
+        raiz.addInt("intWithObjectNull", null, new Integer(741));
+        raiz.addInt("intWithDefaultPrimitive", "123", 741);
+        raiz.addInt("intWithDefaultNullPrimitive", null, 741);
+
+
+        int inteiro = raiz.getInt("inteiro");
+        int intDefault = raiz.getInt("intDefault");
+        int intDefaultNull = raiz.getInt("intDefaultNull");
+        int intWithObject = raiz.getInt("intWithObject");
+        int intWithObjectNull = raiz.getInt("intWithObjectNull");
+        int intWithDefaultPrimitive = raiz.getInt("intWithDefaultPrimitive");
+        int intWithDefaultNullPrimitive = raiz.getInt("intWithDefaultNullPrimitive");
+
+        Assert.assertEquals(inteiro, 123);
+        Assert.assertEquals(intDefault, 456);
+        Assert.assertEquals(intDefaultNull, 852);
+        Assert.assertEquals(intWithObject, 789);
+        Assert.assertEquals(intWithObjectNull, 741);
+        Assert.assertEquals(intWithDefaultPrimitive, 123);
+        Assert.assertEquals(intWithDefaultNullPrimitive, 741);
+    }
+
+    @Test
+    public void addDate(){
+        Calendar calendarDay1 = ConversorToolkit.getCalendar("01/01/2017");
+        Calendar calendarDay2 = ConversorToolkit.getCalendar("02/01/2017");
+        Calendar calendarDay3 = ConversorToolkit.getCalendar("03/01/2017");
+
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addDate("dataSimple", "01/01/2017");
+        raiz.addDate("dataWithDefaultOption", "02/01/2017", "03/01/2017");
+        raiz.addDate("dataWithNullOption", null, "03/01/2017");
+
+        Date dataSimple = raiz.getDate("dataSimple");
+        Date dataWithDefaultOption = raiz.getDate("dataWithDefaultOption");
+        Date dataWithNullOption = raiz.getDate("dataWithNullOption");
+
+        Assert.assertEquals(0, dataSimple.compareTo(calendarDay1.getTime()));
+        Assert.assertEquals(0, dataWithDefaultOption.compareTo(calendarDay2.getTime()));
+        Assert.assertEquals(0, dataWithNullOption.compareTo(calendarDay3.getTime()));
+
+    }
+
+    @Test
+    public void testGetWithDefaultValue(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        raiz.addInt("inteiro", "123");
+        Assert.assertEquals(123, raiz.getInt("inteiro", 456));
+        Assert.assertEquals(456, raiz.getInt("inteiroNotExist", 456));
+
+        raiz.addElement("longValue", (long)123);
+        Assert.assertEquals((long)123, raiz.getLong("longValue", 456));
+        Assert.assertEquals((long)456, raiz.getLong("longValueNotExist", 456));
+
+        raiz.addElement("doubleVal", new Double(123.45));
+        Assert.assertEquals(new Double(123.45), raiz.getDouble("doubleVal"), 0);
+        Assert.assertNull(raiz.getDoubleObject("pathNotExistent"));
+    }
+
+    @Test
+    public void testPutValuesOnBase64(){
+        MElement mElement = MElement.newInstance("mElement");
+        mElement.addElement("test", "elementos".getBytes());
+
+        String valorFinal = new String(mElement.getByteBASE64("test"));
+        assertEquals("elementos", valorFinal);
+
+
+        String stringToTest = "Um teste com linha\r\n e outra linha.\r\n testes.";
+        InputStream inputStreamTest = IOUtils.toInputStream(stringToTest,
+                Charset.defaultCharset());
+        mElement.addElement("inputStream", inputStreamTest);
+
+        byte[] inputStreams = mElement.getByteBASE64("inputStream");
+        String result = new String(inputStreams, Charset.defaultCharset());
+        Assert.assertEquals(stringToTest, result);
+    }
+
+    @Test
+    public void testNewInstanceByClass(){
+        MElement element = MElement.newInstance(String.class);
+
+        Assert.assertEquals("java-lang-String", element.getNodeName());
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testToMElementWithNode(){
+        MElement element = MElement.newInstance("raiz");
+        MElement nodeMElement = element.addElement("node1");
+
+        Node node = null;
+
+        Assert.assertNull(MElement.toMElement(node));
+
+        Assert.assertTrue(MElement.toMElement(element.getNode("node1")) instanceof MElement);
+
+        Assert.assertTrue(MElement.toMElement( (Node) nodeMElement) instanceof MElement);
+
+        MDocument document = MDocument.newInstance();
+
+        MElement.toMElement(document); // throws exception
+    }
+
+    @Test(expected = SingularException.class)
+    public void testToMElementWithMElement(){
+        MElement element = MElement.newInstance("raiz");
+
+        MElement.toMElement(element);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddIntWithNullValue(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddIntWithEmptyValue(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "");
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testAddIntWithDefaultValueNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        Assert.assertNull(raiz.addInt("inteiro", null, null));
+
+        Assert.assertNull(raiz.addInt("inteiro", null, ""));
+
+        raiz.addInt("inteiro", null, 123.45); // throws exception
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddDateNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addDate("date", null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddDateWithDefaultOptionAndValueNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        Assert.assertNull(raiz.addDate("date", null, null));
+
+        Date date = null;
+        raiz.addElement("date", date);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddCalendarWithValueNull(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        Calendar calendar = null;
+        raiz.addElement("calendar", calendar);
+    }
+
+    @Test
+    public void testIsNull(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addElement("elemento", "valor");
+
+        Assert.assertFalse(raiz.isNull("elemento"));
+        Assert.assertTrue(raiz.isNull("elem"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testGets(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        MElement inteiro = raiz.addInt("inteiro", "100");
+        Assert.assertEquals(100, inteiro.getInt());
+
+        MElement longValue = raiz.addInt("longValue", "100");
+        Assert.assertEquals(100, longValue.getLong());
+
+        Assert.assertEquals("100", raiz.getValor("inteiro", "50"));
+        Assert.assertEquals("50", raiz.getValor("int", "50"));
+
+        raiz.addElement("doubleObj", "100.5");
+        Assert.assertEquals(new Double("100.5"), raiz.getDoubleObject("doubleObj"));
+
+        Assert.assertEquals("100,5", raiz.formatNumber("doubleObj"));
+
+        Assert.assertNull(raiz.getCalendar("caminhoInvalido"));
+
+        MElement doubleNull = raiz.addElement("doubleNull");
+        doubleNull.getDouble(); // throws exception
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetBooleanMethods(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "100");
+        raiz.addBoolean("bool", true);
+
+        Assert.assertTrue(raiz.is("inteiro"));
+
+        raiz.is("inteiro");
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetBooleanMethodsWithDefaultOption(){
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addInt("inteiro", "100");
+        raiz.addBoolean("bool", true);
+
+        Assert.assertTrue(raiz.is("inteiro", false));
+
+        raiz.is("inteiro", false);
+    }
+
+    @Test
+    public void testFromBase64OutPutStream() throws IOException {
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
+
+        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
+        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
+
+        raiz.getByteBASE64("string", outputStream);
+
+        outputStream.close();
+        arquivoTemporario.delete();
+    }
+
+    @Test
+    public void testFormat(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        Assert.assertEquals("", raiz.formatDate("caminhoInvalido"));
+        Assert.assertEquals("", raiz.formatDate("caminhoInvalido", ""));
+
+        Assert.assertEquals("", raiz.formatHour("caminhoInvalido"));
+
+        raiz.addDate("dateHour", "01/01/2017");
+        Assert.assertEquals("00:00:00", raiz.formatHour("dateHour"));
+    }
+
+    @Test
+    public void testToJSONString(){
+        MElement raiz = MElement.newInstance("raiz");
+        Assert.assertEquals("{}", raiz.toJSONString());
+    }
+
+    @Test
+    public void testGetBrothers(){
+        MElement raiz = MElement.newInstance("raiz");
+        MElement filho1 = raiz.addElement("filho1", "123");
+        MElement filho2 = raiz.addElement("filho2", "123456");
+        MElement filho2Copy = raiz.addElement("filho2", "0");
+
+        Assert.assertEquals(filho2.getNodeName(), filho1.getProximoIrmao().getNodeName());
+        Assert.assertEquals(filho1.getNodeName(), filho2.getIrmaoAnterior().getNodeName());
+
+        Assert.assertEquals(filho2.getValor(), filho2Copy.getGemeoAnterior().getValor());
+        Assert.assertEquals(filho2Copy.getValor(), filho2.getProximoGemeo().getValor());
+
+        Assert.assertEquals(filho2Copy.getValor(), raiz.getUltimoFilho().getValor());
+
+        Assert.assertEquals(filho1.getValor(), raiz.getPrimeiroFilho("filho1").getValor());
+
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddElementObjectNull(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        raiz.addElement("elemento", (Object) null);
+    }
+    // TODO terminar testes MElement
 }

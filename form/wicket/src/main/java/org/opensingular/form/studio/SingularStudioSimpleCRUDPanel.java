@@ -196,7 +196,7 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
 
             BSDataTableBuilder<I, String, IColumn<I, String>> dataTableBuilder = new BSDataTableBuilder<>(dataProvider);
             buildListTable(dataTableBuilder);
-            dataTableBuilder.appendActionColumn($m.ofValue("Actions"), this::appendActions);
+            dataTableBuilder.appendActionColumn($m.ofValue(""), this::appendActions);
             dataTableBuilder.setBorderedTable(false);
 
             BSDataTable<I, String> table = dataTableBuilder.build("table");

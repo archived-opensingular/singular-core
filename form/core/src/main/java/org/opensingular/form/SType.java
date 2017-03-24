@@ -33,9 +33,18 @@ import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -53,6 +62,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      */
     protected long instanceCount;
 
+    @Nonnull
     private String nameSimple;
 
     private String nameFull;
@@ -92,11 +102,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         this(null, null);
     }
 
-    protected SType(Class<? extends I> instanceClass) {
+    protected SType(@Nullable Class<? extends I> instanceClass) {
         this(null, instanceClass);
     }
 
-    protected SType(String simpleName, Class<? extends I> instanceClass) {
+    protected SType(@Nullable String simpleName, @Nullable Class<? extends I> instanceClass) {
         if (simpleName == null) {
             simpleName = getInfoType().name();
             if (StringUtils.isEmpty(simpleName)) {
@@ -120,7 +130,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      *
      * @param tb Classe utilitária de apoio na configuração do tipo
      */
-    protected void onLoadType(TypeBuilder tb) {
+    protected void onLoadType(@Nonnull TypeBuilder tb) {
         throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()");
         // Esse método será implementado nas classes derevidas se precisarem
     }
@@ -129,7 +139,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
     }
 
-    final <S extends SType<?>> S extend(String simpleName) {
+    final <S extends SType<?>> S extend(@Nullable String simpleName) {
         if (simpleName == null) {
             simpleName = nameSimple; //Extende usando o mesmo nome do tipo pai
         } else {
@@ -189,6 +199,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     @Override
+    @Nonnull
     public SScope getParentScope() {
         if (scope == null) {
             throw new SingularFormException("O escopo do tipo ainda não foi configurado. \n" +
@@ -199,6 +210,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     @Override
+    @Nonnull
     public SDictionary getDictionary() {
         if (dictionary == null) {
             dictionary = getPackage().getDictionary();
