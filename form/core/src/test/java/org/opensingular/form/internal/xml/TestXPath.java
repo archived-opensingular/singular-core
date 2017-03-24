@@ -17,9 +17,15 @@
 package org.opensingular.form.internal.xml;
 
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.lib.commons.base.SingularException;
+import org.w3c.dom.Comment;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.w3c.dom.traversal.NodeIterator;
 
 import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
@@ -341,5 +347,88 @@ public class TestXPath {
      */
     private boolean isIgual(Object o1, Object o2) {
         return ((o1 == null) && (o2 == null)) || ((o1 != null) && o1.equals(o2));
+    }
+
+    @Test
+    public void testGetNomeTipo(){
+        MDocument document = MDocument.newInstance();
+        MElement element = document.createRaiz("pai");
+
+        Comment comment = document.createComment("comentario aqui");
+        Text textNode = document.createTextNode("textNode");
+        DocumentFragment documentFragment = document.createDocumentFragment();
+
+        Assert.assertEquals("Comment Node", XPathToolkit.getNomeTipo(comment));
+        Assert.assertEquals("Document Node", XPathToolkit.getNomeTipo(document));
+        Assert.assertEquals("Element Node", XPathToolkit.getNomeTipo(element));
+        Assert.assertEquals("Text Node", XPathToolkit.getNomeTipo(textNode));
+        Assert.assertEquals("Document Fragment Node", XPathToolkit.getNomeTipo(documentFragment));
+
+        Assert.assertNull(XPathToolkit.getNomeTipo(null));
+    }
+
+    @Test
+    public void testIsSimple(){
+        MElement element = MElement.newInstance("pai");
+        element.addElement("filho", "filhoVal");
+
+        Assert.assertFalse(XPathToolkit.isSimples("//teste"));
+        Assert.assertFalse(XPathToolkit.isSimples(":teste"));
+        Assert.assertFalse(XPathToolkit.isSimples("::teste"));
+        Assert.assertFalse(XPathToolkit.isSimples("*teste"));
+        Assert.assertFalse(XPathToolkit.isSimples("[teste"));
+        Assert.assertFalse(XPathToolkit.isSimples("teste]"));
+        Assert.assertFalse(XPathToolkit.isSimples("te.ste"));
+        Assert.assertTrue(XPathToolkit.isSimples("filho"));
+    }
+
+    @Test(expected = SingularException.class)
+    public void testSelectNodeException(){
+        MElement element = MElement.newInstance("pai");
+        MElement filho = element.addElement("filho", "filhoVal");
+
+        XPathToolkit.selectNode(filho, ".75481");
+    }
+
+    @Test
+    public void testSelectElements(){
+        MDocument document = MDocument.newInstance();
+        MElement element = document.createRaiz("pai");
+
+        MElement filho = element.addElement("filho", "filhoVal");
+        MElementWrapper wrapper = new MElementWrapper(filho);
+
+        Comment comment = document.createComment("comentario aqui");
+
+        Assert.assertTrue(XPathToolkit.selectElements(wrapper, "test") instanceof MElementResult);
+        Assert.assertTrue(XPathToolkit.selectElements(element.getNode("filho"), "comentario aqui") instanceof MElementResult);
+        Assert.assertTrue(XPathToolkit.selectElements(element.getNode("filho"), null) instanceof MElementResult);
+        Assert.assertTrue(XPathToolkit.selectElements(comment, "vazio") instanceof MElementResult);
+    }
+
+    @Test(expected = SingularException.class)
+    public void testSelectNodeListException(){
+        MDocument document = MDocument.newInstance();
+        XPathToolkit.selectNodeList(document, ".erro");
+    }
+
+    @Test
+    public void testSelectNodeIterator(){
+        MDocument document = MDocument.newInstance();
+        MElement element = document.createRaiz("pai");
+
+        element.addElement("filho", "filhoVal");
+        MElementWrapper wrapper = new MElementWrapper(element);
+
+        NodeIterator iterator = XPathToolkit.selectNodeIterator(wrapper, "filho");
+
+        Assert.assertNotNull(iterator);
+        Assert.assertEquals("filhoVal", iterator.nextNode().getFirstChild().getNodeValue());
+    }
+
+    @Test(expected = SingularException.class)
+    public void testSelectNodeIteratorException(){
+        MDocument document = MDocument.newInstance();
+        XPathToolkit.selectNodeIterator(document, ".erro");
     }
 }

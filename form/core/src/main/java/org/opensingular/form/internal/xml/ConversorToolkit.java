@@ -18,7 +18,6 @@ package org.opensingular.form.internal.xml;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -65,50 +64,11 @@ public final class ConversorToolkit {
         return getCalendar(getDateFromData(data));
     }
 
-    public static Calendar getCalendar(Timestamp ts) {
-        return getCalendar(new java.util.Date(ts.getTime()));
-    }
-
     public static Calendar getCalendar(java.util.Date data) {
         Calendar dt = Calendar.getInstance(LOCALE);
         dt.setLenient(false);
         dt.setTime(data);
         return dt;
-    }
-
-    /**
-     * Remove (zera) todos os campos de hora, minuto, segundo e milisegundo.
-     *
-     * @param dt Data a ser truncada
-     * @return -
-     */
-    public static java.sql.Date truncateDate(java.util.Date dt) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(dt);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return new java.sql.Date(cal.getTime().getTime());
-    }
-
-    /**
-     * Retorna um Date com apenas os campos de data do dia atual (sem
-     * hora, minuto, segundo e milisgundos).
-     *
-     * @return sempre diferente de null
-     */
-    public static java.sql.Date getDiaApenas() {
-        Calendar cal = new GregorianCalendar();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return new java.sql.Date(cal.getTime().getTime());
-    }
-
-    public static java.sql.Date getDataAgora() {
-        return new java.sql.Date(System.currentTimeMillis());
     }
 
     private static synchronized DateFormat getDateFormat() {
@@ -149,36 +109,11 @@ public final class ConversorToolkit {
         }
     }
 
-    public static java.util.Date getDateFromHora(String hora) throws ParseException {
-
-        try {
-            checarNull(hora);
-            String novaHora = hora.replace(' ', ':');
-            int pontos = 0;
-            for (int i = novaHora.length() - 1; i != -1; i--) {
-                if (novaHora.charAt(i) == ':') {
-                    pontos++;
-                }
-            }
-            if (pontos < 3) {
-                StringBuilder sb = new StringBuilder(novaHora).append(9);
-                sb.append(novaHora);
-                for (; pontos < 3; pontos++) {
-                    sb.append(":00");
-                }
-                novaHora = sb.toString();
-            }
-            return getTimeFormat().parse(novaHora);
-        } catch (ParseException e) {
-            throw new SingularFormException("Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(), e);
-        }
-    }
-
     public static double getDouble(String valor) throws NumberFormatException {
         if (valor == null) {
             throw new NumberFormatException("Valor null");
         }
-        if (valor.equals("-")) {
+        if ("-".equals(valor)) {
             return 0;
         }
         try {
@@ -365,19 +300,6 @@ public final class ConversorToolkit {
             return "";
         }
         return getNumberFormat(nrCasasDecimais).format(valor);
-    }
-
-    public static String printNumber(int valor) {
-        return printNumber(valor, 0);
-    }
-
-    public static String printTimeStamp(Timestamp time) {
-        return printDataHora(getCalendar(time).getTime());
-    }
-
-    public static String printTimeStampMinuto(Timestamp time) {
-        java.util.Date data = getCalendar(time).getTime();
-        return printDataHora(data).substring(0, 16);
     }
 
     public static String quebrarLinhasHTML(String texto) {

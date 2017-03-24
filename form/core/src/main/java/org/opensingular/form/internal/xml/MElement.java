@@ -23,7 +23,6 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.*;
 
 import java.io.*;
-import java.sql.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -347,7 +346,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona o elemento como o valor informado como objeto fazendo as devidas
      * converções se necessário. Trata os seguintes objetos de forma especial:
-     * Integer, Long, Double, java.util.Date, java.sql.Date, java.sql.Timestamp.
+     * Integer, Long, Double, java.util.Date.
      *
      * @param nome do elemento a ser criado
      * @param o Objeto a ser convertido para texto
@@ -366,13 +365,7 @@ public abstract class MElement implements Element, Serializable {
             return addElement(nome, ((Long) o).longValue());
         } else if (o instanceof Double) {
             return addElement(nome, ((Double) o).doubleValue());
-        } else if (o instanceof java.sql.Date) {
-            return addElement(nome, (java.sql.Date) o);
-        } else if (o instanceof Timestamp) {
-            return addElement(nome, (Timestamp) o);
         } else if (o instanceof java.util.Date) {
-            //Precisa ficar depois java.sql.Date e java.sql.Timestamp
-            //pois esses são derivados de java.util.Date
             return addElement(nome, (java.util.Date) o);
         } else if (o instanceof Calendar) {
             return addElement(nome, (Calendar) o);
@@ -661,56 +654,6 @@ public abstract class MElement implements Element, Serializable {
     }
 
     /**
-     * Adiciona um element como o nome e a data informada no formato ISO 8601.
-     *
-     * @param nome do MElement a ser criado
-     * @param valor Se for null, um exception é disparada.
-     * @return O MElement resultado.
-     */
-    public final MElement addElement(String nome, java.sql.Date valor) {
-        if (valor == null) {
-            return addElement(nome, (String) null);
-        } else {
-            return addElement(nome, ConversorDataISO8601.format(valor));
-        }
-    }
-
-    /**
-     * Adiciona um no como o nome informado e com o valor informado ou com o
-     * default na ausencia do primeiro. Se o default também for null, então o no
-     * não é adicionado.
-     *
-     * @param nome do MElement a ser criado
-     * @param valor -
-     * @param valorDefault a ser utilizado se valor==null
-     * @return O MElement resultado.
-     */
-    public final MElement addElement(String nome, java.sql.Date valor, java.sql.Date valorDefault) {
-        if (valor != null) {
-            return addElement(nome, ConversorDataISO8601.format(valor));
-        } else if (valorDefault != null) {
-            return addElement(nome, ConversorDataISO8601.format(valorDefault));
-        }
-        return null;
-    }
-
-    /**
-     * Adiciona um element como o nome e o timestamp informada no formato ISO
-     * 8601.
-     *
-     * @param nome do MElement a ser criado
-     * @param valor Se for null, um exception é disparada.
-     * @return O MElement resultado.
-     */
-    public final MElement addElement(String nome, Timestamp valor) {
-        if (valor == null) {
-            return addElement(nome, (String) null);
-        } else {
-            return addElement(nome, ConversorDataISO8601.format(valor));
-        }
-    }
-
-    /**
      * Adiciona um element como o nome e o Calendar informada no formato ISO
      * 8601.
      *
@@ -769,234 +712,6 @@ public abstract class MElement implements Element, Serializable {
         }
         return n;
     }
-
-    /**
-     * Atribui o valor apontado pelo xPath a uma coluna da referência a
-     * procediemnto SQL. Se o xPath não apontar para nenhum lugar ou não
-     * apresentar um valor, então atribui null a coluna.
-     *
-     * @param cs Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param tipoSQL tipo de dado da coluna (define qual método será utilizado
-     * para leitura do dado).
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQL(CallableStatement cs, String coluna, int tipoSQL, String xPath)
-            throws SQLException {
-        String v = getValor(xPath);
-        if (v == null) {
-            cs.setNull(coluna, tipoSQL);
-            return;
-        }
-        switch (tipoSQL) {
-            case Types.CHAR:
-            case Types.VARCHAR:
-                cs.setString(coluna, v);
-                break;
-            case Types.TINYINT:
-            case Types.SMALLINT:
-            case Types.INTEGER:
-                cs.setInt(coluna, getInt(xPath));
-                break;
-            case Types.DECIMAL:
-            case Types.BIGINT:
-            case Types.NUMERIC:
-                cs.setLong(coluna, getLong(xPath));
-                break;
-            case Types.FLOAT:
-            case Types.DOUBLE:
-            case Types.REAL:
-                cs.setDouble(coluna, getDouble(xPath));
-                break;
-            case Types.DATE:
-                cs.setDate(coluna, getDateSQL(xPath));
-                break;
-            case Types.TIMESTAMP:
-                cs.setTimestamp(coluna, getTimestamp(xPath));
-                break;
-            //case Types.TIME:
-            //    setSQLTime(ps, coluna, xPath);
-            //    break;
-            default:
-                throw new SingularFormException("Tipo " + tipoSQL + " não tratado por MElement");
-        }
-    }
-
-    /**
-     * Atribui o valor apontado pelo xPath a um parâmetro da chamada SQL. Se o
-     * xPath não apontar para nenhum lugar ou não apresentar um valor, então
-     * atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param tipoSQL tipo de dado da coluna (define qual método será utilizado
-     * para leitura do dado).
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQL(PreparedStatement ps, int coluna, int tipoSQL, String xPath)
-            throws SQLException {
-        String v = getValor(xPath);
-        if (v == null) {
-            ps.setNull(coluna, tipoSQL);
-            return;
-        }
-        switch (tipoSQL) {
-            case Types.CHAR:
-            case Types.VARCHAR:
-                ps.setString(coluna, v);
-                break;
-            case Types.TINYINT:
-            case Types.SMALLINT:
-            case Types.INTEGER:
-                ps.setInt(coluna, getInt(xPath));
-                break;
-            case Types.DECIMAL:
-            case Types.BIGINT:
-            case Types.NUMERIC:
-                ps.setLong(coluna, getLong(xPath));
-                break;
-            case Types.FLOAT:
-            case Types.DOUBLE:
-            case Types.REAL:
-                ps.setDouble(coluna, getDouble(xPath));
-                break;
-            case Types.DATE:
-                ps.setDate(coluna, getDateSQL(xPath));
-                break;
-            case Types.TIMESTAMP:
-                ps.setTimestamp(coluna, getTimestamp(xPath));
-                break;
-            //case Types.TIME:
-            //    setSQLTime(ps, coluna, xPath);
-            //    break;
-            default:
-                throw new SingularFormException("Tipo " + tipoSQL + " não tratado por MElement");
-        }
-    }
-
-    /**
-     * Atribui o valor String apontado pelo xPath a um parâmetro da chamada SQL.
-     * Se o xPath não apontar para nenhum lugar ou não apresentar um valor,
-     * então atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQLString(PreparedStatement ps, int coluna, String xPath)
-            throws SQLException {
-        String v = getValor(xPath);
-        if (v == null) {
-            ps.setNull(coluna, Types.VARCHAR);
-        } else {
-            ps.setString(coluna, v);
-        }
-    }
-
-    /**
-     * Atribui o valor int apontado pelo xPath a um parâmetro da chamada SQL. Se
-     * o xPath não apontar para nenhum lugar ou não apresentar um valor, então
-     * atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQLInt(PreparedStatement ps, int coluna, String xPath) throws SQLException {
-        if (isNull(xPath)) {
-            ps.setNull(coluna, Types.INTEGER);
-        } else {
-            ps.setInt(coluna, getInt(xPath));
-        }
-    }
-
-    /**
-     * Atribui o valor long apontado pelo xPath a um parâmetro da chamada SQL.
-     * Se o xPath não apontar para nenhum lugar ou não apresentar um valor,
-     * então atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQLLong(PreparedStatement ps, int coluna, String xPath)
-            throws SQLException {
-        if (isNull(xPath)) {
-            ps.setNull(coluna, Types.BIGINT);
-        } else {
-            ps.setLong(coluna, getLong(xPath));
-        }
-    }
-
-    /**
-     * Atribui o valor double apontado pelo xPath a um parâmetro da chamada SQL.
-     * Se o xPath não apontar para nenhum lugar ou não apresentar um valor,
-     * então atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQLDouble(PreparedStatement ps, int coluna, String xPath)
-            throws SQLException {
-        if (isNull(xPath)) {
-            ps.setNull(coluna, Types.DOUBLE);
-        } else {
-            ps.setDouble(coluna, getDouble(xPath));
-        }
-    }
-
-    /**
-     * Atribui o valor Date apontado pelo xPath a um parâmetro da chamada SQL.
-     * Se o xPath não apontar para nenhum lugar ou não apresentar um valor,
-     * então atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQLDate(PreparedStatement ps, int coluna, String xPath)
-            throws SQLException {
-        java.sql.Date v = getDateSQL(xPath);
-        if (v == null) {
-            ps.setNull(coluna, Types.DATE);
-        } else {
-            ps.setDate(coluna, v);
-        }
-    }
-
-    /**
-     * Atribui o valor Timestamp apontado pelo xPath a um parâmetro da chamada
-     * SQL. Se o xPath não apontar para nenhum lugar ou não apresentar um valor,
-     * então atribui null ao parâmetro (ps.setNull()).
-     *
-     * @param ps Chamada a ser atribuida o valor
-     * @param coluna Coluna alvo do valor
-     * @param xPath localização da informação
-     * @throws SQLException -
-     */
-    public final void setSQLTimestamp(PreparedStatement ps, int coluna, String xPath)
-            throws SQLException {
-        Timestamp v = getTimestamp(xPath);
-        if (v == null) {
-            ps.setNull(coluna, Types.DATE);
-        } else {
-            ps.setTimestamp(coluna, v);
-        }
-    }
-
-    /*
-     * public void setSQLTime(PreparedStatement ps, int coluna, String xPath)
-     * throws SQLException { Time v = getTime(xPath); if (v == null) {
-     * ps.setNull(coluna, Types.TIME); } else { ps.setTime(coluna, v); } }
-     */
 
     /**
      * Verifica se existe pelo menos um Element apontado pelo xPath. <br>
@@ -1417,21 +1132,6 @@ public abstract class MElement implements Element, Serializable {
     }
 
     /**
-     * Transforma o valor do campo para java.sql.Date. Espera um campo no
-     * formato "yyyy-mm-dd hh:mm:ss.fffffffff".
-     *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
-     * @return -
-     */
-    public final java.sql.Date getDateSQL(String xPath) {
-        String valor = getValor(xPath);
-        if (valor == null) {
-            return null;
-        }
-        return ConversorDataISO8601.getDateSQL(valor);
-    }
-
-    /**
      * Transforma o valor do campo para Calendar. Espera um campo no formato
      * "yyyy-mm-dd hh:mm:ss.fffffffff".
      *
@@ -1444,21 +1144,6 @@ public abstract class MElement implements Element, Serializable {
             return null;
         }
         return ConversorDataISO8601.getCalendar(valor);
-    }
-
-    /**
-     * Transforma o valor do campo para Timestamp. Espera um campo no formato
-     * "yyyy-mm-dd hh:mm:ss.fffffffff".
-     *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
-     * @return -
-     */
-    public final Timestamp getTimestamp(String xPath) {
-        String valor = getValor(xPath);
-        if (valor == null) {
-            return null;
-        }
-        return ConversorDataISO8601.getTimestamp(valor);
     }
 
     /**
