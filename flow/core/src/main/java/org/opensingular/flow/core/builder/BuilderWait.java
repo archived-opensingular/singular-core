@@ -16,18 +16,15 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.flow.core.IExecutionDateStrategy;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.STaskWait;
 
-@FunctionalInterface
-public interface ITaskDefinition {
+public interface BuilderWait<SELF extends BuilderWait<SELF>> extends BuilderUserExecutable<SELF, STaskWait> {
 
-    String getName();
-
-    default String getKey() {
-        return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
-    }
-
-    default boolean isNameEquals(String name) {
-        return getName().equals(name);
+    @Override
+    public default <T extends ProcessInstance> SELF withTargetDate(IExecutionDateStrategy<T> estrategiaDataAlvo) {
+        getTask().withTargetDate(estrategiaDataAlvo);
+        return self();
     }
 }

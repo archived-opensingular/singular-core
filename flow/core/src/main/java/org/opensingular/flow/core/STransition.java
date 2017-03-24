@@ -17,7 +17,6 @@
 package org.opensingular.flow.core;
 
 import com.google.common.base.MoreObjects;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
@@ -32,16 +31,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class MTransition extends MParametersEnabled {
+public class STransition extends SParametersEnabled {
 
-    private final MTask<?> origin;
+    private final STask<?> origin;
     private final String name;
-    private final MTask<?> destination;
+    private final STask<?> destination;
     private final TransitionType type;
     private final String         abbreviation;
 
     private TransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<MProcessRole>                     rolesToDefineUser;
+    private List<SProcessRole>                     rolesToDefineUser;
 
     private MetaData metaData;
 
@@ -50,7 +49,7 @@ public class MTransition extends MParametersEnabled {
 
     private ITaskPredicate predicate;
 
-    protected MTransition(MTask<?> origin, String name, @Nonnull MTask<?> destination, @Nonnull TransitionType type) {
+    protected STransition(STask<?> origin, String name, @Nonnull STask<?> destination, @Nonnull TransitionType type) {
         this.origin = origin;
         this.name = name;
         this.destination = Objects.requireNonNull(destination);
@@ -59,7 +58,7 @@ public class MTransition extends MParametersEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public MTransition withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    public STransition withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         if (this.accessStrategy != null) {
             throw new SingularFlowException("Access strategy already defined");
         }
@@ -76,7 +75,7 @@ public class MTransition extends MParametersEnabled {
 
     public boolean hasRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            for (MProcessRole processRole : rolesToDefineUser) {
+            for (SProcessRole processRole : rolesToDefineUser) {
                 if (!processRole.isAutomaticUserAllocation()) {
                     return true;
                 }
@@ -87,12 +86,12 @@ public class MTransition extends MParametersEnabled {
 
     public boolean hasAutomaticRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            return rolesToDefineUser.stream().anyMatch(MProcessRole::isAutomaticUserAllocation);
+            return rolesToDefineUser.stream().anyMatch(SProcessRole::isAutomaticUserAllocation);
         }
         return false;
     }
 
-    public MTransition defineUserRoleInTransition(MProcessRole papel) {
+    public STransition defineUserRoleInTransition(SProcessRole papel) {
         if (origin.isPeople() || papel.isAutomaticUserAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
@@ -105,7 +104,7 @@ public class MTransition extends MParametersEnabled {
         }
     }
 
-    public List<MProcessRole> getRolesToDefine() {
+    public List<SProcessRole> getRolesToDefine() {
         if (rolesToDefineUser == null) {
             return Collections.emptyList();
         }
@@ -120,7 +119,7 @@ public class MTransition extends MParametersEnabled {
         return metaData == null ? null : getMetaData().get(propRef);
     }
 
-    public <T> MTransition setMetaDataValue(MetaDataRef<T> propRef, T value) {
+    public <T> STransition setMetaDataValue(MetaDataRef<T> propRef, T value) {
         getMetaData().set(propRef, value);
         return this;
     }
@@ -132,7 +131,7 @@ public class MTransition extends MParametersEnabled {
         return metaData;
     }
 
-    public MTask<?> getOrigin() {
+    public STask<?> getOrigin() {
         return origin;
     }
 
@@ -144,27 +143,27 @@ public class MTransition extends MParametersEnabled {
         return abbreviation;
     }
 
-    public MTask<?> getDestination() {
+    public STask<?> getDestination() {
         return destination;
     }
 
-    public MTransition thenGo(ITaskDefinition destination) {
+    public STransition thenGo(ITaskDefinition destination) {
         return thenGo(getFlowMap().getTask(destination));
     }
 
-    public MTransition thenGo(String acao, ITaskDefinition destination) {
+    public STransition thenGo(String acao, ITaskDefinition destination) {
         return thenGo(acao, getFlowMap().getTask(destination));
     }
 
-    public MTransition thenGo(MTask<?> destination) {
+    public STransition thenGo(STask<?> destination) {
         return this.destination.addTransition(destination);
     }
 
-    public MTransition thenGo(String acao, MTask<?> destination) {
+    public STransition thenGo(String acao, STask<?> destination) {
         return this.destination.addTransition(acao, destination);
     }
 
-    public MTransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
+    public STransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
         if(this.parametersInitializer != null){
             throw new SingularFlowException("Parameters Initializer already set");
         }
@@ -173,11 +172,11 @@ public class MTransition extends MParametersEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends ProcessInstance> MTransition setParametersInitializer(ITransitionParametersProcessInitializer<K> initializerByProcess) {
-        return setParametersInitializer((ITransitionParametersInitializer) (ctx, params) -> initializerByProcess.init((K) ctx.getProcessInstance(), params));
+    public <K extends ProcessInstance> STransition setParametersInitializer(ITransitionParametersInitializerProcess<K> initializerByProcess) {
+        return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializerByProcess.init(params, (K) ctx.getProcessInstance()));
     }
 
-    public MTransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
+    public STransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
         if(this.parametersValidator != null){
             throw new SingularFlowException("Parameters Validator already set");
         }
@@ -186,37 +185,37 @@ public class MTransition extends MParametersEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersProcessValidator<K> validatorByProcess) {
-        return setParametersValidator((ITransitionParametersValidator) (ctx, params, result) -> validatorByProcess
-            .validate((K) ctx.getProcessInstance(), params, result));
+    public <K extends ProcessInstance> STransition setParametersValidator(ITransitionParametersValidatorProcess<K> validatorByProcess) {
+        return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validatorByProcess
+            .validate(params, result, (K) ctx.getProcessInstance()));
     }
 
     @Nonnull
-    final VarInstanceMap<?> newTransitionParameters(@Nonnull TransitionRef transitionRef) {
+    final VarInstanceMap<?,?> newTransitionParameters(@Nonnull TransitionRef transitionRef) {
         Objects.requireNonNull(transitionRef);
-        VarInstanceMap<?> params = getParameters().newInstanceMap();
+        VarInstanceMap<?,?> params = getParameters().newInstanceMap();
         if (parametersInitializer != null) {
-            parametersInitializer.init(transitionRef, params);
+            parametersInitializer.init(params, transitionRef);
         }
         return params;
     }
 
     @Nonnull
-    final ValidationResult validate(@Nonnull TransitionRef transitionRef, VarInstanceMap<?> parameters) {
+    final ValidationResult validate(@Nonnull TransitionRef transitionRef, VarInstanceMap<?,?> parameters) {
         ValidationResult validationResult = new ValidationResult();
         if (parametersValidator != null) {
-            parametersValidator.validate(transitionRef, parameters, validationResult);
+            parametersValidator.validate(parameters, validationResult, transitionRef);
         }
         return validationResult;
     }
 
     @Nonnull
-    public ValidationResult validate(@Nonnull TaskInstance instancia, VarInstanceMap<?> parameters) {
+    final ValidationResult validate(@Nonnull TaskInstance instancia, VarInstanceMap<?,?> parameters) {
         return validate(new TransitionRef(instancia, this), parameters);
     }
 
     @Override
-    public MTransition addParamBindedToProcessVariable(String ref, boolean required) {
+    public STransition addParamBindedToProcessVariable(String ref, boolean required) {
         super.addParamBindedToProcessVariable(ref, required);
         return this;
     }
@@ -246,22 +245,22 @@ public class MTransition extends MParametersEnabled {
 
     @FunctionalInterface
     public interface ITransitionParametersInitializer extends Serializable {
-        void init(TransitionRef context, VarInstanceMap<?> params);
+        void init(VarInstanceMap<?,?> params, TransitionRef context);
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersProcessInitializer<K extends ProcessInstance> extends Serializable {
-        void init(K processInstance, VarInstanceMap<?> params);
+    public interface ITransitionParametersInitializerProcess<K extends ProcessInstance> extends Serializable {
+        void init(VarInstanceMap<?,?> params, K processInstance);
     }
 
     @FunctionalInterface
     public interface ITransitionParametersValidator extends Serializable {
-        public void validate(TransitionRef context, VarInstanceMap<?> params, ValidationResult validationResult);
+        public void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, TransitionRef context);
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersProcessValidator<K extends ProcessInstance> extends Serializable {
-        void validate(K processInstance, VarInstanceMap<?> params, ValidationResult validationResult);
+    public interface ITransitionParametersValidatorProcess<K extends ProcessInstance> extends Serializable {
+        void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, K processInstance);
     }
 
 }

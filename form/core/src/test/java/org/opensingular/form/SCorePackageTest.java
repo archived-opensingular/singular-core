@@ -2,7 +2,9 @@ package org.opensingular.form;
 
 import junit.framework.TestCase;
 import org.junit.Assert;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoA;
 import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoB;
 import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoComCargaInterna;
@@ -13,13 +15,13 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.util.STypeEMail;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+
+import java.math.BigDecimal;
 
 @RunWith(Parameterized.class)
 public class SCorePackageTest extends TestCaseForm {
@@ -443,5 +445,62 @@ public class SCorePackageTest extends TestCaseForm {
     private void loadTypeByName(Class<? extends SType<?>> typeClass) {
         String typeName = SFormUtil.getTypeName(typeClass);
         createTestDictionary().getType(typeName);
+    }
+
+    /**
+     * Testa o funcionamento de carga de apenas alguns tipo de um pacote quando o pacote não declara todos os seus
+     * tipo.
+     */
+    @Test
+    public void testLazyPackageLoad() {
+        // Simple reference
+        SDictionary dictionary = createTestDictionary();
+        SPackageTestLazy.TypeLazyA typeA = dictionary.getType(SPackageTestLazy.TypeLazyA.class);
+        assertType(typeA).isNotNull().isDirectExtensionOf(STypeDecimal.class);
+        typeA.newInstance();
+
+        // A reference with other reference
+        dictionary = createTestDictionary();
+        SPackageTestLazy.TypeLazyB typeB = dictionary.getType(SPackageTestLazy.TypeLazyB.class);
+        assertType(typeB).isNotNull().isDirectExtensionOf(SPackageTestLazy.TypeLazyA.class);
+        typeB.newInstance();
+
+        // A lazy composite referencing a lazy simple type
+        dictionary = createTestDictionary();
+        SPackageTestLazy.TypeLazyC typeC = dictionary.getType(SPackageTestLazy.TypeLazyC.class);
+        assertType(typeC).isNotNull();
+        SIComposite iC = typeC.newInstance();
+        iC.setValue("valueB", 10);
+        iC.setValue("valueA", new BigDecimal(100.1));
+        assertInstance(iC).isValueEquals("valueB" , new BigDecimal(10));
+        assertInstance(iC).isValueEquals("valueA" , new BigDecimal(100.1));
+    }
+
+    @SInfoPackage(name="packageLazy")
+    public static class SPackageTestLazy extends SPackage {
+        @Override
+        protected void onLoadPackage(PackageBuilder pb) {
+            pb.createType(TypeLazyA.class);
+            pb.createType(TypeLazyB.class);
+            pb.createType(TypeLazyC.class);
+        }
+
+        @SInfoType(name = "LazyA", spackage = SPackageTestLazy.class)
+        public static class TypeLazyA extends STypeDecimal {
+        }
+
+        @SInfoType(name = "LazyB", spackage = SPackageTestLazy.class)
+        public static class TypeLazyB extends TypeLazyA {
+
+        }
+        @SInfoType(name = "LazyC", spackage = SPackageTestLazy.class)
+        public static class TypeLazyC extends STypeComposite<SIComposite> {
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                addField("valueB", TypeLazyB.class);
+                addField("valueA", TypeLazyA.class);
+                addFieldString("name");
+            }
+        }
     }
 }

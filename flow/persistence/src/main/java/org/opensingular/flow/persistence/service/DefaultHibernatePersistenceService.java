@@ -16,13 +16,36 @@
 
 package org.opensingular.flow.persistence.service;
 
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.entity.*;
-import org.opensingular.flow.persistence.entity.*;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.opensingular.flow.persistence.entity.Actor;
+import org.opensingular.flow.persistence.entity.CategoryEntity;
+import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
+import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.ProcessVersionEntity;
+import org.opensingular.flow.persistence.entity.RoleDefinitionEntity;
+import org.opensingular.flow.persistence.entity.RoleInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
+import org.opensingular.flow.persistence.entity.TaskHistoricTypeEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
+import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
+import org.opensingular.flow.persistence.entity.TaskVersionEntity;
+import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
+import org.opensingular.flow.persistence.entity.VariableTypeInstance;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DefaultHibernatePersistenceService extends
         AbstractHibernatePersistenceService<CategoryEntity, ProcessDefinitionEntity,
@@ -52,7 +75,7 @@ public class DefaultHibernatePersistenceService extends
     }
 
     @Override
-    protected RoleInstanceEntity newEntityRole(ProcessInstanceEntity instance, RoleDefinitionEntity role, MUser user, MUser allocator) {
+    protected RoleInstanceEntity newEntityRole(ProcessInstanceEntity instance, RoleDefinitionEntity role, SUser user, SUser allocator) {
         user = saveUserIfNeeded(user);
         final RoleInstanceEntity entityRole = new RoleInstanceEntity();
         entityRole.setProcessInstance(instance);
@@ -82,7 +105,7 @@ public class DefaultHibernatePersistenceService extends
 
     @Override
     protected IEntityTaskInstanceHistory newTaskInstanceHistory(TaskInstanceEntity task, IEntityTaskHistoricType taskHistoryType,
-            MUser allocatedUser, MUser responsibleUser) {
+            SUser allocatedUser, SUser responsibleUser) {
 
         TaskInstanceHistoryEntity history = new TaskInstanceHistoryEntity();
         history.setTaskInstance(task);
@@ -152,7 +175,7 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    public List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods) {
+    public List<? extends SUser> retrieveUsersByCod(Collection<Integer> cods) {
         throw new UnsupportedOperationException("Método não implementado");
     }
 

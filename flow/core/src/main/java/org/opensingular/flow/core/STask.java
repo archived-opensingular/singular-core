@@ -17,7 +17,6 @@
 package org.opensingular.flow.core;
 
 import com.google.common.base.MoreObjects;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
@@ -34,19 +33,19 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "serial", "unchecked" })
-public abstract class MTask<K extends MTask<?>> {
+public abstract class STask<K extends STask<?>> {
 
     private final FlowMap flowMap;
     private final String name;
     private final String abbreviation;
 
-    private final List<MTransition> transitions = new LinkedList<>();
-    private final Map<String, MTransition> transitionsByName = new HashMap<>();
+    private final List<STransition> transitions = new LinkedList<>();
+    private final Map<String, STransition> transitionsByName = new HashMap<>();
     private List<IConditionalTaskAction> automaticActions;
 
     private List<StartedTaskListener> startedTaskListeners;
 
-    private MTransition defaultTransition;
+    private STransition defaultTransition;
 
     private TaskAccessStrategy<ProcessInstance> accessStrategy;
 
@@ -54,7 +53,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     private MetaData metaData;
 
-    public MTask(FlowMap flowMap, String name, String abbreviation) {
+    public STask(FlowMap flowMap, String name, String abbreviation) {
         Objects.requireNonNull(flowMap);
         Objects.requireNonNull(name);
         this.flowMap = flowMap;
@@ -113,7 +112,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     public IEntityTaskType getEffectiveTaskType() {
         IEntityTaskType tipo = getTaskType();
-        if (tipo != TaskType.WAIT && (this instanceof MTaskJava) && ((MTaskJava) this).getScheduleData() != null) {
+        if (tipo != TaskType.WAIT && (this instanceof STaskJava) && ((STaskJava) this).getScheduleData() != null) {
             tipo = TaskType.WAIT;
         }
         return tipo;
@@ -123,7 +122,7 @@ public abstract class MTask<K extends MTask<?>> {
         return false;
     }
 
-    public <T> MTask<K> setMetaDataValue(MetaDataRef<T> propRef, T value) {
+    public <T> STask<K> setMetaDataValue(MetaDataRef<T> propRef, T value) {
         getMetaData().set(propRef, value);
         return this;
     }
@@ -143,26 +142,26 @@ public abstract class MTask<K extends MTask<?>> {
         return metaData;
     }
 
-    public MTransition addTransition(String actionName, MTask<?> destination, boolean showTransitionInExecution) {
+    public STransition addTransition(String actionName, STask<?> destination, boolean showTransitionInExecution) {
         return addTransition(actionName, destination).withAccessControl(TransitionAccessStrategyImpl.enabled(showTransitionInExecution));
     }
 
-    public MTransition addTransition(String actionName, MTask<?> destination) {
+    public STransition addTransition(String actionName, STask<?> destination) {
         return addTransition(flowMap.newTransition(this, actionName, destination, TransitionType.H));
     }
 
-    public MTransition addTransition(MTask<?> destination) {
+    public STransition addTransition(STask<?> destination) {
         return addTransition(flowMap.newTransition(this, destination.getName(), destination, TransitionType.H));
     }
 
-    public MTransition addAutomaticTransition(ITaskPredicate predicate, MTask<?> destination) {
-        MTransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
+    public STransition addAutomaticTransition(ITaskPredicate predicate, STask<?> destination) {
+        STransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
         transition.setPredicate(predicate);
         addAutomaticAction(TaskActions.executeTransition(predicate, transition));
         return addTransition(transition);
     }
 
-    public void setDefaultTransition(MTransition defaultTransition) {
+    public void setDefaultTransition(STransition defaultTransition) {
         if(this.defaultTransition != null){
             throw new SingularFlowException(createErrorMsg("Default transition already defined"), this).addTransitions(
                     this);
@@ -170,11 +169,11 @@ public abstract class MTask<K extends MTask<?>> {
         this.defaultTransition = defaultTransition;
     }
     
-    public MTransition getDefaultTransition() {
+    public STransition getDefaultTransition() {
         return defaultTransition;
     }
 
-    private MTransition addTransition(MTransition transition) {
+    private STransition addTransition(STransition transition) {
         if (transitionsByName.containsKey(transition.getName().toLowerCase())) {
             throw new SingularFlowException(
                     createErrorMsg("Transition with name '" + transition.getName() + "' already defined"), this)
@@ -209,22 +208,22 @@ public abstract class MTask<K extends MTask<?>> {
 
     /** Lista de transições partindo da task atual. */
     @Nonnull
-    public List<MTransition> getTransitions() {
+    public List<STransition> getTransitions() {
         return transitions;
     }
 
     /** Recupera a transição com o nome informado ou dispara exception senão encontrar. */
     @Nonnull
-    public MTransition getTransitionOrException(@Nonnull String transitionName) {
-        return getTransition(transitionName).orElseThrow(
-                () -> new SingularFlowException(createErrorMsg("Transição não encontrada '" + transitionName + "'"),
-                        this).addTransitions(this));
+    public STransition getTransitionOrException(@Nonnull String transitionName) {
+        return getTransition(transitionName).orElseThrow(() -> new SingularFlowTransactionNotFoundException(
+                createErrorMsg("Transição '" + transitionName + "' não encontrada em '" + getName() + "'"), this)
+                .addTransitions(this));
     }
 
     /** Descobre qual a transição default ou dispara exception senão encontrar. */
     @Nonnull
-    final MTransition resolveDefaultTransitionOrException() {
-        List<MTransition> transitions = getTransitions();
+    final STransition resolveDefaultTransitionOrException() {
+        List<STransition> transitions = getTransitions();
         if (transitions.size() == 1) {
             return transitions.get(0);
         } else if (transitions.size() == 0) {
@@ -232,7 +231,7 @@ public abstract class MTask<K extends MTask<?>> {
         } else if (defaultTransition != null) {
             return defaultTransition;
         }
-        throw new SingularFlowException(createErrorMsg(
+        throw new SingularFlowTransactionNotFoundException(createErrorMsg(
                 "possui várias transações e não definiu transicao default. Defina a transação default ou explicite " +
                         "qual transação deve ser executada."),
                 this).addTransitions(this);
@@ -240,7 +239,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     /** Recupera a transição com o nome informado. */
     @Nonnull
-    public Optional<MTransition> getTransition(@Nonnull String transitionName) {
+    public Optional<STransition> getTransition(@Nonnull String transitionName) {
         Objects.requireNonNull(transitionName);
         return Optional.ofNullable(transitionsByName.get(transitionName.toLowerCase()));
     }
@@ -312,7 +311,7 @@ public abstract class MTask<K extends MTask<?>> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MTask<?> other = (MTask<?>) obj;
+        STask<?> other = (STask<?>) obj;
         return Objects.equals(flowMap, other.flowMap) && Objects.equals(name, other.name);
     }
 }

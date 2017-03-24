@@ -16,9 +16,7 @@
 
 package org.opensingular.flow.persistence.service;
 
-import java.util.ArrayList;
-
-import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.TaskType;
 import org.opensingular.flow.persistence.entity.CategoryEntity;
 import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
@@ -30,6 +28,8 @@ import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
 import org.opensingular.flow.persistence.entity.TaskTransitionVersionEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
+
+import java.util.ArrayList;
 
 public class DefaultHibernateProcessDefinitionService
         extends AbstractHibernateProcessDefinitionService<CategoryEntity, ProcessDefinitionEntity, ProcessVersionEntity, TaskDefinitionEntity, TaskVersionEntity, TaskTransitionVersionEntity, RoleDefinitionEntity, RoleInstanceEntity, RoleTaskEntity> {
@@ -75,7 +75,7 @@ public class DefaultHibernateProcessDefinitionService
     }
 
     @Override
-    public TaskVersionEntity createEntityTaskVersion(ProcessVersionEntity process, TaskDefinitionEntity entityTaskDefinition, MTask<?> task) {
+    public TaskVersionEntity createEntityTaskVersion(ProcessVersionEntity process, TaskDefinitionEntity entityTaskDefinition, STask<?> task) {
         TaskVersionEntity taskEntity = new TaskVersionEntity();
         taskEntity.setProcessVersion(process);
         taskEntity.setTaskDefinition(entityTaskDefinition);

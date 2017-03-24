@@ -94,13 +94,25 @@ public final class SingularTestUtil {
             }
             throw new AssertionError(msg);
         } catch (Exception e) {
-            if (expectedException.isInstance(e)) {
-                if (expectedExceptionMsgPart == null || (e.getMessage() != null && e.getMessage().contains(
-                        expectedExceptionMsgPart))) {
-                    return;
-                }
+            if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
+                return;
             }
             throw e;
         }
+    }
+
+    /** Verifica se encontra a exception esperada na pilha de erro */
+    private static boolean findExpectedException(Throwable e, Class<? extends Exception> expectedException,
+            String expectedExceptionMsgPart) {
+        if (expectedException.isInstance(e)) {
+            if (expectedExceptionMsgPart == null || (e.getMessage() != null && e.getMessage().contains(
+                    expectedExceptionMsgPart))) {
+                return true;
+            }
+        }
+        if (e.getCause() != null) {
+            return findExpectedException(e.getCause(), expectedException, expectedExceptionMsgPart);
+        }
+        return false;
     }
 }

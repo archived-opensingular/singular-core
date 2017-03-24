@@ -79,17 +79,19 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
 
     @Override
     protected void updateInternal(@Nonnull FormKeyLong key, @Nonnull I instance, Integer inclusionActor) {
+        instance.getDocument().persistFiles();
         formService.update(instance, inclusionActor);
     }
 
     @Override
     protected void deleteInternal(@Nonnull FormKeyLong key) {
-        formService.delete(key);
+        formDAO.delete(key.longValue());
     }
 
     @Nonnull
     @Override
     protected FormKeyLong insertInternal(@Nonnull I instance, Integer inclusionActor) {
+        instance.getDocument().persistFiles();
         return (FormKeyLong) formService.insert(instance, inclusionActor);
     }
 
@@ -137,6 +139,11 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
     @Override
     public Optional<I> loadOpt(@Nonnull FormKey key) {
         return super.loadOpt(key);
+    }
+
+    @Override
+    public void delete(@Nonnull FormKey key) {
+        super.delete(key);
     }
 
     public IFormService getFormService() {

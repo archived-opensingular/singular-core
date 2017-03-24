@@ -28,14 +28,14 @@ import java.util.function.Function;
 
 
 
-public class MBPMUtil {
+public class SFlowUtil {
 
     private static final int PESO_TASK_JAVA = 100;
     private static final int PESO_TASK_WAIT = 300;
     private static final int PESO_TASK_PESSOA = 1000;
     private static final int PESO_TASK_FIM = 100000;
 
-    private MBPMUtil() {}
+    private SFlowUtil() {}
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
         instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(),
@@ -68,10 +68,10 @@ public class MBPMUtil {
         return novo;
     }
 
-    public static List<MTask<?>> getSortedTasksByDistanceFromBeginning(ProcessDefinition<?> definicao) {
+    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(ProcessDefinition<?> definicao) {
         FlowMap flowMap = definicao.getFlowMap();
         calculateTaskOrder(flowMap);
-        List<MTask<?>> novo = new ArrayList<>(flowMap.getTasks());
+        List<STask<?>> novo = new ArrayList<>(flowMap.getTasks());
         novo.sort((t1, t2) -> {
             int order1 = t1.getOrder();
             int order2 = t2.getOrder();
@@ -84,22 +84,22 @@ public class MBPMUtil {
     }
 
     static void calculateTaskOrder(FlowMap flowMap) {
-        for (MTask<?> task : flowMap.getTasks()) {
+        for (STask<?> task : flowMap.getTasks()) {
             task.setOrder(0);
         }
-        Deque<MTask<?>> deque = new ArrayDeque<>();
+        Deque<STask<?>> deque = new ArrayDeque<>();
         orderedVisit(0, flowMap.getStart().getTask(), deque);
         flowMap.getTasks().stream().filter(task -> task.getOrder() == 0)
                 .forEach(task -> task.setOrder(calculateWeight(task) + 1000000));
     }
 
-    private static void orderedVisit(int previousValue, MTask<?> task, Deque<MTask<?>> deque) {
+    private static void orderedVisit(int previousValue, STask<?> task, Deque<STask<?>> deque) {
         int valor = previousValue + calculateWeight(task);
         int order = task.getOrder();
         if (order == 0 || (order < valor && !deque.contains(task))) {
             task.setOrder(valor);
             deque.add(task);
-            for (MTransition transicao : task.getTransitions()) {
+            for (STransition transicao : task.getTransitions()) {
                 if (task.getDefaultTransition() == transicao) {
                     orderedVisit(valor, transicao.getDestination(), deque);
                 } else {
@@ -115,7 +115,7 @@ public class MBPMUtil {
                 .equals(entityTaskDefinition.getProcessVersion().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
-        Optional<MTask<?>> task = processDefinition.getFlowMap().getTaskByAbbreviation(entityTaskDefinition.getAbbreviation());
+        Optional<STask<?>> task = processDefinition.getFlowMap().getTaskByAbbreviation(entityTaskDefinition.getAbbreviation());
         if (task.isPresent()) {
             return task.get().getOrder();
         }
@@ -130,7 +130,7 @@ public class MBPMUtil {
         }
     }
 
-    private static int calculateWeight(MTask<?> task) {
+    private static int calculateWeight(STask<?> task) {
         IEntityTaskType tt = task.getTaskType();
         if (tt.isPeople()) {
             return PESO_TASK_PESSOA;

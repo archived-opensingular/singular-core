@@ -16,20 +16,21 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.MParametersEnabled;
-import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SParametersEnabled;
+import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.TransitionAccessStrategy;
 import org.opensingular.flow.core.TransitionAccessStrategyImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public interface BTransition<SELF extends BTransition<SELF>> extends BParametersEnabled<SELF> {
+public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends BuilderParametersEnabled<SELF> {
 
-    public abstract MTransition getTransition();
+    public abstract STransition getTransition();
 
-    public default MParametersEnabled getParametersEnabled() {
+    public default SParametersEnabled getParametersEnabled() {
         return getTransition();
     }
 
@@ -41,12 +42,12 @@ public interface BTransition<SELF extends BTransition<SELF>> extends BParameters
     }
 
     public default SELF thenGo(ITaskDefinition destination) {
-        MTransition transition = getTransition().thenGo(destination);
+        STransition transition = getTransition().thenGo(destination);
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
     public default SELF thenGo(String actionName, ITaskDefinition destination) {
-        MTransition transition = getTransition().thenGo(actionName, destination);
+        STransition transition = getTransition().thenGo(actionName, destination);
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
@@ -60,17 +61,17 @@ public interface BTransition<SELF extends BTransition<SELF>> extends BParameters
         return self();
     }
 
-    public default SELF defineUserRoleInTransition(BProcessRole<?> processRole) {
+    public default SELF defineUserRoleInTransition(BuilderProcessRole<?> processRole) {
         getTransition().defineUserRoleInTransition(processRole.getProcessRole());
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersInitializer(MTransition.ITransitionParametersProcessInitializer<K> parametrosInicializer) {
+    public default <K extends ProcessInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
         getTransition().setParametersInitializer(parametrosInicializer);
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersValidator(MTransition.ITransitionParametersProcessValidator<K> parametrosValidator) {
+    public default <K extends ProcessInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
         getTransition().setParametersValidator(parametrosValidator);
         return self();
     }

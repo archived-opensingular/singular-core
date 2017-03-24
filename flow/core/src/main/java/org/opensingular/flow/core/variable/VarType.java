@@ -28,8 +28,9 @@ public interface VarType<TYPE> {
 
     public String toPersistenceString(VarInstance varInstance);
 
-    TYPE fromPersistenceString(String persistenceValue);
+    /** Recupera o valor original a partir da versão persistida como String do dado. */
+    TYPE fromPersistenceString(String persistenceValue) throws SingularFlowConvertingValueException;
 
     /** Convert o valor informado para o tipo nativo do tipo. */
-    TYPE convert(Object original);
+    TYPE convert(Object original) throws SingularFlowConvertingValueException;
 }

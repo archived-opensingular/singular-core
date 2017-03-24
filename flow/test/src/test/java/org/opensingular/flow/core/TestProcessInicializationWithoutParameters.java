@@ -20,9 +20,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.ProcessWithInitialization.Steps;
-import org.opensingular.flow.core.builder.BTransition;
+import org.opensingular.flow.core.builder.BuilderTransition;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 
 import static org.junit.Assert.assertTrue;
@@ -80,15 +79,14 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
             return f.build();
         }
 
-        private ProcessInstance processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
+        private void processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
             startInitializerCalled = true;
             instance.getVariables().setValue(FLAG, 1);
             instance.start();
-            return instance;
         }
 
 
-        private void configFastTransition(BTransition<?> fastTransition) {
+        private void configFastTransition(BuilderTransition<?> fastTransition) {
             VarDefinitionMap<?> parameters = fastTransition.getTransition().getParameters();
             parameters.addVariableString("motivo").required();
             parameters.addVariableString("extraInfo)");

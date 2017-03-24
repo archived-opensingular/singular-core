@@ -14,12 +14,12 @@ import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 import org.opensingular.flow.core.ws.BaseSingularRest;
 import org.opensingular.flow.persistence.entity.Actor;
@@ -69,8 +69,7 @@ public class RelocationTest  {
         session.beginTransaction();
 
         P p = new P();
-        id = p.newPreStartInstance();
-        id.start();
+        id = p.prepareStartCall().createAndStart();
     }
 
     @After
@@ -81,8 +80,7 @@ public class RelocationTest  {
 
     @Test public void relocatesTaskUser(){
         P p = new P();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
+        ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -95,8 +93,7 @@ public class RelocationTest  {
 
     @Test public void rejectssRelocationTaskUserWithWrongVersionLock(){
         P p = new P();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
+        ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -111,8 +108,7 @@ public class RelocationTest  {
 
     @Test public void rejectsRelocationWithInvalidVersionNumber(){
         P p = new P();
-        ProcessInstance id = p.newPreStartInstance();
-        id.start();
+        ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 

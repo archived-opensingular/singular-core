@@ -16,21 +16,21 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.opensingular.flow.core.SUser;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.opensingular.flow.core.MUser;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_ATOR database table.
  */
 @Entity
 @Table(name = "VW_ATOR", schema = Constants.SCHEMA)
-public class Actor extends BaseEntity<Integer> implements MUser {
+public class Actor extends BaseEntity<Integer> implements SUser {
 
     /* nao deve ter generator, deve ser uma view*/
     @Id

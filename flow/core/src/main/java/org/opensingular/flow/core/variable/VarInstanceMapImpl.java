@@ -18,13 +18,13 @@ package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.SingularFlowException;
 
-public class VarInstanceMapImpl extends AbstractVarInstanceMap<VarInstance> {
+public class VarInstanceMapImpl extends AbstractVarInstanceMap<VarInstance, VarInstanceMapImpl> {
 
     public VarInstanceMapImpl(VarService varService) {
         super(varService);
     }
 
-    public VarInstanceMapImpl(VarInstanceMap<?> instances) {
+    public VarInstanceMapImpl(VarInstanceMap<?,?> instances) {
         super(instances);
     }
 

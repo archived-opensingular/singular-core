@@ -17,37 +17,43 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ExecutionContext;
-import org.opensingular.flow.core.MTaskJava;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.schedule.IScheduleData;
 
-public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, MTaskJava> {
+public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTaskSelf<SELF, STaskJava> {
 
-    default SELF call(MTaskJava.ImplTaskJava impl) {
+    default SELF call(STaskJava.ImplTaskJava impl) {
         getTask().call(impl);
+        return self();
+    }
+
+    default SELF setBpmnTypeAsEmail() {
+        getTask().setMetaDataValue(IFlowRenderer.SEND_EMAIL, Boolean.TRUE);
         return self();
     }
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstanciaExecucao<T> impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask));
+        return call((STaskJava.ImplTaskJava) execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask));
     }
 
     default SELF call(ImplTaskJavaReturnInstanciaTarefaExecucao impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance(), execucaoTask));
+        return call((STaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance(), execucaoTask));
     }
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstanciaExecucao<T> impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> {
+        return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask);
             return null;
         });
     }
 
     default SELF call(ImplTaskJavaVoidInstanciaTarefaExecucao impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> {
+        return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar(execucaoTask.getTaskInstance(), execucaoTask);
             return null;
         });
@@ -55,29 +61,29 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstancia<T> impl) {
-        return call((MTaskJava.ImplTaskJava) (execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance())));
+        return call((STaskJava.ImplTaskJava) (execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance())));
     }
 
     default SELF call(ImplTaskJavaReturnInstanciaTarefa impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance()));
+        return call((STaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance()));
     }
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstancia<T> impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> {
+        return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar((T) execucaoTask.getProcessInstance());
             return null;
         });
     }
 
     default SELF call(ImplTaskJavaVoidInstanciaTarefa impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> {
+        return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar(execucaoTask.getTaskInstance());
             return null;
         });
     }
 
-    default <T extends ProcessInstance> SELF callByBlock(MTaskJava.ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
+    default <T extends ProcessInstance> SELF callByBlock(STaskJava.ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
         getTask().callBlock(implBloco, scheduleData);
         return self();
     }

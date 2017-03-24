@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TestProcessWithFlowDecisionAsFirstStep.ProcessWithFlowDecisionAsFirstStep.StepsDE;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
@@ -41,6 +41,16 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
     @Test
     public void goToResultB() {
         goToResult(StepsDE.ResultB);
+    }
+
+    @Test
+    public void goToWrongTransition() {
+        SingularTestUtil.assertException(() -> goToResult(StepsDE.End), SingularFlowTransactionNotFoundException.class);
+    }
+
+    @Test
+    public void goToUndefinedTransition() {
+        SingularTestUtil.assertException(() -> goToResult(null), SingularFlowTransactionNotFoundException.class);
     }
 
     private void goToResult(StepsDE target) {

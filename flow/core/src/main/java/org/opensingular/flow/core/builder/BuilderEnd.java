@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core;
+package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.STaskEnd;
 
-public class MTaskEnd extends MTask<MTaskEnd> {
+public interface BuilderEnd<SELF extends BuilderEnd<SELF>> extends BuilderTaskSelf<SELF, STaskEnd> {
 
-    public MTaskEnd(FlowMap mapa, String nome, String abbreviation) {
-        super(mapa, nome, abbreviation);
-    }
-
-    @Override
-    public IEntityTaskType getTaskType() {
-        return TaskType.END;
-    }
-
-    @Override
-    public boolean canReallocate() {
-        return false;
-    }
 }

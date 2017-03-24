@@ -16,6 +16,8 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.entity.AccessStrategyType;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,32 +26,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.opensingular.flow.core.entity.AccessStrategyType;
-
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class TaskAccessStrategy<K extends ProcessInstance> {
 
-    public abstract boolean canExecute(K instance, MUser user);
+    public abstract boolean canExecute(K instance, SUser user);
 
-    public <T extends TaskInstance> boolean canExecute(T instance, MUser user) {
+    public <T extends TaskInstance> boolean canExecute(T instance, SUser user) {
         return canExecute((K) instance.getProcessInstance(), user);
     }
 
-    public boolean canVisualize(K instancia, MUser user) {
+    public boolean canVisualize(K instancia, SUser user) {
         return canExecute(instancia, user);
     }
 
     public abstract Set<Integer> getFirstLevelUsersCodWithAccess(K instancia);
 
-    public abstract List<? extends MUser> listAllocableUsers(K instancia);
+    public abstract List<? extends SUser> listAllocableUsers(K instancia);
 
-    public abstract List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, MTask<?> task);
+    public abstract List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task);
 
-    public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+    public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
         return getExecuteRoleNames(definicao, task);
     }
 
-    public MUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
+    public SUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
         return null;
     }
 
@@ -106,12 +106,12 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public boolean canExecute(K instancia, MUser user) {
+        public boolean canExecute(K instancia, SUser user) {
             return disjunction.stream().anyMatch(e -> e.canExecute(instancia, user));
         }
 
         @Override
-        public boolean canVisualize(K instancia, MUser user) {
+        public boolean canVisualize(K instancia, SUser user) {
             return disjunction.stream().anyMatch(e -> e.canVisualize(instancia, user));
         }
 
@@ -125,8 +125,8 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public List<MUser> listAllocableUsers(K instancia) {
-            Set<MUser> users = new LinkedHashSet<>();
+        public List<SUser> listAllocableUsers(K instancia) {
+            Set<SUser> users = new LinkedHashSet<>();
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
                 users.addAll(taskAccessStrategy.listAllocableUsers(instancia));
             }
@@ -134,9 +134,9 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public MUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
+        public SUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
-                MUser alocadoAutomatico = taskAccessStrategy.getAutomaticAllocatedUser(instancia, tarefa);
+                SUser alocadoAutomatico = taskAccessStrategy.getAutomaticAllocatedUser(instancia, tarefa);
                 if (alocadoAutomatico != null) {
                     return alocadoAutomatico;
                 }
@@ -145,12 +145,12 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
             return disjunction.stream().flatMap(p -> p.getExecuteRoleNames(definicao, task).stream()).collect(Collectors.toList());
         }
 
         @Override
-        public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+        public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
             return disjunction.stream().flatMap(p -> p.getVisualizeRoleNames(definicao, task).stream()).collect(Collectors.toList());
         }
     }
@@ -164,12 +164,12 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public boolean canExecute(K instancia, MUser user) {
+        public boolean canExecute(K instancia, SUser user) {
             return false;
         }
 
         @Override
-        public boolean canVisualize(K instancia, MUser user) {
+        public boolean canVisualize(K instancia, SUser user) {
             return original.canVisualize(instancia, user);
         }
 
@@ -179,17 +179,17 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public List<MUser> listAllocableUsers(K instancia) {
+        public List<SUser> listAllocableUsers(K instancia) {
             return Collections.emptyList();
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
             return Collections.emptyList();
         }
 
         @Override
-        public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+        public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
             return original.getVisualizeRoleNames(definicao, task);
         }
 

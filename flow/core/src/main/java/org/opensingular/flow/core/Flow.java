@@ -147,7 +147,7 @@ public final class Flow {
         return getConfigBean().generateID(instanciaTarefa);
     }
 
-    public static MUser getUserIfAvailable() {
+    public static SUser getUserIfAvailable() {
         return getConfigBean().getUserService().getUserIfAvailable();
     }
 
@@ -155,7 +155,7 @@ public final class Flow {
         getConfigBean().notifyListeners(operation);
     }
 
-    static boolean canBeAllocated(MUser pessoa) {
+    static boolean canBeAllocated(SUser pessoa) {
         return getConfigBean().getUserService().canBeAllocated(pessoa);
     }
 

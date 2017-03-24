@@ -33,7 +33,7 @@ public final class TaskHistoricLog {
         sendEmail(null);
     }
 
-    public void sendEmail(List<MUser> users) {
+    public void sendEmail(List<SUser> users) {
         Flow.notifyListeners(n -> n.notifyLogToUsers(this, users));
     }
 
@@ -42,11 +42,11 @@ public final class TaskHistoricLog {
         return Flow.getProcessInstance(history.getTaskInstance().getProcessInstance());
     }
 
-    public MUser getAllocatorUser() {
+    public SUser getAllocatorUser() {
         return history.getAllocatorUser();
     }
 
-    public MUser getAllocatedUser() {
+    public SUser getAllocatedUser() {
         return history.getAllocatedUser();
     }
 

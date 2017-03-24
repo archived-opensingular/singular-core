@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.test.support;
 
-import org.opensingular.flow.core.MTask;
+import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
 import java.util.Optional;
@@ -48,7 +48,7 @@ public class AssertionsTaskInstance extends AssertionsBase<TaskInstance, Asserti
 
     public AssertionsTaskInstance isAtTask(ITaskDefinition expectedType) {
         if(!getTargetOrException().isAtTask(expectedType)) {
-            Optional<MTask<?>> currentTtype = getTargetOrException().getFlowTask();
+            Optional<STask<?>> currentTtype = getTargetOrException().getFlowTask();
             if (currentTtype.isPresent()) {
                 throw new AssertionError(
                         errorMsg("A task não é do tipo esperado", expectedType, currentTtype.get()));

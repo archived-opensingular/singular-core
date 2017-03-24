@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core.builder;
+package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.MProcessRole;
+/**
+ * Indica que não foi encontra a transação deseja na tarefa.
+ * 
+ * @author Daniel C. Bordin on 20/03/2017.
+ */
+public class SingularFlowTransactionNotFoundException extends SingularFlowException {
 
-public interface BProcessRole<SELF extends BProcessRole<SELF>> {
-
-    public MProcessRole getProcessRole();
+    public SingularFlowTransactionNotFoundException(String errorMsg, STask<?> task) {
+        super(errorMsg, task);
+    }
 }

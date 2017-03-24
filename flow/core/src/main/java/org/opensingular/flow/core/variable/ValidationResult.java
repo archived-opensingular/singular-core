@@ -16,25 +16,30 @@
 
 package org.opensingular.flow.core.variable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/**
+ * Representa o resultado de uma validação.
+ *
+ * @author Daniel C. Bordin
+ */
 public class ValidationResult {
 
-    private List<String> erros;
+    private List<String> errors;
 
     public boolean hasErros() {
-        return erros != null && !erros.isEmpty();
+        return errors != null && !errors.isEmpty();
     }
 
     public void addErro(String msg) {
-        if (erros == null) {
-            erros = new ArrayList<>();
+        if (errors == null) {
+            errors = new ArrayList<>();
         }
-        erros.add(msg);
+        errors.add(msg);
     }
 
     public void addErro(VarInstance var, String msg) {
@@ -46,13 +51,13 @@ public class ValidationResult {
         if (!hasErros()) {
             return "[]";
         }
-        return erros.stream().collect(Collectors.joining("\n"));
+        return errors.stream().collect(Collectors.joining("\n"));
     }
 
-    public Stream<String> stream() {
-        if (erros == null) {
-            return (Stream) Collections.emptyList().stream();
-        }
-        return erros.stream();
+    /** Retorna uma lista dos erros encontrados. */
+    @Nonnull
+    public List<String> errors() {
+        return errors == null ? Collections.emptyList() : errors;
     }
+
 }

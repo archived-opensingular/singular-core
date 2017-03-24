@@ -19,11 +19,11 @@ package org.opensingular.flow.test.definicao;
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.builder.FlowBuilder;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionImpl;
 import org.opensingular.flow.core.variable.type.VarTypeDecimal;
 import org.opensingular.flow.core.variable.type.VarTypeString;
@@ -64,12 +64,6 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         f.from(PRINT).go(END);
 
         return f.build();
-    }
-
-    public ProcessInstance start() {
-        ProcessInstance instancia = newPreStartInstance();
-        instancia.start();
-        return instancia;
     }
 
     public void print(ProcessInstance instancia, ExecutionContext ctxExecucao) {

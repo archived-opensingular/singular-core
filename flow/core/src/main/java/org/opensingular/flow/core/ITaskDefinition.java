@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core.builder;
+package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.IExecutionDateStrategy;
-import org.opensingular.flow.core.MTaskWait;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.lib.commons.base.SingularUtil;
 
-public interface BWait<SELF extends BWait<SELF>> extends BUserExecutable<SELF, MTaskWait> {
+@FunctionalInterface
+public interface ITaskDefinition {
 
-    @Override
-    public default <T extends ProcessInstance> SELF withTargetDate(IExecutionDateStrategy<T> estrategiaDataAlvo) {
-        getTask().withTargetDate(estrategiaDataAlvo);
-        return self();
+    String getName();
+
+    default String getKey() {
+        return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
+    }
+
+    default boolean isNameEquals(String name) {
+        return getName().equals(name);
     }
 }

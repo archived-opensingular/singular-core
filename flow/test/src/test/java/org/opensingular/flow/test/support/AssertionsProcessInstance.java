@@ -17,11 +17,13 @@
 package org.opensingular.flow.test.support;
 
 import com.mchange.util.AssertException;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -48,6 +50,10 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
         return msg;
     }
 
+    /**
+     * Verifica se tarefa corrente é do tipo esperado, ou seja, se o processo está no estado esperado. Caso contrário,
+     * dispara exception.
+     */
     public AssertionsProcessInstance isAtTask(ITaskDefinition expectedCurrentTaskType) {
         currentTask().isAtTask(expectedCurrentTaskType);
         return this;
@@ -59,12 +65,32 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
         return new AssertionsTaskInstance(task);
     }
 
-    public AssertionsProcessInstance isVariableValue(String variableName, Object expectedValue) {
+    /** Verifica se a váriavel do processo correspondente ao valor esperado. Caso contrário, dispara exception. */
+    public AssertionsProcessInstance isVariableValue(@Nonnull String variableName, @Nullable Object expectedValue) {
         Object currentValue = getTargetOrException().getVariables().getValue(variableName);
         if(!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(
                     errorMsg("Valor incorreto na váriavel '" + variableName + "' do processo", expectedValue,
                             currentValue));
+        }
+        return this;
+    }
+
+    /**
+     * Verifica se a lista de variáveis do processo corresponde a quantidade de variáveis e variáveis não nula
+     * informada, caso contrário dispara exception.
+     */
+    public AssertionsProcessInstance isVariablesSize(int expectedListSize, int expectedNotNullSize) {
+        if(getTargetOrException().getVariables().size() != expectedListSize) {
+            throw new AssertionError(errorMsg("Quantidade de variáveis não esperadas", expectedListSize,
+                    getTargetOrException().getVariables().size()));
+        }
+        long countNotNull = getTargetOrException().getVariables().asCollection().stream().filter(
+                v -> v.getValue() != null).count();
+        if (countNotNull != expectedNotNullSize) {
+            throw new AssertionError(
+                    errorMsg("Quantidade de variáveis diferentes de null não esperadas", expectedNotNullSize,
+                            countNotNull));
         }
         return this;
     }
