@@ -7,11 +7,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.TypeInfo;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 
 public class TestMElementWrapper {
 
@@ -171,18 +167,5 @@ public class TestMElementWrapper {
         wrapper.normalize();
 
         wrapper.compareDocumentPosition(element);
-    }
-
-    @Test
-    public void testFromBase64OutPutStream() throws IOException {
-        MElementWrapper wrapper = new MElementWrapper("raiz");
-
-        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
-        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
-
-        wrapper.fromBASE64(Base64.getEncoder().encodeToString("valor".getBytes()), outputStream);
-
-        outputStream.close();
-        arquivoTemporario.delete();
     }
 }

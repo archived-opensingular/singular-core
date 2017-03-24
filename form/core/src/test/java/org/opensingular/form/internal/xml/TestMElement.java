@@ -31,9 +31,13 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -907,11 +911,23 @@ public class TestMElement {
         Assert.assertEquals(0, raiz.getDate("dateObj").compareTo((Date) dateObj));
 
         Object stringObj = "testValue";
-        raiz.addElement("stringObj", stringObj);
+        MElement stringObjElement = raiz.addElement("stringObj", stringObj);
         Assert.assertEquals(raiz.getValor("stringObj"), stringObj);
 
-        raiz.addElement("stringObjDefault", stringObj, "testValue2");
+        MElement newStringObjDefault = raiz.addElement("stringObjDefault", stringObj, "testValue2");
         Assert.assertEquals(raiz.getValor("stringObjDefault"), stringObj);
+
+        newStringObjDefault.addElement(stringObjElement);
+        Assert.assertEquals("stringObj", newStringObjDefault.getNode("stringObj").getNodeName());
+
+        raiz.addElement("bytes", (Object) "valores".getBytes());
+        Assert.assertNotNull(raiz.getElement("bytes"));
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testGetValorTextException(){
+        MDocument document = MDocument.newInstance();
+        MElement.getValorTexto(document);
     }
 
     @Test
@@ -1130,7 +1146,7 @@ public class TestMElement {
         raiz.addInt("inteiro", "100");
         raiz.addBoolean("bool", true);
 
-        Assert.assertTrue(raiz.getBoolean("inteiro"));
+        Assert.assertTrue(raiz.is("inteiro"));
 
         raiz.is("inteiro");
     }
@@ -1141,9 +1157,23 @@ public class TestMElement {
         raiz.addInt("inteiro", "100");
         raiz.addBoolean("bool", true);
 
-        Assert.assertTrue(raiz.getBoolean("inteiro", false));
+        Assert.assertTrue(raiz.is("inteiro", false));
 
         raiz.is("inteiro", false);
+    }
+
+    @Test
+    public void testFromBase64OutPutStream() throws IOException {
+        MElement raiz = MElement.newInstance("raiz");
+        raiz.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
+
+        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
+        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
+
+        raiz.getByteBASE64("string", outputStream);
+
+        outputStream.close();
+        arquivoTemporario.delete();
     }
 
     @Test
@@ -1183,6 +1213,13 @@ public class TestMElement {
         Assert.assertEquals(filho1.getValor(), raiz.getPrimeiroFilho("filho1").getValor());
 
 
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddElementObjectNull(){
+        MElement raiz = MElement.newInstance("raiz");
+
+        raiz.addElement("elemento", (Object) null);
     }
     // TODO terminar testes MElement
 }
