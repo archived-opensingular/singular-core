@@ -1,5 +1,8 @@
 package org.opensingular.form;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
 import org.opensingular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
 import org.opensingular.form.type.core.SIInteger;
@@ -11,9 +14,6 @@ import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.util.STypeEMail;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
 
@@ -100,7 +100,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
         SType<SIString> tipo = pb.createType("local", STypeString.class).withInitialValue("aqui");
-        STypeString tipoString = dicionario.getTypeOptional(STypeString.class);
+        STypeString tipoString = dicionario.getType(STypeString.class);
 
         assertEquals("aqui", tipo.getAttributeValueInitialValue());
         assertEquals(null, tipoString.getAttributeValueInitialValue());
