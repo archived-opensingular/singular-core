@@ -29,6 +29,13 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
         super(FormEntity.class);
     }
 
+    public void delete(Long key) {
+        find(key).ifPresent(formEntity -> {
+            getSession().delete(formEntity.getCurrentFormVersionEntity());
+            getSession().delete(formEntity);
+        });
+    }
+
     @Override
     public void saveOrUpdate(FormEntity novoObj) {
         super.saveOrUpdate(novoObj);

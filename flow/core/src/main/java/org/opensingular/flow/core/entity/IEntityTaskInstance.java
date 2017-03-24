@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.entity;
 
-import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SUser;
 
 import java.util.Date;
 import java.util.List;
@@ -43,13 +43,13 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     void setTargetEndDate(Date targetEndDate);
 
-    void setAllocatedUser(MUser allocatedUser);
+    void setAllocatedUser(SUser allocatedUser);
 
-    MUser getAllocatedUser();
+    SUser getAllocatedUser();
 
-    void setResponsibleUser(MUser responsibleUser);
+    void setResponsibleUser(SUser responsibleUser);
 
-    MUser getResponsibleUser();
+    SUser getResponsibleUser();
 
     IEntityTaskTransitionVersion getExecutedTransition();
 

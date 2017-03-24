@@ -19,15 +19,36 @@ package org.opensingular.flow.persistence.service;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.opensingular.flow.core.*;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.SProcessRole;
+import org.opensingular.flow.core.STask;
+import org.opensingular.flow.core.STransition;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskAccessStrategy;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessGroup;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -50,7 +71,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         PROCESS_VERSION entityProcessVersion = createEntityProcessVersion(entityProcessDefinition);
         entityProcessVersion.setVersionDate(new Date());
 
-        for (MTask<?> task : processDefinition.getFlowMap().getAllTasks()) {
+        for (STask<?> task : processDefinition.getFlowMap().getAllTasks()) {
             TASK_DEF entityTaskDefinition = retrieveOrCreateEntityDefinitionTask(entityProcessDefinition, task);
 
             TASK_VERSION entityTask = createEntityTaskVersion(entityProcessVersion, entityTaskDefinition, task);
@@ -58,16 +79,16 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
             ((List<TASK_VERSION>) entityProcessVersion.getVersionTasks()).add(entityTask);
         }
-        for (MTask<?> task : processDefinition.getFlowMap().getAllTasks()) {
+        for (STask<?> task : processDefinition.getFlowMap().getAllTasks()) {
             TASK_VERSION originTask = (TASK_VERSION) entityProcessVersion.getTaskVersion(task.getAbbreviation());
-            for (MTransition mTransition : task.getTransitions()) {
+            for (STransition sTransition : task.getTransitions()) {
                 TASK_VERSION destinationTask = (TASK_VERSION) entityProcessVersion
-                        .getTaskVersion(mTransition.getDestination().getAbbreviation());
+                        .getTaskVersion(sTransition.getDestination().getAbbreviation());
 
                 TRANSITION entityTransition = createEntityTaskTransition(originTask, destinationTask);
-                entityTransition.setAbbreviation(mTransition.getAbbreviation());
-                entityTransition.setName(mTransition.getName());
-                entityTransition.setType(mTransition.getType());
+                entityTransition.setAbbreviation(sTransition.getAbbreviation());
+                entityTransition.setName(sTransition.getName());
+                entityTransition.setType(sTransition.getType());
 
                 ((List<TRANSITION>) originTask.getTransitions()).add(entityTransition);
             }
@@ -77,7 +98,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
     protected abstract PROCESS_VERSION createEntityProcessVersion(PROCESS_DEF entityProcessDefinition);
 
-    protected abstract TASK_VERSION createEntityTaskVersion(PROCESS_VERSION process, TASK_DEF entityTaskDefinition, MTask<?> task);
+    protected abstract TASK_VERSION createEntityTaskVersion(PROCESS_VERSION process, TASK_DEF entityTaskDefinition, STask<?> task);
 
     protected abstract TRANSITION createEntityTaskTransition(TASK_VERSION originTask, TASK_VERSION destinationTask);
 
@@ -153,7 +174,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
         Set<String> abbreviations = new HashSet<>();
         for (IEntityRoleDefinition role : new ArrayList<>(entityProcessDefinition.getRoles())) {
-            MProcessRole roleAbbreviation = processDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
+            SProcessRole roleAbbreviation = processDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
             if (roleAbbreviation == null) {
                 if (!hasRoleInstances(sw, role)) {
                     entityProcessDefinition.getRoles().remove(role);
@@ -170,7 +191,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             }
         }
 
-        for (MProcessRole mPapel : processDefinition.getFlowMap().getRoles()) {
+        for (SProcessRole mPapel : processDefinition.getFlowMap().getRoles()) {
             if (!abbreviations.contains(mPapel.getAbbreviation())) {
                 PROCESS_ROLE_DEF role = newInstanceOf(getClassProcessRoleDef());
                 role.setProcessDefinition(entityProcessDefinition);
@@ -205,7 +226,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
     protected abstract TASK_DEF createEntityDefinitionTask(PROCESS_DEF process);
 
-    private final TASK_DEF retrieveOrCreateEntityDefinitionTask(PROCESS_DEF process, MTask<?> task) {
+    private final TASK_DEF retrieveOrCreateEntityDefinitionTask(PROCESS_DEF process, STask<?> task) {
 
         String abbreviation = task.getAbbreviation();
         TASK_DEF taskDefinition = (TASK_DEF) process.getTaskDefinition(abbreviation);

@@ -27,22 +27,22 @@ public class ExecutionContext {
 
     private final TaskInstance taskInstance;
 
-    private final VarInstanceMap<?> input;
+    private final VarInstanceMap<?,?> input;
 
-    private MTransition transition;
+    private STransition transition;
 
-    public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?> input) {
+    public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?,?> input) {
         this(processInstance, taskInstance, input, null);
     }
 
-    public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?> input, MTransition transition) {
+    public ExecutionContext(ProcessInstance processInstance, TaskInstance taskInstance, VarInstanceMap<?,?> input, STransition transition) {
         this.processInstance = processInstance;
         this.taskInstance = taskInstance;
         this.input = input == null ? VarInstanceMap.empty() : input;
         this.transition = transition;
     }
 
-    public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?> input) {
+    public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?,?> input) {
         this(taskInstance.getProcessInstance(), taskInstance, input);
     }
 
@@ -58,7 +58,7 @@ public class ExecutionContext {
     }
 
     @Nullable
-    public MTransition getTransition() {
+    public STransition getTransition() {
         return transition;
     }
 
@@ -79,7 +79,7 @@ public class ExecutionContext {
         }
     }
 
-    public VarInstanceMap<?> getInput() {
+    public VarInstanceMap<?,?> getInput() {
         return input;
     }
 

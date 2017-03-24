@@ -16,13 +16,13 @@
 
 package org.opensingular.flow.core;
 
-import java.io.Serializable;
-
 import org.opensingular.flow.core.view.Lnk;
+
+import java.io.Serializable;
 
 @FunctionalInterface
 public interface IProcessCreationPageStrategy extends Serializable {
 
-    public Lnk getCreatePageFor(ProcessDefinition<?> definicaoProcesso, MUser user);
+    public Lnk getCreatePageFor(ProcessDefinition<?> definicaoProcesso, SUser user);
 
 }

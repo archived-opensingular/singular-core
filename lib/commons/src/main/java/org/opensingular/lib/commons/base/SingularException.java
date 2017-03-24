@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -86,6 +87,11 @@ public class SingularException extends RuntimeException {
         } else {
             return new SingularException(message, e);
         }
+    }
+
+    /** Verifica se já foi adicinada uma informação de detalhe com o label informado. */
+    public boolean containsEntry(String label) {
+        return entries != null && entries.stream().anyMatch(e -> Objects.equals(label, e.label));
     }
 
     /**

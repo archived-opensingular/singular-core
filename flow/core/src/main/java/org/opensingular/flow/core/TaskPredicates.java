@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
@@ -50,7 +49,7 @@ public class TaskPredicates {
 
     /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
     @Nonnull
-    public static Predicate<TaskInstance> simpleTaskType(@Nonnull MTask<?> tipo) {
+    public static Predicate<TaskInstance> simpleTaskType(@Nonnull STask<?> tipo) {
         Objects.requireNonNull(tipo);
         return simpleTaskType(tipo.getAbbreviation());
     }

@@ -16,10 +16,10 @@
 
 package org.opensingular.flow.core.defaults;
 
-import org.opensingular.flow.core.MUser;
-import org.opensingular.flow.core.ProcessNotifier;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.ProcessNotifier;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.TaskHistoricLog;
 import org.opensingular.flow.core.TaskInstance;
 
@@ -28,12 +28,12 @@ import java.util.List;
 public class NullNotifier implements ProcessNotifier {
 
     @Override
-    public void notifyUserTaskRelocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser, MUser removedUser) {
+    public void notifyUserTaskRelocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify, SUser allocatedUser, SUser removedUser) {
 
     }
 
     @Override
-    public void notifyUserTaskAllocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser, MUser removedUser, String justification) {
+    public void notifyUserTaskAllocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify, SUser allocatedUser, SUser removedUser, String justification) {
 
     }
 
@@ -48,7 +48,7 @@ public class NullNotifier implements ProcessNotifier {
     }
 
     @Override
-    public <X extends MUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify) {
+    public <X extends SUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify) {
 
     }
 

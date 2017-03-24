@@ -38,7 +38,7 @@ public class VarTypeString extends VarTypeBase<String> {
     }
 
     @Override
-    public String fromPersistenceString(String persistenceValue) {
+    public String fromPersistenceStringImpl(String persistenceValue) {
         return persistenceValue;
     }
 

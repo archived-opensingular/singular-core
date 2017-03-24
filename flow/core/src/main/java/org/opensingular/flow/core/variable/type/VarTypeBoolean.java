@@ -39,7 +39,7 @@ public class VarTypeBoolean extends VarTypeBase<Boolean> {
     }
 
     @Override
-    public Boolean fromPersistenceString(String persistenceValue) {
+    public Boolean fromPersistenceStringImpl(String persistenceValue) {
         return persistenceValue == null ? null : Boolean.valueOf(persistenceValue);
     }
 
