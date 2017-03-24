@@ -3,7 +3,11 @@ package org.opensingular.form.internal.xml;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.Iterator;
 
 public class TestMElementResult {
 
@@ -77,6 +81,8 @@ public class TestMElementResult {
 
         Assert.assertEquals("", result.getAttribute("attr"));
         Assert.assertEquals(0, result.getElementsByTagName("arg1").getLength());
+
+        Assert.assertEquals(0, result.getAttributes().getLength());
     }
 
     @Test
@@ -103,7 +109,7 @@ public class TestMElementResult {
     @Test
     public void testNodeMethods(){
         MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
+        MElement nome = pai.addElement("nome", "joaquim");
         pai.addElement("nome", "joao");
         pai.addElement("idade", "10");
 
@@ -123,9 +129,50 @@ public class TestMElementResult {
 
         Assert.assertEquals("joao", result.getNextSibling().getLastChild().getNodeValue());
 
+        Assert.assertEquals("joaquim", result.getLastChild().getNodeValue());
+
+        Assert.assertEquals("nome", result.cloneNode(true).getNodeName());
+
+        Assert.assertEquals("#document", result.getOwnerDocument().getNodeName());
+
         Assert.assertNull(result.getPreviousSibling());
 
         result.normalize();
+
+    }
+
+    @Test(expected = DOMException.class)
+    public void testCompareDocumentPosition(){
+        MElement pai = MElement.newInstance("raiz");
+        MElement nome = pai.addElement("nome", "joaquim");
+
+        MElementResult result = new MElementResult(pai.getChildNodes());
+        result.next();
+        result.compareDocumentPosition(nome);
+    }
+
+    @Test
+    public void testSetTextContentAndSetIdAttribute(){
+        MElement pai = MElement.newInstance("raiz");
+        pai.addElement("nome", "joaquim");
+
+        MElementResult result = new MElementResult(pai.getChildNodes());
+        result.next();
+        result.setTextContent("novo valor");
+        Assert.assertEquals("novo valor", result.getAtual().getTextContent());
+
+        result.setAttributeNS("arg0", "arg1", "arg2");
+        Attr attributeNodeNS = result.getAttributeNodeNS("arg0", "arg1");
+
+        result.setIdAttributeNode(attributeNodeNS, false);
+        Assert.assertFalse(attributeNodeNS.isId());
+
+        result.setAttribute("arg0", "arg1");
+        result.setIdAttribute("arg0", false);
+        Assert.assertFalse(result.getAttributeNode("arg0").isId());
+
+        result.setPrefix("");
+        Assert.assertNull(result.getPrefix());
     }
 
     @Test
@@ -155,6 +202,26 @@ public class TestMElementResult {
         Assert.assertFalse(result.isEqualNode(idade));
 
         Assert.assertFalse(result.isDefaultNamespace("test"));
+    }
 
+    @Test
+    public void testIterator(){
+        MElement pai = MElement.newInstance("raiz");
+        pai.addElement("nome", "joaquim");
+        pai.addElement("nome", "joao");
+        pai.addElement("idade", "10");
+
+        MElementResult result = new MElementResult(pai.getChildNodes());
+        Iterator<MElement> iterator = result.iterator();
+
+        Assert.assertTrue(iterator.hasNext());
+
+        Assert.assertEquals("nome", iterator.next().getNodeName());
+
+        iterator.remove();
+
+        iterator.next();
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertEquals("idade", iterator.next().getNodeName());
     }
 }
