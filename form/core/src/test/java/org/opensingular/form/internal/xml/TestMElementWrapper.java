@@ -7,7 +7,11 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.TypeInfo;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 
 public class TestMElementWrapper {
 
@@ -74,6 +78,13 @@ public class TestMElementWrapper {
         atrr.setNodeValue("novoValor");
         Assert.assertEquals("novoValor", wrapper.getAttributeNode("atrr").getNodeValue());
 
+        wrapper.setIdAttributeNode(atrr, false);
+
+        wrapper.setIdAttribute("atrr", false);
+
+        Assert.assertFalse(atrr.isId());
+
+        wrapper.setAttributeNode(atrr);
         Assert.assertTrue(wrapper.hasAttribute("atrr"));
 
         wrapper.removeAttributeNode(atrr);
@@ -91,6 +102,10 @@ public class TestMElementWrapper {
 
         wrapper.setAttributeNS("arg0", "arg1", "arg2");
         Assert.assertEquals("arg2", wrapper.getAttributeNS("arg0", "arg1"));
+
+        wrapper.setIdAttributeNS("arg0", "arg1", false);
+
+        Assert.assertFalse(wrapper.getAttributeNodeNS("arg0", "arg1").isId());
 
         wrapper.removeAttributeNS("arg0", "arg1");
         Assert.assertEquals("", wrapper.getAttributeNS("arg0", "arg1"));
@@ -120,7 +135,7 @@ public class TestMElementWrapper {
         Assert.assertEquals(0, wrapper.getElementsByTagNameNS("arg0", "arg1").getLength());
     }
 
-    @Test
+    @Test(expected = DOMException.class)
     public void testSomeMethods(){
         MElement element = MElement.newInstance("raiz");
         MElement filho = element.addElement("filho", "filhoVal");
@@ -144,8 +159,30 @@ public class TestMElementWrapper {
 
         Assert.assertFalse(wrapper.isEqualNode(element));
 
+        Assert.assertEquals("filho", wrapper.cloneNode(false).getNodeName());
+
         Assert.assertFalse(wrapper.isDefaultNamespace("namespace"));
 
         Assert.assertTrue(wrapper.getSchemaTypeInfo() instanceof TypeInfo);
+
+        wrapper.setPrefix("");
+        Assert.assertNull(wrapper.getPrefix());
+
+        wrapper.normalize();
+
+        wrapper.compareDocumentPosition(element);
+    }
+
+    @Test
+    public void testFromBase64OutPutStream() throws IOException {
+        MElementWrapper wrapper = new MElementWrapper("raiz");
+
+        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
+        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
+
+        wrapper.fromBASE64(Base64.getEncoder().encodeToString("valor".getBytes()), outputStream);
+
+        outputStream.close();
+        arquivoTemporario.delete();
     }
 }

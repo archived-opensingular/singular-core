@@ -64,4 +64,9 @@ public class TestConversorDataISO8601 {
         calendar.set(Calendar.MILLISECOND, 1000);
         ConversorDataISO8601.format(calendar);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testExceptionGerCalendar(){
+        ConversorDataISO8601.getCalendar("11*17)2017");
+    }
 }

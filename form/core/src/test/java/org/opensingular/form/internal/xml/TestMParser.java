@@ -17,6 +17,8 @@
 package org.opensingular.form.internal.xml;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.opensingular.form.SingularFormException;
 
 /**
  * @author Daniel C. Bordin
@@ -40,5 +42,29 @@ public class TestMParser extends TestCase {
         assertEquals(externo.toStringExato(), externoNovo.toStringExato());
 
         assertEquals(externoNovo.getValor("conteudo"), original.toStringExato());
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testAddInputSourceException(){
+        MParser parser = new MParser();
+        try {
+            parser.addInputSource("id", String.class, "invalidValue");
+        } catch (Exception e) {
+            SingularFormException.rethrow(e);
+        }
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testParseComResolver() {
+        MDocument document = MDocument.newInstance();
+        MElement raiz = document.createRaiz("raiz");
+        raiz.addElement("filho", "filhoVal");
+
+        MParser parser = new MParser();
+        try {
+            parser.parseComResolver(raiz.toString());
+        } catch (Exception e) {
+            SingularFormException.rethrow(e);
+        }
     }
 }

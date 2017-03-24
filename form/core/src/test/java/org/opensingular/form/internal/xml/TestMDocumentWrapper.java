@@ -106,11 +106,11 @@ public class TestMDocumentWrapper {
         wrapper.normalize();
     }
 
-    @Test
+    @Test(expected = DOMException.class)
     public void testNodeMethods(){
         MDocument document = MDocument.newInstance();
         MElement pai = document.createRaiz("raiz");
-        pai.addElement("nome", "joaquim");
+        MElement nome = pai.addElement("nome", "joaquim");
 
         MElement element = pai.addElement("sobrenome", "tadeu da cruz");
 
@@ -128,11 +128,17 @@ public class TestMDocumentWrapper {
 
         Assert.assertFalse(wrapper.isEqualNode(pai));
 
-        wrapper.getDomConfig();
+        Assert.assertTrue(wrapper.getDomConfig() instanceof DOMConfiguration);
+
+        Assert.assertNull(wrapper.getAttributes());
+
+        Assert.assertNull(wrapper.getNextSibling());
+
+        Assert.assertNull(wrapper.getPreviousSibling());
 
         wrapper.normalizeDocument();
 
-        wrapper.getDomConfig();
+        wrapper.removeChild(nome);
     }
 
     @Test
@@ -155,6 +161,9 @@ public class TestMDocumentWrapper {
         wrapper.setDocumentURI("uriDocument");
         Assert.assertEquals("uriDocument", wrapper.getDocumentURI());
 
+        Assert.assertNull(wrapper.getNamespaceURI());
+        wrapper.setTextContent("");
+        Assert.assertNull(wrapper.getTextContent());
     }
 
     @Test(expected = DOMException.class)
@@ -183,7 +192,7 @@ public class TestMDocumentWrapper {
     @Test
     public void testAdoptNode(){
         MDocument document = MDocument.newInstance();
-        MElement pai = document.createRaiz("raiz");
+        document.createRaiz("raiz");
         MDocumentWrapper wrapper = new MDocumentWrapper(document);
 
         MElement element = MElement.newInstance("elemento");
