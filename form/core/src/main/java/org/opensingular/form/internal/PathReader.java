@@ -21,6 +21,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SScope;
 import org.opensingular.form.SingularFormException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Faz o parse de string de paths e aponta para a posição atual dentro path, permitindo a leitura do caminho de forma
  * incremental mediante o uso do método {@link #next()}.
@@ -40,12 +42,12 @@ public final class PathReader {
     private final boolean aListIndex;
 
     /** Cria um novo leitor de path para string informada. */
-    public PathReader(String path) {
+    public PathReader(@Nonnull String path) {
         this(path, 0);
     }
 
     /** Cria um leitor de path para o resto do caminho a partir da posição informada. */
-    private PathReader(String path, int inicio) {
+    private PathReader(@Nonnull String path, int inicio) {
         int inicioCopy = inicio;
         if (path == null) {
             throw new SingularFormException("O path do campo não pode ser nulo.");

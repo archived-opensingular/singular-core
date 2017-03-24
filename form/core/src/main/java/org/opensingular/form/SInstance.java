@@ -31,6 +31,7 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -406,7 +407,8 @@ public abstract class SInstance implements SAttributeEnabled {
         throw new SingularFormException(erroMsgMethodUnsupported());
     }
 
-    final SInstance getField(PathReader pathReader) {
+    @Nonnull
+    final SInstance getField(@Nonnull PathReader pathReader) {
         SInstance instance = this;
         while (true) {
             instance = instance.getFieldLocal(pathReader);
@@ -419,11 +421,13 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    SInstance getFieldLocal(PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+    @Nullable
+    SInstance getFieldLocal(@Nonnull PathReader pathReader) {
+        throw new SingularFormException(erroMsgMethodUnsupported(), this);
     }
 
-    final Optional<SInstance> getFieldOpt(PathReader pathReader) {
+    @Nonnull
+    final Optional<SInstance> getFieldOpt(@Nonnull PathReader pathReader) {
         SInstance instance = this;
         while (true) {
             Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
@@ -437,8 +441,9 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+    @Nonnull
+    Optional<SInstance> getFieldLocalOpt(@Nonnull PathReader pathReader) {
+        throw new SingularFormException(erroMsgMethodUnsupported(), this);
     }
 
     public String toStringDisplayDefault() {
