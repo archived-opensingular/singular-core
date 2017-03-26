@@ -357,7 +357,7 @@ public abstract class SInstance implements SAttributeEnabled {
     public abstract boolean isEmptyOfData();
 
     public Object getValueWithDefault() {
-        return getValue(null);
+        return getValue((Class<?>) null);
     }
 
     public final <T> T getValueWithDefault(Class<T> resultClass) {

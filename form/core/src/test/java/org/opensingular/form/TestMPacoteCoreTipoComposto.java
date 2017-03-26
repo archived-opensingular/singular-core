@@ -160,13 +160,13 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNotNull(bloco.getValue("itens[0]"));
         assertNull(bloco.getValue("itens[0].qtd"));
         bloco.setValue("itens[0].qtd", 10);
-        assertEquals(bloco.getValue("itens[0].qtd"), 10);
+        assertEquals((Object) bloco.getValue("itens[0].qtd"), 10);
 
         assertCriacaoDinamicaSubCampo(bloco, "subBloco", 3, 4);
         assertCriacaoDinamicaSubCampo(bloco.getFieldComposite("subBloco"), "teste", 0, 1);
         assertNull(bloco.getValue("subBloco.teste"));
         bloco.setValue("subBloco.teste", true);
-        assertEquals(bloco.getValue("subBloco.teste"), true);
+        assertEquals((Object) bloco.getValue("subBloco.teste"), true);
 
         // Testa criando em cadeia
         bloco = tipoBloco.newInstance();

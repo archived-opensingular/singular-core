@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -33,9 +34,7 @@ public interface ICompositeInstance {
 
     public void setValue(String pathCampo, Object valor);
 
-    public default Object getValue(String fieldPath) {
-        return getValue(fieldPath, null);
-    }
+    public abstract <T> T getValue(@Nonnull String fieldPath);
 
     public <T> T getValue(String fieldPath, Class<T> resultClass);
 

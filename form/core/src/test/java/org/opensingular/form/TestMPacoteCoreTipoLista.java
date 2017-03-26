@@ -62,7 +62,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertException(() -> listaInt.addValue("XX"), "não consegue converter");
 
         assertEquals(lista.getValue("[0]"), "Paulo");
-        assertEquals(listaInt.getValue("[1]"), 20);
+        assertEquals((Object) listaInt.getValue("[1]"), 20);
         assertException(() -> listaInt.getValue("[20]"), INDICE_INVALIDO);
 
     }
@@ -105,7 +105,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertException(() -> pedidos.getValueAt(10), INDICE_INVALIDO);
 
         assertEquals(pedidos.getValue("[0].descricao"), "bola");
-        assertEquals(pedidos.getValue("[0].qtd"), 20);
+        assertEquals((Object) pedidos.getValue("[0].qtd"), 20);
 
         testAtribuicao(pedidos, "[1].descricao", "rede2", 6);
         testAtribuicao(pedidos, "[1].qtd", 20, 6);

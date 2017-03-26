@@ -146,7 +146,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
     }
 
     private static void assertEqualsArchive(SIPersistenceArchive archive, String path, String expectedValue) {
-        assertThat(archive.getValue(path)).isEqualTo(expectedValue);
+        assertThat((String) archive.getValue(path)).isEqualTo(expectedValue);
     }
 
     private static void assertListSize(SIPersistenceArchive archive, String path, int expectedSize) {
