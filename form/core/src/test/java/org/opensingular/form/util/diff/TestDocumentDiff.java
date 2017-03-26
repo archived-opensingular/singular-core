@@ -20,7 +20,18 @@ import junit.framework.AssertionFailedError;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -320,8 +331,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testListSimple() {
-        STypeList<STypeString, SIString> typeNomes = createTestDictionary().createNewPackage("test").createListTypeOf(
-                "nomes", STypeString.class);
+        STypeList<STypeString, SIString> typeNomes = createTestPackage().createListTypeOf("nomes", STypeString.class);
 
         SIList<SIString> iL1 = typeNomes.newInstance();
         SIList<SIString> iL2 = typeNomes.newInstance();
@@ -416,7 +426,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testListOfComposite() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        PackageBuilder pkg = createTestPackage();
         STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
         typeCs.asAtr().label("Clients");
 
@@ -535,7 +545,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testListOfCompositeEmpty() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        PackageBuilder pkg = createTestPackage();
         STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
 
         SIList<SIComposite>[] iL = new SIList[6];
@@ -568,7 +578,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testAttachment() throws IOException {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        PackageBuilder pkg = createTestPackage();
         STypeComposite<SIComposite> typeOrder = pkg.createCompositeType("order");
         STypeAttachment typeFile1 = typeOrder.addFieldAttachment("file", false);
         STypeAttachment typeFile2 = pkg.getDictionary().getType(STypeAttachment.class);

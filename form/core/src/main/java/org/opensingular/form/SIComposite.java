@@ -19,7 +19,11 @@ package org.opensingular.form;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.util.transformer.Value;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,26 +84,6 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     @Override
     public Stream<? extends SInstance> stream() {
         return fields == null ? Stream.empty() : fields.stream();
-    }
-
-    @Override
-    public SInstance getField(String path) {
-        return getField(new PathReader(path));
-    }
-
-    @Override
-    public Optional<SInstance> getFieldOpt(String path) {
-        return getFieldOpt(new PathReader(path));
-    }
-
-    /**
-     * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
-     * informado. Caso não seja do mesmo tipo, dispara uma exception.
-     */
-    public <II extends SInstance> II getField(SType<II> type) {
-        SInstance instance = getField(type.getNameSimple());
-        type.checkIfIsInstanceOf(instance);
-        return (II) instance;
     }
 
     @Override
@@ -230,11 +214,6 @@ public class SIComposite extends SInstance implements ICompositeInstance {
             throw new SingularFormException(pathReader.getErrorMsg(this, "Não é um campo definido"));
         }
         return fieldIndex;
-    }
-
-    @Override
-    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
-        return getValue(new PathReader(fieldPath), resultClass);
     }
 
     @Override

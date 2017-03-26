@@ -112,7 +112,7 @@ public class TestFormXSDUtil extends TestCaseForm {
     }
 
     private AssertionsSType parseXsd(String xsd) {
-        PackageBuilder sPackage = createTestDictionary().createNewPackage("test.xsd");
+        PackageBuilder sPackage = createTestPackage();
         SType<?> type = FormXSDUtil.xsdToSType(sPackage, xsd);
         return AssertionsSForm.assertType(type).isNotNull();
     }

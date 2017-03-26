@@ -5,7 +5,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.io.FormAssert;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.core.STypeString;
@@ -24,7 +30,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
 
     @Test
     public void testVerySimple() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestPackage("myPkg.teste");
         STypeString type = pkg.createType("descr", STypeString.class);
 
         SIPersistenceArchive archive = testArchiveAndUnarchive(type);
@@ -45,7 +51,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
 
     @Test
     public void testTypeCompositeOneLevel() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestPackage();
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -61,7 +67,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
 
     @Test
     public void testTypeCompositeTwoLevels() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestPackage();
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -79,7 +85,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
 
     @Test
     public void testTypeOfCompositeSubMemberInSamePackage() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         STypeString typeRua = typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -102,7 +108,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
 
     @Test
     public void testTypeOfCompositeSubMemberInDifferentPackage() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestPackage("myPkg.teste");
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         STypeString typeRua = typeEndereco.addFieldString("rua");
         typeEndereco.addFieldInteger("numero");
@@ -125,7 +131,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
     @Ignore("Falta implementar a persistência dos atributos do tipo")
     public void testTypeCompositeWithAttribute() {
         //TODO Implementar esse caso
-        PackageBuilder pkg = createTestDictionary().createNewPackage("myPkg.teste");
+        PackageBuilder pkg = createTestPackage();
         STypeComposite<SIComposite> typeEndereco = pkg.createCompositeType("endereco");
         typeEndereco.asAtr().label("Endereço");
         typeEndereco.addFieldString("rua").asAtr().label("Rua");

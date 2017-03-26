@@ -192,9 +192,7 @@ public abstract class SInstance implements SAttributeEnabled {
         this.type = type;
     }
 
-    public void setValue(Object value) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
-    }
+    public abstract void setValue(Object value);
 
     public abstract Object getValue();
 
@@ -379,6 +377,10 @@ public abstract class SInstance implements SAttributeEnabled {
         return getType().convert(value, resultClass);
     }
 
+    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
+        return getValue(new PathReader(fieldPath), resultClass);
+    }
+
     final <T> T getValue(PathReader pathReader, Class<T> resultClass) {
         SInstance instance = this;
         while (true) {
@@ -396,15 +398,33 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+        throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
     <T> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported(), this);
     }
 
     void setValue(PathReader pathReader, Object value) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported(),this);
+    }
+
+    public SInstance getField(String path) {
+        return getField(new PathReader(path));
+    }
+
+    public Optional<SInstance> getFieldOpt(String path) {
+        return getFieldOpt(new PathReader(path));
+    }
+
+    /**
+     * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
+     * informado. Caso não seja do mesmo tipo, dispara uma exception.
+     */
+    public <II extends SInstance> II getField(SType<II> type) {
+        SInstance instance = getField(type.getNameSimple());
+        type.checkIfIsInstanceOf(instance);
+        return (II) instance;
     }
 
     @Nonnull
@@ -414,8 +434,6 @@ public abstract class SInstance implements SAttributeEnabled {
             instance = instance.getFieldLocal(pathReader);
             if (pathReader.isLast()) {
                 return instance;
-            } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             pathReader = pathReader.next();
         }
@@ -423,7 +441,7 @@ public abstract class SInstance implements SAttributeEnabled {
 
     @Nullable
     SInstance getFieldLocal(@Nonnull PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported(), this);
+        throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
     @Nonnull
@@ -433,8 +451,6 @@ public abstract class SInstance implements SAttributeEnabled {
             Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
             if (!result.isPresent() || pathReader.isLast()) {
                 return result;
-            } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             instance = result.get();
             pathReader = pathReader.next();
@@ -443,7 +459,7 @@ public abstract class SInstance implements SAttributeEnabled {
 
     @Nonnull
     Optional<SInstance> getFieldLocalOpt(@Nonnull PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported(), this);
+        throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
     public String toStringDisplayDefault() {
@@ -564,12 +580,8 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T as(Class<T> classeAlvo) {
-        if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
-            return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
-        }
-        throw new SingularFormException(
-                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
+    public <T> T as(Class<T> targetClass) {
+        return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) targetClass);
     }
 
     @Override

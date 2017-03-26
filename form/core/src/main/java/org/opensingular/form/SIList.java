@@ -84,11 +84,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
     
     @Override
-    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
-        return getValue(new PathReader(fieldPath), resultClass);
-    }
-
-    @Override
     public boolean isEmptyOfData() {
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
@@ -152,16 +147,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     public E get(int index) {
         return getChecking(index, null);
-    }
-
-    @Override
-    public SInstance getField(String path) {
-        return getField(new PathReader(path));
-    }
-
-    @Override
-    public Optional<SInstance> getFieldOpt(String path) {
-        return getFieldOpt(new PathReader(path));
     }
 
     @Override

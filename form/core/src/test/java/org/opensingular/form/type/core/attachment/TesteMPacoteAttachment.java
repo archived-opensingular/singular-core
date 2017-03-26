@@ -1,5 +1,9 @@
 package org.opensingular.form.type.core.attachment;
 
+import com.google.common.io.ByteStreams;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
@@ -9,10 +13,6 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.io.TesteFormSerializationUtil;
-import com.google.common.io.ByteStreams;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     private SIAttachment createEmptyAttachment() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeAttachment tipo = pb.createType("arquivo", STypeAttachment.class);
         return tipo.newInstance();
     }
@@ -138,7 +138,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     @Test
     public void testRepeatedAttachment() throws IOException {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeList<STypeAttachment, SIAttachment> tipoLista = pb.createListTypeOf("anexos", STypeAttachment.class);
         SIList<SIAttachment> lista = tipoLista.newInstance(SIAttachment.class);
 
@@ -167,7 +167,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     @Test
     public void testRemoveAttachmentWheDeletingInstanceOrParentInstance() throws IOException {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldListOf("anexos", STypeAttachment.class);

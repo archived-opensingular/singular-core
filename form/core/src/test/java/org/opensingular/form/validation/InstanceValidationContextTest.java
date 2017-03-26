@@ -1,16 +1,15 @@
 package org.opensingular.form.validation;
 
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.validation.InstanceValidationContext;
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.type.core.STypeString;
 
 
 @RunWith(Parameterized.class)
@@ -32,7 +31,7 @@ public class InstanceValidationContextTest extends TestCaseForm {
     public void setUp() {
         context = new InstanceValidationContext();
 
-        PackageBuilder pkt = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pkt = createTestPackage();
         root = pkt.createCompositeType("root");
         node_1 = root.addFieldComposite("node_1");
         node_2 = root.addFieldComposite("node_2");

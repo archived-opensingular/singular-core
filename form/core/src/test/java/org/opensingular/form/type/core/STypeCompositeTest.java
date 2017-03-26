@@ -26,7 +26,7 @@ public class STypeCompositeTest extends TestCaseForm {
 
     @Before
     public void setUp() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
+        PackageBuilder pkt = createTestPackage();
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");
         subStuff = baseType.addFieldComposite("subStuff");
