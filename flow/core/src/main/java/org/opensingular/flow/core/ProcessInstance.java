@@ -734,18 +734,6 @@ public class ProcessInstance implements Serializable {
 
     /**
      * <p>
-     * Retorna o valor da variável do tipo {@link Date} especificada.
-     * </p>
-     *
-     * @param variableName o nome da variável especificada.
-     * @return o valor da variável.
-     */
-    public final Date getVariableValueDate(String variableName) {
-        return getVariables().getValueDate(variableName);
-    }
-
-    /**
-     * <p>
      * Retorna o valor da variável do tipo {@link Boolean} especificada.
      * </p>
      *

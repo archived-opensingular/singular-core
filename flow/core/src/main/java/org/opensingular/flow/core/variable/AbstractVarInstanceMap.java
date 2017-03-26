@@ -42,9 +42,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance, SELF extends
 
     public AbstractVarInstanceMap(VarDefinitionMap<?> definitions) {
         varService = VarService.getVarService(definitions);
-        for (VarDefinition def : definitions) {
-            addDefinition(def);
-        }
+        addDefinitions(definitions);
     }
 
     @Override

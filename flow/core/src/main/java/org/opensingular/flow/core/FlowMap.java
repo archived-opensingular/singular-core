@@ -206,7 +206,7 @@ public class FlowMap {
             boolean automaticUserAllocation) {
         final SProcessRole processRole = new SProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
-            throw new SingularFlowException(createErrorMsg("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined"));
+            throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
         }
         rolesByAbbreviation.put(processRole.getAbbreviation().toLowerCase(), processRole);
         return processRole;
@@ -249,16 +249,14 @@ public class FlowMap {
         String name = task.getName();
         String abbreviation = task.getAbbreviation();
 
+        if (tasksByAbbreviation.containsKey(abbreviation)) {
+            throw new SingularFlowException("Task with abbreviation '" + abbreviation + "' already defined", this);
+        }
         if (tasksByName.containsKey(name)) {
-            throw new SingularFlowException(createErrorMsg("Task with name '" + name + "' already defined"));
+            throw new SingularFlowException("Task with name '" + name + "' already defined", this);
         }
 
         tasksByName.put(name, task);
-
-        if (tasksByAbbreviation.containsKey(abbreviation)) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' already defined"));
-        }
-
         tasksByAbbreviation.put(abbreviation, task);
 
         return task;
@@ -329,22 +327,12 @@ public class FlowMap {
     public SStart setStart(STask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
-            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"), this);
+            throw new SingularFlowException("The task does not belong to this flow", this);
         } else if (start != null) {
-            throw new SingularFlowException(createErrorMsg("The start point is already setted"), this);
+            throw new SingularFlowException("The start point is already setted", this);
         }
         start = new SStart(task);
         return start;
-    }
-
-    /**
-     * <p>Verifica se há pelo menos duas tarefas do tipo {@link TaskType#PEOPLE} neste mapa.</p>
-     *
-     * @return {@code true} caso haja pelo menos duas tarefas do tipo {@link TaskType#PEOPLE};
-     * {@code false} caso contrário.
-     */
-    public boolean hasMultiplePeopleTasks() {
-        return (getPeopleTasks().size() > 1);
     }
 
     /**
@@ -354,7 +342,7 @@ public class FlowMap {
      */
     public SStart getStart() {
         if (start == null) {
-            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"), this);
+            throw new SingularFlowException("Task inicial não definida no processo", this);
         }
         return start;
     }
@@ -378,7 +366,7 @@ public class FlowMap {
         Objects.requireNonNull(definition.getKey());
         Objects.requireNonNull(definition.getName());
         if (endTasks.containsKey(definition.getName())) {
-            throw new SingularFlowException(createErrorMsg("End task '" + definition.getName() + "' already defined"));
+            throw new SingularFlowException("End task '" + definition.getName() + "' already defined", this);
         }
         final STaskEnd fim = new STaskEnd(this, definition.getName(), definition.getKey());
         endTasks.put(definition.getName(), fim);
@@ -404,12 +392,8 @@ public class FlowMap {
      * @throws SingularFlowException caso não encontre tarefa com a sigla especificada.
      */
     public STask<?> getTaskByAbbreviationOrException(String abbreviation) {
-        STask<?> t = tasksByAbbreviation.get(abbreviation);
-        if (t == null) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"),
-                    this);
-        }
-        return t;
+        return getTaskByAbbreviation(abbreviation).orElseThrow(
+                () -> new SingularFlowException("Task with abbreviation '" + abbreviation + "' not found", this));
     }
 
     /**
@@ -439,8 +423,8 @@ public class FlowMap {
         } else if (expectedClass.isInstance(target)) {
             return expectedClass.cast(target);
         }
-        throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' found, but it is of type "
-                + target.getClass().getName() + " and was expected to be " + expectedClass.getClass().getName()));
+        throw new SingularFlowException("Task with abbreviation '" + abbreviation + "' found, but it is of type "
+                + target.getClass().getName() + " and was expected to be " + expectedClass.getName(), this);
     }
 
     /**
@@ -453,8 +437,8 @@ public class FlowMap {
     public STask<?> getTask(ITaskDefinition taskDefinition) {
         STask<?> task = getTaskWithName(taskDefinition.getName());
         if (task == null) {
-            throw SingularException.rethrow(
-                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey());
+            throw new SingularFlowException(
+                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey(), this);
         }
         return task;
     }
@@ -491,7 +475,7 @@ public class FlowMap {
     public void verifyConsistency() {
         verifyTasksConsistency();
         if(start == null){
-            throw new SingularFlowException(createErrorMsg("There is no initial task set"), this);
+            throw new SingularFlowException("There is no initial task set", this);
         }
         checkRouteToTheEnd();
     }
@@ -507,8 +491,8 @@ public class FlowMap {
             /* CORPO VAZIO */
         }
         if (!tasks.isEmpty()) {
-            throw new SingularFlowException(createErrorMsg("The following tasks have no way to reach the end: "
-                    + joinTaskNames(tasks)));
+            throw new SingularFlowException("The following tasks have no way to reach the end: "
+                    + joinTaskNames(tasks), this);
         }
     }
 
@@ -520,10 +504,6 @@ public class FlowMap {
 
     private static String joinTaskNames(Set<STask<?>> tasks) {
         return tasks.stream().map(STask::getName).collect(Collectors.joining(", "));
-    }
-
-    final String createErrorMsg(String msg) {
-        return getProcessDefinition() + " -> " + msg;
     }
 
     /**
