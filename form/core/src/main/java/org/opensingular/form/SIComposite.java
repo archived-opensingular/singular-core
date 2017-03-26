@@ -114,7 +114,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
             clearInstance();
             Value.hydrate(this, Value.dehydrate((SInstance) obj));
         }else{
-            throw new SingularFormException("SIComposite só suporta valores de mesmo tipo");
+            throw new SingularFormException("SIComposite só suporta valores de mesmo tipo", this);
         }
     }
 

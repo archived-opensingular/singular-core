@@ -168,7 +168,7 @@ public abstract class SInstance implements SAttributeEnabled {
         if (this.parent != null && pai != null) {
             throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
                     + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
-                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
+                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()), this);
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
@@ -364,11 +364,11 @@ public abstract class SInstance implements SAttributeEnabled {
         return convert(getValueWithDefault(), resultClass);
     }
 
-    public final <T> T getValue(Class<T> resultClass) {
+    public final <T> T getValue(@Nullable Class<T> resultClass) {
         return convert(getValue(), resultClass);
     }
 
-    <T> T convert(Object value, Class<T> resultClass) {
+    <T> T convert(@Nullable Object value, @Nullable Class<T> resultClass) {
         if (resultClass == null || value == null) {
             return (T) value;
         } else if (resultClass.isInstance(value)) {
@@ -377,11 +377,15 @@ public abstract class SInstance implements SAttributeEnabled {
         return getType().convert(value, resultClass);
     }
 
-    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
+    public final <T> T getValue(@Nonnull String fieldPath) {
+        return getValue(new PathReader(fieldPath), null);
+    }
+
+    public final <T> T getValue(@Nonnull String fieldPath, @Nullable Class<T> resultClass) {
         return getValue(new PathReader(fieldPath), resultClass);
     }
 
-    final <T> T getValue(PathReader pathReader, Class<T> resultClass) {
+    final <T> T getValue(@Nonnull PathReader pathReader, @Nullable Class<T> resultClass) {
         SInstance instance = this;
         while (true) {
             if (pathReader.isEmpty()) {
@@ -689,7 +693,7 @@ public abstract class SInstance implements SAttributeEnabled {
         onRemove();
         if (getFlag(InstanceFlags.REMOVENDO_INSTANCIA)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()", this);
         }
         setParent(null);
         removeChildren();

@@ -63,13 +63,11 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     public SType<?> getTipo() {
-        if (target == null) {
-            throw new SingularFormException("O objeto alvo dos atributos não foi definido");
+        SAttributeEnabled t = getTarget();
+        if (t instanceof SType) {
+            return (SType<?>) t;
         }
-        if (target instanceof SType) {
-            return (SType<?>) target;
-        }
-        return ((SInstance) target).getType();
+        return ((SInstance) t).getType();
     }
 
     /**

@@ -126,7 +126,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param tb Classe utilitária de apoio na configuração do tipo
      */
     protected void onLoadType(@Nonnull TypeBuilder tb) {
-        throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()");
+        throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()", this);
         // Esse método será implementado nas classes derevidas se precisarem
     }
 
@@ -543,7 +543,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             if (type.hasDirectOrInderectDependentType(this)) {
                 throw new SingularFormException(
                         "Referência circular de dependência detectada ao tentar adicionar " + type +
-                                " como dependente de " + this);
+                                " como dependente de " + this, this);
             }
             if (dependentTypes == null) {
                 dependentTypes = new LinkedHashSet<>();
@@ -634,7 +634,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     public I castInstance(SInstance instance) {
         // TODO verificar se essa é a verificação correta
         if (instance.getType() != this) {
-            throw new SingularFormException("A instância " + instance + " não é do tipo " + this);
+            throw new SingularFormException("A instância " + instance + " não é do tipo " + this, this);
         }
         return (I) instance;
     }
@@ -868,7 +868,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public <T> T convert(Object value, Class<T> resultClass) {
-        throw new SingularFormException("Método não suportado");
+        throw new SingularFormException("Método não suportado", this);
     }
 
     public boolean hasValidation() {

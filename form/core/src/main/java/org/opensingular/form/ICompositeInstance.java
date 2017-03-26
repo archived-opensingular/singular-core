@@ -65,14 +65,14 @@ public interface ICompositeInstance {
     public SInstance getField(String path);
 
     public default <T extends SInstance> T getField(String path, Class<T> typeOfInstance) {
-        SInstance instancia = getField(path);
-        if (instancia == null) {
+        SInstance instance = getField(path);
+        if (instance == null) {
             return null;
-        } else if (typeOfInstance.isInstance(instancia)) {
-            return typeOfInstance.cast(instancia);
+        } else if (typeOfInstance.isInstance(instance)) {
+            return typeOfInstance.cast(instance);
         }
-        throw new SingularFormException("'" + path + "' + retornou uma instancia do tipo " + instancia.getClass().getName()
-                + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName());
+        throw new SingularFormException("'" + path + "' + retornou uma instancia do tipo " + instance.getClass().getName()
+                + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName(), instance);
     }
 
     /**

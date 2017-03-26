@@ -32,19 +32,18 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
 
     private static final long serialVersionUID = -4455601838581324870L;
 
-    private final IModel<? extends SInstance>     model;
+    private final IModel<? extends SIList<?>>     model;
     private final List<SelectSInstanceAwareModel> selects;
 
     public MultipleSelectSInstanceAwareModel(IModel<? extends SInstance> model) {
-        this.model = model;
+        if (! (model.getObject() instanceof SIList)) {
+            throw new SingularFormException("Este model somente deve ser utilizado para tipo lista", model.getObject());
+        }
+        this.model = (IModel<? extends SIList<?>>) model;
         this.selects = new ArrayList<>();
-        if (model.getObject() instanceof SIList) {
-            final SIList<?> list = (SIList<?>) model.getObject();
-            for (int i = 0; i < list.size(); i += 1) {
-                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
-            }
-        } else {
-            throw new SingularFormException("Este model somente deve ser utilizado para tipo lista");
+        final SIList<?> list = this.model.getObject();
+        for (int i = 0; i < list.size(); i += 1) {
+            selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
         }
     }
 
@@ -60,18 +59,14 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
 
     @Override
     public void setObject(List<Serializable> objects) {
-        if (model.getObject() instanceof SIList<?>) {
-            final SIList<?> list = (SIList<?>) model.getObject();
-            list.clearInstance();
-            selects.clear();
-            for (int i = 0; i <= objects.size(); i += 1) {
-                final Serializable o = objects.get(i);
-                final SInstance newElement = list.addNew();
-                model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
-                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
-            }
-        } else {
-            throw new SingularFormException("Este model somente deve ser utilizado para tipo lista");
+        SIList<?> list = model.getObject();
+        list.clearInstance();
+        selects.clear();
+        for (int i = 0; i <= objects.size(); i += 1) {
+            final Serializable o = objects.get(i);
+            final SInstance newElement = list.addNew();
+            model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
+            selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
         }
     }
 
