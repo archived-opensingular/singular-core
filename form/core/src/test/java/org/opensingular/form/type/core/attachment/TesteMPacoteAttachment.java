@@ -77,7 +77,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     private SIAttachment createEmptyAttachment() {
-        PackageBuilder  pb   = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeAttachment tipo = pb.createType("arquivo", STypeAttachment.class);
         return tipo.newInstance();
     }
@@ -138,7 +138,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     @Test
     public void testRepeatedAttachment() throws IOException {
-        PackageBuilder                           pb        = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeList<STypeAttachment, SIAttachment> tipoLista = pb.createListTypeOf("anexos", STypeAttachment.class);
         SIList<SIAttachment>                     lista     = tipoLista.newInstance(SIAttachment.class);
 
@@ -167,7 +167,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     @Test
     public void testRemoveAttachmentWheDeletingInstanceOrParentInstance() throws IOException {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldListOf("anexos", STypeAttachment.class);

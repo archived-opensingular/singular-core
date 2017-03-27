@@ -31,7 +31,7 @@ public class TestSDocumentServices extends TestCaseForm {
 
     @Before
     public void setUp() {
-        createTypes(createTestDictionary().createNewPackage("teste"));
+        createTypes(createTestPackage());
         createInstances();
     }
 

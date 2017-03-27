@@ -16,8 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import java.util.Objects;
-
 public class STaskPeople extends STaskUserExecutable<STaskPeople> {
 
     private boolean canReallocate = true;
@@ -44,7 +42,11 @@ public class STaskPeople extends STaskUserExecutable<STaskPeople> {
     @Override
     void verifyConsistency() {
         super.verifyConsistency();
-        Objects.requireNonNull(getExecutionPage(), "Não foi definida a estratégia da página para execução da tarefa.");
-        Objects.requireNonNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
+        if (getExecutionPage() == null) {
+            throw new SingularFlowException("Não foi definida a estratégia da página para execução da tarefa.", this);
+        }
+        if (getAccessStrategy() == null) {
+            throw new SingularFlowException("Não foi definida a estrategia de verificação de acesso da tarefa", this);
+        }
     }
 }

@@ -1,12 +1,5 @@
 package org.opensingular.form.internal.freemarker;
 
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.type.core.STypeString;
 import org.fest.assertions.api.AbstractAssert;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.StringAssert;
@@ -14,6 +7,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.type.core.STypeString;
 
 import java.util.Date;
 
@@ -32,7 +32,7 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
 
     @Before
     public void setUp() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
+        PackageBuilder pkt = createTestPackage();
         curriculoType = pkt.createCompositeType("curriculo");
 
         dadosType = curriculoType.addFieldComposite("dados");
@@ -89,7 +89,7 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
 
     @Test
     public void testMixedFieldsWithMethods() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
+        PackageBuilder pkt = createTestPackage();
         STypeComposite<? extends SIComposite> recordType = pkt.createCompositeType("record");
         STypeString                           nameType   = recordType.addFieldString("name");
         recordType.addFieldString("value");

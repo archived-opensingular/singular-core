@@ -27,6 +27,10 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     private SAttributeEnabled target;
 
     static <T extends STranslatorForAttribute> T of(SAttributeEnabled original, Class<T> aspectClass) {
+        if (! STranslatorForAttribute.class.isAssignableFrom(aspectClass)) {
+            throw new SingularFormException("Classe '" + aspectClass + "' não funciona como aspecto. Deve extender " +
+                    STranslatorForAttribute.class.getName());
+        }
         T instance;
         try {
             instance = aspectClass.newInstance();
@@ -35,6 +39,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         }
         return of(original, instance);
     }
+
     static <T extends STranslatorForAttribute> T of(SAttributeEnabled original, T instance) {
         instance.setTarget(original);
         return instance;
@@ -58,13 +63,11 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     public SType<?> getTipo() {
-        if (target == null) {
-            throw new SingularFormException("O objeto alvo dos atributos não foi definido");
+        SAttributeEnabled t = getTarget();
+        if (t instanceof SType) {
+            return (SType<?>) t;
         }
-        if (target instanceof SType) {
-            return (SType<?>) target;
-        }
-        return ((SInstance) target).getType();
+        return ((SInstance) t).getType();
     }
 
     /**
