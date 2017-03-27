@@ -53,10 +53,6 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         return o;
     }
 
-    public T insert(InputStream is, long length, String name){
-        return insert(is, length, name, null);
-    }
-
     public T insert(InputStream is, long length, String name, String hashSha1){
         C content = attachmentContentDao.insert(is, length, hashSha1);
         return insert(createAttachment(content, name));

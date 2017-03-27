@@ -231,7 +231,7 @@ public final class XPathToolkit {
             case Node.COMMENT_NODE:
                 return "Comment Node";
             case Node.DOCUMENT_NODE:
-                return "Document node";
+                return "Document Node";
             case Node.DOCUMENT_FRAGMENT_NODE:
                 return "Document Fragment Node";
             case Node.DOCUMENT_TYPE_NODE:

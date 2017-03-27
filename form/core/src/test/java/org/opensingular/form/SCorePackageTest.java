@@ -32,16 +32,16 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testRecuperarTipo() {
-        createTestDictionary().getTypeOptional(STypeString.class);
+        createTestDictionary().getType(STypeString.class);
     }
 
     @Test
     public void testHerancaValorEntreTipos() {
         SDictionary dictionary = createTestDictionary();
 
-        STypeSimple<?, ?> tipoS = dictionary.getTypeOptional(STypeSimple.class);
-        STypeBoolean      tipoB = dictionary.getTypeOptional(STypeBoolean.class);
-        STypeInteger      tipoI = dictionary.getTypeOptional(STypeInteger.class);
+        STypeSimple<?, ?> tipoS = dictionary.getType(STypeSimple.class);
+        STypeBoolean      tipoB = dictionary.getType(STypeBoolean.class);
+        STypeInteger      tipoI = dictionary.getType(STypeInteger.class);
 
         Assert.assertFalse(tipoS.getAttributeValue(SPackageBasic.ATR_REQUIRED));
         Assert.assertFalse(tipoB.getAttributeValue(SPackageBasic.ATR_REQUIRED));
@@ -77,9 +77,9 @@ public class SCorePackageTest extends TestCaseForm {
     @Test
     public void testValidacaoBasica() {
         SDictionary dictionary = createTestDictionary();
-        STypeBoolean tipoB = dictionary.getTypeOptional(STypeBoolean.class);
-        STypeInteger tipoI = dictionary.getTypeOptional(STypeInteger.class);
-        STypeString tipoS = dictionary.getTypeOptional(STypeString.class);
+        STypeBoolean tipoB = dictionary.getType(STypeBoolean.class);
+        STypeInteger tipoI = dictionary.getType(STypeInteger.class);
+        STypeString tipoS = dictionary.getType(STypeString.class);
 
         testarAtribuicao(tipoB, true, null, null);
         testarAtribuicao(tipoB, true, true, true);
@@ -145,9 +145,9 @@ public class SCorePackageTest extends TestCaseForm {
     public void testSelfReference() {
         SDictionary dictionary = createTestDictionary();
 
-        STypeSimple<?, ?> tipoS = dictionary.getTypeOptional(STypeSimple.class);
-        STypeBoolean tipoB = dictionary.getTypeOptional(STypeBoolean.class);
-        STypeInteger tipoI = dictionary.getTypeOptional(STypeInteger.class);
+        STypeSimple<?, ?> tipoS = dictionary.getType(STypeSimple.class);
+        STypeBoolean tipoB = dictionary.getType(STypeBoolean.class);
+        STypeInteger tipoI = dictionary.getType(STypeInteger.class);
 
         Assert.assertNull(tipoS.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
         Assert.assertNull(tipoB.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
@@ -313,9 +313,9 @@ public class SCorePackageTest extends TestCaseForm {
         SDictionary dictionary = createTestDictionary();
         dictionary.loadPackage(TestPacoteA.class);
         assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-        TestCase.assertNotNull(dictionary.getTypeOptional(TestTipoA.class));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA"));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
+        TestCase.assertNotNull(dictionary.getType(TestTipoA.class));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA").get());
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").get());
     }
 
     @Test
@@ -324,10 +324,10 @@ public class SCorePackageTest extends TestCaseForm {
         dictionary.loadPackage(TestPacoteB.class);
         assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
         assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteB")));
-        TestCase.assertNotNull(dictionary.getTypeOptional(TestTipoA.class));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA"));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteB.TestTipoB"));
+        TestCase.assertNotNull(dictionary.getType(TestTipoA.class));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA").get());
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").get());
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteB.TestTipoB").get());
     }
 
     @Test
@@ -354,9 +354,9 @@ public class SCorePackageTest extends TestCaseForm {
         assertCargaPacoteA(dictionary, true);
 
         assertEquals((Integer) 10, tipoEndereco.getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dictionary.getTypeOptional(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dictionary.getTypeOptional(STypeSimple.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dictionary.getTypeOptional(SType.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getType(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getType(STypeSimple.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getType(SType.class).getAttributeValue(TestPacoteA.ATR_XX));
     }
 
     @Test
@@ -382,12 +382,12 @@ public class SCorePackageTest extends TestCaseForm {
     private static void assertCargaPacoteA(SDictionary dictionary, boolean carregado) {
         if (carregado) {
             assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
-            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.xx"));
+            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").get());
+            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.xx").get());
         } else {
             assertFalse(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-            assertNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
-            assertNull(dictionary.getTypeOptional("teste.pacoteA.xx"));
+            assertNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").orElse(null));
+            assertNull(dictionary.getTypeOptional("teste.pacoteA.xx").orElse(null));
         }
     }
 

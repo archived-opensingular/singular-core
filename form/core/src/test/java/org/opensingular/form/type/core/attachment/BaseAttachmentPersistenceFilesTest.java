@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.opensingular.form.io.HashUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,7 +61,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     }
 
     @Test public void createReferenceWithProperDataUsingStream() throws Exception {    
-        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName));
+        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName, HashUtil.toSHA1Base16(content)));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
@@ -71,7 +72,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
 
     
     @Test public void recoverReferenceWithSameDataUsingStream() throws Exception {    
-        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName);
+        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName, HashUtil.toSHA1Base16(content));
         IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
         assertReference(original, returned);
     }

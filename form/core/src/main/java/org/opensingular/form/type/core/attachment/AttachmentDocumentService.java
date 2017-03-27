@@ -81,8 +81,8 @@ class AttachmentDocumentService {
         return service2;
     }
 
-    public IAttachmentRef addContent(String currentReferenceId, File content, long length, String name, SDocument document) {
-        return addContent(currentReferenceId, getTemporaryAttachmentHandler().addAttachment(content, length, name), document);
+    public IAttachmentRef addContent(String currentReferenceId, File content, long length, String name, String hashSha1, SDocument document) {
+        return addContent(currentReferenceId, getTemporaryAttachmentHandler().addAttachment(content, length, name, hashSha1), document);
     }
 
     private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef, SDocument document) {
