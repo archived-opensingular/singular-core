@@ -1,12 +1,12 @@
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TestCaseForm;
 
 @RunWith(Parameterized.class)
 public class FormTreeTypeTest extends TestCaseForm {
@@ -19,7 +19,7 @@ public class FormTreeTypeTest extends TestCaseForm {
 //        FormTreeTypeTest pkg = (FormTreeTypeTest) dict.onLoadPackage((Class)FormTreeTypeTest.class);
 //        STypeComposite<? extends SIComposite> node = pkg.createTipoComposto("node");
 
-        PackageBuilder                        pkg  = createTestDictionary().createNewPackage("pkg");
+        PackageBuilder                        pkg  = createTestPackage();
         STypeComposite<? extends SIComposite> node = pkg.createCompositeType("node");
 
         node.addFieldString("nome");

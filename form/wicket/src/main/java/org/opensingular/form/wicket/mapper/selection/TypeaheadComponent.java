@@ -23,7 +23,11 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.*;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -50,7 +54,11 @@ import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.newLinkedHashMap;
@@ -214,7 +222,7 @@ public class TypeaheadComponent extends Panel {
         if (provider != null) {
             stream = provider.load(providerContext).stream();
         } else {
-            throw new SingularFormException("Nenhum provider foi informado");
+            throw new SingularFormException("Nenhum provider foi informado", instance());
         }
 
         return stream.filter(o -> instance().asAtrProvider().getIdFunction().apply(o).equals(key)).findFirst();

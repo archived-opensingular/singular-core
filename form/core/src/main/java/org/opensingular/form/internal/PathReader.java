@@ -112,17 +112,19 @@ public final class PathReader {
 
     /** Retorna o trecho atual do path sendo lido. Será o nome do campo ou número do índice sendo lido. */
     public String getToken() {
+        checkIfAtEnd();
+        return token;
+    }
+
+    private void checkIfAtEnd() {
         if (token == null) {
             throw new SingularFormException("Leitura já está no fim");
         }
-        return token;
     }
 
     /** Retorna o próximo trecho do path a ser processado. */
     public PathReader next() {
-        if (token == null) {
-            throw new SingularFormException("Leitura já está no fim");
-        }
+        checkIfAtEnd();
         return new PathReader(path, end);
     }
 
@@ -133,17 +135,13 @@ public final class PathReader {
 
     /** Indica se é o último elemento do path. */
     public boolean isLast() {
-        if (token == null) {
-            throw new SingularFormException("Leitura já está no fim");
-        }
+        checkIfAtEnd();
         return end == path.length();
     }
 
     /** Indica se o trecho atual é um indice para uma lista. */
     public boolean isIndex() {
-        if (token == null) {
-            throw new SingularFormException("Leitura já está no fim");
-        }
+        checkIfAtEnd();
         return aListIndex;
     }
 

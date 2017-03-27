@@ -3,7 +3,11 @@ package org.opensingular.form.io;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.helpers.AssertionsXML;
 import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.type.core.SIString;
@@ -20,7 +24,7 @@ public class TestFormXMLUtil extends TestCaseForm {
 
     @Test
     public void testKeepUnknownFieldsInAComposite() {
-        STypeComposite<SIComposite> bloco = createTestDictionary().createNewPackage("teste").createCompositeType(
+        STypeComposite<SIComposite> bloco = createTestPackage().createCompositeType(
                 "bloco");
         bloco.addFieldString("a");
 
@@ -45,7 +49,7 @@ public class TestFormXMLUtil extends TestCaseForm {
 
     @Test
     public void testKeepUnknownFieldsInAListOfComposite() {
-        STypeList<STypeComposite<SIComposite>, SIComposite> list = createTestDictionary().createNewPackage("teste")
+        STypeList<STypeComposite<SIComposite>, SIComposite> list = createTestPackage()
                 .createListOfNewCompositeType("itens", "item");
         list.getElementsType().addFieldString("a");
 

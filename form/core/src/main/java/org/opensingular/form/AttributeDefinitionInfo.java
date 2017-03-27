@@ -31,10 +31,6 @@ final class AttributeDefinitionInfo {
         this(null, false);
     }
 
-    AttributeDefinitionInfo(SType<?> owner) {
-        this(owner, false);
-    }
-
     AttributeDefinitionInfo(SType<?> owner, boolean selfReference) {
         this.owner = owner;
         this.selfReference = selfReference;

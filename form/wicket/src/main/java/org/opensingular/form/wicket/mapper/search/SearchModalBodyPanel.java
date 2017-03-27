@@ -31,8 +31,12 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.provider.*;
+import org.opensingular.form.provider.Config;
 import org.opensingular.form.provider.Config.Column;
+import org.opensingular.form.provider.FilteredPagedProvider;
+import org.opensingular.form.provider.FilteredProvider;
+import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
+import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
@@ -74,11 +78,11 @@ class SearchModalBodyPanel extends Panel {
 
     private void validate() {
         if (getInstance().asAtrProvider().getFilteredProvider() == null) {
-            throw new SingularFormException("O provider não foi informado");
+            throw new SingularFormException("O provider não foi informado", getInstance());
         }
         if (getInstance().asAtrProvider().getConverter() == null
                 && (getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
-            throw new SingularFormException("O tipo não é simples e o converter não foi informado.");
+            throw new SingularFormException("O tipo não é simples e o converter não foi informado.", getInstance());
         }
     }
 

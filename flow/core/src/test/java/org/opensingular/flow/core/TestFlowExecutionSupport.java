@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 public abstract class TestFlowExecutionSupport extends TestFlowSupport {
 
     @Before
-    public void setUp() {
+    public final void setUp() {
         assertNotNull(mbpmBean);
         Flow.setConf(mbpmBean, true);
     }

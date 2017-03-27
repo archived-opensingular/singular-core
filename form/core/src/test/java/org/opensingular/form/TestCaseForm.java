@@ -68,6 +68,14 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         return dictionaryFactory.get();
     }
 
+    protected final PackageBuilder createTestPackage() {
+        return createTestPackage("teste");
+    }
+
+    protected final PackageBuilder createTestPackage(String packageName) {
+        return createTestDictionary().createNewPackage(packageName);
+    }
+
     /** Cria assertivas para um {@link SType}. */
     public static AssertionsSType assertType(SType<?> type) {
         return new AssertionsSType(type);

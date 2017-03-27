@@ -11,7 +11,7 @@ public class SingularInvalidFieldTypeException extends SingularFormException {
         super(String.format(String.format(
                 "O tipo '%s' não foi encontrado como subcampo de '%s'",
                 fieldType.getName(),
-                rootType.getName())));
+                rootType.getName())), rootType);
         this.rootType = rootType;
         this.fieldType = fieldType;
         add("rootType", rootType);

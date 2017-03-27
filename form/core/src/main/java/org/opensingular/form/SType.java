@@ -16,13 +16,11 @@
 
 package org.opensingular.form;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.function.IBehavior;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -111,9 +109,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             simpleName = getInfoType().name();
             if (StringUtils.isEmpty(simpleName)) {
                 simpleName = getClass().getSimpleName();
-                if (simpleName.startsWith("STYPE")) {
-                    simpleName = simpleName.substring(5);
-                }
             }
         }
         SFormUtil.validateSimpleName(simpleName);
@@ -131,7 +126,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param tb Classe utilitária de apoio na configuração do tipo
      */
     protected void onLoadType(@Nonnull TypeBuilder tb) {
-        throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()");
+        throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()", this);
         // Esse método será implementado nas classes derevidas se precisarem
     }
 
@@ -162,10 +157,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     @SuppressWarnings("unchecked")
     final void resolvSuperType(SDictionary dictionary) {
         if (superType == null && getClass() != SType.class) {
-            Class<SType> c = (Class<SType>) getClass().getSuperclass();
-            if (c != null) {
-                this.superType = dictionary.getType(c);
-            }
+            Class<SType> c = (Class<SType>) Objects.requireNonNull(getClass().getSuperclass());
+            superType = dictionary.getType(c);
         }
     }
 
@@ -417,19 +410,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> with(String attributePath, Object value) {
-        setAttributeValue(attributePath, value);
-        return this;
-    }
-
-    public SType<I> with(String valuesExpression) {
-        throw new NotImplementedException("Este tipo não implementa o método `with`");
-    }
-
-    public SType<I> withCode(String fieldPath, IBehavior<I> behavior) {
-        throw new NotImplementedException("Este tipo não implementa o método `withCode`");
-    }
-
     public SType<I> withInitialValue(Object value) {
         return with(SPackageBasic.ATR_INITIAL_VALUE, value);
 
@@ -479,10 +459,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     @SuppressWarnings("unchecked")
     public <T> T as(Class<T> targetClass) {
-        if (STranslatorForAttribute.class.isAssignableFrom(targetClass)) {
-            return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) targetClass);
-        }
-        throw new SingularFormException("Classe '" + targetClass + "' não funciona como aspecto", this);
+        return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) targetClass);
     }
 
     @Override
@@ -566,7 +543,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             if (type.hasDirectOrInderectDependentType(this)) {
                 throw new SingularFormException(
                         "Referência circular de dependência detectada ao tentar adicionar " + type +
-                                " como dependente de " + this);
+                                " como dependente de " + this, this);
             }
             if (dependentTypes == null) {
                 dependentTypes = new LinkedHashSet<>();
@@ -657,7 +634,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     public I castInstance(SInstance instance) {
         // TODO verificar se essa é a verificação correta
         if (instance.getType() != this) {
-            throw new SingularFormException("A instância " + instance + " não é do tipo " + this);
+            throw new SingularFormException("A instância " + instance + " não é do tipo " + this, this);
         }
         return (I) instance;
     }
@@ -891,7 +868,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public <T> T convert(Object value, Class<T> resultClass) {
-        throw new SingularFormException("Método não suportado");
+        throw new SingularFormException("Método não suportado", this);
     }
 
     public boolean hasValidation() {

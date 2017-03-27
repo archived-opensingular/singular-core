@@ -16,7 +16,7 @@ public class TestSInstance extends TestCaseForm {
     }
 
     @Test public void testIncrementoId() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<?> tipoPedido = pb.createCompositeType("pedido");
         tipoPedido.addFieldString("nome");
@@ -60,5 +60,31 @@ public class TestSInstance extends TestCaseForm {
     private static void assertId(SInstance pedido, int idInstancia, int lastId) {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
+    }
+
+    @Test
+    public void getFieldOnSInstanceSimple() {
+        STypeComposite<SIComposite> blockType = createTestPackage().createCompositeType("block");
+        blockType.addFieldBoolean("a");
+        assertException(() -> blockType.newInstance().getField("a.b"), SingularFormException.class,
+                "Não suporta leitura de subCampos");
+        assertException(() -> blockType.newInstance().getFieldOpt("a.b"), SingularFormException.class,
+                "Não suporta leitura de subCampos");
+
+    }
+
+    @Test
+    public void getValueOnSInstanceSimple() {
+        STypeComposite<SIComposite> blockType = createTestPackage().createCompositeType("block");
+        blockType.addFieldBoolean("a");
+
+        SIComposite block = blockType.newInstance();
+        assertException(() -> block.getValue("a.b", Object.class), SingularFormException.class,
+                "Não se aplica um path a um tipo simples");
+
+        block.setValue("a", Boolean.TRUE);
+        assertException(() -> block.getValue("a.b", Object.class), SingularFormException.class,
+                "Não suporta leitura de subCampos");
+
     }
 }
