@@ -34,9 +34,9 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
-    private String tagName;
-    private String cssClass = null, innerStyle = null;
-    protected final RepeatingView items = new RepeatingView("_");
+    private String                tagName;
+    private String                cssClass = null, innerStyle = null;
+    protected final RepeatingView items    = new RepeatingView("_");
 
     public BSContainer(String id) {
         super(id);
@@ -99,7 +99,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     public BSControls newFormGroup(BootstrapSize bsSize) {
         return newComponent(componentId -> {
             BSControls controls = new BSControls(componentId, false)
-                    .setCssClass("form-group" + bsSize.apply("form-group"));
+                .setCssClass("form-group" + bsSize.apply("form-group"));
             controls.add(new AttributeAppender("class", "can-have-error", " "));
             return controls;
         });
@@ -115,7 +115,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public THIS appendTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<Component> factory) {
-        newTag(tag, closeTag, attrs, factory.newComponent(items.newChildId()));
+        newTag(tag, closeTag, attrs, factory.newComponent(newChildId()));
         return (THIS) this;
     }
 
@@ -124,16 +124,15 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public <C extends Component> C newTagWithFactory(String tag, boolean closeTag, String attrs, IBSComponentFactory<C> factory) {
-        return newTag(tag, closeTag, attrs, factory.newComponent(items.newChildId()));
+        return newTag(tag, closeTag, attrs, factory.newComponent(newChildId()));
     }
 
     public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, C component) {
-        TemplatePanel container = newComponent(id -> new TemplatePanel(id, () ->
-                "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
-                        + (closeTag ? "</" + tag + ">\n" : "\n")));
+        TemplatePanel container = newComponent(id -> new TemplatePanel(id, () -> "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
+            + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
-                .add(component)
-                .setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
+            .add(component)
+            .setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
         return component;
     }
 
@@ -149,8 +148,8 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public <C extends Component> C newComponent(IBSComponentFactory<C> factory) {
-        C comp = factory.newComponent(items.newChildId());
-        items.add(comp);
+        C comp = factory.newComponent(newChildId());
+        getItems().add(comp);
         return comp;
     }
 
@@ -176,9 +175,13 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         return cssClass;
     }
 
-    public String getInnerStyle() {return innerStyle; }
+    public String getInnerStyle() {
+        return innerStyle;
+    }
 
-    public RepeatingView getItems() {return items;}
+    public RepeatingView getItems() {
+        return items;
+    }
 
     public void addInfoMessage(String message) {
         final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
@@ -188,7 +191,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         }
     }
 
-    public String newChildId(){
-        return items.newChildId();
+    public String newChildId() {
+        return getItems().newChildId();
     }
 }

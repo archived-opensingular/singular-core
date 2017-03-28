@@ -64,6 +64,7 @@ public interface IBSGridCol<THIS extends Component> {
 
     default AttributeAppender newBSGridColBehavior() {
         return new AttributeAppender("class", new AbstractReadOnlyModel<CharSequence>() {
+            @Override
             public CharSequence getObject() {
                 StringBuilder sb = new StringBuilder();
 
