@@ -97,7 +97,7 @@ public class STaskJava extends STask<STaskJava> {
 
     @Override
     void verifyConsistency() {
-        if (taskImpl == null) {
+        if (taskImpl == null && blockImpl == null) {
             throw new SingularFlowException(createErrorMsg("Não foi configurado o código de execução da tarefa"), this);
         }
     }
