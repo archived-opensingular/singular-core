@@ -16,13 +16,36 @@
 
 package org.opensingular.form.wicket.model;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public interface ISInstanceAwareModel<T> extends IModel<T> {
+
     SInstance getSInstance();
+
+    /**
+     * Recupera o {@link SInstance} associado ao componente, se o componente tiver um model do tipo {@link
+     * ISInstanceAwareModel}.
+     */
+    @Nonnull
+    static Optional<SInstance> optionalSInstance(@Nonnull Component component) {
+        return optionalSInstance(component.getDefaultModel());
+    }
+
+    /**
+     * Recupera o {@link SInstance} associado ao model, se o model for tipo {@linkISInstanceAwareModel}.
+     */
+    @Nonnull
+    static Optional<SInstance> optionalSInstance(IModel<?> model) {
+        if (model instanceof ISInstanceAwareModel) {
+            return Optional.ofNullable(((ISInstanceAwareModel) model).getSInstance());
+        }
+        return Optional.empty();
+    }
 
     static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model) {
         if (model instanceof ISInstanceAwareModel) {

@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -61,8 +62,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithType(SType<?> type) {
-        return findSubComponent(component -> ISInstanceAwareModel.optionalCast(component.getDefaultModel())
-                .map(ISInstanceAwareModel::getSInstance)
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(type::equals).orElse(Boolean.FALSE));
     }
@@ -74,8 +74,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithTypeNameSimple(String nameSimple) {
-        return findSubComponent(component -> ISInstanceAwareModel.optionalCast(component.getDefaultModel())
-                .map(ISInstanceAwareModel::getSInstance)
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(SType::getNameSimple)
                 .map(nameSimple::equals).orElse(Boolean.FALSE));
@@ -83,11 +82,19 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     /**
      * Busca um sub componente do componente atual com o ID informado e retonar o resultado. Dispara exception senão
-     * econtrar o sub componente.
+     * encontrar o sub componente.
      */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithId(String componentId) {
         return findSubComponent(component -> componentId.equals(component.getId()));
+    }
+
+    /**
+     * Busca um sub componente do componente atual que possua uma {@link SInstance} como model do componente.
+     * Dispara exception senão encontrar o sub componente.
+     */
+    public final AssertionsWComponent getSubCompomentWithSInstance() {
+        return findSubComponent(component ->  ISInstanceAwareModel.optionalSInstance(component).isPresent());
     }
 
     /**
@@ -155,8 +162,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     @Nonnull
     public AssertionsSInstance assertSInstance() {
         isNotNull();
-        return new AssertionsSInstance(ISInstanceAwareModel.optionalCast(getTarget().getDefaultModel())
-                .map(ISInstanceAwareModel::getSInstance)
+        return new AssertionsSInstance(ISInstanceAwareModel.optionalSInstance(getTarget())
                 .orElseThrow(() -> new AssertionError(errorMsg("O Componente "+getTarget()
                         +" não possui model de SInstance "))));
     }
@@ -180,7 +186,13 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
             System.out.print("  ");
         }
 
-        System.out.println(component.getId() + ":" + resolveClassName(component.getClass()));
+        String descr = component.getId() + ":" + resolveClassName(component.getClass());
+        Optional<SInstance> instance = ISInstanceAwareModel.optionalSInstance(component);
+        if (instance.isPresent()) {
+            descr += "      <" + instance.get().getPathFull() + ">";
+        }
+
+        System.out.println(descr);
         if (component instanceof MarkupContainer) {
             for(Component sub : (MarkupContainer) component) {
                 debugComponentTree(level+1, sub);

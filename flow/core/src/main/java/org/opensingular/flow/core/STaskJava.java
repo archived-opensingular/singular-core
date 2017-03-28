@@ -57,6 +57,9 @@ public class STaskJava extends STask<STaskJava> {
     public <T extends ProcessInstance> STaskJava callBlock(ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
         Objects.requireNonNull(implBloco);
         Objects.requireNonNull(scheduleData);
+        if (taskImpl != null) {
+            throw new SingularFlowException(createErrorMsg("A task já está configurada usando call(), chamada simples"), this);
+        }
         this.blockImpl = implBloco;
         this.scheduleData = scheduleData;
         return this;
@@ -64,6 +67,9 @@ public class STaskJava extends STask<STaskJava> {
 
     public STaskJava call(ImplTaskJava impl) {
         Objects.requireNonNull(impl);
+        if (blockImpl != null) {
+            throw new SingularFlowException(createErrorMsg("A task já está configurada usando callBlock(), chamada em bloco"), this);
+        }
         taskImpl = impl;
         return this;
     }
@@ -76,7 +82,7 @@ public class STaskJava extends STask<STaskJava> {
     @Override
     public void execute(ExecutionContext execucaoTask) {
         if (taskImpl == null) {
-            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não foi configurado o código de execução da tarefa"), this);
+            throw new SingularFlowException(createErrorMsg("Chamada inválida. Se aplica apenas execução em bloco nesta tarefa."), this);
         }
         Object result = taskImpl.call(execucaoTask);
         if (result instanceof String) {
@@ -95,6 +101,13 @@ public class STaskJava extends STask<STaskJava> {
             result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
         return result;
+    }
+
+    @Override
+    void verifyConsistency() {
+        if (taskImpl == null && blockImpl == null) {
+            throw new SingularFlowException(createErrorMsg("Não foi configurado o código de execução da tarefa"), this);
+        }
     }
 
     @FunctionalInterface
