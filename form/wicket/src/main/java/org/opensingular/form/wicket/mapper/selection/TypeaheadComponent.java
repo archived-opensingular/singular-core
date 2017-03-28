@@ -157,7 +157,7 @@ public class TypeaheadComponent extends Panel {
 
             @Override
             public SInstance getSInstance() {
-                return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getSInstance).orElse(null);
+                return ISInstanceAwareModel.optionalSInstance(model).orElse(null);
             }
 
             @Override
@@ -331,7 +331,7 @@ public class TypeaheadComponent extends Panel {
     }
 
     private SInstance instance() {
-        return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getSInstance).orElse(null);
+        return ISInstanceAwareModel.optionalSInstance(model).orElse(null);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

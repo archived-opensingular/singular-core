@@ -75,9 +75,7 @@ public class STaskJava extends STask<STaskJava> {
 
     @Override
     public void execute(ExecutionContext execucaoTask) {
-        if (taskImpl == null) {
-            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não foi configurado o código de execução da tarefa"), this);
-        }
+        verifyConsistency();
         Object result = taskImpl.call(execucaoTask);
         if (result instanceof String) {
             execucaoTask.setTransition((String) result);
@@ -95,6 +93,13 @@ public class STaskJava extends STask<STaskJava> {
             result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
         return result;
+    }
+
+    @Override
+    void verifyConsistency() {
+        if (taskImpl == null) {
+            throw new SingularFlowException(createErrorMsg("Não foi configurado o código de execução da tarefa"), this);
+        }
     }
 
     @FunctionalInterface

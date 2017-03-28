@@ -199,7 +199,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      */
     private int findFieldIndexOpt(PathReader pathReader) {
         if (pathReader.isIndex()) {
-            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é uma lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é uma lista"), this);
         }
         return getType().findIndexOf(pathReader.getToken());
     }
@@ -211,7 +211,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     private int findFieldIndex(PathReader pathReader) {
         int fieldIndex = findFieldIndexOpt(pathReader);
         if (fieldIndex == -1) {
-            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é um campo definido"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Não é um campo definido"), this);
         }
         return fieldIndex;
     }
