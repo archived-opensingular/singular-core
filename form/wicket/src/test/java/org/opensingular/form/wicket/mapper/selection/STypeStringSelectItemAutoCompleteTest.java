@@ -1,23 +1,21 @@
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 
-import java.util.List;
-
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Enclosed.class)
 public class STypeStringSelectItemAutoCompleteTest {
@@ -50,7 +48,7 @@ public class STypeStringSelectItemAutoCompleteTest {
         }
 
         protected TextField fieldComponent() {
-            return (TextField) ((List) findTag(form.getForm(), TextField.class)).get(0);
+            return findTag(form.getForm(), TextField.class).get(0);
         }
 
         protected TextField valueComponent() {

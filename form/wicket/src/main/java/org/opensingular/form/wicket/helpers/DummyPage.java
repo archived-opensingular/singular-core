@@ -33,7 +33,10 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,25 +46,37 @@ import java.util.Optional;
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected              ViewMode            viewMode       = ViewMode.EDIT;
-    protected              AnnotationMode      annotationMode = AnnotationMode.NONE;
-    protected transient SIComposite                   currentInstance;
-    protected           IConsumer<STypeComposite>     typeBuilder;
-    protected           IFunction<SType, SIComposite> instanceCreator;
+
+    protected ViewMode viewMode = ViewMode.EDIT;
+
+    protected AnnotationMode annotationMode = AnnotationMode.NONE;
+
+    protected transient SIComposite currentInstance;
+
+    protected IConsumer<STypeComposite> typeBuilder;
+
+    protected IFunction<RefType, SIComposite> instanceCreator;
+
+    private final List<IConsumer<SIComposite>> instancePopulators = new ArrayList<>();
 
     private SingularForm<?> form = new SingularForm<>("form");
 
     private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
         @Override
         protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-            if (instanceCreator != null) {
-                Optional<SType<?>> baseType = mockFormConfig.getTypeLoader().loadType("mockType");
-                if (baseType.isPresent()) {
-                    if (baseType.get().isComposite()) {
-                        typeBuilder.accept((STypeComposite) baseType.get());
-                    }
-                    currentInstance = instanceCreator.apply(baseType.get());
+            Optional<RefType> baseType = mockFormConfig.getTypeLoader().loadRefType("mockType");
+            if (baseType.isPresent()) {
+                RefType refType = baseType.get();
+                if (refType.get().isComposite()) {
+                    typeBuilder.accept((STypeComposite) refType.get());
                 }
+                if (instanceCreator != null) {
+                    currentInstance = instanceCreator.apply(refType);
+                } else{
+                    SDocumentFactory factory = mockFormConfig.getDocumentFactory();
+                    currentInstance = (SIComposite) factory.createInstance(refType);
+                }
+                instancePopulators.forEach(populator -> populator.accept(currentInstance));
             }
             return currentInstance;
         }
@@ -114,28 +129,24 @@ public class DummyPage extends WebPage {
         return currentInstance;
     }
 
-    public void setInstanceCreator(IFunction<SType, SIComposite> instanceCreator) {
+    public void setInstanceCreator(IFunction<RefType, SIComposite> instanceCreator) {
         this.instanceCreator = instanceCreator;
+    }
+
+    final IFunction<RefType, SIComposite> getInstanceCreator() {
+        return instanceCreator;
     }
 
     public void setTypeBuilder(IConsumer<STypeComposite> typeBuilder) {
         this.typeBuilder = typeBuilder;
     }
-}
 
-class MockFormConfig implements SFormConfig<String>, Serializable {
-
-    private final MockSDocumentFactory documentFactory = new MockSDocumentFactory();
-    private final MockTypeLoader       mockTypeLoader  = new MockTypeLoader();
-
-    @Override
-    public SDocumentFactory getDocumentFactory() {
-        return documentFactory;
+    final IConsumer<STypeComposite> getTypeBuilder() {
+        return typeBuilder;
     }
 
-    @Override
-    public TypeLoader<String> getTypeLoader() {
-        return mockTypeLoader;
+    public final void addInstancePopulator(IConsumer<SIComposite> populator) {
+        instancePopulators.add(populator);
     }
 }
 
@@ -192,26 +203,20 @@ class MockTypeLoader extends TypeLoader<String> implements Serializable {
 
     @Override
     protected Optional<RefType> loadRefTypeImpl(String typeId) {
-        return Optional.of(new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                final SType<?> typeOptional = dictionary.getTypeOptional(typeId);
-                if (typeOptional != null) {
-                    return typeOptional;
-                } else {
-                    return dictionary.createNewPackage(typeId).createCompositeType("mockRoot");
-                }
-            }
-        });
+        return Optional.of(RefType.of(() -> loadTypeImpl2(typeId)));
     }
 
     @Override
     protected Optional<SType<?>> loadTypeImpl(String typeId) {
-        final SType<?> typeOptional = dictionary.getTypeOptional(typeId);
+        return Optional.of(loadTypeImpl2(typeId));
+    }
+
+    @Nonnull
+    private SType<?> loadTypeImpl2(String typeId) {
+        SType<?> typeOptional = dictionary.getTypeOptional(typeId);
         if (typeOptional != null) {
-            return Optional.of(typeOptional);
-        } else {
-            return Optional.of(dictionary.createNewPackage(typeId).createCompositeType("mockRoot"));
+            return typeOptional;
         }
+        return dictionary.createNewPackage(typeId).createCompositeType("mockRoot");
     }
 }

@@ -1,57 +1,97 @@
 package org.opensingular.form.wicket.validation;
 
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Assert;
+import org.apache.wicket.Component;
+import org.apache.wicket.util.tester.FormTester;
+import org.fest.assertions.api.IterableAssert;
+import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.wicket.IWicketComponentMapper;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-public class DinamicVisiblityValidationTest extends SingularFormBaseTest {
+public class DinamicVisiblityValidationTest {
 
-    String testValue = "fvrw1e4r5t4e.r6";
-    STypeString fieldOne;
-    STypeString fieldTwo;
+    private static final String testValue = "fvrw1e4r5t4e.r6";
+    private static final String FIELD_ONE = "fieldOne";
+    private static final String FIELD_TWO = "fieldTwo";
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> mockType) {
-        fieldOne = mockType.addFieldString("fieldOne");
-        fieldOne.asAtr().required(true);
-        fieldTwo = mockType.addFieldString("fieldTwo");
+    private SingularDummyFormPageTester tester;
 
-        fieldTwo.asAtr().dependsOn(fieldOne);
-        fieldTwo.asAtr()
-                .visible(instance -> instance.findNearestValue(fieldOne, String.class).orElse("").equals(testValue));
-        fieldTwo.asAtr().required(true);
+    @Before
+    public void setUp() {
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(root -> {
+            STypeString fieldOne = root.addFieldString("fieldOne");
+            STypeString fieldTwo = root.addFieldString("fieldTwo");
+
+            fieldOne.asAtr()
+                    .required(true);
+
+            fieldTwo.asAtr()
+                    .dependsOn(fieldOne)
+                    .visible(instance -> instance.findNearestValue(fieldOne, String.class).orElse("").equals(testValue))
+                    .required(true);
+        });
+        tester.startDummyPage();
     }
 
     @Test
     public void testIfContaisErrorOnlyForFieldOne() {
-        form.submit(page.getSingularValidationButton());
-        Assert.assertTrue(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
-        Assert.assertFalse(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
+        submitValidationButton();
+        asserThatValidationErrorsOfFieldOne().hasSize(1);
+        asserThatValidationErrorsOfFieldTwo().isEmpty();
     }
 
     @Test
     public void testIfNotContaisErrorForFieldTwoAfterChangeFieldOneValueWhithWrongValue() {
-        form.setValue(findFieldOneFormComponent(), "abas" + testValue + "2132");
-        tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-        form.submit(page.getSingularValidationButton());
-        Assert.assertTrue(findFormComponentsByType(fieldOne).findFirst().get().getFeedbackMessages().isEmpty());
-        Assert.assertTrue(findFormComponentsByType(fieldTwo).findFirst().get().getFeedbackMessages().isEmpty());
+        setValueOnFieldOneAndCallAjaxValidate("abas" + testValue + "2132");
+        submitValidationButton();
+        asserThatValidationErrorsOfFieldOne().isEmpty();
+        asserThatValidationErrorsOfFieldTwo().isEmpty();
+
     }
 
     @Test
     public void testIfContaisErrorForFieldTwoAfterChangeFieldOneValue() {
-        form.setValue(findFieldOneFormComponent(), testValue);
-        tester.executeAjaxEvent(findFieldOneFormComponent(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-        form.submit(page.getSingularValidationButton());
-        Assert.assertFalse(findModelsByType(fieldOne).findFirst().get().getMInstancia().hasValidationErrors());
-        Assert.assertTrue(findModelsByType(fieldTwo).findFirst().get().getMInstancia().hasValidationErrors());
+        setValueOnFieldOneAndCallAjaxValidate(testValue);
+        submitValidationButton();
+        asserThatValidationErrorsOfFieldOne().isEmpty();
+        asserThatValidationErrorsOfFieldTwo().hasSize(1);
+
     }
 
-    public FormComponent findFieldOneFormComponent() {
-        return findFormComponentsByType(fieldOne).findFirst().get();
+    private void setValueOnFieldOneAndCallAjaxValidate(String value) {
+        FormTester formTester = tester.newFormTester();
+        Component  fieldOne   = tester.getAssertionsForm().getSubCompomentWithId(FIELD_ONE).getTarget();
+        formTester.setValue(fieldOne, value);
+        callAjaxProcessEvent(fieldOne);
     }
+
+    private void submitValidationButton() {
+        tester.newFormTester().submit(tester.getDummyPage().getSingularValidationButton());
+    }
+
+    private IterableAssert<IValidationError> asserThatValidationErrorsOfFieldTwo() {
+        return tester.getAssertionsForm()
+                .getSubCompomentWithType(
+                        tester.findTypeBySimpleName(FIELD_TWO).is(STypeString.class).getTarget()
+                )
+                .assertSInstance()
+                .assertThatValidationErrors();
+    }
+
+    private IterableAssert<IValidationError> asserThatValidationErrorsOfFieldOne() {
+        return tester.getAssertionsForm()
+                .getSubCompomentWithType(
+                        tester.findTypeBySimpleName(FIELD_ONE).is(STypeString.class).getTarget()
+                )
+                .assertSInstance()
+                .assertThatValidationErrors();
+    }
+
+    private void callAjaxProcessEvent(Component fieldOne) {
+        tester.executeAjaxEvent(fieldOne, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+    }
+
 }

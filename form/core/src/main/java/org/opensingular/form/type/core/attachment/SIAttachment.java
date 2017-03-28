@@ -18,6 +18,7 @@ package org.opensingular.form.type.core.attachment;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.io.File;
@@ -26,8 +27,6 @@ import java.io.InputStream;
 import java.util.Optional;
 
 public class SIAttachment extends SIComposite {
-
-    public static final String[] SUFFIXES = {"B", "KB", "MB", "GB"};
 
     private AttachmentDocumentService getAttachmentService() {
         return AttachmentDocumentService.lookup(this);
@@ -145,18 +144,8 @@ public class SIAttachment extends SIComposite {
     }
 
     public String fileSizeToString() {
-        if (getFileSize() <= 0) {
-            return "";
-        }
-        int posSufix = 0;
-        double bytesSize = getFileSize();
-
-        while (bytesSize > 900 && posSufix < SUFFIXES.length - 1) {
-            bytesSize = bytesSize / 1024;
-            posSufix++;
-        }
-
-        return Math.round(bytesSize) + " " + SUFFIXES[posSufix];
+        long size = getFileSize();
+        return size <= 0 ? "" : SingularIOUtils.humanReadableByteCountRound(getFileSize());
     }
 
     @Override

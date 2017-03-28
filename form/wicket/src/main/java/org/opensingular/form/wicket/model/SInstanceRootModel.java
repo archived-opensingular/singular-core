@@ -88,10 +88,10 @@ public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
 
     @Override
     public int hashCode() {
-        final int prime  = 31;
-        int       result = 1;
-        result = prime * result + ((instanceRef.get() == null) ? 0 : instanceRef.get().hashCode());
-        return result;
+        if (instanceRef != null && instanceRef.get() != null) {
+            return instanceRef.get().hashCode();
+        }
+        return 0;
     }
 
     @Override
@@ -103,6 +103,11 @@ public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
         if (getClass() != obj.getClass())
             return false;
         SInstanceRootModel<?> other = (SInstanceRootModel<?>) obj;
+        if (instanceRef == null) {
+            return other.instanceRef == null;
+        } else if (other.instanceRef == null) {
+            return false;
+        }
         return Objects.equals(instanceRef.get(), other.instanceRef.get());
     }
 }
