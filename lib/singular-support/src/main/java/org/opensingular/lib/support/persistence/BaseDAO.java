@@ -170,4 +170,8 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         Object result = query.setMaxResults(1).uniqueResult();
         return Optional.ofNullable(expectedResultClass.cast(result));
     }
+
+    public void flush() {
+        getSession().flush();
+    }
 }
