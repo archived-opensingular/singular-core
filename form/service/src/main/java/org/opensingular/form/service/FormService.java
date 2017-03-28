@@ -77,6 +77,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Inject
     private FormTypeDAO formTypeDAO;
 
+    @Inject
+    private FormFieldService formFieldService;
+
     public FormService() {
         super(FormKeyLong.class);
     }
@@ -84,13 +87,26 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     @Nonnull
     public FormKey insert(SInstance instance, Integer inclusionActor) {
-        return super.insert(instance, inclusionActor);
+        FormKey key = super.insert(instance, inclusionActor);
+        FormTypeEntity formType = getOrCreateNewFormTypeEntity(instance.getType());
+
+        FormEntity formEntity = loadFormEntity(key);
+        FormVersionEntity formVersion = formEntity.getCurrentFormVersionEntity();
+        formFieldService.saveFields(instance, formType, formVersion);
+        return key;
     }
 
     @Override
     @Nonnull
     public FormKey insertOrUpdate(@Nonnull SInstance instance, Integer inclusionActor) {
-        return super.insertOrUpdate(instance, inclusionActor);
+        FormKey key = super.insertOrUpdate(instance, inclusionActor);
+        FormTypeEntity formType = getOrCreateNewFormTypeEntity(instance.getType());
+
+        FormEntity formEntity = loadFormEntity(key);
+        FormVersionEntity formVersion = formEntity.getCurrentFormVersionEntity();
+
+        formFieldService.saveFields(instance, formType, formVersion);
+        return key;
     }
 
     @Nonnull

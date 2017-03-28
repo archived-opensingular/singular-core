@@ -11,8 +11,11 @@
     <import resource="conf/database.xml"/>
 
     <bean id="formService" class="org.opensingular.form.service.FormService" />
+    <bean id="formFieldService" class="org.opensingular.form.service.FormFieldService" />
     <bean id="formDAO" class="org.opensingular.form.persistence.dao.FormDAO" />
     <bean id="formVersionDAO" class="org.opensingular.form.persistence.dao.FormVersionDAO" />
+    <bean id="formCacheFieldDAO" class="org.opensingular.form.persistence.dao.FormCacheFieldDAO" />
+    <bean id="formCacheValueDAO" class="org.opensingular.form.persistence.dao.FormCacheValueDAO" />
     <bean id="formAnnotationDAO" class="org.opensingular.form.persistence.dao.FormAnnotationDAO" />
     <bean id="formAnnotationVersionDAO" class="org.opensingular.form.persistence.dao.FormAnnotationVersionDAO" />
     <bean id="formTypeDAO" class="org.opensingular.form.persistence.dao.FormTypeDAO" />

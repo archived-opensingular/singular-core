@@ -102,3 +102,30 @@ CREATE TABLE DBSINGULAR.TB_ANEXO_FORMULARIO
    CO_ARQUIVO           NUMBER               NOT NULL,
    CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO, CO_ARQUIVO)
 );
+
+/*==============================================================*/
+/* Table: TB_CACHE_CAMPO                                        */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_CACHE_CAMPO
+(
+   CO_CACHE_CAMPO     NUMBER        NOT NULL,
+   CO_TIPO_FORMULARIO NUMBER            NULL,
+   TXT_CAMINHO_CAMPO  VARCHAR(255)  NOT NULL,
+
+   CONSTRAINT PK_CACHE_CAMPO PRIMARY KEY (CO_CACHE_CAMPO)
+);
+
+/*==============================================================*/
+/* Table: TB_CACHE_VALOR                                        */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_CACHE_VALOR
+(
+   CO_CACHE_VALOR         NUMBER        NOT NULL,
+   CO_CACHE_CAMPO         NUMBER        NOT NULL,
+   CO_VERSAO_FORMULARIO   NUMBER            NULL,
+   TXT_VALOR              VARCHAR(2048)     NULL,
+   DT_VALOR               SMALLDATETIME     NULL,
+   NUM_VALOR              NUMBER            NULL,
+
+   CONSTRAINT PK_CACHE_VALOR PRIMARY KEY (CO_CACHE_VALOR)
+);

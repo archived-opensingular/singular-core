@@ -133,7 +133,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     @Nonnull
     private KEY insertImpl(@Nonnull INSTANCE instance, Integer inclusionActor) {
         KEY key = insertInternal(instance, inclusionActor);
-        checkKeyOrException(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
+        checkKeyOrException(key, instance, " o metodo insertInternal deveria gerar uma FormKey, mas retornou null");
         FormKey.set(instance, key);
         return key;
     }
