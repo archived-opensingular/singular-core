@@ -22,6 +22,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TesFlowMapValidations.ProcessWithFlowValidation.StepsDI;
+import org.opensingular.flow.core.builder.BuilderJava;
 import org.opensingular.flow.core.builder.BuilderPeople;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
@@ -39,6 +40,7 @@ import static org.junit.Assert.*;
 public class TesFlowMapValidations {
 
     private static final MetaDataRef<Boolean> TAG = new MetaDataRef<>("tag", Boolean.class);
+    private static final MetaDataRef<Boolean> FLAG = new MetaDataRef<>("flag", Boolean.class);
 
     private static ValidationCondicions condicions = new ValidationCondicions();
 
@@ -54,15 +56,17 @@ public class TesFlowMapValidations {
         ProcessWithFlowValidation definition = new ProcessWithFlowValidation();
 
         assertException(() -> definition.getFlowMap().getTaskByAbbreviationOrException("wrong"), "not found");
-        definition.getFlowMap().getTaskByAbbreviationOrException(StepsDI.Second.getKey());
+        definition.getFlowMap().getTaskByAbbreviationOrException(StepsDI.StepPeople.getKey());
         assertException(() -> definition.getFlowMap().getPeopleTaskByAbbreviationOrException("wrong"), "not found");
-        definition.getFlowMap().getPeopleTaskByAbbreviationOrException(StepsDI.Second.getKey());
-        assertException(() -> definition.getFlowMap().getPeopleTaskByAbbreviationOrException(StepsDI.First.getKey()), "found, but it is of type");
+        definition.getFlowMap().getPeopleTaskByAbbreviationOrException(StepsDI.StepPeople.getKey());
+        assertException(() -> definition.getFlowMap().getPeopleTaskByAbbreviationOrException(StepsDI.StepWait.getKey()), "found, but it is of type");
         assertException(() -> definition.getFlowMap().getTask(StepsDI.NoAndded), "não encontrada");
 
         List<STask<?>> result = definition.getFlowMap().getTasksWithMetadata(TAG);
         assertEquals(1, result.size());
-        assertTrue(result.get(0).is(StepsDI.First));
+        assertTrue(result.get(0).is(StepsDI.StepWait));
+
+        assertTrue(definition.getFlowMap().getTask(StepsDI.StepWait).getMetaData().get(FLAG));
     }
 
     @Test
@@ -98,14 +102,21 @@ public class TesFlowMapValidations {
         assertTrue(p.getMetaDataValue(TAG));
         p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
         assertFalse(p.getMetaDataValue(TAG));
-
     }
+
+    @Test
+    public void taskJavaWithoutCall() {
+        condicions = new ValidationCondicions();
+        condicions.javaTaskSetCode = false;
+        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
+    }
+
 
     @DefinitionInfo("WithFlowValidation")
     public static class ProcessWithFlowValidation extends ProcessDefinition<ProcessInstance> {
 
         public enum StepsDI implements ITaskDefinition {
-            First("F1"), First2("F1"), Second("S1"), End("E1"), NoAndded("X");
+            StepWait("F1"), StepWait2("F1"), StepPeople("S1"), StepJava("J1"), End("E1"), NoAndded("X");
 
             private final String name;
 
@@ -130,7 +141,7 @@ public class TesFlowMapValidations {
         protected FlowMap createFlowMap() {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
 
-            BuilderPeople<?> peopleTask = f.addPeopleTask(StepsDI.Second);
+            BuilderPeople<?> peopleTask = f.addPeopleTask(StepsDI.StepPeople);
             if (condicions.configPeopleExecutionPage) {
                 peopleTask.withExecutionPage((t, u) -> null);
             }
@@ -138,28 +149,34 @@ public class TesFlowMapValidations {
                 peopleTask.addAccessStrategy(new DummyAccessStrategy());
             }
 
-            f.addWaitTask(StepsDI.First).setMetaDataValue(TAG, Boolean.TRUE);
+            f.addWaitTask(StepsDI.StepWait).setMetaDataValue(TAG, Boolean.TRUE);
 
-            assertException(() -> f.addWaitTask(StepsDI.First), "Task with abbreviation");
-            assertException(() -> f.addWaitTask(StepsDI.First2), "Task with name");
+            assertException(() -> f.addWaitTask(StepsDI.StepWait), "Task with abbreviation");
+            assertException(() -> f.addWaitTask(StepsDI.StepWait2), "Task with name");
+
+            if (condicions.javaTaskSetCode) {
+                f.addJavaTask(StepsDI.StepJava).call( (BuilderJava.ImplTaskJavaReturnInstanciaTarefa) (task) -> null);
+            } else {
+                f.addJavaTask(StepsDI.StepJava);
+            }
 
             f.addEnd(StepsDI.End);
             assertException(() -> f.addEnd(StepsDI.End), "already defined");
 
-
             assertException(() -> f.build().getStart(), "Task inicial não definida no processo");
 
             if (condicions.configStart) {
-                f.setStart(StepsDI.First);
-                assertException(() -> f.setStart(StepsDI.First), "The start point is already setted");
+                f.setStart(StepsDI.StepWait);
+                assertException(() -> f.setStart(StepsDI.StepWait), "The start point is already setted");
             }
 
-            f.from(StepsDI.First).go(StepsDI.Second);
+            f.from(StepsDI.StepWait).go(StepsDI.StepPeople).thenGo(StepsDI.StepJava);
 
             if (! condicions.createTaskWithoutPathToEnd) {
-                f.from(StepsDI.Second).go(StepsDI.End);
+                f.from(StepsDI.StepJava).go(StepsDI.End);
             }
 
+            f.forEach(builder -> builder.setMetaDataValue(FLAG, Boolean.TRUE));
             return f.build();
         }
     }
@@ -173,6 +190,7 @@ public class TesFlowMapValidations {
         public boolean configPeopleExecutionPage = true;
         public boolean configPeopleAccessStrategy = true;
         public boolean createTaskWithoutPathToEnd = false;
+        public boolean javaTaskSetCode = true;
     }
 
 
