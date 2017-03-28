@@ -26,6 +26,7 @@ import org.opensingular.flow.core.builder.BuilderJava;
 import org.opensingular.flow.core.builder.BuilderPeople;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.util.List;
@@ -111,6 +112,13 @@ public class TesFlowMapValidations {
         assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
     }
 
+    @Test
+    public void taskJavaWithCallByBlock() {
+        condicions = new ValidationCondicions();
+        condicions.javaTaskSetCode = false;
+        condicions.javaTaskSetCodeByBlock = true;
+        new ProcessWithFlowValidation().getFlowMap();
+    }
 
     @DefinitionInfo("WithFlowValidation")
     public static class ProcessWithFlowValidation extends ProcessDefinition<ProcessInstance> {
@@ -154,7 +162,10 @@ public class TesFlowMapValidations {
             assertException(() -> f.addWaitTask(StepsDI.StepWait), "Task with abbreviation");
             assertException(() -> f.addWaitTask(StepsDI.StepWait2), "Task with name");
 
-            if (condicions.javaTaskSetCode) {
+            if (condicions.javaTaskSetCodeByBlock) {
+                f.addJavaTask(StepsDI.StepJava).callByBlock( (STaskJava.ImplTaskBlock) (task) -> null,
+                        ScheduleDataBuilder.buildMinutely(60));
+            } else if (condicions.javaTaskSetCode) {
                 f.addJavaTask(StepsDI.StepJava).call( (BuilderJava.ImplTaskJavaReturnInstanciaTarefa) (task) -> null);
             } else {
                 f.addJavaTask(StepsDI.StepJava);
@@ -191,6 +202,7 @@ public class TesFlowMapValidations {
         public boolean configPeopleAccessStrategy = true;
         public boolean createTaskWithoutPathToEnd = false;
         public boolean javaTaskSetCode = true;
+        public boolean javaTaskSetCodeByBlock = false;
     }
 
 
