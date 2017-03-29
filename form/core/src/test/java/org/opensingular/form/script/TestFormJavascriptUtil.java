@@ -16,21 +16,22 @@
 
 package org.opensingular.form.script;
 
-import com.google.common.base.Stopwatch;
-import jdk.nashorn.api.scripting.JSObject;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.ObjectAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
 
-import javax.script.*;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author Daniel Bordin
@@ -49,7 +50,7 @@ public class TestFormJavascriptUtil extends TestCaseForm {
 
     @Before
     public void setUp() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
+        PackageBuilder pkt = createTestPackage();
         curriculumType = pkt.createCompositeType("curriculum");
 
         infoType = curriculumType.addFieldComposite("info");

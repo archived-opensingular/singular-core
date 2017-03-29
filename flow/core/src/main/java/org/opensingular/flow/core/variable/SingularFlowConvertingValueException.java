@@ -27,12 +27,9 @@ import java.util.Objects;
  * @author Daniel C. Bordin on 22/03/2017.
  */
 public class SingularFlowConvertingValueException extends SingularFlowException {
-    public SingularFlowConvertingValueException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
 
-    public SingularFlowConvertingValueException(String errorMsg) {
-        super(errorMsg);
+    private SingularFlowConvertingValueException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
     /**

@@ -28,7 +28,13 @@ import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.annotation.Nonnull;
 import javax.lang.model.SourceVersion;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -69,23 +75,23 @@ public final class SFormUtil {
     private static SType<?> resolveFieldTypeInternal(@Nonnull SType<?> type, PathReader pathReader) {
         if (type.isComposite()) {
             if (pathReader.isIndex()) {
-                throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"), type);
             }
             String token = pathReader.getToken();
             SType<?> campo = ((STypeComposite<?>) type).getField(token);
             if (campo == null) {
-                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + token + '\''));
+                throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + token + '\''), type);
             }
             return campo;
         } else if (type.isList()) {
             if (pathReader.isIndex()) {
                 return ((STypeList<?, ?>) type).getElementsType();
             }
-            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica a um tipo lista"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica a um tipo lista"), type);
         } else if (type instanceof STypeSimple) {
-            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica um path a um tipo simples"));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não se aplica um path a um tipo simples"), type);
         } else {
-            throw new SingularFormException(pathReader.getErrorMsg(type, "Não implementado para " + type.getClass()));
+            throw new SingularFormException(pathReader.getErrorMsg(type, "Não implementado para " + type.getClass()), type);
         }
     }
 

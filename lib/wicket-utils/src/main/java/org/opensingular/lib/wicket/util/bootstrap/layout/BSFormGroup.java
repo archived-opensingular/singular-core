@@ -27,6 +27,9 @@ public class BSFormGroup extends BSContainer<BSFormGroup> {
 
     private IBSGridCol.BSGridSize defaultGridSize;
 
+    public BSFormGroup(String id) {
+        this(id, IBSGridCol.BSGridSize.MD);
+    }
     public BSFormGroup(String id, IBSGridCol.BSGridSize defaultGridSize) {
         super(id);
         setDefaultGridSize(defaultGridSize);

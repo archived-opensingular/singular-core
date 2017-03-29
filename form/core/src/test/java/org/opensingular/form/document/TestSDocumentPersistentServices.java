@@ -42,7 +42,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
     @Before
     public void setUp() {
-        createTypes(createTestDictionary().createNewPackage("teste"));
+        createTypes(createTestPackage());
         createInstances();
         setupServices();
 

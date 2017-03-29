@@ -151,6 +151,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
             select);
     }
 
+    @Deprecated
     public Component appendPicklist(Component select) {
         TemplatePanel tt = super.newTemplateTag(t -> "<div><select wicket:id=" + select.getId() + "  multiple=\"multiple\"></select></div>");
         return tt.add(select.add(new PicklistInitBehaviour()));
@@ -162,10 +163,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls appendTextarea(Component textarea, Integer linhas) {
         return super.appendTag("textarea", true, "class='form-control' rows='" + linhas + "'", textarea);
-    }
-
-    public BSControls appendTypeahead(Component typeahead) {
-        return super.appendTag("div", typeahead);
     }
 
     public BSControls appendHeading(Component text, int level) {
@@ -230,8 +227,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return appendHelpBlock(textModel, true);
     }
 
-    public BSControls appendDiv(Component typeahead) {
-        return super.appendTag("div", typeahead);
+    public BSControls appendDiv(Component div) {
+        return super.appendTag("div", div);
     }
 
     public BSControls setFeedbackPanelFactory(IFeedbackPanelFactory feedbackPanelFactory) {

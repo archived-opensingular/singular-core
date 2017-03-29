@@ -1,12 +1,12 @@
 package org.opensingular.form;
 
-import org.opensingular.form.type.core.STypeDate;
-import org.opensingular.form.type.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
 public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
@@ -30,7 +30,7 @@ public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
 
     @Before
     public void setUp() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         _evento = pb.createCompositeType("evento");
         _evento.asAtr().label("Evento");

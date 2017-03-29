@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface VarInstanceMap<K extends VarInstance, SELF extends VarInstanceMap<K,SELF>> extends VarServiceEnabled, Serializable, Iterable<K> {
@@ -54,7 +55,7 @@ public interface VarInstanceMap<K extends VarInstance, SELF extends VarInstanceM
     public default K getVariableOrException(String ref) {
         K cp = getVariable(ref);
         if (cp == null) {
-            throw new IllegalArgumentException("Variável '" + ref + "' não está definida");
+            throw new SingularFlowException("Variável '" + ref + "' não está definida");
         }
         return cp;
     }
@@ -127,50 +128,35 @@ public interface VarInstanceMap<K extends VarInstance, SELF extends VarInstanceM
     // Métodos de conveniência para criação dinâmica de váriáveis
     // ----------------------------------------------------------
 
-    /** Seta o valor na variável ou cria a variável senão existir. */
-    public default SELF addValue(String ref, VarType type, Object value) {
+    default SELF addValue(String ref, Object value, Supplier<VarDefinition> definitionCreator) {
         K var = getVariable(ref);
         if (var == null) {
-            var = addDefinition(getVarService().newDefinition(ref, ref, type));
+            VarDefinition def = Objects.requireNonNull(definitionCreator.get());
+            var = addDefinition(def);
         }
         var.setValue(value);
         return self();
+    }
+
+    /** Seta o valor na variável ou cria a variável senão existir. */
+    public default SELF addValue(String ref, VarType type, Object value) {
+        return addValue(ref, value, () -> getVarService().newDefinition(ref, ref, type));
     }
 
     public default SELF addValueString(String ref, String value) {
-        K var = getVariable(ref);
-        if (var == null) {
-            var = addDefinition(getVarService().newDefinitionString(ref, ref, null));
-        }
-        var.setValue(value);
-        return self();
+        return addValue(ref, value, () -> getVarService().newDefinitionString(ref, ref, null));
     }
 
     public default SELF addValueDate(String ref, Date value) {
-        K var = getVariable(ref);
-        if (var == null) {
-            var = addDefinition(getVarService().newDefinitionDate(ref, ref));
-        }
-        var.setValue(value);
-        return self();
+        return addValue(ref, value, () -> getVarService().newDefinitionDate(ref, ref));
     }
 
     public default SELF addValueInteger(String ref, Integer value) {
-        K var = getVariable(ref);
-        if (var == null) {
-            var = addDefinition(getVarService().newDefinitionInteger(ref, ref));
-        }
-        var.setValue(value);
-        return self();
+        return addValue(ref, value, () -> getVarService().newDefinitionInteger(ref, ref));
     }
 
     public default SELF addValueBoolean(String ref, Boolean value) {
-        K var = getVariable(ref);
-        if (var == null) {
-            var = addDefinition(getVarService().newDefinitionBoolean(ref, ref));
-        }
-        var.setValue(value);
-        return self();
+        return addValue(ref, value, () -> getVarService().newDefinitionBoolean(ref, ref));
     }
 
     // ----------------------------------------------------------

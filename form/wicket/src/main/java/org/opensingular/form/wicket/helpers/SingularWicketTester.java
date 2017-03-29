@@ -19,6 +19,7 @@ package org.opensingular.form.wicket.helpers;
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.internal.form.wicket.util.WicketSerializationDebugUtil;
 
 import javax.servlet.ServletContext;
@@ -91,6 +92,11 @@ public class SingularWicketTester extends WicketTester {
     public final AssertionsWComponent getAssertionsPage() {
         checkIfStartPageCalled();
         return new AssertionsWComponent(getLastRenderedPage());
+    }
+
+    public final AssertionsSInstance getAssertionsInstance() {
+        checkIfStartPageCalled();
+        return getAssertionsPage().getSubCompomentWithSInstance().assertSInstance();
     }
 
     /** Criar um objeto de assertivas para o form da última página executada (assume que o ID é 'form'). */

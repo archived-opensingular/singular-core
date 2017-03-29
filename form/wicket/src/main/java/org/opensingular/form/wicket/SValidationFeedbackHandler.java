@@ -33,11 +33,16 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.lambda.IPredicate;
-import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
@@ -311,10 +316,7 @@ public class SValidationFeedbackHandler implements Serializable {
         }
 
         if (rootInstance.isEmpty()) {
-            ISInstanceAwareModel
-                    .optionalCast(rootContainer.getDefaultModel())
-                    .map(ISInstanceAwareModel::getSInstance)
-                    .ifPresent(rootInstance::add);
+            ISInstanceAwareModel.optionalSInstance(rootContainer).ifPresent(rootInstance::add);
         }
 
         return rootInstance;

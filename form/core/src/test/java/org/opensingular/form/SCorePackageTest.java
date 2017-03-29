@@ -186,7 +186,7 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCriacaoDuplicada() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         pb.createType("CPF", STypeString.class);
         assertException(() -> pb.createType("CPF", STypeString.class), "já está criada");
@@ -194,7 +194,7 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCriacaoAtributoLocal() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         // AtrRef<?, ?, ?> atr = new AtrRef(null, "atTeste", MTipoString.class,
         // MIString.class, String.class);
@@ -344,8 +344,8 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaAutomaticaPacotePorUsarUmAtributo() {
-        SDictionary    dictionary = createTestDictionary();
-        PackageBuilder pb         = dictionary.createNewPackage("teste");
+        PackageBuilder pb         = createTestPackage();
+        SDictionary    dictionary = pb.getDictionary();
 
         assertCargaPacoteA(dictionary, false);
 
@@ -361,18 +361,16 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaAutomaticaPacotePorDarAddEmUmAtributo() {
-        SDictionary    dictionary = createTestDictionary();
-        PackageBuilder pb         = dictionary.createNewPackage("teste");
+        PackageBuilder pb         = createTestPackage();
 
-        assertCargaPacoteA(dictionary, false);
+        assertCargaPacoteA(pb.getDictionary(), false);
         pb.addAttribute(STypeInteger.class, TestPacoteA.ATR_XX);
-        assertCargaPacoteA(dictionary, true);
+        assertCargaPacoteA(pb.getDictionary(), true);
     }
 
     @Test
     public void testCargaAutomaticaPacotePorLerUmAtributo() {
         SDictionary dictionary = createTestDictionary();
-        dictionary.createNewPackage("teste");
 
         assertCargaPacoteA(dictionary, false);
         assertEquals(null, dictionary.getType(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
@@ -417,14 +415,14 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaTipoNoPacoteTrocado() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         assertException(() -> pb.createType(TestPacoteA.TestTipoA.class), "como sendo do pacote",
                 "Deveria dar uma exception pois o tipo tem a anotação para entrar em outro pacote");
     }
 
     @Test
     public void testCargaAtributoNoPacoteTrocado() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         assertException(() -> pb.createAttributeType(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
                 "Deveria dar uma exception pois o atributo pertence a outro pacote");
@@ -478,12 +476,6 @@ public class SCorePackageTest extends TestCaseForm {
 
     @SInfoPackage(name="packageLazy")
     public static class SPackageTestLazy extends SPackage {
-        @Override
-        protected void onLoadPackage(PackageBuilder pb) {
-            pb.createType(TypeLazyA.class);
-            pb.createType(TypeLazyB.class);
-            pb.createType(TypeLazyC.class);
-        }
 
         @SInfoType(name = "LazyA", spackage = SPackageTestLazy.class)
         public static class TypeLazyA extends STypeDecimal {
