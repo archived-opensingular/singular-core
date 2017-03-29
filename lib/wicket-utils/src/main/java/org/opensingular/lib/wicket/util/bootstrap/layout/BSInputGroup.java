@@ -170,10 +170,6 @@ public class BSInputGroup extends BSControls {
         return (BSInputGroup) super.appendInputText(input);
     }
     @Override
-    public BSInputGroup appendTypeahead(Component typeahead) {
-        return (BSInputGroup) super.appendTypeahead(typeahead);
-    }
-    @Override
     public BSInputGroup appendInputButton(Component button) {
         return (BSInputGroup) super.appendInputButton(button);
     }

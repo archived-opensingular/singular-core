@@ -25,6 +25,9 @@ public class BSRow extends BSContainer<BSRow> {
 
     private BSGridSize defaultGridSize;
 
+    public BSRow(String id) {
+        this(id, BSGridSize.MD);
+    }
     public BSRow(String id, BSGridSize defaultGridSize) {
         super(id);
         setDefaultGridSize(defaultGridSize);
@@ -49,7 +52,7 @@ public class BSRow extends BSContainer<BSRow> {
     }
 
     public BSRow appendCol(int colspan, IBSComponentFactory<BSCol> factory) {
-        newCol(colspan);
+        newCol(colspan, factory);
         return this;
     }
 
@@ -65,10 +68,6 @@ public class BSRow extends BSContainer<BSRow> {
         BSC col = super.newComponent(factory);
         getDefaultGridSize().col(col, colspan);
         return col;
-    }
-
-    protected BSCol newCol(String id) {
-        return new BSCol(id);
     }
 
     public BSControls newFormGroup(int colspan) {
