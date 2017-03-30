@@ -15,7 +15,7 @@ import org.opensingular.lib.wicket.util.WicketUtilsDummyApplication;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 
-public class BSFormHorizontalTest extends Object {
+public class BSFormHorizontalTest {
 
     @Test
     public void test() {
