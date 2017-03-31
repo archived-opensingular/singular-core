@@ -3,7 +3,6 @@ package org.opensingular.form.service;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;

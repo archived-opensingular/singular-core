@@ -10,6 +10,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyInt;
 import org.opensingular.form.persistence.FormKeyLong;
+import org.opensingular.form.persistence.dto.PeticaoPrimariaDTO;
 import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
 import org.opensingular.form.persistence.entity.FormCacheValueEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
@@ -18,6 +19,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.form.persistence.service.TransposeService;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 

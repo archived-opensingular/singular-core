@@ -35,6 +35,14 @@ public class FormCacheFieldEntity extends BaseEntity<Long> {
     @Column(name = "TXT_CAMINHO_CAMPO", length = 255)
     private String path;
 
+    public FormCacheFieldEntity() {
+    }
+
+    public FormCacheFieldEntity(String path, FormTypeEntity formType) {
+        this.path = path;
+        this.formTypeEntity = formType;
+    }
+
     public Long getCod() {
         return cod;
     }

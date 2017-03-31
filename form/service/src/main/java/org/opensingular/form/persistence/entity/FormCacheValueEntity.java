@@ -61,6 +61,15 @@ public class FormCacheValueEntity  extends BaseEntity<Long> {
     @Column(name = "NUM_VALOR")
     private BigDecimal numberValue;
 
+    public FormCacheValueEntity() {
+    }
+
+    public FormCacheValueEntity(FormCacheFieldEntity formField, FormVersionEntity formVersion, SInstance field) {
+        this.setCacheField(formField);
+        this.setFormVersion(formVersion);
+        this.setValue(field);
+    }
+
     public Long getCod() {
         return cod;
     }

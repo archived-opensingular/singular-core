@@ -16,6 +16,7 @@
     <bean id="formVersionDAO" class="org.opensingular.form.persistence.dao.FormVersionDAO" />
     <bean id="formCacheFieldDAO" class="org.opensingular.form.persistence.dao.FormCacheFieldDAO" />
     <bean id="formCacheValueDAO" class="org.opensingular.form.persistence.dao.FormCacheValueDAO" />
+    <bean id="reportDAO" class="org.opensingular.form.persistence.dao.ReportDAO" />
     <bean id="formAnnotationDAO" class="org.opensingular.form.persistence.dao.FormAnnotationDAO" />
     <bean id="formAnnotationVersionDAO" class="org.opensingular.form.persistence.dao.FormAnnotationVersionDAO" />
     <bean id="formTypeDAO" class="org.opensingular.form.persistence.dao.FormTypeDAO" />

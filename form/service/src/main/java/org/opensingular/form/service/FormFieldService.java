@@ -1,6 +1,7 @@
 package org.opensingular.form.service;
 
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.persistence.dao.FormCacheFieldDAO;
 import org.opensingular.form.persistence.dao.FormCacheValueDAO;
@@ -11,7 +12,6 @@ import org.opensingular.form.persistence.entity.FormVersionEntity;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,10 @@ public class FormFieldService implements IFormFieldService {
         List<SInstance> fieldsInInstance = ((SIComposite) instance).getFields();
 
         for (SInstance field : fieldsInInstance) {
+            if (field instanceof SIList) {
+                LoadMapWithItensFromList(mapFields, (SIList)field, formVersion);
+            }
+
             if (field instanceof SIComposite) {
                 SIComposite compositeField = (SIComposite) field;
                 if (compositeField.getFields().size() > 0) {
@@ -51,20 +55,15 @@ public class FormFieldService implements IFormFieldService {
             }
 
             String fieldName = field.getType().getName().replace(formType.getAbbreviation() + ".", "");
-
-            FormCacheFieldEntity formField = new FormCacheFieldEntity();
-            formField.setPath(fieldName);
-            formField.setFormTypeEntity(formType);
-
-            FormCacheValueEntity formValue = new FormCacheValueEntity();
-            formValue.setCacheField(formField);
-            formValue.setFormVersion(formVersion);
-            formValue.setValue(field);
-
-            System.out.println("FormField: " + formValue.getCacheField().getPath());
-            System.out.println("FormValue: " + formValue.getStringValue() + " - " + formValue.getNumberValue() + " - " + formValue.getDateValue());
-
+            FormCacheFieldEntity formField = new FormCacheFieldEntity(fieldName, formType);
+            FormCacheValueEntity formValue = new FormCacheValueEntity(formField, formVersion, field);
             mapFields.put(formField, formValue);
+        }
+    }
+
+    private void LoadMapWithItensFromList(Map<FormCacheFieldEntity, FormCacheValueEntity> mapFields, SIList listField, FormVersionEntity formVersion) {
+        for (Object subCampo : listField.getValues()) {
+            loadMap(mapFields, (SInstance) subCampo, formVersion);
         }
     }
 
