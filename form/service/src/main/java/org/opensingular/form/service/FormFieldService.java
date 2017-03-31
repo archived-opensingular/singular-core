@@ -72,7 +72,8 @@ public class FormFieldService implements IFormFieldService {
         long startNanos = System.nanoTime();
 
         mapFields.forEach((field, value) -> {
-            formCacheFieldDAO.save(field);
+            field = formCacheFieldDAO.saveOrFind(field);
+            value.setCacheField(field);
             formCacheValueDAO.save(value);
         });
 

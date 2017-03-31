@@ -28,4 +28,14 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
         return criteria.list();
     }
 
+    public FormCacheFieldEntity saveOrFind(FormCacheFieldEntity field) {
+        FormCacheFieldEntity fieldFromDB = findFieldByPath(field.getPath());
+        if (fieldFromDB != null) {
+            return fieldFromDB;
+        } else {
+            save(field);
+            return field;
+        }
+    }
+
 }
