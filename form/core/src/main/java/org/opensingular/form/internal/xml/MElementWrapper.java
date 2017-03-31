@@ -356,7 +356,7 @@ public class MElementWrapper extends MElement implements EWrapper {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error encoding from the input stream");
+            throw new SingularFormException("Error encoding from the input stream", e);
         }
 
         return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(Charset.defaultCharset()));
@@ -391,7 +391,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         try {
             out.write(java.util.Base64.getDecoder().decode(stringValue));
         } catch (IOException e) {
-            System.err.println("Error decoding from the output stream");
+            throw new SingularFormException("Error decoding from the output stream", e);
         }
     }
 

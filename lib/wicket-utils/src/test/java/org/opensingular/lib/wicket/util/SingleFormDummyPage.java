@@ -7,8 +7,9 @@ import org.apache.wicket.markup.html.form.Form;
 
 public class SingleFormDummyPage extends WebPage {
 
-    public static final String CONTENT_ID = "content";
-    public static final String FORM_ID    = "form";
+    public static final String CONTENT_ID  = "content";
+    public static final String FORM_ID     = "form";
+    public static final String PARENT_PATH = FORM_ID + ":" + CONTENT_ID + ":";
 
     public SingleFormDummyPage() {
         add(newForm(FORM_ID)

@@ -47,4 +47,11 @@ public class SingularPropertiesTest {
 
     }
 
+    @Test
+    public void getPropertyWithDefaultOptionTest(){
+        SingularProperties singularProperties = SingularProperties.get();
+
+        String property = singularProperties.getProperty("notExist", "defaultValue");
+        Assert.assertEquals("defaultValue", property);
+    }
 }
