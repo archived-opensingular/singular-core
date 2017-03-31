@@ -72,14 +72,27 @@ public final class WicketUtils {
                 .collect(message -> Objects.equals(message.getReporter(), component)).stream()
                 .forEach(it -> it.markRendered());
     }
+    
+    /**
+     * Retorna uma lista de parent containers, ordenados do filho para o pai.
+     * @param child
+     * @return lista de parent containers, ordenados do filho para o pai
+     */
+    @SuppressWarnings("unchecked")
+    public static <C extends MarkupContainer> Optional<C> findClosestParent(Component component, Class<C> parentClass) {
+        return listParents(component).stream()
+            .filter(it -> parentClass.isAssignableFrom(it.getClass()))
+            .map(it -> (C) it)
+            .findFirst();
+    }
 
     /**
      * Retorna uma lista de parent containers, ordenados do filho para o pai.
      * @param child
      * @return lista de parent containers, ordenados do filho para o pai
      */
-    public static List<MarkupContainer> listParents(Component reporter) {
-        return listParents(reporter, null);
+    public static List<MarkupContainer> listParents(Component child) {
+        return listParents(child, null);
     }
 
     /**

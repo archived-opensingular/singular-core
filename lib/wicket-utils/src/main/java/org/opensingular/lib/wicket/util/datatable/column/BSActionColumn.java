@@ -82,10 +82,10 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, Icone icone, IBSAction<T> action, IFunction<IModel<T>, Boolean> visibleFunction, IConsumer<BSActionPanel.ActionConfig<T>> configCustomizer) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>()
-                .labelModel(labelModel)
-                .iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg"))
-                .visibleFor(visibleFunction)
-                .configure(configCustomizer), action));
+            .labelModel(labelModel)
+            .iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg"))
+            .visibleFor(visibleFunction)
+            .configure(configCustomizer), action));
         return this;
     }
 
@@ -95,8 +95,8 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBSAction<T> action) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>()
-                .labelModel(labelModel)
-                .iconeModel(iconeModel, null, $m.ofValue("fa-lg")), action));
+            .labelModel(labelModel)
+            .iconeModel(iconeModel, null, $m.ofValue("fa-lg")), action));
         return this;
     }
 
@@ -112,9 +112,9 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
     public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>()
-                .labelModel(labelModel)
-                .iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg"))
-                .linkFactory(linkFactory), null));
+            .labelModel(labelModel)
+            .iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg"))
+            .linkFactory(linkFactory), null));
         return this;
     }
 
@@ -142,7 +142,6 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         }
 
     }
-
 
     public BSActionColumn<T, S> appendComponentFactory(IBiFunction<String, IModel<T>, Component> factory) {
         factories.add(factory);
