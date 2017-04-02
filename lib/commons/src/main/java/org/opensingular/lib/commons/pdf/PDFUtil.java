@@ -18,12 +18,15 @@ package org.opensingular.lib.commons.pdf;
 
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.commons.util.TempFileUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,42 +120,6 @@ public abstract class PDFUtil implements Loggable {
     }
 
     /**
-     * Gerencia os arquivos temporarios criados e apaga-os na chamada do método close(). O objetivo é não deixar lixo
-     * para trás.
-     */
-    private static class TempFileProvider implements Closeable {
-        private final List<File> tempFiles = new ArrayList<>();
-
-        /**
-         * Criar um arquivo temporário garantindo a exclusão do mesmo na saída.
-         *
-         * @param deleteOnMethodExit Se true, apaga o arquivo temporário na chamada de close(). Se false, apaga-o na
-         *                           saída da aplicação.
-         */
-        public final @Nonnull File createTempFile(String extension, boolean deleteOnMethodExit) {
-            try {
-                File f = File.createTempFile("SINGULAR-PDFUTIL-", extension);
-                if (deleteOnMethodExit) {
-                    tempFiles.add(f);
-                } else {
-                    f.deleteOnExit();
-                }
-                return f;
-            } catch (IOException e) {
-                throw new SingularPDFException(
-                        "Erro criando arquivo temporário na geração de pdf: '" + extension + "'", e);
-            }
-        }
-
-        @Override
-        public void close()  {
-            for(File f : tempFiles) {
-                TempFileUtils.deleteOrException(f, PDFUtil.class);
-            }
-        }
-    }
-
-    /**
      * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
      *
      * @param html   o código HTML.
@@ -184,9 +151,9 @@ public abstract class PDFUtil implements Loggable {
         final String header = safeWrapHtml(rawHeader);
         final String footer = safeWrapHtml(rawFooter);
 
-        try (TempFileProvider tmp = new TempFileProvider()){
+        try (TempFileProvider tmp = TempFileProvider.createForUseInTryClause(this)){
 
-            File htmlFile = tmp.createTempFile( "content.html", true);
+            File htmlFile = tmp.createTempFile( "content.html");
             writeToFile(htmlFile, html);
 
             List<String> commandAndArgs = new ArrayList<>(0);
@@ -199,7 +166,7 @@ public abstract class PDFUtil implements Loggable {
             }
 
             if (header != null) {
-                File headerFile = tmp.createTempFile( "header.html", true);
+                File headerFile = tmp.createTempFile( "header.html");
                 writeToFile(headerFile, header);
                 commandAndArgs.add("--header-html");
                 commandAndArgs.add(fixPathArg(headerFile));
@@ -207,14 +174,14 @@ public abstract class PDFUtil implements Loggable {
             }
 
             if (footer != null) {
-                File footerFile = tmp.createTempFile( "footer.html",true);
+                File footerFile = tmp.createTempFile( "footer.html");
                 writeToFile(footerFile, footer);
                 commandAndArgs.add("--footer-html");
                 commandAndArgs.add(fixPathArg(footerFile));
                 addDefaultFooterCommandArgs(commandAndArgs);
             }
 
-            File pdfFile  = tmp.createTempFile( "result.pdf", false);
+            File pdfFile  = tmp.createTempFileByDontPutOnDeleteList( "result.pdf");
             commandAndArgs.add(fixPathArg(htmlFile));
             commandAndArgs.add(pdfFile.getAbsolutePath());
 
@@ -234,9 +201,9 @@ public abstract class PDFUtil implements Loggable {
             throws SingularPDFException {
         getWkhtml2pdfHome(); // Força verifica se o Home está configurado corretamente
 
-        try (TempFileProvider tmp = new TempFileProvider()) {
+        try (TempFileProvider tmp = TempFileProvider.createForUseInTryClause(this)) {
 
-            File htmlFile = tmp.createTempFile("content.html", true);
+            File htmlFile = tmp.createTempFile("content.html");
             writeToFile(htmlFile, html);
 
             List<String> commandAndArgs = new ArrayList<>();
@@ -248,7 +215,7 @@ public abstract class PDFUtil implements Loggable {
                 addDefaultPNGCommandArgs(commandAndArgs);
             }
 
-            File pngFile = tmp.createTempFile("result.png", false);
+            File pngFile = tmp.createTempFileByDontPutOnDeleteList("result.png");
 
             //File jarFile = tmp.createTempFile("cookie.txt", true);
             //commandAndArgs.add("--cookie-jar");
@@ -494,11 +461,11 @@ public abstract class PDFUtil implements Loggable {
      */
     @Nonnull
     public File merge(@Nonnull List<InputStream> pdfs) throws SingularPDFException {
-        try(TempFileProvider tmp = new TempFileProvider()) {
+        try(TempFileProvider tmp = TempFileProvider.createForUseInTryClause(this)) {
             PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
             pdfs.forEach(pdfMergerUtility::addSource);
 
-            File tempMergedFile = tmp.createTempFile("merge.pdf", false);
+            File tempMergedFile = tmp.createTempFileByDontPutOnDeleteList("merge.pdf");
 
             try (FileOutputStream output = new FileOutputStream(tempMergedFile)) {
                 pdfMergerUtility.setDestinationStream(output);

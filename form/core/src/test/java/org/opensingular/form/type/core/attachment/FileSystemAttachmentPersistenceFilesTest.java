@@ -1,32 +1,16 @@
 package org.opensingular.form.type.core.attachment;
 
 import org.opensingular.form.type.core.attachment.handlers.FileSystemAttachmentPersistenceHandler;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
 
 public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPersistenceFilesTest {
-
-    static int countGenerations = 0;
-    @Rule
-    public TemporaryFolder rootTmp = new TemporaryFolder();
-    private File tmpFolder;
 
     public FileSystemAttachmentPersistenceFilesTest(byte[] content, String hash) {
         super(content, hash);
     }
 
-    public void createFolders() throws Exception {
-        tmpFolder = rootTmp.newFolder("tempSingular" + Math.random());
-    }
-
     @Override
-    @SuppressWarnings("serial")
     protected IAttachmentPersistenceHandler createHandler() throws Exception {
-        createFolders();
-        FileSystemAttachmentPersistenceHandler handler = new FileSystemAttachmentPersistenceHandler(tmpFolder);
-        return handler;
+        return new FileSystemAttachmentPersistenceHandler(tmpProvider.createTempDir());
     }
 
 

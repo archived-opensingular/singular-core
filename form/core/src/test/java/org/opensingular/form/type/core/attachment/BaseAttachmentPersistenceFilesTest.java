@@ -1,21 +1,22 @@
 package org.opensingular.form.type.core.attachment;
 
 import com.google.common.io.ByteStreams;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opensingular.form.type.core.attachment.AttachmentTestUtil.*;
 
 @RunWith(value = Parameterized.class)
 abstract public class BaseAttachmentPersistenceFilesTest {
@@ -28,6 +29,18 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     public BaseAttachmentPersistenceFilesTest(byte[] content, String hash) {
         this.content = content;
         this.hash = hash;
+    }
+
+    protected TempFileProvider tmpProvider;
+
+    @Before
+    public void createTmpProvider() {
+        tmpProvider = TempFileProvider.createForUseInTryClause(this);
+    }
+
+    @After
+    public void cleanTmpProvider() {
+        tmpProvider.deleteOrException();
     }
 
     @Before
@@ -59,19 +72,21 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         return grande;
     }
 
-    @Test public void createReferenceWithProperDataUsingStream() throws Exception {    
-        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName));
+    @Test
+    public void createReferenceWithProperDataUsingStream() throws Exception {
+        assertReference(persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length, fileName));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHashSHA1());
         assertEquals(content.length, ref.getSize());
-        assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.getInputStream())));
+        assertTrue(Arrays.equals(content, readAllAndClose(ref)));
     }
 
-    
-    @Test public void recoverReferenceWithSameDataUsingStream() throws Exception {    
-        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName);
+    @Test
+    public void recoverReferenceWithSameDataUsingStream() throws Exception {
+        IAttachmentRef original = persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length,
+                fileName);
         IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
         assertReference(original, returned);
     }
@@ -80,10 +95,14 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         assertEquals(returned.getHashSHA1(), original.getHashSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
-                ByteStreams.toByteArray(original.getInputStream())));
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
-                ByteStreams.toByteArray(original.getInputStream())));
+        assertTrue(Arrays.equals(readAllAndClose(returned), readAllAndClose(original)));
+        assertTrue(Arrays.equals(readAllAndClose(returned), readAllAndClose(original)));
+    }
+
+    private byte[] readAllAndClose(IAttachmentRef ref) throws IOException {
+        try (InputStream in = ref.getInputStream()) {
+            return ByteStreams.toByteArray(in);
+        }
     }
 
 }

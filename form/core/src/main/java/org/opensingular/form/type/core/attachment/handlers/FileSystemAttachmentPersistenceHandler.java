@@ -30,6 +30,7 @@ import org.opensingular.lib.commons.util.TempFileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -84,7 +85,7 @@ public class FileSystemAttachmentPersistenceHandler
         return new FileSystemAttachmentPersistenceHandler(createTemporaryFolder());
     }
 
-    public static File createTemporaryFolder() throws IOException {
+    private static File createTemporaryFolder() throws IOException {
         File tmpDir = Files.createTempDirectory("singular").toFile();
         tmpDir.deleteOnExit();
         return tmpDir;
@@ -102,7 +103,8 @@ public class FileSystemAttachmentPersistenceHandler
     private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name) {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
-        try (OutputStream fos = IOUtil.newBufferedOutputStream(temp);
+        try (FileOutputStream f1 = new FileOutputStream(temp);
+             OutputStream fos = IOUtil.newBufferedOutputStream(f1);
              DigestInputStream inHash = HashUtil.toSHA1InputStream(IOUtil.newBuffredInputStream(origin));
              OutputStream infoFOS = IOUtil.newBufferedOutputStream(infoFileFromId(id))) {
             IOUtils.copy(inHash, fos);
@@ -110,7 +112,7 @@ public class FileSystemAttachmentPersistenceHandler
             IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength), name);
             return newRef(id, sha1, temp.getAbsolutePath(), originLength, name);
         } catch (Exception e) {
-            throw SingularException.rethrow(e);
+            throw new SingularFormException("Erro adicionando anexo", e);
         }
     }
 
