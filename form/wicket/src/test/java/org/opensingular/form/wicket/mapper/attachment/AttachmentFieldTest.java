@@ -80,7 +80,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         java.io.File tmpFile = tmpProvider.createTempFile(content);
 
         FormTester formTester = ctx.newFormTester();
-        formTester.submit(ctx.getAssertionsPage().getSubCompomentWithId("remove_btn").getTargetOrException());
+        formTester.submit(ctx.getAssertionsPage().getSubCompomentWithId("remove_btn").getTarget());
         //formTester.setFile(getFormRelativePath(multipleFileField), new org.apache.wicket.util.file.File(tempFile), "text/plain");
 
         ctx.getAssertionsPage().debugComponentTree();
@@ -122,7 +122,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
         //Clica em apagar
         FormTester formTester = ctx.newFormTester();
-        formTester.submit(assertDelButton(ctx.getAssertionsPage(),true).getTargetOrException());
+        formTester.submit(assertDelButton(ctx.getAssertionsPage(),true).getTarget());
 
         asssertContent(ctx.getAssertionsInstance().field("attachment"), null);
     }

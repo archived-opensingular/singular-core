@@ -50,7 +50,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     @Override
     protected String errorMsg(String msg) {
-        if (getTarget() == null) {
+        if (! getTargetOpt().isPresent()) {
             return "null : " + msg;
         }
         return getTarget().getPageRelativePath() + " : " + msg;
@@ -102,7 +102,6 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      */
     @Nonnull
     public final AssertionsWComponent findSubComponent(Predicate<Component> predicate) {
-        isNotNull();
         return createAssertionForSubComponent(getTarget(), predicate);
     }
 

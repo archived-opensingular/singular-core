@@ -55,7 +55,7 @@ public class NewRowTest {
     }
 
     BSRow findRowForType(SType<?> type) {
-        return tester.getAssertionsForm().getSubCompomentWithType(type).getTargetOrException()
+        return tester.getAssertionsForm().getSubCompomentWithType(type).getTarget()
                 .visitParents(BSRow.class, new IVisitor<BSRow, BSRow>() {
                     @Override
                     public void component(BSRow row, IVisit<BSRow> visit) {

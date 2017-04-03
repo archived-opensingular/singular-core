@@ -18,7 +18,6 @@ package org.opensingular.lib.commons.test;
 
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -42,24 +41,22 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
     /**
      * Objeto alvo das assertivas.
      */
-    @Nullable
+    @Nonnull
     public final T getTarget() {
+        isNotNull();
         return target;
     }
 
-    /**
-     * Objeto alvo das assertivas.
-     */
     @Nonnull
-    public final T getTargetOrException() {
-        isNotNull();
-        return target;
+    public final Optional<T> getTargetOpt() {
+        return Optional.ofNullable(target);
     }
 
     /**
      * Retorna o objeto alvo das assertivas já com cast para o tipo da classe informado ou dá uma exception se o objeto
      * não foi da classe informado. Se for null, também gera exception.
      */
+    @Nonnull
     public final <TT> TT getTarget(@Nonnull Class<TT> expectedClass) {
         if (!expectedClass.isInstance(target)) {
             throw new AssertionError(errorMsg("Não é da classe " + expectedClass.getName(), expectedClass,
@@ -93,7 +90,7 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      * Verifica se o objeto atual é nulo.
      */
     public final SELF isNull() {
-        if (getTarget() != null) {
+        if (target != null) {
             throw new AssertionError(errorMsg("Era esperado ser null."));
         }
         return (SELF) this;
@@ -104,7 +101,7 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      * Verifica se o objeto atual não é nulo.
      */
     public final SELF isNotNull() {
-        if (getTarget() == null) {
+        if (target == null) {
             throw new AssertionError("Resultado está null. Esperado não ser null.");
         }
         return (SELF) this;
@@ -114,7 +111,6 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      * Verifica se o objeto atual é da classe informada.
      */
     public final SELF is(Class<?> typeClass) {
-        isNotNull();
         if (! typeClass.isInstance(getTarget())) {
             throw new AssertionError(errorMsg("Não é uma instância da classe " + typeClass.getName(), typeClass,
                     getTarget().getClass()));
@@ -126,9 +122,9 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      * Verifica se o objeto atual é identico ao valor informado (equivalencia usando '==' ).
      */
     public final SELF isSameAs(Object expectedValue) {
-        if (getTarget() != expectedValue) {
+        if (target != expectedValue) {
             throw new AssertionError(errorMsg("Não é a mesma instância (not the same) de " + expectedValue,
-                    expectedValue, getTarget()));
+                    expectedValue, target));
         }
         return (SELF) this;
     }
@@ -137,10 +133,10 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      * Verifica se o objeto atual não é identico ao valor informado (equivalencia usando '==' ).
      */
     public final SELF isNotSameAs(Object notExpectedValue) {
-        if (getTarget() == notExpectedValue) {
+        if (target == notExpectedValue) {
             throw new AssertionError(errorMsg(
                     "Era esperado instância diferentes (the same) de " + notExpectedValue + ", mas é igual",
-                    "diferente de '" + notExpectedValue + "'", getTarget()));
+                    "diferente de '" + notExpectedValue + "'", target));
         }
         return (SELF) this;
     }

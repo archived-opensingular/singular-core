@@ -12,8 +12,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 /**
  * Apoio a escrita de asserções referente a um {@link SType} e seu conteúdo.
  *
@@ -181,7 +179,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
     }
 
     private void compositeSize(int expectedSize) {
-        Assertions.assertThat(((STypeComposite) getTarget()).getFields().size()).isEqualTo(expectedSize);
+        Assertions.assertThat(getTarget(STypeComposite.class).getFields().size()).isEqualTo(expectedSize);
     }
 
     /**

@@ -77,12 +77,12 @@ public class TypeaheadAjaxUpdateTest {
 
     @Test
     public void assertVisibility() {
-        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTargetOrException();
+        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTarget();
         tester.assertInvisible(pessoaComponent.getPageRelativePath());
 
         tester.getAssertionsForm().getSubCompomentWithType(pessoa).assertSInstance();
 
-        DropDownChoice dropDown = (DropDownChoice) tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget();
+        DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         tester.newFormTester().select(getFormRelativePath(dropDown), 0);
         tester.executeAjaxEvent(dropDown, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
@@ -92,8 +92,8 @@ public class TypeaheadAjaxUpdateTest {
 
     @Test
     public void assertUpdate() {
-        DropDownChoice dropDownGenero = (DropDownChoice) tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).get(0).getTarget();
+        DropDownChoice dropDownGenero =  tester.getAssertionsForm()
+                .getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         {
             tester.newFormTester().select(getFormRelativePath(dropDownGenero), 1);
@@ -117,7 +117,7 @@ public class TypeaheadAjaxUpdateTest {
         tester.executeAjaxEvent(inputNameComponent, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
 
         List<SInstance> listITems = (List<SInstance>) tester.getAssertionsForm()
-                .getSubCompomentWithType(pessoa).assertSInstance().getTargetOrException().getValue();
+                .getSubCompomentWithType(pessoa).assertSInstance().getTarget().getValue();
         assertThat(listITems.get(1).getValue()).isNotNull();
     }
 

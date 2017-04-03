@@ -48,8 +48,8 @@ public class STypeStringMultipleSelectionFieldTest {
     @Test
     public void rendersAListWithSpecifiedOptions() {
         tester.startDummyPage();
-        CheckBoxMultipleChoice choices = (CheckBoxMultipleChoice)
-                tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(0).getTarget();
+        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(
+                0).getTarget(CheckBoxMultipleChoice.class);
 
         List<String> chaves   = new ArrayList<>();
         List<String> displays = new ArrayList<>();
@@ -84,8 +84,8 @@ public class STypeStringMultipleSelectionFieldTest {
         });
         tester.startDummyPage();
 
-        CheckBoxMultipleChoice choices = (CheckBoxMultipleChoice)
-                tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(0).getTarget();
+        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(
+                0).getTarget(CheckBoxMultipleChoice.class);
         List<String> chaves = new ArrayList<>();
         List<String> displays = new ArrayList<>();
 

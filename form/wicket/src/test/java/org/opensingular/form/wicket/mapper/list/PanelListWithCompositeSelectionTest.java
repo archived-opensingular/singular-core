@@ -79,7 +79,7 @@ public class PanelListWithCompositeSelectionTest {
         tester.executeAjaxEvent(addButton, "click");
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
-        Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTargetOrException();
+        Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
 
         tester.executeAjaxEvent(removeButton, "click");
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
@@ -138,7 +138,7 @@ public class PanelListWithCompositeSelectionTest {
 
     private Button findAddButton() {
         return (Button) tester.getAssertionsForm()
-                .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTargetOrException();
+                .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
     }
 
 }

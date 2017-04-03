@@ -20,7 +20,7 @@ public class AssertionsBaseTest {
         Assert.assertTrue(assertion.getTarget() instanceof String);
 
         Assert.assertNotNull(assertion.getTarget(String.class));
-        Assert.assertNotNull(assertion.getTargetOrException());
+        Assert.assertNotNull(assertion.getTarget());
     }
 
     @Test(expected = AssertionError.class)
@@ -32,7 +32,7 @@ public class AssertionsBaseTest {
     @Test(expected = AssertionError.class)
     public void testGetTargetOrException(){
         AssertionsTest assertion = new AssertionsTest((String) null);
-        assertion.getTargetOrException();
+        assertion.getTarget();
     }
 
     @Test
@@ -102,7 +102,7 @@ public class AssertionsBaseTest {
 
         @Override
         protected String errorMsg(String msg) {
-            return getTarget() == null ? msg : "No elemento " + getTarget() + ": " + msg;
+            return getTargetOpt().isPresent() ? "No elemento " + getTarget() + ": " + msg : msg;
         }
     }
 }

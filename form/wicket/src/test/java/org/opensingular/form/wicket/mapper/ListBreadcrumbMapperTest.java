@@ -42,19 +42,19 @@ public class ListBreadcrumbMapperTest {
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 0);
 
         //add a item in the breadCrum
-        ctx.clickLink(cmpExpProf.getSubCompomentWithId("_add").getTargetOrException());
+        ctx.clickLink(cmpExpProf.getSubCompomentWithId("_add").getTarget());
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
 
         //Cancel sub tela
-        ctx.executeAjaxEvent(ctx.getAssertionsForSubComp("cancelButton").getTargetOrException(), "onclick");
+        ctx.executeAjaxEvent(ctx.getAssertionsForSubComp("cancelButton").getTarget(), "onclick");
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 0);
 
         //add a item in the breadCrum
-        ctx.clickLink(ctx.getAssertionsForSubComp("_add").getTargetOrException());
+        ctx.clickLink(ctx.getAssertionsForSubComp("_add").getTarget());
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
 
         //Submit sub tela
-        ctx.executeAjaxEvent(ctx.getAssertionsForSubComp("okButton").getTargetOrException(), "onclick");
+        ctx.executeAjaxEvent(ctx.getAssertionsForSubComp("okButton").getTarget(), "onclick");
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
     }
 
