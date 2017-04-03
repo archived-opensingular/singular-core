@@ -1,18 +1,18 @@
 package org.opensingular.form.persistence.dto;
 
-public class PeticaoPrimariaDTO {
+public class PeticaoPrimariaDTO extends BaseDTO {
 
-    private Long co_versao_formulario;
+    private Long codVersaoFormulario;
     private String nomeRequerente;
     private String cnpjRequerente;
     private String emailRequerente;
 
-    public Long getCo_versao_formulario() {
-        return co_versao_formulario;
+    public Long getCodVersaoFormulario() {
+        return codVersaoFormulario;
     }
 
-    public void setCo_versao_formulario(Long co_versao_formulario) {
-        this.co_versao_formulario = co_versao_formulario;
+    public void setCodVersaoFormulario(Long codVersaoFormulario) {
+        this.codVersaoFormulario = codVersaoFormulario;
     }
 
     public String getNomeRequerente() {

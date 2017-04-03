@@ -1,6 +1,7 @@
 package org.opensingular.form.service;
 
 import org.junit.Test;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.dao.ReportDAO;
 import org.opensingular.form.persistence.dto.PeticaoPrimariaDTO;
 import org.opensingular.form.persistence.service.TransposeService;
@@ -22,7 +23,18 @@ public class TransposeServiceTest extends FormServiceTest {
             .addFilter("nomeRequerente", "=", "Associação Hospitalar Beneficente de Bandeirantes")
             .generateSql();
 
-        List<PeticaoPrimariaDTO> peticoes = reportDAO.listPeticoesPrimarias(sql);
+        List<PeticaoPrimariaDTO> peticoes = (List<PeticaoPrimariaDTO>) reportDAO.listDtos(sql, PeticaoPrimariaDTO.class);
         System.out.println(peticoes);
+    }
+
+    @Test
+    public void selectPersistedValues() {
+        FormKey pessoaKey = insert();
+        String sql = TransposeService.getInstance()
+                .addColumn("nome", "TXT_VALOR", "nome")
+                .addColumn("idade", "TXT_VALOR", "idade")
+                .generateSql();
+        List<PessoaDTO> pessoas = (List<PessoaDTO>) reportDAO.listDtos(sql, PessoaDTO.class);
+        System.out.println(pessoas);
     }
 }

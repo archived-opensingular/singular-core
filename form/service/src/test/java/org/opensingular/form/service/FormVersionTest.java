@@ -6,7 +6,10 @@ import org.hibernate.Session;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SISimple;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.document.RefType;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyInt;
 import org.opensingular.form.persistence.FormKeyLong;
@@ -27,25 +30,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FormVersionTest extends FormServiceTest {
-
-
-    private static final Integer IDADE_15 = 15;
-    private static final Integer IDADE_22 = 22;
-
-    private SIComposite formWithoutAnnotations() {
-        SIComposite pessoa = (SIComposite) documentFactory.createInstance(tipoPessoaRef);
-        pessoa.setValue(idade, IDADE_15);
-        pessoa.setValue(nome, "João");
-        return pessoa;
-    }
-
-    private FormKey insert() {
-        SIComposite pessoa = formWithoutAnnotations();
-        FormKey pessoaKey = formService.insert(pessoa, 1);
-        SIComposite pessoaLoaded = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
-        Assert.assertEquals(pessoa, pessoaLoaded);
-        return pessoaKey;
-    }
 
     @Test
     public void insertTestAndLoad(){
@@ -122,6 +106,7 @@ public class FormVersionTest extends FormServiceTest {
         result = criteria.list();
         System.out.println("Total de " + result.size());
     }
+
 }
 
 
