@@ -28,28 +28,34 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Daniel on 02/04/2017.
+ * @author Daniel C. Bordin on 02/04/2017.
  */
 public class TempFileProviderTest {
 
     private List<File> files = new ArrayList<>();
-    private List<Closeable> locks = new ArrayList<>();
+    private List<Closeable> toBeClosed = new ArrayList<>();
+    private List<FileLock> locks = new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
         files.clear();
         locks.clear();
+        toBeClosed.clear();
     }
 
     @After
     public void tearDown() throws Exception {
-        for (Closeable in : locks) {
+        for (FileLock lock : locks) {
+            lock.release();
+        }
+        for (Closeable in : toBeClosed) {
             in.close();
         }
         for (File file : files) {
@@ -215,7 +221,8 @@ public class TempFileProviderTest {
         FileOutputStream out = new FileOutputStream(file);
         out.write(1);
         out.flush();
-        locks.add(out);
+        toBeClosed.add(out);
+        locks.add(out.getChannel().lock());
     }
 
     @Test
