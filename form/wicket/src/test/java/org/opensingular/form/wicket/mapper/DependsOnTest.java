@@ -119,8 +119,8 @@ public class DependsOnTest {
     // WITH UNEXISTANT SELECTED VALUES
     @Test
     public void addPreloadedOptionsToListIfNotPresentWithUnexistantSelectedValues(){
-        tester.getAssertionsForm().getSubCompomentWithType(category).assertSInstance().getTarget().setValue("special");
-        tester.getAssertionsForm().getSubCompomentWithType(element).assertSInstance().getTarget().setValue("gluten");
+        tester.getAssertionsForm().getSubCompomentWithType(category).assertSInstance().getTargetOrException().setValue("special");
+        tester.getAssertionsForm().getSubCompomentWithType(element).assertSInstance().getTargetOrException().setValue("gluten");
 
         DropDownChoice elementChoices = (DropDownChoice) options().get(1).getTarget();
 
@@ -134,8 +134,8 @@ public class DependsOnTest {
     // WITH UNEXISTANT DEPENDEND SELECTED VALUES
     @Test
     public void addPreloadedOptionsToListIfNotPresentWithUnexistantDependendSelectedValues(){
-        tester.getAssertionsForm().getSubCompomentWithType(category).assertSInstance().getTarget().setValue("vegetables");
-        tester.getAssertionsForm().getSubCompomentWithType(element).assertSInstance().getTarget().setValue("gluten");
+        tester.getAssertionsForm().getSubCompomentWithType(category).assertSInstance().getTargetOrException().setValue("vegetables");
+        tester.getAssertionsForm().getSubCompomentWithType(element).assertSInstance().getTargetOrException().setValue("gluten");
 
         DropDownChoice categoryChoices = (DropDownChoice) options().get(0).getTarget();
         DropDownChoice elementChoices = (DropDownChoice) options().get(1).getTarget();
@@ -152,7 +152,7 @@ public class DependsOnTest {
         tester.getAssertionsForm().getSubCompomentWithType(category).assertSInstance().getTarget().setValue("condiments");
 
         tester.executeAjaxEvent(tester.getAssertionsForm()
-                .getSubCompomentWithType(category).getTarget(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+                .getSubCompomentWithType(category).getTargetOrException(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
 
         DropDownChoice elementChoices = (DropDownChoice) options().get(1).getTarget();
 

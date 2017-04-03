@@ -65,7 +65,7 @@ public class PanelListWithSimpleSelectionTest {
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
         final Button removeButton = (Button) tester.getAssertionsForm()
-                .findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
+                .findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTargetOrException();
 
         tester.executeAjaxEvent(removeButton, "click");
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
@@ -118,6 +118,6 @@ public class PanelListWithSimpleSelectionTest {
 
     private Button getAddButton() {
         return (Button) tester.getAssertionsForm()
-                .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
+                .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTargetOrException();
     }
 }

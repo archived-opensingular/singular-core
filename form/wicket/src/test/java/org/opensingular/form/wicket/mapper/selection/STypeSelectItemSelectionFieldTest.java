@@ -81,7 +81,7 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTargetOrException()), 0)
                 .submit();
 
         tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
@@ -112,7 +112,7 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTargetOrException()), 0)
                 .submit();
 
         tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
@@ -123,7 +123,7 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTargetOrException()), 0)
                 .submit();
 
         tester.getAssertionsForm().getSubCompomentWithType(selectType)

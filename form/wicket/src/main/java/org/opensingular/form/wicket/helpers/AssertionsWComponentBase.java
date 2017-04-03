@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.ObjectAssert;
@@ -56,10 +57,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     }
 
 
-    /**
-     * Busca um sub componente do componente atual com o tipo informado e retonar o resultado. Dispara exception
-     * senão encontrar o elemento.
-     */
+    /** Busca um sub componente do componente atual com o tipo informado e retonar o resultado. */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithType(SType<?> type) {
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
@@ -68,10 +66,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     }
 
 
-    /**
-     * Busca um sub componente do componente atual com o nome do tipo informado e retonar o resultado. Dispara exception
-     * senão encontrar o elemento.
-     */
+    /** Busca um sub componente do componente atual com o nome do tipo informado e retonar o resultado. */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithTypeNameSimple(String nameSimple) {
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
@@ -80,26 +75,30 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
                 .map(nameSimple::equals).orElse(Boolean.FALSE));
     }
 
-    /**
-     * Busca um sub componente do componente atual com o ID informado e retonar o resultado. Dispara exception senão
-     * encontrar o sub componente.
-     */
+    /** Busca um sub componente do componente atual com o ID informado e retonar o resultado. */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithId(String componentId) {
         return findSubComponent(component -> componentId.equals(component.getId()));
     }
 
     /**
+     * Busca um sub componente do componente atual que possua um model cujo o valor seja a {@link SInstance} informada.
+     */
+    public final AssertionsWComponent getSubCompomentForSInstance(@Nonnull SInstance expectedInstance) {
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component).orElse(null) ==
+                expectedInstance);
+    }
+
+    /**
      * Busca um sub componente do componente atual que possua uma {@link SInstance} como model do componente.
-     * Dispara exception senão encontrar o sub componente.
      */
     public final AssertionsWComponent getSubCompomentWithSInstance() {
         return findSubComponent(component ->  ISInstanceAwareModel.optionalSInstance(component).isPresent());
     }
 
     /**
-     * Busca um sub componente do componente atual que atenda ao critério informado. Para no primeiro que atender. Se
-     * não for encontrado um Component que atenda a condição, então dispara exception.
+     * Busca um sub componente do componente atual que atenda ao critério informado. Para no primeiro que atender.
+     * Mesmo senão encontrar, retorna uma assertiva com conteúdo null.
      */
     @Nonnull
     public final AssertionsWComponent findSubComponent(Predicate<Component> predicate) {
@@ -113,7 +112,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      */
     final static AssertionsWComponent createAssertionForSubComponent(Component parent, Predicate<Component> predicate) {
         Objects.requireNonNull(parent);
-        return new AssertionsWComponent(findSubComponentImpl(parent, predicate)).isNotNull();
+        return new AssertionsWComponent(findSubComponentImpl(parent, predicate));
     }
 
     private static Component findSubComponentImpl(Component parent, Predicate<Component> predicate) {
@@ -190,6 +189,8 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
         Optional<SInstance> instance = ISInstanceAwareModel.optionalSInstance(component);
         if (instance.isPresent()) {
             descr += "      <" + instance.get().getPathFull() + ">";
+        } else if (component instanceof Label) {
+            descr += ": \"" + ((Label) component).getDefaultModelObjectAsString() + '"';
         }
 
         System.out.println(descr);

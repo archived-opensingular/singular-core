@@ -35,25 +35,27 @@ public class ListBreadcrumbMapperTest {
         SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
         ctx.getDummyPage().setTypeBuilder(ListBreadcrumbMapperTest::createSimpleForm);
         ctx.getDummyPage().setAsEditView();
-
-        ctx.startDummyPage(); //Start
+        ctx.startDummyPage();
 
         AssertionsWComponent cmpExpProf = ctx.getAssertionsPage().getSubCompomentWithTypeNameSimple(
                 "experienciasProfissionais").isNotNull();
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 0);
 
-        ctx.getAssertionsPage().debugComponentTree();
-        AssertionsWComponent addButton = cmpExpProf.getSubCompomentWithId("_add").isNotNull();
-
-        ctx.clickLink(addButton.getTarget()); //add a item in the breadCrum
-
-        ctx.getAssertionsPage().debugComponentTree();
-
+        //add a item in the breadCrum
+        ctx.clickLink(cmpExpProf.getSubCompomentWithId("_add").getTargetOrException());
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
 
-        //TODO corrigir para que o código abaixo funcione (para que funcione o cancelar) Depois implementar o "ok"
-        //ctx.clickLink(ctx.getAssertionsForSubComp("cancelButton").getTargetOrException());
-        //ctx.getAssertionsInstance().isList("experienciasProfissionais", 0);
+        //Cancel sub tela
+        ctx.executeAjaxEvent(ctx.getAssertionsForSubComp("cancelButton").getTargetOrException(), "onclick");
+        ctx.getAssertionsInstance().isList("experienciasProfissionais", 0);
+
+        //add a item in the breadCrum
+        ctx.clickLink(ctx.getAssertionsForSubComp("_add").getTargetOrException());
+        ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
+
+        //Submit sub tela
+        ctx.executeAjaxEvent(ctx.getAssertionsForSubComp("okButton").getTargetOrException(), "onclick");
+        ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
     }
 
     private static void createSimpleForm(STypeComposite testForm) {

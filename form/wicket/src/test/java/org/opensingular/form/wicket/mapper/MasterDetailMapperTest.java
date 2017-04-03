@@ -47,7 +47,7 @@ public class MasterDetailMapperTest {
         test.startDummyPage();
 
         AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubCompomentWithType(listBaseType)
-                .getSubCompomentWithType(listElementType);
+                .getSubCompomentWithType(listElementType).isNotNull();
 
         compositeAssertion.getSubCompomentWithType(date).assertSInstance().isValueEquals(
                 java.time.YearMonth.of(2016, 01));

@@ -7,6 +7,7 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil.RunnableEx;
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.io.Serializable;
@@ -165,28 +166,28 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, String trechoMsgEsperada) {
+    public static void assertException(RunnableEx acao, String trechoMsgEsperada) {
         SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
+    public static void assertException(RunnableEx acao, String trechoMsgEsperada, String msgFailException) {
         SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada) {
         SingularTestUtil.assertException(acao, exceptionEsperada, null, null);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada,
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada,
             String trechoMsgEsperada) {
         SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
         SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, msgFailException);
     }

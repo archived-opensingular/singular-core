@@ -77,7 +77,7 @@ public class TypeaheadAjaxUpdateTest {
 
     @Test
     public void assertVisibility() {
-        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTarget();
+        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTargetOrException();
         tester.assertInvisible(pessoaComponent.getPageRelativePath());
 
         tester.getAssertionsForm().getSubCompomentWithType(pessoa).assertSInstance();
@@ -117,7 +117,7 @@ public class TypeaheadAjaxUpdateTest {
         tester.executeAjaxEvent(inputNameComponent, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
 
         List<SInstance> listITems = (List<SInstance>) tester.getAssertionsForm()
-                .getSubCompomentWithType(pessoa).assertSInstance().getTarget().getValue();
+                .getSubCompomentWithType(pessoa).assertSInstance().getTargetOrException().getValue();
         assertThat(listITems.get(1).getValue()).isNotNull();
     }
 
