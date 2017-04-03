@@ -1,5 +1,6 @@
 package org.opensingular.form.document;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +13,12 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
-import org.opensingular.form.type.core.attachment.AttachmentTestUtil;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,6 +40,18 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
     public TestSDocumentPersistentServices(TestFormConfig testFormConfig) {
         super(testFormConfig);
+    }
+
+    private TempFileProvider tmpProvider;
+
+    @Before
+    public void createTmpProvider() {
+        tmpProvider = TempFileProvider.createForUseInTryClause(this);
+    }
+
+    @After
+    public void cleanTmpProvider() {
+        tmpProvider.deleteOrException();
     }
 
     @Before
@@ -81,7 +94,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef);
 
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt", HashUtil.toSHA1Base16(content)))
+        when(persistentHandler.addAttachment(tmpProvider.createTempFile(content), content.length, "abacate.txt"))
                 .thenReturn(persistentRef);
 
         when(persistentHandler.copy(eq(tempRef), any()))
@@ -107,7 +120,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef);
 
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt", HashUtil.toSHA1Base16(content)))
+        when(persistentHandler.addAttachment(tmpProvider.createTempFile(content), content.length, "abacate.txt"))
                 .thenReturn(persistentRef);
 
         when(persistentHandler.copy(eq(tempRef), any()))
@@ -133,7 +146,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef = attachmentRef("abacate", content));
 
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt", HashUtil.toSHA1Base16(content)))
+        when(persistentHandler.addAttachment(tmpProvider.createTempFile(content), content.length, "abacate.txt"))
                 .thenReturn(persistentRef = attachmentRef("abacate", content));
 
         when(persistentHandler.copy(eq(tempRef), Mockito.anyObject()))
@@ -158,7 +171,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         when(tempHandler.getAttachment("abacate"))
                 .thenReturn(tempRef);
-        when(persistentHandler.addAttachment(AttachmentTestUtil.writeBytesToTempFile(content), content.length, "abacate.txt", HashUtil.toSHA1Base16(content)))
+        when(persistentHandler.addAttachment(tmpProvider.createTempFile(content), content.length, "abacate.txt"))
                 .thenReturn(persistentRef);
         when(persistentHandler.copy(eq(tempRef), Mockito.anyObject()))
                 .thenReturn(new AttachmentCopyContext<>(persistentRef));

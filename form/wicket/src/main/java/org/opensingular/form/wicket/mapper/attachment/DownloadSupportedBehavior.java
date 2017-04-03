@@ -168,7 +168,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                     resourceResponse.setWriteCallback(new WriteCallback() {
                         @Override
                         public void writeData(Attributes attributes) throws IOException {
-                            try (InputStream inputStream = fileRef.getInputStream()) {
+                            try (InputStream inputStream = fileRef.getContentAsInputStream()) {
                                 IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
                                 /*Desregistrando recurso compartilhado*/
                                 WebApplication.get().unmount(url);

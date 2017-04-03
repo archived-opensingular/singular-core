@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.AttachmentCopyContext;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.lib.commons.base.SingularException;
 
 import java.io.File;
 import java.io.Serializable;
@@ -44,6 +43,10 @@ public class InMemoryAttachmentPersistenceHandler extends FileSystemAttachmentPe
 
     public InMemoryAttachmentPersistenceHandler() {
         super(StringUtils.isEmpty(System.getProperty("java.io.tmpdir")) ? "./tmp" : System.getProperty("java.io.tmpdir"));
+    }
+
+    public InMemoryAttachmentPersistenceHandler(File tempDir) {
+        super(tempDir);
     }
 
     @Override
@@ -78,12 +81,15 @@ public class InMemoryAttachmentPersistenceHandler extends FileSystemAttachmentPe
 
     @Override
     protected File findFileFromId(String fileId) {
-        try {
-            File f = File.createTempFile("InMemoryAttachmentPersitenceHandler_", fileId);
-            f.deleteOnExit();
-            return f;
-        } catch (Exception e) {
-            throw SingularException.rethrow(e);
-        }
+        File f = super.findFileFromId(fileId);
+        f.deleteOnExit();
+        return f;
+    }
+
+    @Override
+    protected File infoFileFromId(String fileId) {
+        File f = super.infoFileFromId(fileId);
+        f.deleteOnExit();
+        return f;
     }
 }

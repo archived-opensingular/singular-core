@@ -121,7 +121,7 @@ public class SearchModalMapperTest {
 
     private void openModal() {
         tester.executeAjaxEvent(tester.getAssertionsForm()
-                .findSubComponent(c -> c.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID))
+                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID)
                 .getTarget(Button.class), "click");
     }
 

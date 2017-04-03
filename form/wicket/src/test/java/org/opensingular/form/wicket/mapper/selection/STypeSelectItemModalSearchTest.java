@@ -99,10 +99,10 @@ public class STypeSelectItemModalSearchTest {
         tester.getDummyPage().setTypeBuilder(STypeSelectItemModalSearchTest::buildBaseType);
         tester.startDummyPage();
 
-        Button link = (Button) tester.getAssertionsForm().findSubComponent(al -> al.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID)).getTarget();
+        Button link = tester.getAssertionsForm().getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(link, "click");
 
-        AjaxLink ajaxLink = (AjaxLink) tester.getAssertionsForm().findSubComponent(al -> al.getId().equals("link")).getTarget();
+        AjaxLink ajaxLink = tester.getAssertionsForm().getSubCompomentWithId("link").getTarget(AjaxLink.class);
         tester.executeAjaxEvent(ajaxLink, "click");
 
         AssertionsSInstance noteBookAssertion = tester.getAssertionsForm().getSubCompomentWithType(notebook).assertSInstance();

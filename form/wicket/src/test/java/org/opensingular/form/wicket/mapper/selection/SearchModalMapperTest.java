@@ -63,8 +63,8 @@ public class SearchModalMapperTest {
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
-        Button openModalButton = (Button) tester.getAssertionsForm()
-                .findSubComponent(b -> b.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID)).getTarget();
+        Button openModalButton = tester.getAssertionsForm()
+                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(openModalButton, "click");
 
         AssertionsWComponentList links = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);

@@ -16,76 +16,21 @@
 
 package org.opensingular.lib.commons.util;
 
-import com.google.common.base.Preconditions;
-import com.google.common.io.Files;
-import org.apache.commons.io.FileUtils;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.lambda.IBiConsumerEx;
-import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.lambda.ISupplierEx;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class TempFileUtils {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TempFileUtils.class);
-    private static final String DEFAULT_FILE_SUFFIX = ".tmp";
-    private static final String DEFAULT_FILE_PREFIX = "TempFileUtils_";
-
     private TempFileUtils() {
     }
 
-    public static void withTempDir(IConsumerEx<File, IOException> callback) {
-        internalWithTempFile(Files::createTempDir, callback);
-    }
-
-    public static void withTempFile(String prefix, String suffix, IConsumerEx<File, IOException> callback) {
-        internalWithTempFile(() -> File.createTempFile(prefix, suffix), callback);
-    }
-
-    public static void withTempFile(IConsumerEx<File, IOException> callback) {
-        withTempFile(DEFAULT_FILE_PREFIX, DEFAULT_FILE_SUFFIX, callback);
-    }
-
-    private static void internalWithTempFile(ISupplierEx<File, IOException> fileSupplier,
-                                             IConsumerEx<File, IOException> callback) {
-        File file = null;
-        try {
-            file = fileSupplier.get();
-            callback.accept(file);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        } finally {
-            if (exists(file)) {
-                FileUtils.deleteQuietly(file);
-            }
-        }
-    }
-
-    /**
-     * @param relativePath caminho
-     * @param callback     biconsumer<baseDir, file>
-     */
-    public static void withFileInTempDir(Path relativePath, IBiConsumerEx<File, File, IOException> callback){
-        Preconditions.checkArgument(!relativePath.isAbsolute());
-        Preconditions.checkArgument(relativePath.getNameCount() > 0);
-        withTempDir(dir -> {
-            Path dirPath = dir.toPath();
-            Path filePath = dirPath.resolve(relativePath);
-            filePath.getParent().toFile().mkdirs();
-            internalWithTempFile(filePath::toFile, file -> callback.accept(dir, file));
-        });
-    }
-
-    public static boolean exists(File f) {
+    private static boolean exists(File f) {
         return (f != null) && f.exists();
     }
 
@@ -96,7 +41,7 @@ public abstract class TempFileUtils {
      * @param file      Arquivo a ser apagado
      * @param requester Classe junta a qual será gravado o log de erro do delete
      */
-    public static void deleteAndFailQuietily(@Nonnull File file, @Nonnull Class<?> requester) {
+    public static void deleteAndFailQuietily(@Nonnull File file, @Nonnull Object requester) {
         delete(file, requester, true);
     }
 
@@ -107,7 +52,7 @@ public abstract class TempFileUtils {
      * @param file      Arquivo a ser apagado
      * @param requester Classe junta a qual será gravado o log de erro do delete
      */
-    public static void deleteOrException(@Nonnull File file, @Nonnull Class<?> requester) {
+    public static void deleteOrException(@Nonnull File file, @Nonnull Object requester) {
         delete(file, requester, false);
     }
 
@@ -120,7 +65,7 @@ public abstract class TempFileUtils {
      *                     chamar {@link File#delete()}. Se true, engole a exception de erro. Se false, dispara
      *                     exception senão conseguir apagar ou se ocorre exception no processo.
      */
-    private static void delete(@Nonnull File file, @Nonnull Class<?> requester, boolean failQuietily) {
+    private static void delete(@Nonnull File file, @Nonnull Object requester, boolean failQuietily) {
         Objects.requireNonNull(requester);
         if (file.exists()) {
             try {
@@ -136,13 +81,19 @@ public abstract class TempFileUtils {
     /**
      * Faz log do erro do delete e dispara exception se necessário.
      */
-    private static void dealWithDeleteErro(@Nonnull File file, @Nonnull Class<?> requester, boolean failQuietily,
+    private static void dealWithDeleteErro(@Nonnull File file, @Nonnull Object requester, boolean failQuietily,
                                            @Nullable Exception e) {
+        Class<?> req = requester instanceof Class ? (Class<?>) requester : requester.getClass();
         String msg = "Nao foi possível apagar o arquivo " + file;
-        Logger logger = Logger.getLogger(requester.getName());
-        logger.log(Level.SEVERE, msg, e);
-        if (!failQuietily) {
+        if (requester != null) {
+            msg += " (solicitação da classe " + req.getName() + ")";
+        }
+        if (failQuietily) {
+            Logger logger = Logger.getLogger(req.getName());
+            logger.log(Level.SEVERE, msg, e);
+        } else {
             throw SingularException.rethrow(msg, e);
         }
     }
+
 }

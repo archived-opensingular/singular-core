@@ -1,7 +1,10 @@
 package org.opensingular.lib.commons.util;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,6 +15,19 @@ import java.util.Map;
 import java.util.Properties;
 
 public class PropertiesUtilsTest {
+
+    protected TempFileProvider tmpProvider;
+
+    @Before
+    public void createTmpProvider() {
+        tmpProvider = TempFileProvider.createForUseInTryClause(this);
+    }
+
+    @After
+    public void cleanTmpProvider() {
+        tmpProvider.deleteOrException();
+    }
+
     @Test
     public void propertiesFromMapTest(){
         Properties properties = getPropertiesTest();
@@ -28,36 +44,35 @@ public class PropertiesUtilsTest {
     public void storeWithOutputStreamAndLoadWithFileTest() throws IOException {
         Properties properties = getPropertiesTest();
 
-        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
-        arquivoTemporario.deleteOnExit();
+        File arquivoTemporario = tmpProvider.createTempFile(".txt");
 
-        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
+        try(FileOutputStream outputStream = new FileOutputStream(arquivoTemporario)) {
 
+            PropertiesUtils.store(null, outputStream);
+            Properties loadedFile = PropertiesUtils.load(arquivoTemporario, "UTF-8");
+            Assert.assertEquals(0, loadedFile.size());
 
-        PropertiesUtils.store(null, outputStream);
-        Properties loadedFile = PropertiesUtils.load(arquivoTemporario, "UTF-8");
-        Assert.assertEquals(0, loadedFile.size());
-
-        PropertiesUtils.store(properties, outputStream);
-        loadedFile = PropertiesUtils.load(arquivoTemporario, "UTF-8");
-        Assert.assertEquals(1, loadedFile.size());
-        Assert.assertEquals("VALUE", loadedFile.getProperty("KEY"));
+            PropertiesUtils.store(properties, outputStream);
+            loadedFile = PropertiesUtils.load(arquivoTemporario, "UTF-8");
+            Assert.assertEquals(1, loadedFile.size());
+            Assert.assertEquals("VALUE", loadedFile.getProperty("KEY"));
+        }
     }
 
     @Test
     public void loadUsingReaderTest() throws IOException {
         Properties properties = getPropertiesTest();
 
-        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
-        arquivoTemporario.deleteOnExit();
+        File arquivoTemporario = tmpProvider.createTempFile(".txt");
 
-        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
-        PropertiesUtils.store(properties, outputStream);
+        try(FileOutputStream outputStream = new FileOutputStream(arquivoTemporario)) {
+            PropertiesUtils.store(properties, outputStream);
+        }
 
-        FileReader reader = new FileReader(arquivoTemporario);
-
-        Properties loadedFile = PropertiesUtils.load(reader);
-        Assert.assertEquals("VALUE", loadedFile.getProperty("KEY"));
+        try(FileReader reader = new FileReader(arquivoTemporario)) {
+            Properties loadedFile = PropertiesUtils.load(reader);
+            Assert.assertEquals("VALUE", loadedFile.getProperty("KEY"));
+        }
     }
 
     @Test

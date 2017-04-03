@@ -92,10 +92,10 @@ public class MasterDetailWithTableListWithStringTest {
     }
 
     private AbstractLink findMasterDetailLink() {
-        return (AbstractLink) tester.getAssertionsForm().findSubComponent((b) -> b.getId().equals("addButton")).getTarget();
+        return tester.getAssertionsForm().getSubCompomentWithId("addButton").getTarget(AbstractLink.class);
     }
 
     private Button findTableAddButton() {
-        return (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
+        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(Button.class);
     }
 }

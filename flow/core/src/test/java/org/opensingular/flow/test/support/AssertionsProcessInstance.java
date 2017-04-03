@@ -44,8 +44,9 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
 
     @Override
     protected String errorMsg(String msg) {
-        if (getTarget() != null) {
-            return "(processInstance=" + getTarget() + ") " + msg;
+        Optional<ProcessInstance> target = getTargetOpt();
+        if (target.isPresent()) {
+            return "(processInstance=" + target.get() + ") " + msg;
         }
         return msg;
     }
@@ -60,14 +61,14 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
     }
 
     private AssertionsTaskInstance currentTask() {
-        TaskInstance task = getTargetOrException().getCurrentTask().orElseThrow(
+        TaskInstance task = getTarget().getCurrentTask().orElseThrow(
                 () -> new AssertException(errorMsg("Não há uma tarefa corrente (currentTask() == null)")));
         return new AssertionsTaskInstance(task);
     }
 
     /** Verifica se a váriavel do processo correspondente ao valor esperado. Caso contrário, dispara exception. */
     public AssertionsProcessInstance isVariableValue(@Nonnull String variableName, @Nullable Object expectedValue) {
-        Object currentValue = getTargetOrException().getVariables().getValue(variableName);
+        Object currentValue = getTarget().getVariables().getValue(variableName);
         if(!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(
                     errorMsg("Valor incorreto na váriavel '" + variableName + "' do processo", expectedValue,
@@ -81,11 +82,11 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
      * informada, caso contrário dispara exception.
      */
     public AssertionsProcessInstance isVariablesSize(int expectedListSize, int expectedNotNullSize) {
-        if(getTargetOrException().getVariables().size() != expectedListSize) {
+        if(getTarget().getVariables().size() != expectedListSize) {
             throw new AssertionError(errorMsg("Quantidade de variáveis não esperadas", expectedListSize,
-                    getTargetOrException().getVariables().size()));
+                    getTarget().getVariables().size()));
         }
-        long countNotNull = getTargetOrException().getVariables().asCollection().stream().filter(
+        long countNotNull = getTarget().getVariables().asCollection().stream().filter(
                 v -> v.getValue() != null).count();
         if (countNotNull != expectedNotNullSize) {
             throw new AssertionError(

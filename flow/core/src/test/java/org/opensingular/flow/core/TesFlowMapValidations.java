@@ -192,7 +192,7 @@ public class TesFlowMapValidations {
         }
     }
 
-    public static void assertException(Runnable code, String expectedExceptionMsgPart) {
+    public static void assertException(SingularTestUtil.RunnableEx code, String expectedExceptionMsgPart) {
         SingularTestUtil.assertException(code, SingularFlowException.class, expectedExceptionMsgPart, null);
     }
 

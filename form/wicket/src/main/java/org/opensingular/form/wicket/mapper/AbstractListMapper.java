@@ -41,11 +41,15 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
-public abstract class AbstractListaMapper implements IWicketComponentMapper {
+public abstract class AbstractListMapper implements IWicketComponentMapper {
 
     protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mLista, final Form<?> form,
                                                final BSContainer<?> cell, boolean footer) {
