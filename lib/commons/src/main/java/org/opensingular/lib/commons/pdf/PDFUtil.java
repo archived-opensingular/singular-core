@@ -101,7 +101,7 @@ public abstract class PDFUtil implements Loggable {
         return new PDFUtilUnix();
     }
 
-    final static boolean isWindows() {
+    public final static boolean isWindows() {
         String os = System.getProperty("os.name").toLowerCase();
         return os.contains("win");
     }
