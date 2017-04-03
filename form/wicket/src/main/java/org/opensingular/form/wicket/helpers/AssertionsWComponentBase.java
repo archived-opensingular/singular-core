@@ -30,7 +30,7 @@ import org.opensingular.lib.commons.test.AssertionsBase;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -134,12 +134,49 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      * tamanho zero.
      */
     @Nonnull
-    public final <TT extends Component> AssertionsWComponentList getSubComponents(@Nonnull Class<TT> targetClass) {
-        List<TT> result = Collections.emptyList();
-        if (getTarget() instanceof MarkupContainer) {
-            result = TestFinders.findTag((MarkupContainer) getTarget(), targetClass);
+    public final <TT extends Component> AssertionsWComponentList<TT> getSubComponents(@Nonnull Class<TT> targetClass) {
+        return (AssertionsWComponentList<TT>) getSubComponents(component -> targetClass.isInstance(component));
+    }
+
+    /**
+     * Retornar uma lista com todos os sub componentes com o ID informado.
+     * <p>A lista pode ser de tamanho zero.</p>
+     */
+    @Nonnull
+    public final AssertionsWComponentList<Component> getSubCompomentsWithId(@Nonnull String componentId) {
+        return getSubComponents(component -> componentId.equals(component.getId()));
+    }
+
+    /**
+     * Retornar uma lista com todos os sub componentes que possuem uma {@link SInstance} associada em seu model.
+     * <p>A lista pode ser de tamanho zero.</p>
+     */
+    public final AssertionsWComponentList<Component> getSubComponentsWithSInstance() {
+        return getSubComponents(component ->  ISInstanceAwareModel.optionalSInstance(component).isPresent());
+    }
+
+    /**
+     * Retornar uma lista dos sub componentes que atendem a critério informado. Ao encontrar um componente que atende
+     * ao critério, não continua procurando nos subComponentes desse.
+     * <p>A lista pode ser de tamanho zero.</p>
+     */
+    @Nonnull
+    public final AssertionsWComponentList<Component> getSubComponents(@Nonnull Predicate<Component> predicate) {
+            List<Component> result = new ArrayList<>();
+            findSubComponentsImpl(getTarget(), predicate, result);
+            return new AssertionsWComponentList<>(result);
+    }
+
+    private static void findSubComponentsImpl(Component parent, Predicate<Component> predicate, List<Component> components) {
+        if (parent instanceof MarkupContainer) {
+            for (Component component : (MarkupContainer) parent) {
+                if (predicate.test(component)) {
+                    components.add(component);
+                } else {
+                    findSubComponentsImpl(component, predicate, components);
+                }
+            }
         }
-        return new AssertionsWComponentList<>(result);
     }
 
     /**
