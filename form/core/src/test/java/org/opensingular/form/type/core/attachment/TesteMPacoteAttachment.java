@@ -81,7 +81,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
         final byte[] conteudo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-        arquivo.setContent(null, tmpProvider.createTempFile(conteudo), conteudo.length);
+        arquivo.setContent(null, tmpProvider.createTempFile(conteudo), conteudo.length, HashUtil.toSHA1Base16(conteudo));
 
         assertConteudo(conteudo, arquivo, 1);
         assertNull(arquivo.getFileName());
@@ -112,10 +112,10 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         byte[] conteudo1 = new byte[]{1, 2, 3};
         byte[] conteudo2 = new byte[]{4, 5, 6, 7, 8, 9, 10};
 
-        arquivo.setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length);
+        arquivo.setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
         assertConteudo(conteudo1, arquivo, 1);
 
-        arquivo.setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length);
+        arquivo.setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2));
         assertConteudo(conteudo2, arquivo, 1);
     }
 
@@ -127,7 +127,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertException(() -> arquivo.setContent("", null, 0, ""), "O arquivo não pode ser nulo.");
         assertNoReference(arquivo, 0);
 
-        arquivo.setContent("", tmpProvider.createTempFile(conteudo), conteudo.length);
+        arquivo.setContent("", tmpProvider.createTempFile(conteudo), conteudo.length, HashUtil.toSHA1Base16(conteudo));
 
     }
 
@@ -135,7 +135,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     public void testSetContentSizeZero() throws IOException {
         SIAttachment arquivo = createEmptyAttachment();
         byte[] conteudo = new byte[0];
-        assertException(() -> arquivo.setContent("", tmpProvider.createTempFile(conteudo), conteudo.length),
+        assertException(() -> arquivo.setContent("", tmpProvider.createTempFile(conteudo), conteudo.length, HashUtil.toSHA1Base16(conteudo)),
                 "O tamanho (em bytes) da nova referência a deve ser preenchido.");
     }
 
@@ -147,7 +147,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertNoReference(arquivo, 0);
 
         byte[] conteudo = new byte[]{9, 10, 11, 12};
-        arquivo.setContent("", tmpProvider.createTempFile(conteudo), conteudo.length);
+        arquivo.setContent("", tmpProvider.createTempFile(conteudo), conteudo.length, HashUtil.toSHA1Base16(conteudo));
         assertConteudo(conteudo, arquivo, 1);
 
         assertException(() -> arquivo.setContent("", new File(""), 0, ""), "Erro lendo origem de dados");
@@ -168,11 +168,11 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo2 = new byte[]{6, 7, 8, 9, 10};
 
         assertBinariosAssociadosDocument(lista, 0);
-        arquivo1.setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length);
+        arquivo1.setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
         assertBinariosAssociadosDocument(lista, 1);
-        arquivo2.setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length);
+        arquivo2.setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
         assertBinariosAssociadosDocument(lista, 2);
-        arquivo3.setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length);
+        arquivo3.setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2));
         assertBinariosAssociadosDocument(lista, 3);
 
         arquivo1.deleteReference();
@@ -202,11 +202,11 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SIComposite bloco = configPersistence(tipoBloco.newInstance());
         SIList<SIAttachment> anexos = bloco.getFieldList("anexos", SIAttachment.class);
 
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length); // 0
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length); // 1
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length); // 2
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length); // 3
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length); // 4
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1)); // 0
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2)); // 1
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2)); // 2
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length, HashUtil.toSHA1Base16(conteudo3)); // 3
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length, HashUtil.toSHA1Base16(conteudo3)); // 4
         anexos.addNew(); // 5
         assertBinariosAssociadosDocument(anexos, 5);
 
@@ -221,8 +221,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         // Testa apenas com subBloco
         bloco = configPersistence(tipoBloco.newInstance());
         SIComposite subBloco = bloco.getFieldComposite("subBloco");
-        subBloco.getField("subArquivo1", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length);
-        subBloco.getField("subArquivo2", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length);
+        subBloco.getField("subArquivo1", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
+        subBloco.getField("subArquivo2", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2));
 
         assertBinariosAssociadosDocument(bloco, 2);
 
@@ -235,13 +235,13 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         // Testa apenas com lista e subBloco interferido um no outro
         bloco = configPersistence(tipoBloco.newInstance());
         anexos = bloco.getFieldList("anexos", SIAttachment.class);
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length); // 0
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length); // 1
-        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length); // 2
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length, HashUtil.toSHA1Base16(conteudo3)); // 0
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2)); // 1
+        anexos.addNew().setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1)); // 2
         subBloco = bloco.getFieldComposite("subBloco");
-        subBloco.getField("subArquivo1", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length);
-        subBloco.getField("subArquivo2", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length);
-        subBloco.getField("subArquivo3", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length);
+        subBloco.getField("subArquivo1", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
+        subBloco.getField("subArquivo2", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2));
+        subBloco.getField("subArquivo3", SIAttachment.class).setContent("", tmpProvider.createTempFile(conteudo3), conteudo3.length, HashUtil.toSHA1Base16(conteudo3));
 
         assertBinariosAssociadosDocument(anexos, 6);
 
@@ -264,7 +264,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         configPersistence(arq);
 
         final byte[] conteudo1 = new byte[]{1, 2, 3};
-        arq.setContent("arq1", tmpProvider.createTempFile(conteudo1), conteudo1.length);
+        arq.setContent("arq1", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
         assertConteudo(conteudo1, arq, 1);
         SIAttachment arq2 = (SIAttachment) TesteFormSerializationUtil.testSerializacao(arq);
         assertConteudo(conteudo1, arq2, 1);
@@ -286,8 +286,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
         final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);
 
-        arquivo1.setContent("content", tmpProvider.createTempFile(conteudo1), conteudo1.length);
-        arquivo2.setContent("content", tmpProvider.createTempFile(conteudo2), conteudo2.length);
+        arquivo1.setContent("content", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
+        arquivo2.setContent("content", tmpProvider.createTempFile(conteudo2), conteudo2.length, HashUtil.toSHA1Base16(conteudo2));
 
         assertConteudo(conteudo1, arquivo1, 2);
         assertConteudo(conteudo2, arquivo2, 2);

@@ -73,7 +73,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
 
     @Test
     public void createReferenceWithProperDataUsingStream() throws Exception {
-        assertReference(persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length, fileName));
+        assertReference(persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length, fileName, HashUtil.toSHA1Base16(content)));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
@@ -85,7 +85,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     @Test
     public void recoverReferenceWithSameDataUsingStream() throws Exception {
         IAttachmentRef original = persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length,
-                fileName);
+                fileName, HashUtil.toSHA1Base16(content));
         IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
         assertReference(original, returned);
     }

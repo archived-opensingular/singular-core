@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.SIList;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
@@ -127,8 +128,8 @@ public class AttachmentListMapperTest {
         ctx.getDummyPage().setTypeBuilder(AttachmentListMapperTest::createType);
         ctx.getDummyPage().addInstancePopulator(instance -> {
             SIList<SIAttachment> attachments = (SIList<SIAttachment>) instance.getField("attachments");
-            attachments.addNew().setContent("teste1.txt", file1, file1.length());
-            attachments.addNew().setContent("teste2.txt", file2, file2.length());
+            attachments.addNew().setContent("teste1.txt", file1, file1.length(), HashUtil.toSHA1Base16(content1));
+            attachments.addNew().setContent("teste2.txt", file2, file2.length(), HashUtil.toSHA1Base16(content2));
         });
         return ctx;
     }

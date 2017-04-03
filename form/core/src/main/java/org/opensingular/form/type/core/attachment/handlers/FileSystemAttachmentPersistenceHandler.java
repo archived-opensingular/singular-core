@@ -119,7 +119,7 @@ public class FileSystemAttachmentPersistenceHandler
     @Override
     public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
         try (InputStream is = attachmentRef.getContentAsInputStream()){
-            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName()));
+            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName(), attachmentRef.getHashSHA1()));
         } catch (Exception e) {
             throw SingularException.rethrow(e);
         }
