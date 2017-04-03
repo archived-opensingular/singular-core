@@ -1,6 +1,5 @@
 package org.opensingular.form.type.core.attachment;
 
-import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +11,6 @@ import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -44,7 +42,7 @@ public abstract class TestCasePersistenceHandlerBase {
         assertEquals(hashEsperado, ref.getHashSHA1());
         assertEquals(hashEsperado, ref.getId());
         assertEquals(sizeEsperado, handler.getAttachments().size());
-        assertTrue(Arrays.equals(conteudoEsperado, ByteStreams.toByteArray(ref.getInputStream())));
+        assertTrue(Arrays.equals(conteudoEsperado, ref.getContentAsByteArray()));
     }
 
     protected final IAttachmentPersistenceHandler getHandler() {
@@ -77,18 +75,12 @@ public abstract class TestCasePersistenceHandlerBase {
             IAttachmentRef ref3 = getHandler().getAttachment(ref.getId());
 
             assertThat(ref2).isNotNull();
-            assertThat(readAllAndClose(ref2)).isEqualTo(conteudos[i]);
+            assertThat(ref2.getContentAsByteArray()).isEqualTo(conteudos[i]);
             assertThat(ref2.getHashSHA1()).isEqualTo(hashs[i]);
 
             assertThat(ref3).isNotNull();
-            assertThat(readAllAndClose(ref3)).isEqualTo(conteudos[i]);
+            assertThat(ref3.getContentAsByteArray()).isEqualTo(conteudos[i]);
             assertThat(ref3.getHashSHA1()).isEqualTo(hashs[i]);
-        }
-    }
-
-    private byte[] readAllAndClose(IAttachmentRef ref) throws IOException {
-        try (InputStream in = ref.getInputStream()) {
-            return ByteStreams.toByteArray(in);
         }
     }
 

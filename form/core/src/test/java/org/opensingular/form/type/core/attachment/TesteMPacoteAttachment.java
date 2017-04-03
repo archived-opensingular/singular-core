@@ -1,6 +1,5 @@
 package org.opensingular.form.type.core.attachment;
 
-import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,18 +45,12 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
         String hash = HashUtil.toSHA1Base16(conteudoEsperado);
 
-        assertTrue(Arrays.equals(conteudoEsperado, readAllAndClose(arquivo.newInputStream())));
+        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray().get()));
         assertEquals(conteudoEsperado.length, arquivo.getFileSize());
         assertEquals(hash, arquivo.getFileHashSHA1());
         assertNotNull(arquivo.getAttachmentRef());
 
         assertBinariosAssociadosDocument(arquivo, expectedDistintictFiles);
-    }
-
-    private static byte[] readAllAndClose(InputStream original) throws IOException {
-        try (InputStream in = original) {
-            return ByteStreams.toByteArray(in);
-        }
     }
 
     private static void assertBinariosAssociadosDocument(SInstance ref, int expectedDistinctFiles) {
@@ -66,7 +59,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
-        assertNull(arquivo.newInputStream());
+        assertNull(arquivo.getContentAsByteArray().orElse(null));
+        assertNull(arquivo.getContentAsInputStream().orElse(null));
         assertNull(arquivo.getFileName());
         assertNull(arquivo.getFileId());
         assertNull(arquivo.getAttachmentRef());

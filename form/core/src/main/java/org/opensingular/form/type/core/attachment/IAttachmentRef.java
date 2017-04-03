@@ -16,15 +16,17 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.tika.Tika;
+import org.opensingular.form.SingularFormException;
+
+import javax.activation.DataSource;
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-
-import javax.activation.DataSource;
-
-import org.opensingular.form.SingularFormException;
-import org.apache.tika.Tika;
+import java.util.Objects;
 
 /**
  * Referência para um arquivo binário persistido, contudo não identifica a data ou tamanho do arquivo.
@@ -62,14 +64,52 @@ public interface IAttachmentRef extends Serializable, DataSource{
 
     @Override
     default String getContentType() {
-        try (InputStream is = getInputStream()){
+        try (InputStream is = getContentAsInputStream()){
             return new Tika().detect(is);
         } catch (IOException e) {
-            throw new SingularFormException("Não foi possivel detectar o content type.", e);
+            throw addInfo(new SingularFormException("Não foi possivel detectar o content type.", e), this);
         }
     }
     
     default OutputStream getOutputStream() throws java.io.IOException {
         throw new UnsupportedOperationException();
+    }
+
+    /** Retorna o conteúdo desta referência. Mesmo que {@link #getInputStream()}. */
+    @Nonnull
+    default InputStream getContentAsInputStream() {
+        try {
+            return Objects.requireNonNull(getInputStream());
+        } catch (IOException e) {
+            throw addInfo(new SingularFormException("Erro obtendo referencia", e), this);
+        }
+    }
+
+    /**
+     * Retorna o conteúdo dessa referência como um array de bytes.
+     * <b>ATENÇÂO: DEVE SER PREFERENCIALMENTE USADO {@link #getContentAsInputStream()}</b> se
+     * há expectativa de manipular arquivos de grande tamanho.
+     */
+    @Nonnull
+    default byte[] getContentAsByteArray() {
+        try(InputStream in = getContentAsInputStream()) {
+            byte[] content = new byte[(int) getSize()];
+            IOUtils.readFully(in, content);
+            if (in.read() != -1) {
+                throw addInfo(new SingularFormException(
+                        "Erro lendo conteúdo da referencia: há mais byte do que o definido por getSize()"), this);
+            }
+            return content;
+        } catch(IOException e) {
+            throw addInfo(new SingularFormException("Erro lendo conteúdo da referencia", e), this);
+        }
+    }
+
+    static SingularFormException addInfo(SingularFormException e, IAttachmentRef ref) {
+        e.add("name", () -> ref.getName())
+                .add("id", () -> ref.getId())
+                .add("size", () -> ref.getSize())
+                .add("sha1", () -> ref.getHashSHA1());
+        return e;
     }
 }

@@ -1,6 +1,5 @@
 package org.opensingular.form.type.core.attachment;
 
-import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +9,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -80,7 +78,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHashSHA1());
         assertEquals(content.length, ref.getSize());
-        assertTrue(Arrays.equals(content, readAllAndClose(ref)));
+        assertTrue(Arrays.equals(content, ref.getContentAsByteArray()));
     }
 
     @Test
@@ -95,14 +93,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         assertEquals(returned.getHashSHA1(), original.getHashSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-        assertTrue(Arrays.equals(readAllAndClose(returned), readAllAndClose(original)));
-        assertTrue(Arrays.equals(readAllAndClose(returned), readAllAndClose(original)));
+        assertTrue(Arrays.equals(returned.getContentAsByteArray(), original.getContentAsByteArray()));
+        assertTrue(Arrays.equals(returned.getContentAsByteArray(), original.getContentAsByteArray()));
     }
-
-    private byte[] readAllAndClose(IAttachmentRef ref) throws IOException {
-        try (InputStream in = ref.getInputStream()) {
-            return ByteStreams.toByteArray(in);
-        }
-    }
-
 }
