@@ -24,11 +24,10 @@ import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.TempFileUtils;
 
+import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 public class TempFileProviderTest {
 
     private List<File> files = new ArrayList<>();
-    private List<InputStream> locks = new ArrayList<>();
+    private List<Closeable> locks = new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
@@ -50,7 +49,7 @@ public class TempFileProviderTest {
 
     @After
     public void tearDown() throws Exception {
-        for (InputStream in : locks) {
+        for (Closeable in : locks) {
             in.close();
         }
         for (File file : files) {
@@ -189,8 +188,8 @@ public class TempFileProviderTest {
     public void close_withLockFile_usingCreate() throws Exception {
         SingularTestUtil.assertException(() -> TempFileProvider.create(this, tmpProvider -> {
             createFourFiles(tmpProvider);
-            locks.add(new FileInputStream(files.get(1)));
-            locks.add(new FileInputStream(files.get(2)));
+            simulateDeleteBlock(files.get(1));
+            simulateDeleteBlock(files.get(2));
         }), SingularException.class, "Nao foi possível apagar o arquivo");
         assertTrue(!files.get(0).exists());
         assertTrue(files.get(1).exists());
@@ -202,8 +201,8 @@ public class TempFileProviderTest {
     public void close_CodeException_AndWithLockFile_usingCreate() throws Exception {
         SingularTestUtil.assertException(() -> TempFileProvider.create(this, tmpProvider -> {
             createFourFiles(tmpProvider);
-            locks.add(new FileInputStream(files.get(1)));
-            locks.add(new FileInputStream(files.get(2)));
+            simulateDeleteBlock(files.get(1));
+            simulateDeleteBlock(files.get(2));
             throw new RuntimeException("Não pode mascarar a exception original");
         }), RuntimeException.class, "Não pode mascarar a exception original");
         assertTrue(!files.get(0).exists());
@@ -212,13 +211,20 @@ public class TempFileProviderTest {
         assertTrue(!files.get(3).exists());
     }
 
+    private void simulateDeleteBlock(File file) throws IOException {
+        FileOutputStream out = new FileOutputStream(file);
+        out.write(1);
+        out.flush();
+        locks.add(out);
+    }
+
     @Test
     public void close_withLockFile_using_CreateForUseInTryClause() throws Exception {
         SingularTestUtil.assertException(() -> {
             try (TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this)) {
                 createFourFiles(tmpProvider);
-                locks.add(new FileInputStream(files.get(1)));
-                locks.add(new FileInputStream(files.get(2)));
+                simulateDeleteBlock(files.get(1));
+                simulateDeleteBlock(files.get(2));
             }
         }, SingularException.class, "Nao foi possível apagar o arquivo");
         assertTrue(!files.get(0).exists());
@@ -232,8 +238,8 @@ public class TempFileProviderTest {
         SingularTestUtil.assertException(() -> {
             try (TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this)) {
                 createFourFiles(tmpProvider);
-                locks.add(new FileInputStream(files.get(1)));
-                locks.add(new FileInputStream(files.get(2)));
+                simulateDeleteBlock(files.get(1));
+                simulateDeleteBlock(files.get(2));
                 throw new RuntimeException("Não pode mascarar a exception original");
             }
         }, RuntimeException.class, "Não pode mascarar a exception original");
@@ -247,8 +253,8 @@ public class TempFileProviderTest {
     public void deleteOrException() throws Exception {
         TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this);
         createFourFiles(tmpProvider);
-        locks.add(new FileInputStream(files.get(1)));
-        locks.add(new FileInputStream(files.get(2)));
+        simulateDeleteBlock(files.get(1));
+        simulateDeleteBlock(files.get(2));
         SingularTestUtil.assertException(() -> tmpProvider.deleteOrException(), SingularException.class,
                 "Nao foi possível apagar o arquivo");
         assertTrue(!files.get(0).exists());
@@ -261,8 +267,8 @@ public class TempFileProviderTest {
     public void deleteQuietly() throws Exception {
         TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this);
         createFourFiles(tmpProvider);
-        locks.add(new FileInputStream(files.get(1)));
-        locks.add(new FileInputStream(files.get(2)));
+        simulateDeleteBlock(files.get(1));
+        simulateDeleteBlock(files.get(2));
         tmpProvider.deleteQuietly();
         assertTrue(!files.get(0).exists());
         assertTrue(files.get(1).exists());
