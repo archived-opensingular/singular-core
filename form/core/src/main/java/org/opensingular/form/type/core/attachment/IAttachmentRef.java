@@ -81,8 +81,10 @@ public interface IAttachmentRef extends Serializable, DataSource{
         try {
             return Objects.requireNonNull(getInputStream());
         } catch (IOException e) {
+            //Faz em mais de um passo para o sonar não dar falso positivo
             SingularFormException e2 = new SingularFormException("Erro obtendo referencia", e);
-            throw addInfo(e2, this);
+            addInfo(e2, this);
+            throw e2;
         }
     }
 
@@ -102,8 +104,10 @@ public interface IAttachmentRef extends Serializable, DataSource{
             }
             return content;
         } catch(IOException e) {
+            //Faz em mais de um passo para o sonar não dar falso positivo
             SingularFormException e2 = new SingularFormException("Erro obtendo referencia", e);
-            throw addInfo(e2, this);
+            addInfo(e2, this);
+            throw e2;
         }
     }
 

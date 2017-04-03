@@ -33,7 +33,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 
 @SuppressWarnings("rawtypes")
-@Ignore("Review after updating logic")
 public class AttachmentFieldTest extends SingularFormBaseTest {
 
     protected SDictionary     dictionary;
@@ -134,8 +133,8 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
             remove.isNotNull();
             Assert.assertTrue(remove.getTarget().isEnabled() && remove.getTarget().isVisible());
         } else {
-            Assert.assertTrue(
-                    remove.getTarget() == null || !remove.getTarget().isEnabled() || !remove.getTarget().isVisible());
+            Assert.assertTrue(!remove.getTargetOpt().isPresent() || !remove.getTarget().isEnabled() ||
+                    !remove.getTarget().isVisible());
         }
         return remove;
     }
