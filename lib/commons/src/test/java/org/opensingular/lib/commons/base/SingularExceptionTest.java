@@ -15,9 +15,9 @@ public class SingularExceptionTest {
         throw  new SingularException(new NullPointerException());
     }
 
-    @Test(expected = SingularException.class)
+    @Test
     public void rethrowException(){
-        SingularException.rethrow(new NullPointerException());
+        Assert.assertNotNull(SingularException.rethrow(new NullPointerException()));
     }
 
     @Test
