@@ -12,11 +12,11 @@ public class FormatUtilTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2017);
         calendar.set(Calendar.MONTH, Calendar.JANUARY);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
         calendar.set(Calendar.HOUR, 13);
         calendar.set(Calendar.MINUTE, 10);
 
-        Assert.assertEquals("01/01/2017 13:10", FormatUtil.dateToDefaultTimestampString(calendar.getTime()));
+        Assert.assertEquals("01/01/2017 01:10", FormatUtil.dateToDefaultTimestampString(calendar.getTime()));
     }
 
     @Test
