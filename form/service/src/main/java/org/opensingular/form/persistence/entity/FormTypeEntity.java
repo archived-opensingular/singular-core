@@ -33,8 +33,6 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 @Entity
 @GenericGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_TIPO_FORMULARIO", schema = Constants.SCHEMA)
-//Não está congifurado o cache no showcase
-//@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class FormTypeEntity extends BaseEntity<Long> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_TIPO_FORMULARIO";
