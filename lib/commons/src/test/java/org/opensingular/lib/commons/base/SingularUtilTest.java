@@ -22,4 +22,9 @@ public class SingularUtilTest {
         convertedValue = SingularUtil.convertToJavaIdentity(test, true, false);
         Assert.assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void propragateExceptionTest(){
+        SingularUtil.propagate(new NullPointerException());
+    }
 }
