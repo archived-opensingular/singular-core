@@ -31,11 +31,11 @@ public class SIAttachment extends SIComposite {
         return AttachmentDocumentService.lookup(this);
     }
 
-    public void setContent(String name, File file, long length) {
+    public void setContent(String name, File file, long length, String hashSha1) {
         if (file == null) {
             throw new SingularFormException("O arquivo não pode ser nulo.", this);
         }
-        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name, getDocument()));
+        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name, hashSha1, getDocument()));
     }
 
     private void setContent(String name, IAttachmentRef ref) {

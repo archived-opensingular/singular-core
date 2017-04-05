@@ -53,9 +53,9 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     protected AttachmentContentDao<C> attachmentContentDao;
 
     @Override
-    public AttachmentRef addAttachment(File file, long length, String name) {
+    public AttachmentRef addAttachment(File file, long length, String name, String hashSha1) {
         try (FileInputStream fs = new FileInputStream(file)) {
-            T attachment = attachmentDao.insert(fs, length, name);
+            T attachment = attachmentDao.insert(fs, length, name, hashSha1);
             return createRef(attachment);
         } catch (IOException e) {
             throw SingularException.rethrow(e);

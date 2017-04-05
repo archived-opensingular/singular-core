@@ -92,15 +92,15 @@ public class FileSystemAttachmentPersistenceHandler
     }
 
     @Override
-    public FileSystemAttachmentRef addAttachment(File file, long length, String name) {
+    public FileSystemAttachmentRef addAttachment(File file, long length, String name, String hashSha1) {
         try (FileInputStream fis = new FileInputStream(file)){
-            return addAttachment(fis, length, name);
+            return addAttachment(fis, length, name, hashSha1);
         } catch (Exception e) {
             throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
 
-    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name) {
+    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name, String hashSha1) {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
         try (FileOutputStream f1 = new FileOutputStream(temp);
@@ -119,7 +119,7 @@ public class FileSystemAttachmentPersistenceHandler
     @Override
     public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
         try (InputStream is = attachmentRef.getContentAsInputStream()){
-            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName()));
+            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName(), attachmentRef.getHashSHA1()));
         } catch (Exception e) {
             throw SingularException.rethrow(e);
         }

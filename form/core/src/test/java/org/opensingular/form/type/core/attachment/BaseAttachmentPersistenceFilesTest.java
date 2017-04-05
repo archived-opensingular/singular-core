@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.form.io.HashUtil;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -72,7 +73,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
 
     @Test
     public void createReferenceWithProperDataUsingStream() throws Exception {
-        assertReference(persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length, fileName));
+        assertReference(persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length, fileName, HashUtil.toSHA1Base16(content)));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
@@ -84,7 +85,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     @Test
     public void recoverReferenceWithSameDataUsingStream() throws Exception {
         IAttachmentRef original = persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length,
-                fileName);
+                fileName, HashUtil.toSHA1Base16(content));
         IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
         assertReference(original, returned);
     }

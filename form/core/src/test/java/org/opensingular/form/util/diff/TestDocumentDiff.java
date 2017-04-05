@@ -32,6 +32,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -590,15 +591,15 @@ public class TestDocumentDiff extends TestCaseForm {
 
             SIAttachment fS20 = typeFile2.newInstance();
             SIAttachment fS21 = typeFile2.newInstance();
-            fS21.setContent("f0", tmpProvider.createTempFile(content1), content1.length);
+            fS21.setContent("f0", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
             SIAttachment fS22 = typeFile2.newInstance();
-            fS22.setContent("f0", tmpProvider.createTempFile(content1), content1.length);
+            fS22.setContent("f0", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
             SIAttachment fS23 = typeFile2.newInstance();
-            fS23.setContent("f00", tmpProvider.createTempFile(content1), content1.length);
+            fS23.setContent("f00", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
             SIAttachment fS24 = typeFile2.newInstance();
-            fS24.setContent("f0", tmpProvider.createTempFile(content2), content2.length);
+            fS24.setContent("f0", tmpProvider.createTempFile(content2), content2.length, HashUtil.toSHA1Base16(content2));
             SIAttachment fS25 = typeFile2.newInstance();
-            fS25.setContent("f0", tmpProvider.createTempFile(content2), content2.length);
+            fS25.setContent("f0", tmpProvider.createTempFile(content2), content2.length, HashUtil.toSHA1Base16(content2));
             fS25.clearInstance();
 
             AssertionsDiff diff;
@@ -621,9 +622,9 @@ public class TestDocumentDiff extends TestCaseForm {
 
             SIComposite o1 = typeOrder.newInstance();
             SIComposite o2 = typeOrder.newInstance();
-            o2.getField(typeFile1).setContent("f0", tmpProvider.createTempFile(content1), content1.length);
+            o2.getField(typeFile1).setContent("f0", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
             SIComposite o3 = typeOrder.newInstance();
-            o3.getField(typeFile1).setContent("f1", tmpProvider.createTempFile(content2), content2.length);
+            o3.getField(typeFile1).setContent("f1", tmpProvider.createTempFile(content2), content2.length, HashUtil.toSHA1Base16(content2));
             o3.clearInstance();
 
             diff = diff(o1, o1, 0).assertUnchangedEmpty(1);
@@ -935,7 +936,7 @@ public class TestDocumentDiff extends TestCaseForm {
         }
 
         public AssertionsDiff assertNames(String expectedSimpleName, String expectedSimpleLabel, String expectedName,
-                String expectedLabel) {
+                                          String expectedLabel) {
             assertEquals(expectedSimpleName, info.getSimpleName());
             assertEquals(expectedSimpleLabel, info.getSimpleLabel());
             assertEquals(expectedName, info.getName());

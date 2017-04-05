@@ -52,7 +52,7 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> {
      * @param name Nome do arquivo original
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
      */
-    T addAttachment(File file, long length, String name);
+    T addAttachment(File file, long length, String name, String hashSha1);
 
     /**
      * Copia o conteúdo de um IAttachmentRef para esse persistence handler e retorna
