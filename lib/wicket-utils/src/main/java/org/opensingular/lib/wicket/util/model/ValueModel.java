@@ -78,6 +78,7 @@ public final class ValueModel<T extends Serializable> implements IMappingModel<T
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
         return object != null ? (Class<T>) object.getClass() : null;
     }

@@ -82,7 +82,7 @@ public interface IBehaviorsMixin extends Serializable {
                     m.appendTail(sb);
                     return sb.toString();
                 }
-                return super.newValue(currentValue, replacementValue);
+                return currentValue;
             }
         };
     }
