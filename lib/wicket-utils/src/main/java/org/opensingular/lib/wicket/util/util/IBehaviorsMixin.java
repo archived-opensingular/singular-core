@@ -204,30 +204,9 @@ public interface IBehaviorsMixin extends Serializable {
             behavior = new FormChoiceAjaxUpdateBehavior(onUpdate);
             component.add(behavior);
 
-            //        } else if (component instanceof TypeaheadField<?>) {
-            //            TypeaheadField<?> tf = (TypeaheadField<?>) component;
-            //            behavior = new TypeaheadAjaxUpdateBehavior(tf, onUpdate);
-            //            tf.addToValueField(behavior);
-
-            //        } else if (component instanceof MontrealSwitcher) {
-            //            behavior = new FormComponentAjaxUpdateBehavior("montrealswitcher.change", onUpdate);
-            //            component.add(behavior);
-
-            //        } else if (component instanceof LocalDateField) {
-            //            behavior = new FormComponentAjaxUpdateBehavior("changedate", onUpdate);
-            //            component.add(behavior);
-
-            //        } else if (component instanceof TextField && component.getParent() instanceof LocalDateRangePanel) {
-            //            behavior = new FormComponentAjaxUpdateBehavior(LocalDateRangePanel.JS_EVENT_CHANGEDATE, onUpdate);
-            //            component.add(behavior);
-
         } else if (component instanceof FormComponent<?>) {
             behavior = new FormComponentAjaxUpdateBehavior("change", onUpdate);
             component.add(behavior);
-
-            //        } else if (component instanceof IOnAfterPopulateItemConfigurable) {
-            //            behavior = new DynamicContainerAjaxUpdateBehavior(onUpdate);
-            //            component.add(behavior);
 
         } else {
             return null;
