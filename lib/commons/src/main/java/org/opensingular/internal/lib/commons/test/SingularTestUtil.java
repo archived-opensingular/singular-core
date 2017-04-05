@@ -34,7 +34,7 @@ public final class SingularTestUtil {
      * @param code                     Código a ser executado e que se espera que gere exception
      * @param expectedExceptionMsgPart (pode ser null) Trecho esperado de ser encontrado na mensagem da exception
      */
-    public static void assertException(Runnable code, String expectedExceptionMsgPart) {
+    public static void assertException(RunnableEx code, String expectedExceptionMsgPart) {
         assertException(code, RuntimeException.class, expectedExceptionMsgPart, null);
     }
 
@@ -46,7 +46,7 @@ public final class SingularTestUtil {
      * @param failMsgIfNoException     (pode ser null) Mensage to be attacher to the fail mensage in case of no
      *                                 exception is producted from the executed code
      */
-    public static void assertException(Runnable code, String expectedExceptionMsgPart, String failMsgIfNoException) {
+    public static void assertException(RunnableEx code, String expectedExceptionMsgPart, String failMsgIfNoException) {
         assertException(code, RuntimeException.class, expectedExceptionMsgPart, failMsgIfNoException);
     }
 
@@ -56,7 +56,7 @@ public final class SingularTestUtil {
      * @param code                     Código a ser executado e que se espera que gere exception
      * @param expectedException        Classe da exceção esperada de ser disparada
      */
-    public static void assertException(Runnable code, Class<? extends Exception> expectedException) {
+    public static void assertException(RunnableEx code, Class<? extends Exception> expectedException) {
         assertException(code, expectedException, null, null);
     }
 
@@ -67,7 +67,7 @@ public final class SingularTestUtil {
      * @param expectedException        Classe da exceção esperada de ser disparada
      * @param expectedExceptionMsgPart (pode ser null) Trecho esperado de ser encontrado na mensagem da exception
      */
-    public static void assertException(Runnable code, Class<? extends Exception> expectedException,
+    public static void assertException(RunnableEx code, Class<? extends Exception> expectedException,
             String expectedExceptionMsgPart) {
         assertException(code, expectedException, expectedExceptionMsgPart, null);
     }
@@ -81,7 +81,7 @@ public final class SingularTestUtil {
      * @param failMsgIfNoException     (pode ser null) Mensage to be attacher to the fail mensage in case of no
      *                                 exception is producted from the executed code
      */
-    public static void assertException(@Nonnull Runnable code, @Nonnull Class<? extends Exception> expectedException,
+    public static void assertException(@Nonnull RunnableEx code, @Nonnull Class<? extends Exception> expectedException,
             @Nullable String expectedExceptionMsgPart, @Nullable String failMsgIfNoException) {
         try {
             code.run();
@@ -96,8 +96,10 @@ public final class SingularTestUtil {
         } catch (Exception e) {
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
+            } else if (e instanceof  RuntimeException) {
+                throw (RuntimeException) e;
             }
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
@@ -114,5 +116,9 @@ public final class SingularTestUtil {
             return findExpectedException(e.getCause(), expectedException, expectedExceptionMsgPart);
         }
         return false;
+    }
+
+    public static interface RunnableEx {
+        public void run() throws Exception;
     }
 }

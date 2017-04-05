@@ -33,11 +33,12 @@ public class MetronicMenu extends Panel {
         super(id);
     }
 
-    public void addItem(AbstractMenuItem item) {
+    public MetronicMenu addItem(AbstractMenuItem item) {
         if(itens.isEmpty()){
             item.add($b.classAppender("start"));
         }
         itens.add(item);
+        return this;
     }
 
     @Override

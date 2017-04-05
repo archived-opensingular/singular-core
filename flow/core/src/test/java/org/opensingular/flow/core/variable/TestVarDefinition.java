@@ -41,7 +41,7 @@ public class TestVarDefinition {
         assertException(() -> varBigDecimal.fromPersistenceString("xx"));
     }
 
-    private void assertException(Runnable code) {
+    private void assertException(SingularTestUtil.RunnableEx code) {
         SingularTestUtil.assertException(code, SingularFlowConvertingValueException.class);
     }
 }

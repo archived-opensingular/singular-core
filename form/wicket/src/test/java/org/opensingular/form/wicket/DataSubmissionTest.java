@@ -46,8 +46,8 @@ public class DataSubmissionTest {
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1").isNotNull();
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2").isNotNull();
 
         tester.newFormTester().submit();
 
@@ -72,8 +72,8 @@ public class DataSubmissionTest {
         tester.startDummyPage();
         data2.asAtr().enabled(false);
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1").isNotNull();
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2").isNotNull();
 
         tester.newFormTester().submit();
 

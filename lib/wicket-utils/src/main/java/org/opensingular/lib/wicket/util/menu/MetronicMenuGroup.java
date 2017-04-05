@@ -45,8 +45,9 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         this.title = title;
     }
 
-    public void addItem(MetronicMenuItem item) {
+    public MetronicMenuGroup addItem(MetronicMenuItem item) {
         itens.add(item);
+        return this;
     }
 
     @Override

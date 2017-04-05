@@ -1,18 +1,18 @@
 package org.opensingular.form.internal.xml;
 
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 public class TestXMLToolkitWriter {
 
     @Test
-    public void testPrintNodeMethods(){
-        File arquivoTemp = null;
-        try {
-            arquivoTemp = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
+    public void testPrintNodeMethods() throws FileNotFoundException {
+        try(TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this)) {
+            File arquivoTemp = tmpProvider.createTempFile(".txt");
             PrintWriter writer = new PrintWriter(arquivoTemp);
 
             MDocument document = MDocument.newInstance();
@@ -27,11 +27,7 @@ public class TestXMLToolkitWriter {
             XMLToolkitWriter.printDocument(writer, raiz, false, false);
             XMLToolkitWriter.printDocument(writer, raiz, false);
             XMLToolkitWriter.printDocumentIndentado(writer, raiz, false);
-
-        } catch (Exception e) {
-            throw SingularFormException.rethrow(e);
-        } finally {
-            arquivoTemp.delete();
+            writer.close();
         }
     }
 }

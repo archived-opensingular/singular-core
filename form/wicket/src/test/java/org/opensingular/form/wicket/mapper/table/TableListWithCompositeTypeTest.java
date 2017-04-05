@@ -74,7 +74,7 @@ public class TableListWithCompositeTypeTest {
                 .getSubCompomentWithType(mockTypeComposite)
                 .getSubCompomentWithType(simpleString).assertSInstance();
 
-        final Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
+        Button removeButton = tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget(Button.class);
 
         tester.executeAjaxEvent(removeButton, "click");
         tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
@@ -128,6 +128,6 @@ public class TableListWithCompositeTypeTest {
     }
 
     public Button findAddButton(){
-        return (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
+        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(Button.class);
     }
 }

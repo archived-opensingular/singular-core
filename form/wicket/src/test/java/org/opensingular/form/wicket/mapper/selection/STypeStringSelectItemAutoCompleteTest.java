@@ -33,7 +33,7 @@ public class STypeStringSelectItemAutoCompleteTest {
     }
 
     private Component valueComponent() {
-        return tester.getAssertionsForm().findSubComponent((c) -> c.getId().equals("value_field")).getTarget();
+        return tester.getAssertionsForm().getSubCompomentWithId("value_field").getTarget();
     }
 
     @Before

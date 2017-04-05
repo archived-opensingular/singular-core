@@ -58,7 +58,7 @@ public class TableListWithSimpleTypeTest {
         tester.executeAjaxEvent(addButton, "click");
         tester.getAssertionsForm().getSubCompomentWithType(nomes).assertSInstance().isList(1);
 
-        final Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
+        Button removeButton = tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget(Button.class);
 
         tester.executeAjaxEvent(removeButton, "click");
         tester.getAssertionsForm().getSubCompomentWithType(nomes).assertSInstance().isList(0);
@@ -99,6 +99,6 @@ public class TableListWithSimpleTypeTest {
     }
 
     public Button findAddButton(){
-        return (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
+        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(Button.class);
     }
 }

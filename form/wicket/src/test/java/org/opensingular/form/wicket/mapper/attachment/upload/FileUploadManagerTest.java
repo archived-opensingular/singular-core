@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
@@ -115,7 +116,7 @@ public class FileUploadManagerTest {
         assertNotNull(info);
 
         verify(fileUploadInfoRepository).add(eq(info));
-        verify(handler).addAttachment(path.toFile(), Files.size(path), fileName);
+        verify(handler).addAttachment(path.toFile(), Files.size(path), fileName, HashUtil.toSHA1Base16(path.toFile()));
 
         path.toFile().deleteOnExit();
     }
