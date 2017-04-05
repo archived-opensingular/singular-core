@@ -4,4 +4,5 @@
   "idLng": "${idLng}",
   "zoom": "${zoom}",
   "readOnly" : "${readOnly}"
+  
 }

@@ -146,7 +146,7 @@ Page Header
       transform: translateY(-50%);
       font-size: 18px; }
     .page-header.navbar .page-logo .logo-default {
-      background-image: url("/singular-static/resources/singular/img/logo_singular.svg");
+      background-image: url("/singular-static/resources/singular/img/logo_singular.png"); 
       height: 25px;
       width: 200px;
       background-repeat: no-repeat;
