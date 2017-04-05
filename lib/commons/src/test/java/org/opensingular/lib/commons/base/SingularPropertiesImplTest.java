@@ -62,4 +62,16 @@ public class SingularPropertiesImplTest {
         SingularPropertiesImpl singularProperties = SingularPropertiesImpl.get();
         singularProperties.reloadAndOverrideWith(new URL("http://www.notexistentsite.com/"));
     }
+
+    @Test
+    public void containsKey(){
+        SingularPropertiesImpl singularProperties = SingularPropertiesImpl.get();
+        Assert.assertTrue(singularProperties.containsKey(SingularPropertiesTest.MOCK_PROPERTY_KEY));
+
+        Assert.assertTrue(singularProperties.isTrue(SingularPropertiesTest.MOCK_TRUE_KEY));
+        Assert.assertFalse(singularProperties.isTrue(SingularPropertiesTest.MOCK_FALSE_KEY));
+
+        Assert.assertFalse(singularProperties.isFalse(SingularPropertiesTest.MOCK_TRUE_KEY));
+        Assert.assertTrue(singularProperties.isFalse(SingularPropertiesTest.MOCK_FALSE_KEY));
+    }
 }
