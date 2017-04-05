@@ -48,12 +48,11 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
 
     @Override
     protected String errorMsg(String msg) {
-        return getTarget() == null ? msg : "No elemento " + getTarget().getFullPath() + ": " + msg;
+        return getTargetOpt().isPresent() ? "No elemento " + getTarget().getFullPath() + ": " + msg : msg;
     }
 
     /** Verifica se o elemento atual não é null e o nome do nó corresponde ao indicado. */
     public AssertionsXML isName(String expetedName) {
-        isNotNull();
         if (!Objects.equals(expetedName, getTarget().getNodeName())) {
             throw new AssertionError(errorMsg("Nome do nó incorreto", expetedName, getTarget().getNodeName()));
         }
@@ -62,7 +61,6 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
 
     /** Verifica se a quantidade de sub nós do tipo Element é zero. */
     public AssertionsXML hasNoChildren() {
-        isNotNull();
         if (getTarget().countFilhos() != 0) {
             throw new AssertionError(errorMsg("Qtd de sub Elements incorretos", 0, getTarget().countFilhos()));
         }
@@ -71,7 +69,6 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
 
     /** Verifica não possui nenhum sob Node, ou seja, não pode ter nenhum sub Element, texto, comentários, etc. */
     public AssertionsXML isEmptyNode() {
-        isNotNull();
         if (getTarget().getFirstChild() != null) {
             throw new AssertionError(errorMsg("Era esperado não possuir nenhuma subinformação"));
         }
@@ -85,7 +82,6 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
 
     /** Verifica se o valor do atributo e o esperado. */
     private AssertionsXML isAtr(String atributeName, String expectedValue) {
-        isNotNull();
         String currentValue = getTarget().getAttribute(atributeName);
         if (!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(
@@ -97,7 +93,6 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
 
     /** Verifica se o valor texto do elemento é o esperado. */
     public AssertionsXML isValue(String expectedValue) {
-        isNotNull();
         String currentValue = getTarget().getValor();
         if (!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(

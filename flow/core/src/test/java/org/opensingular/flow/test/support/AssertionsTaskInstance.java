@@ -40,15 +40,15 @@ public class AssertionsTaskInstance extends AssertionsBase<TaskInstance, Asserti
 
     @Override
     protected String errorMsg(String msg) {
-        if (getTarget() != null) {
-            return "(taskInstance=" + getTarget() + ") " + msg;
+        if (getTargetOpt().isPresent()) {
+            return "(taskInstance=" + getTargetOpt().get() + ") " + msg;
         }
         return msg;
     }
 
     public AssertionsTaskInstance isAtTask(ITaskDefinition expectedType) {
-        if(!getTargetOrException().isAtTask(expectedType)) {
-            Optional<STask<?>> currentTtype = getTargetOrException().getFlowTask();
+        if(!getTarget().isAtTask(expectedType)) {
+            Optional<STask<?>> currentTtype = getTarget().getFlowTask();
             if (currentTtype.isPresent()) {
                 throw new AssertionError(
                         errorMsg("A task não é do tipo esperado", expectedType, currentTtype.get()));

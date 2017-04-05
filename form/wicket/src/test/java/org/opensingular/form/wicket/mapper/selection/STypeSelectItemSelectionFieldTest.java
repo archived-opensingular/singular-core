@@ -67,7 +67,7 @@ public class STypeSelectItemSelectionFieldTest {
         AssertionsWComponentList dropDownAssertion = tester.getAssertionsForm().getSubComponents(DropDownChoice.class);
         dropDownAssertion.isSize(1);
 
-        DropDownChoice choices = (DropDownChoice) dropDownAssertion.get(0).getTarget();
+        DropDownChoice choices = dropDownAssertion.get(0).getTarget(DropDownChoice.class);
 
         assertThat(choices.getChoices()).hasSize(2);
         assertThat(choices.getChoiceRenderer().getIdValue(choices.getChoices().get(0), 0)).isEqualTo("DF");
@@ -96,8 +96,8 @@ public class STypeSelectItemSelectionFieldTest {
         });
         tester.startDummyPage();
 
-        DropDownChoice choices = (DropDownChoice) tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).get(0).getTarget();
+        DropDownChoice choices = tester.getAssertionsForm()
+                .getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         assertThat(choices.getChoiceRenderer().getIdValue(choices.getChoices().get(0), 0)).isEqualTo("GO");
         assertThat(choices.getChoiceRenderer().getDisplayValue(choices.getChoices().get(0))).isEqualTo("Goias");

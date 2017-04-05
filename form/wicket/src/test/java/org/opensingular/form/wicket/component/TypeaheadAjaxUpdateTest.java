@@ -82,7 +82,7 @@ public class TypeaheadAjaxUpdateTest {
 
         tester.getAssertionsForm().getSubCompomentWithType(pessoa).assertSInstance();
 
-        DropDownChoice dropDown = (DropDownChoice) tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget();
+        DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         tester.newFormTester().select(getFormRelativePath(dropDown), 0);
         tester.executeAjaxEvent(dropDown, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
@@ -92,8 +92,8 @@ public class TypeaheadAjaxUpdateTest {
 
     @Test
     public void assertUpdate() {
-        DropDownChoice dropDownGenero = (DropDownChoice) tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).get(0).getTarget();
+        DropDownChoice dropDownGenero =  tester.getAssertionsForm()
+                .getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         {
             tester.newFormTester().select(getFormRelativePath(dropDownGenero), 1);

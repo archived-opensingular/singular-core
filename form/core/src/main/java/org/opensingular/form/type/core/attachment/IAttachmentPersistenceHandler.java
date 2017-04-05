@@ -47,12 +47,12 @@ public interface IAttachmentPersistenceHandler<T extends IAttachmentRef> {
      * O arquivo pode ser excluido em seguida
      *
      * @param file   Arquivo temporário com o conteúdo do anexo.
-     * @param length Tamanho em bytes do arquivo, note que esse parâmetro é inportante uma vez que o método
+     * @param length Tamanho em bytes do arquivo, note que esse parâmetro é importante uma vez que o método
      *               File.length não retorna o tamanho do arquivo de maneira confiável em qualquer sistema operacional
      * @param name Nome do arquivo original
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
      */
-    T addAttachment(File file, long length, String name);
+    T addAttachment(File file, long length, String name, String hashSha1);
 
     /**
      * Copia o conteúdo de um IAttachmentRef para esse persistence handler e retorna

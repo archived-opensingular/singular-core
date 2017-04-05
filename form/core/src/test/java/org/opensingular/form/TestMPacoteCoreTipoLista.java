@@ -431,8 +431,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
         assertType(tTree.name).isNotNull().isSameAs(tTree.getField("name"));
         assertType(tTree.childrens).isNotNull().isSameAs(tTree.getField("childrens"));
-        assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).name).isSameAs(tTree.name);
-        assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).childrens).isSameAs(tTree.childrens);
+        assertType(aTree.listElementType("childrens").getTarget(TypeTestTree.class).name).isSameAs(tTree.name);
+        assertType(aTree.listElementType("childrens").getTarget(TypeTestTree.class).childrens).isSameAs(tTree.childrens);
 
         testTreeRecursiveInstance(tTree, tTree.name, tTree.childrens, "Tree", "SubTree");
 
@@ -533,7 +533,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         AssertionsSType aPark = assertType(tPark);
         aPark.isComposite(3);
-        aPark.getTarget().getDictionary().debug();
+        aPark.getTarget().getDictionary();
         //aPark.field("tree").isExtensionCorrect(tTree);
         aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.getField("tree"));
         aPark.field("trees").listElementType().field("name").isDirectExtensionOf(tTreeName);

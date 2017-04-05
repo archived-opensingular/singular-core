@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -43,9 +44,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * JUnit para test do da classe MElement.
@@ -1164,16 +1163,16 @@ public class TestMElement {
 
     @Test
     public void testFromBase64OutPutStream() throws IOException {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
+        TempFileProvider.create(this, tmpProvider -> {
+            MElement raiz = MElement.newInstance("raiz");
+            raiz.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
 
-        File arquivoTemporario = File.createTempFile("arquivo", Long.toString(System.currentTimeMillis())+".txt");
-        FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
+            File arquivoTemporario = tmpProvider.createTempFile(Long.toString(System.currentTimeMillis())+".txt");
 
-        raiz.getByteBASE64("string", outputStream);
-
-        outputStream.close();
-        arquivoTemporario.delete();
+            FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
+            raiz.getByteBASE64("string", outputStream);
+            outputStream.close();
+        });
     }
 
     @Test

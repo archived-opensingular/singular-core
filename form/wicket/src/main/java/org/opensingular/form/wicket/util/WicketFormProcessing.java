@@ -244,17 +244,18 @@ public class WicketFormProcessing implements Loggable {
             return;
         }
 
-        Set<SInstance> instancesImpactedByUpdateListener = evaluateUpdateListenersAndCollect(instance);
+        validate(component, target, instance);
+
+        Set<SInstance> updatedInstances = evaluateUpdateListenersAndCollect(instance);
 
         EventCollector eventCollector = new EventCollector();
 
         updateAttributes(instance, eventCollector);
-        validate(component, target, instance);
 
         Set<SInstance> instancesToUpdateComponents = new HashSet<>();
 
         instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
-        instancesToUpdateComponents.addAll(instancesImpactedByUpdateListener);
+        instancesToUpdateComponents.addAll(updatedInstances);
 
         updateBoundComponents(component.getPage(), target, instancesToUpdateComponents);
     }
