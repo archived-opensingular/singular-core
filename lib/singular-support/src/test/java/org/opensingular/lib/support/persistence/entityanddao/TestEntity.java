@@ -4,13 +4,9 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "TESTENTITY")
 public class TestEntity extends BaseEntity<Integer> {
 
     public TestEntity(Integer cod, String name, String otherField){

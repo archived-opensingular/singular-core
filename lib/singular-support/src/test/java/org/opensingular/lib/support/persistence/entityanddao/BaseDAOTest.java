@@ -1,9 +1,6 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensingular.lib.commons.base.SingularException;

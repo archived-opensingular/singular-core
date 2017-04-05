@@ -1,6 +1,5 @@
 package org.opensingular.lib.commons.base;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;

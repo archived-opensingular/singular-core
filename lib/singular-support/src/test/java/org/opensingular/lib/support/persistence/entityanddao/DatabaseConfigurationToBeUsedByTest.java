@@ -23,7 +23,6 @@ public class DatabaseConfigurationToBeUsedByTest {
         return new HibernateTransactionManager(factory);
     }
 
-
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -49,5 +48,4 @@ public class DatabaseConfigurationToBeUsedByTest {
 
         return factory;
     }
-
 }
