@@ -3,7 +3,6 @@ package org.opensingular.lib.support.persistence.entityanddao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.entity.EntityInterceptor;
 import org.opensingular.lib.support.persistence.util.Constants;
@@ -13,8 +12,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.Optional;
-
-import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
 
 @ContextConfiguration(classes = DatabaseConfigurationToBeUsedByTest.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,10 +48,9 @@ public class BaseEntityTest {
     @Transactional
     public void testGetOriginal(){
         dao.save(new TestEntity(0, "name", "entidade 1"));
-
         TestEntity testEntity = dao.get(0).get();
 
-        Assert.assertNotEquals(0, testEntity.hashCode());
+        Assert.assertEquals(0, testEntity.hashCode());
         Assert.assertNotNull(BaseEntity.getOriginal(testEntity));
     }
 

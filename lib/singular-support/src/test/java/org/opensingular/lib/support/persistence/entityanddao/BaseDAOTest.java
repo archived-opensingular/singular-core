@@ -1,6 +1,5 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
-import org.hibernate.Criteria;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
