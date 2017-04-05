@@ -48,7 +48,11 @@ public class BaseDAOTest {
         Assert.assertNotNull(dao.getOrException(2));
 
         dao.evict(entity);
+    }
 
+    @Test(expected = SingularException.class)
+    public void getOrExceptionTest(){
+        dao.getOrException(3);
     }
 
     @Test(expected = SingularException.class)
