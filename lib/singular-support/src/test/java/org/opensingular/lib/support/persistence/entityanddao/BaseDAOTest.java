@@ -1,5 +1,6 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
+import org.hibernate.Criteria;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,13 +15,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DatabaseConfigurationToBeUsedByTest.class})
+@Transactional
 public class BaseDAOTest {
 
     @Inject
     private TestDAO dao;
 
     @Test
-    @Transactional
     public void crudTest(){
         TestEntity entity = new TestEntity(1, "entidade 1", null);
         Integer integer = dao.save(entity);
@@ -36,7 +37,6 @@ public class BaseDAOTest {
     }
 
     @Test
-    @Transactional
     public void saveOrUpdateAndEvictAndGetOrExceptionTest(){
         TestEntity entity = new TestEntity(2, "entiidade 2", null);
 
@@ -53,7 +53,6 @@ public class BaseDAOTest {
     }
 
     @Test(expected = SingularException.class)
-    @Transactional
     public void findTest(){
         dao.save(new TestEntity(3, "name", null));
 
@@ -65,17 +64,31 @@ public class BaseDAOTest {
     }
 
     @Test
-    @Transactional
     public void listAllTest(){
         Assert.assertNotNull(dao.listAll());
     }
 
     @Test
-    @Transactional
     public void findByPropertyTest(){
         dao.save(new TestEntity(0, "entidade 1", "entidade 1"));
         dao.save(new TestEntity(1, "name", "entidade 1"));
 
         assertThat(dao.findByProperty("name", "entidade 1")).hasSize(1);
+
+    }
+
+    @Test
+    public void findByPropertyWithMaxValueTest(){
+        dao.save(new TestEntity(6, "name", "entidadeNova"));
+        assertThat(dao.findByProperty("otherField", null, 1)).hasSize(1);
+    }
+
+    @Test
+    public void findByUniquePropertyTest(){
+        dao.save(new TestEntity(7, "nome", "outro valor"));
+
+        TestEntity founded = dao.findByUniqueProperty("name", "nome");
+        Assert.assertEquals("outro valor", founded.getOtherField());
+        dao.flush();
     }
 }
