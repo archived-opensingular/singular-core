@@ -5,6 +5,9 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.util.Date;
 
 @Entity
 public class TestEntity extends BaseEntity<Integer> {
@@ -15,6 +18,9 @@ public class TestEntity extends BaseEntity<Integer> {
         this.otherField = otherField;
     }
 
+    public TestEntity(){
+    }
+
     @Id
     private Integer cod;
 
@@ -23,6 +29,9 @@ public class TestEntity extends BaseEntity<Integer> {
 
     @Column
     private String otherField;
+
+    @Temporal(TemporalType.DATE)
+    private Date date;
 
     @Override
     public Integer getCod() {
@@ -47,5 +56,13 @@ public class TestEntity extends BaseEntity<Integer> {
 
     public void setOtherField(String otherField) {
         this.otherField = otherField;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
