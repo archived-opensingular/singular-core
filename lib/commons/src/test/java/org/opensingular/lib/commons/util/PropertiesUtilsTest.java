@@ -82,5 +82,7 @@ public class PropertiesUtilsTest {
         Properties copy = PropertiesUtils.copy(properties);
         Assert.assertEquals(properties, copy);
         Assert.assertFalse(properties == copy);
+
+        PropertiesUtils.copyTo(null, copy);
     }
 }
