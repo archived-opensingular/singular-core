@@ -54,9 +54,9 @@ public class FormKeyManager<KEY extends FormKey> {
         try {
             method = keyClass.getMethod(CONVERTER_METHOD_NAME, Object.class);
         } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
+            throw new SingularFormPersistenceException(
                     "Erro tentando obter o metodo " + CONVERTER_METHOD_NAME + "(Object) na classe " +
-                            keyClass.getName(), e));
+                            keyClass.getName(), e, exceptionDecorator);
         }
         if (!Modifier.isStatic(method.getModifiers()) || !Modifier.isPublic(method.getModifiers()) ||
                 !keyClass.isAssignableFrom(method.getReturnType())) {
@@ -72,9 +72,9 @@ public class FormKeyManager<KEY extends FormKey> {
         try {
             return keyClass.getConstructor(String.class);
         } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
+            throw new SingularFormPersistenceException(
                     "Erro tentando obter o construtor " + keyClass.getSimpleName() + "(String) na classe " +
-                            keyClass.getName(), e));
+                            keyClass.getName(), e, exceptionDecorator);
         }
     }
 
@@ -91,8 +91,9 @@ public class FormKeyManager<KEY extends FormKey> {
         try {
             return keyConstructor.newInstance(persistenceString);
         } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "Erro criando FormKey para o valor string da chave '" + persistenceString + "'", e));
+            throw new SingularFormPersistenceException(
+                    "Erro criando FormKey para o valor string da chave '" + persistenceString + "'", e,
+                    exceptionDecorator);
         }
     }
 
@@ -112,9 +113,9 @@ public class FormKeyManager<KEY extends FormKey> {
         try {
             result = convertMethod.invoke(null, objectValueToBeConverted);
         } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
+            throw new SingularFormPersistenceException(
                     "Erro convertendo valor usando o método " + keyClass.getSimpleName() + "." + CONVERTER_METHOD_NAME +
-                            "()", e).add("valor sendo convertido", objectValueToBeConverted));
+                            "()", e, exceptionDecorator).add("valor sendo convertido", objectValueToBeConverted);
         }
         if (result == null) {
             throw addInfo(new SingularFormPersistenceException(
