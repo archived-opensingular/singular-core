@@ -39,6 +39,7 @@ public abstract class ReloadableDetachableModel<T> implements IModel<T>
      */
     public ReloadableDetachableModel()
     {
+        this(null);
     }
 
     /**
@@ -51,7 +52,7 @@ public abstract class ReloadableDetachableModel<T> implements IModel<T>
     public ReloadableDetachableModel(T object)
     {
         this.transientModelObject = object;
-        attached = true;
+        attached = (object != null);
     }
 
     /**
