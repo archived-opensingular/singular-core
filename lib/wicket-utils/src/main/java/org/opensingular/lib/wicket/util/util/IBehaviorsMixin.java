@@ -82,7 +82,7 @@ public interface IBehaviorsMixin extends Serializable {
                     m.appendTail(sb);
                     return sb.toString();
                 }
-                return super.newValue(currentValue, replacementValue);
+                return currentValue;
             }
         };
     }
@@ -203,6 +203,7 @@ public interface IBehaviorsMixin extends Serializable {
         if (component instanceof RadioChoice<?> || component instanceof CheckBoxMultipleChoice<?> || component instanceof RadioGroup<?> || component instanceof CheckGroup<?>) {
             behavior = new FormChoiceAjaxUpdateBehavior(onUpdate);
             component.add(behavior);
+
         } else if (component instanceof FormComponent<?>) {
             behavior = new FormComponentAjaxUpdateBehavior("change", onUpdate);
             component.add(behavior);
