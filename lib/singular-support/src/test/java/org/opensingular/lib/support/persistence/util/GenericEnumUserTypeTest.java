@@ -1,4 +1,4 @@
-package org.opensingular.lib.support;
+package org.opensingular.lib.support.persistence.util;
 
 
 import org.junit.Assert;

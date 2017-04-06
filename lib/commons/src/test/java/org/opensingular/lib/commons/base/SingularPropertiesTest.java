@@ -24,6 +24,9 @@ public class SingularPropertiesTest {
     static final String MOCK_PROPERTY_CLASSPATH_VALUE = "Mock Property";
     static final String MOCK_PROPERTY_FILE_VALUE      = "Mock Disck Property";
 
+    static final String MOCK_TRUE_KEY                 = "mock.true";
+    static final String MOCK_FALSE_KEY                = "mock.false";
+
     @Test
     public void loadFromClasspath() throws Exception {
         SingularPropertiesImpl.Tester.runInSandbox(impl -> {
