@@ -42,6 +42,7 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     public FormPersistenceInMemory() {
         super(FormKeyInt.class);
     }
+
     public FormPersistenceInMemory(SDocumentFactory documentFactory, RefType refType) {
         super(FormKeyInt.class);
     }

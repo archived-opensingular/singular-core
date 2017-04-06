@@ -20,7 +20,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.BasicAnnotationPersistence;
-import org.opensingular.form.persistence.BasicFormPersistence;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
@@ -32,8 +31,57 @@ import java.util.Optional;
  * Service de persistência básicos de Form instances
  */
 
-//TODO deveria extender FormPersistence e AnnotationPersistence
-public interface IFormService extends BasicFormPersistence<SInstance>, BasicAnnotationPersistence {
+public interface IFormService extends BasicAnnotationPersistence {
+
+    /**
+     * Converte o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
+     * de chave entendível pela persitencia atual, então dispara uma exception.
+     */
+    @Nonnull
+    FormKey keyFromObject(@Nonnull Object objectValueToBeConverted);
+
+    /**
+     * Insere uma instância nova e devolve a chave do novo registro.
+     */
+    @Nonnull
+    FormKey insert(@Nonnull SInstance instance, Integer inclusionActor);
+
+    /**
+     * Atualiza a instância na base de dados, com base no atributo FormKey contido na instância informada.
+     *
+     * @param instance A mesma deverá conter o atributo FormKey, para tanto deverá ter sido recuperada pela própria
+     *                 persitência.
+     */
+    void update(@Nonnull SInstance instance, Integer inclusionActor);
+
+    /**
+     * Atualiza ou insere a instância de acordo se a mesma ja tiver ou não um FormKey associado (como atributo da instância).
+     * @return Chave da instância criada ou atualizada.
+     */
+    @Nonnull
+    FormKey insertOrUpdate(@Nonnull SInstance instance, Integer inclusionActor);
+
+    /**
+     * Informa se a SInstance passada por parâmetro possui uma chave associada.
+     * Caso contrário é considerado um formulário não persistence
+     */
+    boolean isPersistent(@Nonnull SInstance instance);
+
+    /**
+     * Salva as alterações na versão atual e incrementa versão do formulário
+     * e replica as anotações em suas versões iniciais
+     */
+    @Nonnull
+    default FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor){
+        return newVersion(instance, inclusionActor, true);
+    }
+
+    /**
+     * Salva as alterações na versão atual e incrementa versão do formulário
+     * e das anotações vinculadas
+     */
+    @Nonnull
+    FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations);
 
     /**
      * Carrega uma nova SInstance a partir da última versão de um formulário salvo em banco (formKey).

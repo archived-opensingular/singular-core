@@ -113,9 +113,11 @@ public class FormKeyManager<KEY extends FormKey> {
         try {
             result = convertMethod.invoke(null, objectValueToBeConverted);
         } catch (Exception e) {
-            throw new SingularFormPersistenceException(
+            SingularFormPersistenceException e2 = new SingularFormPersistenceException(
                     "Erro convertendo valor usando o método " + keyClass.getSimpleName() + "." + CONVERTER_METHOD_NAME +
-                            "()", e, exceptionDecorator).add("valor sendo convertido", objectValueToBeConverted);
+                            "()", e, exceptionDecorator);
+            e2.add("valor sendo convertido", objectValueToBeConverted);
+            throw e2;
         }
         if (result == null) {
             throw addInfo(new SingularFormPersistenceException(

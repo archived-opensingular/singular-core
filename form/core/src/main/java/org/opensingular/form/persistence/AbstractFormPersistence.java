@@ -27,12 +27,14 @@ import java.util.Optional;
  * @author Daniel C. Bordin
  */
 public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY extends FormKey>
-        extends AbstractBasicFormPersistence<INSTANCE, KEY> implements FormPersistence<INSTANCE> {
+        implements FormPersistence<INSTANCE> {
+
+    private final FormKeyManager<KEY> formKeyManager;
 
     private String name;
 
     public AbstractFormPersistence(Class<KEY> keyClass) {
-        super(keyClass);
+        this.formKeyManager = new FormKeyManager<>(keyClass, e -> addInfo(e));
     }
 
     public String getName() {
@@ -41,6 +43,80 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    /** Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey. */
+    @Nonnull
+    public final FormKeyManager<KEY> getFormKeyManager() {
+        return formKeyManager;
+    }
+
+    @Override
+    @Nonnull
+    public KEY keyFromObject(@Nonnull Object objectValueToBeConverted) {
+        return formKeyManager.keyFromObject(objectValueToBeConverted);
+    }
+
+    @Override
+    public void delete(@Nonnull FormKey key) {
+        deleteInternal(getFormKeyManager().validKeyOrException(key));
+    }
+
+    @Override
+    public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        KEY key = getFormKeyManager().readFormKeyOrException(instance);
+        updateInternal(key, instance, inclusionActor);
+    }
+
+    @Override
+    @Nonnull
+    public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        Optional<KEY> key = getFormKeyManager().readFormKeyOptional(instance);
+        if (key.isPresent()) {
+            updateInternal(key.get(), instance, inclusionActor);
+            return key.get();
+        }
+        return insertImpl(instance, inclusionActor);
+    }
+
+    @Override
+    @Nonnull
+    public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        if (instance == null) {
+            throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
+        }
+        return insertImpl(instance, inclusionActor);
+    }
+
+    @Nonnull
+    private KEY insertImpl(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        KEY key = insertInternal(instance, inclusionActor);
+        getFormKeyManager().validKeyOrException(key, instance, "Era esperado que o insert interno gerasse uma FormKey, mas retornou null");
+        FormKey.set(instance, key);
+        return key;
+    }
+
+    protected abstract void updateInternal(@Nonnull KEY key, @Nonnull INSTANCE instance, Integer inclusionActor);
+
+    protected abstract void deleteInternal(@Nonnull KEY key);
+
+    @Nonnull
+    protected abstract KEY insertInternal(@Nonnull INSTANCE instance, Integer inclusionActor);
+
+    @Override
+    public final boolean isPersistent(@Nonnull INSTANCE instance) {
+        return getFormKeyManager().isPersistent(instance);
+    }
+
+    /**
+     * Método chamado para adicionar informção do serviço de persistência à exception. Pode ser ser sobreescito para
+     * acrescimo de maiores informações.
+     */
+    @Nonnull
+    protected SingularFormPersistenceException addInfo(@Nonnull SingularFormPersistenceException exception) {
+        exception.add("persitence", toString());
+        return exception;
     }
 
     @Override
