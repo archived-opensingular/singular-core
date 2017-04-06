@@ -36,6 +36,8 @@ public class SingularWicketTester extends WicketTester {
         setup();
     }
 
+
+
     @Deprecated
     public SingularWicketTester(boolean turnOnSerializationCheck) {
         setup(turnOnSerializationCheck);
