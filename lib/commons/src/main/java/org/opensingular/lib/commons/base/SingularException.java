@@ -158,7 +158,7 @@ public class SingularException extends RuntimeException {
         msg.append(super.getMessage());
         int max = 0;
         for (InfoEntry entry : entries) {
-            if (entry != null) {
+            if (entry != null && entry.label != null) {
                 max = Math.max(max, entry.label.length());
             }
         }
