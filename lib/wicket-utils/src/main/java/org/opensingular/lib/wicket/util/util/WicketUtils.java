@@ -151,7 +151,7 @@ public final class WicketUtils {
             return ((Map<?, ?>) obj).isEmpty();
         if (obj instanceof Iterator<?>)
             return ((Iterator<?>) obj).hasNext();
-        return true;
+        return false;
     }
 
     public static Optional<String> findPageRelativePath(MarkupContainer container, String childId) {
