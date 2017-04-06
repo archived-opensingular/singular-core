@@ -24,6 +24,7 @@ import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.model.ValueModel;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.nullsFirst;
@@ -127,10 +128,6 @@ public interface IModelsMixin extends Serializable {
         };
     }
 
-    default <T> PropertyModel<T> property(Object modelObject, String expression) {
-        return new PropertyModel<>(modelObject, expression);
-    }
-
     default IModel<Boolean> isNullOrEmpty(Serializable modelOrValue) {
         return (IReadOnlyModel<Boolean>) () -> WicketUtils.nullOrEmpty(modelOrValue);
     }
@@ -156,7 +153,8 @@ public interface IModelsMixin extends Serializable {
         return new IReadOnlyModel<Boolean>() {
             @Override
             public Boolean getObject() {
-                return nullsFirst(comparing(IModel<C>::getObject)).compare(lower, higher) > 0;
+                return comparing(IModel<C>::getObject, nullsFirst(Comparator.naturalOrder()))
+                    .compare(lower, higher) > 0;
             }
             @Override
             public void detach() {

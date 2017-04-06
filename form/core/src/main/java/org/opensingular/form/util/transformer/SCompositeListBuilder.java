@@ -62,6 +62,9 @@ public class SCompositeListBuilder {
         return currentInstance;
     }
 
+    public SInstance getRoot() {
+        return currentInstance.getRoot();
+    }
     /**
      * Tenta encontrar um serviço da classe solicitada. Senão encontrar, então dispara exception. Veja {@link
      * SDocument#lookupServiceOrException(Class)}.

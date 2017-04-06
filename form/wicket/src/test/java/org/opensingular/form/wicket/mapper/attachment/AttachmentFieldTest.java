@@ -16,6 +16,7 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
@@ -163,7 +164,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentFieldTest::createType);
         ctx.getDummyPage().addInstancePopulator( instance -> {
-            instance.getField("attachment", SIAttachment.class).setContent("teste.txt", file, file.length());
+            instance.getField("attachment", SIAttachment.class).setContent("teste.txt", file, file.length(), HashUtil.toSHA1Base16(content));
         });
         return ctx;
     }

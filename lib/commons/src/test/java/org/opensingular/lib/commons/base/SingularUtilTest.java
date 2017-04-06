@@ -1,6 +1,5 @@
 package org.opensingular.lib.commons.base;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
@@ -21,5 +20,10 @@ public class SingularUtilTest {
 
         convertedValue = SingularUtil.convertToJavaIdentity(test, true, false);
         Assert.assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void propragateExceptionTest(){
+        SingularUtil.propagate(new NullPointerException());
     }
 }

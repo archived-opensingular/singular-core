@@ -17,6 +17,8 @@
 package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.io.HashUtil;
+import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
@@ -33,6 +35,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -115,9 +118,10 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
         file.deleteOnExit();
 
-        Files.copy(input, path);
+        DigestInputStream din  = HashUtil.toSHA1InputStream(input);
+        Files.copy(din, path);
 
-        attachment = handler.addAttachment(file, Files.size(path), fileName);
+        attachment = handler.addAttachment(file, Files.size(path), fileName, HashUtil.bytesToBase16(din.getMessageDigest().digest()));
         info = new FileUploadInfo(attachment);
 
         fileUploadInfoRepository.add(info);

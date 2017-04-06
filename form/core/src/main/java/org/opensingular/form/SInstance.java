@@ -241,8 +241,8 @@ public abstract class SInstance implements SAttributeEnabled {
                     Class<RT> rootTypeClass,
                     IFunction<RT, TT> targetTypeFunction) {
 
-        return (VAL) findField(rootTypeClass, targetTypeFunction)
-                .map(it -> it.getValue())
+        return findField(rootTypeClass, targetTypeFunction)
+                .map(SISimple::getValue)
                 .orElse(null);
     }
 
@@ -302,7 +302,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * @throws ClassCastException if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
-    private <RT extends SType<RI>,
+    public  <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
             TI extends SInstance> Optional<TI> findField(
