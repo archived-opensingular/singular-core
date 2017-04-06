@@ -15,14 +15,13 @@ import java.util.Optional;
 
 @ContextConfiguration(classes = DatabaseConfigurationToBeUsedByTest.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@Transactional
 public class BaseEntityTest {
 
     @Inject
     private TestDAO dao;
 
-
     @Test
-    @Transactional
     public void testBaseToString(){
         dao.save(new TestEntity(0, "name", "entidade 1"));
 
@@ -31,7 +30,6 @@ public class BaseEntityTest {
     }
 
     @Test
-    @Transactional
     public void testEquals(){
         dao.save(new TestEntity(0, "name", "entidade 1"));
         dao.save(new TestEntity(1, "name", "entidade 2"));
@@ -42,10 +40,14 @@ public class BaseEntityTest {
         Assert.assertTrue(testEntity.equals(testEntity));
         Assert.assertFalse(testEntity.equals("invalid Value"));
         Assert.assertFalse(testEntity.equals(testEntity2));
+
+        TestEntity copyEntity = new TestEntity();
+        copyEntity.setCod(0);
+        copyEntity.setName("name");
+        Assert.assertTrue(testEntity.equals(copyEntity));
     }
 
     @Test
-    @Transactional
     public void testGetOriginal(){
         dao.save(new TestEntity(0, "name", "entidade 1"));
         TestEntity testEntity = dao.get(0).get();
