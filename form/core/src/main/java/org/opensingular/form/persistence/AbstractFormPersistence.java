@@ -60,9 +60,9 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
 
     @Nullable
     private INSTANCE loadImpl(@Nonnull FormKey key) {
-        INSTANCE instance = loadInternal(checkKeyOrException(key, null));
+        INSTANCE instance = loadInternal(getFormKeyManager().validKeyOrException(key));
         if (instance != null) {
-            KEY key2 = readKeyAttributeOrException(instance);
+            KEY key2 = getFormKeyManager().readFormKeyOrException(instance);
             if (!key2.equals(key)) {
                 throw addInfo(new SingularFormPersistenceException(
                         "FormKey da instância encontrada, não é igual à solicitada")).add("Key Esperado", key).add(

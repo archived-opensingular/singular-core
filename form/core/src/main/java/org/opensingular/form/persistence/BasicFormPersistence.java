@@ -27,20 +27,13 @@ import javax.annotation.Nonnull;
  */
 public interface BasicFormPersistence<INSTANCE extends SInstance>  {
 
-    /**
-     * Converte uma string representando a chave para o obejto de chave utilizado pela persitência. Dispara exception se
-     * a String não for compatível com o tipo de chave da persistência. <p>Esse metodo seria tipicamente usado para
-     * converter chave passadas por parâmetro (por exemplo na URL) de volta a FormKey.</p>
-     */
-    FormKey keyFromString(String persistenceString);
 
     /**
      * Tenta converter o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
      * de chave entendível pela persitencia atual, então dispara uma exception.
-     *
-     * @return null se o valor for null
      */
-    FormKey keyFromObject(Object objectValueToBeConverted);
+    @Nonnull
+    FormKey keyFromObject(@Nonnull Object objectValueToBeConverted);
 
     /**
      * Insere uma instância nova e devolve a chave do novo registro.

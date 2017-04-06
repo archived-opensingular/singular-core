@@ -54,6 +54,8 @@ public class FormKeyInt extends AbstractFormKey<Integer> implements FormKeyNumbe
             return new FormKeyInt((Integer) objectValueToBeConverted);
         } else if (objectValueToBeConverted instanceof Number) {
             return new FormKeyInt(((Number) objectValueToBeConverted).intValue());
+        } else if (objectValueToBeConverted instanceof String) {
+            return new FormKeyInt((String) objectValueToBeConverted);
         }
         throw new SingularFormPersistenceException("Não consegue converter o valor solcicitado").add("value",
                 objectValueToBeConverted).add("value type", objectValueToBeConverted.getClass());

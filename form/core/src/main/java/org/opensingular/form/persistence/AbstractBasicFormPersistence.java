@@ -17,13 +17,8 @@
 package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -32,88 +27,39 @@ import java.util.Optional;
 public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, KEY extends FormKey>
         implements BasicFormPersistence<INSTANCE> {
 
-    private static final String CONVERTER_METHOD_NAME = "convertToKey";
-    private final Class<KEY> keyClass;
-    private final Constructor<KEY> keyConstructor;
-    private final Method convertMethod;
+    private final FormKeyManager<KEY> formKeyManager;
 
     public AbstractBasicFormPersistence(@Nonnull Class<KEY> keyClass) {
-        this.keyClass = Objects.requireNonNull(keyClass);
-        this.keyConstructor = findConstructorString(keyClass);
-        this.convertMethod = findConvertMethod(keyClass);
+        this.formKeyManager = new FormKeyManager<>(keyClass, e -> addInfo(e));
     }
 
-    private Method findConvertMethod(Class<KEY> keyClass) {
-        Method method;
-        try {
-            method = keyClass.getMethod(CONVERTER_METHOD_NAME, Object.class);
-        } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "Erro tentando obter o metodo " + CONVERTER_METHOD_NAME + "(Object) na classe " +
-                            keyClass.getName(), e));
-        }
-        if (!Modifier.isStatic(method.getModifiers()) || !Modifier.isPublic(method.getModifiers()) ||
-                !keyClass.isAssignableFrom(method.getReturnType())) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "O metodo " + CONVERTER_METHOD_NAME + "(Object) encontrado na classe " + keyClass.getName() +
-                            " não é compatível com a assintura de método esperado, que seria 'public static " +
-                            keyClass.getSimpleName() + " " + CONVERTER_METHOD_NAME + "(Object)'"));
-        }
-        return method;
-    }
-
-    private Constructor<KEY> findConstructorString(Class<KEY> keyClass) {
-        try {
-            return keyClass.getConstructor(String.class);
-        } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "Erro tentando obter o construtor " + keyClass.getSimpleName() + "(String) na classe " +
-                            keyClass.getName(), e));
-        }
+    /** Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey. */
+    @Nonnull
+    public final FormKeyManager<KEY> getFormKeyManager() {
+        return formKeyManager;
     }
 
     @Override
-    public KEY keyFromString(String persistenceString) {
-        try {
-            return keyConstructor.newInstance(persistenceString);
-        } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "Erro criando FormKey para o valor string da chave '" + persistenceString + "'", e));
-        }
-    }
-
-    @Override
-    public KEY keyFromObject(Object objectValueToBeConverted) {
-        if (objectValueToBeConverted == null) {
-            return null;
-        } else if (keyClass.isInstance(objectValueToBeConverted)) {
-            return keyClass.cast(objectValueToBeConverted);
-        }
-        Object result;
-        try {
-            result = convertMethod.invoke(null, objectValueToBeConverted);
-        } catch (Exception e) {
-            throw addInfo(new SingularFormPersistenceException("Erro chamado método " + CONVERTER_METHOD_NAME).add(
-                    "value", objectValueToBeConverted));
-        }
-        return keyClass.cast(result);
+    @Nonnull
+    public KEY keyFromObject(@Nonnull Object objectValueToBeConverted) {
+        return formKeyManager.keyFromObject(objectValueToBeConverted);
     }
 
     @Override
     public void delete(@Nonnull FormKey key) {
-        deleteInternal(checkKeyOrException(key, null));
+        deleteInternal(getFormKeyManager().validKeyOrException(key));
     }
 
     @Override
     public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
-        KEY key = readKeyAttributeOrException(instance);
+        KEY key = getFormKeyManager().readFormKeyOrException(instance);
         updateInternal(key, instance, inclusionActor);
     }
 
     @Override
     @Nonnull
     public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
-        Optional<KEY> key = readKeyAttributeOptional(instance);
+        Optional<KEY> key = getFormKeyManager().readFormKeyOptional(instance);
         if (key.isPresent()) {
             updateInternal(key.get(), instance, inclusionActor);
             return key.get();
@@ -133,7 +79,7 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     @Nonnull
     private KEY insertImpl(@Nonnull INSTANCE instance, Integer inclusionActor) {
         KEY key = insertInternal(instance, inclusionActor);
-        checkKeyOrException(key, instance, " o insert interno gerasse uma FormKey, mas retornou null");
+        getFormKeyManager().validKeyOrException(key, instance, "Era esperado que o insert interno gerasse uma FormKey, mas retornou null");
         FormKey.set(instance, key);
         return key;
     }
@@ -145,73 +91,9 @@ public abstract class AbstractBasicFormPersistence<INSTANCE extends SInstance, K
     @Nonnull
     protected abstract KEY insertInternal(@Nonnull INSTANCE instance, Integer inclusionActor);
 
-    //-------------------------------------------------
-    // Métodos de apoio
-    //-------------------------------------------------
-
-    /**
-     * Lê obrigatoriamente o {@link FormKey} de uma instância e verifica se é da classe esperada. Se for diferente de
-     * null e não for da classe espera, então dispara uma Exception. Se for null, dispara exception.
-     */
-    @Nonnull
-    protected KEY readKeyAttributeOrException(@Nonnull INSTANCE instance) {
-        Optional<KEY> key = readKeyAttributeOptional(instance);
-        if (! key.isPresent()) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "Era esperado que a instância tivesse o atributo FormKey preenchido")).add("key", null).add(
-                    instance);
-        }
-        return key.get();
-    }
-
-    /**
-     * Lê opcionalmente o {@link FormKey} de uma instância e verifica se é da classe esperada. Se for diferente de
-     * null e não for da classe espera, então dispara uma Exception.
-     */
-    @Nonnull
-    private Optional<KEY> readKeyAttributeOptional(@Nonnull INSTANCE instance) {
-        if (instance == null) {
-            throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null"));
-        }
-        Optional<FormKey> key = FormKey.fromOpt(instance);
-        if (key.isPresent()) {
-            return Optional.of(checkKeyOrException(key.get(), instance));
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Verifica se a chave não e nula e é da classe esperada, fazendo o cast para o tipo certo. Caso contrario dispara
-     * uma exception.
-     */
-    @Nonnull
-    protected final KEY checkKeyOrException(FormKey key, INSTANCE instance) {
-        return checkKeyOrException(key, instance, null);
-    }
-
-    /**
-     * Verifica se a chave não e nula e é da classe esperada, fazendo o cast para o tipo certo. Caso contrario dispara
-     * uma exception.
-     */
-    @Nonnull
-    protected final KEY checkKeyOrException(FormKey key, INSTANCE instance, String msgRequired) {
-        if (key == null) {
-            SingularException e = addInfo(new SingularNoFormKeyException(instance)).add("key", null);
-            if (msgRequired != null) {
-                e.add("complement", "Era esperado que " + msgRequired);
-            }
-            throw e;
-        } else if (!keyClass.isInstance(key)) {
-            throw addInfo(new SingularFormPersistenceException(
-                    "A chave encontrada incompatível: (key= " + key + ") é da classe " + key.getClass().getName() +
-                            " mas era esperado que fosse da classe " + keyClass.getName())).add(instance);
-        }
-        return (KEY) key;
-    }
-
     @Override
     public final boolean isPersistent(@Nonnull INSTANCE instance) {
-        return readKeyAttributeOptional(instance).isPresent();
+        return getFormKeyManager().isPersistent(instance);
     }
 
     /**

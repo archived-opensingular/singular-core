@@ -258,7 +258,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     @Nonnull
     public FormEntity loadFormEntity(@Nonnull FormKey key) {
-        return formDAO.findOrException(checkKeyOrException(key, null).longValue());
+        return formDAO.findOrException(getFormKeyManager().validKeyOrException(key).longValue());
     }
 
     @Override
@@ -312,7 +312,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     @Nonnull
     public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
-        FormKey    formKey    = readKeyAttributeOrException(instance);
+        FormKey    formKey    = getFormKeyManager().readFormKeyOrException(instance);
         FormEntity formEntity = loadFormEntity(formKey);
         saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), inclusionActor, keepAnnotations);
         return formKey;
