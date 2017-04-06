@@ -16,8 +16,6 @@
 
 package org.opensingular.form.type.country.brazil;
 
-import java.util.regex.Pattern;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
@@ -29,39 +27,37 @@ import org.opensingular.lib.commons.util.Loggable;
 @SInfoType(name = "EnderecoCompleto", spackage = SPackageCountryBrazil.class)
 public class STypeAddress extends STypeComposite<SIComposite> implements Loggable {
 
-	private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
-	private static final Pattern CEP_PATTERN = Pattern.compile("(\\d{2})(\\d{3})(\\d{3})");
 	private STypeString endereco;
 	private STypeString complemento;
 	private STypeString cidade;
 	private STypeCEP cep;
 	private STypeInteger numero;
 	private STypeComposite<SIComposite> estado;
+	private STypeString bairro;
 
 	@Override
 	protected void onLoadType(TypeBuilder tb) {
-		// addInstanceValidator(ValidationErrorLevel.ERROR,
-		// InstanceValidators.cep());
-		
-		this.asAtr().label("Endereço:");
 
 		cep = this.addField("cep", STypeCEP.class);
-		cep.asAtrBootstrap().colPreference(2);
+		cep.asAtrBootstrap().newRow().colPreference(2);
 		
 		endereco = this.addFieldString("endereco");
-		endereco.asAtr().label("Rua/Avenida").asAtrBootstrap().colPreference(12);
-
-		complemento = this.addFieldString("complemento");
-		complemento.asAtr().label("Endereço");
+		endereco.asAtr().label("Endereço").asAtrBootstrap().newRow().colPreference(10);
 
 		numero = this.addFieldInteger("numero");
-		numero.asAtr().label("Numero").asAtrBootstrap().colPreference(2);
+		numero.asAtr().label("Número").asAtrBootstrap().colPreference(2);
+
+		complemento = this.addFieldString("complemento");
+		complemento.asAtr().label("Complemento").asAtrBootstrap().newRow().colPreference(6);
+
+		bairro = this.addFieldString("bairro");
+		bairro.asAtr().label("Bairro").asAtrBootstrap().colPreference(4);
 
 		cidade = this.addFieldString("cidade");
-		cidade.asAtr().label("Cidade").asAtrBootstrap().colPreference(3);
+		cidade.asAtr().label("Cidade").asAtrBootstrap().newRow().colPreference(5);
 
 		estado = this.addFieldComposite("estado");
-		estado.asAtr().label("Estado").asAtrBootstrap().colPreference(4);
+		estado.asAtr().label("Estado").asAtrBootstrap().colPreference(3);
 
 		final STypeString sigla = estado.addFieldString("sigla");
 		final STypeString nome = estado.addFieldString("nome");
@@ -99,40 +95,4 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
                 	listaBuilder.add().set(nome, "Tocantins").set(sigla, "TO");
                 });
 	}
-
-	// @Override
-	// public String convert(Object valor) {
-	// try {
-	// return format(super.convert(valor));
-	// } catch (Exception e) {
-	// getLogger().trace(e.getMessage(), e);
-	// return String.valueOf(valor);
-	// }
-	// }
-
-	// private Matcher getCepMatcher(String cep) {
-	// String unformated;
-	// if (cep == null) {
-	// return null;
-	// }
-	// unformated = unformat(cep);
-	// return CEP_PATTERN.matcher(unformated);
-	// }
-
-	// public String format(String cep) {
-	// Matcher cepMatcher = getCepMatcher(cep);
-	// if (cepMatcher != null && cepMatcher.matches()) {
-	// return cepMatcher.group(1) + "." + cepMatcher.group(2) + "-" +
-	// cepMatcher.group(3);
-	// }
-	// return cep;
-	// }
-
-	// String unformat(String formated) {
-	// if (formated == null) {
-	// return null;
-	// }
-	// return NOT_NUMBER_PATTERN.matcher(formated).replaceAll("");
-	// }
-
 }
