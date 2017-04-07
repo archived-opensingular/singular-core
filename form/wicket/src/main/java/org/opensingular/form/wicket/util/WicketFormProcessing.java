@@ -306,24 +306,6 @@ public class WicketFormProcessing implements Loggable {
         }
     }
 
-    /**
-     * Verifica se existe na hierarquia, ignora a si proprio.
-     */
-    private static boolean isParentsVisible(SInstance si) {
-        if (si == null) {
-            return false;
-        }
-        if (si.getParent() == null) {
-            return true;
-        }
-        for (SInstance i = si.getParent(); i.getParent() != null; i = i.getParent()) {
-            if (!(i.asAtr().isVisible() && i.asAtr().exists())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static boolean isSkipValidationOnRequest() {
         return RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) != null && RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST);
     }

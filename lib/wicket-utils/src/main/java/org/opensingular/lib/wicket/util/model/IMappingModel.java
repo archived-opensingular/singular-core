@@ -49,6 +49,7 @@ public interface IMappingModel<T> extends IReadOnlyModel<T> {
 
     }
 
+    @Override
     default public void setObject(T object) {
         throw new UnsupportedOperationException("Model " + getClass() + " does not support setObject(Object)");
     }

@@ -23,6 +23,10 @@ public class SupplierReloadableDetachableModel<T> extends ReloadableDetachableMo
     
     private final ISupplier<T> supplier;
     
+    public SupplierReloadableDetachableModel(T object, ISupplier<T> supplier) {
+        this(supplier);
+        setObject(object);
+    }
     public SupplierReloadableDetachableModel(ISupplier<T> supplier) {
         this.supplier = supplier;
     }
