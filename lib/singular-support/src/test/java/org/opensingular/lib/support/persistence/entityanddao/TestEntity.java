@@ -41,6 +41,8 @@ public class TestEntity extends BaseEntity<Integer> {
     @Column(name = "SIM_NAO")
     private SimNao simNaoEnum;
 
+    private static String emptyField = "";
+
     @Override
     public Integer getCod() {
         return cod;

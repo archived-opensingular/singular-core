@@ -1,6 +1,7 @@
 package org.opensingular.lib.support.persistence.util;
 
 
+import org.hibernate.HibernateException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,15 @@ public class GenericEnumUserTypeTest {
         Assert.assertEquals(1, type.sqlTypes().length);
     }
 
+    @Test(expected = HibernateException.class)
+    public void setParametersValueExceptionTest(){
+        GenericEnumUserType type = new GenericEnumUserType();
+
+        Properties properties = new Properties();
+        properties.setProperty("enumClass", "empty");
+        type.setParameterValues(properties);
+    }
+
     @Test
     public void testMethodsWithReturnIgualParameter(){
         GenericEnumUserType type = new GenericEnumUserType();
@@ -84,5 +94,10 @@ public class GenericEnumUserTypeTest {
         SimNao simNaoEnum = dao.find(20).get().getSimNaoEnum();
 
         Assert.assertEquals(SimNao.SIM, simNaoEnum);
+    }
+
+
+    public enum TestEnum{
+        VAL_1, VAL_2;
     }
 }
