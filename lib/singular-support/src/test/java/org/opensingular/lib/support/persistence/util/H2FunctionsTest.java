@@ -26,5 +26,12 @@ public class H2FunctionsTest {
         Double diff = H2Functions.dateDiffInDays(calendarToCompare.getTime(), calendar.getTime());
 
         Assert.assertEquals(31, diff.intValue());
+
+        Assert.assertEquals(0, H2Functions.dateDiffInDays(null, null).intValue());
+    }
+
+    @Test
+    public void notNullTest(){
+        Assert.assertNotNull(new H2Functions());
     }
 }
