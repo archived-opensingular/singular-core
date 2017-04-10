@@ -38,14 +38,24 @@ public class TestDAO extends BaseDAO<TestEntity, Integer> {
         return query.list();
     }
 
-    public TestEntity findByCod(Integer nome){
+    public TestEntity findByCod(Integer cod){
         Map<String, Object> params = new HashedMap();
-        params.put("cod", nome);
+        params.put("cod", cod);
 
         Query query = getSession().createQuery("from "+TestEntity.class.getName()+" as t where t.cod = :cod");
         this.setParametersQuery(query, params);
 
         return (TestEntity) query.uniqueResult();
+    }
+
+    public List<TestEntity> findAllByCod(List<Integer> codigos){
+        Map<String, Object> params = new HashedMap();
+        params.put("codigos", codigos);
+
+        Query query = getSession().createQuery("from "+TestEntity.class.getName()+" as t where t.cod in (:codigos)");
+        this.setParametersQuery(query, params);
+
+        return query.list();
     }
 
     public Optional<TestEntity> findUniqueResultCriteriaTest(String otherValue){
