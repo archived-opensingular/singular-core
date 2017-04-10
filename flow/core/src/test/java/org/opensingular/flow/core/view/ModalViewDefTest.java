@@ -11,6 +11,8 @@ public class ModalViewDefTest {
         Assert.assertEquals(50, modal.getWidth());
 
         modal.setHeight(20);
+        modal.setWidth(20);
         Assert.assertEquals(20, modal.getHeight());
+        Assert.assertEquals(20, modal.getWidth());
     }
 }
