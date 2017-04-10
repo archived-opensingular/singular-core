@@ -29,6 +29,10 @@ public final class FormatUtil {
         return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
     }
 
+    public static String dateToDefaultDateString(Date date) {
+        return new SimpleDateFormat("dd/MM/yyyy").format(date);
+    }
+
     public static StringBuilder appendSeconds(StringBuilder time, long seconds) {
         if (seconds > 0) {
             if (seconds < 60) {
