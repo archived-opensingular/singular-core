@@ -47,19 +47,14 @@ public class BlocksCompositeMapperTest {
         experiencia.asAtrAnnotation().setAnnotated();
 
 
-        SViewTab tabbed = new SViewTab();
-        tabbed.addTab("informacoes", "Informações pessoais")
-                .add(nome)
-                .add(idade);
-        tabbed.addTab(experiencia);
-        testForm.withView(tabbed);
+
 
         testForm.withView(new SViewByBlock(), vbb -> {
-            vbb.newBlock("Empres ")
-                    .add(empresa)
+            vbb.newBlock("Experiencia ")
+                    .add(experiencia)
                     .newBlock("Dados Cargo")
                     .add(nome)
-                    .add(cargo);
+                    .add(idade);
         });
     }
 
