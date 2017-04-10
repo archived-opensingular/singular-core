@@ -21,6 +21,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -142,5 +145,22 @@ public class TestPDFUtil {
         if (!e.getMessage().contains(expectedContent)) {
             assertEquals(expectedContent, e.getMessage());
         }
+    }
+
+    @Test
+    public void createPDFSepartingHeaderBodyAndFooterTest(){
+        String header = "<header><title>Test</title></header>";
+        String body = "<body><div><span>Some string to fill</span></div><body>";
+        String footer = "<footer></footer>";
+
+        PDFUtil pdfUtil = PDFUtil.getInstance();
+        pdfUtil.setPageOrientation(PDFUtil.PageOrientation.PAGE_LANDSCAPE);
+        pdfUtil.setPageSize(PDFUtil.PageSize.PAGE_A4);
+        pdfUtil.setJavascriptDelay(0);
+
+        File instance = pdfUtil.convertHTML2PDF(header, body, footer, new ArrayList<>());
+
+        Assert.assertTrue(instance.exists());
+        instance.delete();
     }
 }
