@@ -73,5 +73,7 @@ public class SingularPropertiesTest {
 
         String property = singularProperties.getProperty("notExist", "defaultValue");
         Assert.assertEquals("defaultValue", property);
+
+        Assert.assertEquals("true", singularProperties.getProperty(MOCK_TRUE_KEY, "defaultValue"));
     }
 }

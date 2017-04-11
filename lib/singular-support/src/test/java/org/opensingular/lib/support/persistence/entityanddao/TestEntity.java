@@ -1,6 +1,10 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +37,12 @@ public class TestEntity extends BaseEntity<Integer> {
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = @Parameter(name = "enumClass", value = SimNao.ENUM_CLASS_NAME))
+    @Column(name = "SIM_NAO")
+    private SimNao simNaoEnum;
+
+    private static String emptyField = "";
+
     @Override
     public Integer getCod() {
         return cod;
@@ -64,5 +74,13 @@ public class TestEntity extends BaseEntity<Integer> {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public SimNao getSimNaoEnum() {
+        return simNaoEnum;
+    }
+
+    public void setSimNaoEnum(SimNao simNaoEnum) {
+        this.simNaoEnum = simNaoEnum;
     }
 }
