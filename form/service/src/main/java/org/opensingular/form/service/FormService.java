@@ -344,6 +344,10 @@ public class FormService implements IFormService {
         return SFormXMLUtil.toStringXMLOrEmptyXML(instance);
     }
 
+    public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor){
+        return newVersion(instance,inclusionActor, true);
+    }
+
     @Override
     @Nonnull
     public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations) {

@@ -72,9 +72,7 @@ public interface IFormService extends BasicAnnotationPersistence {
      * e replica as anotações em suas versões iniciais
      */
     @Nonnull
-    default FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor){
-        return newVersion(instance, inclusionActor, true);
-    }
+    FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor);
 
     /**
      * Salva as alterações na versão atual e incrementa versão do formulário
