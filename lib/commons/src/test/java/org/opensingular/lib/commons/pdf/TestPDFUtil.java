@@ -23,7 +23,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
 /**
  * @author Daniel C. Bordin on 22/01/2017.
  */
-@Ignore
 public class TestPDFUtil {
 
     private static final String SIMPLE_EXAMPLE_HTML = "<html><body>Hello Word</body><htmll>";
