@@ -7,6 +7,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
 import org.opensingular.lib.commons.lambda.IPredicate;
@@ -49,7 +50,10 @@ public class WicketUtilTester extends WicketTester {
     public <C extends Component> Optional<C> childById(Class<C> componentClass, String id) {
         return findChild(componentClass, it -> id.equals(it.getId()));
     }
-    
+    public Optional<Form<?>> topForm() {
+        return findChild(Form.class, it -> true).map(it -> (Form<?>) it);
+    }
+
     public boolean assertHtmlContains(String s) {
         return getLastResponseAsString().contains(s);
     }
