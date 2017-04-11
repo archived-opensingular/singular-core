@@ -17,6 +17,7 @@
 package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin
  */
-public interface FormPersistence<INSTANCE extends SInstance> {
+public interface FormRespository<TYPE extends SType<INSTANCE>, INSTANCE extends SInstance> {
 
     /**
      * Converte o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação

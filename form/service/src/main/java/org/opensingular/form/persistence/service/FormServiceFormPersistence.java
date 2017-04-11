@@ -20,13 +20,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
-public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposite> extends AbstractFormPersistence<I, FormKeyLong> {
+public class FormServiceFormPersistence<TYPE extends SType<INSTANCE>, INSTANCE extends SIComposite>
+        extends AbstractFormPersistence<TYPE, INSTANCE, FormKeyLong> {
 
     private IFormService formService;
 
     private SDocumentFactory documentFactory;
 
-    private Class<T> typeClass;
+    private Class<TYPE> typeClass;
 
     private FormDAO formDAO;
 
@@ -40,8 +41,8 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
     }
 
     @Override
-    protected I loadInternal(FormKeyLong key) {
-        return (I) formService.loadSInstance(key, getRefType(), documentFactory);
+    protected INSTANCE loadInternal(FormKeyLong key) {
+        return (INSTANCE) formService.loadSInstance(key, getRefType(), documentFactory);
     }
 
     @NotNull
@@ -51,7 +52,7 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
 
     @Nonnull
     @Override
-    protected List<I> loadAllInternal() {
+    protected List<INSTANCE> loadAllInternal() {
         return formDAO.listByFormAbbreviation(SFormUtil.getTypeName(typeClass))
                 .stream()
                 .map(FormEntity::getCod)
@@ -62,7 +63,7 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
 
     @Nonnull
     @Override
-    protected List<I> loadAllInternal(long first, long max) {
+    protected List<INSTANCE> loadAllInternal(long first, long max) {
         return formDAO.listByFormAbbreviation(SFormUtil.getTypeName(typeClass), first, max)
                 .stream()
                 .map(FormEntity::getCod)
@@ -73,12 +74,12 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
 
     @Nonnull
     @Override
-    public FormKey newVersion(@Nonnull I instance, Integer inclusionActor, boolean keepAnnotations) {
+    public FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
         return formService.newVersion(instance, inclusionActor, keepAnnotations);
     }
 
     @Override
-    protected void updateInternal(@Nonnull FormKeyLong key, @Nonnull I instance, Integer inclusionActor) {
+    protected void updateInternal(@Nonnull FormKeyLong key, @Nonnull INSTANCE instance, Integer inclusionActor) {
         instance.getDocument().persistFiles();
         formService.update(instance, inclusionActor);
     }
@@ -90,54 +91,54 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
 
     @Nonnull
     @Override
-    protected FormKeyLong insertInternal(@Nonnull I instance, Integer inclusionActor) {
+    protected FormKeyLong insertInternal(@Nonnull INSTANCE instance, Integer inclusionActor) {
         instance.getDocument().persistFiles();
         return (FormKeyLong) formService.insert(instance, inclusionActor);
     }
 
     @Override
-    public I createInstance() {
-        return (I) documentFactory.createInstance(getRefType());
+    public INSTANCE createInstance() {
+        return (INSTANCE) documentFactory.createInstance(getRefType());
     }
 
     @Override
-    public void update(@Nonnull I instance, Integer inclusionActor) {
+    public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
         super.update(instance, inclusionActor);
     }
 
     @Nonnull
     @Override
-    public List<I> loadAll() {
+    public List<INSTANCE> loadAll() {
         return super.loadAll();
     }
 
     @Nonnull
     @Override
-    public List<I> loadAll(long first, long max) {
+    public List<INSTANCE> loadAll(long first, long max) {
         return super.loadAll(first, max);
     }
 
     @Nonnull
     @Override
-    public I load(@Nonnull FormKey key) {
+    public INSTANCE load(@Nonnull FormKey key) {
         return super.load(key);
     }
 
     @Nonnull
     @Override
-    public FormKey insert(@Nonnull I instance, Integer inclusionActor) {
+    public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
         return super.insert(instance, inclusionActor);
     }
 
     @Nonnull
     @Override
-    public FormKey insertOrUpdate(@Nonnull I instance, Integer inclusionActor) {
+    public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
         return super.insertOrUpdate(instance, inclusionActor);
     }
 
     @Nonnull
     @Override
-    public Optional<I> loadOpt(@Nonnull FormKey key) {
+    public Optional<INSTANCE> loadOpt(@Nonnull FormKey key) {
         return super.loadOpt(key);
     }
 
@@ -154,6 +155,7 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
         this.formService = formService;
     }
 
+    @Override
     public SDocumentFactory getDocumentFactory() {
         return documentFactory;
     }
@@ -162,11 +164,11 @@ public class FormServiceFormPersistence<T extends SType<I>, I extends SIComposit
         this.documentFactory = documentFactory;
     }
 
-    public Class<T> getTypeClass() {
+    public Class<TYPE> getTypeClass() {
         return typeClass;
     }
 
-    public void setTypeClass(Class<T> typeClass) {
+    public void setTypeClass(Class<TYPE> typeClass) {
         this.typeClass = typeClass;
     }
 

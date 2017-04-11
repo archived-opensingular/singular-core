@@ -17,7 +17,8 @@
 package org.opensingular.form.persistence;
 
 import com.google.common.collect.Lists;
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
@@ -32,8 +33,8 @@ import java.util.Map;
  *
  * @author Daniel C. Bordin
  */
-public class FormPersistenceInMemory<INSTANCE extends SIComposite>
-        extends AbstractFormPersistence<INSTANCE, FormKeyInt> {
+public class FormPersistenceInMemory<TYPE extends SType<INSTANCE>, INSTANCE extends SInstance>
+        extends AbstractFormPersistence<TYPE, INSTANCE, FormKeyInt> {
 
     private final Map<FormKeyInt, INSTANCE> collection = new LinkedHashMap<>();
 
@@ -45,6 +46,12 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
 
     public FormPersistenceInMemory(SDocumentFactory documentFactory, RefType refType) {
         super(FormKeyInt.class);
+    }
+
+    @Nonnull
+    @Override
+    public SDocumentFactory getDocumentFactory() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -83,7 +90,8 @@ public class FormPersistenceInMemory<INSTANCE extends SIComposite>
     @Override
     @Nonnull
     protected List<INSTANCE> loadAllInternal(long first, long max) {
-        return loadAllInternal().subList((int) first, (int) Math.min(first + max, countAll()));
+        long end = Math.max(first, Math.min(first + max, countAll()));
+        return loadAllInternal().subList((int) first, (int) end);
     }
 
     @Override

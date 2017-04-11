@@ -16,7 +16,9 @@
 
 package org.opensingular.form.persistence;
 
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.document.SDocumentFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,8 +28,8 @@ import java.util.Optional;
 /**
  * @author Daniel C. Bordin
  */
-public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY extends FormKey>
-        implements FormPersistence<INSTANCE> {
+public abstract class AbstractFormPersistence<TYPE extends SType<INSTANCE>, INSTANCE extends SInstance, KEY extends FormKey>
+        implements FormRespository<TYPE, INSTANCE> {
 
     private final FormKeyManager<KEY> formKeyManager;
 
@@ -45,6 +47,8 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
         this.name = name;
     }
 
+    @Nonnull
+    public abstract SDocumentFactory getDocumentFactory();
 
     /** Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey. */
     @Nonnull
@@ -124,7 +128,7 @@ public abstract class AbstractFormPersistence<INSTANCE extends SIComposite, KEY 
     public INSTANCE load(@Nonnull FormKey key) {
         INSTANCE instance = loadImpl(key);
         if (instance == null) {
-            throw addInfo(new SingularFormPersistenceException("Não foi encontrada a instância")).add("Key", key);
+            throw new SingularFormNotFoundException(key);
         }
         return instance;
     }
