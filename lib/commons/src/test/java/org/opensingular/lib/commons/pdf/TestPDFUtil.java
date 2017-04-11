@@ -17,7 +17,6 @@
 package org.opensingular.lib.commons.pdf;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -32,13 +31,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
 /**
  * @author Daniel C. Bordin on 22/01/2017.
  */
+@Ignore
 public class TestPDFUtil {
 
     private static final String SIMPLE_EXAMPLE_HTML = "<html><body>Hello Word</body><htmll>";
