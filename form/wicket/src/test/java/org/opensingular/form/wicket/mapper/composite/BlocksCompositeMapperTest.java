@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper;
+package org.opensingular.form.wicket.mapper.composite;
 
 import org.junit.Test;
 import org.opensingular.form.SIComposite;
