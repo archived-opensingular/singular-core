@@ -1,6 +1,7 @@
 package org.opensingular.form.io.definition;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +13,12 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.io.FormAssert;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 
-import java.util.List;
+import com.google.common.collect.Lists;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -189,7 +190,7 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
             } else {
                 assertThat(recovered.getSuperType()).isNull();
             }
-            FormAssert.assertEqualsAttributes(original, recovered);
+            AssertionsSInstance.assertEqualsAttributes(original, recovered);
             List<SType<?>> localTypesOriginal = Lists.newArrayList(original.getLocalTypes());
             List<SType<?>> localTypesRecovered = Lists.newArrayList(recovered.getLocalTypes());
             assertEquals(localTypesOriginal.size(), localTypesRecovered.size());
