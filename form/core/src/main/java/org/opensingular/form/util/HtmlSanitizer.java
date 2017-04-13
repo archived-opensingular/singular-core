@@ -36,8 +36,11 @@ public class HtmlSanitizer {
 
     private static void addTable() {
         policyBuilder.allowElements("table")
-                .allowAttributes("border", "cellpadding", "cellspacing", "width")
+                .allowAttributes("border", "cellpadding", "cellspacing", "width", "style", "class")
                 .onElements("table");
+        policyBuilder.allowElements("td")
+                .allowAttributes("colspan", "rowspan", "style", "class", "align", "valign")
+                .onElements("td");
     }
 
     private static void addBasicTags() {
