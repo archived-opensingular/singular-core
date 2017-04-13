@@ -138,14 +138,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.java.loci</groupId>
-            <artifactId>jsr308-all</artifactId>
-            <version>1.1.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svggen</artifactId>
             <version>1.7</version>
