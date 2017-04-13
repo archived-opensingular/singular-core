@@ -90,6 +90,7 @@ public enum Icone {
     EXCLAMATION_TRIANGLE("fa fa-exclamation-triangle"),
     UPLOAD("fa fa-upload"),
     BARCODE("fa fa-barcode"),
+    COUNTRY             ("icon-globe"),   
     //@formatter:on
         ;
 
