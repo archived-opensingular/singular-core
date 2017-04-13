@@ -81,7 +81,7 @@ public class FileUploadManagerTest {
         AttachmentKey createdKey = fileUploadManager.createUpload(null, null, null, null);
 
         assertEquals(attachmentKey, createdKey);
-        assertTrue(fileUploadManager.consumeFile(createdKey.asString(), callback).orElse(false));
+        assertTrue(fileUploadManager.consumeFile(createdKey.asString(), callback).orElse(Boolean.FALSE));
 
         verify(callback).apply(eq(attachmentRef));
         verify(fileUploadInfoRepository).remove(eq(fileUploadInfo));

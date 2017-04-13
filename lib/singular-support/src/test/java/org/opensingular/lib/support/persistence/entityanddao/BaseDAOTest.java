@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -133,6 +134,15 @@ public class BaseDAOTest {
 
         assertThat(byDateAfter).isNotNull();
         assertThat(byDateAfter.getCod()).isEqualTo(10);
+    }
+
+    @Test
+    public void findAllByCod(){
+        dao.save(new TestEntity(15, "Quinze", "other value"));
+        dao.save(new TestEntity(16, "Dezesseis", "other value"));
+
+        List<TestEntity> allByCod = dao.findAllByCod(Arrays.asList(15, 16));
+        assertThat(allByCod).hasSize(2);
     }
 
     @Test

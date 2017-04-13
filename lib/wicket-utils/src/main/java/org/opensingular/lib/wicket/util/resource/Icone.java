@@ -88,11 +88,12 @@ public enum Icone {
     HAND_UP             ("fa fa-hand-o-up"),
     DASHBOARD           ("fa fa-dashboard"),
     EXCLAMATION_TRIANGLE("fa fa-exclamation-triangle"),
-    UPLOAD("fa fa-upload"),
-    BARCODE("fa fa-barcode"),
+    MAGIC               ("fa fa-magic"),
+    CLONE               ("fa fa-clone"),
+    UPLOAD              ("fa fa-upload"),
+    BARCODE             ("fa fa-barcode"),
+    SEND_O              ("fa fa-send-o");
     COUNTRY             ("icon-globe"),   
-    //@formatter:on
-        ;
 
     private final String cssClass;
 
