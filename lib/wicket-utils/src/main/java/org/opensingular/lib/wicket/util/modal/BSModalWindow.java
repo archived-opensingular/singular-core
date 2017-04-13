@@ -37,50 +37,46 @@ public class BSModalWindow extends Panel {
 
     private final BSModalBorder modalBorder       = newModalBorder(MODAL_ID);
 
-    private final TemplatePanel bodyContainer = new TemplatePanel(BODY_CONTAINER_ID, p -> "<div wicket:id='" + p.iterator().next().getId() + "'></div>");
-    private MarkupContainer form;
-    private boolean resetOnBodySwitch = true;
-
-    public BSModalWindow(String id, IModel<?> model) {
-        this(id, model, true);
-    }
+    private final TemplatePanel bodyContainer     = new TemplatePanel(BODY_CONTAINER_ID, p -> "<div wicket:id='" + p.iterator().next().getId() + "'></div>");
+    private MarkupContainer     form;
+    private boolean             resetOnBodySwitch = true;
 
     public BSModalWindow(String id) {
         this(id, true);
     }
 
+    public BSModalWindow(String id, IModel<?> model) {
+        this(id, model, true);
+    }
+
+    public BSModalWindow(String id, boolean wrapBodyWithForm) {
+        this(id, wrapBodyWithForm, true);
+    }
+
     public BSModalWindow(String id, IModel<?> model, boolean wrapBodyWithForm) {
-        super(id, model);
-        doInit(wrapBodyWithForm);
+        this(id, model, wrapBodyWithForm, true);
+    }
+
+    public BSModalWindow(String id, boolean wrapBodyWithForm, boolean resetOnBodySwitch) {
+        this(id, null, wrapBodyWithForm, resetOnBodySwitch);
     }
 
     public BSModalWindow(String id, IModel<?> model, boolean wrapBodyWithForm, boolean resetOnBodySwitch) {
         super(id, model);
-        this.resetOnBodySwitch = resetOnBodySwitch;
-        doInit(wrapBodyWithForm);
-    }
-
-    public BSModalWindow(String id, boolean wrapBodyWithForm, boolean resetOnBodySwitch) {
-        super(id);
-        this.resetOnBodySwitch = resetOnBodySwitch;
-        doInit(wrapBodyWithForm);
-    }
-
-    public BSModalWindow(String id, boolean wrapBodyWithForm) {
-        super(id);
-        doInit(wrapBodyWithForm);
+        doInit(wrapBodyWithForm, resetOnBodySwitch);
     }
 
     protected BSModalBorder newModalBorder(String id) {
         return new BSModalBorder(id);
     }
 
-    private void doInit(boolean wrapBodyWithForm) {
-        form = (wrapBodyWithForm) ? newForm(FORM_ID) : new NonForm(FORM_ID);
-        this
-                .add(form
-                        .add(modalBorder
-                                .add(bodyContainer)));
+    private void doInit(boolean wrapBodyWithForm, boolean resetOnBodySwitch) {
+        this.resetOnBodySwitch = resetOnBodySwitch;
+        this.form = (wrapBodyWithForm) ? newForm(FORM_ID) : new NonForm(FORM_ID);
+
+        this.add(form
+            .add(modalBorder
+                .add(bodyContainer)));
         setBody(new WebMarkupContainer("_"));
     }
 
