@@ -35,17 +35,17 @@ public class SingularPredicates {
 
     @SafeVarargs
     public static Predicate<SInstance> allMatches(Predicate<SInstance>... predicates) {
-        return i -> Arrays.asList(predicates).stream().allMatch(p -> p.test(i));
+        return i -> Arrays.stream(predicates).allMatch(p -> p.test(i));
     }
 
     @SafeVarargs
     public static Predicate<SInstance> anyMatches(Predicate<SInstance>... predicates) {
-        return i -> Arrays.asList(predicates).stream().anyMatch(p -> p.test(i));
+        return i -> Arrays.stream(predicates).anyMatch(p -> p.test(i));
     }
 
     @SafeVarargs
     public static Predicate<SInstance> noneMatches(Predicate<SInstance>... predicates) {
-        return i -> Arrays.asList(predicates).stream().noneMatch(p -> p.test(i));
+        return i -> Arrays.stream(predicates).noneMatch(p -> p.test(i));
     }
 
     public static <T extends Serializable> Predicate<SInstance> typeValueMatches(STypeSimple<? extends SISimple<T>, T> type, Predicate<T> predicate) {

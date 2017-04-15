@@ -48,6 +48,7 @@ public class STypeHTML extends STypeSimple<SIHTML, String> {
 
     @Override
     public String fromString(String value) {
-        return HtmlSanitizer.sanitize(value);
+        return value;
+//        return HtmlSanitizer.sanitize(value);
     }
 }

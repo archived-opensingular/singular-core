@@ -1,10 +1,27 @@
 package org.opensingular.form.view;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.util.HtmlSanitizer;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestSanitizeHTML {
+
+    @Test
+    @Ignore
+    public void testIfKeepHtmlTag(){
+        String htmlWithEntity = "<html></html>";
+        assertEquals(htmlWithEntity, HtmlSanitizer.sanitize(htmlWithEntity));
+    }
+
+    @Test
+    @Ignore
+    public void testIfKeepHtmlEntities(){
+        String htmlWithEntity = "<i>Of&iacute;cio n&#x00ba;</i>";
+        assertEquals(htmlWithEntity, HtmlSanitizer.sanitize(htmlWithEntity));
+    }
 
     @Test
     public void addStyleTag() {
