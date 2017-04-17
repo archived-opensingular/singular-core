@@ -27,13 +27,13 @@ import org.opensingular.lib.commons.util.Loggable;
 @SInfoType(name = "EnderecoCompleto", spackage = SPackageCountryBrazil.class)
 public class STypeAddress extends STypeComposite<SIComposite> implements Loggable {
 
-	private STypeString endereco;
-	private STypeString complemento;
-	private STypeString cidade;
-	private STypeCEP cep;
-	private STypeInteger numero;
-	private STypeComposite<SIComposite> estado;
-	private STypeString bairro;
+	public STypeString endereco;
+	public STypeString complemento;
+	public STypeString cidade;
+	public STypeCEP cep;
+	public STypeInteger numero;
+	public STypeComposite<SIComposite> estado;
+	public STypeString bairro;
 
 	@Override
 	protected void onLoadType(TypeBuilder tb) {

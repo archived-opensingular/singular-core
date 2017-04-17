@@ -20,30 +20,30 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.commons.util.Loggable;
 
 @SInfoType(name = "Conta", spackage = SPackageCountryBrazil.class)
 public class STypeAccount extends STypeComposite<SIComposite> implements Loggable {
 
-	private STypeLong agencia;
-	private STypeLong conta;
+	public STypeString agencia;
+	public STypeString conta;
+	public STypeString banco;
 	
 	@Override
 	protected void onLoadType(TypeBuilder tb) {
 
-		agencia = this.addField("agencia", STypeLong.class);
-		agencia.asAtr().maxLength(12);
-		agencia.asAtr().label("Agência").asAtrBootstrap().colPreference(2);
+	    banco = this.addFieldString("banco");
+        banco.asAtr().maxLength(12).label("Banco").asAtrBootstrap().colPreference(2);
+        
+	    agencia = this.addFieldString("agencia");
+		agencia.asAtr().label("Agência").maxLength(12);
+		agencia.asAtrBootstrap().colPreference(2);
 
-		conta = this.addField("conta", STypeLong.class);
-		conta.asAtr().maxLength(12).label("Conta").asAtrBootstrap().colPreference(2);
+		conta = this.addFieldString("conta");
+		conta.asAtr().label("Conta").maxLength(12);
+		conta.asAtrBootstrap().colPreference(2);
 
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(Integer.MAX_VALUE);
-	}
 }
