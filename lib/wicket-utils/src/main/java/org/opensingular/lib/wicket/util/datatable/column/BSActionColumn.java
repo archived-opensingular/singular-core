@@ -47,6 +47,10 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         super(displayModel);
     }
 
+    public void resetActions(){
+        actions.clear();
+    }
+
     @Override
     public String getCssClass() {
         return " action-column " + super.getCssClass();
