@@ -92,7 +92,8 @@ public enum Icone {
     CLONE               ("fa fa-clone"),
     UPLOAD              ("fa fa-upload"),
     BARCODE             ("fa fa-barcode"),
-    SEND_O              ("fa fa-send-o");
+    SEND_O              ("fa fa-send-o"),
+    COUNTRY             ("icon-globe");   
 
     private final String cssClass;
 
