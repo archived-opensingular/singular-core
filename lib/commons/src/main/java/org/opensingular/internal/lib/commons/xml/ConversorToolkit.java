@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;

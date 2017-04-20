@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Attr;
@@ -44,7 +43,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * JUnit para test do da classe MElement.
@@ -53,8 +54,155 @@ import static org.junit.Assert.*;
  */
 public class TestMElement {
 
-    /** XML de base para teste de percorrimento e leitura. */
+    /**
+     * XML de base para teste de percorrimento e leitura.
+     */
     private MElement raiz_;
+
+    /**
+     * Verifica se ambos os nos são iguais fazendo uma comparação em
+     * profundidade.
+     *
+     * @param n1 -
+     * @param n2 -
+     * @throws Exception Se nbão forem iguais
+     */
+    public static void isIgual(Node n1, Node n2) throws Exception {
+        if (n1 == n2) {
+            return;
+        }
+
+        isIgual(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
+        isIgual(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
+        isIgual(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
+        isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
+        isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
+
+        if (isMesmaClasse(Element.class, n1, n2)) {
+            Element e1 = (Element) n1;
+            Element e2 = (Element) n2;
+            //Verifica se possuem os mesmos atributos
+            NamedNodeMap nn1 = e1.getAttributes();
+            NamedNodeMap nn2 = e2.getAttributes();
+            if (nn1.getLength() != nn2.getLength()) {
+                fail("O número atributos em " + XPathToolkit.getFullPath(n1) + " (qtd=" + nn1.getLength() +
+                        " é diferente de n2 (qtd=" + nn2.getLength() + ")");
+            }
+            for (int i = 0; i < nn1.getLength(); i++) {
+                isIgual((Attr) nn1.item(i), (Attr) nn2.item(i));
+            }
+
+            //Verifica se possuem os mesmos filhos
+            Node filho1 = e1.getFirstChild();
+            Node filho2 = e2.getFirstChild();
+            int count = 0;
+            while ((filho1 != null) && (filho2 != null)) {
+                isIgual(filho1, filho2);
+                filho1 = filho1.getNextSibling();
+                filho2 = filho2.getNextSibling();
+                count++;
+            }
+            if (filho1 != null) {
+                fail("Há mais node [" + count + "] " + XPathToolkit.getNomeTipo(filho1) + " (" +
+                        XPathToolkit.getFullPath(filho1) + ") em n1:" + XPathToolkit.getFullPath(n1));
+            }
+            if (filho2 != null) {
+                fail("Há mais node [" + count + "] " + XPathToolkit.getNomeTipo(filho2) + " (" +
+                        XPathToolkit.getFullPath(filho2) + ") em n2:" + XPathToolkit.getFullPath(n2));
+            }
+
+        } else if (isMesmaClasse(Attr.class, n1, n2)) {
+            //Ok
+
+        } else if (isMesmaClasse(Text.class, n1, n2)) {
+            //Ok
+
+        } else {
+            fail("Tipo de nó " + n1.getClass() + " não tratado");
+        }
+
+    }
+
+    /**
+     * Verifica se os atributos são iguais. Existe pois a comparação de
+     * atributos possui particularidades.
+     *
+     * @param n1 -
+     * @param n2 -
+     * @throws Exception Se não forem iguais
+     */
+    public static void isIgual(Attr n1, Attr n2) throws Exception {
+        if (n1 == n2) {
+            return;
+        }
+        isIgual(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
+        isIgual(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
+
+        //Por algum motivo depois do parse Prefix passa de null para não null
+        //isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
+        //Por algum motivo depois do parse Localname passe de não null para
+        // null
+        //isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
+
+        if (!(n1.getNodeName().startsWith("xmlns") && n2.getNodeName().startsWith("xmlns"))) {
+            isIgual(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
+        }
+    }
+
+    /**
+     * Verifica se ambos o nós são da classe informada. Se apenas um for, um
+     * erro é disparado devido a incompatibilidade.
+     *
+     * @param c        Classe a ser verificada
+     * @param original instância 1
+     * @param novo     instância 2
+     * @return true Se ambos forem instância de c
+     */
+    private static boolean isMesmaClasse(Class c, Node original, Node novo) {
+        if (c.isInstance(original)) {
+            if (c.isInstance(novo)) {
+                return true;
+            } else {
+                fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " +
+                        XPathToolkit.getFullPath(novo));
+            }
+        } else if (c.isInstance(novo)) {
+            fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " + XPathToolkit.getFullPath(novo));
+        }
+        return false;
+    }
+
+    /**
+     * Verifica a igualdade de um determiando para de objetos já considerando a
+     * situação de um deles ser null.
+     *
+     * @param n1        -
+     * @param n2        -
+     * @param nomeParte -
+     * @param v1        -
+     * @param v2        -
+     */
+    private static void isIgual(Node n1, Node n2, String nomeParte, Object v1, Object v2) {
+        if (((v1 == null) && (v2 != null)) || ((v1 != null) && !v1.equals(v2))) {
+
+            fail("O(a) " + nomeParte + " em  " + XPathToolkit.getFullPath(n2) + " (" + escreverValor(v2) +
+                    ") está diferente do original em " + XPathToolkit.getFullPath(n1) + " (" + escreverValor(v1) + ")");
+        }
+    }
+
+    /**
+     * Apenas para formar de forma visivel o caso null
+     *
+     * @param o -
+     * @return Uma string entre '' se diferente null ou a string null.
+     */
+    private static String escreverValor(Object o) {
+        if (o == null) {
+            return "null";
+        } else {
+            return "'" + o + "'";
+        }
+    }
 
     /**
      * Method chamado pelo JUnit antes de cada método testXXXX para que esse
@@ -239,7 +387,7 @@ public class TestMElement {
     public void testSetGetDatas() {
         GregorianCalendar agoraGc = new GregorianCalendar(2001, 2, 31, 23, 59, 49);
         agoraGc.set(GregorianCalendar.MILLISECOND, 123);
-        java.util.Date agoraDate = new java.util.Date(agoraGc.getTimeInMillis());
+        Date agoraDate = new Date(agoraGc.getTimeInMillis());
 
         MElement xml;
 
@@ -356,7 +504,7 @@ public class TestMElement {
     public void testAddValorNull() {
         MElement raiz = MElement.newInstance("xxx");
         try {
-            raiz.addElement("campo", (java.util.Date) null);
+            raiz.addElement("campo", (Date) null);
             fail("Deveria ter ocorrido um erro em campo com valor null");
         } catch (IllegalArgumentException e) {
             //ok
@@ -541,165 +689,6 @@ public class TestMElement {
         p.parseComResolver(sXML.getBytes());
     }
 
-    /**
-     * Verifica se o parse consegue ler um DTD em um arquivo relativo a uma
-     * classe.
-     */
-    @Test
-    public void testParseValidatDTDFromClasse() throws Exception {
-        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
-                "<!DOCTYPE raiz SYSTEM \"http://eee/teste-dtd-existe.dtd\">\n" + "<raiz><filho/></raiz>";
-
-        MParser p = new MParser();
-        p.addInputSource("http://eee/teste-dtd-existe.dtd", getClass(), "teste-dtd.dtd");
-        p.parseComResolver(sXML.getBytes());
-    }
-
-    /**
-     * Verifica se o método de copia funciona para o elemento informado.
-     *
-     * @param raiz Elemento a ser copiado
-     */
-    private void testCopy(MElement raiz) throws Exception {
-        MElement paiNovo = MElement.newInstance("pai-a");
-        MElement novo = paiNovo.copy(raiz, null);
-        isIgual(raiz, novo);
-
-        MElement paiNovo2 = MElement.newInstance("http://www.miranteinfo.com", "pai-b");
-        MElement novo2 = paiNovo2.copy(raiz, null);
-        isIgual(raiz, novo2);
-
-        MElement paiNovo3 = MElement.newInstance("http://www.miranteinfo.com", "p:pai-c");
-        MElement novo3 = paiNovo3.copy(raiz, null);
-        isIgual(raiz, novo3);
-    }
-
-    /**
-     * Converte para String depois para XML e verifica se o resultado é igual.
-     *
-     * @param raiz XML original
-     * @return Retorna o MElement resultante da conversão de ida e volta
-     * @throws Exception -
-     */
-    private MElement toStringToXML(MElement raiz) throws Exception {
-        //Gera String a partir do XML
-        //Faz o parse da String
-        testCopy(raiz);
-
-        String space = raiz.getNamespaceURI();
-        String local = raiz.getLocalName();
-
-        String sXML = raiz.toStringExato();
-        MElement lido = MParser.parse(sXML);
-
-        if ((space != null) && !space.equals(raiz.getNamespaceURI())) {
-            fail("Erro bizarro: o namespace do elemento mudou depois do parse");
-        }
-        if ((local != null) && !local.equals(raiz.getLocalName())) {
-            fail("Erro bizarro: o localName do elemento mudou depois do parse");
-        }
-
-        //Verifica igualdade
-        isIgual(raiz, lido);
-
-        testCopy(lido);
-
-        MElement lido2 = MParser.parse(new ByteArrayInputStream(raiz.toByteArray()), true, false);
-        isIgual(raiz, lido2);
-
-        return lido;
-    }
-
-    /**
-     * Verifica se ambos os nos são iguais fazendo uma comparação em
-     * profundidade.
-     *
-     * @param n1 -
-     * @param n2 -
-     * @throws Exception Se nbão forem iguais
-     */
-    public static void isIgual(Node n1, Node n2) throws Exception {
-        if (n1 == n2) {
-            return;
-        }
-
-        isIgual(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
-        isIgual(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
-        isIgual(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
-        isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
-        isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
-
-        if (isMesmaClasse(Element.class, n1, n2)) {
-            Element e1 = (Element) n1;
-            Element e2 = (Element) n2;
-            //Verifica se possuem os mesmos atributos
-            NamedNodeMap nn1 = e1.getAttributes();
-            NamedNodeMap nn2 = e2.getAttributes();
-            if (nn1.getLength() != nn2.getLength()) {
-                fail("O número atributos em " + XPathToolkit.getFullPath(n1) + " (qtd=" + nn1.getLength() +
-                        " é diferente de n2 (qtd=" + nn2.getLength() + ")");
-            }
-            for (int i = 0; i < nn1.getLength(); i++) {
-                isIgual((Attr) nn1.item(i), (Attr) nn2.item(i));
-            }
-
-            //Verifica se possuem os mesmos filhos
-            Node filho1 = e1.getFirstChild();
-            Node filho2 = e2.getFirstChild();
-            int count = 0;
-            while ((filho1 != null) && (filho2 != null)) {
-                isIgual(filho1, filho2);
-                filho1 = filho1.getNextSibling();
-                filho2 = filho2.getNextSibling();
-                count++;
-            }
-            if (filho1 != null) {
-                fail("Há mais node [" + count + "] " + XPathToolkit.getNomeTipo(filho1) + " (" +
-                        XPathToolkit.getFullPath(filho1) + ") em n1:" + XPathToolkit.getFullPath(n1));
-            }
-            if (filho2 != null) {
-                fail("Há mais node [" + count + "] " + XPathToolkit.getNomeTipo(filho2) + " (" +
-                        XPathToolkit.getFullPath(filho2) + ") em n2:" + XPathToolkit.getFullPath(n2));
-            }
-
-        } else if (isMesmaClasse(Attr.class, n1, n2)) {
-            //Ok
-
-        } else if (isMesmaClasse(Text.class, n1, n2)) {
-            //Ok
-
-        } else {
-            fail("Tipo de nó " + n1.getClass() + " não tratado");
-        }
-
-    }
-
-    /**
-     * Verifica se os atributos são iguais. Existe pois a comparação de
-     * atributos possui particularidades.
-     *
-     * @param n1 -
-     * @param n2 -
-     * @throws Exception Se não forem iguais
-     */
-    public static void isIgual(Attr n1, Attr n2) throws Exception {
-        if (n1 == n2) {
-            return;
-        }
-        isIgual(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
-        isIgual(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
-
-        //Por algum motivo depois do parse Prefix passa de null para não null
-        //isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
-        //Por algum motivo depois do parse Localname passe de não null para
-        // null
-        //isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
-
-        if (!(n1.getNodeName().startsWith("xmlns") && n2.getNodeName().startsWith("xmlns"))) {
-            isIgual(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
-        }
-    }
-
     /*
      * private static boolean isAtributosIguais(Node n1, Node n2) { NamedNodeMap
      * n1Attrs = n1.getAttributes(); NamedNodeMap n2Attrs = n2.getAttributes();
@@ -721,58 +710,72 @@ public class TestMElement {
      */
 
     /**
-     * Verifica se ambos o nós são da classe informada. Se apenas um for, um
-     * erro é disparado devido a incompatibilidade.
-     *
-     * @param c        Classe a ser verificada
-     * @param original instância 1
-     * @param novo     instância 2
-     * @return true Se ambos forem instância de c
+     * Verifica se o parse consegue ler um DTD em um arquivo relativo a uma
+     * classe.
      */
-    private static boolean isMesmaClasse(Class c, Node original, Node novo) {
-        if (c.isInstance(original)) {
-            if (c.isInstance(novo)) {
-                return true;
-            } else {
-                fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " +
-                        XPathToolkit.getFullPath(novo));
-            }
-        } else if (c.isInstance(novo)) {
-            fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " + XPathToolkit.getFullPath(novo));
-        }
-        return false;
+    @Test
+    public void testParseValidatDTDFromClasse() throws Exception {
+        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+                "<!DOCTYPE raiz SYSTEM \"http://eee/teste-dtd-existe.dtd\">\n" + "<raiz><filho/></raiz>";
+
+        MParser p = new MParser();
+        p.addInputSource("http://eee/teste-dtd-existe.dtd", getClass(), "teste-dtd.dtd");
+        p.parseComResolver(sXML.getBytes());
     }
 
     /**
-     * Verifica a igualdade de um determiando para de objetos já considerando a
-     * situação de um deles ser null.
+     * Verifica se o método de copia funciona para o elemento informado.
      *
-     * @param n1        -
-     * @param n2        -
-     * @param nomeParte -
-     * @param v1        -
-     * @param v2        -
+     * @param raiz Elemento a ser copiado
      */
-    private static void isIgual(Node n1, Node n2, String nomeParte, Object v1, Object v2) {
-        if (((v1 == null) && (v2 != null)) || ((v1 != null) && !v1.equals(v2))) {
+    private void testCopy(MElement raiz) throws Exception {
+        MElement paiNovo = MElement.newInstance("pai-a");
+        MElement novo    = paiNovo.copy(raiz, null);
+        isIgual(raiz, novo);
 
-            fail("O(a) " + nomeParte + " em  " + XPathToolkit.getFullPath(n2) + " (" + escreverValor(v2) +
-                    ") está diferente do original em " + XPathToolkit.getFullPath(n1) + " (" + escreverValor(v1) + ")");
-        }
+        MElement paiNovo2 = MElement.newInstance("http://www.miranteinfo.com", "pai-b");
+        MElement novo2    = paiNovo2.copy(raiz, null);
+        isIgual(raiz, novo2);
+
+        MElement paiNovo3 = MElement.newInstance("http://www.miranteinfo.com", "p:pai-c");
+        MElement novo3    = paiNovo3.copy(raiz, null);
+        isIgual(raiz, novo3);
     }
 
     /**
-     * Apenas para formar de forma visivel o caso null
+     * Converte para String depois para XML e verifica se o resultado é igual.
      *
-     * @param o -
-     * @return Uma string entre '' se diferente null ou a string null.
+     * @param raiz XML original
+     * @return Retorna o MElement resultante da conversão de ida e volta
+     * @throws Exception -
      */
-    private static String escreverValor(Object o) {
-        if (o == null) {
-            return "null";
-        } else {
-            return "'" + o + "'";
+    private MElement toStringToXML(MElement raiz) throws Exception {
+        //Gera String a partir do XML
+        //Faz o parse da String
+        testCopy(raiz);
+
+        String space = raiz.getNamespaceURI();
+        String local = raiz.getLocalName();
+
+        String   sXML = raiz.toStringExato();
+        MElement lido = MParser.parse(sXML);
+
+        if ((space != null) && !space.equals(raiz.getNamespaceURI())) {
+            fail("Erro bizarro: o namespace do elemento mudou depois do parse");
         }
+        if ((local != null) && !local.equals(raiz.getLocalName())) {
+            fail("Erro bizarro: o localName do elemento mudou depois do parse");
+        }
+
+        //Verifica igualdade
+        isIgual(raiz, lido);
+
+        testCopy(lido);
+
+        MElement lido2 = MParser.parse(new ByteArrayInputStream(raiz.toByteArray()), true, false);
+        isIgual(raiz, lido2);
+
+        return lido;
     }
 
     /**
@@ -842,7 +845,7 @@ public class TestMElement {
     }
 
     @Test
-    public void addDiferentTypesOfElements(){
+    public void addDiferentTypesOfElements() {
         Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
 
         MElement raiz = MElement.newInstance("raiz");
@@ -850,7 +853,7 @@ public class TestMElement {
         raiz.addElement("bytesOfString", "valor".getBytes());
         raiz.addElement("calendar", calendar);
         raiz.addElement("date", calendar.getTime());
-        raiz.addElement("longValue", (long)123);
+        raiz.addElement("longValue", (long) 123);
         raiz.addElement("doubles", 123.45);
         raiz.addElement("simpleString", "valores");
         raiz.addElement("outraString", "valor", "val");
@@ -863,7 +866,7 @@ public class TestMElement {
         Assert.assertEquals(0, date.compareTo(calendar.getTime()));
 
         long longValue = raiz.getLong("longValue");
-        Assert.assertEquals(longValue, (long)123);
+        Assert.assertEquals(longValue, (long) 123);
 
         double doubles = raiz.getDouble("doubles");
         Assert.assertEquals(doubles, 123.45, 0);
@@ -893,9 +896,9 @@ public class TestMElement {
     }
 
     @Test
-    public void testAddElementObjects(){
+    public void testAddElementObjects() {
         Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
-        MElement raiz = MElement.newInstance("raiz");
+        MElement raiz     = MElement.newInstance("raiz");
 
         Object longObj = new Long(123456);
         raiz.addElement("longObj", longObj);
@@ -909,7 +912,7 @@ public class TestMElement {
         raiz.addElement("dateObj", dateObj);
         Assert.assertEquals(0, raiz.getDate("dateObj").compareTo((Date) dateObj));
 
-        Object stringObj = "testValue";
+        Object   stringObj        = "testValue";
         MElement stringObjElement = raiz.addElement("stringObj", stringObj);
         Assert.assertEquals(raiz.getValor("stringObj"), stringObj);
 
@@ -923,14 +926,14 @@ public class TestMElement {
         Assert.assertNotNull(raiz.getElement("bytes"));
     }
 
-    @Test(expected = SingularFormException.class)
-    public void testGetValorTextException(){
+    @Test(expected = SingularException.class)
+    public void testGetValorTextException() {
         MDocument document = MDocument.newInstance();
         MElement.getValorTexto(document);
     }
 
     @Test
-    public void addBoolean(){
+    public void addBoolean() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addBoolean("booleanTrue", true);
         raiz.addBoolean("booleanFalse", false);
@@ -944,7 +947,7 @@ public class TestMElement {
     }
 
     @Test
-    public void addInt(){
+    public void addInt() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addInt("inteiro", "123");
         raiz.addInt("intDefault", "456", "789");
@@ -955,12 +958,12 @@ public class TestMElement {
         raiz.addInt("intWithDefaultNullPrimitive", null, 741);
 
 
-        int inteiro = raiz.getInt("inteiro");
-        int intDefault = raiz.getInt("intDefault");
-        int intDefaultNull = raiz.getInt("intDefaultNull");
-        int intWithObject = raiz.getInt("intWithObject");
-        int intWithObjectNull = raiz.getInt("intWithObjectNull");
-        int intWithDefaultPrimitive = raiz.getInt("intWithDefaultPrimitive");
+        int inteiro                     = raiz.getInt("inteiro");
+        int intDefault                  = raiz.getInt("intDefault");
+        int intDefaultNull              = raiz.getInt("intDefaultNull");
+        int intWithObject               = raiz.getInt("intWithObject");
+        int intWithObjectNull           = raiz.getInt("intWithObjectNull");
+        int intWithDefaultPrimitive     = raiz.getInt("intWithDefaultPrimitive");
         int intWithDefaultNullPrimitive = raiz.getInt("intWithDefaultNullPrimitive");
 
         Assert.assertEquals(inteiro, 123);
@@ -973,7 +976,7 @@ public class TestMElement {
     }
 
     @Test
-    public void addDate(){
+    public void addDate() {
         Calendar calendarDay1 = ConversorToolkit.getCalendar("01/01/2017");
         Calendar calendarDay2 = ConversorToolkit.getCalendar("02/01/2017");
         Calendar calendarDay3 = ConversorToolkit.getCalendar("03/01/2017");
@@ -983,9 +986,9 @@ public class TestMElement {
         raiz.addDate("dataWithDefaultOption", "02/01/2017", "03/01/2017");
         raiz.addDate("dataWithNullOption", null, "03/01/2017");
 
-        Date dataSimple = raiz.getDate("dataSimple");
+        Date dataSimple            = raiz.getDate("dataSimple");
         Date dataWithDefaultOption = raiz.getDate("dataWithDefaultOption");
-        Date dataWithNullOption = raiz.getDate("dataWithNullOption");
+        Date dataWithNullOption    = raiz.getDate("dataWithNullOption");
 
         Assert.assertEquals(0, dataSimple.compareTo(calendarDay1.getTime()));
         Assert.assertEquals(0, dataWithDefaultOption.compareTo(calendarDay2.getTime()));
@@ -994,16 +997,16 @@ public class TestMElement {
     }
 
     @Test
-    public void testGetWithDefaultValue(){
+    public void testGetWithDefaultValue() {
         MElement raiz = MElement.newInstance("raiz");
 
         raiz.addInt("inteiro", "123");
         Assert.assertEquals(123, raiz.getInt("inteiro", 456));
         Assert.assertEquals(456, raiz.getInt("inteiroNotExist", 456));
 
-        raiz.addElement("longValue", (long)123);
-        Assert.assertEquals((long)123, raiz.getLong("longValue", 456));
-        Assert.assertEquals((long)456, raiz.getLong("longValueNotExist", 456));
+        raiz.addElement("longValue", (long) 123);
+        Assert.assertEquals((long) 123, raiz.getLong("longValue", 456));
+        Assert.assertEquals((long) 456, raiz.getLong("longValueNotExist", 456));
 
         raiz.addElement("doubleVal", new Double(123.45));
         Assert.assertEquals(new Double(123.45), raiz.getDouble("doubleVal"), 0);
@@ -1011,7 +1014,7 @@ public class TestMElement {
     }
 
     @Test
-    public void testPutValuesOnBase64(){
+    public void testPutValuesOnBase64() {
         MElement mElement = MElement.newInstance("mElement");
         mElement.addElement("test", "elementos".getBytes());
 
@@ -1025,20 +1028,20 @@ public class TestMElement {
         mElement.addElement("inputStream", inputStreamTest);
 
         byte[] inputStreams = mElement.getByteBASE64("inputStream");
-        String result = new String(inputStreams, Charset.defaultCharset());
+        String result       = new String(inputStreams, Charset.defaultCharset());
         Assert.assertEquals(stringToTest, result);
     }
 
     @Test
-    public void testNewInstanceByClass(){
+    public void testNewInstanceByClass() {
         MElement element = MElement.newInstance(String.class);
 
         Assert.assertEquals("java-lang-String", element.getNodeName());
     }
 
-    @Test(expected = SingularFormException.class)
-    public void testToMElementWithNode(){
-        MElement element = MElement.newInstance("raiz");
+    @Test(expected = SingularException.class)
+    public void testToMElementWithNode() {
+        MElement element      = MElement.newInstance("raiz");
         MElement nodeMElement = element.addElement("node1");
 
         Node node = null;
@@ -1047,7 +1050,7 @@ public class TestMElement {
 
         Assert.assertTrue(MElement.toMElement(element.getNode("node1")) instanceof MElement);
 
-        Assert.assertTrue(MElement.toMElement( (Node) nodeMElement) instanceof MElement);
+        Assert.assertTrue(MElement.toMElement((Node) nodeMElement) instanceof MElement);
 
         MDocument document = MDocument.newInstance();
 
@@ -1055,26 +1058,26 @@ public class TestMElement {
     }
 
     @Test(expected = SingularException.class)
-    public void testToMElementWithMElement(){
+    public void testToMElementWithMElement() {
         MElement element = MElement.newInstance("raiz");
 
         MElement.toMElement(element);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddIntWithNullValue(){
+    public void testAddIntWithNullValue() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addInt("inteiro", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddIntWithEmptyValue(){
+    public void testAddIntWithEmptyValue() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addInt("inteiro", "");
     }
 
-    @Test(expected = SingularFormException.class)
-    public void testAddIntWithDefaultValueNull(){
+    @Test(expected = SingularException.class)
+    public void testAddIntWithDefaultValueNull() {
         MElement raiz = MElement.newInstance("raiz");
         Assert.assertNull(raiz.addInt("inteiro", null, null));
 
@@ -1084,13 +1087,13 @@ public class TestMElement {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddDateNull(){
+    public void testAddDateNull() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addDate("date", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddDateWithDefaultOptionAndValueNull(){
+    public void testAddDateWithDefaultOptionAndValueNull() {
         MElement raiz = MElement.newInstance("raiz");
         Assert.assertNull(raiz.addDate("date", null, null));
 
@@ -1099,7 +1102,7 @@ public class TestMElement {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddCalendarWithValueNull(){
+    public void testAddCalendarWithValueNull() {
         MElement raiz = MElement.newInstance("raiz");
 
         Calendar calendar = null;
@@ -1107,7 +1110,7 @@ public class TestMElement {
     }
 
     @Test
-    public void testIsNull(){
+    public void testIsNull() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addElement("elemento", "valor");
 
@@ -1116,7 +1119,7 @@ public class TestMElement {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGets(){
+    public void testGets() {
         MElement raiz = MElement.newInstance("raiz");
 
         MElement inteiro = raiz.addInt("inteiro", "100");
@@ -1139,8 +1142,8 @@ public class TestMElement {
         doubleNull.getDouble(); // throws exception
     }
 
-    @Test(expected = SingularFormException.class)
-    public void testGetBooleanMethods(){
+    @Test(expected = SingularException.class)
+    public void testGetBooleanMethods() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addInt("inteiro", "100");
         raiz.addBoolean("bool", true);
@@ -1150,8 +1153,8 @@ public class TestMElement {
         raiz.is("inteiro");
     }
 
-    @Test(expected = SingularFormException.class)
-    public void testGetBooleanMethodsWithDefaultOption(){
+    @Test(expected = SingularException.class)
+    public void testGetBooleanMethodsWithDefaultOption() {
         MElement raiz = MElement.newInstance("raiz");
         raiz.addInt("inteiro", "100");
         raiz.addBoolean("bool", true);
@@ -1167,7 +1170,7 @@ public class TestMElement {
             MElement raiz = MElement.newInstance("raiz");
             raiz.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
 
-            File arquivoTemporario = tmpProvider.createTempFile(Long.toString(System.currentTimeMillis())+".txt");
+            File arquivoTemporario = tmpProvider.createTempFile(Long.toString(System.currentTimeMillis()) + ".txt");
 
             FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
             raiz.getByteBASE64("string", outputStream);
@@ -1176,7 +1179,7 @@ public class TestMElement {
     }
 
     @Test
-    public void testFormat(){
+    public void testFormat() {
         MElement raiz = MElement.newInstance("raiz");
 
         Assert.assertEquals("", raiz.formatDate("caminhoInvalido"));
@@ -1189,16 +1192,16 @@ public class TestMElement {
     }
 
     @Test
-    public void testToJSONString(){
+    public void testToJSONString() {
         MElement raiz = MElement.newInstance("raiz");
         Assert.assertEquals("{}", raiz.toJSONString());
     }
 
     @Test
-    public void testGetBrothers(){
-        MElement raiz = MElement.newInstance("raiz");
-        MElement filho1 = raiz.addElement("filho1", "123");
-        MElement filho2 = raiz.addElement("filho2", "123456");
+    public void testGetBrothers() {
+        MElement raiz       = MElement.newInstance("raiz");
+        MElement filho1     = raiz.addElement("filho1", "123");
+        MElement filho2     = raiz.addElement("filho2", "123456");
         MElement filho2Copy = raiz.addElement("filho2", "0");
 
         Assert.assertEquals(filho2.getNodeName(), filho1.getProximoIrmao().getNodeName());
@@ -1215,7 +1218,7 @@ public class TestMElement {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddElementObjectNull(){
+    public void testAddElementObjectNull() {
         MElement raiz = MElement.newInstance("raiz");
 
         raiz.addElement("elemento", (Object) null);

@@ -46,7 +46,7 @@ public class SingularException extends RuntimeException {
      *
      * @param msg the error message
      */
-    protected SingularException(String msg) {
+    public SingularException(String msg) {
         super(msg);
     }
 

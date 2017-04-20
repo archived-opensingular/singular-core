@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SingularFormException;

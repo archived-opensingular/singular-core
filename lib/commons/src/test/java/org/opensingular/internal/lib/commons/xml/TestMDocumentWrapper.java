@@ -1,4 +1,4 @@
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class TestMDocumentWrapper {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateMDocumentWrapper(){
-        MDocument document = MDocument.newInstance();
+        MDocument        document = MDocument.newInstance();
         MDocumentWrapper wrapper = new MDocumentWrapper(document);
 
         Assert.assertNotNull(wrapper);

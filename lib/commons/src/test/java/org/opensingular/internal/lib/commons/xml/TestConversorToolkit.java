@@ -1,4 +1,4 @@
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

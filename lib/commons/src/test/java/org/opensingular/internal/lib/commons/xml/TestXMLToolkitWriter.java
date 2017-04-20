@@ -1,4 +1,4 @@
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;

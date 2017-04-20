@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import com.sun.org.apache.xpath.internal.XPathAPI;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
+import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Métodos utilitários para trabalhar com XPath. Para um bom tutorial em
@@ -329,7 +329,7 @@ public final class XPathToolkit {
             try {
                 return XPathAPI.selectSingleNode(contextNode, xPath);
             } catch (TransformerException e) {
-                throw SingularFormException.rethrow(e);
+                throw SingularException.rethrow(e);
             }
         }
     }
@@ -349,7 +349,7 @@ public final class XPathToolkit {
             return null;
         }
         if (!isNodeTypeElement(result)) {
-            throw new SingularFormException(
+            throw new SingularException(
                     "O elemento resultante (" + getFullPath(result) + ") não é um Element, mas um " +
                             getNomeTipo(result));
         }
@@ -438,7 +438,7 @@ public final class XPathToolkit {
         try {
             return XPathAPI.selectNodeList(contextNode, xPath);
         } catch (TransformerException e) {
-            throw SingularFormException.rethrow(e.getMessage(), e);
+            throw SingularException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -459,7 +459,7 @@ public final class XPathToolkit {
         try {
             return XPathAPI.selectNodeIterator(context, xPath);
         } catch (TransformerException e) {
-            throw SingularFormException.rethrow(e.getMessage(), e);
+            throw SingularException.rethrow(e.getMessage(), e);
         }
     }
 
@@ -496,7 +496,7 @@ public final class XPathToolkit {
 
             if (nomeElemento.charAt(0) == '@') {
                 if ((path != null) || !isNodeTypeElement(resp)) {
-                    throw SingularFormException.rethrow("O xPath '" + path + "' é inválido");
+                    throw SingularException.rethrow("O xPath '" + path + "' é inválido");
                 }
                 return ((Element) resp).getAttributeNode(nomeElemento.substring(1));
             }

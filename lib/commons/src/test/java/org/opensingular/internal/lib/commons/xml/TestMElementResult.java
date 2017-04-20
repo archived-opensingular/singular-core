@@ -1,10 +1,9 @@
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.Iterator;

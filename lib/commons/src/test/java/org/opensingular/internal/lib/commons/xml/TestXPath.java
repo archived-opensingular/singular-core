@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 
 import org.junit.Assert;
@@ -33,7 +33,7 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
+import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * JUnit para testar a class XPathToolkit.

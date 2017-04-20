@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
+import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Percorredor de uma lista especifica de elementos da um XML (aceita filtro
@@ -204,7 +204,7 @@ public final class MElementResult extends MElement implements EWrapper {
             Node no = nodeList.item(i);
             if (no == null) {
                 throw new SingularFormException("O result da consulta na posição " + atualList_ + " está null");
-            } else if (!isNodeTypeElement(no)) {
+            } else if (!XmlUtil.isNodeTypeElement(no)) {
                 throw new SingularFormException(
                         "O result da consulta na posição " + atualList_ + " não é um Element. É um no do tipo " +
                                 XPathToolkit.getNomeTipo(no));

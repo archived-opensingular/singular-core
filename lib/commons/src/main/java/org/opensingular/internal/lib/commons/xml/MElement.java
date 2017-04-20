@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.internal.xml;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SingularFormException;
@@ -28,8 +28,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeElement;
-import static org.opensingular.form.internal.xml.XmlUtil.isNodeTypeText;
+import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Representa um Element com diversos métodos utilitários para
@@ -239,7 +238,7 @@ public abstract class MElement implements Element, Serializable {
             return null;
         } else if (no instanceof MElement) {
             return (MElement) no;
-        } else if (!isNodeTypeElement(no)) {
+        } else if (!XmlUtil.isNodeTypeElement(no)) {
             throw new SingularFormException("no " + XPathToolkit.getFullPath(no) + " não é Element");
         }
         return new MElementWrapper((Element) no);
@@ -692,7 +691,7 @@ public abstract class MElement implements Element, Serializable {
                     Text txt = d.createTextNode(value);
                     n.appendChild(txt);
                 }
-            } else if (isNodeTypeText(filho)) {
+            } else if (XmlUtil.isNodeTypeText(filho)) {
                 if (!StringUtils.isEmpty(value)) {
                     filho.setNodeValue(value);
                 } else {
@@ -766,7 +765,7 @@ public abstract class MElement implements Element, Serializable {
         int qtd = 0;
         Node node = getFirstChild();
         while (node != null) {
-            if (isNodeTypeElement(node, nome)) {
+            if (XmlUtil.isNodeTypeElement(node, nome)) {
                 qtd++;
             }
             node = node.getNextSibling();
@@ -798,7 +797,7 @@ public abstract class MElement implements Element, Serializable {
         switch (no.getNodeType()) {
             case Node.ELEMENT_NODE:
                 Node n = no.getFirstChild();
-                if (isNodeTypeText(n)) {
+                if (XmlUtil.isNodeTypeText(n)) {
                     return n.getNodeValue();
                 }
                 break;
@@ -1501,7 +1500,7 @@ public abstract class MElement implements Element, Serializable {
      */
     private MElement procurarElementAnterior(Node no, String nome) {
         while (no != null) {
-            if (isNodeTypeElement(no, nome)) {
+            if (XmlUtil.isNodeTypeElement(no, nome)) {
                 return toMElement(no);
             }
             no = no.getPreviousSibling();
