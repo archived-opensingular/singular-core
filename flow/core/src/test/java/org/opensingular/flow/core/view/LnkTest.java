@@ -3,6 +3,7 @@ package org.opensingular.flow.core.view;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.net.Lnk;
 
 public class LnkTest {
@@ -51,7 +52,7 @@ public class LnkTest {
         Assert.assertEquals("urlApp/url", Lnk.of(null, "url").getUrl("urlApp"));
     }
 
-    @Test(expected = SingularFlowException.class)
+    @Test(expected = SingularException.class)
     public void getUrlException(){
         Lnk url1 = new Lnk("url", true);
         url1.getUrl();
