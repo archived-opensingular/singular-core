@@ -2,6 +2,7 @@ package org.opensingular.flow.core.view;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.lib.commons.net.ModalViewDef;
 
 public class ModalViewDefTest {
 

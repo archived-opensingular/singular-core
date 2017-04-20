@@ -17,37 +17,46 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.util.json.JSONToolkit;
+import org.opensingular.internal.lib.commons.json.JSONToolkit;
 import org.opensingular.lib.commons.base.SingularException;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-
-import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
 /**
  * Representa um Element com diversos métodos utilitários para
  * leitura e montagem do XML. Essa classe substitui a classe XMLToolkit.
  * O MElement é um Element (implementa essa interface) adicionado dos métodos
  * do XMLToolkit.
- * <p>
+ * <p/>
  * É possível montar uma árvore XML com objeto org.w3c.dom.Element
  * usando os métodos desta classe, no entanto, este procedimento não
  * é prático, pois exige mais de um passo para adicionar uma
  * única informação.
- * <p>
+ * <p/>
  * A montagem de um estrutura de objetos Element em vez do arquivo
  * XML também é bem mais simples e de melhor performance Evita-se fazer um
  * parse do arquivo.
- * <p>
- * <p>
+ * <p/>
+ * <p/>
  * <b>Exemplo de uso</b>:<br>
- * <p>
+ * <p/>
  * Passo 1: <i>Cria o elemento raiz:</i>
  * <xmp>
  * MElement raiz = MElement.newInstance("pedido");
@@ -55,7 +64,7 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * // XML resultado:
  * // <pedido/>
  * </xmp>
- * <p>
+ * <p/>
  * Passo 2: <i>Adicionar sub-elementos:</i>
  * <xmp>
  * MElement item1 = raiz.addElement("item");
@@ -67,7 +76,7 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * //   <item/>
  * // </pedido>
  * </xmp>
- * <p>
+ * <p/>
  * Passo 3: <i>Adicionar elementos com valores:</i>
  * <xmp>
  * item1.addElement("@cod",310);
@@ -93,7 +102,7 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * //   <responsavel>Paulo Santos</responsavel>
  * // </pedido>
  * </xmp>
- * <p>
+ * <p/>
  * Passo 4: <i>Percorrendo todos os elementos filhos:</i>
  * <xmp>
  * //getPrimeiroFilho() e getProximoIrmao já retornam MElement
@@ -107,7 +116,7 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * //   item
  * //   responsavel
  * </xmp>
- * <p>
+ * <p/>
  * Passo 5: <i>Percorrendo todos os elementos "item":</i>
  * <xmp>
  * //getPrimeiroFilho(String) e getProximoGemeo já retornam MElement
@@ -118,14 +127,14 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * item.getValor("nome") + " - " +   //Le o valor de um Element
  * item.formatNumber("qtd",1) + " " +//Le formatando a saida
  * item.getValor("unidade","n/d"));  //Le valor (usando default)
- * <p>
+ * <p/>
  * item = item.getProximoGemeo()
  * }
  * // XML resultado:
  * //   310 - arroz - 10.0 - kg
  * //   410 - milho - 21.0 - n/d
  * </xmp>
- * <p>
+ * <p/>
  * Passo 6: <i>Percorrendo todos os elementos "item" com qtd=21:</i>
  * <xmp>
  * // selectElements aceita consultas xPath
@@ -138,25 +147,25 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * // XML resultado:
  * //   410 - milho
  * </xmp>
- * <p>
+ * <p/>
  * <b>Criando um MElement.</b> Existe 3 formas de se obter um MElement:
  * <xmp>
  * //Novo element
  * MElement raiz1 = MElement.newIntance("pedido");
- * <p>
+ * <p/>
  * //Novo element com namespace
  * MElement raiz2 = MElement.newIntance("http://www.com/ordem", "pedido");
- * <p>
+ * <p/>
  * //Convertendo um Element
  * //Toda alteração em wrapper reflete-se no Element original.
  * Element original = ....
  * MElement wraper = MElement.toElement(original);
  * </xmp>
- * <p>
+ * <p/>
  * <b>MElement e SQL.</b> Um problema muito comum é o tratamento de null
  * tanto ao ler quanto ao gravar no banco de dados. O MElement possui alguns
  * facilitadores nesse sentido.<p>
- * <p>
+ * <p/>
  * <i>Montando XML a partir do Banco</i>
  * <xmp>
  * <pre>
@@ -184,7 +193,7 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  *    }
  * </pre>
  * </xmp>
- * <p>
+ * <p/>
  * <i>Preenchendo um PreparedStatement a partir do MElement</i>
  * <pre>
  * <xmp>
@@ -239,7 +248,7 @@ public abstract class MElement implements Element, Serializable {
         } else if (no instanceof MElement) {
             return (MElement) no;
         } else if (!XmlUtil.isNodeTypeElement(no)) {
-            throw new SingularFormException("no " + XPathToolkit.getFullPath(no) + " não é Element");
+            throw new SingularException("no " + XPathToolkit.getFullPath(no) + " não é Element");
         }
         return new MElementWrapper((Element) no);
     }
@@ -271,14 +280,47 @@ public abstract class MElement implements Element, Serializable {
      * MElement contém internamente um Element embutido. MElement retornado.
      *
      * @param nameSpaceURI Nome do namespace. Tipicamente o name space possui o
-     * formato de uma URL (não é obrigatório) no formato, por exemplo,
-     * http://www.miranteinfo.com/sisfinanceiro/cobranca/registraPagamento.
-     * @param nomeRaiz o nome do elemento que será criado. Pode conter prefixo
-     * (ex.: "fi:ContaPagamento").
+     *                     formato de uma URL (não é obrigatório) no formato, por exemplo,
+     *                     http://www.miranteinfo.com/sisfinanceiro/cobranca/registraPagamento.
+     * @param nomeRaiz     o nome do elemento que será criado. Pode conter prefixo
+     *                     (ex.: "fi:ContaPagamento").
      * @return -
      */
     public static MElement newInstance(String nameSpaceURI, String nomeRaiz) {
         return new MElementWrapper(nameSpaceURI, nomeRaiz);
+    }
+
+    /**
+     * Retorna o valor do no passado como parâmetro. Se for um Element retorna o
+     * texto imediatamente abaixo.
+     *
+     * @param no do qual será extraido o texto
+     * @return pdoe ser null
+     */
+    static String getValorTexto(Node no) {
+        //Não é private, pois a classe XMLToolkit também utiliza
+        if (no == null) {
+            return null;
+        }
+        switch (no.getNodeType()) {
+            case Node.ELEMENT_NODE:
+                Node n = no.getFirstChild();
+                if (XmlUtil.isNodeTypeText(n)) {
+                    return n.getNodeValue();
+                }
+                break;
+            case Node.ATTRIBUTE_NODE:
+            case Node.TEXT_NODE:
+                String valor = no.getNodeValue();
+                if (!StringUtils.isEmpty(valor)) {
+                    return valor;
+                }
+                break;
+            default:
+                throw new SingularException("getValorTexto(Node) não trata nó "
+                        + XPathToolkit.getNomeTipo(no));
+        }
+        return null;
     }
 
     public final MDocument getMDocument() {
@@ -304,7 +346,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona um element com o nome informado no namespace especificado.
      *
-     * @param namespaceURI -
+     * @param namespaceURI  -
      * @param qualifiedName Nome do novo element filho
      * @return Elemento criado
      */
@@ -315,7 +357,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona um element como o nome informado como filho do atual.
      *
-     * @param nome do MElement a ser criado
+     * @param nome  do MElement a ser criado
      * @param valor Se for null, um exception é disparada.
      * @return O MElement resultado.
      */
@@ -328,8 +370,8 @@ public abstract class MElement implements Element, Serializable {
      * default na ausencia do primeiro. Se o default também for null, então o no
      * não é adicionado
      *
-     * @param nome do MElement a ser criado
-     * @param valor -
+     * @param nome     do MElement a ser criado
+     * @param valor    -
      * @param defaultV a ser utilizado se valor==null
      * @return O MElement resultado.
      */
@@ -348,7 +390,7 @@ public abstract class MElement implements Element, Serializable {
      * Integer, Long, Double, java.util.Date.
      *
      * @param nome do elemento a ser criado
-     * @param o Objeto a ser convertido para texto
+     * @param o    Objeto a ser convertido para texto
      * @return MElement criado
      */
     public final MElement addElement(String nome, Object o) {
@@ -382,8 +424,8 @@ public abstract class MElement implements Element, Serializable {
      * converções se necessário. Se o valor null, utiliza o valor default. Se o
      * default também for null, então o no não é adicionado.
      *
-     * @param nome do elemento a ser criado
-     * @param valor Objeto a ser convertido para texto
+     * @param nome     do elemento a ser criado
+     * @param valor    Objeto a ser convertido para texto
      * @param defaultV a ser utilizado se valor==null
      * @return MElement criado
      */
@@ -400,7 +442,7 @@ public abstract class MElement implements Element, Serializable {
      * Cria um no indicado pelo nome com o texto resultado da converção do
      * double.
      *
-     * @param nome do element ou atributo a ser criado
+     * @param nome  do element ou atributo a ser criado
      * @param valor a ser atribuito
      * @return MElement criado ou dono do atributo criado
      */
@@ -412,14 +454,14 @@ public abstract class MElement implements Element, Serializable {
      * Cria um no indicado pelo nome com o texto resultado da converção do
      * double segundo a precisão desejada.
      *
-     * @param nome do element ou atributo a ser criado
-     * @param valor a ser atribuito
+     * @param nome     do element ou atributo a ser criado
+     * @param valor    a ser atribuito
      * @param precisao Informa quantas casas depois d virgula deseja-se manter.
-     * Se for negativo arredonta os digitos antes da virgula.
+     *                 Se for negativo arredonta os digitos antes da virgula.
      * @return MElement criado ou dono do atributo criado
      */
     public final MElement addElement(String nome, double valor, int precisao) {
-        double m = Math.pow(10, precisao);
+        double m      = Math.pow(10, precisao);
         String sValor = Double.toString(Math.rint(Math.round(valor * m)) / m);
         return addElement(nome, sValor);
     }
@@ -427,7 +469,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Cria um no indicado pelo nome com o texto resultado da converção do int.
      *
-     * @param nome do element ou atributo a ser criado
+     * @param nome  do element ou atributo a ser criado
      * @param valor a ser atribuito
      * @return MElement criado ou dono do atributo criado
      */
@@ -438,7 +480,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Cria um no indicado pelo nome com o texto resultado da converção do long.
      *
-     * @param nome do element ou atributo a ser criado
+     * @param nome  do element ou atributo a ser criado
      * @param valor a ser atribuito
      * @return MElement criado ou dono do atributo criado
      */
@@ -455,9 +497,9 @@ public abstract class MElement implements Element, Serializable {
      * memória e de custo de conversão de binário para string e string para
      * binário ao se decidir pelo uso deste formato.
      *
-     * @param nome o nome do elemento que será inserido
+     * @param nome  o nome do elemento que será inserido
      * @param valor o array binário do elemento adicionado (a ser convertido p/
-     * BASE64)
+     *              BASE64)
      * @return o elemento que foi adicionado
      */
     public final MElement addElement(String nome, byte[] valor) {
@@ -475,9 +517,8 @@ public abstract class MElement implements Element, Serializable {
      * formato.
      *
      * @param nome o nome do elemento que será inserido
-     * @param in Stream com os dados a serem convertidos p/ BASE64.
+     * @param in   Stream com os dados a serem convertidos p/ BASE64.
      * @return o elemento que foi adicionado
-     *
      * @throws IOException se erro na leitura dos bytes
      */
     public final MElement addElement(String nome, InputStream in) {
@@ -487,7 +528,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona o no com o nome indicado com o valor boolean informado.
      *
-     * @param nome do MElement a ser criado
+     * @param nome  do MElement a ser criado
      * @param valor -
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
@@ -502,7 +543,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona o no com o nome indicado considerando-o como um inteiro.
      *
-     * @param nome do MELement a ser criado
+     * @param nome  do MELement a ser criado
      * @param valor Se for null, uma exception é disparada.
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
@@ -526,8 +567,8 @@ public abstract class MElement implements Element, Serializable {
      * conversão. Caso o valorDefault também seja null ou em braco, então não é
      * adiciona o nó.
      *
-     * @param nome do MELement a ser criado
-     * @param valor -
+     * @param nome         do MELement a ser criado
+     * @param valor        -
      * @param valorDefault a ser utilizado se valor for null ou vazio
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
@@ -549,7 +590,7 @@ public abstract class MElement implements Element, Serializable {
             } else if (valorDefault instanceof Integer) {
                 return addElement(nome, valorDefault);
             } else {
-                throw new SingularFormException("Tipo default inválido ("
+                throw new SingularException("Tipo default inválido ("
                         + valorDefault.getClass().getName()
                         + ") para um inteiro");
             }
@@ -564,8 +605,8 @@ public abstract class MElement implements Element, Serializable {
      * conversão. Caso o valorDefault também seja null ou em braco, então não é
      * adiciona o nó.
      *
-     * @param nome do MELement a ser criado
-     * @param valor -
+     * @param nome         do MELement a ser criado
+     * @param valor        -
      * @param valorDefault a ser utilizado se valor for null ou vazio
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
@@ -584,7 +625,7 @@ public abstract class MElement implements Element, Serializable {
      * Adiciona o no com o nome indicado considerando o valor como sendo uma
      * data a qual será convertida para o formato ISO8601.
      *
-     * @param nome do MELement a ser criado
+     * @param nome  do MELement a ser criado
      * @param valor Se for null, uma exception é disparada.
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
@@ -603,8 +644,8 @@ public abstract class MElement implements Element, Serializable {
      * conversão. Caso o valorDefault também seja null ou em braco, então não é
      * adiciona o nó.
      *
-     * @param nome do MELement a ser criado
-     * @param valor -
+     * @param nome         do MELement a ser criado
+     * @param valor        -
      * @param valorDefault a ser utilizado se valor for null ou vazio
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
@@ -621,7 +662,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona um element como o nome e a data informada no formato ISO 8601.
      *
-     * @param nome do MElement a ser criado
+     * @param nome  do MElement a ser criado
      * @param valor Se for null, um exception é disparada.
      * @return O MElement resultado.
      */
@@ -638,8 +679,8 @@ public abstract class MElement implements Element, Serializable {
      * default na ausencia do primeiro. Se o default também for null, então o no
      * não é adicionado.
      *
-     * @param nome do MElement a ser criado
-     * @param valor -
+     * @param nome         do MElement a ser criado
+     * @param valor        -
      * @param valorDefault a ser utilizado se valor==null
      * @return O MElement resultado.
      */
@@ -656,7 +697,7 @@ public abstract class MElement implements Element, Serializable {
      * Adiciona um element como o nome e o Calendar informada no formato ISO
      * 8601.
      *
-     * @param nome do MElement a ser criado
+     * @param nome  do MElement a ser criado
      * @param valor Se for null, um exception é disparada.
      * @return O MElement resultado.
      */
@@ -674,8 +715,8 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath Caminho do Node a ser atualizado ou criado
      * @param value Novo valor do Node. Se for null, então o valor é limpo. Se o
-     * element já existir e valor for null, então transforma a tag em
-     * empty, mas a mantém no XML.
+     *              element já existir e valor for null, então transforma a tag em
+     *              empty, mas a mantém no XML.
      * @return O Node alterado ou criado, ou null se não for possível atualizar
      * o valor do mesmo.
      */
@@ -718,7 +759,6 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath Endereço do Element ou consulta xpath
      * @return se getElement(xPath) != null
-     *
      * @see #possuiNode
      */
     public final boolean possuiElement(String xPath) {
@@ -762,7 +802,7 @@ public abstract class MElement implements Element, Serializable {
      * @return o número de ocorrências
      */
     public final int count(String nome) {
-        int qtd = 0;
+        int  qtd  = 0;
         Node node = getFirstChild();
         while (node != null) {
             if (XmlUtil.isNodeTypeElement(node, nome)) {
@@ -780,39 +820,6 @@ public abstract class MElement implements Element, Serializable {
      */
     public final String getValor() {
         return getValorTexto(this);
-    }
-
-    /**
-     * Retorna o valor do no passado como parâmetro. Se for um Element retorna o
-     * texto imediatamente abaixo.
-     *
-     * @param no do qual será extraido o texto
-     * @return pdoe ser null
-     */
-    static String getValorTexto(Node no) {
-        //Não é private, pois a classe XMLToolkit também utiliza
-        if (no == null) {
-            return null;
-        }
-        switch (no.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                Node n = no.getFirstChild();
-                if (XmlUtil.isNodeTypeText(n)) {
-                    return n.getNodeValue();
-                }
-                break;
-            case Node.ATTRIBUTE_NODE:
-            case Node.TEXT_NODE:
-                String valor = no.getNodeValue();
-                if (!StringUtils.isEmpty(valor)) {
-                    return valor;
-                }
-                break;
-            default:
-                throw new SingularFormException("getValorTexto(Node) não trata nó "
-                        + XPathToolkit.getNomeTipo(no));
-        }
-        return null;
     }
 
     /**
@@ -872,7 +879,7 @@ public abstract class MElement implements Element, Serializable {
      * Obtem o valor no endereço fornecido, ou valor default, se a pesquisa
      * resultar em null.
      *
-     * @param xPath Caminho para o valor (string) desejado
+     * @param xPath    Caminho para o valor (string) desejado
      * @param defaultV valor a retornado se a pesquisa for null
      * @return -
      */
@@ -890,7 +897,6 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath Caminho para o valor (string) desejado
      * @return -
-     *
      * @throws NullPointerException Se a pesquisa resultar em null
      */
     public final String getValorNotNull(String xPath) throws NullPointerException {
@@ -937,9 +943,9 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Equivalente a getBoolean, serve para escrever código mais legíveis.
      *
-     * @param xPath caminho xpath ou nome do elemento desejado
+     * @param xPath        caminho xpath ou nome do elemento desejado
      * @param valorDefault Valor a ser utilziado se não encontrar nenhum valor
-     * no caminho indicado no xPath
+     *                     no caminho indicado no xPath
      * @return O boolean convertido de string
      */
     public final boolean is(String xPath, boolean valorDefault) {
@@ -959,15 +965,15 @@ public abstract class MElement implements Element, Serializable {
         } else if (Boolean.FALSE.toString().equals(s)) {
             return false;
         }
-        throw new SingularFormException("O valor em " + xPath + " não é boolean = " + s);
+        throw new SingularException("O valor em " + xPath + " não é boolean = " + s);
     }
 
     /**
      * Retorna o valor em boolean do sub-elemento indicado pelo caminho xpath.
      *
-     * @param xPath caminho xpath ou nome do elemento desejado
+     * @param xPath        caminho xpath ou nome do elemento desejado
      * @param valorDefault Valor a ser utilziado se não encontrar nenhum valor
-     * no caminho indicado no xPath
+     *                     no caminho indicado no xPath
      * @return O boolean convertido de string
      */
     public final boolean getBoolean(String xPath, boolean valorDefault) {
@@ -979,7 +985,7 @@ public abstract class MElement implements Element, Serializable {
         } else if (Boolean.FALSE.toString().equals(s)) {
             return false;
         }
-        throw new SingularFormException("O valor em " + xPath + " não é boolean = " + s);
+        throw new SingularException("O valor em " + xPath + " não é boolean = " + s);
     }
 
     /**
@@ -1010,7 +1016,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Retorna o valor em int do sub-elemento indicado pelo caminho xpath.
      *
-     * @param xPath caminho xpath ou nome do elemento desejado
+     * @param xPath    caminho xpath ou nome do elemento desejado
      * @param defaultV valor a se retornado se o xPath resultar em null
      * @return O long convertido de string
      */
@@ -1035,7 +1041,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Retorna o valor em long do sub-elemento indicado pelo caminho xpath.
      *
-     * @param xPath caminho xpath ou nome do elemento desejado
+     * @param xPath    caminho xpath ou nome do elemento desejado
      * @param defaultV valor a se retornado se o xPath resultar em null
      * @return O long convertido de string
      */
@@ -1064,7 +1070,7 @@ public abstract class MElement implements Element, Serializable {
      * xpath apontado. Utiliza Double.parseDouble(), ou seja, o formato deve ser
      * com ponto como separador de decimal.
      *
-     * @param xPath caminho xpath ou nome do elemento desejado
+     * @param xPath    caminho xpath ou nome do elemento desejado
      * @param defaultV valor a se retornado se o xPath resultar em null
      * @return O double convertido de string
      */
@@ -1107,9 +1113,9 @@ public abstract class MElement implements Element, Serializable {
      * bytes escrevendo para a saida informada.
      *
      * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
-     * @param out Destino do bytes convertidos
+     * @param out   Destino do bytes convertidos
      * @throws IOException Se houver problemas de conversão ou de escrita para a
-     * saida.
+     *                     saida.
      */
     public final void getByteBASE64(String xPath, OutputStream out) {
         MElementWrapper.fromBASE64(getValorNotNull(xPath), out);
@@ -1162,7 +1168,7 @@ public abstract class MElement implements Element, Serializable {
      * e milhar. Deixa livre a quantidade de casa decimais, ou seja, vai
      * colocar quanta forem necessárias.
      *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
+     * @param xPath     endereço do valor (atributo, tag, etc.) a ser convertido
      * @param printZero Se falso e o valor zero, então retorna string vazia
      * @return string vazia se o elemento não existir ou não tiver valor
      */
@@ -1174,7 +1180,7 @@ public abstract class MElement implements Element, Serializable {
      * Transforma o valor do campo em um número formato com separado de decimal
      * e milhar.
      *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
+     * @param xPath   endereço do valor (atributo, tag, etc.) a ser convertido
      * @param digitos qtd. de casas decimais a serem exibidas (-1 deixa livre).
      * @return zero se o elemento não existir ou não tiver valor
      */
@@ -1186,8 +1192,8 @@ public abstract class MElement implements Element, Serializable {
      * Transforma o valor do campo em um número formato com separado de decimal
      * e milhar com opção de não exibir zeros.
      *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
-     * @param digitos qtd. de casas decimais a serem exibidas (-1 deixa livre).
+     * @param xPath     endereço do valor (atributo, tag, etc.) a ser convertido
+     * @param digitos   qtd. de casas decimais a serem exibidas (-1 deixa livre).
      * @param printZero Se falso e o valor zero, então retorna string vazia
      * @return string vazia se o elemento não existir ou não tiver valor
      */
@@ -1211,9 +1217,9 @@ public abstract class MElement implements Element, Serializable {
      * Transforma o valor do campo em uma string no formato de exibição de data
      * segundo o formato solicitado.
      *
-     * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
+     * @param xPath   endereço do valor (atributo, tag, etc.) a ser convertido
      * @param formato a ser convertido pode ser "short", "medium", "long",
-     * "full" ou então customizado (ver java.text.SimpleDateFormat).
+     *                "full" ou então customizado (ver java.text.SimpleDateFormat).
      * @return String vazia se o xPath não existir
      */
     public final String formatDate(String xPath, String formato) {
@@ -1238,7 +1244,6 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath caminho do elemento desejado
      * @return O Node no destino ou null se o xPath não existir
-     *
      * @see XPathToolkit
      */
     public final Node getNode(String xPath) {
@@ -1249,7 +1254,7 @@ public abstract class MElement implements Element, Serializable {
      * A partir do atual retorna um percorredor de todos os Element que
      * satisfazem a consulta xPath. Se a consulta for null, retorna todos os
      * filhos. Exemplos:
-     * <p>
+     * <p/>
      * <xmp>raiz.selectElements(null); //Retorna todos os filhos imediatos
      * raiz.selectElements("aluno"); //todos as tags "aluno" imediatas
      * raiz.selectElements("aluno/nota"); //todos as tags nota de baixo de
@@ -1258,7 +1263,6 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath caminho do elemento desejado
      * @return Sempre diferente de null
-     *
      * @see XPathToolkit XPathToolkit para entender mais sobre xPath
      */
     public final MElementResult selectElements(String xPath) {
@@ -1281,8 +1285,7 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath caminho do elemento desejado
      * @return O Node no destino ou null se o xPath não existir
-     *
-     * @throws SingularFormException Se o node no xPath não for um Element
+     * @throws SingularException Se o node no xPath não for um Element
      * @see XPathToolkit
      */
     public final MElement getElement(String xPath) {
@@ -1296,7 +1299,7 @@ public abstract class MElement implements Element, Serializable {
      * //faz algo com e..... } </xmp>
      *
      * @param xPath dos elementos a serem retornados. Se for null retorna todos
-     * os MElement imediantamente filhos.
+     *              os MElement imediantamente filhos.
      * @return a lista com os elementos ou um array de tamanho zero
      */
     public final MElement[] getElements(String xPath) {
@@ -1320,7 +1323,7 @@ public abstract class MElement implements Element, Serializable {
      * elemento sendo copiado. Para manter o nome do elemento original, passar
      * <code>novoNome</code> igual a <code>null</code>.
      *
-     * @param no Element a ser inserido
+     * @param no       Element a ser inserido
      * @param novoNome se diferente de null
      * @return Elemento copia crido debaixo do atual.
      */
@@ -1397,10 +1400,10 @@ public abstract class MElement implements Element, Serializable {
      * Escreve o XML de forma que um eventual parse gere o mesmo XML. Para
      * impressões mais legíveis utilize printTabulado().
      *
-     * @param out saída destino
+     * @param out         saída destino
      * @param printHeader Se true, adiciona string de indentificação de arquivo
-     * XML. Se false, depois não será possível fazer parse do resultado
-     * sem informaçoes complementares (header).
+     *                    XML. Se false, depois não será possível fazer parse do resultado
+     *                    sem informaçoes complementares (header).
      */
     public final void print(PrintWriter out, boolean printHeader) {
         XMLToolkitWriter.printDocument(out, this, printHeader);
@@ -1410,12 +1413,12 @@ public abstract class MElement implements Element, Serializable {
      * Escreve o XML de forma que um eventual parse gere o mesmo XML. Para
      * impressões mais legíveis utilize printTabulado().
      *
-     * @param out saída destino
-     * @param printHeader Se true, adiciona string de indentificação de arquivo
-     * XML. Se false, depois não será possível fazer parse do resultado
-     * sem informaçoes complementares (header).
+     * @param out               saída destino
+     * @param printHeader       Se true, adiciona string de indentificação de arquivo
+     *                          XML. Se false, depois não será possível fazer parse do resultado
+     *                          sem informaçoes complementares (header).
      * @param converteEspeciais se verdadeiro converte os caracteres '<' '>' e '&' para
-     * seus respectivos escapes.
+     *                          seus respectivos escapes.
      */
     public final void print(PrintWriter out, boolean printHeader, boolean converteEspeciais) {
         XMLToolkitWriter.printDocument(out, this, printHeader, converteEspeciais);
@@ -1493,9 +1496,9 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Procura pelo node do tipo Element anterior (incluindo o nó informado).
      *
-     * @param no Ponto de partida da pesquisa
+     * @param no   Ponto de partida da pesquisa
      * @param nome Nome do Element a ser retornado. Se for null retorna o
-     * primeiro a ser encontrado.
+     *             primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
     private MElement procurarElementAnterior(Node no, String nome) {
@@ -1511,9 +1514,9 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Procura pelo proximo node do tipo Element (incluindo o nó informado).
      *
-     * @param no Ponto de partida da pesquisa
+     * @param no   Ponto de partida da pesquisa
      * @param nome Nome do Element a ser retornado. Se for null retorna o
-     * primeiro a ser encontrado.
+     *             primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
     private MElement procurarProximoElement(Node no, String nome) {
@@ -1530,7 +1533,7 @@ public abstract class MElement implements Element, Serializable {
     @Override
     public String toString() {
         CharArrayWriter writer = new CharArrayWriter();
-        PrintWriter out = new PrintWriter(writer);
+        PrintWriter     out    = new PrintWriter(writer);
         printTabulado(out);
         out.flush();
         return writer.toString();
@@ -1545,7 +1548,7 @@ public abstract class MElement implements Element, Serializable {
      */
     public final String toStringExato() {
         CharArrayWriter writer = new CharArrayWriter();
-        PrintWriter out = new PrintWriter(writer);
+        PrintWriter     out    = new PrintWriter(writer);
         print(out, true, true);
         out.flush();
         return writer.toString();
@@ -1557,13 +1560,13 @@ public abstract class MElement implements Element, Serializable {
      * houver um PrintWriter ou PrintStream disponível.
      *
      * @param printHeader Indica se será adiciona o identificado inicial de
-     * arquivo XML. Se for false, não será possível fazer parse do
-     * resultado sem a adição de informações complementares.
+     *                    arquivo XML. Se for false, não será possível fazer parse do
+     *                    resultado sem a adição de informações complementares.
      * @return a String que feito parse, retorna o mesmo conteudo
      */
     public final String toStringExato(boolean printHeader) {
         CharArrayWriter writer = new CharArrayWriter();
-        PrintWriter out = new PrintWriter(writer);
+        PrintWriter     out    = new PrintWriter(writer);
         print(out, printHeader, true);
         out.flush();
         return writer.toString();
@@ -1576,7 +1579,7 @@ public abstract class MElement implements Element, Serializable {
      */
     public final byte[] toByteArray() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintWriter pw = new PrintWriter(out);
+        PrintWriter           pw  = new PrintWriter(out);
         print(pw);
         pw.flush();
         return out.toByteArray();

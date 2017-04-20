@@ -16,7 +16,7 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.*;
 
 import java.io.PrintWriter;
@@ -224,7 +224,7 @@ final class XMLToolkitWriter {
                 out.print(node.getNodeValue());
                 break;
             default:
-                throw new SingularFormException(
+                throw new SingularException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -243,7 +243,7 @@ final class XMLToolkitWriter {
                 }
                 break;
             default:
-                throw new SingularFormException(
+                throw new SingularException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }
@@ -281,7 +281,7 @@ final class XMLToolkitWriter {
                 }
                 break;
             default:
-                throw new SingularFormException(
+                throw new SingularException(
                         "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
         }
     }

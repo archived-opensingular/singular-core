@@ -18,7 +18,7 @@ package org.opensingular.internal.lib.commons.xml;
 
 import junit.framework.TestCase;
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * @author Daniel C. Bordin
@@ -44,17 +44,17 @@ public class TestMParser extends TestCase {
         assertEquals(externoNovo.getValor("conteudo"), original.toStringExato());
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testAddInputSourceException(){
         MParser parser = new MParser();
         try {
             parser.addInputSource("id", String.class, "invalidValue");
         } catch (Exception e) {
-            SingularFormException.rethrow(e);
+            SingularException.rethrow(e);
         }
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testParseComResolver() {
         MDocument document = MDocument.newInstance();
         MElement raiz = document.createRaiz("raiz");
@@ -64,7 +64,7 @@ public class TestMParser extends TestCase {
         try {
             parser.parseComResolver(raiz.toString());
         } catch (Exception e) {
-            SingularFormException.rethrow(e);
+            SingularException.rethrow(e);
         }
     }
 }

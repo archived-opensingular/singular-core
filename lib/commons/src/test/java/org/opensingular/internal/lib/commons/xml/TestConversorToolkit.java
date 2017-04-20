@@ -2,7 +2,8 @@ package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -62,7 +63,7 @@ public class TestConversorToolkit {
         ConversorToolkit.getDouble(null);
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testGetDoubleErrorInvalidValue(){
         ConversorToolkit.getDouble("123+54");
     }
@@ -97,7 +98,7 @@ public class TestConversorToolkit {
         ConversorToolkit.getInt(null);
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testGetIntWithInvalidValue(){
         ConversorToolkit.getInt("123-87");
     }
@@ -195,12 +196,12 @@ public class TestConversorToolkit {
         ConversorToolkit.getDateFromData(iso8601);
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testChecarNull(){
         ConversorToolkit.getDateFromData(null);
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testMethods(){
         Date dateFromData = ConversorToolkit.getDateFromData("01 01 17");
 

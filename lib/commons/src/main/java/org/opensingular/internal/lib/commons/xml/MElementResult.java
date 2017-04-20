@@ -16,7 +16,7 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.w3c.dom.*;
@@ -203,9 +203,9 @@ public final class MElementResult extends MElement implements EWrapper {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node no = nodeList.item(i);
             if (no == null) {
-                throw new SingularFormException("O result da consulta na posição " + atualList_ + " está null");
+                throw new SingularException("O result da consulta na posição " + atualList_ + " está null");
             } else if (!XmlUtil.isNodeTypeElement(no)) {
-                throw new SingularFormException(
+                throw new SingularException(
                         "O result da consulta na posição " + atualList_ + " não é um Element. É um no do tipo " +
                                 XPathToolkit.getNomeTipo(no));
             }

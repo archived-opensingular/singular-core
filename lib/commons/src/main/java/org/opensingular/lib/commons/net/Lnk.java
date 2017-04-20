@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core.view;
+package org.opensingular.lib.commons.net;
+
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -22,12 +24,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import org.opensingular.flow.core.SingularFlowException;
-
 public class Lnk implements Serializable {
 
     private final boolean urlAppMissing;
-    private final String url_;
+    private final String  url_;
 
     private Lnk(String url) {
         urlAppMissing = true;
@@ -37,6 +37,16 @@ public class Lnk implements Serializable {
     public Lnk(String url, boolean urlAppMissing) {
         this.urlAppMissing = urlAppMissing;
         url_ = url;
+    }
+
+    private Lnk(String urlApp, String path) {
+        if (urlApp == null) {
+            urlAppMissing = true;
+            url_ = path;
+        } else {
+            urlAppMissing = false;
+            url_ = concat(urlApp, path);
+        }
     }
 
     public static Lnk of(String path) {
@@ -51,14 +61,24 @@ public class Lnk implements Serializable {
         return path.addUrlApp(urlApp);
     }
 
-    private Lnk(String urlApp, String path) {
-        if (urlApp == null) {
-            urlAppMissing = true;
-            url_ = path;
+    public static String concat(String url, String path) {
+        Objects.requireNonNull(url);
+        Objects.requireNonNull(path);
+        String s = url;
+        if (s.length() > 0 && s.charAt(s.length() - 1) == '/') {
+            if (path.length() > 0 && path.charAt(0) == '/') {
+                s = s.substring(0, s.length() - 1) + path;
+            } else {
+                s += path;
+            }
         } else {
-            urlAppMissing = false;
-            url_ = concat(urlApp, path);
+            if (path.length() > 0 && path.charAt(0) == '/') {
+                s += path;
+            } else {
+                s += "/" + path;
+            }
         }
+        return s;
     }
 
     public boolean isUrlAppMissing() {
@@ -94,7 +114,7 @@ public class Lnk implements Serializable {
             }
             return new Lnk(url_ + separador + parameter + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.name()), urlAppMissing);
         } catch (UnsupportedEncodingException e) {
-            throw new SingularFlowException(e);
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -155,28 +175,8 @@ public class Lnk implements Serializable {
 
     public String getUrl() {
         if (urlAppMissing) {
-            throw new SingularFlowException("UrlApp não definida para '" + url_ + "'");
+            throw new SingularException("UrlApp não definida para '" + url_ + "'");
         }
         return url_;
-    }
-
-    public static String concat(String url, String path) {
-        Objects.requireNonNull(url);
-        Objects.requireNonNull(path);
-        String s = url;
-        if (s.length() > 0 && s.charAt(s.length() - 1) == '/') {
-            if (path.length() > 0 && path.charAt(0) == '/') {
-                s = s.substring(0, s.length() - 1) + path;
-            } else {
-                s += path;
-            }
-        } else {
-            if (path.length() > 0 && path.charAt(0) == '/') {
-                s += path;
-            } else {
-                s += "/" + path;
-            }
-        }
-        return s;
     }
 }

@@ -16,7 +16,7 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.w3c.dom.Attr;
@@ -125,7 +125,7 @@ public class MElementWrapper extends MElement implements EWrapper {
                 documentBuilder__ = f.newDocumentBuilder();
             } catch (Exception e) {
                 //} catch(javax.xml.parsers.ParserConfigurationException e) {
-                throw new SingularFormException("Não instancia o parser XML: ", e);
+                throw SingularException.rethrow("Não instancia o parser XML: ", e);
             }
         }
         return documentBuilder__.newDocument();
@@ -230,7 +230,7 @@ public class MElementWrapper extends MElement implements EWrapper {
                     copyElement(novo, (Element) atual);
                     break;
                 default:
-                    throw new SingularFormException("O no do tipo "
+                    throw new SingularException("O no do tipo "
                             + atual.getNodeType()
                             + " não é suportado");
             }
@@ -356,7 +356,7 @@ public class MElementWrapper extends MElement implements EWrapper {
                 }
             }
         } catch (IOException e) {
-            throw new SingularFormException("Error encoding from the input stream", e);
+            throw SingularException.rethrow("Error encoding from the input stream", e);
         }
 
         return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(Charset.defaultCharset()));
@@ -391,7 +391,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         try {
             out.write(java.util.Base64.getDecoder().decode(stringValue));
         } catch (IOException e) {
-            throw new SingularFormException("Error decoding from the output stream", e);
+            throw SingularException.rethrow("Error decoding from the output stream", e);
         }
     }
 

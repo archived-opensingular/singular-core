@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core.view;
+package org.opensingular.lib.commons.net;
 
 import java.io.Serializable;
 

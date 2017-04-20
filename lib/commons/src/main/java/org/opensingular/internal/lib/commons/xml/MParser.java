@@ -16,7 +16,6 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
-import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Element;
 import org.xml.sax.EntityResolver;
@@ -144,7 +143,7 @@ public final class MParser {
     public void addInputSource(String systemId, Class<?> ref, String nomeRecurso) {
         InputStream in = ref.getResourceAsStream(nomeRecurso);
         if (in == null) {
-            throw new SingularFormException("Nao foi encontrado o recurso '"
+            throw new SingularException("Nao foi encontrado o recurso '"
                     + nomeRecurso
                     + "' tendo por base a classe "
                     + ref.getName());
@@ -283,7 +282,7 @@ public final class MParser {
             builder = factory.newDocumentBuilder();
         } catch (Exception e) {
             //      } catch(javax.xml.parsers.ParserConfigurationException e) {
-            throw new SingularFormException("Não instanciou o parser XML: ", e);
+            throw SingularException.rethrow("Não instanciou o parser XML: ", e);
         }
         if (entityResolver != null) {
             builder.setEntityResolver(entityResolver);

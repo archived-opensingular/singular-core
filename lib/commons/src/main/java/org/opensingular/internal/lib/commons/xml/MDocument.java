@@ -17,7 +17,7 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,7 +45,7 @@ public abstract class MDocument implements Document {
         } else if (no instanceof MDocument) {
             return (MDocument) no;
         } else if (no.getNodeType() != Node.DOCUMENT_NODE) {
-            throw new SingularFormException("no " + XPathToolkit.getFullPath(no) + " não é Document");
+            throw new SingularException("no " + XPathToolkit.getFullPath(no) + " não é Document");
         }
         return new MDocumentWrapper((Document) no);
     }
@@ -65,7 +65,7 @@ public abstract class MDocument implements Document {
         String resto = null;
         if (pos != -1) {
             if (pos == 0) {
-                throw new SingularFormException("Criação no raiz para elemento salto não faz sentido");
+                throw new SingularException("Criação no raiz para elemento salto não faz sentido");
             }
             resto = qualifiedName.substring(pos + 1);
             qualifiedName = qualifiedName.substring(0, pos);

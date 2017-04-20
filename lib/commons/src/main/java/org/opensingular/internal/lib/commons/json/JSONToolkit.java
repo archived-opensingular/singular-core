@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.util.json;
+package org.opensingular.internal.lib.commons.json;
 
 import org.json.JSONWriter;
 import org.w3c.dom.Element;

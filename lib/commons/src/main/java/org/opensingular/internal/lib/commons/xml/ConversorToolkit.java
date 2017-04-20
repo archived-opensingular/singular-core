@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * @author Expedito Júnior
@@ -104,7 +104,7 @@ public final class ConversorToolkit {
                 return getDateFormat("dd/MM/yy").parse(new String(novo, StandardCharsets.UTF_8));
             }
         } catch (ParseException e) {
-            throw new SingularFormException(
+            throw SingularException.rethrow(
                     "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset(), e);
         }
     }
@@ -122,7 +122,7 @@ public final class ConversorToolkit {
             }
             return Double.parseDouble(valor.replace(',', '.'));
         } catch (Exception e) {
-            throw new SingularFormException("Valor inválido (" + valor + ")!", e);
+            throw SingularException.rethrow("Valor inválido (" + valor + ")!", e);
         }
     }
 
@@ -133,7 +133,7 @@ public final class ConversorToolkit {
         try {
             return Integer.parseInt(removeCaracterFromString(valor.trim(), '.'));
         } catch (NumberFormatException e) {
-            throw new SingularFormException("Valor inválido (" + valor + ")!", e);
+            throw SingularException.rethrow("Valor inválido (" + valor + ")!", e);
         }
     }
 

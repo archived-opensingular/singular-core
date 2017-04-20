@@ -3,6 +3,7 @@ package org.opensingular.flow.core.view;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.lib.commons.net.Lnk;
 
 public class LnkTest {
 

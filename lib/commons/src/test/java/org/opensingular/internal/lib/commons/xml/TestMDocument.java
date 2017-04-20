@@ -2,7 +2,7 @@ package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -24,7 +24,7 @@ public class TestMDocument {
         MDocument.toMDocument(MDocument.newInstance());
     }
 
-    @Test(expected = SingularFormException.class)
+    @Test(expected = SingularException.class)
     public void testToMDocumentByNode(){
         MDocument document = MDocument.newInstance();
         MElement raiz = document.createRaiz("raiz");
@@ -69,7 +69,7 @@ public class TestMDocument {
         document.getParentNode();
     }
 
-    @Test(expected =  SingularFormException.class)
+    @Test(expected =  SingularException.class)
     public void testCreateElementNSThrowException(){
         MDocument document = MDocument.newInstance();
         document.createMElementNS("qualquerUm", "/testeNome");
