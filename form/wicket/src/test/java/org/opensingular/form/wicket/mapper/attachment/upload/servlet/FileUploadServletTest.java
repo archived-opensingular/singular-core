@@ -6,11 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opensingular.form.wicket.mapper.attachment.upload.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -62,13 +65,18 @@ public class FileUploadServletTest {
     @Mock
     private ServletFileUpload servletFileUpload;
 
-
+    @Spy
     private FileUploadServlet uploadServlet;
 
     @Before
-    public void setUp() {
-        uploadServlet = new FileUploadServlet(fileUploadManagerFactory, attachmentKeyFactory,
-                servletFileUploadFactory, uploadProcessor, uploadResponseWriter, fileUploadConfig);
+    public void setUp() throws ServletException {
+        Mockito.when(uploadServlet.createAttachmentKeyFactory()).thenReturn(attachmentKeyFactory);
+        Mockito.when(uploadServlet.createFileUploadConfig()).thenReturn(fileUploadConfig);
+        Mockito.when(uploadServlet.createFileUploadManagerFactory()).thenReturn(fileUploadManagerFactory);
+        Mockito.when(uploadServlet.createServletFileUploadFactory()).thenReturn(servletFileUploadFactory);
+        Mockito.when(uploadServlet.createFileUploadProcessor()).thenReturn(uploadProcessor);
+        Mockito.when(uploadServlet.createUploadResponseWriter()).thenReturn(uploadResponseWriter);
+        uploadServlet.init();
     }
 
     @Test

@@ -46,30 +46,46 @@ public class FileUploadServlet extends HttpServlet {
     public static final String UPLOAD_URL = "/upload";
     public static final String PARAM_NAME = "FILE-UPLOAD";
 
-    private final FileUploadManagerFactory upManagerFactory;
-    private final AttachmentKeyFactory     keyFactory;
-    private final ServletFileUploadFactory servletFileUploadFactory;
-    private final FileUploadProcessor      upProcessor;
-    private final UploadResponseWriter     upResponseWriter;
-    private final FileUploadConfig         fupConfig;
+    private FileUploadManagerFactory upManagerFactory;
+    private AttachmentKeyFactory     keyFactory;
+    private ServletFileUploadFactory servletFileUploadFactory;
+    private FileUploadProcessor      upProcessor;
+    private UploadResponseWriter     upResponseWriter;
+    private FileUploadConfig         fupConfig;
 
-    public FileUploadServlet() {
-        this(new FileUploadManagerFactory(), new AttachmentKeyFactory(), new ServletFileUploadFactory(),
-                new FileUploadProcessor(), new UploadResponseWriter(), new FileUploadConfig(SingularProperties.get()));
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.upManagerFactory = createFileUploadManagerFactory();
+        this.keyFactory = createAttachmentKeyFactory();
+        this.servletFileUploadFactory = createServletFileUploadFactory();
+        this.upProcessor = createFileUploadProcessor();
+        this.upResponseWriter = createUploadResponseWriter();
+        this.fupConfig = createFileUploadConfig();
     }
 
-    public FileUploadServlet(FileUploadManagerFactory upManagerFactory,
-                             AttachmentKeyFactory keyFactory,
-                             ServletFileUploadFactory servletFileUploadFactory,
-                             FileUploadProcessor upProcessor,
-                             UploadResponseWriter upResponseWriter,
-                             FileUploadConfig fupConfig) {
-        this.upManagerFactory = upManagerFactory;
-        this.keyFactory = keyFactory;
-        this.servletFileUploadFactory = servletFileUploadFactory;
-        this.upProcessor = upProcessor;
-        this.upResponseWriter = upResponseWriter;
-        this.fupConfig = fupConfig;
+    protected FileUploadManagerFactory createFileUploadManagerFactory() {
+        return new FileUploadManagerFactory();
+    }
+
+    protected AttachmentKeyFactory createAttachmentKeyFactory() {
+        return new AttachmentKeyFactory();
+    }
+
+    protected ServletFileUploadFactory createServletFileUploadFactory() {
+        return new ServletFileUploadFactory();
+    }
+
+    protected FileUploadProcessor createFileUploadProcessor() {
+        return new FileUploadProcessor();
+    }
+
+    protected UploadResponseWriter createUploadResponseWriter() {
+        return new UploadResponseWriter();
+    }
+
+    protected FileUploadConfig createFileUploadConfig() {
+        return new FileUploadConfig(SingularProperties.get());
     }
 
     public static String getUploadUrl(HttpServletRequest req, AttachmentKey attachmentKey) {
@@ -91,14 +107,14 @@ public class FileUploadServlet extends HttpServlet {
                 return;
             }
 
-            FileUploadManager upManager = upManagerFactory.get(req.getSession());
-            Optional<UploadInfo> upInfo = upManager.findUploadInfo(uploadID);
+            FileUploadManager    upManager = upManagerFactory.get(req.getSession());
+            Optional<UploadInfo> upInfo    = upManager.findUploadInfo(uploadID);
 
-            if (! upInfo.isPresent()) {
+            if (!upInfo.isPresent()) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
                 return;
             }
-            UploadInfo info = upInfo.get();
+            UploadInfo               info         = upInfo.get();
             List<UploadResponseInfo> allResponses = new ArrayList<>();
 
             try {
