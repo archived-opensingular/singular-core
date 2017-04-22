@@ -70,12 +70,12 @@ public class FileUploadServletTest {
 
     @Before
     public void setUp() throws ServletException {
-        Mockito.when(uploadServlet.createAttachmentKeyFactory()).thenReturn(attachmentKeyFactory);
-        Mockito.when(uploadServlet.createFileUploadConfig()).thenReturn(fileUploadConfig);
-        Mockito.when(uploadServlet.createFileUploadManagerFactory()).thenReturn(fileUploadManagerFactory);
-        Mockito.when(uploadServlet.createServletFileUploadFactory()).thenReturn(servletFileUploadFactory);
-        Mockito.when(uploadServlet.createFileUploadProcessor()).thenReturn(uploadProcessor);
-        Mockito.when(uploadServlet.createUploadResponseWriter()).thenReturn(uploadResponseWriter);
+        Mockito.when(uploadServlet.makeAttachmentKeyFactory()).thenReturn(attachmentKeyFactory);
+        Mockito.when(uploadServlet.makeFileUploadConfig()).thenReturn(fileUploadConfig);
+        Mockito.when(uploadServlet.makeFileUploadManagerFactory()).thenReturn(fileUploadManagerFactory);
+        Mockito.when(uploadServlet.makeServletFileUploadFactory()).thenReturn(servletFileUploadFactory);
+        Mockito.when(uploadServlet.makeFileUploadProcessor()).thenReturn(uploadProcessor);
+        Mockito.when(uploadServlet.makeUploadResponseWriter()).thenReturn(uploadResponseWriter);
         uploadServlet.init();
     }
 
@@ -99,7 +99,7 @@ public class FileUploadServletTest {
         mockMultipartAndPost();
         mockAttachmentKeyFactoryResult(null);
         uploadServlet.doPost(request, response);
-        verify(attachmentKeyFactory).get(eq(request));
+        verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
         verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), any());
     }
 
@@ -122,12 +122,12 @@ public class FileUploadServletTest {
         mockMultipartAndPost();
         mockKeySessionAndFileUploadManager(attachmentKey);
 
-        when(uploadManager.findUploadInfo(eq(attachmentKey))).thenReturn(Optional.of(uploadInfo));
+        when(uploadManager.findUploadInfoByAttachmentKey(eq(attachmentKey))).thenReturn(Optional.of(uploadInfo));
         when(servletFileUpload.parseParameterMap(eq(request))).thenReturn(params);
 
         uploadServlet.doPost(request, response);
 
-        verify(attachmentKeyFactory).get(eq(request));
+        verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
         verify(uploadProcessor).process(eq(fileItem1), eq(uploadInfo), eq(uploadManager));
         verify(uploadProcessor).process(eq(fileItem2), eq(uploadInfo), eq(uploadManager));
     }
@@ -137,15 +137,15 @@ public class FileUploadServletTest {
         mockFactories();
         mockMultipartAndPost();
         mockKeySessionAndFileUploadManager(attachmentKey);
-        when(uploadManager.findUploadInfo(eq(attachmentKey))).thenReturn(Optional.empty());
+        when(uploadManager.findUploadInfoByAttachmentKey(eq(attachmentKey))).thenReturn(Optional.empty());
         uploadServlet.doPost(request, response);
-        verify(attachmentKeyFactory).get(eq(request));
+        verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
         verify(response).sendError(eq(HttpServletResponse.SC_NOT_FOUND), any());
     }
 
     private void mockFactories() {
-        when(fileUploadManagerFactory.get(eq(session))).thenReturn(uploadManager);
-        when(servletFileUploadFactory.get(eq(fileUploadConfig), eq(uploadInfo))).thenReturn(servletFileUpload);
+        when(fileUploadManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(eq(session))).thenReturn(uploadManager);
+        when(servletFileUploadFactory.makeServletFileUpload(eq(uploadInfo))).thenReturn(servletFileUpload);
     }
 
     private void mockMultipartAndPost() {
@@ -159,7 +159,7 @@ public class FileUploadServletTest {
     }
 
     private void mockAttachmentKeyFactoryResult(AttachmentKey myKey) throws IOException {
-        when(attachmentKeyFactory.get(eq(request))).thenReturn(myKey);
+        when(attachmentKeyFactory.makeFromRequestPathOrNull(eq(request))).thenReturn(myKey);
     }
 
     private void mockSessionAndFileUploadManager() {

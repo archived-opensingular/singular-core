@@ -18,7 +18,6 @@ package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.io.HashUtil;
-import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
@@ -50,16 +49,28 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
     private UploadPathHandler        uploadPathHandler;
     private FileUploadInfoRepository fileUploadInfoRepository;
 
+
     public FileUploadManager() {
-        this(new AttachmentKeyFactory(), new UploadInfoRepository(), new UploadPathHandler(), new FileUploadInfoRepository());
+        this.attachmentKeyFactory = makeAttachmentKeyFactory();
+        this.uploadInfoRepository = makeUploadInfoRepository();
+        this.uploadPathHandler = makeUploadPathHandler();
+        this.fileUploadInfoRepository = makeFileUploadInfoRepository();
     }
 
-    public FileUploadManager(AttachmentKeyFactory attachmentKeyFactory, UploadInfoRepository uploadInfoRepository,
-                             UploadPathHandler uploadPathHandler, FileUploadInfoRepository fileUploadInfoRepository) {
-        this.attachmentKeyFactory = attachmentKeyFactory;
-        this.uploadInfoRepository = uploadInfoRepository;
-        this.uploadPathHandler = uploadPathHandler;
-        this.fileUploadInfoRepository = fileUploadInfoRepository;
+    protected AttachmentKeyFactory makeAttachmentKeyFactory() {
+        return new AttachmentKeyFactory();
+    }
+
+    protected UploadInfoRepository makeUploadInfoRepository() {
+        return new UploadInfoRepository();
+    }
+
+    protected UploadPathHandler makeUploadPathHandler() {
+        return new UploadPathHandler();
+    }
+
+    protected FileUploadInfoRepository makeFileUploadInfoRepository() {
+        return new FileUploadInfoRepository();
     }
 
     /**
@@ -75,7 +86,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
         getLogger().debug("createUpload({},{},{})", maxFileSize, maxFileCount, allowedFileTypes);
 
-        final AttachmentKey newkey = attachmentKeyFactory.get();
+        final AttachmentKey newkey = attachmentKeyFactory.make();
 
         uploadInfoRepository.add(new UploadInfo(newkey,
                 ObjectUtils.defaultIfNull(maxFileSize, Long.MAX_VALUE),
@@ -86,7 +97,7 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         return newkey;
     }
 
-    public synchronized Optional<UploadInfo> findUploadInfo(AttachmentKey uploadId) {
+    public synchronized Optional<UploadInfo> findUploadInfoByAttachmentKey(AttachmentKey uploadId) {
         return uploadInfoRepository.findByAttachmentKey(uploadId);
     }
 
@@ -113,12 +124,12 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
         final File                          file;
 
         handler = uploadInfo.getPersistenceHandlerSupplier().get();
-        path = uploadPathHandler.getLocalFilePath(attachmentKeyFactory.get().toString());
+        path = uploadPathHandler.getLocalFilePath(attachmentKeyFactory.make().toString());
         file = path.toFile();
 
         file.deleteOnExit();
 
-        DigestInputStream din  = HashUtil.toSHA1InputStream(input);
+        DigestInputStream din = HashUtil.toSHA1InputStream(input);
         Files.copy(din, path);
 
         attachment = handler.addAttachment(file, Files.size(path), fileName, HashUtil.bytesToBase16(din.getMessageDigest().digest()));

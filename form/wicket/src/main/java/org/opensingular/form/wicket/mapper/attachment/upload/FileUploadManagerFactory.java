@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 public class FileUploadManagerFactory implements Loggable, Serializable {
 
-    public synchronized FileUploadManager get(HttpSession session) {
+    public synchronized FileUploadManager getFileUploadManagerFromSessionOrMakeAndAttach(HttpSession session) {
         FileUploadManager manager = (FileUploadManager) session.getAttribute(FileUploadManager.SESSION_KEY);
         if (manager == null) {
             manager = new FileUploadManager();

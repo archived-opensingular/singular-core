@@ -147,7 +147,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         final FileUploadManager fileUploadManager = getFileUploadManager();
 
-        if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
+        if (uploadId == null || !fileUploadManager.findUploadInfoByAttachmentKey(uploadId).isPresent()) {
             final AtrBasic atrAttachment = getModelObject().getElementsType().asAtr();
             this.uploadId = fileUploadManager.createUpload(atrAttachment.getMaxFileSize(), null, atrAttachment.getAllowedFileTypes(), this::getTemporaryHandler);
         }
@@ -234,7 +234,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return upManagerFactory.get(getServletRequest().getSession());
+        return upManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(getServletRequest().getSession());
     }
 
     public static class LabelWithIcon extends Label {
