@@ -92,7 +92,6 @@ public enum Icone {
     CLONE               ("fa fa-clone"),
     UPLOAD              ("fa fa-upload"),
     BARCODE             ("fa fa-barcode"),
-    SEND_O              ("fa fa-send-o"),
     CALENDAR_PLUS_O     ("fa fa-calendar-plus-o"),
     RECYCLE             ("fa fa-recycle"),
     SEND_O              ("fa fa-send-o"),
