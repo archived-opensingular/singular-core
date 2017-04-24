@@ -94,10 +94,9 @@ public enum Icone {
     BARCODE             ("fa fa-barcode"),
     SEND_O              ("fa fa-send-o"),
     CALENDAR_PLUS_O     ("fa fa-calendar-plus-o"),
-    RECYCLE             ("fa fa-recycle")
-
-    ;
-
+    RECYCLE             ("fa fa-recycle"),
+    SEND_O              ("fa fa-send-o"),
+    COUNTRY             ("icon-globe");   
 
     private final String cssClass;
 

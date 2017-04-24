@@ -18,7 +18,7 @@ package org.opensingular.flow.core.defaults;
 
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.view.IViewLocator;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.flow.core.TaskInstance;
 
 public class NullViewLocator implements IViewLocator {

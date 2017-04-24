@@ -9,7 +9,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.helpers.AssertionsXML;
-import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 

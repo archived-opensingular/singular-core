@@ -62,8 +62,9 @@ public class ProcessadorCodigoFonte {
             if(isLixo(linha)){
                 continue;
             } else if (isBloco(linha)) {
+                
                 while (!isFimBloco(linhas[++i])) {
-                    fonteFinal.add(linha);
+                    fonteFinal.add(linhas[i]);
                     linhasParaDestacar.add(fonteFinal.size());
                 }
             } else if (isLinha(linha)) {
