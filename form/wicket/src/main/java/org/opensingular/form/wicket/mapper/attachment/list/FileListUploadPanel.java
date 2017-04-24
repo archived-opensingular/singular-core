@@ -56,6 +56,7 @@ import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -239,10 +240,10 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     public static class LabelWithIcon extends Label {
 
-        private final Icone          icon;
+        private final SingularIcon   icon;
         private final IModel<String> forAttrValue;
 
-        public LabelWithIcon(String id, IModel<?> model, Icone icon, IModel<String> forAttrValue) {
+        public LabelWithIcon(String id, IModel<?> model, SingularIcon icon, IModel<String> forAttrValue) {
             super(id, model);
             this.icon = icon;
             this.forAttrValue = forAttrValue;
@@ -275,7 +276,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName   = getParamFileId("name").toString();
+                final String pName = getParamFileId("name").toString();
 
                 getLogger().debug("FileListUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 

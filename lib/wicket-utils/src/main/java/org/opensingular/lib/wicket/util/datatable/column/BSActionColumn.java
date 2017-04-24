@@ -31,8 +31,9 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 
 public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
@@ -76,15 +77,15 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         factories.forEach(factory -> actionPanel.appendComponent(factory, rowModel));
     }
 
-    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, Icone icone, IBSAction<T> action) {
+    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, SingularIcon icone, IBSAction<T> action) {
         return appendAction(labelModel, $m.ofValue(icone), action);
     }
 
-    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, Icone icone, IBSAction<T> action, IFunction<IModel<T>, Boolean> visibleFunction) {
+    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, SingularIcon icone, IBSAction<T> action, IFunction<IModel<T>, Boolean> visibleFunction) {
         return appendAction(labelModel, icone, action, visibleFunction, IConsumer.noop());
     }
 
-    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, Icone icone, IBSAction<T> action, IFunction<IModel<T>, Boolean> visibleFunction, IConsumer<BSActionPanel.ActionConfig<T>> configCustomizer) {
+    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, SingularIcon icone, IBSAction<T> action, IFunction<IModel<T>, Boolean> visibleFunction, IConsumer<BSActionPanel.ActionConfig<T>> configCustomizer) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>()
             .labelModel(labelModel)
             .iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg"))
@@ -94,10 +95,10 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IBSAction<T> action) {
-        return appendAction(labelModel, (IModel<Icone>) null, action);
+        return appendAction(labelModel, (IModel<SingularIcon>) null, action);
     }
 
-    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBSAction<T> action) {
+    public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<SingularIcon> iconeModel, IBSAction<T> action) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>()
             .labelModel(labelModel)
             .iconeModel(iconeModel, null, $m.ofValue("fa-lg")), action));
@@ -114,7 +115,7 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         return (BSActionColumn<T, S>) super.setRowMergeIdFunction(rowMergeIdFunction);
     }
 
-    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
+    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, SingularIcon icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>()
             .labelModel(labelModel)
             .iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg"))
@@ -122,16 +123,16 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         return this;
     }
 
-    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory, IFunction<IModel<T>, Boolean> visibleFunction) {
+    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, SingularIcon icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory, IFunction<IModel<T>, Boolean> visibleFunction) {
         return appendStaticAction(labelModel, icone, linkFactory, visibleFunction, IConsumer.noop());
     }
 
-    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, Icone icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory, IFunction<IModel<T>, Boolean> visibleFunction, IConsumer<BSActionPanel.ActionConfig<T>> configCustomizer) {
+    public BSActionColumn<T, S> appendStaticAction(IModel<?> labelModel, SingularIcon icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory, IFunction<IModel<T>, Boolean> visibleFunction, IConsumer<BSActionPanel.ActionConfig<T>> configCustomizer) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>().labelModel(labelModel).iconeModel($m.ofValue(icone), null, $m.ofValue("fa-lg")).linkFactory(linkFactory).visibleFor(visibleFunction).configure(configCustomizer), null));
         return this;
     }
 
-    public BSActionColumn<T, S> appendStaticActionWithDefaultIcon(IModel<?> labelModel, Icone icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
+    public BSActionColumn<T, S> appendStaticActionWithDefaultIcon(IModel<?> labelModel, SingularIcon icone, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
         actions.add(new ActionItem<>(new BSActionPanel.ActionConfig<T>().labelModel(labelModel).iconeModel($m.ofValue(icone)).linkFactory(linkFactory), null));
         return this;
     }

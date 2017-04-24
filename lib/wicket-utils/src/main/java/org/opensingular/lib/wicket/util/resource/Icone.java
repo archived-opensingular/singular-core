@@ -16,7 +16,7 @@
 
 package org.opensingular.lib.wicket.util.resource;
 
-public enum Icone {
+public enum Icone implements SingularIcon {
     //@formatter:off
     ARROW_DOWN          ("fa fa-arrow-down"),
     BAN                 ("icon-ban"),
@@ -103,6 +103,7 @@ public enum Icone {
         this.cssClass = cssClass;
     }
 
+    @Override
     public String getCssClass() {
         return cssClass;
     }
