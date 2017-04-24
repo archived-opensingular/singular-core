@@ -362,7 +362,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if (version == null) {
             entityVersionCod = null;
             throw new SingularFlowException(
-                    createErrorMsg("Definicao demanda inconsistente com o BD: codigo não encontrado"), this);
+                    createErrorMsg(String.format("Definicao demanda inconsistente com o BD: codigo '%d' não encontrado", entityVersionCod)), this);
         }
 
         return version;
