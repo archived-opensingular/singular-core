@@ -74,7 +74,7 @@ public class FileUploadManagerTest {
         Path           path           = createTestPath().resolve(key);
 
         when(uploadPathHandler.getLocalFilePath(eq(fileUploadInfo))).thenReturn(path);
-        when(attachmentKeyFactory.get()).thenReturn(attachmentKey);
+        when(attachmentKeyFactory.make()).thenReturn(attachmentKey);
         when(fileUploadInfo.getAttachmentRef()).thenReturn(attachmentRef);
         when(fileUploadInfoRepository.findByID(key)).thenReturn(Optional.of(fileUploadInfo));
 
@@ -108,7 +108,7 @@ public class FileUploadManagerTest {
 
         when(ui.getPersistenceHandlerSupplier()).thenReturn(() -> handler);
         when(uploadPathHandler.getLocalFilePath(eq(key))).thenReturn(path);
-        when(attachmentKeyFactory.get()).thenReturn(attachmentKey);
+        when(attachmentKeyFactory.make()).thenReturn(attachmentKey);
 
         String         fileName = "my_document.pdf";
         FileUploadInfo info     = fileUploadManager.createFile(ui, fileName, in);

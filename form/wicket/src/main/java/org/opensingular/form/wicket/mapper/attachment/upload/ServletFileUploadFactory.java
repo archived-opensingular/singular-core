@@ -22,9 +22,15 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 
 import java.io.Serializable;
 
-public class ServletFileUploadFactory  implements Serializable {
+public class ServletFileUploadFactory implements Serializable {
 
-    public ServletFileUpload get(FileUploadConfig config, UploadInfo uploadInfo) {
+    private final FileUploadConfig config;
+
+    public ServletFileUploadFactory(FileUploadConfig config) {
+        this.config = config;
+    }
+
+    public ServletFileUpload makeServletFileUpload(UploadInfo uploadInfo) {
         final ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
 
         servletFileUpload.setFileSizeMax(
