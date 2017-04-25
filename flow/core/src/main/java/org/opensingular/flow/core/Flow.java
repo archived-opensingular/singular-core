@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

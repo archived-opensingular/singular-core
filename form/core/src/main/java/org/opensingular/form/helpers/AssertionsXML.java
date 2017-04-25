@@ -16,8 +16,8 @@
 
 package org.opensingular.form.helpers;
 
-import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.internal.xml.MParser;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.lib.commons.test.AssertionsBase;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;

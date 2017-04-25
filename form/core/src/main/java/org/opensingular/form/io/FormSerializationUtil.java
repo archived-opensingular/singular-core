@@ -24,7 +24,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.ServiceRegistry;
-import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
 import javax.annotation.Nonnull;
