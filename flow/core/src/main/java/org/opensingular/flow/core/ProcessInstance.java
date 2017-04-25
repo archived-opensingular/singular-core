@@ -853,8 +853,8 @@ public class ProcessInstance implements Serializable {
         return Lists.reverse(demanda.getTasks()).stream().map(this::getTaskInstance);
     }
 
-    public Stream<TaskInstance> getTasksNewerFirstAsStream(ITaskDefinition... taskType) {
-        return getTasksNewerFirstAsStream().filter(TaskPredicates.simpleTaskType(taskType));
+    public Stream<TaskInstance> getTasksNewerFirstAsStream(List<ITaskDefinition> tasksTypes) {
+        return getTasksNewerFirstAsStream().filter(TaskPredicates.simpleTaskType(tasksTypes));
     }
 
     /**
