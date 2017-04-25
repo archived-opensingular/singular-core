@@ -65,4 +65,8 @@ public class AssertionsWComponentList<T extends Component>
     public AssertionsWComponent first() {
         return get(0);
     }
+
+    public AssertionsWComponent last() {
+        return get(getTarget().size() - 1);
+    }
 }
