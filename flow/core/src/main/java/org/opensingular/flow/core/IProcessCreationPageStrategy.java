@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 
 import java.io.Serializable;
 

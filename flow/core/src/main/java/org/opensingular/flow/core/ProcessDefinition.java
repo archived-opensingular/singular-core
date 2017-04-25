@@ -36,7 +36,7 @@ import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -30,7 +30,7 @@ import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;

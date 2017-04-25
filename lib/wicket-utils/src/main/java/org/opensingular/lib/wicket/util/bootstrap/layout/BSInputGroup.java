@@ -25,7 +25,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 
 public class BSInputGroup extends BSControls {
 
@@ -51,22 +51,22 @@ public class BSInputGroup extends BSControls {
             .appendTag("input", false, "type='checkbox'", checkbox));
     }
 
-    public BSInputGroup appendIconAddon(Icone icone) {
+    public BSInputGroup appendIconAddon(SingularIcon singularIcon) {
         return appendTag("div", true, "class='input-group-addon'", id -> new BSContainer<>(id)
-            .appendTag("i", true, "class='" + icone.getCssClass() + "'", new WebMarkupContainer("i")));
+            .appendTag("i", true, "class='" + singularIcon.getCssClass() + "'", new WebMarkupContainer("i")));
     }
 
-    public BSInputGroup appendButtonAddon(Icone icone) {
+    public BSInputGroup appendButtonAddon(SingularIcon singularIcon) {
         return appendTag("span", true, "class='input-group-btn'", bid -> new BSContainer<>(bid)
             .appendTag("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'",
-                iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icone.getCssClass() + "'",
+                iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + singularIcon.getCssClass() + "'",
                     new WebMarkupContainer("i"))));
     }
 
-    public BSContainer<?> newButtonAddon(Icone icone) {
+    public BSContainer<?> newButtonAddon(SingularIcon singularIcon) {
         BSContainer<?> div = newTagWithFactory("span", true, "class='input-group-btn'", BSContainer::new);
         BSContainer<?> button = div.newTagWithFactory("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'", BSContainer::new);
-        button.newTag("i", true, "class='" + icone.getCssClass() + "'", new WebMarkupContainer("i"));
+        button.newTag("i", true, "class='" + singularIcon.getCssClass() + "'", new WebMarkupContainer("i"));
         return button;
     }
 

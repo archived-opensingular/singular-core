@@ -27,6 +27,7 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 
 import java.util.HashSet;
@@ -49,7 +50,7 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
     private final WebMarkupContainer container = new WebMarkupContainer("container");
 
     private IModel<String> crudTitle = new Model<>();
-    private IModel<Icone> crudIcon = new Model<>();
+    private IModel<SingularIcon> crudIcon = new Model<>();
 
     public SingularStudioSimpleCRUDPanel(String id, FormPersistence<I> formPersistence) {
         this(id, () -> formPersistence);
@@ -224,7 +225,7 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
         return this;
     }
 
-    public SingularStudioSimpleCRUDPanel<T, I> setCrudIcon(Icone crudIcon) {
+    public SingularStudioSimpleCRUDPanel<T, I> setCrudIcon(SingularIcon crudIcon) {
         this.crudIcon.setObject(crudIcon);
         return this;
     }

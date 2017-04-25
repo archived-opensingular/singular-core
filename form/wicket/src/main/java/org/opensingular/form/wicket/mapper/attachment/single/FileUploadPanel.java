@@ -150,7 +150,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         final FileUploadManager fileUploadManager = getFileUploadManager();
 
-        if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
+        if (uploadId == null || !fileUploadManager.findUploadInfoByAttachmentKey(uploadId).isPresent()) {
             final SIAttachment attachment = getModelObject();
             this.uploadId = fileUploadManager.createUpload(attachment.asAtr().getMaxFileSize(), null, attachment.asAtr().getAllowedFileTypes(), this::getTemporaryHandler);
         }
@@ -204,7 +204,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return upManagerFactory.get(getServletRequest().getSession());
+        return upManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(getServletRequest().getSession());
     }
 
     private HttpServletRequest getServletRequest() {
