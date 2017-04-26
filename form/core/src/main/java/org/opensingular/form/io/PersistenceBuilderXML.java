@@ -17,7 +17,7 @@
 package org.opensingular.form.io;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 public class PersistenceBuilderXML {
 

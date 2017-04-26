@@ -23,8 +23,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
-import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 
 public class BSInputGroupButton extends BSContainer<BSInputGroupButton> {
 
@@ -42,11 +42,11 @@ public class BSInputGroupButton extends BSContainer<BSInputGroupButton> {
                 .add(button));
     }
 
-    public BSInputGroupButton appendButtonAddon(Icone icone, Component button) {
+    public BSInputGroupButton appendButtonAddon(SingularIcon singularIcon, Component button) {
         return this
             .appendTag("wicket:container", new TemplatePanel("_", () -> ""
                 + "<button wicket:id='" + button.getId() + "' class='btn btn-default'>"
-                + "<i class='" + icone.getCssClass() + "'></i>"
+                + "<i class='" + singularIcon.getCssClass() + "'></i>"
                 + "</button>")
                 .add(button));
     }

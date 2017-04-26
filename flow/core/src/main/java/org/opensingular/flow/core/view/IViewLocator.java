@@ -18,6 +18,7 @@ package org.opensingular.flow.core.view;
 
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.lib.commons.net.Lnk;
 
 public interface IViewLocator {
 
