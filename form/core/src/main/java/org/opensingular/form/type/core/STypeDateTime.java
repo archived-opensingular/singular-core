@@ -73,6 +73,9 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
 
     @Override
     protected String toStringPersistence(Date originalValue) {
+        if (originalValue == null) {
+            return null;
+        }
         DateTime instant = new DateTime(originalValue);
         return isoFormarter().print(instant.withZone(DateTimeZone.UTC));
     }
