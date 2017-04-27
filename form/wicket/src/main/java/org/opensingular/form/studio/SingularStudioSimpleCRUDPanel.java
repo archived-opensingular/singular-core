@@ -18,7 +18,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormPersistence;
+import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -40,23 +40,23 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 /**
  * Created by ronaldtm on 16/03/17.
  */
-public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extends SIComposite>
+public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>, INSTANCE extends SIComposite>
         extends Panel {
 
     private static final String ID_CONTENT = "content";
 
-    private final ISupplier<FormPersistence<I>> formPersistence;
+    private final ISupplier<FormRespository<TYPE, INSTANCE>> formPersistence;
 
     private final WebMarkupContainer container = new WebMarkupContainer("container");
 
     private IModel<String> crudTitle = new Model<>();
     private IModel<SingularIcon> crudIcon = new Model<>();
 
-    public SingularStudioSimpleCRUDPanel(String id, FormPersistence<I> formPersistence) {
+    public SingularStudioSimpleCRUDPanel(String id, FormRespository<TYPE, INSTANCE> formPersistence) {
         this(id, () -> formPersistence);
     }
 
-    public SingularStudioSimpleCRUDPanel(String id, ISupplier<FormPersistence<I>> formPersistence) {
+    public SingularStudioSimpleCRUDPanel(String id, ISupplier<FormRespository<TYPE, INSTANCE>> formPersistence) {
         super(id);
         this.formPersistence = formPersistence;
 
@@ -67,23 +67,23 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
         showListContent(null);
     }
 
-    protected FormPersistence<I> getFormPersistence() {
+    protected FormRespository<TYPE, INSTANCE> getFormPersistence() {
         return this.formPersistence.get();
     }
 
-    protected abstract void buildListTable(BSDataTableBuilder<I, String, IColumn<I, String>> dataTableBuilder);
+    protected abstract void buildListTable(BSDataTableBuilder<INSTANCE, String, IColumn<INSTANCE, String>> dataTableBuilder);
 
-    private void onEdit(AjaxRequestTarget target, IModel<I> model) {
+    private void onEdit(AjaxRequestTarget target, IModel<INSTANCE> model) {
         showEditContent(target, getFormKey(model.getObject()));
     }
 
-    private void onDelete(AjaxRequestTarget target, IModel<I> model) {
+    private void onDelete(AjaxRequestTarget target, IModel<INSTANCE> model) {
         getFormPersistence().delete(getFormKey(model.getObject()));
         showListContent(target);
     }
 
-    private void onSave(AjaxRequestTarget target, IModel<I> instanceModel) {
-        I instance = instanceModel.getObject();
+    private void onSave(AjaxRequestTarget target, IModel<INSTANCE> instanceModel) {
+        INSTANCE instance = instanceModel.getObject();
         getFormPersistence().insertOrUpdate(instance, null);
         instanceModel.setObject(getFormPersistence().createInstance());
         showListContent(target);
@@ -128,7 +128,7 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
     }
 
     private class FormFragment extends Fragment {
-        public FormFragment(String id, I instance) {
+        public FormFragment(String id, INSTANCE instance) {
             super(id, "FormFragment", SingularStudioSimpleCRUDPanel.this);
 
             Form<?> form = new Form<>("form");
@@ -139,7 +139,7 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
                     .add(new SingularSaveButton("save", content.getInstanceModel()) {
                         @Override
                         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                            onSave(target, (IModel<I>) instanceModel);
+                            onSave(target, (IModel<INSTANCE>) instanceModel);
                         }
 
                         @Override
@@ -161,9 +161,9 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
         public ListFragment(String id) {
             super(id, "ListFragment", SingularStudioSimpleCRUDPanel.this);
 
-            ISortableDataProvider<I, String> dataProvider = new SortableDataProvider<I, String>() {
+            ISortableDataProvider<INSTANCE, String> dataProvider = new SortableDataProvider<INSTANCE, String>() {
                 @Override
-                public Iterator<? extends I> iterator(long first, long count) {
+                public Iterator<? extends INSTANCE> iterator(long first, long count) {
                     return getFormPersistence().loadAll(first, count).iterator();
                 }
 
@@ -173,7 +173,7 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
                 }
 
                 @Override
-                public IModel<I> model(I object) {
+                public IModel<INSTANCE> model(INSTANCE object) {
                     final FormKey key = getFormKey(object);
                     return $m.loadable(object, () -> getFormPersistence().load(key));
                 }
@@ -195,12 +195,12 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
 
             add(crudIconComponent, crudTitleComponent);
 
-            BSDataTableBuilder<I, String, IColumn<I, String>> dataTableBuilder = new BSDataTableBuilder<>(dataProvider);
+            BSDataTableBuilder<INSTANCE, String, IColumn<INSTANCE, String>> dataTableBuilder = new BSDataTableBuilder<>(dataProvider);
             buildListTable(dataTableBuilder);
             dataTableBuilder.appendActionColumn($m.ofValue(""), this::appendActions);
             dataTableBuilder.setBorderedTable(false);
 
-            BSDataTable<I, String> table = dataTableBuilder.build("table");
+            BSDataTable<INSTANCE, String> table = dataTableBuilder.build("table");
             table.add($b.classAppender("worklist"));
 
             add(table);
@@ -213,19 +213,19 @@ public abstract class SingularStudioSimpleCRUDPanel<T extends SType<I>, I extend
             });
         }
 
-        private BSActionColumn<I, String> appendActions(BSActionColumn<I, String> col) {
+        private BSActionColumn<INSTANCE, String> appendActions(BSActionColumn<INSTANCE, String> col) {
             return col
                     .appendAction($m.ofValue("edit"), Icone.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit)
                     .appendAction($m.ofValue("delete"), Icone.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
         }
     }
 
-    public SingularStudioSimpleCRUDPanel<T, I> setCrudTitle(String crudTitle) {
+    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudTitle(String crudTitle) {
         this.crudTitle.setObject(crudTitle);
         return this;
     }
 
-    public SingularStudioSimpleCRUDPanel<T, I> setCrudIcon(SingularIcon crudIcon) {
+    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudIcon(SingularIcon crudIcon) {
         this.crudIcon.setObject(crudIcon);
         return this;
     }
