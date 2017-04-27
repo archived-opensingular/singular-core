@@ -898,7 +898,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return new SelectionBuilder<>(this);
     }
 
-    public void withSelectionFromProvider(Class<? extends SimpleProvider<?, ?>> providerClass) {
+    public <SP extends SimpleProvider<?, ?>> void withSelectionFromProvider(Class<? extends SP> providerClass) {
         this.typelessSelection().selfIdAndDisplay().provider(providerClass);
     }
 
