@@ -17,8 +17,11 @@
 package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.internal.form.wicket.util.WicketSerializationDebugUtil;
 
 import javax.servlet.ServletContext;
@@ -34,6 +37,8 @@ public class SingularWicketTester extends WicketTester {
     public SingularWicketTester() {
         setup();
     }
+
+
 
     @Deprecated
     public SingularWicketTester(boolean turnOnSerializationCheck) {
@@ -93,20 +98,43 @@ public class SingularWicketTester extends WicketTester {
         return new AssertionsWComponent(getLastRenderedPage());
     }
 
+    public final AssertionsSInstance getAssertionsInstance() {
+        checkIfStartPageCalled();
+        return getAssertionsPage().getSubCompomentWithSInstance().assertSInstance();
+    }
+
     /** Criar um objeto de assertivas para o form da última página executada (assume que o ID é 'form'). */
     public final AssertionsWComponent getAssertionsForm() {
-        return getAssertions("form");
+        return getAssertionsForPath("form");
     }
 
     /** Criar um objeto de assertivas para o componente indicado no path da última página executada. */
-    public final AssertionsWComponent getAssertions(String path) {
+    public final AssertionsWComponent getAssertionsForPath(String path) {
         checkIfStartPageCalled();
         return new AssertionsWComponent(getComponentFromLastRenderedPage(path));
+    }
+
+    /**
+     * Cria um objeto de assertivas para o sub componente na hierarquia que for encontrado com o id informado ou dispara
+     * exception senão encontrar o componente.
+     */
+    public final AssertionsWComponent getAssertionsForSubComp(String id) {
+        checkIfStartPageCalled();
+        return AssertionsWComponentBase.createAssertionForSubComponent(getLastRenderedPage(),
+                c -> c.getId().equals(id));
     }
 
     private void checkIfStartPageCalled() {
         if (getLastRenderedPage() == null) {
             throw new RuntimeException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
         }
+    }
+
+    public SingularFormTester newSingularFormTester(String path) {
+        return newSingularFormTester(path, true);
+    }
+
+    public SingularFormTester newSingularFormTester(String path, boolean fillBlankString) {
+        return new SingularFormTester(path, (Form<?>)getComponentFromLastRenderedPage(path), this, fillBlankString);
     }
 }

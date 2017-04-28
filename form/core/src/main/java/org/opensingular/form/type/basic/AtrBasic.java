@@ -92,7 +92,7 @@ public class AtrBasic extends STranslatorForAttribute {
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
                 Stream.of(value)
-                        .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                        .flatMap(it -> Stream.<String>of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
                         .collect(joining(",")));
         return this;
     }

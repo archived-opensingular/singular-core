@@ -28,7 +28,13 @@ import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.util.TempFileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.util.Collection;
@@ -54,7 +60,8 @@ import java.util.logging.Logger;
  * @author Fabricio Buzeto
  */
 @SuppressWarnings("serial")
-public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersistenceHandler<FileSystemAttachmentRef> {
+public class FileSystemAttachmentPersistenceHandler
+        implements IAttachmentPersistenceHandler<FileSystemAttachmentRef>, Serializable {
 
     protected static final String INFO_SUFFIX = ".INFO";
 
@@ -78,25 +85,26 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
         return new FileSystemAttachmentPersistenceHandler(createTemporaryFolder());
     }
 
-    public static File createTemporaryFolder() throws IOException {
+    private static File createTemporaryFolder() throws IOException {
         File tmpDir = Files.createTempDirectory("singular").toFile();
         tmpDir.deleteOnExit();
         return tmpDir;
     }
 
     @Override
-    public FileSystemAttachmentRef addAttachment(File file, long length, String name) {
+    public FileSystemAttachmentRef addAttachment(File file, long length, String name, String hashSha1) {
         try (FileInputStream fis = new FileInputStream(file)){
-            return addAttachment(fis, length, name);
+            return addAttachment(fis, length, name, hashSha1);
         } catch (Exception e) {
             throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
 
-    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name) {
+    private FileSystemAttachmentRef addAttachment(InputStream origin, long originLength, String name, String hashSha1) {
         String id = UUID.randomUUID().toString();
         File temp = findFileFromId(id);
-        try (OutputStream fos = IOUtil.newBufferedOutputStream(temp);
+        try (FileOutputStream f1 = new FileOutputStream(temp);
+             OutputStream fos = IOUtil.newBufferedOutputStream(f1);
              DigestInputStream inHash = HashUtil.toSHA1InputStream(IOUtil.newBuffredInputStream(origin));
              OutputStream infoFOS = IOUtil.newBufferedOutputStream(infoFileFromId(id))) {
             IOUtils.copy(inHash, fos);
@@ -104,14 +112,14 @@ public class FileSystemAttachmentPersistenceHandler implements IAttachmentPersis
             IOUtil.writeLines(infoFOS, sha1, String.valueOf(originLength), name);
             return newRef(id, sha1, temp.getAbsolutePath(), originLength, name);
         } catch (Exception e) {
-            throw SingularException.rethrow(e);
+            throw new SingularFormException("Erro adicionando anexo", e);
         }
     }
 
     @Override
     public AttachmentCopyContext<FileSystemAttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
-        try (InputStream is = attachmentRef.getInputStream()){
-            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName()));
+        try (InputStream is = attachmentRef.getContentAsInputStream()){
+            return new AttachmentCopyContext<>(addAttachment(is, attachmentRef.getSize(), attachmentRef.getName(), attachmentRef.getHashSHA1()));
         } catch (Exception e) {
             throw SingularException.rethrow(e);
         }

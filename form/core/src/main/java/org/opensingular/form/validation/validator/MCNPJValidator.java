@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> {
+enum MCNPJValidator implements IInstanceValueValidator<SIString, String> {
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");

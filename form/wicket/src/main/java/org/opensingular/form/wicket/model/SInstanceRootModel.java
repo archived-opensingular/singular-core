@@ -48,6 +48,9 @@ public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
 
     @Override
     public I getObject() {
+        if (instanceRef == null) {
+            return null;
+        }
         instanceRef.get().attachEventCollector();
         return instanceRef.get();
     }

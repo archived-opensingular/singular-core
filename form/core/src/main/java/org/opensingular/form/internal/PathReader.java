@@ -21,6 +21,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SScope;
 import org.opensingular.form.SingularFormException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Faz o parse de string de paths e aponta para a posição atual dentro path, permitindo a leitura do caminho de forma
  * incremental mediante o uso do método {@link #next()}.
@@ -40,12 +42,12 @@ public final class PathReader {
     private final boolean aListIndex;
 
     /** Cria um novo leitor de path para string informada. */
-    public PathReader(String path) {
+    public PathReader(@Nonnull String path) {
         this(path, 0);
     }
 
     /** Cria um leitor de path para o resto do caminho a partir da posição informada. */
-    private PathReader(String path, int inicio) {
+    private PathReader(@Nonnull String path, int inicio) {
         int inicioCopy = inicio;
         if (path == null) {
             throw new SingularFormException("O path do campo não pode ser nulo.");
@@ -110,17 +112,19 @@ public final class PathReader {
 
     /** Retorna o trecho atual do path sendo lido. Será o nome do campo ou número do índice sendo lido. */
     public String getToken() {
+        checkIfAtEnd();
+        return token;
+    }
+
+    private void checkIfAtEnd() {
         if (token == null) {
             throw new SingularFormException("Leitura já está no fim");
         }
-        return token;
     }
 
     /** Retorna o próximo trecho do path a ser processado. */
     public PathReader next() {
-        if (token == null) {
-            throw new SingularFormException("Leitura já está no fim");
-        }
+        checkIfAtEnd();
         return new PathReader(path, end);
     }
 
@@ -131,17 +135,13 @@ public final class PathReader {
 
     /** Indica se é o último elemento do path. */
     public boolean isLast() {
-        if (token == null) {
-            throw new SingularFormException("Leitura já está no fim");
-        }
+        checkIfAtEnd();
         return end == path.length();
     }
 
     /** Indica se o trecho atual é um indice para uma lista. */
     public boolean isIndex() {
-        if (token == null) {
-            throw new SingularFormException("Leitura já está no fim");
-        }
+        checkIfAtEnd();
         return aListIndex;
     }
 

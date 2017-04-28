@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Deprecated
 public class TestFinders {
 
     private TestFinders() {}
@@ -82,8 +83,7 @@ public class TestFinders {
 
     public static Stream<FormComponent> findFormComponentsByType(Form form, SType type) {
         return findOnForm(FormComponent.class, form, fc -> ISInstanceAwareModel
-                .optionalCast(fc.getDefaultModel())
-                .map(ISInstanceAwareModel::getMInstancia)
+                .optionalSInstance(fc)
                 .map(SInstance::getType)
                 .map(type::equals)
                 .orElse(Boolean.FALSE));

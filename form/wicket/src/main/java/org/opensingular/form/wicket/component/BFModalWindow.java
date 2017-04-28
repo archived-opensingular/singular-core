@@ -50,6 +50,6 @@ public class BFModalWindow extends BSModalWindow {
     
     @Override
     protected Form<?> newForm(String id) {
-        return new SingularForm<>(id);
+        return new SingularFormWicket<>(id);
     }
 }

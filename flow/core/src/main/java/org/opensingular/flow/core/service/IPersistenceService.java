@@ -16,32 +16,34 @@
 
 package org.opensingular.flow.core.service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import org.opensingular.flow.core.MUser;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.entity.IEntityByCod;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.variable.VarType;
-import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityVariableType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance> {
 
@@ -51,15 +53,16 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     TASK_INSTANCE addTask(@NotNull PROCESS_INSTANCE instance, @NotNull TASK_VERSION state);
 
-    void completeTask(@NotNull TASK_INSTANCE task, @Nullable String transitionAbbreviation, @Nullable MUser responsibleUser);
+    void completeTask(@NotNull TASK_INSTANCE task, @Nullable String transitionAbbreviation, @Nullable SUser responsibleUser);
 
     void setProcessInstanceParent(@NotNull PROCESS_INSTANCE instance, @NotNull PROCESS_INSTANCE parentTask);
 
-    ROLE_USER setInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE role, MUser user);
+    ROLE_USER setInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE role, SUser user);
 
     void removeInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE_USER roleUser);
 
-    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
+    @Nullable
+    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, @Nullable Integer dbVariableCod);
 
     void setParentTask(@NotNull PROCESS_INSTANCE childrenInstance, @NotNull TASK_INSTANCE parentTask);
 
@@ -67,20 +70,33 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     PROCESS_VERSION retrieveProcessVersionByCod(@NotNull Integer cod);
 
-    PROCESS_INSTANCE retrieveProcessInstanceByCod(@NotNull Integer cod);
+    @Nonnull
+    Optional<PROCESS_INSTANCE> retrieveProcessInstanceByCod(@NotNull Integer cod);
 
-    TASK_INSTANCE retrieveTaskInstanceByCod(@NotNull Integer cod);
+    @Nonnull
+    default PROCESS_INSTANCE retrieveProcessInstanceByCodOrException(@NotNull Integer cod) {
+        return retrieveProcessInstanceByCod(cod).orElseThrow(
+                () -> new SingularFlowException("Nao foi encontrada a instancia de processo cod=" + cod));
+    }
 
-    IEntityTaskInstanceHistory saveTaskHistoricLog(@NotNull TASK_INSTANCE task, String typeDescription, String detail, MUser allocatedUser,
-            MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance);
+    @Nonnull
+    Optional<TASK_INSTANCE> retrieveTaskInstanceByCod(@NotNull Integer cod);
 
-    void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask, VarInstanceMap<?> instanceMap);
+    default TASK_INSTANCE retrieveTaskInstanceByCodOrException(@NotNull Integer cod) {
+        return retrieveTaskInstanceByCod(cod).orElseThrow(
+                () -> new SingularFlowException("Nao foi encontrada a instancia de tarefa cod=" + cod));
+    }
 
-    default void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TaskInstance originTask, TaskInstance destinationTask, VarInstanceMap<?> instanceMap) {
+    IEntityTaskInstanceHistory saveTaskHistoricLog(@NotNull TASK_INSTANCE task, String typeDescription, String detail, SUser allocatedUser,
+            SUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance);
+
+    void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask, VarInstanceMap<?,?> instanceMap);
+
+    default void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TaskInstance originTask, TaskInstance destinationTask, VarInstanceMap<?,?> instanceMap) {
         saveVariableHistoric(dateHour, instance, originTask != null ? originTask.<TASK_INSTANCE> getEntityTaskInstance() : null, destinationTask != null ? destinationTask.<TASK_INSTANCE> getEntityTaskInstance() : null, instanceMap);
     }
 
-    List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
+    List<? extends SUser> retrieveUsersByCod(Collection<Integer> cods);
 
     /**
      * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcessVersion},
@@ -93,7 +109,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     IEntityVariableType retrieveOrCreateEntityVariableType(VarType varType);
 
-    void relocateTask(TASK_INSTANCE taskInstance, MUser user);
+    void relocateTask(TASK_INSTANCE taskInstance, SUser user);
 
     void updateTargetEndDate(TASK_INSTANCE taskInstance, Date targetEndDate);
 
@@ -107,7 +123,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
     List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable Date beginDate,
             @Nullable Date endDate, @Nullable Collection<? extends TASK_DEF> states);
 
-    List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable MUser creatingUser,
+    List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable SUser creatingUser,
             @Nullable Boolean active);
 
     void endLastAllocation(TASK_INSTANCE entityTaskInstance);

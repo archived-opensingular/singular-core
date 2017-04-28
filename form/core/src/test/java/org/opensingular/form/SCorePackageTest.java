@@ -2,7 +2,9 @@ package org.opensingular.form;
 
 import junit.framework.TestCase;
 import org.junit.Assert;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoA;
 import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoB;
 import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoComCargaInterna;
@@ -13,13 +15,13 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.util.STypeEMail;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+
+import java.math.BigDecimal;
 
 @RunWith(Parameterized.class)
 public class SCorePackageTest extends TestCaseForm {
@@ -30,16 +32,16 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testRecuperarTipo() {
-        createTestDictionary().getTypeOptional(STypeString.class);
+        createTestDictionary().getType(STypeString.class);
     }
 
     @Test
     public void testHerancaValorEntreTipos() {
         SDictionary dictionary = createTestDictionary();
 
-        STypeSimple<?, ?> tipoS = dictionary.getTypeOptional(STypeSimple.class);
-        STypeBoolean      tipoB = dictionary.getTypeOptional(STypeBoolean.class);
-        STypeInteger      tipoI = dictionary.getTypeOptional(STypeInteger.class);
+        STypeSimple<?, ?> tipoS = dictionary.getType(STypeSimple.class);
+        STypeBoolean      tipoB = dictionary.getType(STypeBoolean.class);
+        STypeInteger      tipoI = dictionary.getType(STypeInteger.class);
 
         Assert.assertFalse(tipoS.getAttributeValue(SPackageBasic.ATR_REQUIRED));
         Assert.assertFalse(tipoB.getAttributeValue(SPackageBasic.ATR_REQUIRED));
@@ -75,9 +77,9 @@ public class SCorePackageTest extends TestCaseForm {
     @Test
     public void testValidacaoBasica() {
         SDictionary dictionary = createTestDictionary();
-        STypeBoolean tipoB = dictionary.getTypeOptional(STypeBoolean.class);
-        STypeInteger tipoI = dictionary.getTypeOptional(STypeInteger.class);
-        STypeString tipoS = dictionary.getTypeOptional(STypeString.class);
+        STypeBoolean tipoB = dictionary.getType(STypeBoolean.class);
+        STypeInteger tipoI = dictionary.getType(STypeInteger.class);
+        STypeString tipoS = dictionary.getType(STypeString.class);
 
         testarAtribuicao(tipoB, true, null, null);
         testarAtribuicao(tipoB, true, true, true);
@@ -143,9 +145,9 @@ public class SCorePackageTest extends TestCaseForm {
     public void testSelfReference() {
         SDictionary dictionary = createTestDictionary();
 
-        STypeSimple<?, ?> tipoS = dictionary.getTypeOptional(STypeSimple.class);
-        STypeBoolean tipoB = dictionary.getTypeOptional(STypeBoolean.class);
-        STypeInteger tipoI = dictionary.getTypeOptional(STypeInteger.class);
+        STypeSimple<?, ?> tipoS = dictionary.getType(STypeSimple.class);
+        STypeBoolean tipoB = dictionary.getType(STypeBoolean.class);
+        STypeInteger tipoI = dictionary.getType(STypeInteger.class);
 
         Assert.assertNull(tipoS.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
         Assert.assertNull(tipoB.getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL));
@@ -184,7 +186,7 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCriacaoDuplicada() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         pb.createType("CPF", STypeString.class);
         assertException(() -> pb.createType("CPF", STypeString.class), "já está criada");
@@ -192,7 +194,7 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCriacaoAtributoLocal() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         // AtrRef<?, ?, ?> atr = new AtrRef(null, "atTeste", MTipoString.class,
         // MIString.class, String.class);
@@ -311,9 +313,9 @@ public class SCorePackageTest extends TestCaseForm {
         SDictionary dictionary = createTestDictionary();
         dictionary.loadPackage(TestPacoteA.class);
         assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-        TestCase.assertNotNull(dictionary.getTypeOptional(TestTipoA.class));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA"));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
+        TestCase.assertNotNull(dictionary.getType(TestTipoA.class));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA").get());
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").get());
     }
 
     @Test
@@ -322,10 +324,10 @@ public class SCorePackageTest extends TestCaseForm {
         dictionary.loadPackage(TestPacoteB.class);
         assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
         assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteB")));
-        TestCase.assertNotNull(dictionary.getTypeOptional(TestTipoA.class));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA"));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
-        assertNotNull(dictionary.getTypeOptional("teste.pacoteB.TestTipoB"));
+        TestCase.assertNotNull(dictionary.getType(TestTipoA.class));
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoA").get());
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").get());
+        assertNotNull(dictionary.getTypeOptional("teste.pacoteB.TestTipoB").get());
     }
 
     @Test
@@ -342,8 +344,8 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaAutomaticaPacotePorUsarUmAtributo() {
-        SDictionary    dictionary = createTestDictionary();
-        PackageBuilder pb         = dictionary.createNewPackage("teste");
+        PackageBuilder pb         = createTestPackage();
+        SDictionary    dictionary = pb.getDictionary();
 
         assertCargaPacoteA(dictionary, false);
 
@@ -352,25 +354,23 @@ public class SCorePackageTest extends TestCaseForm {
         assertCargaPacoteA(dictionary, true);
 
         assertEquals((Integer) 10, tipoEndereco.getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dictionary.getTypeOptional(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dictionary.getTypeOptional(STypeSimple.class).getAttributeValue(TestPacoteA.ATR_XX));
-        assertEquals(null, dictionary.getTypeOptional(SType.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getType(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getType(STypeSimple.class).getAttributeValue(TestPacoteA.ATR_XX));
+        assertEquals(null, dictionary.getType(SType.class).getAttributeValue(TestPacoteA.ATR_XX));
     }
 
     @Test
     public void testCargaAutomaticaPacotePorDarAddEmUmAtributo() {
-        SDictionary    dictionary = createTestDictionary();
-        PackageBuilder pb         = dictionary.createNewPackage("teste");
+        PackageBuilder pb         = createTestPackage();
 
-        assertCargaPacoteA(dictionary, false);
+        assertCargaPacoteA(pb.getDictionary(), false);
         pb.addAttribute(STypeInteger.class, TestPacoteA.ATR_XX);
-        assertCargaPacoteA(dictionary, true);
+        assertCargaPacoteA(pb.getDictionary(), true);
     }
 
     @Test
     public void testCargaAutomaticaPacotePorLerUmAtributo() {
         SDictionary dictionary = createTestDictionary();
-        dictionary.createNewPackage("teste");
 
         assertCargaPacoteA(dictionary, false);
         assertEquals(null, dictionary.getType(STypeString.class).getAttributeValue(TestPacoteA.ATR_XX));
@@ -380,12 +380,12 @@ public class SCorePackageTest extends TestCaseForm {
     private static void assertCargaPacoteA(SDictionary dictionary, boolean carregado) {
         if (carregado) {
             assertTrue(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
-            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.xx"));
+            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").get());
+            assertNotNull(dictionary.getTypeOptional("teste.pacoteA.xx").get());
         } else {
             assertFalse(dictionary.getPackages().stream().anyMatch(p -> p.getName().equals("teste.pacoteA")));
-            assertNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA"));
-            assertNull(dictionary.getTypeOptional("teste.pacoteA.xx"));
+            assertNull(dictionary.getTypeOptional("teste.pacoteA.TestTipoAA").orElse(null));
+            assertNull(dictionary.getTypeOptional("teste.pacoteA.xx").orElse(null));
         }
     }
 
@@ -415,14 +415,14 @@ public class SCorePackageTest extends TestCaseForm {
 
     @Test
     public void testCargaTipoNoPacoteTrocado() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         assertException(() -> pb.createType(TestPacoteA.TestTipoA.class), "como sendo do pacote",
                 "Deveria dar uma exception pois o tipo tem a anotação para entrar em outro pacote");
     }
 
     @Test
     public void testCargaAtributoNoPacoteTrocado() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         assertException(() -> pb.createAttributeType(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
                 "Deveria dar uma exception pois o atributo pertence a outro pacote");
@@ -443,5 +443,56 @@ public class SCorePackageTest extends TestCaseForm {
     private void loadTypeByName(Class<? extends SType<?>> typeClass) {
         String typeName = SFormUtil.getTypeName(typeClass);
         createTestDictionary().getType(typeName);
+    }
+
+    /**
+     * Testa o funcionamento de carga de apenas alguns tipo de um pacote quando o pacote não declara todos os seus
+     * tipo.
+     */
+    @Test
+    public void testLazyPackageLoad() {
+        // Simple reference
+        SDictionary dictionary = createTestDictionary();
+        SPackageTestLazy.TypeLazyA typeA = dictionary.getType(SPackageTestLazy.TypeLazyA.class);
+        assertType(typeA).isNotNull().isDirectExtensionOf(STypeDecimal.class);
+        typeA.newInstance();
+
+        // A reference with other reference
+        dictionary = createTestDictionary();
+        SPackageTestLazy.TypeLazyB typeB = dictionary.getType(SPackageTestLazy.TypeLazyB.class);
+        assertType(typeB).isNotNull().isDirectExtensionOf(SPackageTestLazy.TypeLazyA.class);
+        typeB.newInstance();
+
+        // A lazy composite referencing a lazy simple type
+        dictionary = createTestDictionary();
+        SPackageTestLazy.TypeLazyC typeC = dictionary.getType(SPackageTestLazy.TypeLazyC.class);
+        assertType(typeC).isNotNull();
+        SIComposite iC = typeC.newInstance();
+        iC.setValue("valueB", 10);
+        iC.setValue("valueA", new BigDecimal(100.1));
+        assertInstance(iC).isValueEquals("valueB" , new BigDecimal(10));
+        assertInstance(iC).isValueEquals("valueA" , new BigDecimal(100.1));
+    }
+
+    @SInfoPackage(name="packageLazy")
+    public static class SPackageTestLazy extends SPackage {
+
+        @SInfoType(name = "LazyA", spackage = SPackageTestLazy.class)
+        public static class TypeLazyA extends STypeDecimal {
+        }
+
+        @SInfoType(name = "LazyB", spackage = SPackageTestLazy.class)
+        public static class TypeLazyB extends TypeLazyA {
+
+        }
+        @SInfoType(name = "LazyC", spackage = SPackageTestLazy.class)
+        public static class TypeLazyC extends STypeComposite<SIComposite> {
+            @Override
+            protected void onLoadType(TypeBuilder tb) {
+                addField("valueB", TypeLazyB.class);
+                addField("valueA", TypeLazyA.class);
+                addFieldString("name");
+            }
+        }
     }
 }

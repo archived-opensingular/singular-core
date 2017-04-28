@@ -16,7 +16,9 @@
 
 package org.opensingular.form;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Builder para configuração do tipos e atributos de um pacote, com diversos métodos de apoio.
@@ -70,7 +72,7 @@ public class PackageBuilder {
     }
 
     public <T extends SType<?>> T createType(Class<T> newTypeClass) {
-        return sPackage.registerType(MapByName.newInstance(newTypeClass), newTypeClass);
+        return sPackage.registerType(newTypeClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -111,23 +113,23 @@ public class PackageBuilder {
         return attribute;
     }
 
-    public SType<?> getAttribute(AtrRef<?, ?, ?> atr) {
-        SType<?> attribute = getAttributeOptional(atr);
-        if (attribute == null) {
-            throw new SingularFormException("O atributo '" + atr.getNameFull() + "' não está definido");
-        }
-        return attribute;
+    @Nonnull
+    public SType<?> getAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+        Objects.requireNonNull(atr);
+        return getAttributeOptional(atr).orElseThrow(
+                () -> new SingularFormException("O atributo '" + atr.getNameFull() + "' não está definido"));
     }
 
-    private SType<?> getAttributeOptional(AtrRef<?, ?, ?> atr) {
+    @Nonnull
+    private Optional<SType<?>> getAttributeOptional(@Nonnull AtrRef<?, ?, ?> atr) {
         getDictionary().loadPackage(atr.getPackageClass());
 
         if (atr.isNotBindDone()) {
-            return null;
+            return Optional.empty();
         }
-        SType<?> type = getDictionary().getTypeOptional(atr.getNameFull());
-        if (type != null) {
-            type.checkIfIsAttribute();
+        Optional<SType<?>> type = getDictionary().getTypeOptional(atr.getNameFull());
+        if (type.isPresent()) {
+            type.get().checkIfIsAttribute();
         }
         return type;
     }

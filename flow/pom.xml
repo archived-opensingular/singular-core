@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.opensingular</groupId>
 		<artifactId>singular</artifactId>
-		<version>1.5.16-SNAPSHOT</version>
+		<version>1.6.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>singular-flow</artifactId>
@@ -16,10 +16,7 @@
 	<modules>
 		<module>core</module>
 		<module>schedule</module>
-		<module>persistence</module>
-		<module>test</module>
 		<module>rest-client</module>
-		<module>alocpro-mock-client</module>
 	</modules>
 
 </project>

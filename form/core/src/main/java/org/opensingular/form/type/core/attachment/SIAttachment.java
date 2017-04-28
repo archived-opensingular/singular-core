@@ -19,10 +19,9 @@ package org.opensingular.form.type.core.attachment;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-import org.opensingular.lib.commons.base.SingularUtil;
 
+import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
@@ -32,11 +31,11 @@ public class SIAttachment extends SIComposite {
         return AttachmentDocumentService.lookup(this);
     }
 
-    public void setContent(String name, File file, long length) {
+    public void setContent(String name, File file, long length, String hashSha1) {
         if (file == null) {
-            throw new SingularFormException("O arquivo não pode ser nulo.");
+            throw new SingularFormException("O arquivo não pode ser nulo.", this);
         }
-        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name, getDocument()));
+        setContent(name, getAttachmentService().addContent(getFileId(), file, length, name, hashSha1, getDocument()));
     }
 
     private void setContent(String name, IAttachmentRef ref) {
@@ -76,14 +75,14 @@ public class SIAttachment extends SIComposite {
     }
 
     public IAttachmentRef getAttachmentRef() {
-        IAttachmentRef ref = null;
         if (getDocument().isAttachmentPersistenceTemporaryHandlerSupported()) {
-            ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
+            IAttachmentRef ref = getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(getFileId());
+            if (ref != null) {
+                return ref;
+            }
         }
-        if (ref == null && getDocument().isAttachmentPersistencePermanentHandlerSupported()) {
-            ref = getDocument().getAttachmentPersistencePermanentHandler().getAttachment(getFileId());
-        }
-        return ref;
+        return getDocument().getAttachmentPersistencePermanentHandler()
+                .map(h -> h.getAttachment(getFileId())).orElse(null);
     }
 
     /**
@@ -134,13 +133,26 @@ public class SIAttachment extends SIComposite {
         setValue(STypeAttachment.FIELD_HASH_SHA1, hash);
     }
 
-    public InputStream newInputStream() {
-        try {
-            IAttachmentRef ref = getAttachmentRef();
-            return ref == null ? null : ref.getInputStream();
-        } catch (IOException e) {
-            throw SingularUtil.propagate(e);
-        }
+    /**
+     * Retorna o conteúdo do anexo como uma InputStream se existir.
+     * @see IAttachmentRef#getContentAsInputStream()
+     */
+    @Nonnull
+    public Optional<InputStream> getContentAsInputStream() {
+        IAttachmentRef ref = getAttachmentRef();
+        return ref == null ? Optional.empty(): Optional.of(ref.getContentAsInputStream());
+    }
+
+    /**
+     * Retorna o conteúdo do anexo como um array de bytes.
+     * <b>ATENÇÂO: DEVE SER PREFERENCIALMENTE USADO {@link #getContentAsInputStream()}</b> se
+     * há expectativa de manipular arquivos de grande tamanho.
+     * @see IAttachmentRef#getContentAsByteArray()
+     */
+    @Nonnull
+    public Optional<byte[]> getContentAsByteArray() {
+        IAttachmentRef ref = getAttachmentRef();
+        return ref == null ? Optional.empty(): Optional.of(ref.getContentAsByteArray());
     }
 
     public String fileSizeToString() {

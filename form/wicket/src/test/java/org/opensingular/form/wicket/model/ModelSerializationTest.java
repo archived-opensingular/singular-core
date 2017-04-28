@@ -9,34 +9,28 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
-import org.opensingular.form.SType;
 import org.opensingular.form.curriculo.SPackageCurriculo;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.event.ISInstanceListener;
-import org.opensingular.form.wicket.util.WicketFormProcessing;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ModelSerializationTest implements Serializable {
+public class ModelSerializationTest {
 
 
     private static SIComposite newInstance() {
-        RefType ref = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                SDictionary dicionario = SDictionary.create();
-                dicionario.loadPackage(SPackageCurriculo.class);
-                return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
-            }
-        };
+        RefType ref = RefType.of(() -> {
+            SDictionary dicionario = SDictionary.create();
+            dicionario.loadPackage(SPackageCurriculo.class);
+            return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
+        });
         return (SIComposite) SDocumentFactory.empty().createInstance(ref);
     }
 

@@ -55,7 +55,7 @@ final class MapAttributeDefinitionResolver {
         if(owner != null) {
             throw new SingularFormException(
                     "Não existe o atributo '" + attributePath + "' definido em '" + owner.getName()
-                    + "' ou nos tipos extendidos");
+                    + "' ou nos tipos extendidos", owner);
         } else {
             throw new SingularFormException("Não existe o atributo '" + attributePath + "'");
         }

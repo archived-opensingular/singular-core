@@ -16,15 +16,15 @@
 
 package org.opensingular.flow.core.defaults;
 
-import org.opensingular.flow.core.MUser;
 import org.opensingular.flow.core.ITaskPageStrategy;
+import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.view.WebRef;
+import org.opensingular.lib.commons.net.WebRef;
 
 public class NullPageStrategy implements ITaskPageStrategy {
 
     @Override
-    public WebRef getPageFor(TaskInstance taskInstance, MUser user) {
+    public WebRef getPageFor(TaskInstance taskInstance, SUser user) {
         return null;
     }
 

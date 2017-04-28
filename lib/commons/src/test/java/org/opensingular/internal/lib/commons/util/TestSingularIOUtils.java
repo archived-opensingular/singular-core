@@ -16,6 +16,7 @@
 
 package org.opensingular.internal.lib.commons.util;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -80,5 +81,14 @@ public class TestSingularIOUtils {
     private void assertFormatMillis(long millis, String expectedFormat) {
         char decimal = String.format("%.1f", 0.1).charAt(1);
         assertFormat(expectedFormat, SingularIOUtils.humanReadableMiliSeconds(millis), decimal);
+    }
+
+    @Test
+    public void serializeAndDeserializeTest(){
+        String test = "One simple String to serialize";
+
+        String result = SingularIOUtils.serializeAndDeserialize(test);
+
+        Assert.assertEquals(test, result);
     }
 }

@@ -16,11 +16,13 @@
 
 package org.opensingular.form.util.transformer;
 
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.document.SDocument;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +60,18 @@ public class SCompositeListBuilder {
 
     public SInstance getCurrentInstance() {
         return currentInstance;
+    }
+
+    public SInstance getRoot() {
+        return currentInstance.getRoot();
+    }
+    /**
+     * Tenta encontrar um serviço da classe solicitada. Senão encontrar, então dispara exception. Veja {@link
+     * SDocument#lookupServiceOrException(Class)}.
+     */
+    @Nonnull
+    public <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
+        return currentInstance.getDocument().lookupServiceOrException(targetClass);
     }
 
     public static class SCompositeValueSetter {

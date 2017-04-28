@@ -26,7 +26,7 @@ public class SInstanceBoudComponentUpdateVisitor implements IVisitor<Component, 
         IModel<?> model = component.getDefaultModel();
         if (model instanceof ISInstanceAwareModel) {
             ISInstanceAwareModel instanceAwareModel = (ISInstanceAwareModel) model;
-            if (instances.contains(instanceAwareModel.getMInstancia())) {
+            if (instances.contains(instanceAwareModel.getSInstance())) {
                 WicketFormProcessing.refreshComponentOrCellContainer(ajaxRequestTarget, component);
             }
         }

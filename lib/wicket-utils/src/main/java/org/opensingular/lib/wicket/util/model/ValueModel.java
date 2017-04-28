@@ -31,6 +31,9 @@ public final class ValueModel<T extends Serializable> implements IMappingModel<T
 
     private final IFunction<T, Object> equalsHashArgsFunc;
 
+    public ValueModel(T object) {
+        this(object, it -> it);
+    }
     public ValueModel(T object, IFunction<T, Object> equalsHashArgsFunc) {
         setObject(object);
         this.equalsHashArgsFunc = equalsHashArgsFunc;
@@ -78,6 +81,7 @@ public final class ValueModel<T extends Serializable> implements IMappingModel<T
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
         return object != null ? (Class<T>) object.getClass() : null;
     }

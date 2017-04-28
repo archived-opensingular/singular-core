@@ -1,7 +1,11 @@
 package org.opensingular.form;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
 import org.opensingular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
+import org.opensingular.form.type.core.SIBoolean;
 import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeBoolean;
@@ -11,10 +15,8 @@ import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.util.STypeEMail;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -94,13 +96,56 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals(instancia.getAttributeValue(TestPacoteAA.ATR_XX), (Object) 17);
     }
 
+    private static boolean exceptionAtCorrentPoint = false;
+
+    @Test
+    public void testReadicionarAtributoExclusivo() {
+        exceptionAtCorrentPoint = false;
+        assertException(() -> createTestDictionary().loadPackage(PackageWrongAttribute1.class),
+                SingularFormException.class, "pertence excelusivamente ao tipo");
+        assertTrue(exceptionAtCorrentPoint);
+
+        exceptionAtCorrentPoint = false;
+        assertException(() -> createTestDictionary().loadPackage(PackageWrongAttribute2.class),
+                SingularFormException.class, "já está criada em");
+        assertTrue(exceptionAtCorrentPoint);
+    }
+
+    @SInfoPackage()
+    public static class PackageWrongAttribute1 extends SPackage {
+
+        private static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_X = new AtrRef(PackageWrongAttribute1.class,
+                "aa", STypeBoolean.class, SIBoolean.class, Boolean.class);
+        @Override
+        protected void onLoadPackage(@Nonnull PackageBuilder pb) {
+            pb.createAttributeIntoType(STypeList.class, ATR_X);
+            exceptionAtCorrentPoint = true;
+            pb.addAttribute(STypeComposite.class, ATR_X);
+            exceptionAtCorrentPoint = false;
+        }
+    }
+
+    @SInfoPackage()
+    public static class PackageWrongAttribute2 extends SPackage {
+
+        private static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_Y = new AtrRef(PackageWrongAttribute2.class,
+                "aa", STypeBoolean.class, SIBoolean.class, Boolean.class);
+        @Override
+        protected void onLoadPackage(@Nonnull PackageBuilder pb) {
+            pb.createAttributeIntoType(STypeList.class, ATR_Y);
+            exceptionAtCorrentPoint = true;
+            pb.createAttributeIntoType(STypeComposite.class, ATR_Y);
+            exceptionAtCorrentPoint = false;
+        }
+    }
+
     @Test
     public void testAtributoValorInicial() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
         SType<SIString> tipo = pb.createType("local", STypeString.class).withInitialValue("aqui");
-        STypeString tipoString = dicionario.getTypeOptional(STypeString.class);
+        STypeString tipoString = dicionario.getType(STypeString.class);
 
         assertEquals("aqui", tipo.getAttributeValueInitialValue());
         assertEquals(null, tipoString.getAttributeValueInitialValue());

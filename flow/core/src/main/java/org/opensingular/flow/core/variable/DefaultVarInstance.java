@@ -32,7 +32,7 @@ public class DefaultVarInstance extends AbstractVarInstance {
     public VarInstance setValue(Object valor) {
         try {
             Object antes = this.valor;
-            this.valor = valor;
+            this.valor = getDefinition().convert(valor);
             if (needToNotifyAboutValueChanged() && !Objects.equals(antes, this.valor)) {
                 notifyValueChanged();
             }

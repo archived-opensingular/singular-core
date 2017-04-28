@@ -16,30 +16,42 @@
 
 package org.opensingular.flow.core.variable;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 public interface VarService extends Serializable {
 
     VarService deserialize();
 
+    @Nonnull
     VarDefinitionMap<?> newVarDefinitionMap();
 
     /* TODO Verifica se ficou em uso no final, senão apagar */
     VarInstance newVarInstance(VarDefinition def);
 
+    @Nonnull
     VarDefinition newDefinition(String ref, String name, VarType type);
 
+    @Nonnull
     VarDefinition newDefinitionString(String ref, String name, Integer tamanhoMaximo);
 
+    @Nonnull
     VarDefinition newDefinitionMultiLineString(String ref, String name, Integer tamanhoMaximo);
 
+    @Nonnull
     VarDefinition newDefinitionDate(String ref, String name);
 
+    @Nonnull
     VarDefinition newDefinitionInteger(String ref, String name);
 
+    @Nonnull
     VarDefinition newDefinitionBoolean(String ref, String name);
 
+    @Nonnull
     VarDefinition newDefinitionDouble(String ref, String name);
+
+    @Nonnull
+    VarDefinition newDefinitionBigDecimal(String ref, String name);
 
     static VarService basic() {
         return DefaultVarService.DEFAULT_VAR_SERVICE;

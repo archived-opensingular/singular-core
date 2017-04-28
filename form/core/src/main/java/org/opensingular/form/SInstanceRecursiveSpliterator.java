@@ -24,10 +24,11 @@ import java.util.function.Consumer;
 public class SInstanceRecursiveSpliterator implements Spliterator<SInstance> {
     private final Deque<SInstance> deque = new ArrayDeque<>();
     public SInstanceRecursiveSpliterator(SInstance root, boolean includeRoot) {
-        if (includeRoot)
+        if (includeRoot) {
             this.deque.add(root);
-        else
-            this.deque.addAll(SInstances.children(root));
+        } else {
+            SInstances.addAllChildren(this.deque, root);
+        }
     }
     @Override
     public boolean tryAdvance(Consumer<? super SInstance> action) {
@@ -35,7 +36,7 @@ public class SInstanceRecursiveSpliterator implements Spliterator<SInstance> {
             return false;
 
         final SInstance node = deque.removeFirst();
-        deque.addAll(SInstances.children(node));
+        SInstances.addAllChildren(deque, node);
         action.accept(node);
         return true;
     }

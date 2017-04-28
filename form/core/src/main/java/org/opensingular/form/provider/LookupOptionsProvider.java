@@ -16,11 +16,13 @@
 
 package org.opensingular.form.provider;
 
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.form.SingularFormException;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class responsible for looking up for the desired providers from the current
@@ -47,24 +49,25 @@ public class LookupOptionsProvider implements Provider {
         return whichProvider(context.getInstance().getDocument()).load(context);
     }
 
-    private Provider whichProvider(SDocument document) {
-        Provider p;
+    @Nonnull
+    private Provider whichProvider(@Nonnull SDocument document) {
+        Optional<Provider> p;
         if (providerName != null) {
             p = document.lookupService(providerName, Provider.class);
-            if (p == null) {
+            if (! p.isPresent()) {
                 throw new SingularFormException("Não foi localizado o " + Provider.class.getSimpleName() + " de nome '"
                         + providerName + "' nos serviços registrado para o documento");
             }
         } else if (providerClass != null) {
-            p = document.lookupService(providerClass);
-            if (p == null) {
+            p = (Optional<Provider>) document.lookupService(providerClass);
+            if (! p.isPresent()) {
                 throw new SingularFormException("Não foi localizado o " + Provider.class.getSimpleName() + " da classe '"
                         + providerClass + "' nos serviços registrado para o documento");
             }
         } else {
             throw SingularException.rethrow("Não foi configurador a origem do " + Provider.class.getSimpleName());
         }
-        return p;
+        return p.get();
     }
 
 }

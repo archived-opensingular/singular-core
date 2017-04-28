@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
@@ -57,8 +56,8 @@ public class TestMFormUtil extends TestCaseForm {
 
     @Test
     public void testResolverTipoCampo() {
-        SDictionary    dicionario = createTestDictionary();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
+        SDictionary    dicionario = pb.getDictionary();
 
         STypeComposite<SIComposite>      tipoBloco = pb.createCompositeType("bloco");
         STypeInteger integer1 = tipoBloco.addFieldInteger("integer1");

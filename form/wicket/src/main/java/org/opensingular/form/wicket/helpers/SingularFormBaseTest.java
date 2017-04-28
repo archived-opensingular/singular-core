@@ -59,7 +59,7 @@ public abstract class SingularFormBaseTest {
     }
 
     protected SIComposite baseInstance() {
-        return page.getCurrentInstance();
+        return page.getInstance();
     }
 
     protected String getFormRelativePath(FormComponent<?> c) {

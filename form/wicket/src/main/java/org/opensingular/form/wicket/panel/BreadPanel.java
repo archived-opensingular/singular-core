@@ -21,15 +21,15 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.panel.Panel;
 
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.metronic.breadcrumb.MetronicBreadcrumbBar;
 
 public class BreadPanel extends Panel {
 
-    private   SingularForm<?> form      = new SingularForm<>("panel-form");
-    private   BSGrid          container = new BSGrid("grid");
-    private final List<String>    breads;
+    private SingularFormWicket<?> form      = new SingularFormWicket<>("panel-form");
+    private BSGrid                container = new BSGrid("grid");
+    private final List<String> breads;
 
     public BreadPanel(String id) {
         this(id, new ArrayList<>());

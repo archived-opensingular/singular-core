@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.support.spring.util;
 
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.springframework.beans.BeansException;
@@ -37,12 +38,26 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         ApplicationContextProvider.setup(applicationContext);
     }
 
+    /** Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado. */
     public static ApplicationContext get() {
+        if (applicationContext == null) {
+            throw SingularException.rethrow(
+                    "O applicationContext ainda não foi configurado em " + ApplicationContextProvider.class.getName());
+        }
         return applicationContext;
     }
 
+    /**
+     * Retorna um supplier que recuperará dinamicamente o bean mediante chamada da função informada passando o contexto
+     * atual da aplicação para a mesma.
+     */
     public static <T> ISupplier<T> supplierOf(IFunction<ApplicationContext, T> factory) {
         return () -> factory.apply(ApplicationContextProvider.get());
+    }
+
+    /** Retorna um supplier que recuperará dinamicamente o bean a partir do contexto de aplicação atual. */
+    public static <T> ISupplier<T> supplierOf(Class<T> beanClass) {
+        return () -> ApplicationContextProvider.get().getBean(beanClass);
     }
 
 }

@@ -29,7 +29,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener.EventCollector;
 import org.opensingular.form.validation.InstanceValidationContext;
@@ -182,7 +186,7 @@ public class WicketFormProcessing implements Loggable {
      */
     private static Set<SInstance> evaluateUpdateListenersAndCollect(SInstance i) {
         return SInstances
-                .streamDescendants(SInstances.getRootInstance(i), true)
+                .streamDescendants(i.getRoot(), true)
                 .filter(isDependantOf(i))
                 .filter(WicketFormProcessing::isNotOrphan)
                 .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
@@ -240,17 +244,18 @@ public class WicketFormProcessing implements Loggable {
             return;
         }
 
-        Set<SInstance> instancesImpactedByUpdateListener = evaluateUpdateListenersAndCollect(instance);
+        validate(component, target, instance);
+
+        Set<SInstance> updatedInstances = evaluateUpdateListenersAndCollect(instance);
 
         EventCollector eventCollector = new EventCollector();
 
         updateAttributes(instance, eventCollector);
-        validate(component, target, instance);
 
         Set<SInstance> instancesToUpdateComponents = new HashSet<>();
 
         instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
-        instancesToUpdateComponents.addAll(instancesImpactedByUpdateListener);
+        instancesToUpdateComponents.addAll(updatedInstances);
 
         updateBoundComponents(component.getPage(), target, instancesToUpdateComponents);
     }
@@ -299,24 +304,6 @@ public class WicketFormProcessing implements Loggable {
                         updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
                     }));
         }
-    }
-
-    /**
-     * Verifica se existe na hierarquia, ignora a si proprio.
-     */
-    private static boolean isParentsVisible(SInstance si) {
-        if (si == null) {
-            return false;
-        }
-        if (si.getParent() == null) {
-            return true;
-        }
-        for (SInstance i = si.getParent(); i.getParent() != null; i = i.getParent()) {
-            if (!(i.asAtr().isVisible() && i.asAtr().exists())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static boolean isSkipValidationOnRequest() {

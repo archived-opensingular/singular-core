@@ -20,8 +20,13 @@ import com.google.common.base.Preconditions;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,9 +52,8 @@ public abstract class SScopeBase implements SScope {
      * Retorna os tipos criados localmente. Se for um pacote, retorna o tipos do
      * pacote. Se for um tipo, então retorna o tipo criados no escopo local do
      * tipo (tipo dentro de tipo).
-     *
-     * @return Nunca null
      */
+    @Nonnull
     public Collection<SType<?>> getLocalTypes() {
         return getLocalTypesMap().values();
     }
@@ -74,11 +78,13 @@ public abstract class SScopeBase implements SScope {
     }
 
     @Override
-    public Optional<SType<?>> getLocalTypeOptional(String path) {
+    @Nonnull
+    public Optional<SType<?>> getLocalTypeOptional(@Nonnull String path) {
         return getLocalTypeOptional(new PathReader(path));
     }
 
-    final Optional<SType<?>> getLocalTypeOptional(PathReader pathReader) {
+    @Nonnull
+    final Optional<SType<?>> getLocalTypeOptional(@Nonnull PathReader pathReader) {
         SType<?> type = getLocalTypesMap().get(pathReader.getToken());
         if (type == null) {
             return Optional.empty();
@@ -90,13 +96,15 @@ public abstract class SScopeBase implements SScope {
 
 
     @Override
-    public SType<?> getLocalType(String path) {
+    @Nonnull
+    public SType<?> getLocalType(@Nonnull String path) {
         // Não utiliza getTipoLocalOpcional, pois da forma abaixo é possível
         // apontar precisamente onde deu erro no path passado.
         return getLocalType(new PathReader(path));
     }
 
-    final SType<?> getLocalType(PathReader pathReader) {
+    @Nonnull
+    final SType<?> getLocalType(@Nonnull PathReader pathReader) {
         SType<?> type = getLocalTypesMap().get(pathReader.getToken());
         if (type != null) {
             if (pathReader.isLast()) {
@@ -106,6 +114,11 @@ public abstract class SScopeBase implements SScope {
         }
         throw new SingularFormException(pathReader.getErrorMsg(this,
                 "Não foi encontrado o tipo '" + pathReader.getToken() + "' em '" + getName() + "'"), this);
+    }
+
+    /** Registro o tipo informado neste escopo. */
+    final <T extends SType<?>> T registerType(Class<T> typeClass) {
+        return registerType(MapByName.newInstance(typeClass), typeClass);
     }
 
     final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {

@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
@@ -73,14 +74,14 @@ public class FileUploadManagerTest {
         Path           path           = createTestPath().resolve(key);
 
         when(uploadPathHandler.getLocalFilePath(eq(fileUploadInfo))).thenReturn(path);
-        when(attachmentKeyFactory.get()).thenReturn(attachmentKey);
+        when(attachmentKeyFactory.make()).thenReturn(attachmentKey);
         when(fileUploadInfo.getAttachmentRef()).thenReturn(attachmentRef);
         when(fileUploadInfoRepository.findByID(key)).thenReturn(Optional.of(fileUploadInfo));
 
         AttachmentKey createdKey = fileUploadManager.createUpload(null, null, null, null);
 
         assertEquals(attachmentKey, createdKey);
-        assertTrue(fileUploadManager.consumeFile(createdKey.asString(), callback).orElse(false));
+        assertTrue(fileUploadManager.consumeFile(createdKey.asString(), callback).orElse(Boolean.FALSE));
 
         verify(callback).apply(eq(attachmentRef));
         verify(fileUploadInfoRepository).remove(eq(fileUploadInfo));
@@ -107,7 +108,7 @@ public class FileUploadManagerTest {
 
         when(ui.getPersistenceHandlerSupplier()).thenReturn(() -> handler);
         when(uploadPathHandler.getLocalFilePath(eq(key))).thenReturn(path);
-        when(attachmentKeyFactory.get()).thenReturn(attachmentKey);
+        when(attachmentKeyFactory.make()).thenReturn(attachmentKey);
 
         String         fileName = "my_document.pdf";
         FileUploadInfo info     = fileUploadManager.createFile(ui, fileName, in);
@@ -115,7 +116,7 @@ public class FileUploadManagerTest {
         assertNotNull(info);
 
         verify(fileUploadInfoRepository).add(eq(info));
-        verify(handler).addAttachment(path.toFile(), Files.size(path), fileName);
+        verify(handler).addAttachment(path.toFile(), Files.size(path), fileName, HashUtil.toSHA1Base16(path.toFile()));
 
         path.toFile().deleteOnExit();
     }

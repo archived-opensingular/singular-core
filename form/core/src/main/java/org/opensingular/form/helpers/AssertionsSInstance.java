@@ -1,17 +1,24 @@
 package org.opensingular.form.helpers;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
 import org.fest.assertions.api.IterableAssert;
 import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.IValidationError;
 
-import java.util.Date;
-import java.util.Objects;
+import static org.junit.Assert.*;
 
 /**
  * Classe de apoio a a escrita de assertivas referentes a um {@link SInstance}. Dispara {@link AssertionError} se uma
@@ -42,7 +49,12 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
      * Verifica se o valor da instância atual é igual ao esperado.
      */
     public AssertionsSInstance isValueEquals(Object expectedValue) {
-        return isValueEquals((String) null, expectedValue);
+        if (expectedValue instanceof SInstance) {
+            assertEquivalentInstance(getTarget(), (SInstance) expectedValue, false, true);
+            return this;
+        } else {
+            return isValueEquals((String) null, expectedValue);
+        }
     }
 
     public AssertionsSInstance isValueEquals(SType<?> field, Object expectedValue) {
@@ -154,12 +166,105 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         return Assertions.assertThat(getTarget().getValidationErrors());
     }
 
+    /**
+     * Cria uma nova assertiva para o valor da instância, se a instância contiver um valor Date. Senão o valor for
+     * diferente de null e não for Date, então dispara exception.
+     */
     public DateAssert assertDateValue() {
         Object value = getTarget().getValue();
-        if (value instanceof Date) {
+        if (value instanceof Date || value == null) {
             return Assertions.assertThat((Date) value);
         }
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
     }
 
+    /** Cria uma nova assertiva a partir do resultado da serialização e deserialização da instância atual. */
+    public AssertionsSInstance serializeAndDeserialize() {
+        isNotNull();
+        AssertionsSInstance a = new AssertionsSInstance(FormSerializationUtil.serializeAndDeserialize(getTarget()));
+        a.isNotSameAs(getTarget());
+        a.is(getTarget().getClass());
+        return a;
+    }
+
+
+    public static void assertEquivalentInstance(SInstance original, SInstance copy) {
+        assertEquivalentInstance(original, copy, true);
+    }
+
+    public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId) {
+        assertEquivalentInstance(original, copy, mustHaveSameId, false);
+    }
+
+    public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId, boolean ignoreNullValues) {
+        try {
+            assertNotSame(original, copy);
+            assertEquals(original.getClass(), copy.getClass());
+            assertEquals(original.getType().getName(), copy.getType().getName());
+            assertEquals(original.getType().getClass(), copy.getType().getClass());
+            assertEquals(original.getName(), copy.getName());
+            if (mustHaveSameId) {
+                assertEquals(original.getId(), copy.getId());
+            }
+            assertEquals(original.getPathFull(), copy.getPathFull());
+            if (original.getParent() != null) {
+                assertNotNull(copy.getParent());
+                assertEquals(original.getParent().getPathFull(), copy.getParent().getPathFull());
+            } else {
+                assertNull(copy.getParent());
+            }
+            if (original instanceof ICompositeInstance) {
+                List<SInstance> originalChildren = new ArrayList<>(((ICompositeInstance) original).getChildren());
+                List<SInstance> copyChildren     = new ArrayList<>(((ICompositeInstance) copy).getChildren());
+
+                if (ignoreNullValues) {
+                    removeNullChildren(originalChildren);
+                    removeNullChildren(copyChildren);
+                }
+
+                assertEquals(originalChildren.size(), copyChildren.size());
+                for (int i = 0; i < originalChildren.size(); i++) {
+                    assertEquivalentInstance(originalChildren.get(0), copyChildren.get(0), mustHaveSameId);
+                }
+            } else {
+                assertEquals(original.getValue(), copy.getValue());
+            }
+
+            assertEquals(original.isAttribute(), copy.isAttribute());
+            if(! original.isAttribute()) {
+                assertEqualsAttributes(original, copy);
+            }
+        } catch (AssertionError e) {
+            if (e.getMessage().startsWith("Erro comparando")) {
+                throw e;
+            }
+            throw new AssertionError("Erro comparando '" + original.getPathFull() + "'", e);
+        }
+    }
+
+    public static void removeNullChildren(List<SInstance> children) {
+        children.removeIf(child -> child.getValue() == null);
+    }
+
+    public static void assertEqualsAttributes(SAttributeEnabled original, SAttributeEnabled copy) {
+        try {
+            assertEquals(original.getAttributes().size(), copy.getAttributes().size());
+
+            for (SInstance atrOriginal : original.getAttributes()) {
+                SInstance atrNovo = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName()).get();
+                try {
+                    assertNotNull(atrNovo);
+                    assertEquivalentInstance(atrOriginal, atrNovo, false);
+                } catch (AssertionError e) {
+                    throw new AssertionError(
+                            "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
+                }
+            }
+        } catch (AssertionError e) {
+            if (e.getMessage().startsWith("Erro comparando atributos de ")) {
+                throw e;
+            }
+            throw new AssertionError("Erro comparando atributos de '" + original + "'", e);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package org.opensingular.form;
 
-import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 import java.util.List;
 import java.util.Objects;

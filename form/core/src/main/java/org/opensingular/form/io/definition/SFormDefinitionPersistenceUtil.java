@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -111,12 +112,12 @@ public class SFormDefinitionPersistenceUtil {
 
     private static SType<?> resolveSuperType(ContextUnarchive ctx, SScopeBase scopeNewType, SIPersistenceType pType) {
         String superTypeName = ctx.translateTypeName(pType.getSuperType());
-        SType<?> superType = ctx.getDictionary().getTypeOptional(superTypeName);
-        if(superType == null) {
-            throw new SingularFormException("Ao ler o tipo '" + scopeNewType.getName() + "." + pType.getSimpleName()
-                    + "' não foi encontrado a definição do seu tipo '" + superTypeName + "' nas definições sendo importadas.");
+        Optional<SType<?>> superType = ctx.getDictionary().getTypeOptional(superTypeName);
+        if(superType.isPresent()) {
+            return superType.get();
         }
-        return superType;
+        throw new SingularFormException("Ao ler o tipo '" + scopeNewType.getName() + "." + pType.getSimpleName()
+                + "' não foi encontrado a definição do seu tipo '" + superTypeName + "' nas definições sendo importadas.");
     }
 
     private static void readMembers(ContextUnarchive ctx, STypeComposite<?> newComposite, SIList<SIPersistenceType> members) {

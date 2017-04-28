@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.ObjectAssert;
@@ -29,8 +30,10 @@ import org.opensingular.lib.commons.test.AssertionsBase;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -47,65 +50,77 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     @Override
     protected String errorMsg(String msg) {
-        if (getTarget() == null) {
+        if (! getTargetOpt().isPresent()) {
             return "null : " + msg;
         }
         return getTarget().getPageRelativePath() + " : " + msg;
     }
 
 
-    /**
-     * Busca um sub componente do componente atual com o tipo informado e retonar o resultado. O resultado pode
-     * conter um valor null senão for encontrado o componente.
-     */
+    /** Busca um sub componente do componente atual com o tipo informado e retonar o resultado. */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithType(SType<?> type) {
-        return findSubComponent(component -> ISInstanceAwareModel.optionalCast(component.getDefaultModel())
-                .map(ISInstanceAwareModel::getMInstancia)
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
-                .map(type::equals).orElse(Boolean.FALSE)).isNotNull();
+                .map(type::equals).orElse(Boolean.FALSE));
     }
 
 
-    /**
-     * Busca um sub componente do componente atual com o nome do tipo informado e retonar o resultado. O resultado pode
-     * conter um valor null senão for encontrado o componente.
-     */
+    /** Busca um sub componente do componente atual com o nome do tipo informado e retonar o resultado. */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithTypeNameSimple(String nameSimple) {
-        return findSubComponent(component -> ISInstanceAwareModel.optionalCast(component.getDefaultModel())
-                .map(ISInstanceAwareModel::getMInstancia)
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(SType::getNameSimple)
-                .map(nameSimple::equals).orElse(Boolean.FALSE)).isNotNull();
+                .map(nameSimple::equals).orElse(Boolean.FALSE));
     }
 
-    /**
-     * Busca um sub componente do componente atual com o ID informado e retonar o resultado. O resultado pode
-     * conter um valor null senão for encontrado o componente.
-     */
+    /** Busca um sub componente do componente atual com o ID informado e retonar o resultado. */
     @Nonnull
     public final AssertionsWComponent getSubCompomentWithId(String componentId) {
-        return findSubComponent(component -> componentId.equals(component.getId())).isNotNull();
+        return findSubComponent(component -> componentId.equals(component.getId()));
     }
 
     /**
-     * Busca um sub componente do componente atual que atenda ao critério informado. Para no primeiro que atender. O
-     * resultado pode conter um valor null senão for encontrado o componente.
+     * Busca um sub componente do componente atual que possua um model cujo o valor seja a {@link SInstance} informada.
+     */
+    public final AssertionsWComponent getSubCompomentForSInstance(@Nonnull SInstance expectedInstance) {
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component).orElse(null) ==
+                expectedInstance);
+    }
+
+    /**
+     * Busca um sub componente do componente atual que possua uma {@link SInstance} como model do componente.
+     */
+    public final AssertionsWComponent getSubCompomentWithSInstance() {
+        return findSubComponent(component ->  ISInstanceAwareModel.optionalSInstance(component).isPresent());
+    }
+
+    /**
+     * Busca um sub componente do componente atual que atenda ao critério informado. Para no primeiro que atender.
+     * Mesmo senão encontrar, retorna uma assertiva com conteúdo null.
      */
     @Nonnull
     public final AssertionsWComponent findSubComponent(Predicate<Component> predicate) {
-        isNotNull();
-        return new AssertionsWComponent(findSubComponent(getTarget(), predicate));
+        return createAssertionForSubComponent(getTarget(), predicate);
     }
 
-    private Component findSubComponent(Component parent, Predicate<Component> predicate) {
+    /**
+     * Cria um objeto de assertivas para o sub componente na hierarquia que for encontrado com o id informado ou dispara
+     * exception senão encontrar o componente.
+     */
+    final static AssertionsWComponent createAssertionForSubComponent(Component parent, Predicate<Component> predicate) {
+        Objects.requireNonNull(parent);
+        return new AssertionsWComponent(findSubComponentImpl(parent, predicate));
+    }
+
+    private static Component findSubComponentImpl(Component parent, Predicate<Component> predicate) {
         if (parent instanceof MarkupContainer) {
             for (Component component : (MarkupContainer) parent) {
                 if (predicate.test(component)) {
                     return component;
                 }
-                Component result = findSubComponent(component, predicate);
+                Component result = findSubComponentImpl(component, predicate);
                 if (result != null) {
                     return result;
                 }
@@ -119,12 +134,49 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      * tamanho zero.
      */
     @Nonnull
-    public final <TT extends Component> AssertionsWComponentList getSubComponents(@Nonnull Class<TT> targetClass) {
-        List<TT> result = Collections.emptyList();
-        if (getTarget() instanceof MarkupContainer) {
-            result = TestFinders.findTag((MarkupContainer) getTarget(), targetClass);
+    public final <TT extends Component> AssertionsWComponentList<TT> getSubComponents(@Nonnull Class<TT> targetClass) {
+        return (AssertionsWComponentList<TT>) getSubComponents(component -> targetClass.isInstance(component));
+    }
+
+    /**
+     * Retornar uma lista com todos os sub componentes com o ID informado.
+     * <p>A lista pode ser de tamanho zero.</p>
+     */
+    @Nonnull
+    public final AssertionsWComponentList<Component> getSubCompomentsWithId(@Nonnull String componentId) {
+        return getSubComponents(component -> componentId.equals(component.getId()));
+    }
+
+    /**
+     * Retornar uma lista com todos os sub componentes que possuem uma {@link SInstance} associada em seu model.
+     * <p>A lista pode ser de tamanho zero.</p>
+     */
+    public final AssertionsWComponentList<Component> getSubComponentsWithSInstance() {
+        return getSubComponents(component ->  ISInstanceAwareModel.optionalSInstance(component).isPresent());
+    }
+
+    /**
+     * Retornar uma lista dos sub componentes que atendem a critério informado. Ao encontrar um componente que atende
+     * ao critério, não continua procurando nos subComponentes desse.
+     * <p>A lista pode ser de tamanho zero.</p>
+     */
+    @Nonnull
+    public final AssertionsWComponentList<Component> getSubComponents(@Nonnull Predicate<Component> predicate) {
+            List<Component> result = new ArrayList<>();
+            findSubComponentsImpl(getTarget(), predicate, result);
+            return new AssertionsWComponentList<>(result);
+    }
+
+    private static void findSubComponentsImpl(Component parent, Predicate<Component> predicate, List<Component> components) {
+        if (parent instanceof MarkupContainer) {
+            for (Component component : (MarkupContainer) parent) {
+                if (predicate.test(component)) {
+                    components.add(component);
+                } else {
+                    findSubComponentsImpl(component, predicate, components);
+                }
+            }
         }
-        return new AssertionsWComponentList<>(result);
     }
 
     /**
@@ -144,8 +196,8 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      */
     @Nonnull
     public AssertionsSInstance assertSInstance() {
-        return new AssertionsSInstance(ISInstanceAwareModel.optionalCast(getTarget().getDefaultModel())
-                .map(ISInstanceAwareModel::getMInstancia)
+        isNotNull();
+        return new AssertionsSInstance(ISInstanceAwareModel.optionalSInstance(getTarget())
                 .orElseThrow(() -> new AssertionError(errorMsg("O Componente "+getTarget()
                         +" não possui model de SInstance "))));
     }
@@ -154,4 +206,43 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
         return Assertions.assertThat((Serializable) getTarget().getDefaultModelObject());
     }
 
+
+    /** Gera para o console a árvore de componentes a partir do elemento atual. */
+    public final SELF debugComponentTree() {
+        debugComponentTree(0, getTarget());
+        return (SELF) this;
+    }
+
+    private void debugComponentTree(int level, Component component) {
+        if (component == null) {
+            return;
+        }
+        for(int i = 0; i < level; i++) {
+            System.out.print("  ");
+        }
+
+        String descr = component.getId() + ":" + resolveClassName(component.getClass());
+        Optional<SInstance> instance = ISInstanceAwareModel.optionalSInstance(component);
+        if (instance.isPresent()) {
+            descr += "      <" + instance.get().getPathFull() + ">";
+        } else if (component instanceof Label) {
+            descr += ": \"" + ((Label) component).getDefaultModelObjectAsString() + '"';
+        }
+
+        System.out.println(descr);
+        if (component instanceof MarkupContainer) {
+            for(Component sub : (MarkupContainer) component) {
+                debugComponentTree(level+1, sub);
+            }
+        }
+    }
+
+    private String resolveClassName(Class<?> aClass) {
+        String name = aClass.getSimpleName();
+        while (name.length() == 0) {
+            aClass = aClass.getSuperclass();
+            name = aClass.getSimpleName();
+        }
+        return name;
+    }
 }
