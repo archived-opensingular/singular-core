@@ -4,7 +4,7 @@
     <parent>
         <artifactId>singular-flow</artifactId>
         <groupId>org.opensingular</groupId>
-        <version>1.5.16</version>
+        <version>1.5.17-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,19 +16,19 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-flow-core</artifactId>
-            <version>1.5.16</version>
+            <version>1.5.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-flow-persistence</artifactId>
-            <version>1.5.16</version>
+            <version>1.5.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-service</artifactId>
-            <version>1.5.16</version>
+            <version>1.5.17-SNAPSHOT</version>
         </dependency>
 
 
