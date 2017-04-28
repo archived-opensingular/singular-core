@@ -54,46 +54,39 @@ import java.util.logging.Logger;
 public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
-
-    /**
-     * contabiliza a quantidade de instancias desse tipo.
-     */
-    protected long instanceCount;
-
-    @Nonnull
-    private String nameSimple;
-
-    private String nameFull;
-
-    private SDictionary dictionary;
-
-    /** Representa um identficado único de cada tipo dentro de um dicionário. */
-    private int typeId;
-
-    private SScope scope;
-
     private final AttributeMap attributesDefined = new AttributeMap();
-
     private final MapAttributeDefinitionResolver attributesResolved;
-
-    private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
-
-    private Set<SType<?>> dependentTypes;
-
-    private AttributeDefinitionInfo attributeDefinitionInfo;
-
     /**
      * Classe a  ser usada para criar as instâncias do tipo atual. Pode ser null, indicado que o tipo atual é abstrato.
      */
     @Nullable
     private final Class<? extends I> instanceClass;
-
-    /** Representa o tipo ao qual o tipo atual extende. Pode ou não ser da mesma classe do tipo atual. */
+    /**
+     * contabiliza a quantidade de instancias desse tipo.
+     */
+    protected long instanceCount;
+    @Nonnull
+    private String nameSimple;
+    private String nameFull;
+    private SDictionary dictionary;
+    /**
+     * Representa um identficado único de cada tipo dentro de um dicionário.
+     */
+    private int typeId;
+    private SScope scope;
+    private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
+    private Set<SType<?>> dependentTypes;
+    private AttributeDefinitionInfo attributeDefinitionInfo;
+    /**
+     * Representa o tipo ao qual o tipo atual extende. Pode ou não ser da mesma classe do tipo atual.
+     */
     private SType<I> superType;
 
     private SView view;
 
-    /** Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}. */
+    /**
+     * Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}.
+     */
     private boolean callingOnLoadType;
 
     public SType() {
@@ -115,6 +108,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         this.nameSimple = simpleName;
         this.instanceClass = instanceClass;
         attributesResolved = new MapAttributeDefinitionResolver(this);
+    }
+
+    private static boolean isEqualsStart(String name, String prefixo) {
+        return name.startsWith(prefixo) && name.length() > prefixo.length() && name.charAt(prefixo.length()) == '.';
     }
 
     /**
@@ -269,7 +266,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return attrInstance;
     }
 
-
     /**
      * Informa se o tipo é a definição de um atributo (de outro tipo ou de instância) ou se é um tipo comum.
      */
@@ -311,7 +307,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     public <M extends SInstance> M getAttributeInstance(AtrRef<?, M, ?> atr) {
         Class<M> instanceAttributeClass;
-        if(atr.isSelfReference()) {
+        if (atr.isSelfReference()) {
             instanceAttributeClass = (Class<M>) getInstanceClassResolved();
             if (instanceAttributeClass == null) {
                 throw new SingularFormException(
@@ -507,16 +503,16 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return v;
     }
 
+    public SView getView() {
+        return this.view;
+    }
+
     private void setView(SView view) {
         if (view.isApplicableFor(this)) {
             this.view = view;
         } else {
             throw new SingularFormException("A view '" + view.getClass().getName() + "' não é aplicável ao tipo", this);
         }
-    }
-
-    public SView getView() {
-        return this.view;
     }
 
     public Set<SType<?>> getDependentTypes() {
@@ -539,7 +535,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     public final SType<I> addDependentType(SType<?> type) {
-        if (! isDependentType(type)) {
+        if (!isDependentType(type)) {
             if (type.hasDirectOrInderectDependentType(this)) {
                 throw new SingularFormException(
                         "Referência circular de dependência detectada ao tentar adicionar " + type +
@@ -555,7 +551,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private boolean hasDirectOrInderectDependentType(SType<?> type) {
         if (dependentTypes != null) {
-            for(SType<?> d : dependentTypes ) {
+            for (SType<?> d : dependentTypes) {
                 if (type.isTypeOf(d)) {
                     return true;
                 } else if (d.hasDirectOrInderectDependentType(type)) {
@@ -655,8 +651,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     public final I newInstance(boolean executeInstanceInitListeners) {
-        SDocument owner = new SDocument();
-        I instance = newInstance(this, owner);
+        SDocument owner    = new SDocument();
+        I         instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {
             instance.init();
@@ -765,7 +761,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         } else {
             debugTypeHeaderNormalType(appendable);
         }
-        if (superType != null && (! isAttribute() || !isSelfReference())) {
+        if (superType != null && (!isAttribute() || !isSelfReference())) {
             appendable.append(" extend ");
             appendNameAndId(appendable, superType);
             if (this.isList()) {
@@ -804,7 +800,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private void debugAttributes(Appendable appendable) {
         try {
             Collection<SInstance> attrs = getAttributes();
-            if (! attrs.isEmpty()) {
+            if (!attrs.isEmpty()) {
                 appendable.append(" {");
                 attrs.stream().forEach(attr -> {
                     try {
@@ -863,10 +859,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return name;
     }
 
-    private static boolean isEqualsStart(String name, String prefixo) {
-        return name.startsWith(prefixo) && name.length() > prefixo.length() && name.charAt(prefixo.length()) == '.';
-    }
-
     public <T> T convert(Object value, Class<T> resultClass) {
         throw new SingularFormException("Método não suportado", this);
     }
@@ -887,7 +879,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public UIComponentMapper getComponentMapper(){
+    public UIComponentMapper getComponentMapper() {
         return this.asAtr().getAttributeValue(SPackageBasic.ATR_MAPPER);
     }
 
@@ -906,7 +898,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return new SelectionBuilder<>(this);
     }
 
-    public void withSelectionFromProvider(Class<SimpleProvider> providerClass) {
+    public <SP extends SimpleProvider<?, ?>> void withSelectionFromProvider(Class<? extends SP> providerClass) {
         this.typelessSelection().selfIdAndDisplay().provider(providerClass);
     }
 
@@ -914,13 +906,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         this.typelessSelection().selfIdAndDisplay().provider(providerName);
     }
 
-    final void setTypeId(int typeId) {
-        this.typeId = typeId;
-    }
-
-    /** Retorna um identificador único do tipo dentro de um mesmo dicionário. */
+    /**
+     * Retorna um identificador único do tipo dentro de um mesmo dicionário.
+     */
     final int getTypeId() {
         return this.typeId;
+    }
+
+    final void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     @Override
@@ -928,12 +922,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return nameFull + '(' + getClass().getSimpleName() + '@' + typeId + ')';
     }
 
-    final void setCallingOnLoadType(boolean callingOnLoadType) {
-        this.callingOnLoadType = callingOnLoadType;
-    }
-
     final boolean isCallingOnLoadType() {
         return callingOnLoadType;
+    }
+
+    final void setCallingOnLoadType(boolean callingOnLoadType) {
+        this.callingOnLoadType = callingOnLoadType;
     }
 
     @Override

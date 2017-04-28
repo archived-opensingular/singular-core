@@ -32,7 +32,7 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
     @Nonnull
     private final T value;
 
-    public AbstractFormKey(String persistenceString) {
+    public AbstractFormKey(@Nonnull String persistenceString) {
         if (persistenceString == null) {
             throw new SingularFormPersistenceException("O valor da chave não pode ser null");
         }
@@ -44,13 +44,14 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
         this.value = newValue;
     }
 
-    public AbstractFormKey(T value) {
+    public AbstractFormKey(@Nonnull T value) {
         if (value == null) {
             throw new SingularFormPersistenceException("O valor da chave não pode ser null");
         }
         this.value = value;
     }
 
+    @Nonnull
     public T getValue() {
         return value;
     }
@@ -73,7 +74,7 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj.getClass() == getClass() && value.equals(((AbstractFormKey<T>) obj).getValue());
+        return obj != null && obj.getClass() == getClass() && value.equals(((AbstractFormKey<?>) obj).getValue());
     }
 
     @Override

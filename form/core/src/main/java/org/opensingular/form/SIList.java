@@ -369,11 +369,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return true;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s(%s)", getClass().getSimpleName(), getAllChildren());
-    }
-
     public E first() {
         if (hasValues())
             return values.get(0);
