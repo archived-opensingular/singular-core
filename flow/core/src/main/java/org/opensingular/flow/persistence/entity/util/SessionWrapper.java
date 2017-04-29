@@ -294,7 +294,9 @@ public class SessionWrapper {
 
     public <T> T refreshByPk(Class<T> classe, Serializable id) {
         Object o = getSession().get(classe, id);
-        getSession().refresh(o);
+        if (o != null) {
+            getSession().refresh(o);
+        }
         return classe.cast(o);
     }
 
