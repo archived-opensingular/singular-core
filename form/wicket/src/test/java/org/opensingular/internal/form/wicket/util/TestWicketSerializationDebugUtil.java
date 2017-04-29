@@ -46,15 +46,16 @@ public class TestWicketSerializationDebugUtil {
     public void testeWrongSerializationPage() {
         tester.startPage(WrongSerializationPage.class);
         tester.assertRenderedPage(WrongSerializationPage.class);
-        Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains("result size="));
+        Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains(" size="));
         Assert.assertFalse(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains("EXCEPTION"));
+        Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains(" deserialization="));
         try {
             tester.clickLink("reload");
             Assert.fail("Era esperada uma exception de serialização");
         } catch (SingularFormException e) {
             Assert.assertTrue(e.getMessage().contains("Erro serializando"));
         }
-        Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains("result size=EXCEPTION"));
+        Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains(" size=EXCEPTION"));
     }
 
     public static class WrongSerializationPage extends WebPage {
