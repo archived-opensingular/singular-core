@@ -1,5 +1,14 @@
 package org.opensingular.form.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Map.Entry;
+import java.util.function.Function;
+
 import org.fest.assertions.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,19 +30,11 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.ServiceRegistry.Pair;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Map.Entry;
-import java.util.function.Function;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -381,6 +382,6 @@ public class TesteFormSerializationUtil extends TestCaseForm {
     }
 
     private static void assertEquivalent(SInstance original, SInstance copy) {
-        FormAssert.assertEquivalentInstance(original, copy);
+        AssertionsSInstance.assertEquivalentInstance(original, copy);
     }
 }
