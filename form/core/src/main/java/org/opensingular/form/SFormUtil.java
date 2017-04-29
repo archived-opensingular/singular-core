@@ -178,8 +178,7 @@ public final class SFormUtil {
     @Nonnull
     public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
         Class<? extends SPackage> packageClass = getTypePackage(typeClass);
-        String packageName = getInfoPackageNameOrException(packageClass);
-        return packageName + '.' + getTypeSimpleName(typeClass);
+        return getInfoPackageName(packageClass) + '.' + getTypeSimpleName(typeClass);
     }
 
     public static String getTypeSimpleName(Class<? extends SType<?>> typeClass) {
@@ -199,6 +198,7 @@ public final class SFormUtil {
         return Optional.of(infoType.label());
     }
 
+    @Nonnull
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
         SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
         if (mFormTipo == null) {
@@ -208,6 +208,7 @@ public final class SFormUtil {
         return mFormTipo;
     }
 
+    @Nonnull
     public static Class<? extends SPackage> getTypePackage(Class<? extends SType<?>> typeClass) {
         Class<? extends SPackage> sPackage = getInfoType(typeClass).spackage();
         if (sPackage == null) {
@@ -221,17 +222,32 @@ public final class SFormUtil {
         return packageClass.getAnnotation(SInfoPackage.class);
     }
 
-    static String getInfoPackageName(Class<? extends SPackage> packageClass) {
+    @Nonnull
+    static String getInfoPackageName(@Nonnull Class<? extends SPackage> packageClass) {
         SInfoPackage info = getInfoPackage(packageClass);
-        return info != null && !StringUtils.isBlank(info.name()) ? info.name() : null;
+        return info != null && !StringUtils.isBlank(info.name()) ? info.name() : packageClass.getName();
     }
 
-    static String getInfoPackageNameOrException(Class<? extends SPackage> packageClass) {
-        String packageName = getInfoPackageName(packageClass);
-        if (packageName == null) {
-            packageName = packageClass.getSimpleName();
+    @Nonnull
+    static String getScopeNameOrException(@Nonnull Class<? extends SScope> scopeClass) {
+        if (SPackage.class.isAssignableFrom(scopeClass)) {
+            return getInfoPackageName( (Class<SPackage>) scopeClass);
+        } else if (SType.class.isAssignableFrom(scopeClass)) {
+            return getTypeName((Class<SType<?>>) scopeClass);
+        } else {
+            throw new SingularFormException("Unsupported class: " + scopeClass.getName());
         }
-        return packageName;
+    }
+
+    @Nonnull
+    static Class<? extends SPackage> getPackageClassOrException(@Nonnull Class<? extends SScope> scopeClass) {
+        if (SPackage.class.isAssignableFrom(scopeClass)) {
+            return (Class<SPackage>) scopeClass;
+        } else if (SType.class.isAssignableFrom(scopeClass)) {
+            return getTypePackage((Class<SType<?>>) scopeClass);
+        } else {
+            throw new SingularFormException("Unsupported class: " + scopeClass.getName());
+        }
     }
 
     private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
@@ -250,7 +266,7 @@ public final class SFormUtil {
     }
 
     private static void addPackage(Builder<String, Class<? extends SPackage>> builder, Class<? extends SPackage> packageClass) {
-        builder.put(getInfoPackageNameOrException(packageClass), packageClass);
+        builder.put(getInfoPackageName(packageClass), packageClass);
     }
 
     /**

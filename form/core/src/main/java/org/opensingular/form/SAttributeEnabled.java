@@ -35,14 +35,14 @@ import java.util.function.Function;
 public interface SAttributeEnabled {
 
     default <V> void setAttributeCalculation(AtrRef<?, ?, V> atr, SimpleValueCalculation<V> value) {
-        getDictionary().loadPackage(atr.getPackageClass());
+        getDictionary().loadPackageFor(atr);
         setAttributeCalculation(atr.getNameFull(), null, value);
     }
 
     <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> value);
 
     default <V> void setAttributeValue(AtrRef<?, ?, V> atr, V value) {
-        getDictionary().loadPackage(atr.getPackageClass());
+        getDictionary().loadPackageFor(atr);
         setAttributeValue(atr.getNameFull(), null, value);
     }
 
@@ -70,17 +70,17 @@ public interface SAttributeEnabled {
     <V> V getAttributeValue(String attributeFullName, Class<V> resultClass);
 
     default <T> T getAttributeValue(AtrRef<?, ?, ?> atr, Class<T> resultClass) {
-        getDictionary().loadPackage(atr.getPackageClass());
+        getDictionary().loadPackageFor(atr);
         return getAttributeValue(atr.getNameFull(), resultClass);
     }
 
     default <V> V getAttributeValue(AtrRef<?, ?, V> atr) {
-        getDictionary().loadPackage(atr.getPackageClass());
+        getDictionary().loadPackageFor(atr);
         return getAttributeValue(atr.getNameFull(), atr.getValueClass());
     }
 
     default <V> boolean hasAttribute(AtrRef<?, ?, V> atr) {
-        getDictionary().loadPackage(atr.getPackageClass());
+        getDictionary().loadPackageFor(atr);
         return getAttribute(atr.getNameFull()).isPresent();
     }
 

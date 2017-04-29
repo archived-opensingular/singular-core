@@ -122,7 +122,7 @@ public class PackageBuilder {
 
     @Nonnull
     private Optional<SType<?>> getAttributeOptional(@Nonnull AtrRef<?, ?, ?> atr) {
-        getDictionary().loadPackage(atr.getPackageClass());
+        getDictionary().loadPackageFor(atr);
 
         if (atr.isNotBindDone()) {
             return Optional.empty();

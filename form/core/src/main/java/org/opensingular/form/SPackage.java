@@ -44,9 +44,12 @@ public class SPackage extends SScopeBase {
                         + SPackage.class.getSimpleName() + " deve ser derivado");
             }
             name = SFormUtil.getInfoPackageName(this.getClass());
-            if (name == null) {
-                name = getClass().getName();
-            }
+        } else if (getClass() != SPackage.class) {
+            throw new SingularFormException(
+                    "Para uma classe derivada de " + getClass().getSimpleName() + ", não deve ser usado o construtor " +
+                            SPackage.class.getSimpleName() + "(String) . Use o construtor " +
+                            SPackage.class.getSimpleName() + "() e informe o nome do pacote usando a anotação @" +
+                            SInfoPackage.class.getSimpleName());
         }
         SFormUtil.validatePackageName(name);
         this.name = name;

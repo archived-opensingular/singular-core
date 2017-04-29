@@ -3,8 +3,8 @@ package org.opensingular.form;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
-import org.opensingular.form.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
+import org.opensingular.form.CoreAttributesTest.TestPacoteCAI.TipoComAtributoInterno1;
+import org.opensingular.form.CoreAttributesTest.TestPacoteCAI.TipoComAtributoInterno2;
 import org.opensingular.form.type.core.SIBoolean;
 import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.core.SIString;
@@ -22,9 +22,9 @@ import java.io.Serializable;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class TestMPacoteCoreAtributos extends TestCaseForm {
+public class CoreAttributesTest extends TestCaseForm {
 
-    public TestMPacoteCoreAtributos(TestFormConfig testFormConfig) {
+    public CoreAttributesTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -35,10 +35,6 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
         static final AtrRef<STypeInteger, SIInteger, Integer> ATR_YY = new AtrRef<>(TestPacoteAA.class, "yy", STypeInteger.class,
                 SIInteger.class, Integer.class);
-
-        protected TestPacoteAA() {
-            super("teste.pacoteAA");
-        }
 
         @Override
         protected void onLoadPackage(PackageBuilder pb) {
@@ -216,11 +212,11 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
     @Test
     public void testCriacaoNovosAtributosNosPacotesCerto() {
         SDictionary dicionario = SDictionary.create();
-        dicionario.loadPackage(SCorePackageTest.TestPacoteB.class);
+        dicionario.loadPackage(SPackageTest.TestPacoteB.class);
 
-        assertEquals("teste.pacoteB.yy", SCorePackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
+        assertEquals("teste.pacoteB.yy", SPackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
 
-        SType<?> tipoAtributo = dicionario.getType(SCorePackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
+        SType<?> tipoAtributo = dicionario.getType(SPackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
         assertNotNull(tipoAtributo);
         assertEquals("teste.pacoteB.yy", tipoAtributo.getName());
         assertEquals("teste.pacoteB", tipoAtributo.getPackage().getName());
@@ -329,13 +325,13 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
     public static final class TestPacoteCAI extends SPackage {
 
-        static final AtrRef<STypeString, SIString, String> ATR_REF_ID1 = new AtrRef<>(TestPacoteCAI.class, "refId1", STypeString.class,
+        static final AtrRef<STypeString, SIString, String> ATR_REF_ID1 = new AtrRef<>(TipoComAtributoInterno1.class, "refId1", STypeString.class,
                 SIString.class, String.class);
 
-        static final AtrRef<STypeString, SIString, String> ATR_REF_ID2 = new AtrRef<>(TestPacoteCAI.class, "refId2", STypeString.class,
+        static final AtrRef<STypeString, SIString, String> ATR_REF_ID2 = new AtrRef<>(TipoComAtributoInterno2.class, "refId2", STypeString.class,
                 SIString.class, String.class);
 
-        static final AtrRef<STypeString, SIString, String> ATR_REF_ID3 = new AtrRef<>(TestPacoteCAI.class, "refId3", STypeString.class,
+        static final AtrRef<STypeString, SIString, String> ATR_REF_ID3 = new AtrRef<>(TipoComAtributoInterno1.class, "refId3", STypeString.class,
                 SIString.class, String.class);
         static final String ATR_KEY_ID4 = "refId4";
 

@@ -106,6 +106,17 @@ public class SDictionary {
         return novo;
     }
 
+    /**
+     * Carrega no dicionário o pacote do atributo informado, se ainda não tiver sido carregado. É seguro chamar é
+     * método mais de uma vez para o mesmo pacote.
+     *
+     * @return O pacote carregado
+     */
+    @Nonnull
+    final SPackage loadPackageFor(@Nonnull AtrRef<?, ?, ?> atr) {
+        return loadPackage(atr.getPackageClass());
+    }
+
     public PackageBuilder createNewPackage(String nome) {
         packages.verifyMustNotBePresent(nome, this);
         SPackage novo = new SPackage(nome);
