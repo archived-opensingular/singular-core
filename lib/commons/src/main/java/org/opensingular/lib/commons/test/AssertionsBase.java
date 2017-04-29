@@ -74,13 +74,14 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
 
     protected final String errorMsg(String msg, Object expected, Object current) {
         boolean showClass = (expected != null) && (current != null) && expected.getClass() != current.getClass();
+        showClass |= "null".equals(expected) || "null".equals(current);
         StringBuilder sb = new StringBuilder();
         sb.append(msg).append(":\n Esperado  : ").append(expected);
-        if (showClass) {
+        if (showClass && expected != null) {
             sb.append(" (").append(expected.getClass()).append(')');
         }
         sb.append("\n Encontrado: ").append(current);
-        if (showClass) {
+        if (showClass && current != null) {
             sb.append(" (").append(current.getClass()).append(')');
         }
         return errorMsg(sb.toString());

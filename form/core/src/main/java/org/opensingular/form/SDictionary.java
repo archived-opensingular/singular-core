@@ -153,7 +153,7 @@ public class SDictionary {
     /** Adiciona o tipo informado no pacote. */
     @Nonnull
     private <T extends SType<?>> T registeLazyTypeIntoPackage(@Nonnull SPackage typePackage, @Nonnull Class<T> typeClass) {
-        Objects.requireNonNull(typeClass);
+        Objects.requireNonNull(typePackage);
         Objects.requireNonNull(typeClass);
         return typePackage.registerType(typeClass);
     }

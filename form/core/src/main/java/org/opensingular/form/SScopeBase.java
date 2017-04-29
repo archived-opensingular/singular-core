@@ -18,6 +18,7 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
 import javax.annotation.Nonnull;
@@ -118,7 +119,9 @@ public abstract class SScopeBase implements SScope {
 
     /** Registro o tipo informado neste escopo. */
     final <T extends SType<?>> T registerType(Class<T> typeClass) {
-        return registerType(MapByName.newInstance(typeClass), typeClass);
+        T t = registerType(MapByName.newInstance(typeClass), typeClass);
+        TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
+        return t;
     }
 
     final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {
