@@ -17,35 +17,28 @@
 package org.opensingular.form.persistence;
 
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * Serviço com as operações básicas de persistência de formulário, mas sem as funções de recuperação e listagem.
+ * Serviço de persistência para alteração e recuperação de instâncias.
  *
  * @author Daniel C. Bordin
  */
-public interface BasicFormPersistence<INSTANCE extends SInstance>  {
+public interface FormRespository<TYPE extends SType<INSTANCE>, INSTANCE extends SInstance> {
 
     /**
-     * Converte uma string representando a chave para o obejto de chave utilizado pela persitência. Dispara exception se
-     * a String não for compatível com o tipo de chave da persistência. <p>Esse metodo seria tipicamente usado para
-     * converter chave passadas por parâmetro (por exemplo na URL) de volta a FormKey.</p>
-     */
-    FormKey keyFromString(String persistenceString);
-
-    /**
-     * Tenta converter o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
+     * Converte o valor para o tipo de FormKey utlizado pela FormPersitente. Se o tipo não for uma representação
      * de chave entendível pela persitencia atual, então dispara uma exception.
-     *
-     * @return null se o valor for null
      */
-    FormKey keyFromObject(Object objectValueToBeConverted);
+    @Nonnull
+    FormKey keyFromObject(@Nonnull Object objectValueToBeConverted);
 
     /**
      * Insere uma instância nova e devolve a chave do novo registro.
-     *
-     * @return Nunca Null
      */
     @Nonnull
     FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor);
@@ -56,7 +49,7 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
     void delete(@Nonnull FormKey key);
 
     /**
-     * Atualiza a instância na base de dados, com base no atributo FormmKey contido na instância informada.
+     * Atualiza a instância na base de dados, com base no atributo FormKey contido na instância informada.
      *
      * @param instance A mesma deverá conter o atributo FormKey, para tanto deverá ter sido recuperada pela própria
      *                 persitência.
@@ -91,4 +84,26 @@ public interface BasicFormPersistence<INSTANCE extends SInstance>  {
      */
     @Nonnull
     FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor, boolean keepAnnotations);
+
+    /**
+     * Recupera a instância correspondete a chava ou dispara Exception se não encontrar.
+     */
+    @Nonnull
+    INSTANCE load(@Nonnull FormKey key);
+
+    /**
+     * Tentar recupeara a instância correspondente a chave, mas pode retornar resultado vazio.
+     */
+    @Nonnull
+    Optional<INSTANCE> loadOpt(@Nonnull FormKey key);
+
+    @Nonnull
+    List<INSTANCE> loadAll(long first, long max);
+
+    @Nonnull
+    List<INSTANCE> loadAll();
+
+    long countAll();
+
+    INSTANCE createInstance();
 }

@@ -1,10 +1,7 @@
 package org.opensingular.form.spring;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
@@ -13,11 +10,14 @@ import org.opensingular.form.persistence.FormPersistenceInMemory;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by ronaldtm on 16/03/17.
  */
-public class SpringFormPersistenceInMemory<T extends SType<I>, I extends SIComposite>
-        extends FormPersistenceInMemory<I>
+public class SpringFormPersistenceInMemory<TYPE extends SType<INSTANCE>, INSTANCE extends SInstance>
+        extends FormPersistenceInMemory<TYPE, INSTANCE>
         implements InitializingBean {
 
     private List<Class<? extends SPackage>> packageClasses = new ArrayList<>();
@@ -41,19 +41,19 @@ public class SpringFormPersistenceInMemory<T extends SType<I>, I extends SICompo
     }
 
     @SuppressWarnings("unchecked")
-    public T getType() {
-        return (T) dictionary.get().getType(typeFullName);
+    public TYPE getType() {
+        return (TYPE) dictionary.get().getType(typeFullName);
     }
 
     @Override
-    public I createInstance() {
-        return (I) documentFactory.createInstance(getRefType());
+    public INSTANCE createInstance() {
+        return (INSTANCE) documentFactory.createInstance(getRefType());
     }
 
     //@formatter:off
-    public SpringFormPersistenceInMemory<T, I> setPackageClasses (List<Class<? extends SPackage>> packageClasses) { this.packageClasses  = packageClasses;  return this; }
-    public SpringFormPersistenceInMemory<T, I> setDocumentFactory(SDocumentFactory               documentFactory) { this.documentFactory = documentFactory; return this; }
-    public SpringFormPersistenceInMemory<T, I> setTypeFullName   (String                            typeFullName) { this.typeFullName    = typeFullName;    return this; }
+    public SpringFormPersistenceInMemory<TYPE, INSTANCE> setPackageClasses (List<Class<? extends SPackage>> packageClasses) { this.packageClasses  = packageClasses;  return this; }
+    public SpringFormPersistenceInMemory<TYPE, INSTANCE> setDocumentFactory(SDocumentFactory               documentFactory) { this.documentFactory = documentFactory; return this; }
+    public SpringFormPersistenceInMemory<TYPE, INSTANCE> setTypeFullName   (String                            typeFullName) { this.typeFullName    = typeFullName;    return this; }
     //@formatter:on
 
     /**
