@@ -1,12 +1,12 @@
 package org.opensingular.form.type.basic;
 
-import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TestCaseForm;
 
 import java.util.GregorianCalendar;
 
@@ -20,7 +20,7 @@ public class DisplayStringCalculationTest extends TestCaseForm {
     }
 
     private SIComposite createPedido() {
-        PackageBuilder              pkt = createTestDictionary().createNewPackage("teste");
+        PackageBuilder              pkt = createTestPackage();
         STypeComposite<SIComposite> tipoPedido = pkt.createCompositeType("pedido");
         tipoPedido.addFieldInteger("cod");
         tipoPedido.addFieldString("nome");

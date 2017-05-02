@@ -18,27 +18,37 @@ package org.opensingular.flow.core.variable.type;
 
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
-import org.opensingular.flow.core.variable.VarType;
 
-public class VarTypeLong implements VarType {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
+public class VarTypeLong extends VarTypeBase<Long> {
 
-    @Override
-    public String toDisplayString(VarInstance varInstance) {
-        return toDisplayString(varInstance.getValue(), varInstance.getDefinition());
+    public VarTypeLong() {
+        super(Long.class);
     }
 
     @Override
     public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return Long.toString((Long) valor);
+        return Long.toString(convert(valor));
     }
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        return Long.toString((Long) varInstance.getValue());
+        return Long.toString(convert(varInstance.getValue()));
+    }
+
+    @Override
+    public Long fromPersistenceStringImpl(String persistenceValue) {
+        return persistenceValue == null ? null : Long.valueOf(persistenceValue);
+    }
+
+    @Nullable
+    @Override
+    protected Long convertNotDirectCompatible(@Nonnull Object original) {
+        if (original instanceof Number) {
+            return ((Number) original).longValue();
+        }
+        return null;
     }
 }

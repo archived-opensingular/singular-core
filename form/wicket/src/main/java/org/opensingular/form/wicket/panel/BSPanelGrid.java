@@ -41,7 +41,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
@@ -50,12 +50,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 public abstract class BSPanelGrid extends Panel {
 
     private static final String ID_TAB    = "tab";
-    private SingularForm<?>    form       = new SingularForm<>("panel-form");
-    private BSTabCol           navigation = new BSTabCol("tab-navigation");
-    private BSTabCol           content    = new BSTabCol("tab-content");
-    private BSGrid             container  = new BSGrid("grid");
-    private Map<String, BSTab> tabMap     = new LinkedHashMap<>();
-    private BSTab              activeTab  = null;
+    private SingularFormWicket<?> form       = new SingularFormWicket<>("panel-form");
+    private BSTabCol              navigation = new BSTabCol("tab-navigation");
+    private BSTabCol              content    = new BSTabCol("tab-content");
+    private BSGrid                container  = new BSGrid("grid");
+    private Map<String, BSTab>    tabMap     = new LinkedHashMap<>();
+    private BSTab                 activeTab  = null;
 
     public BSPanelGrid(String id) {
         super(id);

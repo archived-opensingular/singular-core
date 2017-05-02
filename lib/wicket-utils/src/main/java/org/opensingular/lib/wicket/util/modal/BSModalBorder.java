@@ -261,12 +261,12 @@ public class BSModalBorder extends Border {
     }
 
     public BSModalBorder setRenderModalBodyTag(boolean render) {
-        getModalBody().setRenderBodyOnly(render);
+        getModalBody().setRenderBodyOnly(!render);
         return this;
     }
 
     public BSModalBorder setRenderModalFooterTag(boolean render) {
-        getModalFooter().setRenderBodyOnly(render);
+        getModalFooter().setRenderBodyOnly(!render);
         return this;
     }
 
@@ -431,6 +431,10 @@ public class BSModalBorder extends Border {
 
     public final MarkupContainer getModalFooter() {
         return (MarkupContainer) get(DIALOG).get(FOOTER);
+    }
+    
+    public final Component getCloseIcon() {
+        return get(DIALOG).get(HEADER).get(CLOSE_ICON);
     }
 
     public Component getTitle() {

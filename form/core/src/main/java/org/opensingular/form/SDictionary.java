@@ -24,6 +24,8 @@ import org.opensingular.form.view.ViewResolver;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SDictionary {
 
@@ -90,7 +92,8 @@ public class SDictionary {
      *
      * @return O pacote carregado
      */
-    public <T extends SPackage> T loadPackage(Class<T> packageClass) {
+    @Nonnull
+    public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
         }
@@ -116,37 +119,40 @@ public class SDictionary {
      * estiver carregado ainda, busca carregá-lo e as definições do pacote a que
      * pertence. Senão encontrar no dicionário e nem conseguir encontrar para
      * carregar, então dispara Exception.
-     *
-     * @return Nunca Null.
      */
     @Nonnull
     public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
-        T typeRef = getTypeOptional(typeClass);
+        Objects.requireNonNull(typeClass);
+        T typeRef = types.get(typeClass);
+        if (typeRef == null) {
+            Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
+            SPackage typePackage = loadPackage(classPacote);
+            typeRef = types.get(typeClass);
+            if (typeRef == null) {
+                //O tipo é de carga lazy e não se auto registrou no pacote, então regista agora
+                typeRef = registeLazyTypeIntoPackage(typePackage, typeClass);
+            }
+        }
         if (typeRef == null) {
             throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
         }
         return typeRef;
     }
 
-    public <T extends SType<?>> T getTypeOptional(Class<T> typeClass) {
-        T tipoRef = types.get(typeClass);
-        if (tipoRef == null) {
-            Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
-            loadPackage(classPacote);
-            tipoRef = types.get(typeClass);
-        }
-        return tipoRef;
+    /** Adiciona o tipo informado no pacote. */
+    @Nonnull
+    private <T extends SType<?>> T registeLazyTypeIntoPackage(@Nonnull SPackage typePackage, @Nonnull Class<T> typeClass) {
+        Objects.requireNonNull(typeClass);
+        Objects.requireNonNull(typeClass);
+        return typePackage.registerType(typeClass);
     }
 
     public SType<?> getType(String fullNamePath) {
-        SType<?> type = getTypeOptional(fullNamePath);
-        if (type == null) {
-            throw new SingularFormException("Tipo '" + fullNamePath + "' não encontrado");
-        }
-        return type;
+        return getTypeOptional(fullNamePath).orElseThrow(
+                () -> new SingularFormException("Tipo '" + fullNamePath + "' não encontrado"));
     }
 
-    public SType<?> getTypeOptional(String pathFullName) {
+    public Optional<SType<?>> getTypeOptional(String pathFullName) {
         SType<?> t = types.get(pathFullName);
         if (t == null) {
             // Verifica se é um tipo dos pacotes com carga automática do
@@ -157,7 +163,7 @@ public class SDictionary {
                 t = types.get(pathFullName);
             }
         }
-        return t;
+        return Optional.ofNullable(t);
     }
 
     public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> classeTipo) {

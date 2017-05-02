@@ -12,7 +12,11 @@ import org.opensingular.form.TestMPacoteCoreTipoLista.TestPacoteListaA.TipoPedid
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.*;
+import org.opensingular.form.type.core.SIInteger;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
 
 import java.util.Collection;
 
@@ -28,7 +32,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     @Test
     @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoSimples() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeList<STypeString, SIString> nomes = pb.createListTypeOf("nomes", STypeString.class);
 
@@ -58,7 +62,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertException(() -> listaInt.addValue("XX"), "não consegue converter");
 
         assertEquals(lista.getValue("[0]"), "Paulo");
-        assertEquals(listaInt.getValue("[1]"), 20);
+        assertEquals((Object) listaInt.getValue("[1]"), 20);
         assertException(() -> listaInt.getValue("[20]"), INDICE_INVALIDO);
 
     }
@@ -69,7 +73,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @Test
     public void testTipoListaCriacaoOfTipoComposto() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeList<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createListOfNewCompositeType("pedidos",
                 "pedido");
@@ -101,7 +105,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertException(() -> pedidos.getValueAt(10), INDICE_INVALIDO);
 
         assertEquals(pedidos.getValue("[0].descricao"), "bola");
-        assertEquals(pedidos.getValue("[0].qtd"), 20);
+        assertEquals((Object) pedidos.getValue("[0].qtd"), 20);
 
         testAtribuicao(pedidos, "[1].descricao", "rede2", 6);
         testAtribuicao(pedidos, "[1].qtd", 20, 6);
@@ -117,7 +121,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @Test
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeList<TipoPedido, Pedido> tipoPedidos = pb.createListTypeOf("formulas", TipoPedido.class);
         TipoPedido tipoPedidoLista = tipoPedidos.getElementsType();
@@ -152,7 +156,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     public void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalCompositeType() {
         //-----------------------------------------------------------------
         //Teste 1 - Criando a lista direto no package e usando um composite criado
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeComposite<SIComposite> original = pb.createCompositeType("original");
         original.addFieldString("s1");
         STypeList<?, ?> list = pb.createListTypeOf("list", original);
@@ -160,21 +164,21 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         //-----------------------------------------------------------------
         //Teste 2 - Criando a lista direto no package e usando SType
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         original = pb.getType(STypeComposite.class);
         list = pb.createListOfNewCompositeType("list", "item");
         testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalCompositeType(original, list);
 
         //-----------------------------------------------------------------
         //Teste 3 - Criando a lista direto no package e usando SType pela referencia de classe
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         original = pb.getType(STypeComposite.class);
         list = pb.createListTypeOf("list", STypeComposite.class);
         testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalCompositeType(original, list);
 
         //-----------------------------------------------------------------
         //Teste 4 - Criando a lista de um tipo e usando um composite criado
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         original = pb.createCompositeType("original");
         original.addFieldString("s1");
         STypeComposite<SIComposite> parent = pb.createCompositeType("parent");
@@ -183,7 +187,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         //-----------------------------------------------------------------
         //Teste 5 - Criando a lista de um tipo e usando SType
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         original = pb.getType(STypeComposite.class);
         parent = pb.createCompositeType("parent");
         list = parent.addFieldListOfComposite("list", "item");
@@ -191,7 +195,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         //-----------------------------------------------------------------
         //Teste 6 - Criando a lista de um tipo e usando SType pela referencia de classe
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         original = pb.getType(STypeComposite.class);
         parent = pb.createCompositeType("parent");
         list = parent.addFieldListOf("list", STypeComposite.class);
@@ -226,14 +230,14 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     @Test
     //@Ignore("Desativado devido a problema estrutural. Voltar quando tiver sido resolvido")
     public void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedido() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         TipoPedido pedido = pb.getType(TipoPedido.class);
         STypeList<TipoPedido, Pedido> list = pb.createListTypeOf("list", pedido);
         testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalType(pedido, list);
         verificarVariaveisPedidoCriada(pedido);
         verificarVariaveisPedidoCriada(list.getElementsType());
 
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         pedido = pb.getType(TipoPedido.class);
         list = pb.createListTypeOf("list", TipoPedido.class);
         testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalType(pedido, list);
@@ -254,7 +258,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     @Test
     //@Ignore("Desativado devido a problema estrutural. Voltar quando tiver sido resolvido")
     public void testChangeInAttributeOfTheListElementTypeMustNotChangeTheOriginalTypeByClassPedidoTwoTimes() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         TipoPedido pedido = pb.getType(TipoPedido.class);
         STypeComposite<SIComposite> composite = pb.createCompositeType("block");
         STypeList<TipoPedido, Pedido> list1 = composite.addFieldListOf("list1", pedido);
@@ -264,7 +268,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         verificarVariaveisPedidoCriada(list1.getElementsType());
         verificarVariaveisPedidoCriada(list2.getElementsType());
 
-        pb = createTestDictionary().createNewPackage("teste");
+        pb = createTestPackage();
         pedido = pb.getType(TipoPedido.class);
         composite = pb.createCompositeType("block");
         list1 = composite.addFieldListOf("list1", TipoPedido.class);
@@ -306,7 +310,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @Test
     public void testeOnCargaTipoChamadaSubTipo() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         TestTipoListaComCargaInterna tipo = pb.createType("arquivo", TestTipoListaComCargaInterna.class);
 
         assertEquals("xxx", tipo.asAtr().getLabel());
@@ -406,7 +410,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     private SIList<SIInteger> createIntList(int size) {
-        PackageBuilder    pb   = createTestDictionary().createNewPackage("teste");
+        PackageBuilder    pb   = createTestPackage();
         SIList<SIInteger> list = pb.createListTypeOf("numbers", STypeInteger.class).newInstance();
 
         for (int i = 0; i < size; i++) {
@@ -427,8 +431,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         aTree.listElementType("childrens").isAttrLabel("SubTree").isComposite(2);
         assertType(tTree.name).isNotNull().isSameAs(tTree.getField("name"));
         assertType(tTree.childrens).isNotNull().isSameAs(tTree.getField("childrens"));
-        assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).name).isSameAs(tTree.name);
-        assertType(((TypeTestTree) aTree.listElementType("childrens").getTarget()).childrens).isSameAs(tTree.childrens);
+        assertType(aTree.listElementType("childrens").getTarget(TypeTestTree.class).name).isSameAs(tTree.name);
+        assertType(aTree.listElementType("childrens").getTarget(TypeTestTree.class).childrens).isSameAs(tTree.childrens);
 
         testTreeRecursiveInstance(tTree, tTree.name, tTree.childrens, "Tree", "SubTree");
 
@@ -489,7 +493,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @Test
     public void testCircularReferenceWithOutTypeDefinedByClass() {
-        PackageBuilder                                      pb             = createTestDictionary().createNewPackage("test");
+        PackageBuilder                                      pb             = createTestPackage();
         STypeComposite<SIComposite>                         tTree          = pb.createCompositeType("tree");
         STypeString                                         tTreeName      = tTree.addFieldString("name");
         STypeList<STypeComposite<SIComposite>, SIComposite> tTreeChildrens = tTree.addFieldListOf("childrens", tTree);
@@ -529,7 +533,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         AssertionsSType aPark = assertType(tPark);
         aPark.isComposite(3);
-        aPark.getTarget().getDictionary().debug();
+        aPark.getTarget().getDictionary();
         //aPark.field("tree").isExtensionCorrect(tTree);
         aPark.field("trees").listElementType().isDirectExtensionOf(tTree).isNotSameAs(tPark.getField("tree"));
         aPark.field("trees").listElementType().field("name").isDirectExtensionOf(tTreeName);

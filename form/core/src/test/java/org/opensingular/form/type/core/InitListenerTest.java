@@ -1,7 +1,8 @@
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.form.TestCaseForm;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SIComposite;
@@ -10,13 +11,11 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.document.SDocumentFactoryEmpty;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.io.TesteFormSerializationUtil;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
 
@@ -31,7 +30,7 @@ public class InitListenerTest extends TestCaseForm {
 
     @Test
     public void runInitializationCode() {
-        STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
+        STypeComposite<SIComposite> base = createTestPackage().createCompositeType("base");
         STypeString field1 = base.addFieldString("field1");
         STypeString field2 = base.addFieldString("field2");
 
@@ -41,13 +40,13 @@ public class InitListenerTest extends TestCaseForm {
 
     @Test
     public void initializationCodeHasAccessToAllServices() {
-        STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
+        STypeComposite<SIComposite> base = createTestPackage().createCompositeType("base");
         STypeString field1 = base.addFieldString("field1");
         STypeString field2 = base.addFieldString("field2");
 
         field1.withInitListener((x) -> {
             assertThat(x.getDocument()).isNotNull();
-            assertThat(x.getDocument().lookupService(P.class)).isNotNull();
+            assertThat(x.getDocument().lookupService(P.class).orElse(null)).isNotNull();
             x.setValue("abacate");
         });
 
@@ -56,7 +55,7 @@ public class InitListenerTest extends TestCaseForm {
 
     @Test
     public void initializationIsRunnedForAllInstances() {
-        STypeComposite<SIComposite> base = createTestDictionary().createNewPackage("test").createCompositeType("base");
+        STypeComposite<SIComposite> base = createTestPackage().createCompositeType("base");
         STypeString field1 = base.addFieldString("field1");
         STypeString field2 = base.addFieldString("field2");
 
@@ -72,24 +71,14 @@ public class InitListenerTest extends TestCaseForm {
     }
 
     private SInstance newInstance(SType t) {
-        return new SDocumentFactoryEmpty() {
-            @Override
-            protected void setupDocument(SDocument document) {
-                super.setupDocument(document);
-                document.bindLocalService("test", P.class, RefService.of(new P()));
-            }
-        }.createInstance(new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return t;
-            }
-        });
-
+        return SDocumentFactory.empty()
+                .extendAddingSetupStep(document -> document.bindLocalService("test", P.class, RefService.of(new P())))
+                .createInstance(RefType.of(() -> t));
     }
 
     @Test
     public void testIfSimpleInitWithValue() {
-        PackageBuilder pb   = createTestDictionary().createNewPackage("SPackageTest");
+        PackageBuilder pb   = createTestPackage();
         STypeString    nome = pb.createType("nome", STypeString.class);
 
         nome.withInitListener(si -> si.setValue("banana"));
@@ -103,7 +92,7 @@ public class InitListenerTest extends TestCaseForm {
 
     @Test
     public void testIfCompositeInitWithValue() {
-        PackageBuilder              pb   = createTestDictionary().createNewPackage("SPackageTest");
+        PackageBuilder              pb   = createTestPackage();
         STypeComposite<SIComposite> root = pb.createCompositeType("root");
         STypeString                 nome = root.addFieldString("nome");
         root.addFieldString("origem");
@@ -125,7 +114,7 @@ public class InitListenerTest extends TestCaseForm {
     @Test
     public void testListOfCompositeInitWithValue() {
 
-        PackageBuilder                                      pb     = createTestDictionary().createNewPackage("SPackageTest");
+        PackageBuilder                                      pb     = createTestPackage();
         STypeComposite<SIComposite>                         root   = pb.createCompositeType("root");
         STypeList<STypeComposite<SIComposite>, SIComposite> frutas = root.addFieldListOfComposite("frutas", "fruta");
         STypeComposite<SIComposite>                         fruta  = frutas.getElementsType();
@@ -147,7 +136,7 @@ public class InitListenerTest extends TestCaseForm {
 
     @Test
     public void testIfListOfSimpleInitWithValue() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("SPackageTest");
+        PackageBuilder pb = createTestPackage();
         STypeList<STypeString, SIString> frutasType = pb.createListTypeOf("frutas", STypeString.class);
 
         frutasType.getElementsType().withInitListener(si -> si.setValue("banana"));

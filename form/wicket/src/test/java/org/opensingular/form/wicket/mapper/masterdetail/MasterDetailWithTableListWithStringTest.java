@@ -1,31 +1,28 @@
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.link.AbstractLink;
+import org.junit.Before;
+import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.AbstractLink;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTest {
+public class MasterDetailWithTableListWithStringTest {
 
-    STypeString simpleString;
+    private static SingularDummyFormPageTester tester;
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> mockType) {
+    private static STypeList<STypeComposite<SIComposite>, SIComposite> mockList;
+    private static STypeComposite<?> mockTypeComposite;
+    private static STypeString simpleString;
+
+    private static void baseType(STypeComposite<?> mockType) {
 
         final STypeList<STypeComposite<SIComposite>, SIComposite> mockMasterDetail
                 = mockType.addFieldListOfComposite("mockList", "mockTypeMasterDetailComposite");
@@ -36,81 +33,69 @@ public class MasterDetailWithTableListWithStringTest extends SingularFormBaseTes
         mockMasterDetail.asAtr()
                 .label("Mock Type Master Detail ");
 
-        final STypeList<STypeComposite<SIComposite>, SIComposite> mockList
-                = mockTypeMasterDetailComposite.addFieldListOfComposite("mockList", "mockTypeComposite");
-
-        final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
+        mockList = mockTypeMasterDetailComposite.addFieldListOfComposite("mockList", "mockTypeComposite");
+        mockTypeComposite = mockList.getElementsType();
 
         mockList.withView(SViewListByTable::new);
         mockList.asAtr()
                 .label("Mock Type Composite");
 
         simpleString = mockTypeComposite.addFieldString("mockTypeComposite");
-
     }
 
-    @Test public void clickingTheButtonAddsNewItems() {
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(MasterDetailWithTableListWithStringTest::baseType);
+        tester.startDummyPage();
+    }
+
+    @Test
+    public void clickingTheButtonAddsNewItems() {
         clickMasterDetailLink();
 
-        Assert.assertNotEquals(findMasterDetailLink(), findTableAddButton());
+        assertThat(findMasterDetailLink()).isNotEqualTo(findTableAddButton());
 
-        Stream<FormComponent> stream = findFormComponentsByType(form.getForm(), simpleString);
-        Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
-
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
         clickAddButton();
-        assertThat(componentsOfType(simpleString)).hasSize(1);
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
 
         clickAddButton();
         clickAddButton();
-        assertThat(componentsOfType(simpleString)).hasSize(3);
+
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(3);
     }
 
     @Test
     public void keepsFilledDataForAlreadyAddedItems() {
-
         clickMasterDetailLink();
 
-        assertThat(componentsOfType(simpleString)).isEmpty();
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
 
         clickAddButton();
 
-        assertThat(componentsOfType(simpleString)).hasSize(1);
-
-        form.setValue(getSimpleStringField(), "123456");
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubCompomentWithType(simpleString).assertSInstance().getTarget().setValue("123456");
 
         clickAddButton();
 
-        assertThat(componentsOfType(simpleString)).hasSize(2);
-        assertThat(getSimpleStringField().getValue()).isEqualTo("123456");
+        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(2);
+        tester.getAssertionsForm().getSubCompomentWithType(simpleString).assertSInstance().isValueEquals("123456");
     }
 
     private void clickMasterDetailLink() {
         tester.executeAjaxEvent(findMasterDetailLink(), "click");
     }
 
-    private List<FormComponent> componentsOfType(STypeString type) {
-        return findFormComponentsByType(form.getForm(), type).collect(Collectors.toList());
-    }
-
     private void clickAddButton() {
         tester.executeAjaxEvent(findTableAddButton(), "click");
     }
 
-    private TextField getSimpleStringField() {
-        return (TextField) findFormComponentsByType(form.getForm(), simpleString)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o select simples"));
-    }
-
     private AbstractLink findMasterDetailLink() {
-        return findOnForm(AbstractLink.class, form.getForm(), (b) -> b.getId().equals("addButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar do mestre detalhe"));
+        return tester.getAssertionsForm().getSubCompomentWithId("addButton").getTarget(AbstractLink.class);
     }
 
     private Button findTableAddButton() {
-        return findOnForm(Button.class, form.getForm(), b -> b.getClass().getName().contains("AddButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar do table list"));
+        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(Button.class);
     }
 }

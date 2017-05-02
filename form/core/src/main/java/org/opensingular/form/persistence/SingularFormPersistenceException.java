@@ -19,6 +19,8 @@ package org.opensingular.form.persistence;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 
+import java.util.function.Consumer;
+
 /**
  * Representa exceptions relacioandas a camada de persistência de formulário.
  *
@@ -36,6 +38,14 @@ public class SingularFormPersistenceException extends SingularFormException {
 
     public SingularFormPersistenceException(String msg, Throwable throwable) {
         super(msg, throwable);
+    }
+
+    public SingularFormPersistenceException(String msg, Throwable throwable,
+            Consumer<SingularFormPersistenceException> consumer) {
+        super(msg, throwable);
+        if (consumer != null) {
+            consumer.accept(this);
+        }
     }
 
     /**

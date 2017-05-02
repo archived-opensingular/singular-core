@@ -16,50 +16,32 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.variable.VarInstanceMap;
-import org.opensingular.flow.core.variable.ValidationResult;
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
-public class TransitionRef {
+public final class TransitionRef {
 
-    private ProcessInstance processInstance;
+    private final TaskInstance originTaskInstance;
 
-    private TaskInstance taskInstance;
+    private final STransition transition;
 
-    private final MTransition transition;
-
-    public TransitionRef(ProcessInstance processInstance, MTransition transition) {
-        this.processInstance = processInstance;
-        this.transition = transition;
+    public TransitionRef(@Nonnull TaskInstance originTaskInstance, @Nonnull STransition transition) {
+        this.originTaskInstance = Objects.requireNonNull(originTaskInstance);
+        this.transition = Objects.requireNonNull(transition);
     }
 
-    public TransitionRef(TaskInstance taskInstance, MTransition transition) {
-        this.taskInstance = taskInstance;
-        this.transition = transition;
-    }
-
+    @Nonnull
     public ProcessInstance getProcessInstance() {
-        if (processInstance == null) {
-            processInstance = taskInstance.getProcessInstance();
-        }
-        return processInstance;
+        return originTaskInstance.getProcessInstance();
     }
 
-    public TaskInstance getTaskInstance() {
-        if (taskInstance == null) {
-            return processInstance.getCurrentTask();
-        }
-        return taskInstance;
+    @Nonnull
+    public TaskInstance getOriginTaskInstance() {
+        return originTaskInstance;
     }
 
-    public MTransition getTransition() {
+    @Nonnull
+    public STransition getTransition() {
         return transition;
-    }
-
-    public VarInstanceMap<?> newTransationParameters() {
-        return transition.newTransationParameters(this);
-    }
-
-    public ValidationResult validate(VarInstanceMap<?> transitionParameters) {
-        return transition.validate(this, transitionParameters);
     }
 }

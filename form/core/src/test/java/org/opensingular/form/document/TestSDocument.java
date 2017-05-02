@@ -1,6 +1,8 @@
 package org.opensingular.form.document;
 
-import org.opensingular.form.TestCaseForm;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
@@ -8,11 +10,9 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class TestSDocument extends TestCaseForm {
@@ -35,7 +35,7 @@ public class TestSDocument extends TestCaseForm {
 
     @Test
     public void testCriacaoImplicitaPacoteNovo() {
-        PackageBuilder    pb         = createTestDictionary().createNewPackage("teste");
+        PackageBuilder    pb         = createTestPackage();
         STypeComposite<?> tipo       = pb.createType("nome", STypeComposite.class);
 
         SInstance instancia1 = tipo.newInstance();
@@ -49,7 +49,7 @@ public class TestSDocument extends TestCaseForm {
 
     @Test
     public void testHerancaPelosSubcampos() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeList<STypeComposite<SIComposite>, SIComposite> tipoLista    = pb.createListOfNewCompositeType("pessoas", "pessoa");
         STypeComposite<?>                                   tipoComposto = tipoLista.getElementsType();
         tipoComposto.addFieldString("nome");

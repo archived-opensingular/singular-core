@@ -16,32 +16,57 @@
 
 package org.opensingular.form.wicket.model;
 
-import org.opensingular.form.SInstance;
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public interface ISInstanceAwareModel<T> extends IModel<T> {
-    SInstance getMInstancia();
 
-    static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model){
-        if(model != null && ISInstanceAwareModel.class.isAssignableFrom(model.getClass())){
-            return Optional.of((ISInstanceAwareModel<X>) model);
-        } else {
-            return Optional.empty();
+    SInstance getSInstance();
+
+    /**
+     * Recupera o {@link SInstance} associado ao componente, se o componente tiver um model do tipo {@link
+     * ISInstanceAwareModel}.
+     */
+    @Nonnull
+    static Optional<SInstance> optionalSInstance(@Nonnull Component component) {
+        return optionalSInstance(component.getDefaultModel());
+    }
+
+    /**
+     * Recupera o {@link SInstance} associado ao model, se o model for tipo {@linkISInstanceAwareModel}.
+     */
+    @Nonnull
+    static Optional<SInstance> optionalSInstance(IModel<?> model) {
+        if (model instanceof ISInstanceAwareModel) {
+            return Optional.ofNullable(((ISInstanceAwareModel) model).getSInstance());
         }
+        return Optional.empty();
+    }
+
+    static <X> Optional<ISInstanceAwareModel<X>> optionalCast(IModel<X> model) {
+        if (model instanceof ISInstanceAwareModel) {
+            return Optional.of((ISInstanceAwareModel<X>) model);
+        }
+        return Optional.empty();
     }
 
     static IModel<SInstance> getInstanceModel(ISInstanceAwareModel<?> model) {
         return new ISInstanceAwareModel<SInstance>() {
             public SInstance getObject() {
-                return getMInstancia();
+                return getSInstance();
             }
-            public SInstance getMInstancia() {
-                return model.getMInstancia();
+
+            public SInstance getSInstance() {
+                return model.getSInstance();
             }
+
             @Override
             public void setObject(SInstance object) {}
+
             @Override
             public void detach() {}
         };

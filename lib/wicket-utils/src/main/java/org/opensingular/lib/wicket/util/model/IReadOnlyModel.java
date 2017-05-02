@@ -20,11 +20,13 @@ import org.apache.wicket.model.IModel;
 
 public interface IReadOnlyModel<T> extends IModel<T> {
 
+    @Override
     default void setObject(T object) {
         throw new UnsupportedOperationException("Model " + getClass() +
             " does not support setObject(Object)");
     }
     
+    @Override
     default void detach() {
     }
     

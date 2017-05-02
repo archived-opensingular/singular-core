@@ -16,8 +16,8 @@
 
 package org.opensingular.form.converter;
 
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 
 import java.io.Serializable;
@@ -34,7 +34,7 @@ public interface ValueToSICompositeConverter<T extends Serializable> extends SIn
 
     @Override
     default T toObject(SInstance ins) {
-        throw new SingularFormException(ValueToSICompositeConverter.class.getName() + " não é capaz de converter para objeto");
+        throw new SingularFormException(ValueToSICompositeConverter.class.getName() + " não é capaz de converter para objeto", ins);
     }
 
 }

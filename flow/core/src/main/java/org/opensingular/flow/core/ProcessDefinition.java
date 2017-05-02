@@ -19,8 +19,16 @@ package org.opensingular.flow.core;
 import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.builder.ITaskDefinition;
-import org.opensingular.flow.core.entity.*;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.service.IPersistenceService;
@@ -28,14 +36,20 @@ import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,13 +122,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      */
     protected ProcessDefinition(Class<I> processInstanceClass, VarService varService) {
         if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
-            throw new SingularFlowException("A definição de fluxo deve ser anotada com " + DefinitionInfo.class.getName());
+            throw new SingularFlowException(
+                    "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
+                            DefinitionInfo.class.getName(), this);
         }
         String flowKey = this.getClass().getAnnotation(DefinitionInfo.class).value();
         Objects.requireNonNull(flowKey, "key");
         Objects.requireNonNull(processInstanceClass, "processInstanceClass");
         if (getClass().getSimpleName().equalsIgnoreCase(flowKey)) {
-            throw new SingularFlowException("A o nome simples da classe do processo(" + getClass().getSimpleName() + ") não pode ser igual a chave definida em @DefinitionInfo.");
+            throw new SingularFlowException("O nome simples da classe do processo(" + getClass().getSimpleName() +
+                    ") não pode ser igual a chave definida em @DefinitionInfo.", this);
         }
         this.key = flowKey;
         this.processInstanceClass = processInstanceClass;
@@ -134,45 +151,35 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
 
     /**
-     * <p>
-     * Método responsável pela criação do mapa de fluxo.
-     * </p>
-     *
-     * @return o mapa de fluxo para este processo.
+     * Método a ser implementado com a criação do fluxo do processo.
      */
+    @Nonnull
     protected abstract FlowMap createFlowMap();
 
     /**
-     * <p>
      * Retorna o {@link FlowMap} para esta definição de processo.
-     * </p>
-     *
-     * @return o {@link FlowMap}.
      */
+    @Nonnull
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
             if (novo == null){
                 novo = new FlowMap(this);
             }
-            configureActions(novo);
             if (novo.getProcessDefinition() != this) {
-                throw new SingularFlowException("Mapa com definiçao trocada");
+                throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
             novo.verifyConsistency();
-            MBPMUtil.calculateTaskOrder(novo);
+            SFlowUtil.calculateTaskOrder(novo);
             flowMap = novo;
         }
         return flowMap;
     }
 
     /**
-     * <p>
      * Retorna o serviço de consulta das instâncias deste tipo de processo.
-     * </p>
-     *
-     * @return o serviço de consulta.
      */
+    @Nonnull
     public IProcessDataService<I> getDataService() {
         if (processDataService == null) {
             processDataService = new ProcessDataServiceImpl<>(this);
@@ -262,12 +269,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
 
         if (scheduledJobsByName.containsKey(name)) {
-            throw new SingularFlowException("A Job with name '" + name + "' is already defined.");
+            throw new SingularFlowException("A Job with name '" + name + "' is already defined.", this);
         }
         scheduledJobsByName.put(name, scheduledJob);
         return scheduledJob;
     }
 
+    @Nonnull
     final Collection<ProcessScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
@@ -353,7 +361,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         IEntityProcessVersion version = getPersistenceService().retrieveProcessVersionByCod(entityVersionCod);
         if (version == null) {
             entityVersionCod = null;
-            throw new SingularFlowException(createErrorMsg("Definicao demanda inconsistente com o BD: codigo não encontrado"));
+            throw new SingularFlowException(
+                    createErrorMsg(String.format("Definicao demanda inconsistente com o BD: codigo '%d' não encontrado", entityVersionCod)), this);
         }
 
         return version;
@@ -375,7 +384,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @throws SingularException
      *             caso não encontre a tarefa.
      */
-    public MTask<?> getTask(ITaskDefinition taskDefinition) {
+    public STask<?> getTask(ITaskDefinition taskDefinition) {
         return getFlowMap().getTask(taskDefinition);
     }
 
@@ -383,11 +392,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
     }
 
-    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull MTask<?> task) {
+    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
         IEntityTaskVersion version = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
         if (version == null) {
-            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
+            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"), this);
         }
         return version;
     }
@@ -429,7 +438,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            a tarefa informada.
      * @return a entidade persistente.
      */
-    public final IEntityTaskDefinition getEntityTaskDefinition(MTask<?> task) {
+    public final IEntityTaskDefinition getEntityTaskDefinition(STask<?> task) {
         return getEntityTaskDefinitionOrException(task.getAbbreviation());
     }
 
@@ -476,7 +485,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
         IEntityTaskDefinition taskDefinition = getEntityTaskDefinition(taskAbbreviation);
         if (taskDefinition == null) {
-            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation));
+            throw new SingularFlowException(
+                    createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation), this);
         }
         return taskDefinition;
     }
@@ -549,7 +559,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            o usuário especificado.
      * @return o <i>link resolver</i>.
      */
-    public final Lnk getCreatePageFor(MUser user) {
+    public final Lnk getCreatePageFor(SUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
     }
 
@@ -594,7 +604,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa
      *         ser configurado; {@code false} caso contrário.
      */
-    public boolean canBeCreatedBy(MUser user) {
+    public boolean canBeCreatedBy(SUser user) {
         return isCreatedByUser();
     }
 
@@ -631,7 +641,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return metaData;
     }
 
-    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends MTask<?>> stream) {
+    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends STask<?>> stream) {
         return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
     }
 
@@ -649,39 +659,55 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * <p>
      * Retorna a instância correspondente à entidade fornecida.
-     * </p>
-     *
-     * @param dadosInstancia
-     *            a entidade fornecida.
-     * @return a instância.
      */
-    protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
-        if(dadosInstancia.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(getKey())){
-            Objects.requireNonNull(dadosInstancia);
-            I novo = newUnbindedInstance();
-            novo.setInternalEntity(dadosInstancia);
-            return novo;
-        } else {
-            throw new SingularFlowException(createErrorMsg("A entidade com id "+dadosInstancia.getCod()+" não pertence ao processo."));
+    @Nonnull
+    protected final I convertToProcessInstance(@Nonnull IEntityProcessInstance dadosInstancia) {
+        Objects.requireNonNull(dadosInstancia);
+        checkIfKeysAreCompatible(this, dadosInstancia);
+
+        I novo = newUnbindedInstance();
+        novo.setInternalEntity(dadosInstancia);
+        return novo;
+    }
+
+    /** Verifica se a entidade da instancia de processo pertence a definição de processo. Senão dispara Exception. */
+    private static void checkIfKeysAreCompatible(ProcessDefinition<?> definition, IEntityProcessInstance instance) {
+        if(! instance.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(definition.getKey())){
+            throw new SingularFlowException(
+                    "A instancia de processo com id " + instance.getCod() + " não pertence a definição de processo " +
+                            definition.getName(), definition);
+        }
+    }
+
+    /** Verifica se a instancia de processo pertence a definição de processo. Senão dispara Exception. */
+    final void checkIfCompatible(ProcessInstance instance) {
+        checkIfKeysAreCompatible(this, instance.getEntity());
+        if (!processInstanceClass.isInstance(instance)) {
+            throw new SingularFlowException(
+                    "A instancia de processo com id=" + instance.getFullId() + " deveria ser da classe " +
+                            processInstanceClass.getName() + " mas na verdade é da classe " +
+                            instance.getClass().getName(), instance);
         }
     }
 
     /**
-     * <p>
      * Retorna uma nova instância vazia deste processo pronta para ser
      * configurada em um novo fluxo.
-     * </p>
-     *
-     * @return a nova instância (<i>null safe</i>).
      */
-    public I newInstance() {
+    @Nonnull
+    public I newPreStartInstance() {
         I novo = newUnbindedInstance();
         novo.setInternalEntity(createProcessInstance());
         return novo;
     }
 
+    public StartCall<I> prepareStartCall() {
+        return new StartCall<I>(this, getFlowMap().getStart());
+    }
+
+
+    @Nonnull
     private I newUnbindedInstance() {
         I novo;
         try {
@@ -696,12 +722,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         } catch (Exception e) {
             throw new SingularFlowException(e.getMessage(), e);
         }
-        throw new SingularFlowException(
-                createErrorMsg("Construtor sem parametros  ausente: " + getProcessInstanceClass().getSimpleName() + "()"));
+        throw new SingularFlowException(createErrorMsg(
+                "Construtor sem parametros ausente: " + getProcessInstanceClass().getSimpleName() + "()"), this);
     }
 
     final IEntityProcessInstance createProcessInstance() {
-        IEntityTaskVersion initialState =  getEntityTaskVersion(getFlowMap().getStartTask());
+        IEntityTaskVersion initialState =  getEntityTaskVersion(getFlowMap().getStart().getTask());
         return getPersistenceService().createProcessInstance(getEntityProcessVersion(), initialState);
     }
 
@@ -762,9 +788,5 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         result = getCategory().hashCode();
         result = 31 * result + getName().hashCode();
         return result;
-    }
-
-    protected void configureActions(FlowMap flowMap){
-
     }
 }

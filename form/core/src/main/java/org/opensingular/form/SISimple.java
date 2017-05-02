@@ -16,12 +16,12 @@
 
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import org.opensingular.form.calculation.CalculationContext;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.internal.PathReader;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
 
@@ -72,7 +72,7 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
     @Override
     final <T> T getValueWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         if (!leitor.isEmpty()) {
-            throw new SingularFormException("Não ser aplica path a um tipo simples");
+            throw new SingularFormException("Não ser aplica path a um tipo simples", this);
         }
         return getValueWithDefault(classeDestino);
     }

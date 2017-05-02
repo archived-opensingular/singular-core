@@ -16,9 +16,13 @@
 
 package org.opensingular.lib.commons.base;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * The base class of all runtime exceptions for Singular.
@@ -42,7 +46,7 @@ public class SingularException extends RuntimeException {
      *
      * @param msg the error message
      */
-    protected SingularException(String msg) {
+    public SingularException(String msg) {
         super(msg);
     }
 
@@ -85,6 +89,11 @@ public class SingularException extends RuntimeException {
         }
     }
 
+    /** Verifica se já foi adicinada uma informação de detalhe com o label informado. */
+    public boolean containsEntry(String label) {
+        return entries != null && entries.stream().anyMatch(e -> Objects.equals(label, e.label));
+    }
+
     /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.
      *
@@ -101,6 +110,22 @@ public class SingularException extends RuntimeException {
      * @param value Valor da informação (pode ser null)
      */
     public SingularException add(String label, Object value) {
+        return add(0, label, value);
+    }
+
+    /**
+     * Adiciona uma nova linha de informação extra na exception a ser exibida junto com a mensagem a partir doSupplier,
+     * mas protegendo a geração caso o Supplier provoque uma Exception.
+     */
+    @Nonnull
+    public SingularException add(@Nullable String label, @Nullable Supplier<?> valueSupplier) {
+        Object value;
+        try {
+            value = valueSupplier == null ? null : valueSupplier.get();
+        } catch (Exception e) {
+            //Ignora a exception para não bloquear a geração da Exception atual
+            return this;
+        }
         return add(0, label, value);
     }
 
@@ -133,7 +158,7 @@ public class SingularException extends RuntimeException {
         msg.append(super.getMessage());
         int max = 0;
         for (InfoEntry entry : entries) {
-            if (entry != null) {
+            if (entry != null && entry.label != null) {
                 max = Math.max(max, entry.label.length());
             }
         }
@@ -161,7 +186,7 @@ public class SingularException extends RuntimeException {
      */
     private static final class InfoEntry implements Serializable {
 
-        public final int    level;
+        public final int level;
         public final String label;
         public final String value;
 

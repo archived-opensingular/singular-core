@@ -26,10 +26,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.*;
-import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.internal.xml.MParser;
-import org.opensingular.form.io.MformPersistenciaXML;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
+import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewBreadcrumb;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -60,7 +66,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
-public class ListBreadcrumbMapper extends AbstractListaMapper {
+public class ListBreadcrumbMapper extends AbstractListMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
@@ -157,10 +163,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
         }
 
         private void saveState() {
-            MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
-            if (xml != null) {
-                instanceBackupXml = xml.toString();
-            }
+            SFormXMLUtil.toStringXML(currentInstance.getObject()).ifPresent(x -> instanceBackupXml = x);
         }
 
         private void rollbackState() {
@@ -169,7 +172,7 @@ public class ListBreadcrumbMapper extends AbstractListaMapper {
                     listModel.getObject().remove(listModel.getObject().size() - 1);
                 } else {
                     MElement xml = MParser.parse(instanceBackupXml);
-                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getType(), xml);
+                    SInstance i = SFormXMLUtil.fromXML(currentInstance.getObject().getType(), xml);
                     currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {

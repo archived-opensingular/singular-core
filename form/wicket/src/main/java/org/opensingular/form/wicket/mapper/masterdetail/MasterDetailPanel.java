@@ -25,7 +25,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.*;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.validation.IValidationError;
@@ -34,11 +40,11 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.component.SingularForm;
+import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
-import org.opensingular.form.wicket.mapper.AbstractListaMapper;
+import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
@@ -60,8 +66,12 @@ import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -75,7 +85,7 @@ public class MasterDetailPanel extends Panel {
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
 
-    private SingularForm<?>                 form;
+    private SingularFormWicket<?>           form;
     private WebMarkupContainer              head;
     private Label                           headLabel;
     private WebMarkupContainer              body;
@@ -97,7 +107,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void addBehaviours() {
-        footer.add($b.visibleIf(() -> AbstractListaMapper.canAddItems(ctx)));
+        footer.add($b.visibleIf(() -> AbstractListMapper.canAddItems(ctx)));
         addButton.add(WicketUtils.$b.attr("title", addButtonLabel.getDefaultModel()));
         addButton.setEscapeModelStrings(false);
     }
@@ -111,13 +121,13 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void createComponents() {
-        form = new SingularForm<>("form");
+        form = new SingularFormWicket<>("form");
         head = new WebMarkupContainer("head");
         headLabel = newHeadLabel();
         body = new WebMarkupContainer("body");
         footer = new WebMarkupContainer("footer");
         addButton = newAddAjaxLink();
-        addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListaMapper.defineLabel(ctx)));
+        addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
     }
@@ -349,7 +359,7 @@ public class MasterDetailPanel extends Panel {
                     }
 
                     @Override
-                    public SInstance getMInstancia() {
+                    public SInstance getSInstance() {
                         return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };
@@ -359,22 +369,32 @@ public class MasterDetailPanel extends Panel {
 
 
     private BaseDataProvider<SInstance, ?> newDataProvider() {
-        return new BaseDataProvider<SInstance, Object>() {
-            @Override
-            public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
-                return lista.getObject().iterator();
-            }
-
-            @Override
-            public long size() {
-                return lista.getObject().size();
-            }
-
-            @Override
-            public IModel<SInstance> model(SInstance object) {
-                return new SInstanceListItemModel<>(lista, lista.getObject().indexOf(object));
-            }
-        };
+        return new SIListDataProvider(lista);
     }
 
+    static class SIListDataProvider extends BaseDataProvider<SInstance, Object> {
+        private final IModel<SIList<SInstance>> lista;
+        public SIListDataProvider(IModel<SIList<SInstance>> lista) {
+            this.lista = lista;
+        }
+
+        @Override
+        public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
+            final SIList<SInstance> siList = lista.getObject();
+            final List<SInstance> list = new ArrayList<>();
+            for (int i = 0; (i < count) && (i + first < siList.size()); i++)
+                list.add(siList.get(i + first));
+            return list.iterator();
+        }
+
+        @Override
+        public long size() {
+            return lista.getObject().size();
+        }
+
+        @Override
+        public IModel<SInstance> model(SInstance object) {
+            return new SInstanceListItemModel<>(lista, lista.getObject().indexOf(object));
+        }
+    }
 }

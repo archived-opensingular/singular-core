@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>1.5.11</version>
+        <version>1.6.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-support</artifactId>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.5.11</version>
+            <version>1.6.1-SNAPSHOT</version>
         </dependency>
 
         <!-- HIBERNATE -->
@@ -157,6 +157,14 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
+        </dependency>
+
+        <!-- USED IN TESTS -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.176</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

@@ -16,42 +16,6 @@
 
 package org.opensingular.form.wicket;
 
-import org.opensingular.form.type.country.brazil.STypeCNPJ;
-import org.opensingular.form.type.country.brazil.STypeCPF;
-import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.BooleanMapper;
-import org.opensingular.form.wicket.mapper.DateMapper;
-import org.opensingular.form.wicket.mapper.DateTimeMapper;
-import org.opensingular.form.wicket.mapper.DecimalMapper;
-import org.opensingular.form.wicket.mapper.LatitudeLongitudeMapper;
-import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
-import org.opensingular.form.wicket.mapper.MoneyMapper;
-import org.opensingular.form.wicket.mapper.NumberMapper;
-import org.opensingular.form.wicket.mapper.PanelListaMapper;
-import org.opensingular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
-import org.opensingular.form.wicket.mapper.RichTextMapper;
-import org.opensingular.form.wicket.mapper.StringMapper;
-import org.opensingular.form.wicket.mapper.TabMapper;
-import org.opensingular.form.wicket.mapper.TableListMapper;
-import org.opensingular.form.wicket.mapper.TelefoneNacionalMapper;
-import org.opensingular.form.wicket.mapper.TextAreaMapper;
-import org.opensingular.form.wicket.mapper.TimeMapper;
-import org.opensingular.form.wicket.mapper.YearMonthMapper;
-import org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper;
-import org.opensingular.form.wicket.mapper.composite.BlocksCompositeMapper;
-import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
-import org.opensingular.form.wicket.mapper.country.brazil.CNPJMapper;
-import org.opensingular.form.wicket.mapper.country.brazil.CPFMapper;
-import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
-import org.opensingular.form.wicket.mapper.selection.AutocompleteMapper;
-import org.opensingular.form.wicket.mapper.selection.BooleanRadioMapper;
-import org.opensingular.form.wicket.mapper.selection.BooleanSelectMapper;
-import org.opensingular.form.wicket.mapper.selection.MultipleCheckMapper;
-import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
-import org.opensingular.form.wicket.mapper.selection.RadioMapper;
-import org.opensingular.form.wicket.mapper.selection.SelectMapper;
-import org.opensingular.form.wicket.panel.BreadPanel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
@@ -71,13 +35,11 @@ import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.country.brazil.STypeCNPJ;
+import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeYearMonth;
-import org.opensingular.form.wicket.mapper.attachment.single.AttachmentMapper;
-import org.opensingular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
-import org.opensingular.form.wicket.mapper.richtext.PortletRichTextMapper;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.form.view.SMultiSelectionByCheckboxView;
 import org.opensingular.form.view.SMultiSelectionByPicklistView;
 import org.opensingular.form.view.SMultiSelectionBySelectView;
@@ -100,6 +62,44 @@ import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.form.view.ViewMapperRegistry;
 import org.opensingular.form.view.ViewResolver;
+import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.BooleanMapper;
+import org.opensingular.form.wicket.mapper.DateMapper;
+import org.opensingular.form.wicket.mapper.DateTimeMapper;
+import org.opensingular.form.wicket.mapper.DecimalMapper;
+import org.opensingular.form.wicket.mapper.LatitudeLongitudeMapper;
+import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
+import org.opensingular.form.wicket.mapper.MoneyMapper;
+import org.opensingular.form.wicket.mapper.NumberMapper;
+import org.opensingular.form.wicket.mapper.PanelListMapper;
+import org.opensingular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
+import org.opensingular.form.wicket.mapper.RichTextMapper;
+import org.opensingular.form.wicket.mapper.StringMapper;
+import org.opensingular.form.wicket.mapper.TabMapper;
+import org.opensingular.form.wicket.mapper.TableListMapper;
+import org.opensingular.form.wicket.mapper.TelefoneNacionalMapper;
+import org.opensingular.form.wicket.mapper.TextAreaMapper;
+import org.opensingular.form.wicket.mapper.TimeMapper;
+import org.opensingular.form.wicket.mapper.YearMonthMapper;
+import org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper;
+import org.opensingular.form.wicket.mapper.attachment.single.AttachmentMapper;
+import org.opensingular.form.wicket.mapper.composite.BlocksCompositeMapper;
+import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import org.opensingular.form.wicket.mapper.country.brazil.CNPJMapper;
+import org.opensingular.form.wicket.mapper.country.brazil.CPFMapper;
+import org.opensingular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
+import org.opensingular.form.wicket.mapper.richtext.PortletRichTextMapper;
+import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
+import org.opensingular.form.wicket.mapper.selection.AutocompleteMapper;
+import org.opensingular.form.wicket.mapper.selection.BooleanRadioMapper;
+import org.opensingular.form.wicket.mapper.selection.BooleanSelectMapper;
+import org.opensingular.form.wicket.mapper.selection.MultipleCheckMapper;
+import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
+import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
+import org.opensingular.form.wicket.mapper.selection.RadioMapper;
+import org.opensingular.form.wicket.mapper.selection.SelectMapper;
+import org.opensingular.form.wicket.panel.BreadPanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -181,7 +181,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeList.class,        SMultiSelectionByPicklistView.class,  PicklistMapper::new)
                 .register(STypeList.class,                                              TableListMapper::new)
                 .register(STypeList.class,        SViewListByTable.class,               TableListMapper::new)
-                .register(STypeList.class,        SViewListByForm.class,                PanelListaMapper::new)
+                .register(STypeList.class,        SViewListByForm.class,                PanelListMapper::new)
                 .register(STypeList.class,        SViewListByMasterDetail.class,        ListMasterDetailMapper::new)
                 .register(STypeList.class,        SViewBreadcrumb.class,                ListBreadcrumbMapper::new)
                 .register(STypeDateTime.class,                                          DateTimeMapper::new)

@@ -21,27 +21,23 @@ import org.opensingular.form.type.core.STypeBoolean;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * Métodos utilitários para manipulação de MInstance.
+ * Métodos utilitários para manipulação de SInstance.
  *
  * @author Daniel C. Bordin
  */
 public abstract class SInstances {
-
-    public static SIComposite getRootInstance(SInstance instance) {
-        //TODO (by Daniel) Deveria retornar SInstance. Refatorar.
-        SInstance i = instance;
-        while (i.getParent() != null) {
-            i = i.getParent();
-        }
-        return (SIComposite) i;
-    }
 
     public static interface IVisit<R> {
         void stop();
@@ -322,7 +318,7 @@ public abstract class SInstances {
             if (node.getType().isTypeOf(descendantType)) {
                 return Optional.of((D) node);
             } else {
-                deque.addAll(children(node));
+                addAllChildren(deque, node);
             }
         }
         return Optional.empty();
@@ -354,7 +350,7 @@ public abstract class SInstances {
             if (node.getType().isTypeOf(descendantType)) {
                 result.add(function.apply((D) node));
             } else {
-                deque.addAll(children(node));
+                addAllChildren(deque, node);
             }
         }
         return result;
@@ -408,12 +404,10 @@ public abstract class SInstances {
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */
-    static Collection<SInstance> children(SInstance node) {
-        List<SInstance> result = new ArrayList<>();
+    static void addAllChildren(Deque<SInstance> deque, SInstance node) {
         if (node instanceof ICompositeInstance) {
-            result.addAll(((ICompositeInstance) node).getAllChildren());
+            deque.addAll(((ICompositeInstance) node).getAllChildren());
         }
-        return result;
     }
 
     public static void updateBooleanAttribute(

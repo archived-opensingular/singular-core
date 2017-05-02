@@ -54,7 +54,7 @@ public class AttachmentKeyFactoryTest {
     public void testGet() throws Exception {
         HttpServletRequest httpServletRequest = Mockito.mock(HttpServletRequest.class);
         Mockito.when(httpServletRequest.getPathTranslated()).thenReturn(path);
-        assertEquals(KEY, attachmentKeyFactory.get(httpServletRequest).asString());
+        assertEquals(KEY, attachmentKeyFactory.makeFromRequestPathOrNull(httpServletRequest).asString());
     }
 
 

@@ -3,6 +3,10 @@ package org.opensingular.lib.commons.base;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
+
 public class SingularPropertiesImplTest {
 
     @Test
@@ -43,5 +47,31 @@ public class SingularPropertiesImplTest {
         SingularPropertiesImpl.Tester.restoreState(state1);
         Assert.assertEquals(originalServerHome, SingularProperties.get().getSingularServerHome());
         Assert.assertEquals(SingularPropertiesTest.MOCK_PROPERTY_CLASSPATH_VALUE, SingularProperties.get().getProperty(SingularPropertiesTest.MOCK_PROPERTY_KEY));
+    }
+
+    @Test
+    public void usingTesterTest(){
+        SingularPropertiesImpl.Tester tester = new SingularPropertiesImpl.Tester(new Properties());
+
+        tester.setProperty("key", "value");
+        Assert.assertEquals("value", tester.getProperty("key"));
+    }
+
+    @Test(expected = SingularException.class)
+    public void reloadAndOverrideTestException() throws MalformedURLException {
+        SingularPropertiesImpl singularProperties = SingularPropertiesImpl.get();
+        singularProperties.reloadAndOverrideWith(new URL("http://www.notexistentsite.com/"));
+    }
+
+    @Test
+    public void containsKey(){
+        SingularPropertiesImpl singularProperties = SingularPropertiesImpl.get();
+        Assert.assertTrue(singularProperties.containsKey(SingularPropertiesTest.MOCK_PROPERTY_KEY));
+
+        Assert.assertTrue(singularProperties.isTrue(SingularPropertiesTest.MOCK_TRUE_KEY));
+        Assert.assertFalse(singularProperties.isTrue(SingularPropertiesTest.MOCK_FALSE_KEY));
+
+        Assert.assertFalse(singularProperties.isFalse(SingularPropertiesTest.MOCK_TRUE_KEY));
+        Assert.assertTrue(singularProperties.isFalse(SingularPropertiesTest.MOCK_FALSE_KEY));
     }
 }

@@ -16,25 +16,36 @@
 
 package org.opensingular.form;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface SScope {
 
+    @Nonnull
     public String getName();
 
-    public Optional<SType<?>> getLocalTypeOptional(String simpleName);
+    @Nonnull
+    public Optional<SType<?>> getLocalTypeOptional(@Nonnull String simpleName);
 
-    public SType<?> getLocalType(String simpleName);
+    @Nonnull
+    public SType<?> getLocalType(@Nonnull String simpleName);
 
+    @Nullable
     public SScope getParentScope();
 
+    @Nonnull
     public default SPackage getPackage() {
         SScope atual = this;
         while (atual != null && !(atual instanceof SPackage)) {
             atual = atual.getParentScope();
         }
+        if (atual == null) {
+            throw new SingularFormException("Internal Error: Não foi possível encontrar o pacote do tipo", this);
+        }
         return (SPackage) atual;
     }
 
+    @Nonnull
     public SDictionary getDictionary();
 }

@@ -63,12 +63,18 @@ public class DropdownMenu extends Panel {
         menus.add(item);
     }
 
-    @Override
-    public boolean isVisible() {
-        return menus.size() > 0;
-    }
+//    @Override
+//    public boolean isVisible() {
+//        return menus.size() > 0;
+//    }
 
     public String getLabel() {
         return fixedLabel;
+    }
+    
+    @Override
+    protected void onConfigure() {
+    	super.onConfigure();
+        this.setVisible(menus.size() > 0);
     }
 }

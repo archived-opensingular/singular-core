@@ -98,7 +98,7 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
      */
     public AssertionsSType findTypeBySimpleName(String simpleName) {
 
-        List<SType<?>> types = SInstances.streamDescendants(getDummyPage().getCurrentInstance(), true)
+        List<SType<?>> types = SInstances.streamDescendants(getDummyPage().getInstance(), true)
                 .filter(ins -> ins.getType().getNameSimple().equals(simpleName))
                 .map(SInstance::getType)
                 .collect(Collectors.toList());

@@ -43,8 +43,8 @@ public interface SIDateTimeModel {
         }
 
         @Override
-        public SInstance getMInstancia() {
-            return model.getMInstancia();
+        public SInstance getSInstance() {
+            return model.getSInstance();
         }
     }
 

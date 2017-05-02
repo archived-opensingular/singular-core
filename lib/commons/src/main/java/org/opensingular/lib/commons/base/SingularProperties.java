@@ -46,16 +46,18 @@ public interface SingularProperties {
     String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE    = "singular.fileupload.default_max_file_size";
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
-    String USE_INMEMORY_DATABASE = "singular.use.inmemory.database";
-    String JNDI_DATASOURCE = "singular.jndi.name.datasource";
+    String USE_EMBEDDED_DATABASE = "singular.database.embbeded";
+    String JNDI_DATASOURCE       = "singular.jndi.name.datasource";
 
     // Identifica o nome do schema que deve ser utilizado
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";
 
-    String DEFAULT_CAS_ENABLED = "singular.cas.default.enabled";
+    String DEFAULT_CAS_ENABLED   = "singular.cas.default.enabled";
     String DISABLE_AUTHORIZATION = "singular.auth.disable";
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
+
+//    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
 
     static SingularProperties get() {
         return SingularPropertiesImpl.get();

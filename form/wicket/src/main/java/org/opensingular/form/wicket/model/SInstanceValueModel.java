@@ -16,12 +16,12 @@
 
 package org.opensingular.form.wicket.model;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.IObjectClassAwareModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeSimple;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.IObjectClassAwareModel;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class SInstanceValueModel<T>
     }
 
     @Override
-    public SInstance getMInstancia() {
+    public SInstance getSInstance() {
         return instanciaModel.getObject();
     }
 

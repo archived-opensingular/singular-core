@@ -20,7 +20,12 @@ import com.google.common.collect.ImmutableMap;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SingularFormException;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -41,30 +46,33 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     @Override
-    public <T> T lookupService(Class<T> targetClass) {
-        T provider = lookupLocalService(targetClass);
-        if (provider != null) {
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
+        Optional<T> provider = lookupLocalService(targetClass);
+        if (provider.isPresent()) {
             return provider;
         }
         return lookupChainedService(targetClass);
     }
 
-    private <T> T lookupChainedService(Class<T> targetClass) {
+    @Nonnull
+    private <T> Optional<T> lookupChainedService(@Nonnull Class<T> targetClass) {
         for (ServiceRegistry r : registries) {
-            T provider = r.lookupService(targetClass);
-            if (provider != null) {
+            Optional<T> provider = r.lookupService(targetClass);
+            if (provider.isPresent()) {
                 return provider;
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    public <T> T lookupLocalService(Class<T> targetClass) {
+    @Nonnull
+    public <T> Optional<T> lookupLocalService(@Nonnull Class<T> targetClass) {
         List<RefService<?>> result = findAllMatchingProviders(targetClass);
         if(result != null && !result.isEmpty()){
             return verifyResultAndReturn(targetClass, result);
         }
-        return null;
+        return Optional.empty();
     }
 
     private <T> List<RefService<?>> findAllMatchingProviders(Class<T> targetClass) {
@@ -77,30 +85,33 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
         return result;
     }
 
-    private <T> T verifyResultAndReturn(Class<T> targetClass, List<RefService<?>> list) {
+    private <T> Optional<T> verifyResultAndReturn(Class<T> targetClass, List<RefService<?>> list) {
         if(list.size() == 1){
             RefService<?> provider = list.get(0);
-            return targetClass.cast(provider.get());
+            return Optional.of(targetClass.cast(provider.get()));
         }
         String message = String.format("There are %s options of type %s please be more specific", list.size(), targetClass.getName());
         throw new SingularFormException(message);
     }
 
     @Override
-    public Object lookupService(String name) {
+    @Nonnull
+    public Optional<Object> lookupService(@Nonnull String name) {
         return lookupService(name, Object.class);
     }
 
     @Override
-    public <T> T lookupService(String name, Class<T> targetClass) {
-        T provider = lookupLocalService(name, targetClass);
-        if(provider !=  null) {
+    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
+        Optional<T> provider = lookupLocalService(name, targetClass);
+        if(provider.isPresent()) {
             return provider;
         }
         return lookupChainedService(name, targetClass);
     }
 
-    public <T> T lookupLocalService(String name, Class<T> targetClass) {
+    public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(targetClass);
         Pair ref = servicesByName.get(name);
         if (ref != null) {
             Object value = ref.provider.get();
@@ -110,21 +121,31 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
                 String message = "For service '" + name + "' was found a clas of value "
                     + value.getClass().getName() + " instead of the expected " + targetClass.getName();
                 throw new SingularFormException(message);
-            } else {
-                return targetClass.cast(value);
             }
+            return Optional.ofNullable(targetClass.cast(value));
         }
-        return null;
+        return Optional.empty();
     }
 
-    private <T> T lookupChainedService(String name, Class<T> targetClass) {
+    public <T> T lookupLocalServiceOrException(@Nonnull String name, @Nonnull Class<T> targetClass) {
+        return lookupLocalService(name, targetClass).orElseThrow(
+                () -> new SingularFormException(createMsgForNotFoundBean(name, targetClass, true)));
+    }
+
+    private String createMsgForNotFoundBean(@Nonnull String name, @Nonnull Class<?> targetClass, boolean localScope) {
+        return "Bean with '" + name + "' of class " + targetClass + " not found" +
+                (localScope ? " in local registry" : " in any of the available registries");
+    }
+
+    @Nonnull
+    private <T> Optional<T> lookupChainedService(@Nonnull String name, @Nonnull Class<T> targetClass) {
         for(ServiceRegistry r : registries){
-            T provider = r.lookupService(name, targetClass);
-            if(provider != null) {
+            Optional<T> provider = r.lookupService(name, targetClass);
+            if(provider.isPresent()) {
                 return provider;
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

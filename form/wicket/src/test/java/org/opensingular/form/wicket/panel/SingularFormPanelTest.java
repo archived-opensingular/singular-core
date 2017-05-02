@@ -23,9 +23,6 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.type.util.STypeEMail;
@@ -75,7 +72,7 @@ public class SingularFormPanelTest {
 
     public static class WrongSerializationPage extends WebPage {
 
-        private SingularFormPanel<String> singularFormPanel;
+        private SingularFormPanel singularFormPanel;
 
         public Object o;
 
@@ -95,34 +92,18 @@ public class SingularFormPanelTest {
             };
             o = 1;
 
-            singularFormPanel = new SingularFormPanel<String>("singularFormPanel", formConfig) {
-                @Override
-                protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                    myTestService.getInt();
-                    RefType refType = RefType.of(WrongSerializationPage::createType);
-                    return singularFormConfig.getDocumentFactory().createInstance(refType);
-                }
+            myTestService.getInt();
 
-                @Override
-                public AnnotationMode getAnnotationMode() {
-                    return AnnotationMode.READ_ONLY;
-                }
-
-                @Override
-                protected void onAfterRender() {
-                    super.onAfterRender();
-                    //getApplication().getFrameworkSettings().getSerializer().serialize(getPage());
-
-                }
-            };
+            singularFormPanel = new SingularFormPanel("singularFormPanel");
+            singularFormPanel.setInstanceCreator(() -> {
+                myTestService.getInt();
+                RefType refType = RefType.of(STypeEMail.class);
+                return formConfig.getDocumentFactory().createInstance(refType);
+            });
+            singularFormPanel.setAnnotationMode(AnnotationMode.READ_ONLY);
+            singularFormPanel.setViewMode(ViewMode.READ_ONLY);
 
             add(new Form("form").add(singularFormPanel));
-            singularFormPanel.setViewMode(ViewMode.READ_ONLY);
-        }
-
-        private static SType<?> createType() {
-            SDictionary dictionary = SDictionary.create();
-            return dictionary.getType(STypeEMail.class);
         }
     }
 

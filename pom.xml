@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.5.11</version>
+    <version>1.6.1-SNAPSHOT</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -41,6 +41,7 @@
     <modules>
         <module>flow</module>
         <module>form</module>
+		<module>flow-form</module>
         <module>lib</module>
         <module>resources</module>
         <module>ws</module>
@@ -144,6 +145,10 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.8</version>
+                <configuration>
+                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                    <append>true</append>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -199,10 +204,11 @@
 
         <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.1</version>
+            <groupId>net.java.loci</groupId>
+            <artifactId>jsr308-all</artifactId>
+            <version>1.1.2</version>
         </dependency>
+
 
         <!-- Joda Time API -->
         <dependency>
@@ -215,7 +221,13 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>21.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.lukehutch</groupId>
+            <artifactId>fast-classpath-scanner</artifactId>
+            <version>2.0.17</version>
         </dependency>
 
         <dependency>
@@ -242,7 +254,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.easytesting</groupId>
@@ -263,7 +275,7 @@
         <url>${project.scm.url}</url>
         <connection>${project.scm.connection}</connection>
         <developerConnection>${project.scm.developerConnection}</developerConnection>
-      <tag>HEAD</tag>
+      <tag>1.6.0</tag>
   </scm>
 
     <profiles>
@@ -300,7 +312,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.7</version>
+                        <version>1.6.8</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -327,7 +339,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -511,6 +523,15 @@
 
         <sonar.issue.ignore.multicriteria.s48.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s48.ruleKey>
         <sonar.issue.ignore.multicriteria.s48.resourceKey>**/DownloadSupportedBehavior.java</sonar.issue.ignore.multicriteria.s48.resourceKey>
+
+        <sonar.issue.ignore.multicriteria.s49.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s49.ruleKey>
+        <sonar.issue.ignore.multicriteria.s49.resourceKey>**/SingularIOUtils.java</sonar.issue.ignore.multicriteria.s49.resourceKey>
+
+        <!-- Sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/SINGULAR/singular-core.git</project.scm.connection>

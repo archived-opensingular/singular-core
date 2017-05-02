@@ -24,7 +24,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -51,7 +56,7 @@ import static org.opensingular.form.wicket.mapper.components.MetronicPanel.depen
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
-public class TableListMapper extends AbstractListaMapper {
+public class TableListMapper extends AbstractListMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {

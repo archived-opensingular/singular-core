@@ -1,23 +1,20 @@
 package org.opensingular.form.service;
 
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.document.RefSDocumentFactory;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.springframework.orm.hibernate4.SessionHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
@@ -45,15 +42,8 @@ public abstract class FormServiceTest {
     protected STypeInteger      idade;
     protected STypeString       nome;
     protected SDocumentFactory  documentFactory;
-    protected RefType tipoPessoaRef = new RefType() {
-        @Override
-        protected SType<?> retrieve() {
-            return tipoPessoa;
-        }
-    };
+    protected RefType tipoPessoaRef = RefType.of(() -> tipoPessoa);
     private SDocument                     document;
-    private IAttachmentPersistenceHandler tempHandler;
-    private IAttachmentPersistenceHandler persistentHandler;
 
     @Before
     public void setUp() {
@@ -63,30 +53,12 @@ public abstract class FormServiceTest {
         nome = tipoPessoa.addFieldString("nome");
         tipoPessoa.asAtrAnnotation().setAnnotated();
 
-        documentFactory = new SDocumentFactory() {
-            @Override
-            public RefSDocumentFactory getDocumentFactoryRef() {
-                return new RefSDocumentFactory() {
-                    @Override
-                    protected SDocumentFactory retrieve() {
-                        return documentFactory;
-                    }
-                };
-            }
-
-            @Override
-            public ServiceRegistry getServiceRegistry() {
-                return null;
-            }
-
-            @Override
-            protected void setupDocument(SDocument document) {
-                tempHandler = mock(IAttachmentPersistenceHandler.class);
-                persistentHandler = mock(IAttachmentPersistenceHandler.class);
-                document.setAttachmentPersistenceTemporaryHandler(RefService.of(tempHandler));
-                document.setAttachmentPersistencePermanentHandler(RefService.of(persistentHandler));
-            }
-        };
+        documentFactory = SDocumentFactory.of(doc -> {
+            IAttachmentPersistenceHandler<?> tempHandler = mock(IAttachmentPersistenceHandler.class);
+            IAttachmentPersistenceHandler<?> persistentHandler = mock(IAttachmentPersistenceHandler.class);
+            doc.setAttachmentPersistenceTemporaryHandler(RefService.ofToBeDescartedIfSerialized(tempHandler));
+            doc.setAttachmentPersistencePermanentHandler(RefService.ofToBeDescartedIfSerialized(persistentHandler));
+        });
         TransactionSynchronizationManager.bindResource(this.sessionFactory, new SessionHolder(sessionFactory.openSession()));
     }
 
