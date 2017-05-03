@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
@@ -105,28 +108,59 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     private final ViewMapperRegistry<IWicketComponentMapper> registry = newViewMapperRegistry();
 
+    public UIBuilderWicket() {}
+
     ViewMapperRegistry<IWicketComponentMapper> getViewMapperRegistry() {
         return registry;
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
-        WicketBuildContext child = ctx;
+        final Deque<IWicketBuildListener> listeners = new LinkedList<>(ctx.getListeners());
+
+        ctx.init(this, viewMode);
+
+        // onBuildContextInitialized
+        listeners.stream().forEach(it -> it.onBuildContextInitialized(ctx, viewMode));
+
+        final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
+
+        if (mapper instanceof IWicketBuildListener)
+            listeners.addFirst((IWicketBuildListener) mapper);
+
+        // onMapperResolved
+        listeners.stream().forEach(it -> it.onMapperResolved(ctx, mapper, viewMode));
+
+        // decorateContext
+        WicketBuildContext childCtx = ctx;
+        for (IWicketBuildListener listener : listeners) {
+            WicketBuildContext newContext = listener.decorateContext(ctx, mapper, viewMode);
+            if (newContext != null && newContext != childCtx) {
+                childCtx = newContext;
+                childCtx.init(this, viewMode);
+            }
+        }
+
         if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
-            ctx.init(this, viewMode);
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
                 @Override
                 public boolean isVisible() {
-                    return !isEmpty();
+                    return !this.isEmpty();
                 }
             };
 
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
-            child = ctx.createChild(row.newCol(), true, ctx.getModel());
+            childCtx = ctx.createChild(row.newCol(), ctx.getModel());
+            childCtx.init(this, viewMode);
         }
 
-        final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
-        mapper.buildView(child.init(this, viewMode));
+        // onBeforeBuild
+        listeners.stream().forEach(it -> it.onBeforeBuild(ctx, mapper, viewMode));
+
+        mapper.buildView(childCtx);
+
+        // onAfterBuild
+        listeners.stream().forEach(it -> it.onAfterBuild(ctx, mapper, viewMode));
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {

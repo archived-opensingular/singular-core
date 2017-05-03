@@ -85,6 +85,9 @@ public interface IWicketComponentMapper extends UIComponentMapper {
     @FunctionalInterface
     interface HintKey<T> extends Serializable {
         T getDefaultValue();
+        default boolean isInheritable() {
+            return true;
+        }
     }
 
 }
