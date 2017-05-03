@@ -213,62 +213,69 @@ public class TransformPojoUtil {
     private static void realMapToSInstance(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Object pojoDataMap, SInstance rootInstance, boolean strictMode) {
         SType<?> type = rootInstance.getType();
         if (type.isComposite()) {
-            SIComposite composite = (SIComposite) rootInstance;
-
-            if (strictMode) {
-                // verifica se os valores existem em ambos os lugares
-                List<String> nomesAtributos = new ArrayList<>();
-                composite.getAllChildren().forEach(inst -> nomesAtributos.add(inst.getType().getNameSimple()));
-                Set<String> keySet = ((Map<String, Object>) pojoDataMap).keySet();
-                for (String string : keySet) {
-                    if (!nomesAtributos.contains(string)) {
-                        throw new SingularFormException("Valor existente no mapa não encontrado no SInstance.");
-                    }
-                }
-            }
-            for (SInstance child : composite.getAllChildren()) {
-                Object object = ((Map<String, Object>) pojoDataMap).get(child.getType().getNameSimple());
-                // pega o objeto ou mapa que é referenciado
-
-                Map<String, Object> mapNovo = new HashMap<>();
-                if (child.getType().isComposite()) {
-                    /*Caso ele tenha uma referencia já colocada, ela estará no pojoReferenceDataMap
-					 * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
-					 * especificados no STYPE chamador, ou seja, nao vai entrar em recursão enchendo a heap se quem chamou nao repetir os atributos*/
-                    // TODO verificar quando tiver referencia circular
-                    if (object instanceof String && ((String) object).contains("codRef=")) {
-                        String[] split = ((String) object).split("=");
-                        mapNovo = pojoReferenceDataMap.get(Integer.valueOf(split[split.length - 1]));
-                    } else {
-                        mapNovo = (Map<String, Object>) object;
-                    }
-                } else {
-                    // mapa criado pra garantir que teremos a referencia do objeto salva(key)
-                    mapNovo.put(child.getType().getNameSimple(), object);
-                }
-
-
-                realMapToSInstance(pojoReferenceDataMap, mapNovo, child, strictMode);
-            }
+            mapToSIComposite(pojoReferenceDataMap, (Map<String, Object>) pojoDataMap, (SIComposite) rootInstance, strictMode);
         } else if (type.isList()) {
-
-            SIList<SInstance> sIList = (SIList<SInstance>) rootInstance;
-            List<Object> list = (List<Object>) ((Map<String, Object>) pojoDataMap).get(type.getNameSimple());
-
-            if (list != null) {
-                while (sIList.size() < list.size()) {
-                    sIList.addNew();
-                }
-
-                Iterator<SInstance> iterator = sIList.iterator();
-                int contador = 0;
-                while (iterator.hasNext()) {
-                    realMapToSInstance(pojoReferenceDataMap, list.get(contador), iterator.next(), strictMode);
-                    contador++;
-                }
-            }
+            mapToSIList(pojoReferenceDataMap, (Map<String, Object>) pojoDataMap, (SIList<SInstance>) rootInstance, strictMode, type);
         } else {
             rootInstance.setValue(((Map<String, Object>) pojoDataMap).get(type.getNameSimple()));
+        }
+    }
+
+    private static void mapToSIComposite(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Map<String, Object> pojoDataMap, SIComposite rootInstance, boolean strictMode) {
+        SIComposite composite = rootInstance;
+
+        if (strictMode) {
+            // verifica se os valores existem em ambos os lugares
+            List<String> nomesAtributos = new ArrayList<>();
+            composite.getAllChildren().forEach(inst -> nomesAtributos.add(inst.getType().getNameSimple()));
+            Set<String> keySet = pojoDataMap.keySet();
+            for (String string : keySet) {
+                if (!nomesAtributos.contains(string)) {
+                    throw new SingularFormException("Valor existente no mapa não encontrado no SInstance.");
+                }
+            }
+        }
+        for (SInstance child : composite.getAllChildren()) {
+            Object object = pojoDataMap.get(child.getType().getNameSimple());
+            // pega o objeto ou mapa que é referenciado
+
+            Map<String, Object> mapNovo = new HashMap<>();
+            if (child.getType().isComposite()) {
+                /*Caso ele tenha uma referencia já colocada, ela estará no pojoReferenceDataMap
+                 * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
+                 * especificados no STYPE chamador, ou seja, nao vai entrar em recursão enchendo a heap se quem chamou nao repetir os atributos*/
+                // TODO verificar quando tiver referencia circular
+                if (object instanceof String && ((String) object).contains("codRef=")) {
+                    String[] split = ((String) object).split("=");
+                    mapNovo = pojoReferenceDataMap.get(Integer.valueOf(split[split.length - 1]));
+                } else {
+                    mapNovo = (Map<String, Object>) object;
+                }
+            } else {
+                // mapa criado pra garantir que teremos a referencia do objeto salva(key)
+                mapNovo.put(child.getType().getNameSimple(), object);
+            }
+
+
+            realMapToSInstance(pojoReferenceDataMap, mapNovo, child, strictMode);
+        }
+    }
+
+    private static void mapToSIList(Map<Integer, Map<String, Object>> pojoReferenceDataMap, Map<String, Object> pojoDataMap, SIList<SInstance> rootInstance, boolean strictMode, SType<?> type) {
+        SIList<SInstance> sIList = rootInstance;
+        List<Object>      list   = (List<Object>) pojoDataMap.get(type.getNameSimple());
+
+        if (list != null) {
+            while (sIList.size() < list.size()) {
+                sIList.addNew();
+            }
+
+            Iterator<SInstance> iterator = sIList.iterator();
+            int                 contador = 0;
+            while (iterator.hasNext()) {
+                realMapToSInstance(pojoReferenceDataMap, list.get(contador), iterator.next(), strictMode);
+                contador++;
+            }
         }
     }
 

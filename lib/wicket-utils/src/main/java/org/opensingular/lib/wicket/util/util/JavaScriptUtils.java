@@ -16,6 +16,9 @@
 
 package org.opensingular.lib.wicket.util.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Utility class for JavaScript escaping.
  * Escapes based on the JavaScript 1.5 recommendation.
@@ -33,6 +36,13 @@ package org.opensingular.lib.wicket.util.util;
  * @since 1.1.1
  */
 public class JavaScriptUtils {
+
+    private static final Map<Character, String> ESCAPED_CHARACTERS;
+
+    static {
+        ESCAPED_CHARACTERS = new HashMap<>();
+
+    }
 
     private JavaScriptUtils() {}
 
@@ -52,60 +62,89 @@ public class JavaScriptUtils {
         char c;
         for (int i = 0; i < input.length(); i++) {
             c = input.charAt(i);
-            if (c == '"') {
-                filtered.append("\\\"");
+
+            String escaped = escapeSpecialChars(c);
+
+            if (escaped == null) {
+                escaped = escapeControlChars(c, prevChar);
             }
-            else if (c == '\'') {
-                filtered.append("\\'");
+
+            if (escaped == null) {
+                escaped = escapeUnicodeChars(c);
             }
-            else if (c == '\\') {
-                filtered.append("\\\\");
-            }
-            else if (c == '/') {
-                filtered.append("\\/");
-            }
-            else if (c == '\t') {
-                filtered.append("\\t");
-            }
-            else if (c == '\n') {
-                if (prevChar != '\r') {
-                    filtered.append("\\n");
-                }
-            }
-            else if (c == '\r') {
-                filtered.append("\\n");
-            }
-            else if (c == '\f') {
-                filtered.append("\\f");
-            }
-            else if (c == '\b') {
-                filtered.append("\\b");
-            }
-            // No '\v' in Java, use octal value for VT ascii char
-            else if (c == '\013') {
-                filtered.append("\\v");
-            }
-            else if (c == '<') {
-                filtered.append("\\u003C");
-            }
-            else if (c == '>') {
-                filtered.append("\\u003E");
-            }
-            // Unicode for PS (line terminator in ECMA-262)
-            else if (c == '\u2028') {
-                filtered.append("\\u2028");
-            }
-            // Unicode for LS (line terminator in ECMA-262)
-            else if (c == '\u2029') {
-                filtered.append("\\u2029");
-            }
-            else {
+
+            if (escaped == null) {
                 filtered.append(c);
+            } else {
+                filtered.append(escaped);
             }
+
             prevChar = c;
 
         }
         return filtered.toString();
+    }
+
+    private static String escapeSpecialChars(char c) {
+        if (c == '"') {
+            return "\\\"";
+        }
+        else if (c == '\'') {
+            return "\\'";
+        }
+        else if (c == '\\') {
+            return "\\\\";
+        }
+        else if (c == '/') {
+            return "\\/";
+        }
+        else if (c == '<') {
+            return "\\u003C";
+        }
+        else if (c == '>') {
+            return "\\u003E";
+        } else {
+            return null;
+        }
+    }
+
+    private static String escapeControlChars(char c, char prevChar) {
+        if (c == '\t') {
+            return "\\t";
+        }
+        else if (c == '\n') {
+            if (prevChar != '\r') {
+                return "\\n";
+            }
+        }
+        else if (c == '\r') {
+            return "\\n";
+        }
+        else if (c == '\f') {
+            return "\\f";
+        }
+        else if (c == '\b') {
+            return "\\b";
+        }
+
+        return null;
+    }
+
+    private static String escapeUnicodeChars(char c) {
+        // No '\v' in Java, use octal value for VT ascii char
+        if (c == '\013') {
+            return "\\v";
+        }
+        // Unicode for PS (line terminator in ECMA-262)
+        else if (c == '\u2028') {
+            return "\\u2028";
+        }
+        // Unicode for LS (line terminator in ECMA-262)
+        else if (c == '\u2029') {
+            return "\\u2029";
+        } else {
+            return null;
+        }
     }
 
 }

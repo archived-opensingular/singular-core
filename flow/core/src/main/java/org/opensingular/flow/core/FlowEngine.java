@@ -16,6 +16,13 @@
 
 package org.opensingular.flow.core;
 
+import java.util.Date;
+import java.util.Objects;
+import java.util.function.BiFunction;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -31,12 +38,6 @@ import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Date;
-import java.util.Objects;
-import java.util.function.BiFunction;
 
 class FlowEngine {
 
@@ -105,18 +106,7 @@ class FlowEngine {
 
             getPersistenceService().flushSession();
             if (!destinyTask.isImmediateExecution()) {
-                initTask(processInstance, destinyTask, newTaskInstance);
-                
-                if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
-                    automaticallySetUsersRole(processInstance, newTaskInstance, transition);
-                }
-                
-                if (transition != null) {
-                    validarParametrosInput(originTaskInstance, transition, paramIn);
-                }
-                ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
-                newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
-                return newTaskInstance;
+                return executeImediate(processInstance, originTaskInstance, transition, destinyTask, paramIn, newTaskInstance);
             }
             final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
             newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
@@ -142,6 +132,23 @@ class FlowEngine {
             originTaskInstance = newTaskInstance;
             paramIn = null;
         }
+    }
+
+    private static <P extends ProcessInstance> TaskInstance executeImediate(P processInstance, TaskInstance originTaskInstance,
+                                                                            STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
+                                                                            TaskInstance newTaskInstance) {
+        initTask(processInstance, destinyTask, newTaskInstance);
+
+        if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
+            automaticallySetUsersRole(processInstance, newTaskInstance, transition);
+        }
+
+        if (transition != null) {
+            validarParametrosInput(originTaskInstance, transition, paramIn);
+        }
+        ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
+        newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
+        return newTaskInstance;
     }
 
     private static <P extends ProcessInstance> void automaticallySetUsersRole(P instancia, TaskInstance instanciaTarefa,
