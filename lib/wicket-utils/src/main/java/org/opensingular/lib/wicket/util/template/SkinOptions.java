@@ -82,7 +82,6 @@ public class SkinOptions implements Serializable, Loggable {
 
     public void selectSkin(Skin selection) {
         final Cookie cookie = new Cookie("skin", "");
-        cookie.setSecure(true);
         cookie.setPath("/");
         if (selection != null) {
             final JSONObject json = new JSONObject();
