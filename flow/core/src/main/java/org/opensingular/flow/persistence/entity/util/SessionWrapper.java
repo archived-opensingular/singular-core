@@ -123,9 +123,7 @@ public class SessionWrapper {
             for (Serializable id : ids) {
                 if (id != null) {
                     Optional<? extends Serializable> obj = retrieve(tipo, id);
-                    if (obj.isPresent()) {
-                        getSession().delete(obj.get());
-                    }
+                    obj.ifPresent(getSession()::delete);
                 }
             }
         }
