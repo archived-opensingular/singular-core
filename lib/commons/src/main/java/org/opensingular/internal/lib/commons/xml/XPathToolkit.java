@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
@@ -253,13 +254,11 @@ public final class XPathToolkit {
      */
     static boolean isSimples(String xPath) {
 
+        Pattern pattern = Pattern.compile("[*\\[\\].]|::");
+
         if (xPath.startsWith("//")
                 || xPath.startsWith(":")
-                || xPath.contains("::")
-                || xPath.contains("*")
-                || xPath.contains("[")
-                || xPath.contains("]")
-                || xPath.contains(".")) {
+                || pattern.matcher(xPath).find()) {
             return false;
         }
 
