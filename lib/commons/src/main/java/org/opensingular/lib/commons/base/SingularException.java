@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.opensingular.lib.commons.util.Loggable;
+
 /**
  * The base class of all runtime exceptions for Singular.
  */
-public class SingularException extends RuntimeException {
+public class SingularException extends RuntimeException implements Loggable {
 
 
     private List<InfoEntry> entries;
@@ -124,6 +126,7 @@ public class SingularException extends RuntimeException {
             value = valueSupplier == null ? null : valueSupplier.get();
         } catch (Exception e) {
             //Ignora a exception para não bloquear a geração da Exception atual
+            getLogger().debug(null, e);
             return this;
         }
         return add(0, label, value);
