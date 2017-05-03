@@ -30,7 +30,7 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
 
     public static final String FIELD_NAME      = "name";
     public static final String FIELD_FILE_ID   = "fileId";
-    public static final String FIELD_FILE_SIZE = "size";
+    public static final String FIELD_FILE_SIZE = "fileSize";
     public static final String FIELD_HASH_SHA1 = "hashSHA1";
 
     public static final AtrRef<STypeString, SIString, String> ATR_ORIGINAL_ID = new AtrRef<>(SPackageCore.class, "originalId", STypeString.class, SIString.class, String.class);
