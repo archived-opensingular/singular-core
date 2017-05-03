@@ -527,6 +527,9 @@
         <sonar.issue.ignore.multicriteria.s49.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s49.ruleKey>
         <sonar.issue.ignore.multicriteria.s49.resourceKey>**/SingularIOUtils.java</sonar.issue.ignore.multicriteria.s49.resourceKey>
 
+        <sonar.issue.ignore.multicriteria.s49.ruleKey>squid:S00112</sonar.issue.ignore.multicriteria.s49.ruleKey>
+        <sonar.issue.ignore.multicriteria.s49.resourceKey>**/RunnableEx.java</sonar.issue.ignore.multicriteria.s49.resourceKey>
+
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>

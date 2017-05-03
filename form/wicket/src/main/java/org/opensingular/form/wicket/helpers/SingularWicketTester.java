@@ -126,7 +126,7 @@ public class SingularWicketTester extends WicketTester {
 
     private void checkIfStartPageCalled() {
         if (getLastRenderedPage() == null) {
-            throw new RuntimeException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
+            throw new IllegalStateException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
         }
     }
 

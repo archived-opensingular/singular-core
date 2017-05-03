@@ -117,8 +117,4 @@ public final class SingularTestUtil {
         }
         return false;
     }
-
-    public static interface RunnableEx {
-        public void run() throws Exception;
-    }
 }

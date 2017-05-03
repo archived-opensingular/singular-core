@@ -113,10 +113,8 @@ public class TransformPojoUtil {
     }
 
     // TODO Implementar futuramente
-    private static void fieldIsAMap(Map<Integer, Map<String, Object>> mapMain, Field field, Object objectToConvert, Map<String, Object> map)
-            throws Exception {
-
-        throw new Exception("Não é suportado atualmente o mapeamento de map.");
+    private static void fieldIsAMap(Map<Integer, Map<String, Object>> mapMain, Field field, Object objectToConvert, Map<String, Object> map) {
+        throw new UnsupportedOperationException("Não é suportado atualmente o mapeamento de map.");
     }
 
     private static void fieldIsAObjectClass(Map<Integer, Map<String, Object>> mapMain, Field field,
