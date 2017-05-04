@@ -26,9 +26,9 @@ import java.io.Serializable;
 public class MetaDataValue implements Serializable {
 
     private final String name;
-    private Object value;
+    private Serializable value;
 
-    public Object getValue() {
+    public Serializable getValue() {
         return value;
     }
 
@@ -36,7 +36,7 @@ public class MetaDataValue implements Serializable {
         this.name = propRef.getName();
     }
 
-    final void setValue(Object value) {
+    final void setValue(Serializable value) {
         this.value = value;
     }
 

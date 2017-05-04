@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core.variable;
 
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataEnabled;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 
-public interface VarDefinition extends Serializable {
+public interface VarDefinition extends Serializable, MetaDataEnabled {
 
     public String getRef();
 
@@ -57,12 +57,6 @@ public interface VarDefinition extends Serializable {
             throw SingularFlowConvertingValueException.rethrow(e, this, persistenceValue);
         }
     }
-
-    public <T> VarDefinition setMetaDataValue(MetaDataRef<T> propRef, T value);
-
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue);
-
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef);
 
     public default Object convert(Object value) throws SingularFlowConvertingValueException {
         try {

@@ -52,7 +52,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
                     v = addDefinition(getVarService().newDefinitionString(dadosVariavel.getName(), dadosVariavel.getName(), null));
                 }
                 v.setValueFromPersistence(dadosVariavel.getValue());
-                v.getMetaData().set(PROP_DB_COD, dadosVariavel.getCod());
+                v.setMetaDataValue(PROP_DB_COD, dadosVariavel.getCod());
             }
         }
     }
@@ -69,10 +69,10 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     @Override
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
-            Integer dbCod = changedVar.getMetaData().get(PROP_DB_COD);
+            Integer dbCod = changedVar.getMetaDataValue(PROP_DB_COD);
             Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
-                changedVar.getMetaData().set(PROP_DB_COD, dbCod2);
+                changedVar.setMetaDataValue(PROP_DB_COD, dbCod2);
             }
         }
     }

@@ -16,10 +16,9 @@
 
 package org.opensingular.flow.core;
 
-import com.google.common.base.MoreObjects;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataEnabled;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
@@ -30,8 +29,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
-public class STransition extends SParametersEnabled {
+public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     private final STask<?> origin;
     private final String name;
@@ -111,20 +111,15 @@ public class STransition extends SParametersEnabled {
         return rolesToDefineUser;
     }
 
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
-        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
+    @Override
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
     }
 
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
-        return metaData == null ? null : getMetaData().get(propRef);
-    }
-
-    public <T> STransition setMetaDataValue(MetaDataRef<T> propRef, T value) {
-        getMetaData().set(propRef, value);
-        return this;
-    }
-
-    MetaData getMetaData() {
+    @Override
+    @Nonnull
+    public MetaData getMetaData() {
         if (metaData == null) {
             metaData = new MetaData();
         }

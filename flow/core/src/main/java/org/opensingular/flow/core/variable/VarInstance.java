@@ -17,12 +17,13 @@
 package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataEnabled;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
 //TODO marcar a variável quando esta for utilizada. Essa interface deve obrigar a implementacao de um metodo para essa verificacao
-public interface VarInstance extends Serializable {
+public interface VarInstance extends Serializable, MetaDataEnabled {
 
     VarInstance setValue(Object valor);
 
