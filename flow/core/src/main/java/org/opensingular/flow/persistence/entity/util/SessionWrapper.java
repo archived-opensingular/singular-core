@@ -228,9 +228,7 @@ public class SessionWrapper {
         List<T> lista = new ArrayList<>(ids.size());
         for (Serializable id : ids) {
             T t = retrieveOrException(classe, id);
-            if (t != null) {
-                lista.add(t);
-            }
+            lista.add(t);
         }
         return lista;
     }

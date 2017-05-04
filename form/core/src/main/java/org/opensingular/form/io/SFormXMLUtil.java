@@ -111,9 +111,7 @@ public final class SFormXMLUtil {
 
     private static int verificarIds(SInstance instancia, Set<Integer> ids) {
         Integer id = instancia.getId();
-        if (id == null) {
-            throw new SingularFormException("O ID da instância está null", instancia);
-        } else if (ids.contains(id)) {
+        if (ids.contains(id)) {
             throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
         }
         if (instancia instanceof ICompositeInstance) {
@@ -435,7 +433,7 @@ public final class SFormXMLUtil {
 
         private MElement complement(SInstance instancia, MElement element) {
             Integer id = instancia.getId();
-            if (builder.isPersistId() && id != null) {
+            if (builder.isPersistId()) {
                 element.setAttribute(ATRIBUTO_ID, id.toString());
             }
             if (builder.isPersistAttributes()) {

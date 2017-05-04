@@ -153,6 +153,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     /**
      * Método a ser implementado com a criação do fluxo do processo.
      */
+    @Nonnull
     protected abstract FlowMap createFlowMap();
 
     /**
@@ -162,9 +163,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
-            if (novo == null){
-                novo = new FlowMap(this);
-            }
+            Objects.requireNonNull(novo);
             if (novo.getProcessDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
