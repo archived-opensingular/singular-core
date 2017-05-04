@@ -41,6 +41,7 @@ import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
@@ -55,7 +56,7 @@ import static org.opensingular.form.wicket.IWicketComponentMapper.SINGULAR_PROCE
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 @SuppressWarnings("unchecked")
-class SearchModalBodyPanel extends Panel {
+class SearchModalBodyPanel extends Panel implements Loggable {
 
     public static final String FILTER_BUTTON_ID = "filterButton";
     public static final String FORM_PANEL_ID    = "formPanel";
@@ -167,6 +168,7 @@ class SearchModalBodyPanel extends Panel {
                         return object;
                     }
                 } catch (Exception ex) {
+                    getLogger().debug(null, ex);
                     throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
                 }
             });

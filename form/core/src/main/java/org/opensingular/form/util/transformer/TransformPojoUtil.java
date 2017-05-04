@@ -16,14 +16,6 @@
 
 package org.opensingular.form.util.transformer;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.SingularFormException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,6 +28,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransformPojoUtil {
 
@@ -113,10 +113,8 @@ public class TransformPojoUtil {
     }
 
     // TODO Implementar futuramente
-    private static void fieldIsAMap(Map<Integer, Map<String, Object>> mapMain, Field field, Object objectToConvert, Map<String, Object> map)
-            throws Exception {
-
-        throw new Exception("Não é suportado atualmente o mapeamento de map.");
+    private static void fieldIsAMap(Map<Integer, Map<String, Object>> mapMain, Field field, Object objectToConvert, Map<String, Object> map) {
+        throw new UnsupportedOperationException("Não é suportado atualmente o mapeamento de map.");
     }
 
     private static void fieldIsAObjectClass(Map<Integer, Map<String, Object>> mapMain, Field field,
@@ -128,26 +126,30 @@ public class TransformPojoUtil {
         if (type.isPrimitive() || STOP_CRITERY.contains(type)) {
             map.put(field.getName(), obj);
         } else {
-            if (obj == null) {
-                map.put(field.getName(), null);
-            } else {
-                // se ja existe, coloca-se apenas a referencia do obj
-                if (mapMain.containsKey(System.identityHashCode(obj))) {
-                    map.put(field.getName(), "codRef=" + System.identityHashCode(obj));
-                } else {
-                    // senao, gera-se o dados necessarios
-                    Map<String, Object> mapItemFilho = new HashMap<>(); // cria o mapa do obj filho
-                    mapMain.put(System.identityHashCode(obj), mapItemFilho); // add no mapa de referencia
-                    map.put(field.getName(), mapItemFilho); // add no obj pai
+            fieldIsANonPrimitiveObject(mapMain, field, map, type, obj);
+        }
+    }
 
-                    Arrays.asList(type.getDeclaredFields()).forEach(f -> {
-                        try {
-                            convertObjectToMap(mapMain, f, obj);
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                    });
-                }
+    private static void fieldIsANonPrimitiveObject(Map<Integer, Map<String, Object>> mapMain, Field field, Map<String, Object> map, Class<?> type, Object obj) {
+        if (obj == null) {
+            map.put(field.getName(), null);
+        } else {
+            // se ja existe, coloca-se apenas a referencia do obj
+            if (mapMain.containsKey(System.identityHashCode(obj))) {
+                map.put(field.getName(), "codRef=" + System.identityHashCode(obj));
+            } else {
+                // senao, gera-se o dados necessarios
+                Map<String, Object> mapItemFilho = new HashMap<>(); // cria o mapa do obj filho
+                mapMain.put(System.identityHashCode(obj), mapItemFilho); // add no mapa de referencia
+                map.put(field.getName(), mapItemFilho); // add no obj pai
+
+                Arrays.asList(type.getDeclaredFields()).forEach(f -> {
+                    try {
+                        convertObjectToMap(mapMain, f, obj);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
             }
         }
     }
@@ -161,33 +163,38 @@ public class TransformPojoUtil {
         } else {
             Iterator<?> iterator = objCollection.iterator();
             if (iterator.hasNext()) {
-                List<Object> colecao = new ArrayList<>();
-
-                while (iterator.hasNext()) {
-                    Object item = iterator.next();
-                    if (item.getClass().isPrimitive() || STOP_CRITERY.contains(item.getClass())) {
-                        // maneira feita para garantir o tipo primitivo de ser colocado, e de se ter uma lista dele no SInstance
-                        Map<String, Object> itemMap = new HashMap<>();
-
-                        String[] valor = item.getClass().getName().split("\\.");
-                        itemMap.put(valor[valor.length - 1], item);
-
-                        colecao.add(itemMap);
-                    } else {
-                        Map<String, Object> itemMap = mapMain.get(System.identityHashCode(item));
-                        if (itemMap == null) {
-                            itemMap = new HashMap<>();
-                            mapMain.put(System.identityHashCode(item), itemMap);
-                        }
-                        Arrays.asList(item.getClass().getDeclaredFields()).forEach(f -> convertObjectToMap(mapMain, f, item));
-                        colecao.add(itemMap);
-                    }
-                }
+                List<Object> colecao = populateCollection(mapMain, iterator);
                 map.put(field.getName(), colecao);
             } else {
                 map.put(field.getName(), null);
             }
         }
+    }
+
+    private static List<Object> populateCollection(Map<Integer, Map<String, Object>> mapMain, Iterator<?> iterator) {
+        List<Object> colecao = new ArrayList<>();
+
+        while (iterator.hasNext()) {
+            Object item = iterator.next();
+            if (item.getClass().isPrimitive() || STOP_CRITERY.contains(item.getClass())) {
+                // maneira feita para garantir o tipo primitivo de ser colocado, e de se ter uma lista dele no SInstance
+                Map<String, Object> itemMap = new HashMap<>();
+
+                String[] valor = item.getClass().getName().split("\\.");
+                itemMap.put(valor[valor.length - 1], item);
+
+                colecao.add(itemMap);
+            } else {
+                Map<String, Object> itemMap = mapMain.get(System.identityHashCode(item));
+                if (itemMap == null) {
+                    itemMap = new HashMap<>();
+                    mapMain.put(System.identityHashCode(item), itemMap);
+                }
+                Arrays.asList(item.getClass().getDeclaredFields()).forEach(f -> convertObjectToMap(mapMain, f, item));
+                colecao.add(itemMap);
+            }
+        }
+        return colecao;
     }
 
     /**

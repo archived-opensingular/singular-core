@@ -27,6 +27,7 @@ import org.opensingular.flow.core.builder.BuilderPeople;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
+import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.util.List;
@@ -192,7 +193,7 @@ public class TesFlowMapValidations {
         }
     }
 
-    public static void assertException(SingularTestUtil.RunnableEx code, String expectedExceptionMsgPart) {
+    public static void assertException(RunnableEx code, String expectedExceptionMsgPart) {
         SingularTestUtil.assertException(code, SingularFlowException.class, expectedExceptionMsgPart, null);
     }
 

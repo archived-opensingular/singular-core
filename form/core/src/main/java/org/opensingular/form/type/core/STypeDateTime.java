@@ -33,8 +33,6 @@ import java.util.logging.Logger;
 @SInfoType(name = "DateTime", spackage = SPackageCore.class)
 public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
 
-    private static final Logger LOGGER = Logger.getLogger(STypeDateTime.class.getName());
-
     public static final String FORMAT = "dd/MM/yyyy HH:mm";
 
     public STypeDateTime() {
@@ -52,6 +50,7 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
         try {
             return isoFormarter().parseLocalDateTime(value).toDate();
         } catch (Exception e) {
+            getLogger().debug(null, e);
             try{
                 return latinFormatter().parse(value);
             } catch (Exception ex) {
@@ -62,7 +61,7 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
 
     private Date handleError(String value, Exception e) {
         String msg = String.format("Can't parse value '%s' with format '%s'.", value, "dd/MM/yyyy");
-        LOGGER.log(Level.WARNING, msg, e);
+        getLogger().warn(msg, e);
         throw SingularUtil.propagate(e);
     }
 

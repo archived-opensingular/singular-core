@@ -16,6 +16,20 @@
 
 package org.opensingular.flow.persistence.entity.util;
 
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
@@ -23,17 +37,13 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.jdbc.Work;
 import org.opensingular.flow.core.SingularFlowException;
-
-import javax.annotation.Nonnull;
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class SessionWrapper {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(SessionWrapper.class);
 
     private final Session session;
 
@@ -123,9 +133,7 @@ public class SessionWrapper {
             for (Serializable id : ids) {
                 if (id != null) {
                     Optional<? extends Serializable> obj = retrieve(tipo, id);
-                    if (obj.isPresent()) {
-                        getSession().delete(obj.get());
-                    }
+                    obj.ifPresent(getSession()::delete);
                 }
             }
         }
@@ -202,6 +210,7 @@ public class SessionWrapper {
             Object o = getSession().get(Objects.requireNonNull(classe), Objects.requireNonNull(id));
             return Optional.of(classe.cast(o));
         } catch (ObjectNotFoundException e) {
+            LOGGER.error("", e);
             return Optional.empty();
         }
     }

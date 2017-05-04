@@ -161,7 +161,7 @@ public class SingularIOUtils {
             ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out1.toByteArray()));
             return (T) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Falha no contexto da aplicação para serializar e deserializar o objeto", e);
         }
     }
 }

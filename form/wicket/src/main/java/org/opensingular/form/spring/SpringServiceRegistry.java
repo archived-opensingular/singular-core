@@ -17,6 +17,7 @@
 package org.opensingular.form.spring;
 
 import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -33,7 +34,7 @@ import java.util.Optional;
  * @author Fabricio Buzeto
  */
 public class SpringServiceRegistry implements ServiceRegistry,
-        ApplicationContextAware {
+        ApplicationContextAware, Loggable {
 
     private ApplicationContext applicationContext;
 
@@ -54,6 +55,7 @@ public class SpringServiceRegistry implements ServiceRegistry,
         try {
             return Optional.ofNullable(applicationContext.getBean(name, targetClass));
         } catch (NoSuchBeanDefinitionException ex) {
+            getLogger().debug(null, ex);
             return Optional.empty();
         }
     }
@@ -63,6 +65,7 @@ public class SpringServiceRegistry implements ServiceRegistry,
         try {
             return Optional.ofNullable(applicationContext.getBean(targetClass));
         } catch (NoSuchBeanDefinitionException ex) {
+            getLogger().debug(null, ex);
             return Optional.empty();
         }
     }
@@ -72,6 +75,7 @@ public class SpringServiceRegistry implements ServiceRegistry,
         try {
             return Optional.ofNullable(applicationContext.getBean(name));
         } catch (NoSuchBeanDefinitionException ex) {
+            getLogger().debug(null, ex);
             return Optional.empty();
         }
     }
