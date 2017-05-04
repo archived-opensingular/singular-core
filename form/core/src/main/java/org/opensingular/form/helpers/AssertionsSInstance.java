@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
@@ -251,8 +252,10 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
             assertEquals(original.getAttributes().size(), copy.getAttributes().size());
 
             for (SInstance atrOriginal : original.getAttributes()) {
-                SInstance atrNovo = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName()).get();
+                Optional<SInstance> atrNovoOpt = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName());
                 try {
+                    assertTrue(atrNovoOpt.isPresent());
+                    SInstance           atrNovo    = atrNovoOpt.get();
                     assertNotNull(atrNovo);
                     assertEquivalentInstance(atrOriginal, atrNovo, false);
                 } catch (AssertionError e) {

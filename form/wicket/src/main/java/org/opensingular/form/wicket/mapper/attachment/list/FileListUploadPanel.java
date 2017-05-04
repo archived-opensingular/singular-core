@@ -133,7 +133,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add($b.classAppender("FileListUploadPanel"));
         add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
 
-        if (viewMode.isVisualization() && model.getObject().isEmpty()) {
+        if (viewMode != null && viewMode.isVisualization() && model.getObject().isEmpty()) {
             add($b.classAppender("FileListUploadPanel_empty"));
         }
     }

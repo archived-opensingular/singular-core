@@ -81,7 +81,7 @@ public enum SingularClassPathScanner implements Loggable {
     private <T> Optional<Class<? extends T>> classLookup(Class<T> type, String className) {
         try {
             return Optional.of(Class.forName(className).asSubclass(type));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
         }
         return Optional.empty();
