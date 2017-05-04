@@ -133,9 +133,6 @@ public class SDictionary {
                 typeRef = registeLazyTypeIntoPackage(typePackage, typeClass);
             }
         }
-        if (typeRef == null) {
-            throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
-        }
         return typeRef;
     }
 

@@ -51,7 +51,7 @@ public interface BuilderStart<SELF extends BuilderStart<SELF>> extends BuilderPa
      *
      * @see SStart#setStartInitializer(SStart.IStartInitializer)
      */
-    default <I extends ProcessInstance> SELF withInitializer(SStart.IStartInitializer<I> startInitializer) {
+    default <I extends ProcessInstance> SELF setInitializer(SStart.IStartInitializer<I> startInitializer) {
         getStart().setStartInitializer(startInitializer);
         return self();
     }
@@ -62,7 +62,7 @@ public interface BuilderStart<SELF extends BuilderStart<SELF>> extends BuilderPa
      *
      * @see SStart#setStartValidator(SStart.IStartValidator)
      */
-    default <I extends ProcessInstance> SELF withValidator(SStart.IStartValidator<I> startValidator) {
+    default <I extends ProcessInstance> SELF setValidator(SStart.IStartValidator<I> startValidator) {
         getStart().setStartValidator(startValidator);
         return self();
     }

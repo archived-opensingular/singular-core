@@ -20,10 +20,11 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_VALIDATE_EVENT;
 
 public class SingularEventBehavior extends Behavior {
 
@@ -104,8 +105,8 @@ public class SingularEventBehavior extends Behavior {
                 JQuery.$(defaultIfNull(valComp, component)),
                 JQuery.$(defaultIfNull(prcComp, component)),
                 JQuery.$(defaultIfNull(supportComponents, EMPTY)),
-                IWicketComponentMapper.SINGULAR_VALIDATE_EVENT,
-                IWicketComponentMapper.SINGULAR_PROCESS_EVENT,
+                SINGULAR_VALIDATE_EVENT,
+                SINGULAR_PROCESS_EVENT,
                 getValidateSourceEvent(),
                 getProcessSourceEvent())
             + "\n var clearVal = function() { clearTimeout($validate.data('sngValEvt')); };"

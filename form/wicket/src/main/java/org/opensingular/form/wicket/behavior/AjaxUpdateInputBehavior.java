@@ -21,10 +21,11 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SInstance;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
+
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_VALIDATE_EVENT;
 
 public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
 
@@ -40,10 +41,10 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
     }
 
     public static AjaxUpdateInputBehavior forValidate(IModel<SInstance> model, IAjaxUpdateListener listener) {
-        return new AjaxUpdateInputBehavior(IWicketComponentMapper.SINGULAR_VALIDATE_EVENT, model, true, listener);
+        return new AjaxUpdateInputBehavior(SINGULAR_VALIDATE_EVENT, model, true, listener);
     }
     public static AjaxUpdateInputBehavior forProcess(IModel<SInstance> model, IAjaxUpdateListener listener) {
-        return new AjaxUpdateInputBehavior(IWicketComponentMapper.SINGULAR_PROCESS_EVENT, model, false, listener);
+        return new AjaxUpdateInputBehavior(SINGULAR_PROCESS_EVENT, model, false, listener);
     }
 
     @Override

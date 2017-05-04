@@ -211,10 +211,6 @@ public class SDocument {
             throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
         }
         documentFactory = context;
-        if (context.getDocumentFactoryRef() == null) {
-            throw new SingularFormException(
-                    context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
-        }
         ServiceRegistry sr = documentFactory.getServiceRegistry();
         if (sr != null) {
             addServiceRegistry(sr);

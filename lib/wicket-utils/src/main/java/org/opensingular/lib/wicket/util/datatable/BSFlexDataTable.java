@@ -178,10 +178,13 @@ public class BSFlexDataTable<T, S> extends BSDataTable<T, S> {
                 DefaultDataGridView.this.populateItem(item);
 
                 RepeatingView cells = (RepeatingView) item.get("cells");
-                Iterator<Component> cellItems = cells.iterator();
-                for (int columnIndex = 0; cellItems.hasNext(); columnIndex++) {
-                    Item<ICellPopulator<T>> cellItem = (Item<ICellPopulator<T>>) cellItems.next();
+
+                int columnIndex = 0;
+                for (Iterator<Component> it = cells.iterator(); it.hasNext(); ) {
+                    Item<ICellPopulator<T>> cellItem = (Item<ICellPopulator<T>>) it.next();
                     postPopulateCellItem(cellItem, columnIndex, model);
+
+                    columnIndex++;
                 }
                 return item;
             };

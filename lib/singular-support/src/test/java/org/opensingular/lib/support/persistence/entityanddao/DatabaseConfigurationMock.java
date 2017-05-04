@@ -16,7 +16,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = {"org.opensingular.lib.support.persistence.entityanddao"})
 @EnableTransactionManagement(proxyTargetClass = true)
-public class DatabaseConfigurationToBeUsedByTest {
+public class DatabaseConfigurationMock {
 
     @Bean
     public PlatformTransactionManager platformTransactionManager(SessionFactory factory){
