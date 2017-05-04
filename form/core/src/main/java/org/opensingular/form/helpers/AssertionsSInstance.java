@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
 import org.fest.assertions.api.IterableAssert;
+import org.fest.assertions.api.StringAssert;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SIComposite;
@@ -177,6 +178,14 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
             return Assertions.assertThat((Date) value);
         }
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
+    }
+
+    public StringAssert assertStringValue() {
+        Object value = getTarget().getValue();
+        if (value instanceof String || value == null) {
+            return Assertions.assertThat((String) value);
+        }
+        throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo String"));
     }
 
     /** Cria uma nova assertiva a partir do resultado da serialização e deserialização da instância atual. */

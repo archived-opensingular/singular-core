@@ -52,7 +52,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import static org.opensingular.form.wicket.IWicketComponentMapper.SINGULAR_PROCESS_EVENT;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 @SuppressWarnings("unchecked")
