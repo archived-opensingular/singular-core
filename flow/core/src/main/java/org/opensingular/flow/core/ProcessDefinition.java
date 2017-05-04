@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityCategory;
@@ -30,7 +29,7 @@ import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataEnabled;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
@@ -49,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -65,7 +65,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance>
-        implements Comparable<ProcessDefinition<?>> {
+        implements Comparable<ProcessDefinition<?>>, MetaDataEnabled {
 
     static final Logger logger = LoggerFactory.getLogger(ProcessDefinition.class);
 
@@ -277,58 +277,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     @Nonnull
     final Collection<ProcessScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
-    }
-
-    /**
-     * <p>
-     * Retorna o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @param defaultValue
-     *            o valor padrão do metadado.
-     * @return o valor do metadado especificado; ou o valor padrão caso não
-     *         encontre o metadado especificado.
-     */
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
-        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
-    }
-
-    /**
-     * <p>
-     * Retorna o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @return o valor do metadado especificado; ou {@code null} caso não
-     *         encontre o metadado especificado.
-     */
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
-        return metaData == null ? null : getMetaData().get(propRef);
-    }
-
-    /**
-     * <p>
-     * Configura o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @param value
-     *            o valor do metadado a ser configurado.
-     * @return esta definição de processo já com o metadado definido.
-     */
-    protected <T> ProcessDefinition<I> setMetaDataValue(MetaDataRef<T> propRef, T value) {
-        getMetaData().set(propRef, value);
-        return this;
     }
 
     /**
@@ -633,7 +581,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         this.name = name;
     }
 
-    final MetaData getMetaData() {
+    @Override
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
+    }
+
+    @Override
+    public MetaData getMetaData() {
         if (metaData == null) {
             metaData = new MetaData();
         }
