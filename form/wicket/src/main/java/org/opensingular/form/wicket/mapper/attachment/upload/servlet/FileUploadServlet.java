@@ -46,23 +46,20 @@ public class FileUploadServlet extends HttpServlet {
     public static final String UPLOAD_URL = "/upload";
     public static final String PARAM_NAME = "FILE-UPLOAD";
 
-    private final FileUploadManagerFactory uploadManagerFactory;
-    private final AttachmentKeyFactory     keyFactory;
-    private final ServletFileUploadFactory servletFileUploadFactory;
-    private final FileUploadProcessor      upProcessor;
-    private final UploadResponseWriter     upResponseWriter;
+    private FileUploadManagerFactory uploadManagerFactory;
+    private AttachmentKeyFactory     keyFactory;
+    private ServletFileUploadFactory servletFileUploadFactory;
+    private FileUploadProcessor      upProcessor;
+    private UploadResponseWriter     upResponseWriter;
 
-    public FileUploadServlet() {
+    @Override
+    public void init() throws ServletException {
+        super.init();
         this.uploadManagerFactory = makeFileUploadManagerFactory();
         this.keyFactory = makeAttachmentKeyFactory();
         this.servletFileUploadFactory = makeServletFileUploadFactory();
         this.upProcessor = makeFileUploadProcessor();
         this.upResponseWriter = makeUploadResponseWriter();
-    }
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
     }
 
     protected FileUploadManagerFactory makeFileUploadManagerFactory() {
