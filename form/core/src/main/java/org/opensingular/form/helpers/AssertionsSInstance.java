@@ -254,10 +254,13 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
             for (SInstance atrOriginal : original.getAttributes()) {
                 Optional<SInstance> atrNovoOpt = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName());
                 try {
-                    assertTrue(atrNovoOpt.isPresent());
-                    SInstance           atrNovo    = atrNovoOpt.get();
-                    assertNotNull(atrNovo);
-                    assertEquivalentInstance(atrOriginal, atrNovo, false);
+                    if (atrNovoOpt.isPresent()) {
+                        SInstance atrNovo = atrNovoOpt.get();
+                        assertNotNull(atrNovo);
+                        assertEquivalentInstance(atrOriginal, atrNovo, false);
+                    } else {
+                        fail();
+                    }
                 } catch (AssertionError e) {
                     throw new AssertionError(
                             "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
