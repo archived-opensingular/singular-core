@@ -96,7 +96,7 @@ public class STypeTester<T extends SType<?>> {
                         .filter(c -> selection.test(c, choices.indexOf(c)))
                         .map(choices::indexOf)
                         .findFirst()
-                        .get());
+                        .orElse(null));
     }
 
     public <ST extends SType<?>> void submitSelection(IFunction<T, ST> typeFinder, int choiceIndex) {
@@ -172,7 +172,7 @@ public class STypeTester<T extends SType<?>> {
     private <ST extends SType<?>> SInstance resolveTypeFinderInstance(IFunction<T, ST> typeFinder) {
         SInstance instance = getRootSInstanceForGivenSTypeClass();
         ST        subtype  = typeFinder.apply((T) instance.getType());
-        return instance.findNearest((SType<SInstance>) subtype).get();
+        return instance.findNearest((SType<SInstance>) subtype).orElse(null);
     }
 
     private SInstance getRootSInstanceForGivenSTypeClass() {
