@@ -94,13 +94,13 @@ public class TransformPojoUtil {
 
         try {
             verifyTypeOfAField(mapMain, field, objectToConvert, map);
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
     private static void verifyTypeOfAField(Map<Integer, Map<String, Object>> mapMain, Field field,
-                                           Object objectToConvert, Map<String, Object> map) throws Exception {
+                                           Object objectToConvert, Map<String, Object> map) throws IllegalAccessException {
         Class<?> type = field.getType();
         // Verifica qual o tipo de campo
         if (Collection.class.isAssignableFrom(type)) {
