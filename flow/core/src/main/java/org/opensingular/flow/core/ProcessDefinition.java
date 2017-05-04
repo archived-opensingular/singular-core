@@ -153,7 +153,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     /**
      * Método a ser implementado com a criação do fluxo do processo.
      */
-    @Nonnull
     protected abstract FlowMap createFlowMap();
 
     /**
