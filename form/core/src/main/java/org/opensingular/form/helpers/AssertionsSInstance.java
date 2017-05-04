@@ -261,25 +261,29 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
             assertEquals(original.getAttributes().size(), copy.getAttributes().size());
 
             for (SInstance atrOriginal : original.getAttributes()) {
-                Optional<SInstance> atrNovoOpt = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName());
-                try {
-                    if (atrNovoOpt.isPresent()) {
-                        SInstance atrNovo = atrNovoOpt.get();
-                        assertNotNull(atrNovo);
-                        assertEquivalentInstance(atrOriginal, atrNovo, false);
-                    } else {
-                        fail();
-                    }
-                } catch (AssertionError e) {
-                    throw new AssertionError(
-                            "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
-                }
+                assertEqualsAtribute(copy, atrOriginal);
             }
         } catch (AssertionError e) {
             if (e.getMessage().startsWith("Erro comparando atributos de ")) {
                 throw e;
             }
             throw new AssertionError("Erro comparando atributos de '" + original + "'", e);
+        }
+    }
+
+    public static void assertEqualsAtribute(SAttributeEnabled copy, SInstance atrOriginal) {
+        Optional<SInstance> atrNovoOpt = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName());
+        try {
+            if (atrNovoOpt.isPresent()) {
+                SInstance atrNovo = atrNovoOpt.get();
+                assertNotNull(atrNovo);
+                assertEquivalentInstance(atrOriginal, atrNovo, false);
+            } else {
+                fail();
+            }
+        } catch (AssertionError e) {
+            throw new AssertionError(
+                    "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
         }
     }
 }
