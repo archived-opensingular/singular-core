@@ -36,7 +36,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
 
     public FlowBuilder getFlowBuilder();
 
-    public default SELF markAsDefault() {
+    public default SELF setAsDefaultTransiton() {
         getTransition().getOrigin().setDefaultTransition(getTransition());
         return (SELF) self();
     }
@@ -56,7 +56,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
     
-    public default SELF withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    public default SELF setAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         getTransition().withAccessControl(accessStrategy);
         return self();
     }

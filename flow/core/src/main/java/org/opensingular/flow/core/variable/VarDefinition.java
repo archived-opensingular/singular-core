@@ -19,8 +19,9 @@ package org.opensingular.flow.core.variable;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 
-public interface VarDefinition {
+public interface VarDefinition extends Serializable {
 
     public String getRef();
 

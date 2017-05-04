@@ -17,7 +17,11 @@
 package org.opensingular.internal.lib.commons.util;
 
 import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Métodos utilitários relacionados a arquivos e manipulação de IO.
@@ -123,7 +127,7 @@ public class SingularIOUtils {
      */
     @Nonnull
     public static String humanReadableMiliSeconds(long mili) {
-        int[]    unit   = {60, 60, 24, 0};
+        int[] unit = {60, 60, 24, 0};
         if (mili < 1000) return mili + " ms";
         double value = mili / 1000d;
         int pos = 0;
@@ -132,6 +136,18 @@ public class SingularIOUtils {
             pos++;
         }
         return String.format("%.1f %s", value, TIME_SYMBOS[pos]);
+    }
+
+    /**
+     * Serializa e deserializa o mesmo objeto retornando o resultado da deserialização. Útil na automação de testes.
+     *
+     * @param activeJavaDebugInfo Se true, ativa as informações detalhadas de serialização (NÃO USAR EM PRODUÇÃO)
+     */
+    public static <T> T serializeAndDeserialize(@Nonnull T obj, boolean activeJavaDebugInfo) {
+        if (activeJavaDebugInfo) {
+            System.setProperty("sun.io.serialization.extendedDebugInfo", "true");
+        }
+        return serializeAndDeserialize(obj);
     }
 
     /** Serializa e deserializa o mesmo objeto retornando o resultado da deserialização. Útil na automação de testes.*/

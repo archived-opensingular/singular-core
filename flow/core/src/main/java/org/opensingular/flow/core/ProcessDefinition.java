@@ -36,8 +36,8 @@ import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
-import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -703,7 +703,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     public StartCall<I> prepareStartCall() {
-        return new StartCall<I>(this, getFlowMap().getStart());
+        return new StartCall<I>(this, new RefStart(getFlowMap().getStart()));
     }
 
 

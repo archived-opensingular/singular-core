@@ -191,27 +191,27 @@ public class STransition extends SParametersEnabled {
     }
 
     @Nonnull
-    final VarInstanceMap<?,?> newTransitionParameters(@Nonnull TransitionRef transitionRef) {
-        Objects.requireNonNull(transitionRef);
+    final VarInstanceMap<?,?> newTransitionParameters(@Nonnull RefTransition refTransition) {
+        Objects.requireNonNull(refTransition);
         VarInstanceMap<?,?> params = getParameters().newInstanceMap();
         if (parametersInitializer != null) {
-            parametersInitializer.init(params, transitionRef);
+            parametersInitializer.init(params, refTransition);
         }
         return params;
     }
 
     @Nonnull
-    final ValidationResult validate(@Nonnull TransitionRef transitionRef, VarInstanceMap<?,?> parameters) {
+    final ValidationResult validate(@Nonnull RefTransition refTransition, VarInstanceMap<?,?> parameters) {
         ValidationResult validationResult = new ValidationResult();
         if (parametersValidator != null) {
-            parametersValidator.validate(parameters, validationResult, transitionRef);
+            parametersValidator.validate(parameters, validationResult, refTransition);
         }
         return validationResult;
     }
 
     @Nonnull
     final ValidationResult validate(@Nonnull TaskInstance instancia, VarInstanceMap<?,?> parameters) {
-        return validate(new TransitionRef(instancia, this), parameters);
+        return validate(new RefTransition(instancia, this), parameters);
     }
 
     @Override
@@ -245,7 +245,7 @@ public class STransition extends SParametersEnabled {
 
     @FunctionalInterface
     public interface ITransitionParametersInitializer extends Serializable {
-        void init(VarInstanceMap<?,?> params, TransitionRef context);
+        void init(VarInstanceMap<?,?> params, RefTransition context);
     }
 
     @FunctionalInterface
@@ -255,7 +255,7 @@ public class STransition extends SParametersEnabled {
 
     @FunctionalInterface
     public interface ITransitionParametersValidator extends Serializable {
-        public void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, TransitionRef context);
+        public void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, RefTransition context);
     }
 
     @FunctionalInterface

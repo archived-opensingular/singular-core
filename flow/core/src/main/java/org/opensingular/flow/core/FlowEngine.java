@@ -16,13 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.function.BiFunction;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -38,6 +31,12 @@ import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Date;
+import java.util.Objects;
+import java.util.function.BiFunction;
 
 class FlowEngine {
 
@@ -88,6 +87,10 @@ class FlowEngine {
                 throw new SingularFlowException(
                         "Não pode ser solicitada execução de uma transição específica (transition=" +
                                 transition.getName() + ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
+            } else if (originTaskInstance != null && ! originTaskInstance.isActive()) {
+                throw new SingularFlowException(
+                        "Não pode ser executada uma transição a partir da task '" + originTaskInstance.getName() +
+                                "', pois a mesma já está concluida.", originTaskInstance);
             }
             Date agora = new Date();
             final TaskInstance newTaskInstance = processInstance.updateState(originTaskInstance, transition, destinyTask, agora);
@@ -254,7 +257,7 @@ class FlowEngine {
     private static void copyMarkedParametersToInstanceVariables(@Nonnull ProcessInstance instance,
             @Nonnull VarInstanceMap<?, ?> paramIn) {
         for (VarInstance variavel : paramIn) {
-            if (SParametersEnabled.isAutoBindedToProcessVariable(variavel.getDefinition())) {
+            if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToProcessVariable(variavel)) {
                 String ref = variavel.getRef();
                 if (instance.getProcessDefinition().getVariables().contains(ref)) {
                     instance.setVariable(ref, variavel.getValue());
@@ -269,32 +272,26 @@ class FlowEngine {
                 .getConfigBean().getPersistenceService();
     }
 
-    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull STransition transicao, VarInstanceMap<?,?> paramIn) {
+    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(taskInstance);
-        if (transicao.getParameters().isEmpty()) {
+        if (transition.getParameters().isEmpty()) {
             return;
         }
-        for (VarDefinition p : transicao.getParameters()) {
-            if (p.isRequired()) {
-                if (!parametroPresentes(paramIn, p)) {
-                    throw new SingularFlowException(
-                            "O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição " +
-                                    transicao.getName(), taskInstance);
-                }
+        ValidationResult errors = new ValidationResult();
+        for (VarDefinition p : transition.getParameters()) {
+            if (p.isRequired() && !parametroPresentes(paramIn, p)) {
+                errors.addErro(p, "parametro obrigatório não informado");
             }
         }
-        ValidationResult errors = transicao.validate(taskInstance, paramIn);
+        if (! errors.hasErros()) {
+            errors = transition.validate(taskInstance, paramIn);
+        }
         if (errors.hasErros()) {
-            throw new SingularFlowException(
-                    "Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]",
-                    taskInstance);
+            throw new SingularFlowInvalidParametersException(taskInstance, transition, errors);
         }
     }
 
     private static boolean parametroPresentes(VarInstanceMap<?,?> parametros, VarDefinition parametroEsperado) {
-        if (parametros == null) {
-            return false;
-        }
-        return parametros.contains(parametroEsperado.getRef());
+        return parametros != null && parametros.getValue(parametroEsperado.getRef()) != null;
     }
 }
