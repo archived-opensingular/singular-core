@@ -33,7 +33,11 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.opensingular.flow.core.service.IFlowMetadataREST.*;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_DIAGRAM;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_HAS_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_WITH_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_INSTANCE_HAS_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.generateGroupToken;
 
 class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     
