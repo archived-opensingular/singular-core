@@ -383,6 +383,13 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         this.listeners = listeners;
         return this;
     }
+    public WicketBuildContext addListeners(Iterable<IWicketBuildListener> listeners) {
+        if (listeners != null) {
+            for (IWicketBuildListener listener : listeners)
+                addListener(listener);
+        }
+        return this;
+    }
     public WicketBuildContext addListener(IWicketBuildListener listener) {
         if (this.listeners == null)
             this.listeners = new ArrayList<>();
