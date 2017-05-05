@@ -16,10 +16,9 @@
 
 package org.opensingular.flow.core;
 
-import com.google.common.base.MoreObjects;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataEnabled;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "serial", "unchecked" })
-public abstract class STask<K extends STask<?>> {
+public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     private final FlowMap flowMap;
     private final String name;
@@ -122,20 +121,15 @@ public abstract class STask<K extends STask<?>> {
         return false;
     }
 
-    public <T> STask<K> setMetaDataValue(MetaDataRef<T> propRef, T value) {
-        getMetaData().set(propRef, value);
-        return this;
+    @Override
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
     }
 
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
-        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
-    }
-
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
-        return metaData == null ? null : getMetaData().get(propRef);
-    }
-
-    MetaData getMetaData() {
+    @Override
+    @Nonnull
+    public MetaData getMetaData() {
         if (metaData == null) {
             metaData = new MetaData();
         }

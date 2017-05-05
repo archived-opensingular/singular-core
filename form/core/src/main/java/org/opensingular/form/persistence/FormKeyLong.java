@@ -60,6 +60,8 @@ public class FormKeyLong extends AbstractFormKey<Long> implements FormKeyNumber 
             return new FormKeyLong((Long) objectValueToBeConverted);
         } else if (objectValueToBeConverted instanceof Number) {
             return new FormKeyLong(((Number) objectValueToBeConverted).longValue());
+        } else if (objectValueToBeConverted instanceof String) {
+            return new FormKeyLong((String) objectValueToBeConverted);
         }
         throw new SingularFormPersistenceException("Não consegue converter o valor solcicitado").add("value",
                 objectValueToBeConverted).add("value type", objectValueToBeConverted.getClass());

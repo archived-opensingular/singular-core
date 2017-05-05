@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -319,7 +318,7 @@ public abstract class SInstances {
             if (node.getType().isTypeOf(descendantType)) {
                 return Optional.of((D) node);
             } else {
-                deque.addAll(children(node));
+                addAllChildren(deque, node);
             }
         }
         return Optional.empty();
@@ -351,7 +350,7 @@ public abstract class SInstances {
             if (node.getType().isTypeOf(descendantType)) {
                 result.add(function.apply((D) node));
             } else {
-                deque.addAll(children(node));
+                addAllChildren(deque, node);
             }
         }
         return result;
@@ -405,12 +404,10 @@ public abstract class SInstances {
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */
-    static Collection<SInstance> children(SInstance node) {
-        List<SInstance> result = new ArrayList<>();
+    static void addAllChildren(Deque<SInstance> deque, SInstance node) {
         if (node instanceof ICompositeInstance) {
-            result.addAll(((ICompositeInstance) node).getAllChildren());
+            deque.addAll(((ICompositeInstance) node).getAllChildren());
         }
-        return result;
     }
 
     public static void updateBooleanAttribute(

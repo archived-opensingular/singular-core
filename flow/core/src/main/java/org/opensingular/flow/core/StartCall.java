@@ -28,15 +28,13 @@ import javax.annotation.Nonnull;
  */
 public final class StartCall<I extends ProcessInstance> extends CallWithParameters<StartCall<I>> {
 
-    private final ProcessDefinition<I> processDefinition;
+    private final RefStart start;
 
-    private final SStart start;
-
-    StartCall(ProcessDefinition<I> processDefinition, SStart start) {this.processDefinition = processDefinition;
+    StartCall(ProcessDefinition<I> processDefinition, RefStart start) {
         this.start = start;
-        if (start.getFlowMap().getProcessDefinition() != processDefinition) {
-            throw new SingularFlowException("Erro interno: processDefinition diferentes").add(
-                    start.getFlowMap().getProcessDefinition()).add(processDefinition);
+        if (getProcessDefinition() != processDefinition) {
+            throw new SingularFlowException("Erro interno: processDefinition diferentes").add(getProcessDefinition())
+                    .add(processDefinition);
         }
     }
 
@@ -65,16 +63,16 @@ public final class StartCall<I extends ProcessInstance> extends CallWithParamete
 
     @Override
     protected VarInstanceMap<?,?> newParameters() {
-        return start.getParameters().newInstanceMap();
+        return getStart().getParameters().newInstanceMap();
     }
 
     /** Definição desse ponto de inicialização segunda a definiçao do próprio processo. */
     public SStart getStart() {
-        return start;
+        return start.get();
     }
 
     /** Retorna a definição do processo que será inicializado. */
     public ProcessDefinition<I> getProcessDefinition() {
-        return processDefinition;
+        return (ProcessDefinition<I>) getStart().getFlowMap().getProcessDefinition();
     }
 }

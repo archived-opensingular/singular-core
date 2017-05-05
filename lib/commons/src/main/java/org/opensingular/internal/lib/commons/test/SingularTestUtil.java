@@ -96,10 +96,11 @@ public final class SingularTestUtil {
         } catch (Exception e) {
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
-            } else if (e instanceof  RuntimeException) {
-                throw (RuntimeException) e;
+            } else {
+                String msg = "Era esperado " + expectedException.getSimpleName() + "'";
+                msg += " no entanto ocorreu a exceção '" + e.getClass().getSimpleName() + "'";
+                throw new AssertionError(msg, e);
             }
-            throw new RuntimeException(e);
         }
     }
 
@@ -116,9 +117,5 @@ public final class SingularTestUtil {
             return findExpectedException(e.getCause(), expectedException, expectedExceptionMsgPart);
         }
         return false;
-    }
-
-    public static interface RunnableEx {
-        public void run() throws Exception;
     }
 }

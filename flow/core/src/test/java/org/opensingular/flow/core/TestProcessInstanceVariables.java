@@ -63,27 +63,17 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
     public void simpleVriables() {
         ProcessInstance pi = new ProcessWithVariables().prepareStartCall().createAndStart();
 
-        assertions(pi).isAtTask(StepsPV.First)
-                .isVariableValue(PARAM_STRING, PARAM_STRING_VALUE)
-                .isVariableValue(PARAM_NULL, null)
-                .isVariableValue(PARAM_BOOLEAN, PARAM_BOOLEAN_VALUE)
-                .isVariableValue(PARAM_DATE, PARAM_DATE_VALUE)
-                .isVariableValue(PARAM_INTEGER, PARAM_INTEGER_VALUE);
-        assertEquals(PARAM_STRING_VALUE, pi.getVariableValueString(PARAM_STRING));
-        assertEquals(PARAM_BOOLEAN_VALUE, pi.getVariableValueBoolean(PARAM_BOOLEAN));
-        assertEquals(PARAM_INTEGER_VALUE, pi.getVariableValueInteger(PARAM_INTEGER));
-
-        pi = reload(pi);
-
-        assertions(pi).isAtTask(StepsPV.First)
-                .isVariableValue(PARAM_STRING, PARAM_STRING_VALUE)
-                .isVariableValue(PARAM_NULL, null)
-                .isVariableValue(PARAM_BOOLEAN, PARAM_BOOLEAN_VALUE)
-                .isVariableValue(PARAM_DATE, PARAM_DATE_VALUE)
-                .isVariableValue(PARAM_INTEGER, PARAM_INTEGER_VALUE);
-        assertEquals(PARAM_STRING_VALUE, pi.getVariableValueString(PARAM_STRING));
-        assertEquals(PARAM_BOOLEAN_VALUE, pi.getVariableValueBoolean(PARAM_BOOLEAN));
-        assertEquals(PARAM_INTEGER_VALUE, pi.getVariableValueInteger(PARAM_INTEGER));
+        assertReloadAssert(pi, p-> {
+            assertions(p).isAtTask(StepsPV.First)
+                    .isVariableValue(PARAM_STRING, PARAM_STRING_VALUE)
+                    .isVariableValue(PARAM_NULL, null)
+                    .isVariableValue(PARAM_BOOLEAN, PARAM_BOOLEAN_VALUE)
+                    .isVariableValue(PARAM_DATE, PARAM_DATE_VALUE)
+                    .isVariableValue(PARAM_INTEGER, PARAM_INTEGER_VALUE);
+            assertEquals(PARAM_STRING_VALUE, pi.getVariableValueString(PARAM_STRING));
+            assertEquals(PARAM_BOOLEAN_VALUE, pi.getVariableValueBoolean(PARAM_BOOLEAN));
+            assertEquals(PARAM_INTEGER_VALUE, pi.getVariableValueInteger(PARAM_INTEGER));
+        });
     }
 
     @Test
@@ -125,7 +115,7 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
             f.addWaitTask(StepsPV.First);
             f.addEnd(StepsPV.End);
 
-            f.setStart(StepsPV.First).withInitializer(this::processInitializer);
+            f.setStart(StepsPV.First).setInitializer(this::processInitializer);
             f.from(StepsPV.First).go(StepsPV.End);
 
             return f.build();

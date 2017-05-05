@@ -7,8 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.IValidationError;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class DinamicVisiblityValidationTest {
 
@@ -91,7 +92,7 @@ public class DinamicVisiblityValidationTest {
     }
 
     private void callAjaxProcessEvent(Component fieldOne) {
-        tester.executeAjaxEvent(fieldOne, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(fieldOne, SINGULAR_PROCESS_EVENT);
     }
 
 }

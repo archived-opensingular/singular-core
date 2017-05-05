@@ -5,7 +5,7 @@ import org.hibernate.HibernateException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensingular.lib.support.persistence.entityanddao.DatabaseConfigurationToBeUsedByTest;
+import org.opensingular.lib.support.persistence.entityanddao.DatabaseConfigurationMock;
 import org.opensingular.lib.support.persistence.entityanddao.TestDAO;
 import org.opensingular.lib.support.persistence.entityanddao.TestEntity;
 import org.opensingular.lib.support.persistence.enums.SimNao;
@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {DatabaseConfigurationToBeUsedByTest.class})
+@ContextConfiguration(classes = {DatabaseConfigurationMock.class})
 public class GenericEnumUserTypeTest {
 
     @Inject

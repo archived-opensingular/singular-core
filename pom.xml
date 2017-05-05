@@ -145,6 +145,10 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.8</version>
+                <configuration>
+                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                    <append>true</append>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -250,7 +254,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.easytesting</groupId>
@@ -335,7 +339,7 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49,s50,s51,s52</sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -522,6 +526,23 @@
 
         <sonar.issue.ignore.multicriteria.s49.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s49.ruleKey>
         <sonar.issue.ignore.multicriteria.s49.resourceKey>**/SingularIOUtils.java</sonar.issue.ignore.multicriteria.s49.resourceKey>
+
+        <sonar.issue.ignore.multicriteria.s50.ruleKey>squid:S00112</sonar.issue.ignore.multicriteria.s50.ruleKey>
+        <sonar.issue.ignore.multicriteria.s50.resourceKey>**/RunnableEx.java</sonar.issue.ignore.multicriteria.s50.resourceKey>
+
+        <!-- Falso positivo: cookie seguro  -->
+        <sonar.issue.ignore.multicriteria.s51.ruleKey>squid:S2092</sonar.issue.ignore.multicriteria.s51.ruleKey>
+        <sonar.issue.ignore.multicriteria.s51.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s51.resourceKey>
+
+        <!-- Falso positivo: remover estado mutavel de servlet  -->
+        <sonar.issue.ignore.multicriteria.s52.ruleKey>squid:S2226</sonar.issue.ignore.multicriteria.s52.ruleKey>
+        <sonar.issue.ignore.multicriteria.s52.resourceKey>**/FileUploadServlet.java</sonar.issue.ignore.multicriteria.s52.resourceKey>
+
+        <!-- Sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/SINGULAR/singular-core.git</project.scm.connection>

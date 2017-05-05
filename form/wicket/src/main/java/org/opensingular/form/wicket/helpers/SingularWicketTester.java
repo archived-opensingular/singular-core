@@ -17,8 +17,11 @@
 package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.opensingular.form.SType;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.internal.form.wicket.util.WicketSerializationDebugUtil;
 
@@ -124,7 +127,19 @@ public class SingularWicketTester extends WicketTester {
 
     private void checkIfStartPageCalled() {
         if (getLastRenderedPage() == null) {
-            throw new RuntimeException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
+            throw new IllegalStateException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
         }
+    }
+
+    public SingularFormTester newSingularFormTester(String path) {
+        return newSingularFormTester(path, true);
+    }
+
+    public SingularFormTester newSingularFormTester(String path, boolean fillBlankString) {
+        return new SingularFormTester(path, (Form<?>)getComponentFromLastRenderedPage(path), this, fillBlankString);
+    }
+
+    public <T extends SType<?>> STypeTester<T> newSingularSTypeTester(Class<? extends T> sypeClass){
+        return new STypeTester<>(this, sypeClass);
     }
 }

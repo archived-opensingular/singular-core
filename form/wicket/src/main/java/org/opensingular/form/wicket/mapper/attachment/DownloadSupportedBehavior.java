@@ -99,6 +99,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         try {
             handleRequest();
         } catch (IOException e) {
+            getLogger().debug(null, e);
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 

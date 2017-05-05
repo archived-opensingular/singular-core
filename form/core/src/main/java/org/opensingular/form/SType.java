@@ -30,6 +30,7 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
+public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
     private final AttributeMap attributesDefined = new AttributeMap();
@@ -898,7 +899,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return new SelectionBuilder<>(this);
     }
 
-    public void withSelectionFromProvider(Class<? extends SimpleProvider<?, ?>> providerClass) {
+    public <SP extends SimpleProvider<?, ?>> void withSelectionFromProvider(Class<? extends SP> providerClass) {
         this.typelessSelection().selfIdAndDisplay().provider(providerClass);
     }
 
