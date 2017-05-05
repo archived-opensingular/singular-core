@@ -80,12 +80,14 @@ public class STypeStringSelectionFromProviderFieldTest {
 
     }
 
+
+
     public static class WithSpecifiedProviderBindedByType extends Base {
 
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);
-            selectType.withSelectionFromProvider(SimpleProvider.class);
+            selectType.withSelectionFromProvider("nada");
         }
 
         @Override
