@@ -24,8 +24,10 @@ import org.opensingular.lib.commons.test.AssertionsBase;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Classe de apoio a construção de asertivas de teste para {@link ProcessInstance}.
@@ -38,17 +40,9 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
         super(target);
     }
 
-    public AssertionsProcessInstance(Optional<? extends ProcessInstance> target) {
-        super(target);
-    }
-
     @Override
     protected String errorMsg(String msg) {
-        Optional<ProcessInstance> target = getTargetOpt();
-        if (target.isPresent()) {
-            return "(processInstance=" + target.get() + ") " + msg;
-        }
-        return msg;
+        return getTargetOpt().map(target -> "(processInstance=" + target + ") " + msg).orElse(msg);
     }
 
     /**
@@ -92,6 +86,32 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
             throw new AssertionError(
                     errorMsg("Quantidade de variáveis diferentes de null não esperadas", expectedNotNullSize,
                             countNotNull));
+        }
+        return this;
+    }
+
+    /**
+     * Verifica se o processo possui um histórico de tarefa compatível com a sequencia informada.
+     */
+    public AssertionsProcessInstance isTaskSequence(ITaskDefinition... expectedTaskSequence) {
+        List<TaskInstance> tasks = getTarget().getTasksOlderFirst();
+        int pos = -1;
+        if (tasks.size() == expectedTaskSequence.length) {
+            for(int i = 0 ; i < expectedTaskSequence.length; i++) {
+                if (! tasks.get(i).isAtTask(expectedTaskSequence[i])) {
+                    pos = i;
+                    break;
+                }
+            }
+        } else {
+            pos = Math.min(tasks.size(), expectedTaskSequence.length);
+        }
+        if (pos != -1) {
+            String expected = Arrays.stream(expectedTaskSequence).map(e -> e.toString()).collect(
+                    Collectors.joining(", "));
+            String current = tasks.stream().map(t -> t.getFlowTask().get().getAbbreviation()).collect(
+                    Collectors.joining(", "));
+            throw new AssertionError(errorMsg("Sequencia de Tasks diferente na posição " + pos, expected,current));
         }
         return this;
     }

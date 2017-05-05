@@ -50,7 +50,7 @@ public class MetaData implements Iterable<MetaDataValue>, Serializable {
         return (metaDataKeyValue == null) ? Collections.emptyIterator() : metaDataKeyValue.values().iterator();
     }
 
-    public <T> void set(MetaDataRef<T> propRef, T value) {
+    public <T extends Serializable> void set(MetaDataRef<T> propRef, T value) {
         if (value == null) {
             remove(propRef);
         } else {
@@ -79,7 +79,7 @@ public class MetaData implements Iterable<MetaDataValue>, Serializable {
         }
     }
 
-    public <T> T get(MetaDataRef<T> propRef) {
+    public <T extends Serializable> T get(MetaDataRef<T> propRef) {
         if (metaDataKeyValue != null) {
             MetaDataValue p = metaDataKeyValue.get(propRef.getName());
             if (p != null) {

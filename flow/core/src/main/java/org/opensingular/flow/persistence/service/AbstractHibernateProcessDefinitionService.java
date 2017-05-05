@@ -293,10 +293,18 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     private static boolean isNewVersion(IEntityTaskTransitionVersion oldTaskTransition, IEntityTaskTransitionVersion newTaskTransition) {
         //@formatter:off
         return oldTaskTransition == null ||
-                !oldTaskTransition.getName().equalsIgnoreCase(newTaskTransition.getName()) ||
-                !oldTaskTransition.getAbbreviation().equalsIgnoreCase(newTaskTransition.getAbbreviation()) ||
-                oldTaskTransition.getType() != newTaskTransition.getType() ||
-                !oldTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newTaskTransition.getDestinationTask().getAbbreviation());
+                isDifferentTask(oldTaskTransition, newTaskTransition) ||
+                isDifferentDestinationTask(oldTaskTransition, newTaskTransition);
         //@formatter:on
+    }
+
+    private static boolean isDifferentTask(IEntityTaskTransitionVersion oldTaskTransition, IEntityTaskTransitionVersion newTaskTransition) {
+        return !oldTaskTransition.getName().equalsIgnoreCase(newTaskTransition.getName()) ||
+                !oldTaskTransition.getAbbreviation().equalsIgnoreCase(newTaskTransition.getAbbreviation()) ||
+                oldTaskTransition.getType() != newTaskTransition.getType();
+    }
+
+    private static boolean isDifferentDestinationTask(IEntityTaskTransitionVersion oldTaskTransition, IEntityTaskTransitionVersion newTaskTransition) {
+        return !oldTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newTaskTransition.getDestinationTask().getAbbreviation());
     }
 }

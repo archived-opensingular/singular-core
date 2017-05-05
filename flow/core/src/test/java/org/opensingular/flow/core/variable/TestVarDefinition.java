@@ -17,6 +17,7 @@
 package org.opensingular.flow.core.variable;
 
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 /**
@@ -41,7 +42,7 @@ public class TestVarDefinition {
         assertException(() -> varBigDecimal.fromPersistenceString("xx"));
     }
 
-    private void assertException(SingularTestUtil.RunnableEx code) {
+    private void assertException(RunnableEx code) {
         SingularTestUtil.assertException(code, SingularFlowConvertingValueException.class);
     }
 }

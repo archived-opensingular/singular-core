@@ -41,40 +41,49 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class TaskInstance {
+public class TaskInstance implements Serializable {
 
     public static final String ALOCACAO = "Alocação";
     public static final String DESALOCACAO = "Desalocação";
 
-    private IEntityTaskInstance entityTask;
+    private final Integer taskCod;
 
-    private ProcessInstance processInstance;
+    private transient IEntityTaskInstance entityTask;
+
+    private transient ProcessInstance processInstance;
 
     private transient STask<?> flowTask;
 
     TaskInstance(@Nonnull ProcessInstance processInstance, @Nonnull IEntityTaskInstance task) {
+        this(task);
         Objects.requireNonNull(processInstance);
-        Objects.requireNonNull(task);
         if (!processInstance.getEntity().equals(task.getProcessInstance())) {
             throw new SingularFlowException(processInstance.createErrorMsg(
                     "O objeto " + task.getClass().getSimpleName() + " " + task + " não é uma tarefa filha do objeto " +
                             processInstance.getClass().getSimpleName() + " em questão"), processInstance);
         }
         this.processInstance = processInstance;
-        this.entityTask = task;
     }
 
     TaskInstance(@Nonnull IEntityTaskInstance task) {
         this.entityTask = Objects.requireNonNull(task);
+        this.taskCod = Objects.requireNonNull(task.getCod());
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
     public <X extends ProcessInstance> X getProcessInstance() {
         if (processInstance == null) {
-            processInstance = Flow.getProcessInstance(entityTask.getProcessInstance());
+            processInstance = Flow.getProcessInstance(getEntity().getProcessInstance());
         }
         return (X) processInstance;
+    }
+
+    private IEntityTaskInstance getEntity() {
+        if (entityTask == null) {
+            entityTask =  Flow.getConfigBean().getPersistenceService().retrieveTaskInstanceByCodOrException(taskCod);
+        }
+        return entityTask;
     }
 
     @Nonnull
@@ -94,7 +103,7 @@ public class TaskInstance {
     }
 
     public Serializable getId() {
-        return entityTask.getCod();
+        return taskCod;
     }
 
     public String getFullId() {
@@ -106,21 +115,21 @@ public class TaskInstance {
     }
 
     public SUser getAllocatedUser() {
-        return entityTask.getAllocatedUser();
+        return getEntity().getAllocatedUser();
     }
 
     public SUser getResponsibleUser() {
-        return entityTask.getResponsibleUser();
+        return getEntity().getResponsibleUser();
     }
 
     public Date getTargetEndDate() {
-        return entityTask.getTargetEndDate();
+        return getEntity().getTargetEndDate();
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
     public final <X extends IEntityTaskInstance> X getEntityTaskInstance() {
-        entityTask = getPersistenceService().retrieveTaskInstanceByCodOrException(entityTask.getCod());
+        entityTask = getPersistenceService().retrieveTaskInstanceByCodOrException(taskCod);
         return (X) entityTask;
     }
 
@@ -135,7 +144,7 @@ public class TaskInstance {
     }
 
     private IEntityTaskVersion getTaskVersion() {
-        return entityTask.getTaskVersion();
+        return getEntity().getTaskVersion();
     }
 
     @Nonnull
@@ -160,20 +169,20 @@ public class TaskInstance {
     }
 
     public Date getBeginDate() {
-        return entityTask.getBeginDate();
+        return getEntity().getBeginDate();
     }
 
     public Date getEndDate() {
-        return entityTask.getEndDate();
+        return getEntity().getEndDate();
     }
 
 
     public boolean isFinished() {
-        return entityTask.isFinished();
+        return getEntity().isFinished();
     }
 
     public boolean isActive() {
-        return entityTask.isActive();
+        return getEntity().isActive();
     }
 
     public boolean isEnd() {
@@ -206,8 +215,7 @@ public class TaskInstance {
     /** Prepara para execução a transação default da instância. Senão existir transição default, dispara exception. */
     @Nonnull
     public TransitionCall prepareTransition() {
-        return new TransitionCall(
-                new TransitionRef(this, getFlowTaskOrException().resolveDefaultTransitionOrException()));
+        return new TransitionCall(new RefTransition(this));
     }
 
     /**
@@ -217,8 +225,7 @@ public class TaskInstance {
     @Nonnull
     public TransitionCall prepareTransition(@Nonnull String transitionName) {
         Objects.requireNonNull(transitionName);
-        return new TransitionCall(
-                new TransitionRef(this, getFlowTaskOrException().getTransitionOrException(transitionName)));
+        return new TransitionCall(new RefTransition(this, transitionName));
     }
 
     public void relocateTask(SUser author, SUser user,
@@ -275,7 +282,7 @@ public class TaskInstance {
 
         IEntityProcessInstance childProcessInstanceEntity = childProcessInstance.getEntity();
 
-        getPersistenceService().setParentTask(childProcessInstanceEntity, entityTask);
+        getPersistenceService().setParentTask(childProcessInstanceEntity, getEntity());
 
         if (historyType != null) {
             log(historyType, childProcessInstanceEntity.getDescription(),
@@ -294,7 +301,7 @@ public class TaskInstance {
      */
     @Nonnull
     public List<ProcessInstance> getChildProcesses() {
-        return Flow.getProcessInstances(entityTask.getChildProcesses());
+        return Flow.getProcessInstances(getEntity().getChildProcesses());
     }
 
     private void notifyStateUpdate() {
@@ -315,12 +322,14 @@ public class TaskInstance {
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada, SUser autor, Date dataHora,
             IEntityProcessInstance demandaFilha) {
-        IEntityTaskInstanceHistory historico = getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada,
-                autor, dataHora, demandaFilha);
+        IEntityTaskInstanceHistory historico = getPersistenceService().saveTaskHistoricLog(getEntity(), tipoHistorico,
+                detalhamento, alocada, autor, dataHora, demandaFilha);
         return new TaskHistoricLog(historico);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion,
+            IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion,
+            IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
         return getProcessInstance().getProcessDefinition().getPersistenceService();
     }
 

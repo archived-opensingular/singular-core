@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.opensingular</groupId>
     <artifactId>singular-lib</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>singular-wicket-utils</artifactId>
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.opensingular</groupId>
       <artifactId>singular-commons</artifactId>
-      <version>1.6.0-SNAPSHOT</version>
+      <version>1.6.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>

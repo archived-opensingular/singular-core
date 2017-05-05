@@ -249,7 +249,7 @@ public abstract class SchedulerAccessor {
                 } catch (ObjectAlreadyExistsException ex) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Unexpectedly found existing trigger, assumably due to cluster race condition: " +
-                                ex.getMessage() + " - can safely be ignored");
+                                ex.getMessage() + " - can safely be ignored", ex);
                     }
                     if (this.overwriteExistingJobs) {
                         rescheduleJob(trigger);

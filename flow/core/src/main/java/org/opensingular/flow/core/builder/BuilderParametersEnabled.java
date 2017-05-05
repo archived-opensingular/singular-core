@@ -83,6 +83,15 @@ public interface BuilderParametersEnabled<SELF extends BuilderParametersEnabled<
         return self();
     }
 
+    public default SELF addParamBigDecimal(String ref, boolean obrigatorio) {
+        return addParamBigDecimal(ref, ref, obrigatorio);
+    }
+
+    public default SELF addParamBigDecimal(String ref, String nome, boolean obrigatorio) {
+        getParametersEnabled().getParameters().addVariableBigDecimal(ref, nome).setRequired(obrigatorio);
+        return self();
+    }
+
     public default SELF addParamDouble(String ref, boolean obrigatorio) {
         return addParamDouble(ref, ref, obrigatorio);
     }

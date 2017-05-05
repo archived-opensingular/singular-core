@@ -18,13 +18,41 @@ package org.opensingular.lib.commons.util;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class ConversionUtils {
-    private ConversionUtils() {}
-
     private static Pattern HUMANE_NUMBER_PATTERN = Pattern.compile("(\\-?\\s*(?:[0-9][0-9\\.,_]*))\\s*(k|kb|m|mb|g|gb|t|tb|week|weeks|day|days|hour|hours|min|mins|sec|secs|ms)?", Pattern.CASE_INSENSITIVE);
+
+    private static final Map<String, Long> UNIT_MULTIPLIER;
+
+    static {
+        UNIT_MULTIPLIER = new HashMap<>();
+        UNIT_MULTIPLIER.put("k", 1024L);
+        UNIT_MULTIPLIER.put("kb", 1024L);
+        UNIT_MULTIPLIER.put("m", 1024L * 1024);
+        UNIT_MULTIPLIER.put("mb", 1024L * 1024);
+        UNIT_MULTIPLIER.put("g", 1024L * 1024 * 1024);
+        UNIT_MULTIPLIER.put("gb", 1024L * 1024 * 1024);
+        UNIT_MULTIPLIER.put("t", 1024L * 1024 * 1024 * 1024);
+        UNIT_MULTIPLIER.put("tb", 1024L * 1024 * 1024 * 1024);
+        UNIT_MULTIPLIER.put("ms", 1L);
+        UNIT_MULTIPLIER.put("sec", 1000L);
+        UNIT_MULTIPLIER.put("secs", 1000L);
+        UNIT_MULTIPLIER.put("min", 1000L * 60);
+        UNIT_MULTIPLIER.put("mins", 1000L * 60);
+        UNIT_MULTIPLIER.put("hour", 1000L * 60 * 60);
+        UNIT_MULTIPLIER.put("hours", 1000L * 60 * 60);
+        UNIT_MULTIPLIER.put("day", 1000L * 60 * 60 * 24);
+        UNIT_MULTIPLIER.put("days", 1000L * 60 * 60 * 24);
+        UNIT_MULTIPLIER.put("week", 1000L * 60 * 60 * 24 * 7);
+        UNIT_MULTIPLIER.put("weeks", 1000L * 60 * 60 * 24 * 7);
+
+    }
+
+    private ConversionUtils() {}
 
     public static int toIntHumane(String s, int defaultValue) {
         long v = toLongHumane(s, defaultValue);
@@ -47,40 +75,8 @@ public abstract class ConversionUtils {
     }
 
     private static long resolveMultiplier(final String s) {
-        switch (defaultIfBlank(s, "").toLowerCase()) {
-            case "k":
-            case "kb":
-                return 1L * 1024;
-            case "m":
-            case "mb":
-                return 1L * 1024L * 1024;
-            case "g":
-            case "gb":
-                return 1L * 1024L * 1024 * 1024;
-            case "t":
-            case "tb":
-                return 1L * 1024L * 1024 * 1024 * 1024;
-
-            case "ms":
-                return 1L;
-            case "sec":
-            case "secs":
-                return 1L * 1000;
-            case "min":
-            case "mins":
-                return 1L * 1000 * 60;
-            case "hour":
-            case "hours":
-                return 1L * 1000 * 60 * 60;
-            case "day":
-            case "days":
-                return 1L * 1000 * 60 * 60 * 24;
-            case "week":
-            case "weeks":
-                return 1L * 1000 * 60 * 60 * 24 * 7;
-
-            default:
-                return 1L;
-        }
+        String unit = defaultIfBlank(s, "").toLowerCase();
+        Long   multiplier = UNIT_MULTIPLIER.get(unit);
+        return multiplier != null ? multiplier : 1L;
     }
 }
