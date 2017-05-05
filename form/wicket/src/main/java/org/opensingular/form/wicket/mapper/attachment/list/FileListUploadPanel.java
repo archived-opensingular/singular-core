@@ -123,17 +123,17 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add(new WebMarkupContainer("empty-box")
                 .add(new WebMarkupContainer("select-file-link")
                         .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))
-                        .add($b.visibleIf(viewMode::isEdition))
+                        .add($b.visibleIf(() -> isEdition(viewMode)))
                         .add($b.onReadyScript(c -> JQuery.on(c, "click", JQuery.$(fileField).append(".click();")))))
                 .add(new Label("empty-message", $m.ofValue("Nenhum arquivo adicionado"))
-                        .add($b.visibleIf(viewMode::isVisualization)))
+                        .add($b.visibleIf(() -> !isEdition(viewMode))))
                 .add($b.visibleIf(() -> model.getObject().isEmpty())));
 
         add(adder, remover, downloader);
         add($b.classAppender("FileListUploadPanel"));
         add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
 
-        if (viewMode.isVisualization() && model.getObject().isEmpty()) {
+        if (viewMode != null && viewMode.isVisualization() && model.getObject().isEmpty()) {
             add($b.classAppender("FileListUploadPanel_empty"));
         }
     }

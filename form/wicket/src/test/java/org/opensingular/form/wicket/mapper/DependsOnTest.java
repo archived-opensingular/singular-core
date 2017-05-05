@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class DependsOnTest {
 
@@ -89,7 +90,7 @@ public class DependsOnTest {
         AssertionsWComponent categoryAssertion = tester.getAssertionsForm().getSubCompomentWithType(category);
         categoryAssertion.assertSInstance().getTarget().setValue("fruits");
 
-        tester.executeAjaxEvent(categoryAssertion.getTarget(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(categoryAssertion.getTarget(), SINGULAR_PROCESS_EVENT);
 
         DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
 
@@ -152,7 +153,7 @@ public class DependsOnTest {
         tester.getAssertionsForm().getSubCompomentWithType(category).assertSInstance().getTarget().setValue("condiments");
 
         tester.executeAjaxEvent(tester.getAssertionsForm()
-                .getSubCompomentWithType(category).getTarget(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+                .getSubCompomentWithType(category).getTarget(), SINGULAR_PROCESS_EVENT);
 
         DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
 

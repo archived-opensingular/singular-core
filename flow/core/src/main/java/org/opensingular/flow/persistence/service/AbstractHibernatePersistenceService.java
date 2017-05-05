@@ -334,34 +334,44 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     @Override
     public void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask,
             VarInstanceMap<?,?> instanceMap) {
-        if (instanceMap != null) {
-            SessionWrapper ss = getSession();
+        if (instanceMap == null) {
+            return;
+        }
+        SessionWrapper ss = getSession();
 
-            boolean salvou = false;
-            for (VarInstance variavel : instanceMap) {
-                if (variavel.getValue() != null) {
-
-                    IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
-                    String ref = variavel.getRef();
-                    IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
-
-                    IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
-                    novo.setName(ref);
-                    novo.setValue(variavel.getPersistentString());
-                    novo.setDate(dateHour);
-                    ss.save(novo);
-                    salvou = true;
+        boolean salvou = false;
+        for (VarInstance variavel : instanceMap) {
+            if (variavel.getValue() != null) {
+                try {
+                    saveOneVariable(ss, instance, originTask, destinationTask, variavel, dateHour);
+                } catch (Exception e) {
+                    throw SingularFlowException.rethrow(
+                            "Erro ao salvar variável '" + variavel.getName() + "' no histórico", e);
                 }
-            }
-            if (salvou) {
-                if (originTask != null) {
-                    ss.refresh(originTask);
-                }
-                if (destinationTask != null) {
-                    ss.refresh(destinationTask);
-                }
+                salvou = true;
             }
         }
+        if (salvou) {
+            if (originTask != null) {
+                ss.refresh(originTask);
+            }
+            if (destinationTask != null) {
+                ss.refresh(destinationTask);
+            }
+        }
+    }
+
+    private void saveOneVariable(SessionWrapper ss, PROCESS_INSTANCE instance, TASK_INSTANCE originTask,
+            TASK_INSTANCE destinationTask, VarInstance variavel, Date dateHour) {
+        boolean salvou;IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
+        String ref = variavel.getRef();
+        IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
+
+        IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
+        novo.setName(ref);
+        novo.setValue(variavel.getPersistentString());
+        novo.setDate(dateHour);
+        ss.save(novo);
     }
 
     protected abstract Class<? extends IEntityVariableType> getClassEntityVariableType();

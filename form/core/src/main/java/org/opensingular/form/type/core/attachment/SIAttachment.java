@@ -52,7 +52,7 @@ public class SIAttachment extends SIComposite {
         }
         setValue(STypeAttachment.FIELD_FILE_ID, null);
         setValue(STypeAttachment.FIELD_HASH_SHA1, null);
-        setValue(STypeAttachment.FIELD_SIZE, null);
+        setValue(STypeAttachment.FIELD_FILE_SIZE, null);
         setValue(STypeAttachment.FIELD_NAME, null);
         if (hasAttribute(STypeAttachment.ATR_ORIGINAL_ID)) {
             setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
@@ -90,11 +90,11 @@ public class SIAttachment extends SIComposite {
      * arquivo.
      */
     public long getFileSize() {
-        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_SIZE)).orElse(-1L);
+        return Optional.ofNullable(getValueLong(STypeAttachment.FIELD_FILE_SIZE)).orElse(-1L);
     }
 
     public void setFileSize(long size) {
-        setValue(STypeAttachment.FIELD_SIZE, size);
+        setValue(STypeAttachment.FIELD_FILE_SIZE, size);
     }
 
     public String getFileName() {

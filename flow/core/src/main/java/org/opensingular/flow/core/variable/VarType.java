@@ -16,7 +16,9 @@
 
 package org.opensingular.flow.core.variable;
 
-public interface VarType<TYPE> {
+import java.io.Serializable;
+
+public interface VarType<TYPE> extends Serializable {
 
     public Class<TYPE> getClassTypeContent();
 

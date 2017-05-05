@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core.variable.type;
 
+import org.opensingular.flow.core.variable.SingularFlowConvertingValueException;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
 
@@ -45,6 +46,6 @@ public class VarTypeBoolean extends VarTypeBase<Boolean> {
 
     @Override
     protected Boolean convertNotDirectCompatible(@Nonnull Object original) {
-        return null;
+        throw SingularFlowConvertingValueException.rethrow(null, this, original);
     }
 }

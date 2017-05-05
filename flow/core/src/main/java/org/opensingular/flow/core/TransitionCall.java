@@ -30,9 +30,9 @@ import java.util.Objects;
  */
 public final class TransitionCall extends CallWithParameters<TransitionCall> {
 
-    private final TransitionRef transition;
+    private final RefTransition transition;
 
-    TransitionCall(@Nonnull TransitionRef transition) {
+    TransitionCall(@Nonnull RefTransition transition) {
         this.transition = Objects.requireNonNull(transition);
     }
 
