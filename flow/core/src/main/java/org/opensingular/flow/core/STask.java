@@ -220,7 +220,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         List<STransition> transitions = getTransitions();
         if (transitions.size() == 1) {
             return transitions.get(0);
-        } else if (transitions.size() == 0) {
+        } else if (transitions.isEmpty()) {
             throw new SingularFlowException(createErrorMsg("não definiu nenhuma transicao"), this);
         } else if (defaultTransition != null) {
             return defaultTransition;

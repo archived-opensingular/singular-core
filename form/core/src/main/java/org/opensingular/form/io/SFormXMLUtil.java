@@ -17,15 +17,23 @@
 package org.opensingular.form.io;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.*;
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.InternalAccess;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.internal.lib.commons.xml.MDocument;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
-import org.opensingular.form.type.core.annotation.DocumentAnnotations;
-import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
@@ -379,16 +387,17 @@ public final class SFormXMLUtil {
      */
     private static MElement toXMLChildren(ConfXMLGeneration conf, SInstance instance, MElement newElement,
             List<? extends SInstance> children) {
+        MElement result = newElement;
         for (SInstance child : children) {
             MElement xmlChild = toXML(conf, child);
             if (xmlChild != null) {
-                if (newElement == null) {
-                    newElement = conf.createMElement(instance);
+                if (result == null) {
+                    result = conf.createMElement(instance);
                 }
-                newElement.appendChild(xmlChild);
+                result.appendChild(xmlChild);
             }
         }
-        return newElement;
+        return result;
     }
 
     /**
@@ -398,15 +407,16 @@ public final class SFormXMLUtil {
     private static MElement toXMLOldElementWithoutType(ConfXMLGeneration conf, SInstance instance,
             MElement newElement) {
         List<MElement> unreadInfo = InternalAccess.internal(instance).getUnreadInfo();
+        MElement result = newElement;
         if (! unreadInfo.isEmpty()) {
-            if (newElement == null) {
-                newElement = conf.createMElement(instance);
+            if (result == null) {
+                result = conf.createMElement(instance);
             }
             for(MElement extra : unreadInfo) {
-                newElement.copy(extra, null);
+                result.copy(extra, null);
             }
         }
-        return newElement;
+        return result;
     }
 
     private static final class ConfXMLGeneration {

@@ -38,18 +38,19 @@ public class SPackage extends SScopeBase {
     }
 
     protected SPackage(@Nullable String name) {
-        if (name == null) {
+        String nameResolved = name;
+        if (nameResolved == null) {
             if (getClass() == SPackage.class) {
-                throw new SingularFormException("Deve ser utilizado o construtor " + SPackage.class.getSimpleName() + "(String) ou "
-                        + SPackage.class.getSimpleName() + " deve ser derivado");
+                throw new SingularFormException(
+                        "Deve ser utilizado o construtor " + SPackage.class.getSimpleName() + "(String) ou " +
+                                SPackage.class.getSimpleName() + " deve ser derivado");
             }
-            name = SFormUtil.getInfoPackageName(this.getClass());
-            if (name == null) {
-                name = getClass().getName();
+            nameResolved = SFormUtil.getInfoPackageName(this.getClass());
+            if (nameResolved == null) {
+                nameResolved = getClass().getName();
             }
         }
-        SFormUtil.validatePackageName(name);
-        this.name = name;
+        this.name = SFormUtil.validatePackageName(nameResolved);
     }
 
     @Override
