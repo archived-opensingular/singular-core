@@ -405,41 +405,43 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @return o elemento que foi adicionado
      */
     static Element addElementNS(Node parent, String namespaceURI, String qualifiedName) {
-        Document d = parent.getOwnerDocument();
+        Node resolvedParent = parent;
+        Document d = resolvedParent.getOwnerDocument();
         String resolvedNamespaceURI = namespaceURI;
-        int pos = qualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
+        String resolvedQualifiedName = qualifiedName;
+        int pos = resolvedQualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
         if (pos != -1) {
             if (pos == 0) {
-                parent = XmlUtil.getRootParent(parent);
+                resolvedParent = XmlUtil.getRootParent(resolvedParent);
             } else {
-                parent = getElementCriando(d, parent, resolvedNamespaceURI, qualifiedName.substring(0, pos));
+                resolvedParent = getElementCriando(d, resolvedParent, resolvedNamespaceURI, resolvedQualifiedName.substring(0, pos));
             }
-            qualifiedName = qualifiedName.substring(pos + 1);
+            resolvedQualifiedName = resolvedQualifiedName.substring(pos + 1);
             resolvedNamespaceURI = null;
         }
         Element novo;
         if (isVazio(resolvedNamespaceURI)) {
-            if ((parent.getNamespaceURI() != null) && isVazio(parent.getPrefix())) {
-                resolvedNamespaceURI = parent.getNamespaceURI();
+            if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
+                resolvedNamespaceURI = resolvedParent.getNamespaceURI();
             } else {
                 resolvedNamespaceURI = null; //Podia ser String vazia
             }
-            novo = d.createElementNS(resolvedNamespaceURI, qualifiedName);
+            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
         } else {
-            novo = d.createElementNS(resolvedNamespaceURI, qualifiedName);
+            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
 
-            if (!Objects.equals(resolvedNamespaceURI, parent.getNamespaceURI())) {
-                int posPrefixo = qualifiedName.indexOf(':');
+            if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
+                int posPrefixo = resolvedQualifiedName.indexOf(':');
                 if ((posPrefixo == -1)) {
                     novo.setAttribute("xmlns", resolvedNamespaceURI);
                 } else {
-                    String prefixo = qualifiedName.substring(0, posPrefixo);
+                    String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
                     novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
                 }
                 //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
             }
         }
-        parent.appendChild(novo);
+        resolvedParent.appendChild(novo);
         return novo;
     }
 
@@ -493,15 +495,16 @@ public class MElementWrapper extends MElement implements EWrapper {
         return novo;
     }
 
-    private static Element getElementCriando(Document d, Node pai, final String namespaceURI,
+    private static Element getElementCriando(Document d, Node parent, final String namespaceURI,
             final String qualifiedName) {
 
         String subTrecho = null;
         String resolvedQualifiedName = qualifiedName;
         int pos = resolvedQualifiedName.indexOf(SEPARADOR_ELEMENT);
+        Node resolvedParent = parent;
         if (pos != -1) {
             if (pos == 0) {
-                pai = XmlUtil.getRootParent(pai);
+                resolvedParent = XmlUtil.getRootParent(resolvedParent);
                 resolvedQualifiedName = resolvedQualifiedName.substring(1);
                 pos = resolvedQualifiedName.indexOf(SEPARADOR_ELEMENT);
             }
@@ -511,18 +514,18 @@ public class MElementWrapper extends MElement implements EWrapper {
             }
         }
 
-        Node n = XmlUtil.nextSiblingOfTypeElement(pai.getFirstChild(), resolvedQualifiedName);
+        Node n = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
 
         Element e = (Element) n;
         if (e == null) {
             String resolvedNamespaceURI = namespaceURI;
             if (isVazio(resolvedNamespaceURI)) {
-                if (!isVazio(pai.getNamespaceURI()) && isVazio(pai.getPrefix())) {
-                    resolvedNamespaceURI = pai.getNamespaceURI();
+                if (!isVazio(resolvedParent.getNamespaceURI()) && isVazio(resolvedParent.getPrefix())) {
+                    resolvedNamespaceURI = resolvedParent.getNamespaceURI();
                 }
             }
             e = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
-            pai.appendChild(e);
+            resolvedParent.appendChild(e);
         }
 
         // verifica se precisa procurar um sub-item

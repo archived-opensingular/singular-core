@@ -30,7 +30,6 @@ import java.util.Objects;
  */
 public abstract class AbstractFormKey<T extends Serializable> implements FormKey {
 
-        @Nonnull
     private final T value;
 
     public AbstractFormKey(@Nonnull String persistenceString) {

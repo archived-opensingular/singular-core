@@ -21,6 +21,7 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIList;
+import org.opensingular.form.SScope;
 import org.opensingular.form.SScopeBase;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -61,7 +62,9 @@ public class SFormDefinitionPersistenceUtil {
 
     private static void ensureType(ContextArchive ctx, SType<?> type) {
         SType<?> currentType = type;
-        for (; currentType.getParentScope() instanceof SType; currentType = (SType<?>) currentType.getParentScope()) ;
+        for (SScope t = type.getParentScope(); t instanceof SType; t = ((SType<?>) t).getParentScope()) {
+            currentType = (SType<?>) t;
+        }
 
         if (!ctx.isNecessaryToArchive(currentType) || ctx.isAlreadyArchived(currentType)) {
             return;
