@@ -66,7 +66,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * contabiliza a quantidade de instancias desse tipo.
      */
     protected long instanceCount;
-    @Nonnull
+
     private String nameSimple;
     private String nameFull;
     private SDictionary dictionary;

@@ -435,12 +435,11 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     final SInstance getField(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            instance = instance.getFieldLocal(pathReader);
-            if (pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; true; currentPath = currentPath.next()) {
+            instance = instance.getFieldLocal(currentPath);
+            if (currentPath.isLast()) {
                 return instance;
             }
-            pathReader = pathReader.next();
         }
     }
 
@@ -452,13 +451,12 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     final Optional<SInstance> getFieldOpt(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
-            if (!result.isPresent() || pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; true; currentPath = currentPath.next()) {
+            Optional<SInstance> result = instance.getFieldLocalOpt(currentPath);
+            if (!result.isPresent() || currentPath.isLast()) {
                 return result;
             }
             instance = result.get();
-            pathReader = pathReader.next();
         }
     }
 

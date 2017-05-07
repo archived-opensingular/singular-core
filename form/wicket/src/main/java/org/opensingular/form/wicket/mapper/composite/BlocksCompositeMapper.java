@@ -38,7 +38,11 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
@@ -64,9 +68,10 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             final WicketBuildContext             rootContext = ctx.getRootContext();
             final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
 
+            BSGrid targetGrid = grid;
             if (factory != null) {
-                grid.newComponent(factory);
-                grid = grid.newGrid();
+                targetGrid.newComponent(factory);
+                targetGrid = targetGrid.newGrid();
                 rootContext.setPreFormPanelFactory(null);
             }
 
@@ -81,7 +86,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 }
                 final PortletPanel portlet = new PortletPanel("_portlet" + i, block, ctx);
                 addedTypes.addAll(block.getTypes());
-                appendBlock(grid, block, portlet);
+                appendBlock(targetGrid, block, portlet);
             }
 
             for (SType<?> f : getInstanceType().getFields()) {
@@ -95,7 +100,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 final Block        block   = new Block();
                 final PortletPanel portlet = new PortletPanel("_portletForRemaining", block, ctx);
                 block.setTypes(remainingTypes);
-                appendBlock(grid, block, portlet);
+                appendBlock(targetGrid, block, portlet);
             }
 
         }
@@ -115,13 +120,11 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row) {
-            final Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
-            final SInstanceFieldModel<SInstance> im     = fieldModel(field);
-            if (newRow != null && newRow) {
-                row = grid.newRow();
-            }
-            buildField(ctx.getUiBuilderWicket(), row, im);
-            return row;
+            Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+            SInstanceFieldModel<SInstance> im     = fieldModel(field);
+            BSRow target = (newRow != null && newRow) ? grid.newRow() : row;
+            buildField(ctx.getUiBuilderWicket(), target, im);
+            return target;
         }
     }
 

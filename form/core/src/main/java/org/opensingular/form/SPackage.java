@@ -28,7 +28,6 @@ public class SPackage extends SScopeBase {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
-    @Nonnull
     private final String name;
 
     private SDictionary dictionary;

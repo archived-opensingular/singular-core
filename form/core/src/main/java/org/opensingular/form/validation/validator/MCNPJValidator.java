@@ -43,9 +43,9 @@ enum MCNPJValidator implements IInstanceValueValidator<SIString, String> {
         }
     }
 
-    private boolean isValid(String cnpj) {
+    private boolean isValid(String cnpjCandidate) {
         try {
-            cnpj = unmask(cnpj);
+            String cnpj = unmask(cnpjCandidate);
 
             if (invalidPatterns.contains(cnpj)) {
                 return false;

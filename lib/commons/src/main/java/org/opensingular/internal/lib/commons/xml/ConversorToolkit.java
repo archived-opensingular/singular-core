@@ -16,6 +16,8 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import org.opensingular.lib.commons.base.SingularException;
+
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -26,8 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-
-import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * @author Expedito Júnior
@@ -117,10 +117,11 @@ public final class ConversorToolkit {
             return 0;
         }
         try {
-            if (valor.contains(",")) {
-                valor = removeCaracterFromString(valor.trim(), '.');
+            String v = valor;
+            if (v.contains(",")) {
+                v = removeCaracterFromString(v.trim(), '.');
             }
-            return Double.parseDouble(valor.replace(',', '.'));
+            return Double.parseDouble(v.replace(',', '.'));
         } catch (Exception e) {
             throw SingularException.rethrow("Valor inválido (" + valor + ")!", e);
         }

@@ -262,14 +262,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
      */
     protected final ProcessScheduledJob addScheduledJob(String name) {
-        name = StringUtils.trimToNull(name);
+        String jobName = StringUtils.trimToNull(name);
 
-        final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
+        ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, jobName);
 
-        if (scheduledJobsByName.containsKey(name)) {
-            throw new SingularFlowException("A Job with name '" + name + "' is already defined.", this);
+        if (scheduledJobsByName.containsKey(jobName)) {
+            throw new SingularFlowException("A Job with name '" + jobName + "' is already defined.", this);
         }
-        scheduledJobsByName.put(name, scheduledJob);
+        scheduledJobsByName.put(jobName, scheduledJob);
         return scheduledJob;
     }
 

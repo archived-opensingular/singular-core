@@ -745,7 +745,7 @@ public abstract class MElement implements Element, Serializable {
         } else if (n instanceof Attr) {
             //Não há como saber quem é o pai (n.getParentNode() retorna null)
             if (value == null) {
-                value = ""; //Força a remoção do atributo
+                return addElement(xPath, ""); //Força a remoção do atributo
             }
             return addElement(xPath, value);
         } else {
@@ -1502,12 +1502,11 @@ public abstract class MElement implements Element, Serializable {
      *             primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private MElement procurarElementAnterior(Node no, String nome) {
-        while (no != null) {
-            if (XmlUtil.isNodeTypeElement(no, nome)) {
-                return toMElement(no);
+    private MElement procurarElementAnterior(Node no2, String nome) {
+        for (Node current = no2; current != null; current = current.getPreviousSibling()) {
+            if (XmlUtil.isNodeTypeElement(current, nome)) {
+                return toMElement(current);
             }
-            no = no.getPreviousSibling();
         }
         return null;
     }

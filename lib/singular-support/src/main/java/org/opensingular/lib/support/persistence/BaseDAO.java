@@ -144,12 +144,9 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
     public <T> List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
         Criteria criteria = getSession().createCriteria(tipo);
 
-        if (matchMode == null) {
-            matchMode = MatchMode.EXACT;
-        }
-
         if (value != null && !value.isEmpty()) {
-            criteria.add(Restrictions.ilike(propertyName, value, matchMode));
+            MatchMode mode = matchMode == null ? MatchMode.EXACT : matchMode;
+            criteria.add(Restrictions.ilike(propertyName, value, mode));
         }
 
         if (maxResults != null) {

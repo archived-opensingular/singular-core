@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 public abstract class AbstractFormKey<T extends Serializable> implements FormKey {
 
-    @Nonnull
+        @Nonnull
     private final T value;
 
     public AbstractFormKey(@Nonnull String persistenceString) {
@@ -42,14 +42,14 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
             throw new SingularFormPersistenceException(
                     "O método parsePersistenceString() retornou null para a string '" + persistenceString + "'");
         }
-        this.value = Objects.requireNonNull(newValue);
+        value = Objects.requireNonNull(newValue);
     }
 
-    public AbstractFormKey(@Nonnull T value) {
-        if (value == null) {
+    public AbstractFormKey(@Nonnull T keyValue) {
+        if (keyValue == null) {
             throw new SingularFormPersistenceException("O valor da chave não pode ser null");
         }
-        this.value = value;
+        value = keyValue;
     }
 
     @Nonnull

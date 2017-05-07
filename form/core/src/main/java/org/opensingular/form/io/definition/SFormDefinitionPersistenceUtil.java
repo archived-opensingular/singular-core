@@ -60,15 +60,14 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void ensureType(ContextArchive ctx, SType<?> type) {
-        Object i;
-        while ((i = type.getParentScope()) instanceof SType) {
-            type = (SType<?>) i;
-        }
-        if (!ctx.isNecessaryToArchive(type) || ctx.isAlreadyArchived(type)) {
+        SType<?> currentType = type;
+        for (; currentType.getParentScope() instanceof SType; currentType = (SType<?>) currentType.getParentScope()) ;
+
+        if (!ctx.isNecessaryToArchive(currentType) || ctx.isAlreadyArchived(currentType)) {
             return;
         }
-        SIPersistenceType pType = ctx.createTypeInPackage(type);
-        writeType(ctx, pType, type);
+        SIPersistenceType pType = ctx.createTypeInPackage(currentType);
+        writeType(ctx, pType, currentType);
     }
 
     private static void writeType(ContextArchive ctx, SIPersistenceType pType, SType<?> type) {
