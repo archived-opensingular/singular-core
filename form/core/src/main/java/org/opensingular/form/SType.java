@@ -30,6 +30,7 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
+public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
     private final AttributeMap attributesDefined = new AttributeMap();
@@ -65,7 +66,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * contabiliza a quantidade de instancias desse tipo.
      */
     protected long instanceCount;
-    @Nonnull
+
     private String nameSimple;
     private String nameFull;
     private SDictionary dictionary;
@@ -98,14 +99,14 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     protected SType(@Nullable String simpleName, @Nullable Class<? extends I> instanceClass) {
+        String resolvedName = simpleName;
         if (simpleName == null) {
-            simpleName = getInfoType().name();
-            if (StringUtils.isEmpty(simpleName)) {
-                simpleName = getClass().getSimpleName();
+            resolvedName = getInfoType().name();
+            if (StringUtils.isEmpty(resolvedName)) {
+                resolvedName = getClass().getSimpleName();
             }
         }
-        SFormUtil.validateSimpleName(simpleName);
-        this.nameSimple = simpleName;
+        this.nameSimple = SFormUtil.validateSimpleName(resolvedName);
         this.instanceClass = instanceClass;
         attributesResolved = new MapAttributeDefinitionResolver(this);
     }
@@ -131,16 +132,14 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
     }
 
+    @Nonnull
     final <S extends SType<?>> S extend(@Nullable String simpleName) {
-        if (simpleName == null) {
-            simpleName = nameSimple; //Extende usando o mesmo nome do tipo pai
-        } else {
-            SFormUtil.validateSimpleName(simpleName);
-        }
-        S newType = (S) MapByName.newInstance(getClass());
-        ((SType<I>) newType).nameSimple = simpleName;
-        ((SType<I>) newType).superType = this;
+        String nameResolved = SFormUtil.resolveName(simpleName, this);
+        nameResolved = SFormUtil.validateSimpleName(nameResolved);
 
+        S newType = (S) MapByName.newInstance(getClass());
+        ((SType<I>) newType).nameSimple = nameResolved;
+        ((SType<I>) newType).superType = this;
         return newType;
     }
 
@@ -552,9 +551,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private boolean hasDirectOrInderectDependentType(SType<?> type) {
         if (dependentTypes != null) {
             for (SType<?> d : dependentTypes) {
-                if (type.isTypeOf(d)) {
-                    return true;
-                } else if (d.hasDirectOrInderectDependentType(type)) {
+                if (type.isTypeOf(d) || d.hasDirectOrInderectDependentType(type)) {
                     return true;
                 }
             }

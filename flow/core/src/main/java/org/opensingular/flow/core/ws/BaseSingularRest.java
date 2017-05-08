@@ -64,10 +64,8 @@ public class BaseSingularRest {
                              Integer lastVersion) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         SUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
-        if(lastVersion == null) {
-            lastVersion = 0;
-        }
-        processInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion);
+        Integer lastVersion2 = (lastVersion == null) ? Integer.valueOf(0) : lastVersion;
+        processInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion2);
     }
 
     private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {

@@ -18,6 +18,8 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings("rawtypes")
 public class AtrRef<T extends SType, I extends SInstance, V> {
 
@@ -37,15 +39,15 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final boolean                  selfReference;
 
-    public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends SPackage> packageClass, String nameSimple) {
+    public static AtrRef<?, ?, Object> ofSelfReference(@Nonnull Class<? extends SPackage> packageClass,
+            @Nonnull String nameSimple) {
         return new AtrRef(packageClass, nameSimple, null, null, null);
     }
 
-    public AtrRef(Class<? extends SPackage> packageClass, String nameSimple, Class<T> typeClass, Class<I> instanceClass,
-                  Class<V> valueClass) {
-        SFormUtil.validateSimpleName(nameSimple);
+    public AtrRef(@Nonnull Class<? extends SPackage> packageClass, @Nonnull String nameSimple, Class<T> typeClass,
+            Class<I> instanceClass, Class<V> valueClass) {
         this.packageClass = packageClass;
-        this.nameSimple = nameSimple;
+        this.nameSimple = SFormUtil.validateSimpleName(nameSimple);
         this.typeClass = typeClass;
         this.instanceClass = instanceClass;
         this.valueClass = valueClass;

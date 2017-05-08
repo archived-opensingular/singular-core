@@ -17,9 +17,9 @@
 package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.property.MetaData;
-import org.opensingular.flow.core.property.MetaDataRef;
 
-import com.google.common.base.MoreObjects;
+import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class VarDefinitionImpl implements VarDefinition {
 
@@ -46,22 +46,13 @@ public class VarDefinitionImpl implements VarDefinition {
     }
 
     @Override
-    public <T> VarDefinition setMetaDataValue(MetaDataRef<T> propRef, T value) {
-        getMetaData().set(propRef, value);
-        return this;
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
     }
-
     @Override
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
-        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
-    }
-
-    @Override
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
-        return metaData == null ? null : getMetaData().get(propRef);
-    }
-
-    MetaData getMetaData() {
+    @Nonnull
+    public MetaData getMetaData() {
         if (metaData == null) {
             metaData = new MetaData();
         }

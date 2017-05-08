@@ -373,8 +373,11 @@ public class TestXPath {
         element.addElement("filho", "filhoVal");
 
         Assert.assertFalse(XPathToolkit.isSimples("//teste"));
+        Assert.assertTrue(XPathToolkit.isSimples("/teste"));
         Assert.assertFalse(XPathToolkit.isSimples(":teste"));
         Assert.assertFalse(XPathToolkit.isSimples("::teste"));
+        Assert.assertTrue(XPathToolkit.isSimples("lala:teste"));
+        Assert.assertFalse(XPathToolkit.isSimples("lala::teste"));
         Assert.assertFalse(XPathToolkit.isSimples("*teste"));
         Assert.assertFalse(XPathToolkit.isSimples("[teste"));
         Assert.assertFalse(XPathToolkit.isSimples("teste]"));

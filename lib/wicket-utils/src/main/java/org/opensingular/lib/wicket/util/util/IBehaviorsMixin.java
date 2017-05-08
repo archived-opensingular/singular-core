@@ -71,18 +71,7 @@ public interface IBehaviorsMixin extends Serializable {
             @Override
             protected String newValue(String currentValue, String replacementValue) {
                 String  regex  = (isolateWord) ? "\\b" + replacementValue + "\\b" : replacementValue;
-                Matcher m      = Pattern.compile(regex).matcher(currentValue);
-                boolean result = m.find();
-                if (result) {
-                    StringBuffer sb = new StringBuffer();
-                    do {
-                        m.appendReplacement(sb, "");
-                        result = m.find();
-                    } while (result);
-                    m.appendTail(sb);
-                    return sb.toString();
-                }
-                return currentValue;
+                return currentValue.replaceAll(regex, "");
             }
         };
     }

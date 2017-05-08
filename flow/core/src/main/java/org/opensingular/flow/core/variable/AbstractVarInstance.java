@@ -18,6 +18,9 @@ package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.property.MetaData;
 
+import javax.annotation.Nonnull;
+import java.util.Optional;
+
 public abstract class AbstractVarInstance implements VarInstance {
 
     private MetaData metaData;
@@ -44,6 +47,12 @@ public abstract class AbstractVarInstance implements VarInstance {
     @Override
     public String getPersistentString() {
         return getDefinition().toPersistenceString(this);
+    }
+
+    @Override
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
     }
 
     @Override

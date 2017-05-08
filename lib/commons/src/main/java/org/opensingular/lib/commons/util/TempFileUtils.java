@@ -85,9 +85,8 @@ public abstract class TempFileUtils {
                                            @Nullable Exception e) {
         Class<?> req = requester instanceof Class ? (Class<?>) requester : requester.getClass();
         String msg = "Nao foi possível apagar o arquivo " + file;
-        if (requester != null) {
-            msg += " (solicitação da classe " + req.getName() + ")";
-        }
+        msg += " (solicitação da classe " + req.getName() + ")";
+
         if (failQuietily) {
             Logger logger = Logger.getLogger(req.getName());
             logger.log(Level.SEVERE, msg, e);

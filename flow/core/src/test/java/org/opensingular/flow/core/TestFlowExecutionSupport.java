@@ -20,6 +20,8 @@ import org.hibernate.Session;
 import org.junit.Before;
 import org.opensingular.flow.test.support.TestFlowSupport;
 
+import java.util.function.Consumer;
+
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -33,6 +35,15 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
     public final void setUp() {
         assertNotNull(mbpmBean);
         Flow.setConf(mbpmBean, true);
+    }
+
+    /**
+     * Executa o código de assertivas duas vezes. A primeira direto no processo e novamente depois de recarregar o
+     * processo a partir do banco.
+     */
+    protected void assertReloadAssert(ProcessInstance pi, Consumer<ProcessInstance> assertionsCode) {
+        assertionsCode.accept(pi);
+        assertionsCode.accept(reload(pi));
     }
 
     /** Recarrega a instância de processo a partir do BD. */

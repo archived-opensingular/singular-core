@@ -265,5 +265,5 @@ public interface VarInstanceMap<K extends VarInstance, SELF extends VarInstanceM
         public VarService getVarService() {
             throw new SingularFlowException("Método não suportado");
         }
-    };
+    }
 }

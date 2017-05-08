@@ -17,7 +17,11 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import org.opensingular.lib.commons.base.SingularException;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.PrintWriter;
 
@@ -327,7 +331,7 @@ final class XMLToolkitWriter {
     private static void printSpace(PrintWriter out, int level) {
         if (level >= LISTA_SPACE.length) {
             //Indentação maior que o cache de espaços
-            for (; level != 0; level--) {
+            for (int i = level; i != 0; i--) {
                 out.print(SPACE);
             }
             return;

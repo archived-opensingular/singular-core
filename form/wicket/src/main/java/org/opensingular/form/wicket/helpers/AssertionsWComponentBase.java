@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.ObjectAssert;
+import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.helpers.AssertionsSInstance;
@@ -63,6 +64,15 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(type::equals).orElse(Boolean.FALSE));
+    }
+
+    @Nonnull
+    public final <T extends SType<?>> AssertionsWComponent getSubCompomentWithType(Class<? extends T> typeClass) {
+        return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
+                .map(SInstance::getType)
+                .map(SType::getName)
+                .map(SFormUtil.getTypeName(typeClass)::equals)
+                .orElse(Boolean.FALSE));
     }
 
 
@@ -239,9 +249,8 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     private String resolveClassName(Class<?> aClass) {
         String name = aClass.getSimpleName();
-        while (name.length() == 0) {
-            aClass = aClass.getSuperclass();
-            name = aClass.getSimpleName();
+        if (name.length() == 0) {
+            return resolveClassName(aClass.getSuperclass());
         }
         return name;
     }

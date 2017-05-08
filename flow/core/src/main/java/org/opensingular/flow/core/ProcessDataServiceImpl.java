@@ -103,13 +103,15 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     private List<I> retrieveAllInstancesIn(Date dataInicio, Date dataFim, boolean exibirEncerradas,
-            Collection<IEntityTaskDefinition> situacoesAlvo) {
-        if (!exibirEncerradas && (situacoesAlvo == null || situacoesAlvo.isEmpty())) {
-            situacoesAlvo = getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isEnd())
+            Collection<IEntityTaskDefinition> targetSituations) {
+        Collection<IEntityTaskDefinition> resolvedSituations = targetSituations;
+        if (!exibirEncerradas && (resolvedSituations == null || resolvedSituations.isEmpty())) {
+            resolvedSituations = getEntityProcessDefinition().getTaskDefinitions().stream().filter(
+                    t -> !t.getLastVersion().isEnd())
                     .collect(Collectors.toList());
         }
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), dataInicio,
-            dataFim, situacoesAlvo));
+        return convertToProcessInstance(getPersistenceService()
+                .retrieveProcessInstancesWith(getEntityProcessDefinition(), dataInicio, dataFim, resolvedSituations));
     }
 
     @Override

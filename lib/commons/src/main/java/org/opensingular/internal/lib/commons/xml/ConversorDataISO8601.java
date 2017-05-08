@@ -18,6 +18,7 @@ package org.opensingular.internal.lib.commons.xml;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.stream.Stream;
 
 /**
  * Fornece métodos de conversão de string de Data/Hora no formato
@@ -252,8 +253,10 @@ public final class ConversorDataISO8601 {
 
         formatYearMonthDay(buffer, year, month, day);
 
+        boolean timeIsZero = Stream.of(hour, mili, second, mili, nano).allMatch(x -> x.equals(0));
+
         if ((prescisao == DIA)
-                || ((hour == 0) && (minute == 0) && (second == 0) && (mili == 0) && (nano == 0))) {
+                || timeIsZero) {
             return buffer.toString();
         }
 
@@ -303,9 +306,9 @@ public final class ConversorDataISO8601 {
         mili = nano / 1000000;
         formatMiliIfNecessary(buffer, mili, prescisao);
         if (prescisao == NANO) {
-            nano = nano % 1000000;
-            if (nano != 0) {
-                String nanoS = Integer.toString(nano);
+            int onlyNano = nano % 1000000;
+            if (onlyNano != 0) {
+                String nanoS = Integer.toString(onlyNano);
                 for (int i = 6 - nanoS.length(); i != 0; i--) {
                     buffer.append('0');
                 }

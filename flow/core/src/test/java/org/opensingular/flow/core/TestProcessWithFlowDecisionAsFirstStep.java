@@ -56,10 +56,7 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
     private void goToResult(StepsDE target) {
         action = target;
         ProcessInstance pi = new ProcessWithFlowDecisionAsFirstStep().prepareStartCall().createAndStart();
-        assertions(pi).isAtTask(target);
-
-        pi = reload(pi);
-        assertions(pi).isAtTask(target);
+        assertReloadAssert(pi, p -> assertions(p).isAtTask(target));
     }
 
     @DefinitionInfo("FlowDecisionAsFirstStep")

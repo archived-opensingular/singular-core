@@ -19,6 +19,9 @@ package org.opensingular.flow.core;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
+import org.opensingular.flow.core.variable.VarInstance;
+
+import javax.annotation.Nonnull;
 
 /**
  * Classe Base para estrutura de definição do flow que trabalhar com parâmetros para sua execução.
@@ -58,8 +61,12 @@ public abstract class SParametersEnabled {
     }
 
     /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
-    final static boolean isAutoBindedToProcessVariable(VarDefinition varDef) {
+    final static boolean isAutoBindedToProcessVariable(@Nonnull VarDefinition varDef) {
         return varDef.getMetaDataValue(AUTO_BIND_VARIABLE, Boolean.FALSE);
     }
 
+    /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
+    final static boolean isAutoBindedToProcessVariable(@Nonnull VarInstance var) {
+        return isAutoBindedToProcessVariable(var.getDefinition());
+    }
 }

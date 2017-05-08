@@ -19,11 +19,11 @@ package org.opensingular.lib.wicket.util.util;
 /**
  * Utility class for JavaScript escaping.
  * Escapes based on the JavaScript 1.5 recommendation.
- *
+ * <p/>
  * <p>Reference:
  * <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Values,_variables,_and_literals#String_literals">
  * JavaScript Guide</a> on Mozilla Developer Network.
- *
+ * <p/>
  * This class was copied from spring, so we don't have a
  * dependency caused by just one method.
  *
@@ -34,7 +34,8 @@ package org.opensingular.lib.wicket.util.util;
  */
 public class JavaScriptUtils {
 
-    private JavaScriptUtils() {}
+    private JavaScriptUtils() {
+    }
 
     /**
      * Turn JavaScript special characters into escaped characters.
@@ -48,64 +49,84 @@ public class JavaScriptUtils {
         }
 
         StringBuilder filtered = new StringBuilder(input.length());
-        char prevChar = '\u0000';
-        char c;
+        char          prevChar = '\u0000';
+        char          c;
         for (int i = 0; i < input.length(); i++) {
             c = input.charAt(i);
-            if (c == '"') {
-                filtered.append("\\\"");
+
+            String escaped = escapeSpecialChars(c);
+
+            if (escaped == null) {
+                escaped = escapeControlChars(c, prevChar);
             }
-            else if (c == '\'') {
-                filtered.append("\\'");
+
+            if (escaped == null) {
+                escaped = escapeUnicodeChars(c);
             }
-            else if (c == '\\') {
-                filtered.append("\\\\");
-            }
-            else if (c == '/') {
-                filtered.append("\\/");
-            }
-            else if (c == '\t') {
-                filtered.append("\\t");
-            }
-            else if (c == '\n') {
-                if (prevChar != '\r') {
-                    filtered.append("\\n");
-                }
-            }
-            else if (c == '\r') {
-                filtered.append("\\n");
-            }
-            else if (c == '\f') {
-                filtered.append("\\f");
-            }
-            else if (c == '\b') {
-                filtered.append("\\b");
-            }
-            // No '\v' in Java, use octal value for VT ascii char
-            else if (c == '\013') {
-                filtered.append("\\v");
-            }
-            else if (c == '<') {
-                filtered.append("\\u003C");
-            }
-            else if (c == '>') {
-                filtered.append("\\u003E");
-            }
-            // Unicode for PS (line terminator in ECMA-262)
-            else if (c == '\u2028') {
-                filtered.append("\\u2028");
-            }
-            // Unicode for LS (line terminator in ECMA-262)
-            else if (c == '\u2029') {
-                filtered.append("\\u2029");
-            }
-            else {
+
+            if (escaped == null) {
                 filtered.append(c);
+            } else {
+                filtered.append(escaped);
             }
+
             prevChar = c;
 
         }
         return filtered.toString();
+    }
+
+    private static String escapeSpecialChars(char c) {
+        if (c == '"') {
+            return "\\\"";
+        } else if (c == '\'') {
+            return "\\'";
+        } else if (c == '\\') {
+            return "\\\\";
+        } else if (c == '/') {
+            return "\\/";
+        } else if (c == '<') {
+            return "\\u003C";
+        } else if (c == '>') {
+            return "\\u003E";
+        } else {
+            return null;
+        }
+    }
+
+    private static String escapeControlChars(char c, char prevChar) {
+        if (c == '\t') {
+            return "\\t";
+        } else if (c == '\n') {
+            if (prevChar != '\r') {
+                return "\\n";
+            }
+        } else if (c == '\r') {
+            return "\\n";
+        } else if (c == '\f') {
+            return "\\f";
+        } else if (c == '\b') {
+            return "\\b";
+        }
+
+        return null;
+    }
+
+    private static String escapeUnicodeChars(char c) {
+        // No '\v' in Java, use octal value for VT ascii char
+        if (c == '\013') {
+            return "\\v";
+        }
+        // Unicode for PS (line terminator in ECMA-262)
+        else if (c == '\u2028') {
+            return "\\u2028";
+        }
+        // Unicode for LS (line terminator in ECMA-262)
+        else if (c == '\u2029') {
+            return "\\u2029";
+        } else {
+            return null;
+        }
     }
 
 }

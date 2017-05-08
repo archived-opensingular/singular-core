@@ -66,6 +66,7 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         try {
             quartzBundle = ResourceBundle.getBundle(CONFIG_RESOURCE_NAME);
         } catch (MissingResourceException mse) {
+            getLogger().debug(null, mse);
             // If this fails, we load the defaul one.
         }
         if (quartzBundle == null) {
