@@ -119,7 +119,7 @@ public final class SFormXMLUtil {
         return novo;
     }
 
-    private static int verificarIds(SInstance instancia, Set<Integer> ids) {
+    private static int verificarIds(@Nonnull SInstance instancia, @Nonnull Set<Integer> ids) {
         Integer id = instancia.getId();
         if (ids.contains(id)) {
             throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
