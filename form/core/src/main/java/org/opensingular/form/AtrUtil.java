@@ -45,7 +45,7 @@ final class AtrUtil {
      * @param defaultMaxSize Tamanho do array, caso tenha que ser criado do zero ou necessário fazer copia.
      * @return O array original ou um novo array (se necessário expadir/criar o mesmo)
      */
-    @Nonnull
+    @Nullable
     final static <T> T[] arraySet(@Nullable T[] original, int index, @Nullable T value, Class<T> classArray,
             int defaultMaxSize) {
         T[] content = original;

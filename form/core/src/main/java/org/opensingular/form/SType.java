@@ -327,7 +327,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     @Nullable
     final SInstance findAttributeInstance(@Nonnull String fullName) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(fullName);
-        return ref == null ? null : AttributeValuesManagerForSType.findAttributeInstance(this, ref);
+        return AttributeValuesManagerForSType.findAttributeInstance(this, ref);
     }
 
     @Override

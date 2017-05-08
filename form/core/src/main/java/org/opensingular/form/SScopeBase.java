@@ -114,7 +114,7 @@ public abstract class SScopeBase implements SScope {
     }
 
     /** Registro o tipo informado neste escopo. */
-    final <T extends SType<?>> T registerType(Class<T> typeClass) {
+    final <T extends SType<?>> T registerType(@Nonnull Class<T> typeClass) {
         T t = registerType(MapByName.newInstance(typeClass), typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;

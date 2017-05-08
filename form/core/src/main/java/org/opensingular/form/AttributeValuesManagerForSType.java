@@ -65,7 +65,7 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nullable
-    final static <V> V getAttributeValueInTheContextOf(@Nonnull SType<?> type, @Nullable SInstance contextInstance,
+    final static <V> V getAttributeValueInTheContextOf(@Nonnull final SType<?> type, @Nullable SInstance contextInstance,
             @Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         SInstance instance = findAttributeInstance(type, ref);
         if (instance != null) {
@@ -85,7 +85,7 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nonnull
-    final static SType<?> getAttributeDefinedHierarchy(@Nonnull SType<?> type, @Nonnull AttrInternalRef ref) {
+    final static SType<?> getAttributeDefinedHierarchy(@Nonnull final SType<?> type, @Nonnull AttrInternalRef ref) {
         for (SType<?> current = type; current != null; current = current.getSuperType()) {
             SType<?> att = current.getAttributeDefinedLocally(ref);
             if (att != null) {
