@@ -16,26 +16,25 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JsonFunction;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class DecimalMapper extends StringMapper {
 
@@ -121,23 +120,24 @@ public class DecimalMapper extends StringMapper {
         }
 
         @Override
-        public Object convertToObject(String value, Locale locale) {
+        public BigDecimal convertToObject(String value, Locale locale) {
             if (!StringUtils.isEmpty(value)) {
                 return new BigDecimal(value.replaceAll("\\.", "").replaceAll(",", "."));
             }
-
             return null;
         }
 
         @Override
         public String convertToString(Object value, Locale locale) {
-            if (value == null) {
-                return "";
-            } else if (value instanceof String) {
-                value = convertToObject((String) value, locale);
+            BigDecimal bigDecimal;
+            if (value instanceof String) {
+                bigDecimal = convertToObject((String) value, locale);
+            } else {
+                bigDecimal = (BigDecimal) value;
             }
-
-            BigDecimal bigDecimal = (BigDecimal) value;
+            if (bigDecimal == null) {
+                return "";
+            }
             int casasValue = bigDecimal.scale();
             int casasDecimais = casasValue < this.maximoCasasDecimais ? casasValue : this.maximoCasasDecimais;
             return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP), false);

@@ -350,17 +350,13 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         SIList<?> other = (SIList<?>) obj;
-        if (size() != other.size()) {
+        if (size() != other.size() || !getType().equals(other.getType()) || !Objects.equals(getElementsType(),
+                other.getElementsType())) {
             return false;
-        } else if (!getType().equals(other.getType())) {
-            return false;
-        } else if (!Objects.equals(getElementsType(), other.getElementsType()))
-            return false;
+        }
         for (int i = size() - 1; i != -1; i--) {
             if (!Objects.equals(get(i), other.get(i))) {
                 return false;

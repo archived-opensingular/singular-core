@@ -18,7 +18,7 @@ package org.opensingular.flow.core.property;
 
 import java.io.Serializable;
 
-public class MetaDataRef<K extends Serializable> {
+public class MetaDataRef<K extends Serializable> implements Serializable {
 
     private final String name;
     private final Class<K> valueClass;

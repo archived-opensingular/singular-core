@@ -2,6 +2,7 @@
 ######################
 **/*.h2.db
 **/*.trace.db
+**/*.mv.db
 **/*.tmp
 **/singulardb.lock.db
 
@@ -58,3 +59,7 @@ out/**
 buildall.sh
 _confHomol/
 flow/test/singulardb.trace.db.old
+
+# Aid Diagramas      #
+######################
+**/*.ucls

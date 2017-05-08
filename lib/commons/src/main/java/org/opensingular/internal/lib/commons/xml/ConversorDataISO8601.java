@@ -306,9 +306,9 @@ public final class ConversorDataISO8601 {
         mili = nano / 1000000;
         formatMiliIfNecessary(buffer, mili, prescisao);
         if (prescisao == NANO) {
-            nano = nano % 1000000;
-            if (nano != 0) {
-                String nanoS = Integer.toString(nano);
+            int onlyNano = nano % 1000000;
+            if (onlyNano != 0) {
+                String nanoS = Integer.toString(onlyNano);
                 for (int i = 6 - nanoS.length(); i != 0; i--) {
                     buffer.append('0');
                 }

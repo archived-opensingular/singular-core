@@ -81,59 +81,67 @@ class FlowEngine {
             @Nullable TaskInstance originTaskInstance, @Nullable STransition transition, @Nonnull STask<?> destinyTask,
             @Nullable VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(processInstance);
-        Objects.requireNonNull(destinyTask);
+        TaskInstance currentOrigin = originTaskInstance;
+        STransition currentTransition = transition;
+        STask<?> currentDestiny = Objects.requireNonNull(destinyTask);
+        VarInstanceMap<?, ?> currentParam = paramIn;
         while (true) {
-            if (transition != null && originTaskInstance == null) {
+            if (currentTransition != null && currentOrigin == null) {
                 throw new SingularFlowException(
                         "Não pode ser solicitada execução de uma transição específica (transition=" +
-                                transition.getName() + ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
-            } else if (originTaskInstance != null && ! originTaskInstance.isActive()) {
+                                currentTransition.getName() +
+                                ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
+            } else if (currentOrigin != null && !currentOrigin.isActive()) {
                 throw new SingularFlowException(
-                        "Não pode ser executada uma transição a partir da task '" + originTaskInstance.getName() +
-                                "', pois a mesma já está concluida.", originTaskInstance);
+                        "Não pode ser executada uma transição a partir da task '" + currentOrigin.getName() +
+                                "', pois a mesma já está concluida.", currentOrigin);
             }
             Date agora = new Date();
-            final TaskInstance newTaskInstance = processInstance.updateState(originTaskInstance, transition, destinyTask, agora);
+            final TaskInstance newTaskInstance = processInstance.updateState(currentOrigin, currentTransition,
+                    currentDestiny, agora);
 
-            if (paramIn != null) {
-                copyMarkedParametersToInstanceVariables(processInstance, paramIn);
+            if (currentParam != null) {
+                copyMarkedParametersToInstanceVariables(processInstance, currentParam);
 
-                if (originTaskInstance != null) {
+                if (currentOrigin != null) {
                     //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
                     // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
                     // impede). O problema é uqe originTaskInstance é obrigatório
-                    getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), originTaskInstance,
-                            newTaskInstance, paramIn);
+                    getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), currentOrigin,
+                            newTaskInstance, currentParam);
                 }
             }
 
             getPersistenceService().flushSession();
-            if (!destinyTask.isImmediateExecution()) {
-                return executeImediate(processInstance, originTaskInstance, transition, destinyTask, paramIn, newTaskInstance);
+            if (!currentDestiny.isImmediateExecution()) {
+                return executeImediate(processInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
+                        newTaskInstance);
             }
-            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
+            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, currentParam,
+                    currentTransition);
             newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
 
             processInstance.setExecutionContext(execucaoTask);
             execucaoTask.setTransition(null);
             try {
-                if (transition != null) {
-                    validarParametrosInput(originTaskInstance, transition, paramIn);
+                if (currentTransition != null) {
+                    validarParametrosInput(currentOrigin, currentTransition, currentParam);
                 }
-                destinyTask.execute(execucaoTask);
+                currentDestiny.execute(execucaoTask);
                 getPersistenceService().flushSession();
             } catch(Exception e) {
-                SingularFlowException e2 = new SingularFlowException("Error running task '" + destinyTask.getName()+"'", e);
-                e2.add(destinyTask);
+                SingularFlowException e2 = new SingularFlowException(
+                        "Error running task '" + currentDestiny.getName() + "'", e);
+                e2.add(currentDestiny);
                 throw e2;
             } finally {
                 processInstance.setExecutionContext(null);
             }
 
-            transition = resolveDefaultTransitionIfNecessary(newTaskInstance, execucaoTask.getTransition());
-            destinyTask = transition.getDestination();
-            originTaskInstance = newTaskInstance;
-            paramIn = null;
+            currentTransition = resolveDefaultTransitionIfNecessary(newTaskInstance, execucaoTask.getTransition());
+            currentDestiny = currentTransition.getDestination();
+            currentOrigin = newTaskInstance;
+            currentParam = null;
         }
     }
 
@@ -226,10 +234,11 @@ class FlowEngine {
     }
 
     @Nonnull
-    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable STransition transition, @Nullable VarInstanceMap<?,?> param) {
-        transition = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
+    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable STransition transition,
+            @Nullable VarInstanceMap<?, ?> param) {
+        STransition trans = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
         tarefaAtual.endLastAllocation();
-        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transition, transition.getDestination(), param);
+        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, trans, trans.getDestination(), param);
     }
 
 

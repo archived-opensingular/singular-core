@@ -51,7 +51,14 @@ import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
@@ -222,12 +229,12 @@ public class WicketBuildContext implements Serializable {
     }
 
     public static Optional<WicketBuildContext> findNearest(Component comp) {
-        do {
-            Optional<WicketBuildContext> ctx = find(comp);
-            if (ctx.isPresent())
+        for (Component c = comp; c != null; c = c.getParent()) {
+            Optional<WicketBuildContext> ctx = find(c);
+            if (ctx.isPresent()) {
                 return ctx;
-            comp = comp.getParent();
-        } while (comp != null);
+            }
+        }
         return Optional.empty();
     }
 

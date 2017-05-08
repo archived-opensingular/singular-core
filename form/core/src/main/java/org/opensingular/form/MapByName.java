@@ -16,7 +16,12 @@
 
 package org.opensingular.form;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -91,7 +96,7 @@ class MapByName<K> implements Iterable<K> {
         verifyMustNotBePresent(getNome(alvo), owner);
     }
 
-    final void verifyMustNotBePresent(String fullName, Object owner) {
+    final void verifyMustNotBePresent(@Nonnull String fullName, Object owner) {
         if (byName.containsKey(fullName)) {
             throw new SingularFormException(erroMsg("A definição '" + fullName + "' já está criada", owner));
         }
