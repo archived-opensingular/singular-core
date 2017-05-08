@@ -50,6 +50,9 @@ public class TypeProcessorAttributeReadFromFile {
 
     /** Instância única do processador. */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
+    private static final int SUBFIELD_PATH = 0;
+    private static final int ATTRIBUTE_NAME = 1;
+    private static final int ATTRIBUTE_VALUE = 2;
 
     /** Objeto de acesso a metodos internos da API. */
     private static InternalAccess internalAccess;
@@ -73,12 +76,13 @@ public class TypeProcessorAttributeReadFromFile {
         for (String[] entry : definitions.definitions) {
             try {
                 SType<?> target = type;
-                if (entry[0] != null) {
-                    target = target.getLocalType(entry[0]);
+                if (entry[SUBFIELD_PATH] != null) {
+                    target = target.getLocalType(entry[SUBFIELD_PATH]);
                 }
-                getInternalAccess().setAttributeValueSavingForLatter(target, entry[1], entry[2]);
+                getInternalAccess().setAttributeValueSavingForLatter(target, entry[ATTRIBUTE_NAME],
+                        entry[ATTRIBUTE_VALUE]);
             } catch (Exception e) {
-                String key = (entry[0] == null ? "" : entry[0]) + '@' + entry[1];
+                String key = (entry[SUBFIELD_PATH] == null ? "" : entry[SUBFIELD_PATH]) + '@' + entry[ATTRIBUTE_NAME];
                 throw new SingularFormException(
                         "Erro configurando atributo da chave '" + key + "' lidos de " + definitions.url, e);
             }
@@ -117,14 +121,14 @@ public class TypeProcessorAttributeReadFromFile {
             if (pos == -1 || pos == key.length() - 1) {
                 throw new SingularFormException("Invalid attribute definition key='" + key + "'");
             }
-            String[] defintion = new String[3];
-            defintion[0] = pos == 0 ? null : StringUtils.trimToNull(key.substring(0, pos));
-            defintion[1] = StringUtils.trimToNull(key.substring(pos + 1));
-            defintion[2] = StringUtils.trimToNull((String) entry.getValue());
-            if (defintion[1] == null) {
+            String[] definition = new String[3];
+            definition[SUBFIELD_PATH] = pos == 0 ? null : StringUtils.trimToNull(key.substring(0, pos));
+            definition[ATTRIBUTE_NAME] = StringUtils.trimToNull(key.substring(pos + 1));
+            definition[ATTRIBUTE_VALUE] = StringUtils.trimToNull((String) entry.getValue());
+            if (definition[ATTRIBUTE_NAME] == null) {
                 throw new SingularFormException("Invalid attribute definition key='" + key + "'");
             }
-            vals.add(defintion);
+            vals.add(definition);
         }
         return vals;
     }
