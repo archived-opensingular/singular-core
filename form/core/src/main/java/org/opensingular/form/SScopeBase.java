@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -114,7 +115,9 @@ public abstract class SScopeBase implements SScope {
     }
 
     /** Registro o tipo informado neste escopo. */
+    @Nonnull
     final <T extends SType<?>> T registerType(@Nonnull Class<T> typeClass) {
+        Objects.requireNonNull(typeClass);
         T t = registerType(MapByName.newInstance(typeClass), typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;

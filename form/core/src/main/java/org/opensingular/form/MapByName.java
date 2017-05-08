@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +56,8 @@ class MapByName<K> implements Iterable<K> {
         }
     }
 
-    public <T extends K> T get(Class<T> classeAlvo) {
+    @Nullable
+    public <T extends K> T get(@Nonnull Class<T> classeAlvo) {
         K valor = byClass.get(classeAlvo);
         return classeAlvo.cast(valor);
     }
@@ -69,7 +71,8 @@ class MapByName<K> implements Iterable<K> {
         return byName.values();
     }
 
-    final <T extends K> T getOrNewInstance(Class<T> classeAlvo) {
+    @Nonnull
+    final <T extends K> T getOrNewInstance(@Nonnull Class<T> classeAlvo) {
         T valor = get(classeAlvo);
         if (valor == null) {
             return newInstance(classeAlvo);
@@ -77,7 +80,8 @@ class MapByName<K> implements Iterable<K> {
         return valor;
     }
 
-    static <TT> TT newInstance(Class<TT> classeAlvo) {
+    @Nonnull
+    static <TT> TT newInstance(@Nonnull Class<TT> classeAlvo) {
         try {
             return classeAlvo.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

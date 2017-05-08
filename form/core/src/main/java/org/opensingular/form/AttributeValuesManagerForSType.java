@@ -18,6 +18,7 @@ package org.opensingular.form;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * Representa um mapa de valores de atributos associados a um {@link SType}.
@@ -65,19 +66,18 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nullable
-    final static <V> V getAttributeValueInTheContextOf(@Nonnull final SType<?> type, @Nullable SInstance contextInstance,
+    final static <V> V getAttributeValueInTheContextOf(@Nonnull final SType<?> target, @Nullable SInstance contextInstance,
             @Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
-        SInstance instance = findAttributeInstance(type, ref);
+        SInstance instance = findAttributeInstance(target, ref);
         if (instance != null) {
             if (contextInstance != null) {
                 return instance.getValueInTheContextOf(contextInstance, resultClass);
             } else if (resultClass == null) {
                 return (V) instance.getValue();
-            } else {
-                return instance.getValueWithDefault(resultClass);
             }
+            return instance.getValueWithDefault(resultClass);
         }
-        SType<?> atr = getAttributeDefinedHierarchy(type, ref);
+        SType<?> atr = getAttributeDefinedHierarchy(target, ref);
         if (resultClass == null) {
             return (V) atr.getAttributeValueOrDefaultValueIfNull();
         }
@@ -85,7 +85,8 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nonnull
-    final static SType<?> getAttributeDefinedHierarchy(@Nonnull final SType<?> type, @Nonnull AttrInternalRef ref) {
+    final static SType<?> getAttributeDefinedHierarchy(@Nonnull SType<?> type, @Nonnull AttrInternalRef ref) {
+        Objects.requireNonNull(type);
         for (SType<?> current = type; current != null; current = current.getSuperType()) {
             SType<?> att = current.getAttributeDefinedLocally(ref);
             if (att != null) {
