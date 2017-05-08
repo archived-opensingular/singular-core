@@ -1,11 +1,5 @@
 package org.opensingular.form.helpers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
 import org.fest.assertions.api.IterableAssert;
@@ -17,6 +11,11 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.IValidationError;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -251,7 +250,8 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
             assertEquals(original.getAttributes().size(), copy.getAttributes().size());
 
             for (SInstance atrOriginal : original.getAttributes()) {
-                SInstance atrNovo = copy.getAttribute(atrOriginal.getAttributeInstanceInfo().getName()).get();
+                SInstance atrNovo = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName()).orElse(
+                        null);
                 try {
                     assertNotNull(atrNovo);
                     assertEquivalentInstance(atrOriginal, atrNovo, false);

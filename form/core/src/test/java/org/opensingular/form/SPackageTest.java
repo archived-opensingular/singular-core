@@ -106,7 +106,7 @@ public class SPackageTest extends TestCaseForm {
         testarAtribuicao(tipoI, false, new Object(), null);
         testarAtribuicao(tipoI, false, false, null);
 
-        assertNull(tipoS.getAttributeInstance(SPackageBasic.ATR_EMPTY_TO_NULL));
+        assertNull(tipoS.findAttributeInstance(SPackageBasic.ATR_EMPTY_TO_NULL));
         assertEquals(tipoS.getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL), Boolean.TRUE);
         assertTrue(tipoS.getValorAtributoEmptyToNull());
         assertTrue(tipoS.getValorAtributoTrim());
@@ -210,22 +210,14 @@ public class SPackageTest extends TestCaseForm {
         assertNotNull(tipoX.getLocalType("atTeste"));
 
         assertEquals(null, tipoX.getAttributeValue("teste.XXXXX.atTeste"));
-        assertEquals(null, tipoX.getAttributeValue("atTeste"));
 
         atributo.withDefaultValueIfNull("0");
-        assertEquals("0", tipoX.getAttributeValue("atTeste"));
         assertEquals("0", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
 
         tipoX.setAttributeValue(atributo, "A");
-        assertEquals("A", tipoX.getAttributeValue("atTeste"));
         assertEquals("A", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
 
-        tipoX.setAttributeValue("atTeste", "B");
-        assertEquals("B", tipoX.getAttributeValue("atTeste"));
-        assertEquals("B", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
-
         tipoX.setAttributeValue("teste.XXXXX.atTeste", "C");
-        assertEquals("C", tipoX.getAttributeValue("atTeste"));
         assertEquals("C", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
     }
 

@@ -22,9 +22,12 @@ package org.opensingular.form;
  *
  * @author Daniel C. Bordin
  */
-public enum InstanceFlags {
+enum InstanceFlags {
 
-    REMOVENDO_INSTANCIA, IS_ATRIBUTO;
+    /** Indica que a instância está no meio de uma exclusão. */
+    REMOVENDO_INSTANCIA,
+    /** Se true, indica que o atributo é temporário e deve ser convertido para o tipo correto mais tarde. */
+    ATTRIBUTE_SHOULD_MIGRATE;
 
     private int bit;
 

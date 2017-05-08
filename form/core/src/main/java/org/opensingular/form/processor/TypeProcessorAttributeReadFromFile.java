@@ -20,6 +20,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.InternalAccess;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.lib.commons.util.PropertiesUtils;
@@ -31,16 +32,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 
 /**
+ * Processador que faz a leitura de atributos de {@link SType} que forem definidos em classes próprias e que possuam
+ * arquivo de configuração de attributos com o mesmo nome da classe.
+ * <p> Verifica se o atributo ainda não teve o seu tipo registrado. Nesse caso, coloca o atributo lidos como sendo do
+ * tipo String temporariamente até a carga da definição do atributo.</p>
+ *
  * @author Daniel C. Bordin on 29/04/2017.
  */
 public class TypeProcessorAttributeReadFromFile {
 
+    private static final String SUFFIX_PROPERTIES = ".properties";
+
+    /** Instância única do processador. */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
 
+    /** Objeto de acesso a metodos internos da API. */
+    private static InternalAccess internalAccess;
+
+    /**
+     * Cache com informações sobre a presença ou não de arquivos de definição de atribuitos associados a um classe
+     * específica.
+     */
     private final LoadingCache<Class<?>, FileDefinitions> cache = CacheBuilder.newBuilder().softValues().build(
             new CacheLoader<Class<?>, FileDefinitions>() {
                 public FileDefinitions load(Class<?> key) {
@@ -48,11 +65,9 @@ public class TypeProcessorAttributeReadFromFile {
                 }
             });
 
-    private static final String SUFFIX_PROPERTIES = ".properties";
+    TypeProcessorAttributeReadFromFile() { }
 
-    TypeProcessorAttributeReadFromFile() {
-    }
-
+    /** Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo. */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
         FileDefinitions definitions = cache.getUnchecked(typeClass);
         for (String[] entry : definitions.definitions) {
@@ -61,7 +76,7 @@ public class TypeProcessorAttributeReadFromFile {
                 if (entry[0] != null) {
                     target = target.getLocalType(entry[0]);
                 }
-                target.setAttributeValue(entry[1], null, entry[2]);
+                getInternalAccess().setAttributeValueSavingForLatter(target, entry[1], entry[2]);
             } catch (Exception e) {
                 String key = (entry[0] == null ? "" : entry[0]) + '@' + entry[1];
                 throw new SingularFormException(
@@ -70,7 +85,13 @@ public class TypeProcessorAttributeReadFromFile {
         }
     }
 
-    private FileDefinitions readDefinitionsFor(Class<?> typeClass) {
+    /**
+     * Recupera a lista de valores extras de atributos associados a classe informada.
+     *
+     * @return Nunca null, mas pode ser um lista com conteúdo zero.
+     */
+    @Nonnull
+    private FileDefinitions readDefinitionsFor(@Nonnull Class<?> typeClass) {
         URL url = lookForFile(typeClass);
         if (url != null) {
             try {
@@ -86,7 +107,9 @@ public class TypeProcessorAttributeReadFromFile {
         return FileDefinitions.EMPTY;
     }
 
-    private List<String[]> readDefinitionsFor(Properties props) {
+    /** Lê as associações de atributos a partir de um arquivo de propriedades. */
+    @Nonnull
+    private List<String[]> readDefinitionsFor(@Nonnull Properties props) {
         List<String[]> vals = new ArrayList<>(props.size());
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
             String key = (String) entry.getKey();
@@ -106,6 +129,7 @@ public class TypeProcessorAttributeReadFromFile {
         return vals;
     }
 
+    /** Verifica se há um arquivos com valores de atributos associados a classe informada. */
     @Nullable
     private URL lookForFile(@Nonnull Class<?> typeClass) {
         String name = typeClass.getSimpleName();
@@ -116,6 +140,7 @@ public class TypeProcessorAttributeReadFromFile {
         return context.getResource(name + SUFFIX_PROPERTIES);
     }
 
+    /** Representa um lsita de valores de atributos obtidos de um arquivo específico. */
     private static class FileDefinitions {
 
         public static final FileDefinitions EMPTY = new FileDefinitions(null, Collections.emptyList());
@@ -127,5 +152,20 @@ public class TypeProcessorAttributeReadFromFile {
             this.url = url;
             this.definitions = definitions;
         }
+    }
+
+    /** Recebe o objeto que viabiliza executar chamadas internas da API (chamadas a métodos não públicos). */
+    public static final void setInternalAccess(@Nonnull InternalAccess internalAccess) {
+        TypeProcessorAttributeReadFromFile.internalAccess = internalAccess;
+    }
+
+    /** Garante a carga do objeto a chamada internas da API. */
+    @Nonnull
+    private static final InternalAccess getInternalAccess() {
+        if (internalAccess == null) {
+            InternalAccess.load();
+            return Objects.requireNonNull(internalAccess);
+        }
+        return internalAccess;
     }
 }

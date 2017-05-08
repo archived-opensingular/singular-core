@@ -382,14 +382,14 @@ public class CoreAttributesTest extends TestCaseForm {
         STypeString at1 = pb1.createAttributeIntoType(tipo, "a", STypeString.class);
         STypeComposite<?> at2 = pb1.createAttributeIntoType(tipo, "b", tipoPosicao);
 
-        tipo.setAttributeValue("a", "a1");
-        assertAttribute(tipo.getAttributeInstanceInternal(at1.getName()), null);
+        tipo.setAttributeValue("teste1.X.a", "a1");
+        assertAttribute(tipo.findAttributeInstance(at1.getName()), null);
 
-        tipo.setAttributeValue("b", "cor", "b1");
-        tipo.setAttributeValue("b", "linha", 1);
-        assertAttribute(tipo.getAttributeInstanceInternal(at2.getName()), null);
-        assertAttribute(((ICompositeInstance) tipo.getAttributeInstanceInternal(at2.getName())).getField("cor"), null);
-        assertAttribute(((ICompositeInstance) tipo.getAttributeInstanceInternal(at2.getName())).getField("linha"), null);
+        tipo.setAttributeValue("teste1.X.b", "cor", "b1");
+        tipo.setAttributeValue("teste1.X.b", "linha", 1);
+        assertAttribute(tipo.findAttributeInstance(at2.getName()), null);
+        assertAttribute(((ICompositeInstance) tipo.findAttributeInstance(at2.getName())).getField("cor"), null);
+        assertAttribute(((ICompositeInstance) tipo.findAttributeInstance(at2.getName())).getField("linha"), null);
 
         SIString instancia = (SIString) tipo.newInstance();
         assertEquals(false, instancia.isAttribute());
@@ -400,10 +400,10 @@ public class CoreAttributesTest extends TestCaseForm {
         instancia.setAttributeValue(at2.getName(), "linha", 2);
 
         assertEquals(2, instancia.getAttributes().size());
-        assertAttribute(instancia.getAttribute(at1.getName()).get(), instancia);
-        assertAttribute(instancia.getAttribute(at2.getName()).get(), instancia);
-        assertAttribute(((ICompositeInstance) instancia.getAttribute(at2.getName()).get()).getField("cor"), instancia);
-        assertAttribute(((ICompositeInstance) instancia.getAttribute(at2.getName()).get()).getField("linha"), instancia);
+        assertAttribute(instancia.getAttributeDirectly(at1.getName()).get(), instancia);
+        assertAttribute(instancia.getAttributeDirectly(at2.getName()).get(), instancia);
+        assertAttribute(((ICompositeInstance) instancia.getAttributeDirectly(at2.getName()).get()).getField("cor"), instancia);
+        assertAttribute(((ICompositeInstance) instancia.getAttributeDirectly(at2.getName()).get()).getField("linha"), instancia);
         instancia.getAttributes().stream().forEach(a -> assertAttribute(a, instancia));
     }
 

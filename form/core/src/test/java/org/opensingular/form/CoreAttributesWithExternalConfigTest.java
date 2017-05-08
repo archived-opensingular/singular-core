@@ -16,13 +16,20 @@
 
 package org.opensingular.form;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SIInteger;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
 /**
  * @author Daniel C. Bordin on 28/04/2017.
@@ -120,8 +127,51 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
         type.field("field2").isAttribute(SPackageBasic.ATR_SUBTITLE, "SSS3");
     }
 
+    @Test
+    @Ignore
+    public void performance() {
+        createTestDictionary().getType(STypeExternalAttributeComposite.class); //Para fazer caches
+        performance("String    ", 10000, this::simpleCall);
+        performance("Composite ", 10000, this::compositeCall);
+        performance("String2   ", 20000, this::simpleCall);
+        performance("Composite2", 20000, this::compositeCall);
+        performance("String3   ", 20000, this::simpleCall);
+        performance("Composite3", 20000, this::compositeCall);
+    }
+
+    private void simpleCall() {
+        STypeString type = createTestDictionary().getType(STypeString.class);
+        readAttributes(type);
+    }
+
+    private void readAttributes(SType<?> type) {
+        type.getAttributeValue(SPackageBasic.ATR_LABEL);
+        type.getAttributeValue(SPackageBasic.ATR_SUBTITLE);
+        type.getAttributeValue(SPackageBasic.ATR_REQUIRED);
+        type.getAttributeValue(SPackageBasic.ATR_VISIBLE);
+    }
+
+    private void compositeCall() {
+        STypeExternalAttributeComposite type = createTestDictionary().getType(STypeExternalAttributeComposite.class);
+        readAttributes(type);
+        readAttributes(type.getField("field1"));
+        readAttributes(type.getField("field2"));
+    }
+
+    private void performance(String name, int repeticoes, Runnable task) {
+        long tempo = System.currentTimeMillis();
+        for(int i = 0; i <repeticoes; i++) {
+            task.run();
+        }
+        tempo = System.currentTimeMillis() - tempo;
+        System.out.println("-------------------------------------------");
+        System.out.println("  " + name + ": T=" + SingularIOUtils.humanReadableMiliSeconds(tempo) + " R=" + repeticoes +
+                "  qtd/seg=" + ConversorToolkit.printNumber(1000.0 * repeticoes / tempo, 0));
+    }
+
     @SInfoType(spackage = PackageExternalAttr.class)
     public static class STypeExternalAttributeComposite extends STypeComposite {
+
         @Override
         protected void onLoadType(TypeBuilder tb) {
             setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC11");
@@ -147,11 +197,77 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
 
     @Test
     public void loadFormExternalLazy_withClassReadTriger() {
+        SDictionary dictionary = createTestDictionary();
+        AssertionsSType type = assertType(dictionary.getType(STypeExternalAttributeLazyLoad.class));
 
+        AtrRef<STypeString, SIString, String> atr1 = PackageDinamicAttr.ATR_TEXT1;
+        AtrRef<STypeInteger, SIInteger, Integer> atr2 = PackageDinamicAttr.ATR_INT1;
+        assertFalse(type.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertFalse(type.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+
+        type.isAttribute(SPackageBasic.ATR_LABEL, "LBL");
+        type.isAttribute(atr1.getNameFull(), "correct");
+        type.isAttribute(atr2.getNameFull(), "20");
+
+        assertFalse(type.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertFalse(type.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+
+        type.isAttribute(atr1, "correct");
+        type.isAttribute(atr2, 20);
+
+        //Depois das linhas a cima, então têm que ter convertido os valores
+        type.isAttribute(atr2.getNameFull(), 20);
+        assertEquals(SIInteger.class, type.getTarget().getAttributeDirectly(atr2.getNameFull()).get().getClass());
+
+        assertTrue(type.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertTrue(type.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
     }
 
     @Test
     public void loadFormExternalLazy_withInstanceReadTriger() {
+        SDictionary dictionary = createTestDictionary();
+        AssertionsSInstance instance = assertInstance(dictionary.newInstance(STypeExternalAttributeLazyLoad.class));
 
+        AtrRef<STypeString, SIString, String> atr1 = PackageDinamicAttr.ATR_TEXT1;
+        AtrRef<STypeInteger, SIInteger, Integer> atr2 = PackageDinamicAttr.ATR_INT1;
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+
+        instance.isAttribute(SPackageBasic.ATR_LABEL, "LBL");
+        instance.isAttribute(atr1.getNameFull(), "correct");
+        instance.isAttribute(atr2.getNameFull(), "20");
+
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+
+        instance.isAttribute(atr1, "correct");
+        instance.isAttribute(atr2, 20);
+
+        //Depois das linhas a cima, então têm que ter convertido os valores
+        instance.isAttribute(atr2.getNameFull(), 20);
+        assertEquals(SIInteger.class, instance.getTarget().getType().getAttributeDirectly(atr2.getNameFull()).get().getClass());
+
+        assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
     }
+
+    @SInfoType(spackage = PackageExternalAttr.class)
+    public static class STypeExternalAttributeLazyLoad extends STypeString {
+    }
+
+    @SInfoPackage(name = "dinamic")
+    public static class PackageDinamicAttr extends SPackage {
+
+        public static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(PackageDinamicAttr.class,
+                "text1", STypeString.class, SIString.class, String.class);
+
+        public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(PackageDinamicAttr.class,
+                "int1", STypeInteger.class, SIInteger.class, Integer.class);
+
+        protected void onLoadPackage(PackageBuilder pb) {
+            pb.createAttributeIntoType(SType.class, ATR_TEXT1);
+            pb.createAttributeIntoType(SType.class, ATR_INT1);
+        }
+    }
+
 }
