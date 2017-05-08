@@ -25,6 +25,9 @@ import org.opensingular.flow.core.TransitionAccessStrategy;
 import org.opensingular.flow.core.TransitionAccessStrategyImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
 
+import javax.annotation.Nonnull;
+import java.io.Serializable;
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends BuilderParametersEnabled<SELF> {
 
@@ -36,7 +39,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
 
     public FlowBuilder getFlowBuilder();
 
-    public default SELF markAsDefault() {
+    public default SELF setAsDefaultTransiton() {
         getTransition().getOrigin().setDefaultTransition(getTransition());
         return (SELF) self();
     }
@@ -56,7 +59,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
     
-    public default SELF withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    public default SELF setAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         getTransition().withAccessControl(accessStrategy);
         return self();
     }
@@ -76,7 +79,8 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
 
-    public default <T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
+    @Nonnull
+    public default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
         getTransition().setMetaDataValue(propRef, value);
         return self();
     }

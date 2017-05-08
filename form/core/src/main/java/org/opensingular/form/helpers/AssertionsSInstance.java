@@ -1,8 +1,16 @@
 package org.opensingular.form.helpers;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
 import org.fest.assertions.api.IterableAssert;
+import org.fest.assertions.api.StringAssert;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SIComposite;
@@ -11,11 +19,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.IValidationError;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -177,6 +180,14 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
     }
 
+    public StringAssert assertStringValue() {
+        Object value = getTarget().getValue();
+        if (value instanceof String || value == null) {
+            return Assertions.assertThat((String) value);
+        }
+        throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo String"));
+    }
+
     /** Cria uma nova assertiva a partir do resultado da serialização e deserialização da instância atual. */
     public AssertionsSInstance serializeAndDeserialize() {
         isNotNull();
@@ -250,21 +261,29 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
             assertEquals(original.getAttributes().size(), copy.getAttributes().size());
 
             for (SInstance atrOriginal : original.getAttributes()) {
-                SInstance atrNovo = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName()).orElse(
-                        null);
-                try {
-                    assertNotNull(atrNovo);
-                    assertEquivalentInstance(atrOriginal, atrNovo, false);
-                } catch (AssertionError e) {
-                    throw new AssertionError(
-                            "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
-                }
+                assertEqualsAtribute(copy, atrOriginal);
             }
         } catch (AssertionError e) {
             if (e.getMessage().startsWith("Erro comparando atributos de ")) {
                 throw e;
             }
             throw new AssertionError("Erro comparando atributos de '" + original + "'", e);
+        }
+    }
+
+    public static void assertEqualsAtribute(SAttributeEnabled copy, SInstance atrOriginal) {
+        Optional<SInstance> atrNovoOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
+        try {
+            if (atrNovoOpt.isPresent()) {
+                SInstance atrNovo = atrNovoOpt.get();
+                assertNotNull(atrNovo);
+                assertEquivalentInstance(atrOriginal, atrNovo, false);
+            } else {
+                fail();
+            }
+        } catch (AssertionError e) {
+            throw new AssertionError(
+                    "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
         }
     }
 }

@@ -16,9 +16,9 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SInfoType;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
 
 import java.math.BigDecimal;
 
@@ -43,14 +43,13 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
 
     @Override
     public BigDecimal fromString(String valor) {
-        valor = StringUtils.trimToNull(valor);
-        if (valor == null) {
+        String v = StringUtils.trimToNull(valor);
+        if (v == null) {
             return null;
         }
 
         try {
-            return new BigDecimal(valor.replaceAll("\\.", "").replaceAll(",", "."));
-
+            return new BigDecimal(v.replaceAll("\\.", "").replaceAll(",", "."));
         } catch (Exception e) {
             throw createConversionError(valor, BigDecimal.class, null, e);
         }
@@ -58,14 +57,13 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
 
     @Override
     public BigDecimal fromStringPersistence(String valor) {
-        valor = StringUtils.trimToNull(valor);
-        if (valor == null) {
+        String v = StringUtils.trimToNull(valor);
+        if (v == null) {
             return null;
         }
 
         try {
-            return new BigDecimal(valor);
-
+            return new BigDecimal(v);
         } catch (Exception e) {
             throw createConversionError(valor, BigDecimal.class, null, e);
         }

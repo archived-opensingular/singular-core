@@ -40,10 +40,7 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
         ProcessInstance pi = new ProcessWithInitialization().prepareStartCall().createAndStart();
 
         assertTrue(startInitializerCalled);
-        assertions(pi).isAtTask(Steps.Second).isVariableValue(FLAG, 11);
-
-        pi = reload(pi);
-        assertions(pi).isAtTask(Steps.Second).isVariableValue(FLAG, 11);
+        assertReloadAssert(pi, p-> assertions(p).isAtTask(Steps.Second).isVariableValue(FLAG, 11));
     }
 
     @DefinitionInfo("WithoutParameters")
@@ -71,7 +68,7 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
             f.addWaitTask(Steps.Second);
             f.addEnd(Steps.End);
 
-            f.setStart(Steps.First).withInitializer(this::processInitializer);
+            f.setStart(Steps.First).setInitializer(this::processInitializer);
             f.from(Steps.First).go(Steps.Second).thenGo(Steps.End);
 
             return f.build();

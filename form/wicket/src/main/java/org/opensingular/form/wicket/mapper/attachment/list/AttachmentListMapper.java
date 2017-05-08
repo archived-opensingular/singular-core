@@ -23,6 +23,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractListMapper;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class AttachmentListMapper extends AbstractListMapper {
 

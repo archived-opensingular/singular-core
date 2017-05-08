@@ -149,9 +149,6 @@ public class SDictionary {
                 typeRef = registeLazyTypeIntoPackage(typePackage, typeClass);
             }
         }
-        if (typeRef == null) {
-            throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
-        }
         return typeRef;
     }
 
@@ -216,7 +213,8 @@ public class SDictionary {
         types.add(newType, (Class<SType<?>>) classForRegister);
     }
 
-    private static SPackage findPackage(SScope scope) {
+    private static SPackage findPackage(SScope currentScope) {
+        SScope scope = currentScope;
         while (scope != null && !(scope instanceof SPackage)) {
             scope = scope.getParentScope();
         }

@@ -121,9 +121,7 @@ public final class SFormXMLUtil {
 
     private static int verificarIds(SInstance instancia, Set<Integer> ids) {
         Integer id = instancia.getId();
-        if (id == null) {
-            throw new SingularFormException("O ID da instância está null", instancia);
-        } else if (ids.contains(id)) {
+        if (ids.contains(id)) {
             throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
         }
         if (instancia instanceof ICompositeInstance) {
@@ -391,16 +389,17 @@ public final class SFormXMLUtil {
      */
     private static MElement toXMLChildren(ConfXMLGeneration conf, SInstance instance, MElement newElement,
             List<? extends SInstance> children) {
+        MElement result = newElement;
         for (SInstance child : children) {
             MElement xmlChild = toXML(conf, child);
             if (xmlChild != null) {
-                if (newElement == null) {
-                    newElement = conf.createMElement(instance);
+                if (result == null) {
+                    result = conf.createMElement(instance);
                 }
-                newElement.appendChild(xmlChild);
+                result.appendChild(xmlChild);
             }
         }
-        return newElement;
+        return result;
     }
 
     /**
@@ -410,15 +409,16 @@ public final class SFormXMLUtil {
     private static MElement toXMLOldElementWithoutType(ConfXMLGeneration conf, SInstance instance,
             MElement newElement) {
         List<MElement> unreadInfo = getInternalAccess().getUnreadInfo(instance);
+        MElement result = newElement;
         if (! unreadInfo.isEmpty()) {
-            if (newElement == null) {
-                newElement = conf.createMElement(instance);
+            if (result == null) {
+                result = conf.createMElement(instance);
             }
             for(MElement extra : unreadInfo) {
-                newElement.copy(extra, null);
+                result.copy(extra, null);
             }
         }
-        return newElement;
+        return result;
     }
 
     /** Garante a carga do objeto a chamada internas da API. */
@@ -460,7 +460,7 @@ public final class SFormXMLUtil {
 
         private MElement complement(SInstance instancia, MElement element) {
             Integer id = instancia.getId();
-            if (builder.isPersistId() && id != null) {
+            if (builder.isPersistId()) {
                 element.setAttribute(ATRIBUTO_ID, id.toString());
             }
             if (builder.isPersistAttributes()) {

@@ -34,10 +34,7 @@ public class TestProcessInicializationDefault extends TestFlowExecutionSupport {
     public void simpleStart() {
         ProcessInstance pi = new ProcessWithDefaultInitialization().prepareStartCall().createAndStart();
 
-        assertions(pi).isAtTask(StepsDI.First).isVariableValue(FLAG, null);
-
-        pi = reload(pi);
-        assertions(pi).isAtTask(StepsDI.First).isVariableValue(FLAG, null);
+        assertReloadAssert(pi, p-> assertions(p).isAtTask(StepsDI.First).isVariableValue(FLAG, null));
     }
 
     @DefinitionInfo("InicializationDefault")

@@ -21,6 +21,7 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIList;
+import org.opensingular.form.SScope;
 import org.opensingular.form.SScopeBase;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -60,15 +61,16 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void ensureType(ContextArchive ctx, SType<?> type) {
-        Object i;
-        while ((i = type.getParentScope()) instanceof SType) {
-            type = (SType<?>) i;
+        SType<?> currentType = type;
+        for (SScope t = type.getParentScope(); t instanceof SType; t = ((SType<?>) t).getParentScope()) {
+            currentType = (SType<?>) t;
         }
-        if (!ctx.isNecessaryToArchive(type) || ctx.isAlreadyArchived(type)) {
+
+        if (!ctx.isNecessaryToArchive(currentType) || ctx.isAlreadyArchived(currentType)) {
             return;
         }
-        SIPersistenceType pType = ctx.createTypeInPackage(type);
-        writeType(ctx, pType, type);
+        SIPersistenceType pType = ctx.createTypeInPackage(currentType);
+        writeType(ctx, pType, currentType);
     }
 
     private static void writeType(ContextArchive ctx, SIPersistenceType pType, SType<?> type) {
