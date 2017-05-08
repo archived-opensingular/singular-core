@@ -76,10 +76,10 @@ public class DefaultHibernatePersistenceService extends
 
     @Override
     protected RoleInstanceEntity newEntityRole(ProcessInstanceEntity instance, RoleDefinitionEntity role, SUser user, SUser allocator) {
-        user = saveUserIfNeeded(user);
+        SUser resolvedUser = saveUserIfNeeded(user);
         final RoleInstanceEntity entityRole = new RoleInstanceEntity();
         entityRole.setProcessInstance(instance);
-        entityRole.setUser((Actor) user);
+        entityRole.setUser((Actor) resolvedUser);
         entityRole.setRole(role);
         entityRole.setAllocatorUser((Actor) allocator);
         entityRole.setCreateDate(new Date());

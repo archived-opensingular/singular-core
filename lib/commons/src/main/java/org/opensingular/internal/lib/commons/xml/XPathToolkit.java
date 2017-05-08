@@ -27,7 +27,10 @@ import org.w3c.dom.traversal.NodeIterator;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
@@ -85,6 +88,24 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
  * @author Daniel C. Bordin
  */
 public final class XPathToolkit {
+
+    private static final Map<Short, String> NODE_LABEL_MAP;
+
+    static {
+        NODE_LABEL_MAP = new HashMap<>();
+        NODE_LABEL_MAP.put(Node.ELEMENT_NODE, "Element Node");
+        NODE_LABEL_MAP.put(Node.TEXT_NODE, "Text Node");
+        NODE_LABEL_MAP.put(Node.ATTRIBUTE_NODE, "Attribute Node");
+        NODE_LABEL_MAP.put(Node.CDATA_SECTION_NODE, "CData Section Node");
+        NODE_LABEL_MAP.put(Node.COMMENT_NODE, "Comment Node");
+        NODE_LABEL_MAP.put(Node.DOCUMENT_NODE, "Document Node");
+        NODE_LABEL_MAP.put(Node.DOCUMENT_FRAGMENT_NODE, "Document Fragment Node");
+        NODE_LABEL_MAP.put(Node.DOCUMENT_TYPE_NODE, "Document Type Node");
+        NODE_LABEL_MAP.put(Node.ENTITY_REFERENCE_NODE, "Entity Reference Node");
+        NODE_LABEL_MAP.put(Node.ENTITY_NODE, "Entity Node");
+        NODE_LABEL_MAP.put(Node.NOTATION_NODE, "Notation Node");
+        NODE_LABEL_MAP.put(Node.PROCESSING_INSTRUCTION_NODE, "Processing Instruction Node");
+    }
 
     /**
      * Esconde o construtor pro ser uma classe utiliária.
@@ -219,34 +240,9 @@ public final class XPathToolkit {
         if (n == null) {
             return null;
         }
-        switch (n.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                return "Element Node";
-            case Node.TEXT_NODE:
-                return "Text Node";
-            case Node.ATTRIBUTE_NODE:
-                return "Attribute Node";
-            case Node.CDATA_SECTION_NODE:
-                return "CData Section Node";
-            case Node.COMMENT_NODE:
-                return "Comment Node";
-            case Node.DOCUMENT_NODE:
-                return "Document Node";
-            case Node.DOCUMENT_FRAGMENT_NODE:
-                return "Document Fragment Node";
-            case Node.DOCUMENT_TYPE_NODE:
-                return "Document Type Node";
-            case Node.ENTITY_REFERENCE_NODE:
-                return "Entity Reference Node";
-            case Node.ENTITY_NODE:
-                return "Entity Node";
-            case Node.NOTATION_NODE:
-                return "Notation Node";
-            case Node.PROCESSING_INSTRUCTION_NODE:
-                return "Processing Instruction Node";
-            default:
-                return "Desconhecido (" + n.getClass().getName() + ") Node";
-        }
+
+        String nodeLabel = NODE_LABEL_MAP.get(n.getNodeType());
+        return nodeLabel != null ? nodeLabel : "Desconhecido (" + n.getClass().getName() + ") Node";
     }
 
     /**
@@ -257,29 +253,15 @@ public final class XPathToolkit {
      * @return false Para indica necessidade da API XPath
      */
     static boolean isSimples(String xPath) {
-        for (int i = xPath.length() - 1; i != -1; i--) {
-            switch (xPath.charAt(i)) {
-                case '/':
-                    // Comando "//" no inicio
-                    if ((i == 1) && (xPath.charAt(0) == '/')) {
-                        return false;
-                    }
-                    break;
-                case ':':
-                    // Se : simples (refeerencia Namespace)
-                    // se :: então é xPAth
-                    if ((i == 0) || (xPath.charAt(i - 1) == ':')) {
-                        return false;
-                    }
-                    break;
-                case '*':
-                case '[':
-                case ']':
-                case '.':
-                    return false;
-                default:
-            }
+
+        Pattern pattern = Pattern.compile("[*\\[\\].]|::");
+
+        if (xPath.startsWith("//")
+                || xPath.startsWith(":")
+                || pattern.matcher(xPath).find()) {
+            return false;
         }
+
         return true;
     }
 
@@ -319,18 +301,13 @@ public final class XPathToolkit {
      * @return Node The first node found that matches the XPath, or null.
      */
     public static Node selectNode(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
         if (isSimples(xPath)) {
-            return findSimples(contextNode, xPath);
-        } else {
-            try {
-                return XPathAPI.selectSingleNode(contextNode, xPath);
-            } catch (TransformerException e) {
-                throw SingularException.rethrow(e);
-            }
+            return findSimples(EWrapper.getOriginal(contextNode), xPath);
+        }
+        try {
+            return XPathAPI.selectSingleNode(EWrapper.getOriginal(contextNode), xPath);
+        } catch (TransformerException e) {
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -366,10 +343,6 @@ public final class XPathToolkit {
      * @return Node The first node found that matches the XPath, or null.
      */
     public static MElementResult selectElements(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
         if (contextNode instanceof Element) {
             if (xPath == null) {
                 return new MElementResult((Element) contextNode);
@@ -388,11 +361,6 @@ public final class XPathToolkit {
      * @return Sempre not null. Se não encontrar nada retorna vazio.
      */
     public static List<String> getValores(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
-
         List<String> lista = null;
         if (isSelectSimples(xPath)) {
             MElementResult rs = new MElementResult((Element) contextNode, xPath);
@@ -430,13 +398,9 @@ public final class XPathToolkit {
      * @return NodeList A NodeIterator, should never be null.
      */
     public static NodeList selectNodeList(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
-
         try {
-            return XPathAPI.selectNodeList(contextNode, xPath);
+            // O XPath não funciona a partir o MElement
+            return XPathAPI.selectNodeList(EWrapper.getOriginal(contextNode), xPath);
         } catch (TransformerException e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }
@@ -451,13 +415,8 @@ public final class XPathToolkit {
      * @return NodeIterator A NodeIterator, should never be null.
      */
     public static NodeIterator selectNodeIterator(Node context, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (context instanceof EWrapper) {
-            context = ((EWrapper) context).getOriginal();
-        }
-
         try {
-            return XPathAPI.selectNodeIterator(context, xPath);
+            return XPathAPI.selectNodeIterator(EWrapper.getOriginal(context), xPath);
         } catch (TransformerException e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }
@@ -471,10 +430,10 @@ public final class XPathToolkit {
      * @param path Caminho a ser pesquisa deve conter apenas nomes e /
      * @return O elemento se for encontrado.
      */
-    private static Node findSimples(Node pai, String path) {
+    private static Node findSimples(final Node pai, final String nodePath) {
 
         Node resp = pai;
-
+        String path = nodePath;
         if (path.charAt(0) == '/') {
             resp = XmlUtil.getRootParent(resp);
             if (path.length() == 1) {

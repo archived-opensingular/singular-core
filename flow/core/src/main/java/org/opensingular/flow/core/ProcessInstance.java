@@ -464,10 +464,8 @@ public class ProcessInstance implements Serializable {
         List<SUser> pessoasAnteriores = getDirectlyResponsibles();
         final Date agora = new Date();
         TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);
-        if (tarefaOrigem != null) {
-            tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
-                null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
-        }
+        tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
+            null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         FlowEngine.initTask(this, task, tarefaNova);
         ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
 
@@ -853,8 +851,12 @@ public class ProcessInstance implements Serializable {
         return Lists.reverse(demanda.getTasks()).stream().map(this::getTaskInstance);
     }
 
-    public Stream<TaskInstance> getTasksNewerFirstAsStream(ITaskDefinition... taskType) {
-        return getTasksNewerFirstAsStream().filter(TaskPredicates.simpleTaskType(taskType));
+    public Stream<TaskInstance> getTasksNewerFirstAsStream(ITaskDefinition... tasksTypes) {
+        return getTasksNewerFirstAsStream().filter(TaskPredicates.simpleTaskType(tasksTypes));
+    }
+
+    public Stream<TaskInstance> getTasksNewerFirstAsStream(List<ITaskDefinition> tasksTypes) {
+        return getTasksNewerFirstAsStream().filter(TaskPredicates.simpleTaskType(tasksTypes));
     }
 
     /**

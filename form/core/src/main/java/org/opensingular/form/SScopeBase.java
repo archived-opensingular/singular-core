@@ -21,6 +21,7 @@ import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -203,7 +204,8 @@ public abstract class SScopeBase implements SScope {
         return false;
     }
 
-    final <T extends SType<?>> T extendType(String simpleNameNewType, T parentType) {
+    @Nonnull
+    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull T parentType) {
         if (getDictionary() != parentType.getDictionary()) {
             throw new SingularFormException(
                     "O tipo " + parentType.getName() + " foi criado dentro de outro dicionário, que não o atual de " + getName());
@@ -212,7 +214,7 @@ public abstract class SScopeBase implements SScope {
         return registerType(newType, null);
     }
 
-    final <T extends SType<?>> T extendType(String simpleNameNewType, Class<T> parenteTypeClass) {
+    final <T extends SType<?>> T extendType(String simpleNameNewType, @Nonnull Class<T> parenteTypeClass) {
         T parentType = resolveType(parenteTypeClass);
         return extendType(simpleNameNewType, parentType);
     }
@@ -233,7 +235,8 @@ public abstract class SScopeBase implements SScope {
         return listType;
     }
 
-    final <T extends SType<?>> T resolveType(Class<T> typeClass) {
+    @Nonnull
+    final <T extends SType<?>> T resolveType(@Nonnull Class<T> typeClass) {
         return getDictionary().getType(typeClass);
     }
 

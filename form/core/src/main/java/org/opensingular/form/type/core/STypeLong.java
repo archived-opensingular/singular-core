@@ -16,9 +16,9 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SInfoType;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
 
 import java.math.BigInteger;
 
@@ -50,12 +50,12 @@ public class STypeLong extends STypeSimple<SILong, Long> {
 
     @Override
     public Long fromString(String valor) {
-        valor = StringUtils.trimToNull(valor);
-        if (valor == null) {
+        String v = StringUtils.trimToNull(valor);
+        if (v == null) {
             return null;
         }
         try {
-            return Long.valueOf(valor);
+            return Long.valueOf(v);
         } catch (Exception e) {
             throw createConversionError(valor, Long.class, null, e);
         }

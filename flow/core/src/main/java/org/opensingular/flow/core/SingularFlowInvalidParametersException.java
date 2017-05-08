@@ -18,24 +18,33 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.variable.ValidationResult;
 
+import javax.annotation.Nonnull;
+
 /**
  * Exception referente a passagem incorreta de parâmentros, em geral em um start de processo ou execução de transição.
  *
  * @author Daniel C. Bordin on 21/03/2017.
  */
 public class SingularFlowInvalidParametersException extends SingularFlowException {
+
     SingularFlowInvalidParametersException(StartCall<?> startCall, ValidationResult result) {
-        super("Erro nos parâmetros passados para inicialização do processo '" +
-                startCall.getProcessDefinition().getName() + "'" + appendIfOneErro(result));
-        add(startCall.getProcessDefinition());
-        if (result.errors().size() > 1) {
-            add(result);
-        }
+        this(startCall.getProcessDefinition(), result, "Erro nos parâmetros passados para inicialização do processo '" +
+                startCall.getProcessDefinition().getName() + "'");
     }
 
-    public SingularFlowInvalidParametersException(ProcessDefinition<?> processDefinition, ValidationResult result) {
-        super("Erro ao iniciar processo '" + processDefinition.getName() + "': variáveis inválidas" +
-                appendIfOneErro(result));
+    SingularFlowInvalidParametersException(ProcessDefinition<?> processDefinition, ValidationResult result) {
+        this(processDefinition, result, "Erro ao iniciar processo '" + processDefinition.getName());
+    }
+
+    SingularFlowInvalidParametersException(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, ValidationResult result) {
+        this(taskInstance.getProcessInstance().getProcessDefinition(), result,
+                "Erro ao validar os parametros da transição '" + transition.getName() + "' a partir da tarefa '" +
+                        taskInstance.getName() + "'");
+        add(taskInstance);
+    }
+
+    private SingularFlowInvalidParametersException(ProcessDefinition<?> processDefinition, ValidationResult result, String msg) {
+        super(msg + ": variáveis inválidas" + appendIfOneErro(result));
         add(processDefinition);
         if (result.errors().size() > 1) {
             add(result);

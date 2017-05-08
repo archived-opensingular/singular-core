@@ -23,10 +23,10 @@ import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.validation.IValidationError;
+import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
@@ -309,21 +309,21 @@ public abstract class SInstance implements SAttributeEnabled {
                     Class<RT> rootTypeClass,
                     IFunction<RT, TT> targetTypeFunction) {
 
-        if (!rootTypeClass.isAssignableFrom(this.getType().getClass()))
+        if (!rootTypeClass.isAssignableFrom(this.getType().getClass())) {
             throw new SingularInvalidTypeException(this, rootTypeClass);
-;
+        }
         final RI rootInstance = (RI) this;
         final RT rootType = (RT) rootInstance.getType();
         final TT targetType = targetTypeFunction.apply(rootType);
 
-        if (!STypes.listAscendants(targetType, true).contains(rootType))
+        if (!STypes.listAscendants(targetType, true).contains(rootType)) {
             throw new SingularInvalidFieldTypeException(rootType, targetType);
-        else if (rootType == targetType)
+        } else if (rootType == targetType) {
             return Optional.of((TI) rootInstance);
-        else if (rootInstance instanceof SIComposite)
+        } else if (rootInstance instanceof SIComposite) {
             return ((SIComposite) rootInstance).findDescendant(targetType);
-        else
-            return Optional.empty();
+        }
+        return Optional.empty();
     }
 
 
@@ -387,17 +387,18 @@ public abstract class SInstance implements SAttributeEnabled {
 
     final <T> T getValue(@Nonnull PathReader pathReader, @Nullable Class<T> resultClass) {
         SInstance instance = this;
+        PathReader currentPath = pathReader;
         while (true) {
-            if (pathReader.isEmpty()) {
+            if (currentPath.isEmpty()) {
                 return instance.getValue(resultClass);
             }
-            SInstance children = instance.getFieldLocalWithoutCreating(pathReader);
+            SInstance children = instance.getFieldLocalWithoutCreating(currentPath);
             if (children == null) {
-                SFormUtil.resolveFieldType(instance.getType(), pathReader);
+                SFormUtil.resolveFieldType(instance.getType(), currentPath);
                 return null;
             }
             instance = children;
-            pathReader = pathReader.next();
+            currentPath = currentPath.next();
         }
     }
 
@@ -434,12 +435,11 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     final SInstance getField(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            instance = instance.getFieldLocal(pathReader);
-            if (pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; ; currentPath = currentPath.next()) {
+            instance = instance.getFieldLocal(currentPath);
+            if (currentPath.isLast()) {
                 return instance;
             }
-            pathReader = pathReader.next();
         }
     }
 
@@ -451,13 +451,12 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     final Optional<SInstance> getFieldOpt(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
-            if (!result.isPresent() || pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; ; currentPath = currentPath.next()) {
+            Optional<SInstance> result = instance.getFieldLocalOpt(currentPath);
+            if (!result.isPresent() || currentPath.isLast()) {
                 return result;
             }
             instance = result.get();
-            pathReader = pathReader.next();
         }
     }
 
@@ -490,15 +489,18 @@ public abstract class SInstance implements SAttributeEnabled {
         setValueCalculation(instanceAtr, subPath, valueCalculation);
     }
 
-    static <V> void setValueCalculation(SInstance instance, String subPath, SimpleValueCalculation<V> valueCalculation) {
+    static <V> void setValueCalculation(@Nonnull SInstance instance, @Nullable String subPath,
+            @Nullable SimpleValueCalculation<V> valueCalculation) {
+        SInstance instanceResolved = instance;
         if (subPath != null) {
-            instance = instance.getField(new PathReader(subPath));
+            instanceResolved = instance.getField(new PathReader(subPath));
         }
-        if (!(instance instanceof SISimple)) {
-            throw new SingularFormException("O atributo " + instance.getPathFull() + " não é do tipo " + SISimple.class.getName(),
-                    instance);
+        if (!(instanceResolved instanceof SISimple)) {
+            throw new SingularFormException(
+                    "O atributo " + instanceResolved.getPathFull() + " não é do tipo " + SISimple.class.getName(),
+                    instanceResolved);
         }
-        ((SISimple) instance).setValueCalculation(valueCalculation);
+        ((SISimple) instanceResolved).setValueCalculation(valueCalculation);
     }
 
     private SInstance getOrCreateAttribute(String attributeFullName) {

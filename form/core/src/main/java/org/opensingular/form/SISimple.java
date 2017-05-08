@@ -93,7 +93,7 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
         TIPO_NATIVO oldValue = this.getValue();
         TIPO_NATIVO newValue = getType().convert(valor);
         this.value = onSetValor(oldValue, newValue);
-        if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
+        if (!Objects.equals(oldValue, newValue)) {
             if (isAttribute()) {
                 getDocument().getInstanceListeners().fireInstanceAttributeChanged(getAttributeOwner(), this, oldValue, newValue);
             } else {

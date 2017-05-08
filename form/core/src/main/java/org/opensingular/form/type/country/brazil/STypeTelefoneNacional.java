@@ -104,7 +104,7 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
      */
     private String removeZeroIfNeeded(String unformated) {
         if (Pattern.compile("0[1-9{2}]").matcher(unformated).lookingAt()) {
-            unformated = unformated.replaceFirst("0", "");
+            return unformated.replaceFirst("0", "");
         }
         return unformated;
     }

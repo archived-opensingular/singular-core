@@ -27,6 +27,7 @@ import org.opensingular.form.type.util.SPackageUtil;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.lang.model.SourceVersion;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -48,28 +50,41 @@ public final class SFormUtil {
     private SFormUtil() {
     }
 
-    public static boolean isNotValidSimpleName(String name) {
+    public static boolean isNotValidSimpleName(@Nonnull  String name) {
+        Objects.requireNonNull(name);
         return !idPattern.matcher(name).matches();
     }
 
-    static void validateSimpleName(String name) {
+    @Nonnull
+    static String validateSimpleName(@Nonnull String name) {
         if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para tipo ou atributo");
         }
+        return name;
     }
 
-    static void validatePackageName(String name) {
+    @Nonnull
+    static String validatePackageName(@Nonnull String name) {
+        Objects.requireNonNull(name);
         if (!SourceVersion.isName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para um pacote");
         }
+        return name;
+    }
+
+    @Nonnull
+    public static String resolveName(@Nullable String simpleName, @Nonnull SType<?> type) {
+        return simpleName == null ? type.getNameSimple() : simpleName;
     }
 
     static SType<?> resolveFieldType(SType<?> type, PathReader pathReader) {
-        while (!pathReader.isEmpty()) {
-            type = resolveFieldTypeInternal(type, pathReader);
-            pathReader = pathReader.next();
+        SType<?> currentType = type;
+        PathReader currentPathReader = pathReader;
+        while (!currentPathReader.isEmpty()) {
+            currentType = resolveFieldTypeInternal(currentType, currentPathReader);
+            currentPathReader = currentPathReader.next();
         }
-        return type;
+        return currentType;
     }
 
     private static SType<?> resolveFieldTypeInternal(@Nonnull SType<?> type, PathReader pathReader) {
@@ -99,7 +114,8 @@ public final class SFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    public static String generatePath(SInstance current, Predicate<SInstance> stopCondition) {
+    public static String generatePath(SInstance instance, Predicate<SInstance> stopCondition) {
+        SInstance current = instance;
         List<SInstance> sequencia = null;
         while (!stopCondition.test(current)) {
             if (sequencia == null) {
@@ -217,16 +233,19 @@ public final class SFormUtil {
         return sPackage;
     }
 
-    static SInfoPackage getInfoPackage(Class<? extends SPackage> packageClass) {
+    @Nullable
+    static SInfoPackage getInfoPackage(@Nonnull Class<? extends SPackage> packageClass) {
         return packageClass.getAnnotation(SInfoPackage.class);
     }
 
-    static String getInfoPackageName(Class<? extends SPackage> packageClass) {
+    @Nullable
+    static String getInfoPackageName(@Nonnull Class<? extends SPackage> packageClass) {
         SInfoPackage info = getInfoPackage(packageClass);
         return info != null && !StringUtils.isBlank(info.name()) ? info.name() : null;
     }
 
-    static String getInfoPackageNameOrException(Class<? extends SPackage> packageClass) {
+    @Nonnull
+    static String getInfoPackageNameOrException(@Nonnull Class<? extends SPackage> packageClass) {
         String packageName = getInfoPackageName(packageClass);
         if (packageName == null) {
             packageName = packageClass.getSimpleName();
@@ -282,5 +301,4 @@ public final class SFormUtil {
     public static boolean isSingularBuiltInType(SType<?> type) {
         return type.getPackage().getName().startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX);
     }
-
 }

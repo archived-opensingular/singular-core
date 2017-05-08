@@ -16,11 +16,13 @@
 
 package org.opensingular.form.type.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.view.SViewBooleanByRadio;
-import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
 
 @SInfoType(name = "Boolean", spackage = SPackageCore.class)
 public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
@@ -50,16 +52,17 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
     }
 
     @Override
-    public Boolean fromString(String valor) {
-        valor = StringUtils.trimToNull(valor);
-        if (valor == null) {
+    @Nullable
+    public Boolean fromString(@Nullable String value) {
+        String v2 = StringUtils.trimToNull(value);
+        if (v2 == null) {
             return null;//NOSONAR falso positivo o retorno nulo é esperado
-        } else if (valor.equalsIgnoreCase("true") || valor.equals("1") || valor.equals("Sim")) {
+        } else if ("true".equalsIgnoreCase(v2) || "1".equals(v2) || "Sim".equals(v2)) {
             return Boolean.TRUE;
-        } else if (valor.equalsIgnoreCase("false") || valor.equals("0") || valor.equals("Não")) {
+        } else if ("false".equalsIgnoreCase(v2) || "0".equals(v2) || "Não".equals(v2)) {
             return Boolean.FALSE;
         }
-        throw createConversionError(valor, Boolean.class);
+        throw createConversionError(v2, Boolean.class);
     }
 
     /**

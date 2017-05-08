@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 /**
  * Verifica se é possivel selecionar um valor apos
  * o componente de typeahead ser atualizado via ajax por outro componente.
@@ -85,7 +85,7 @@ public class TypeaheadAjaxUpdateTest {
         DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         tester.newFormTester().select(getFormRelativePath(dropDown), 0);
-        tester.executeAjaxEvent(dropDown, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(dropDown, SINGULAR_PROCESS_EVENT);
 
         tester.assertVisible(pessoaComponent.getPageRelativePath());
     }
@@ -97,14 +97,14 @@ public class TypeaheadAjaxUpdateTest {
 
         {
             tester.newFormTester().select(getFormRelativePath(dropDownGenero), 1);
-            tester.executeAjaxEvent(dropDownGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+            tester.executeAjaxEvent(dropDownGenero, SINGULAR_PROCESS_EVENT);
 
             setAndCheckValue();
         }
 
         {
             tester.newFormTester().select(getFormRelativePath(dropDownGenero), 0);
-            tester.executeAjaxEvent(dropDownGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+            tester.executeAjaxEvent(dropDownGenero, SINGULAR_PROCESS_EVENT);
 
             setAndCheckValue();
         }
@@ -114,7 +114,7 @@ public class TypeaheadAjaxUpdateTest {
         Component inputNameComponent = tester.getAssertionsForm().getSubComponents(TextField.class).get(1).getTarget();
 
         tester.newFormTester().setValue(inputNameComponent, "Danilo");
-        tester.executeAjaxEvent(inputNameComponent, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(inputNameComponent, SINGULAR_PROCESS_EVENT);
 
         List<SInstance> listITems = (List<SInstance>) tester.getAssertionsForm()
                 .getSubCompomentWithType(pessoa).assertSInstance().getTarget().getValue();

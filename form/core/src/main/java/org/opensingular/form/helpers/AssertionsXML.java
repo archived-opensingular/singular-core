@@ -122,7 +122,7 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
         try {
             expectedXML = MParser.parse(expectedXMLContent);
         } catch (SAXException | IOException e) {
-            throw new RuntimeException(e);
+            throw new AssertionError("Não foi possível fazer o parse do XML.", e);
         }
         String currentContent = getTarget().toStringExato();
         String expectedAjustedXML = expectedXML.toStringExato();

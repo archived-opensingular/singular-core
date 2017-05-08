@@ -22,16 +22,17 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.internal.lib.commons.xml.MElement;
-import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
 import org.w3c.dom.Node;
 
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -299,6 +300,9 @@ public class FormXSDUtil {
 
                 @Override
                 public ElementReader next() {
+                    if (current == null) {
+                        throw new NoSuchElementException();
+                    }
                     ElementReader result = new ElementReader(xsdContext, current);
                     current = current.getProximoIrmao();
                     return result;
