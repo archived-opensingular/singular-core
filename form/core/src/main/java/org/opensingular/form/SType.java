@@ -820,19 +820,21 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             Collection<SInstance> attrs = getAttributes();
             if (!attrs.isEmpty()) {
                 appendable.append(" {");
-                attrs.forEach(attr -> {
-                    try {
-                        if (! attr.getAttributeInstanceInfo().getRef().isResolved()) {
-                            appendable.append('?');
-                        }
-                        appendable.append(suppressPackage(attr.getAttributeInstanceInfo().getName(), true)).append("=")
-                                .append(attr.toStringDisplay()).append("; ");
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                    }
-                });
+                attrs.forEach(attr -> deburAttribute(appendable, attr));
                 appendable.append("}");
             }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    private void deburAttribute(Appendable appendable, SInstance attr) {
+        try {
+            if (! attr.getAttributeInstanceInfo().getRef().isResolved()) {
+                appendable.append('?');
+            }
+            appendable.append(suppressPackage(attr.getAttributeInstanceInfo().getName(), true)).append("=")
+                    .append(attr.toStringDisplay()).append("; ");
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
