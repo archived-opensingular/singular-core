@@ -33,8 +33,8 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
     public static final String FIELD_FILE_SIZE = "fileSize";
     public static final String FIELD_HASH_SHA1 = "hashSHA1";
 
-    public static final AtrRef<STypeString, SIString, String> ATR_ORIGINAL_ID = new AtrRef<>(SPackageCore.class, "originalId", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeString, SIString, String> ATR_IS_TEMPORARY = new AtrRef<>(SPackageCore.class, "IS_TEMPORARY", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_ORIGINAL_ID = new AtrRef<>(STypeAttachment.class, "originalId", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_IS_TEMPORARY = new AtrRef<>(STypeAttachment.class, "IS_TEMPORARY", STypeString.class, SIString.class, String.class);
 
     public STypeString name;
     public STypeString fileId;

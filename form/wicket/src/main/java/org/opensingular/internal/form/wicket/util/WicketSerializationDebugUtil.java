@@ -16,6 +16,7 @@
 
 package org.opensingular.internal.form.wicket.util;
 
+import com.google.common.base.Throwables;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -26,6 +27,9 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 
+import java.io.ByteArrayInputStream;
+import java.io.EOFException;
+import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
 /**
@@ -137,7 +141,7 @@ public class WicketSerializationDebugUtil {
             } else if (current instanceof Page) {
                 return;
             }
-            for(Component parent = c.getParent(); parent != null ; parent = parent.getParent()) {
+            for (Component parent = c.getParent(); parent != null; parent = parent.getParent()) {
                 if (parent == current) {
                     return; //The new component is inside of the current one
                 }
@@ -150,7 +154,7 @@ public class WicketSerializationDebugUtil {
             Component c = componentThreadLocal.get();
             if (c != null) {
                 componentThreadLocal.remove();
-                if (! (c instanceof Page)) {
+                if (!(c instanceof Page)) {
                     //Não foi chamada de página, mas uma chamada Ajax, então chamara a serialização agora
                     tryComponentSerialization(c);
                 }
@@ -158,19 +162,49 @@ public class WicketSerializationDebugUtil {
         }
 
         private void tryComponentSerialization(Component c) {
+            //Serialization
             long time = System.currentTimeMillis();
             byte[] result = c.getApplication().getFrameworkSettings().getSerializer().serialize(c);
             time = System.currentTimeMillis() - time;
-            String msg = c.getClass().getName() + " serialization: result size=" +
+
+            String msg = "Serialization: target=" + c.getClass().getName() + " size=" +
                     (result == null ? "EXCEPTION" : SingularIOUtils.humanReadableByteCount(result.length)) +
-                    " time=" + SingularIOUtils.humanReadableMiliSeconds(time);
-            lastVerification = msg;
-            if (result == null) {
-                logger.severe(msg);
-                throw new SingularFormException("Erro serializando a página " + c.getClass().getName() +
-                        ". Verifique o log para obter a pilha de erro da serialização.");
-            } else {
+                    " serialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
+            try {
+                if (result == null) {
+                    throw new SingularFormException("Erro serializando a página " + c.getClass().getName() +
+                            ". Verifique o log para obter a pilha de erro da serialização.");
+                }
+
+                //Deserialization
+                time = System.currentTimeMillis();
+                Object last = readAllObjects(result);
+                time = System.currentTimeMillis() - time;
+
+                msg += " deserialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
+                if (last == null || c.getClass() != last.getClass()) {
+                    msg += " !!!! DESERIALIZATED CLASS NOT OF EXPECTED TYPE result=" +
+                            (last == null ? null : last.getClass());
+                }
+            } finally {
+                lastVerification = msg;
                 logger.info(msg);
+            }
+        }
+
+        /** Lê todos os objetos serialziados, retornando o último. */
+        private Object readAllObjects(byte[] content) {
+            Object last = null;
+            try {
+                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(content));
+                while (true) {
+                    last = in.readObject();
+                }
+            } catch (EOFException e) {
+                return last;
+            } catch (Exception e) {
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
     }

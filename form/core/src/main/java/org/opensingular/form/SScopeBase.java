@@ -18,6 +18,7 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
 import javax.annotation.Nonnull;
@@ -43,11 +44,6 @@ public abstract class SScopeBase implements SScope {
      * será.
      */
     private boolean recursiveReference;
-
-    @Override
-    public SScope getParentScope() {
-        return null;
-    }
 
     /**
      * Retorna os tipos criados localmente. Se for um pacote, retorna o tipos do
@@ -119,10 +115,13 @@ public abstract class SScopeBase implements SScope {
 
     /** Registro o tipo informado neste escopo. */
     final <T extends SType<?>> T registerType(Class<T> typeClass) {
-        return registerType(MapByName.newInstance(typeClass), typeClass);
+        T t = registerType(MapByName.newInstance(typeClass), typeClass);
+        TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
+        return t;
     }
 
-    final <T extends SType<?>> T registerType(T newType, Class<T> classeDeRegistro) {
+    @Nonnull
+    final <T extends SType<?>> T registerType(@Nonnull T newType, @Nullable Class<T> classeDeRegistro) {
         getDictionary().registeType(this, newType, classeDeRegistro);
         /*
         (by Daniel Bordin) O If abaixo impede que o onLoadType seja chamado mais de uma vezes caso o novo tipo seja
@@ -195,7 +194,7 @@ public abstract class SScopeBase implements SScope {
      * indicar true somente para a referência interna dentro da referência circular, ou seja, o tipo (ou classe) que
      * contêm o campo não será marcado como referência circular, somente o campo em si.
      */
-    private  boolean isRecursiveReference(SType<?> type) {
+    private  boolean isRecursiveReference(@Nonnull SType<?> type) {
         for(SScope parent = type.getParentScope(); parent instanceof SType; parent = parent.getParentScope()) {
             if(parent == type || parent == type.getSuperType()) {
                 return true;
@@ -214,7 +213,8 @@ public abstract class SScopeBase implements SScope {
         return registerType(newType, null);
     }
 
-    final <T extends SType<?>> T extendType(String simpleNameNewType, @Nonnull Class<T> parenteTypeClass) {
+    @Nonnull
+    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull Class<T> parenteTypeClass) {
         T parentType = resolveType(parenteTypeClass);
         return extendType(simpleNameNewType, parentType);
     }
