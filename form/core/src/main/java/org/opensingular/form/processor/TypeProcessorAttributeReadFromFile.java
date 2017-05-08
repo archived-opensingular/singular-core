@@ -50,9 +50,6 @@ public class TypeProcessorAttributeReadFromFile {
 
     /** Instância única do processador. */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
-    private static final int SUBFIELD_PATH = 0;
-    private static final int ATTRIBUTE_NAME = 1;
-    private static final int ATTRIBUTE_VALUE = 2;
 
     /** Objeto de acesso a metodos internos da API. */
     private static InternalAccess internalAccess;
@@ -73,16 +70,16 @@ public class TypeProcessorAttributeReadFromFile {
     /** Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo. */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
         FileDefinitions definitions = cache.getUnchecked(typeClass);
-        for (String[] entry : definitions.definitions) {
+        for (AttibuteEntry entry : definitions.definitions) {
             try {
                 SType<?> target = type;
-                if (entry[SUBFIELD_PATH] != null) {
-                    target = target.getLocalType(entry[SUBFIELD_PATH]);
+                if (entry.subFieldPath != null) {
+                    target = target.getLocalType(entry.subFieldPath);
                 }
-                getInternalAccess().setAttributeValueSavingForLatter(target, entry[ATTRIBUTE_NAME],
-                        entry[ATTRIBUTE_VALUE]);
+                getInternalAccess().setAttributeValueSavingForLatter(target, entry.attributeName,
+                        entry.attributeValue);
             } catch (Exception e) {
-                String key = (entry[SUBFIELD_PATH] == null ? "" : entry[SUBFIELD_PATH]) + '@' + entry[ATTRIBUTE_NAME];
+                String key = (entry.subFieldPath == null ? "" : entry.subFieldPath) + '@' + entry.attributeName;
                 throw new SingularFormException(
                         "Erro configurando atributo da chave '" + key + "' lidos de " + definitions.url, e);
             }
@@ -113,19 +110,19 @@ public class TypeProcessorAttributeReadFromFile {
 
     /** Lê as associações de atributos a partir de um arquivo de propriedades. */
     @Nonnull
-    private List<String[]> readDefinitionsFor(@Nonnull Properties props) {
-        List<String[]> vals = new ArrayList<>(props.size());
+    private List<AttibuteEntry> readDefinitionsFor(@Nonnull Properties props) {
+        List<AttibuteEntry> vals = new ArrayList<>(props.size());
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
             String key = (String) entry.getKey();
             int pos = key.indexOf('@');
             if (pos == -1 || pos == key.length() - 1) {
                 throw new SingularFormException("Invalid attribute definition key='" + key + "'");
             }
-            String[] definition = new String[3];
-            definition[SUBFIELD_PATH] = pos == 0 ? null : StringUtils.trimToNull(key.substring(0, pos));
-            definition[ATTRIBUTE_NAME] = StringUtils.trimToNull(key.substring(pos + 1));
-            definition[ATTRIBUTE_VALUE] = StringUtils.trimToNull((String) entry.getValue());
-            if (definition[ATTRIBUTE_NAME] == null) {
+            AttibuteEntry definition = new AttibuteEntry();
+            definition.subFieldPath = pos == 0 ? null : StringUtils.trimToNull(key.substring(0, pos));
+            definition.attributeName = StringUtils.trimToNull(key.substring(pos + 1));
+            definition.attributeValue = StringUtils.trimToNull((String) entry.getValue());
+            if (definition.attributeName == null) {
                 throw new SingularFormException("Invalid attribute definition key='" + key + "'");
             }
             vals.add(definition);
@@ -150,9 +147,9 @@ public class TypeProcessorAttributeReadFromFile {
         public static final FileDefinitions EMPTY = new FileDefinitions(null, Collections.emptyList());
 
         public final URL url;
-        public final List<String[]> definitions;
+        public final List<AttibuteEntry> definitions;
 
-        private FileDefinitions(URL url, List<String[]> definitions) {
+        private FileDefinitions(URL url, List<AttibuteEntry> definitions) {
             this.url = url;
             this.definitions = definitions;
         }
@@ -171,5 +168,12 @@ public class TypeProcessorAttributeReadFromFile {
             return Objects.requireNonNull(internalAccess);
         }
         return internalAccess;
+    }
+
+    private static class AttibuteEntry {
+
+        String subFieldPath;
+        String attributeName;
+        String attributeValue;
     }
 }
