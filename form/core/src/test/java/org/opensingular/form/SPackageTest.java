@@ -5,10 +5,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoA;
-import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoB;
-import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoComCargaInterna;
-import org.opensingular.form.SCorePackageTest.TestPacoteA.TestTipoX;
+import org.opensingular.form.SPackageTest.TestPacoteA.TestTipoA;
+import org.opensingular.form.SPackageTest.TestPacoteA.TestTipoB;
+import org.opensingular.form.SPackageTest.TestPacoteA.TestTipoComCargaInterna;
+import org.opensingular.form.SPackageTest.TestPacoteA.TestTipoX;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.core.SIString;
@@ -20,13 +20,14 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.util.STypeEMail;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.math.BigDecimal;
 
 @RunWith(Parameterized.class)
-public class SCorePackageTest extends TestCaseForm {
+public class SPackageTest extends TestCaseForm {
 
-    public SCorePackageTest(TestFormConfig testFormConfig) {
+    public SPackageTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -105,7 +106,7 @@ public class SCorePackageTest extends TestCaseForm {
         testarAtribuicao(tipoI, false, new Object(), null);
         testarAtribuicao(tipoI, false, false, null);
 
-        assertNull(tipoS.getAttributeInstance(SPackageBasic.ATR_EMPTY_TO_NULL));
+        assertNull(tipoS.findAttributeInstance(SPackageBasic.ATR_EMPTY_TO_NULL));
         assertEquals(tipoS.getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL), Boolean.TRUE);
         assertTrue(tipoS.getValorAtributoEmptyToNull());
         assertTrue(tipoS.getValorAtributoTrim());
@@ -209,22 +210,14 @@ public class SCorePackageTest extends TestCaseForm {
         assertNotNull(tipoX.getLocalType("atTeste"));
 
         assertEquals(null, tipoX.getAttributeValue("teste.XXXXX.atTeste"));
-        assertEquals(null, tipoX.getAttributeValue("atTeste"));
 
         atributo.withDefaultValueIfNull("0");
-        assertEquals("0", tipoX.getAttributeValue("atTeste"));
         assertEquals("0", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
 
         tipoX.setAttributeValue(atributo, "A");
-        assertEquals("A", tipoX.getAttributeValue("atTeste"));
         assertEquals("A", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
 
-        tipoX.setAttributeValue("atTeste", "B");
-        assertEquals("B", tipoX.getAttributeValue("atTeste"));
-        assertEquals("B", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
-
         tipoX.setAttributeValue("teste.XXXXX.atTeste", "C");
-        assertEquals("C", tipoX.getAttributeValue("atTeste"));
         assertEquals("C", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
     }
 
@@ -236,14 +229,11 @@ public class SCorePackageTest extends TestCaseForm {
         TestCase.assertEquals("TX", dictionary.getType(TestTipoX.class).getNameSimple());
     }
 
+    @SInfoPackage(name = "teste.pacoteA")
     public static final class TestPacoteA extends SPackage {
 
         static final AtrRef<STypeInteger, SIInteger, Integer> ATR_XX = new AtrRef<>(TestPacoteA.class, "xx", STypeInteger.class,
                 SIInteger.class, Integer.class);
-
-        protected TestPacoteA() {
-            super("teste.pacoteA");
-        }
 
         @Override
         protected void onLoadPackage(PackageBuilder pb) {
@@ -295,17 +285,24 @@ public class SCorePackageTest extends TestCaseForm {
 
     }
 
+    public static final class TestPacoteC extends SPackage {
+
+    }
+
     @Test
     public void testPackageName() {
+        assertEquals("teste.pacoteA", SFormUtil.getInfoPackageName(TestPacoteA.class));
         assertEquals("teste.pacoteB", SFormUtil.getInfoPackageName(TestPacoteB.class));
-        assertNull(SFormUtil.getInfoPackageName(TestPacoteA.class));
+        assertEquals(TestPacoteC.class.getName(), SFormUtil.getInfoPackageName(TestPacoteC.class));
 
         SDictionary dictionary = createTestDictionary();
         TestPacoteA pacoteA    = dictionary.loadPackage(TestPacoteA.class);
         TestPacoteB pacoteB    = dictionary.loadPackage(TestPacoteB.class);
+        TestPacoteC pacoteC    = dictionary.loadPackage(TestPacoteC.class);
 
         assertEquals("teste.pacoteA", pacoteA.getName());
         assertEquals("teste.pacoteB", pacoteB.getName());
+        assertEquals(TestPacoteC.class.getName(), pacoteC.getName());
     }
 
     @Test
@@ -493,6 +490,21 @@ public class SCorePackageTest extends TestCaseForm {
                 addField("valueA", TypeLazyA.class);
                 addFieldString("name");
             }
+        }
+    }
+
+    @Test
+    public void testDerivatedSPackageShouldNotPassNameInConstructor() {
+        SDictionary dictionary = createTestDictionary();
+        dictionary.createNewPackage("ok.not.extenstion");
+
+        SingularTestUtil.assertException(() -> createTestDictionary().loadPackage(PackageUsingWrongName.class),
+                SingularFormException.class, "não deve ser usado o construtor SPackage(String)");
+    }
+
+    public static class PackageUsingWrongName extends SPackage {
+        public PackageUsingWrongName() {
+            super("no.name.expected.here");
         }
     }
 }

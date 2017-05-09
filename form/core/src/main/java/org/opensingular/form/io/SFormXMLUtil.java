@@ -41,6 +41,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ public final class SFormXMLUtil {
 
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
+    private static InternalAccess internalAccess;
 
     private SFormXMLUtil() {}
 
@@ -117,7 +119,7 @@ public final class SFormXMLUtil {
         return novo;
     }
 
-    private static int verificarIds(SInstance instancia, Set<Integer> ids) {
+    private static int verificarIds(@Nonnull SInstance instancia, @Nonnull Set<Integer> ids) {
         Integer id = instancia.getId();
         if (ids.contains(id)) {
             throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
@@ -148,7 +150,7 @@ public final class SFormXMLUtil {
                 if (instcField.isPresent()) {
                     fromXML(instcField.get(), xmlChild);
                 } else {
-                    InternalAccess.internal(instance).addUnreadInfo(xmlChild);
+                    getInternalAccess().addUnreadInfo(instance, xmlChild);
                 }
             }
         } else if (instance instanceof SIList) {
@@ -158,7 +160,7 @@ public final class SFormXMLUtil {
                 if(childrenName.equals(xmlChild.getTagName())) {
                     fromXML(list.addNew(), xmlChild);
                 } else {
-                    InternalAccess.internal(instance).addUnreadInfo(xmlChild);
+                    getInternalAccess().addUnreadInfo(instance, xmlChild);
                 }
             }
         } else {
@@ -175,7 +177,7 @@ public final class SFormXMLUtil {
                 if (at.getName().equals(ATRIBUTO_ID)) {
                     instancia.setId(Integer.valueOf(at.getValue()));
                 } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
-                    instancia.setAttributeValue(at.getName(), at.getValue());
+                    getInternalAccess().setAttributeValueSavingForLatter(instancia, at.getName(), at.getValue());
                 }
             }
         }
@@ -406,7 +408,7 @@ public final class SFormXMLUtil {
      */
     private static MElement toXMLOldElementWithoutType(ConfXMLGeneration conf, SInstance instance,
             MElement newElement) {
-        List<MElement> unreadInfo = InternalAccess.internal(instance).getUnreadInfo();
+        List<MElement> unreadInfo = getInternalAccess().getUnreadInfo(instance);
         MElement result = newElement;
         if (! unreadInfo.isEmpty()) {
             if (result == null) {
@@ -417,6 +419,21 @@ public final class SFormXMLUtil {
             }
         }
         return result;
+    }
+
+    /** Garante a carga do objeto a chamada internas da API. */
+    @Nonnull
+    private static final InternalAccess getInternalAccess() {
+        if (internalAccess == null) {
+            InternalAccess.load();
+            return Objects.requireNonNull(internalAccess);
+        }
+        return internalAccess;
+    }
+
+    /** Recebe o objeto que viabiliza executar chamadas internas da API (chamadas a métodos não públicos). */
+    public static final void setInternalAccess(@Nonnull InternalAccess internalAccess) {
+        SFormXMLUtil.internalAccess = internalAccess;
     }
 
     private static final class ConfXMLGeneration {

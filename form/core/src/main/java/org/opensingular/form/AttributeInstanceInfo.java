@@ -23,29 +23,29 @@ package org.opensingular.form;
  */
 public final class AttributeInstanceInfo {
 
-    private final String name;
-
     private final SInstance instanceOwner;
 
     private final SType<?> typeOwner;
 
+    private final AttrInternalRef ref;
+
     /** Cira um instância de atributo que está associado a um SIntance. */
-    AttributeInstanceInfo(String name, SInstance instanceOwner) {
-        this.name = name;
+    AttributeInstanceInfo(AttrInternalRef ref, SInstance instanceOwner) {
         this.instanceOwner = instanceOwner;
         this.typeOwner = null;
+        this.ref = ref;
     }
 
     /** Cira um instância de atributo que está associado a um SType. */
-    AttributeInstanceInfo(String name, SType<?> typeOwner) {
-        this.name = name;
+    AttributeInstanceInfo(AttrInternalRef ref, SType<?> typeOwner) {
         this.instanceOwner = null;
         this.typeOwner = typeOwner;
+        this.ref = ref;
     }
 
     /** Nome completo do atributo. */
     public String getName() {
-        return name;
+        return ref.getName();
     }
 
     /** Retorna a instância a qual o atributo associa um valor (pode ser null, se o atributo for de um tipo). */
@@ -56,5 +56,9 @@ public final class AttributeInstanceInfo {
     /** Retorna o tipo ao qual o atributo associa um valor (pode ser null, se o atributo for de instância). */
     public SType<?> getTypeOwner() {
         return typeOwner;
+    }
+
+    AttrInternalRef getRef() {
+        return ref;
     }
 }
