@@ -16,16 +16,16 @@
 
 package org.opensingular.flow.core.entity;
 
+import org.opensingular.flow.core.SUser;
+
 import java.util.Date;
 import java.util.List;
-
-import org.opensingular.flow.core.MUser;
 
 public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     IEntityProcessInstance getProcessInstance();
 
-    IEntityTaskVersion getTask();
+    IEntityTaskVersion getTaskVersion();
 
     Date getBeginDate();
 
@@ -43,13 +43,13 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     void setTargetEndDate(Date targetEndDate);
 
-    void setAllocatedUser(MUser allocatedUser);
+    void setAllocatedUser(SUser allocatedUser);
 
-    MUser getAllocatedUser();
+    SUser getAllocatedUser();
 
-    void setResponsibleUser(MUser responsibleUser);
+    void setResponsibleUser(SUser responsibleUser);
 
-    MUser getResponsibleUser();
+    SUser getResponsibleUser();
 
     IEntityTaskTransitionVersion getExecutedTransition();
 
@@ -65,7 +65,7 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     default boolean isActive() {
         return getEndDate() == null
-                || getTask().getType().isEnd();
+                || getTaskVersion().getType().isEnd();
     }
 
     default boolean isFinished() {

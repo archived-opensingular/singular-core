@@ -16,11 +16,11 @@
 
 package org.opensingular.form.wicket.model;
 
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.AtrRef;
 import org.opensingular.lib.wicket.util.model.IBooleanModel;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.model.NullOrEmptyModel;
-import org.apache.wicket.model.IModel;
 
 public class AttributeModel<T> implements IReadOnlyModel<T> {
 
@@ -37,7 +37,7 @@ public class AttributeModel<T> implements IReadOnlyModel<T> {
     @Override
     public T getObject() {
         if (model instanceof ISInstanceAwareModel<?>)
-            return ((ISInstanceAwareModel<?>) model).getMInstancia().getAttributeValue(nomeCompletoAtributo, classeValorAtributo);
+            return ((ISInstanceAwareModel<?>) model).getSInstance().getAttributeValue(nomeCompletoAtributo, classeValorAtributo);
 
         return null;
     }

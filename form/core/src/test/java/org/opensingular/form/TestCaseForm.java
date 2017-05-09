@@ -1,19 +1,22 @@
 package org.opensingular.form;
 
-import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.form.helpers.AssertionsSType;
-import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import junit.framework.TestCase;
-import org.junit.runners.Parameterized;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.junit.runners.Parameterized;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.helpers.AssertionsSType;
+import org.opensingular.internal.lib.commons.test.RunnableEx;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.util.Loggable;
+
+import junit.framework.TestCase;
 
 public abstract class TestCaseForm extends TestCase implements Loggable {
 
@@ -65,6 +68,14 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     protected final SDictionary createTestDictionary() {
         return dictionaryFactory.get();
+    }
+
+    protected final PackageBuilder createTestPackage() {
+        return createTestPackage("teste");
+    }
+
+    protected final PackageBuilder createTestPackage(String packageName) {
+        return createTestDictionary().createNewPackage(packageName);
     }
 
     /** Cria assertivas para um {@link SType}. */
@@ -155,44 +166,31 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         }
     }
 
-    public static void assertException(Runnable acao, String trechoMsgEsperada) {
-        assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
+    @Deprecated
+    public static void assertException(RunnableEx acao, String trechoMsgEsperada) {
+        SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
     }
 
-    public static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
-        assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
+    @Deprecated
+    public static void assertException(RunnableEx acao, String trechoMsgEsperada, String msgFailException) {
+        SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
     }
 
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
-        assertException(acao, exceptionEsperada, null, null);
+    @Deprecated
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada) {
+        SingularTestUtil.assertException(acao, exceptionEsperada, null, null);
     }
 
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada,
+    @Deprecated
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada,
             String trechoMsgEsperada) {
-        assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
+        SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
     }
 
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
+    @Deprecated
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
-        try {
-            acao.run();
-            String msg = "Não ocorreu nenhuma Exception. Era esperado " + exceptionEsperada.getSimpleName() + "'";
-            if (trechoMsgEsperada != null) {
-                msg += " com mensagem contendo '" + trechoMsgEsperada + "'";
-            }
-            if (msgFailException != null) {
-                msg += ", pois " + msgFailException;
-            }
-            fail(msg);
-        } catch (Exception e) {
-            if (exceptionEsperada.isInstance(e)) {
-                if (trechoMsgEsperada == null || (e.getMessage() != null && e.getMessage().contains(trechoMsgEsperada))) {
-                    return;
-                }
-            }
-            throw e;
-        }
-
+        SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, msgFailException);
     }
 
     public SInstance createSerializableTestInstance(Class<? extends SType<?>> typeClass) {
@@ -201,12 +199,7 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory,
             Class<? extends SType<?>> typeClass) {
-        RefType refType = new RefType() {
-            @Override
-            protected SType<?> retrieve() {
-                return dictionaryFactory.get().getType(typeClass);
-            }
-        };
+        RefType refType = RefType.of(() -> dictionaryFactory.get().getType(typeClass));
         return SDocumentFactory.empty().createInstance(refType);
     }
 
@@ -216,15 +209,11 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory, String typeName,
             ConfiguratorTestPackage setupCode) {
-        RefType refType = new RefType() {
-
-            @Override
-            protected SType<?> retrieve() {
-                SDictionary dictionary = dictionaryFactory.get();
-                setupCode.setup(dictionary.createNewPackage("teste"));
-                return dictionary.getType(typeName);
-            }
-        };
+        RefType refType = RefType.of(() -> {
+            SDictionary dictionary = dictionaryFactory.get();
+            setupCode.setup(dictionary.createNewPackage("teste"));
+            return dictionary.getType(typeName);
+        });
         return SDocumentFactory.empty().createInstance(refType);
     }
 

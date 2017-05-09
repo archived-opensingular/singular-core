@@ -17,6 +17,7 @@
 package org.opensingular.form.spring;
 
 import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +25,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class provides a {@link ServiceRegistry} that relays service lookup
@@ -32,7 +34,7 @@ import java.util.Map;
  * @author Fabricio Buzeto
  */
 public class SpringServiceRegistry implements ServiceRegistry,
-        ApplicationContextAware {
+        ApplicationContextAware, Loggable {
 
     private ApplicationContext applicationContext;
 
@@ -49,29 +51,32 @@ public class SpringServiceRegistry implements ServiceRegistry,
     }
 
     @Override
-    public <T> T lookupService(String name, Class<T> targetClass) {
+    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
         try {
-            return applicationContext.getBean(name, targetClass);
+            return Optional.ofNullable(applicationContext.getBean(name, targetClass));
         } catch (NoSuchBeanDefinitionException ex) {
-            return null;
+            getLogger().debug(null, ex);
+            return Optional.empty();
         }
     }
 
     @Override
-    public <T> T lookupService(Class<T> targetClass) {
+    public <T> Optional<T> lookupService(Class<T> targetClass) {
         try {
-            return applicationContext.getBean(targetClass);
+            return Optional.ofNullable(applicationContext.getBean(targetClass));
         } catch (NoSuchBeanDefinitionException ex) {
-            return null;
+            getLogger().debug(null, ex);
+            return Optional.empty();
         }
     }
 
     @Override
-    public Object lookupService(String name) {
+    public Optional<Object> lookupService(String name) {
         try {
-            return applicationContext.getBean(name);
+            return Optional.ofNullable(applicationContext.getBean(name));
         } catch (NoSuchBeanDefinitionException ex) {
-            return null;
+            getLogger().debug(null, ex);
+            return Optional.empty();
         }
     }
 

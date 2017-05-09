@@ -16,12 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -29,7 +23,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.util.convert.IConverter;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -37,6 +30,15 @@ import org.opensingular.form.wicket.behavior.MoneyMaskBehavior;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class MoneyMapper extends AbstractControlsFieldComponentMapper {
 
@@ -159,23 +161,24 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
         }
 
         @Override
-        public Object convertToObject(String value, Locale locale) {
+        public BigDecimal convertToObject(String value, Locale locale) {
             if (!StringUtils.isEmpty(value)) {
                 return new BigDecimal(value.replaceAll("\\.", "").replaceAll(",", "."));
             }
-
             return null;
         }
 
         @Override
         public String convertToString(Object value, Locale locale) {
-            if (value == null) {
-                return "";
-            }else if (value instanceof String) {
-                value = convertToObject((String) value, locale);
+            BigDecimal bigDecimal;
+            if (value instanceof String) {
+                bigDecimal = convertToObject((String) value, locale);
+            } else {
+                bigDecimal = (BigDecimal) value;
             }
-
-            BigDecimal bigDecimal = (BigDecimal) value;
+            if (bigDecimal == null) {
+                return "";
+            }
             return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP), casasDecimais);
         }
 

@@ -19,11 +19,23 @@ package org.opensingular.form.util.transformer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -111,9 +123,9 @@ public class Value {
     }
 
     /**
-     * Retorna o valor de uma instancia filha simples a partir da instancia
-     * composta informada
+     * Passar a usar {@link SInstance#getValue(String)}.
      */
+    @Deprecated
     public static <T extends Serializable> T of(SInstance instanciaComposta, String...path) {
         if (instanciaComposta instanceof SIComposite) {
             SInstance campo = ((SIComposite) instanciaComposta).getField(Arrays.stream(path).collect(Collectors.joining(".")));
@@ -124,21 +136,6 @@ public class Value {
             }
         }
         return null;
-    }
-
-    public static <T extends Serializable> Optional<T> ofOpt(SInstance instanciaComposta, String...path) {
-        if (instanciaComposta instanceof SIComposite) {
-            Optional<SInstance> campoOpt = ((SIComposite) instanciaComposta).getFieldOpt(Arrays.stream(path).collect(Collectors.joining(".")));
-            if (campoOpt.isPresent()) {
-                SInstance campo = campoOpt.get();
-                if (campo instanceof SISimple) {
-                    return Optional.ofNullable(Value.of((SISimple<T>) campo));
-                } else if (campo instanceof SIList) {
-                    return Optional.ofNullable((T) ofList((SIList) campo));
-                }
-            }
-        }
-        return Optional.empty();
     }
 
     public static String stringValueOf(SInstance instanciaComposta, String path) {
@@ -178,20 +175,20 @@ public class Value {
      * parametro recursivamente. Usualmente content é o retorno do metodo
      * dehydrate.
      */
-    public static void hydrate(SInstance instancia, Content content) {
-        if (instancia != null) {
-            if (instancia instanceof SIComposite) {
-                fromMap((Map<String, Content>) content.getRawContent(), (SIComposite) instancia);
-            } else if (instancia instanceof SISimple) {
+    public static void hydrate(SInstance instance, Content content) {
+        if (instance != null) {
+            if (instance instanceof SIComposite) {
+                fromMap((Map<String, Content>) content.getRawContent(), (SIComposite) instance);
+            } else if (instance instanceof SISimple) {
                 if (content.getRawContent() == null) {
-                    instancia.clearInstance();
+                    instance.clearInstance();
                 } else {
-                    instancia.setValue(content.getRawContent());
+                    instance.setValue(content.getRawContent());
                 }
-            } else if (instancia instanceof SIList) {
-                fromList((List<Content>) content.getRawContent(), (SIList) instancia);
+            } else if (instance instanceof SIList) {
+                fromList((List<Content>) content.getRawContent(), (SIList) instance);
             } else {
-                throw new SingularFormException("Tipo de instancia não suportado: " + instancia.getClass().getName());
+                throw new SingularFormException("Tipo de instancia não suportado: " + instance.getClass().getName(), instance);
             }
         }
     }

@@ -56,6 +56,7 @@ import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,17 +123,17 @@ public class FileListUploadPanel extends Panel implements Loggable {
         add(new WebMarkupContainer("empty-box")
                 .add(new WebMarkupContainer("select-file-link")
                         .add(new Label("select-file-link-message", $m.ofValue("Selecione o(s) arquivo(s)")))
-                        .add($b.visibleIf(viewMode::isEdition))
+                        .add($b.visibleIf(() -> isEdition(viewMode)))
                         .add($b.onReadyScript(c -> JQuery.on(c, "click", JQuery.$(fileField).append(".click();")))))
                 .add(new Label("empty-message", $m.ofValue("Nenhum arquivo adicionado"))
-                        .add($b.visibleIf(viewMode::isVisualization)))
+                        .add($b.visibleIf(() -> !isEdition(viewMode))))
                 .add($b.visibleIf(() -> model.getObject().isEmpty())));
 
         add(adder, remover, downloader);
         add($b.classAppender("FileListUploadPanel"));
         add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
 
-        if (viewMode.isVisualization() && model.getObject().isEmpty()) {
+        if (viewMode != null && viewMode.isVisualization() && model.getObject().isEmpty()) {
             add($b.classAppender("FileListUploadPanel_empty"));
         }
     }
@@ -147,7 +148,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
         final FileUploadManager fileUploadManager = getFileUploadManager();
 
-        if (uploadId == null || !fileUploadManager.findUploadInfo(uploadId).isPresent()) {
+        if (uploadId == null || !fileUploadManager.findUploadInfoByAttachmentKey(uploadId).isPresent()) {
             final AtrBasic atrAttachment = getModelObject().getElementsType().asAtr();
             this.uploadId = fileUploadManager.createUpload(atrAttachment.getMaxFileSize(), null, atrAttachment.getAllowedFileTypes(), this::getTemporaryHandler);
         }
@@ -234,15 +235,15 @@ public class FileListUploadPanel extends Panel implements Loggable {
     }
 
     private FileUploadManager getFileUploadManager() {
-        return upManagerFactory.get(getServletRequest().getSession());
+        return upManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(getServletRequest().getSession());
     }
 
     public static class LabelWithIcon extends Label {
 
-        private final Icone          icon;
+        private final SingularIcon   icon;
         private final IModel<String> forAttrValue;
 
-        public LabelWithIcon(String id, IModel<?> model, Icone icon, IModel<String> forAttrValue) {
+        public LabelWithIcon(String id, IModel<?> model, SingularIcon icon, IModel<String> forAttrValue) {
             super(id, model);
             this.icon = icon;
             this.forAttrValue = forAttrValue;
@@ -275,7 +276,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName   = getParamFileId("name").toString();
+                final String pName = getParamFileId("name").toString();
 
                 getLogger().debug("FileListUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 

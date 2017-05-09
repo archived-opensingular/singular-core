@@ -16,9 +16,9 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SInfoType;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
 
 @SInfoType(name = "Integer", spackage = SPackageCore.class)
 public class STypeInteger extends STypeSimple<SIInteger, Integer> {
@@ -48,12 +48,12 @@ public class STypeInteger extends STypeSimple<SIInteger, Integer> {
 
     @Override
     public Integer fromString(String valor) {
-        valor = StringUtils.trimToNull(valor);
-        if (valor == null) {
+        String v = StringUtils.trimToNull(valor);
+        if (v == null) {
             return null;
         }
         try {
-            return Integer.valueOf(valor);
+            return Integer.valueOf(v);
         } catch (Exception e) {
             throw createConversionError(valor, Integer.class, null, e);
         }

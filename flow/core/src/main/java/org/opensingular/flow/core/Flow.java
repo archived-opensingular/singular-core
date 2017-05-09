@@ -16,14 +16,16 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.view.Lnk;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.lib.commons.net.Lnk;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -49,28 +51,30 @@ public final class Flow {
         setConf(conf, false);
     }
 
+    @Nonnull
     public static SingularFlowConfigurationBean getConfigBean() {
         Objects.requireNonNull(configBean, "Configuração do fluxo não realizada");
         return configBean;
     }
 
-    public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
+    @Nonnull
+    public static <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull Class<K> classe) {
         return getConfigBean().getProcessDefinition(classe);
     }
 
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
-     * @param key
-     * @return
      */
-    public static ProcessDefinition<?> getProcessDefinitionUnchecked(String key) {
-        return getConfigBean().getProcessDefinitionUnchecked(key);
+    @Nonnull
+    public static Optional<ProcessDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {
+        return getConfigBean().getProcessDefinitionOpt(key);
     }
 
     /**
      * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
      */
-    public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String key) {
+    @Nonnull
+    public static <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull String key) {
         return (K) getConfigBean().getProcessDefinition(key);
     }
 
@@ -85,40 +89,53 @@ public final class Flow {
         return new TaskInstance(entityTaskInstance);
     }
 
-    public static ProcessInstance getProcessInstance(IEntityProcessInstance dadosInstanciaProcesso) {
-        return getConfigBean().getProcessInstance(dadosInstanciaProcesso);
+    /** Retorna a ProcessInstance referente a entidade infomado ou dispara exception senão encontrar. */
+    @Nonnull
+    public static ProcessInstance getProcessInstance(@Nonnull IEntityProcessInstance dadosInstanciaProcesso) {
+        Objects.requireNonNull(dadosInstanciaProcesso);
+        return Objects.requireNonNull(getConfigBean().getProcessInstance(dadosInstanciaProcesso));
     }
 
-    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(Class<K> expectedType, IEntityProcessInstance dadosInstanciaProcesso) {
+    @Nonnull
+    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<K> expectedType, @Nonnull IEntityProcessInstance dadosInstanciaProcesso) {
         return getConfigBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
     }
 
-    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
+    @Nonnull
+    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(@Nonnull K processDefinition, @Nonnull Integer cod) {
+        return getConfigBean().getProcessInstance(processDefinition, cod);
+    }
+
+    @Nonnull
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
         return getConfigBean().getProcessInstance(processClass, cod);
     }
 
-    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
+    @Nonnull
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull String id) {
         return getConfigBean().getProcessInstance(processClass, id);
     }
 
-    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstanceOrException(Class<T> processClass, String id) {
-        return getConfigBean().getProcessInstanceOrException(processClass, id);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(Class<T> processClass, String id) {
+        return getConfigBean().getProcessInstanceOpt(processClass, id);
     }
 
-    public static <X extends ProcessInstance> X getProcessInstance(String processInstanceID) {
-        return (X) getConfigBean().getProcessInstance(processInstanceID);
+    @Nonnull
+    public static <X extends ProcessInstance> Optional<X> getProcessInstanceOpt(@Nonnull String processInstanceID) {
+        return getConfigBean().getProcessInstanceOpt(processInstanceID);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstanceOrException(String processInstanceID) {
-        return (T) getConfigBean().getProcessInstanceOrException(processInstanceID);
+    @Nonnull
+    public static final <T extends ProcessInstance> T getProcessInstance(@Nonnull String processInstanceID) {
+        return getConfigBean().getProcessInstance(processInstanceID);
     }
 
     /**
      * Converte a lista de entidades nos respectivos ProcessInstance.
-     *
      * @return Uma lista que pode ser alterada
      */
-    public static List<ProcessInstance> getProcessInstances(Collection<? extends IEntityProcessInstance> entities) {
+    @Nonnull
+    public static List<ProcessInstance> getProcessInstances(@Nonnull Collection<? extends IEntityProcessInstance> entities) {
         return entities.stream().map(e -> getProcessInstance(e)).collect(Collectors.toList());
     }
 
@@ -130,7 +147,7 @@ public final class Flow {
         return getConfigBean().generateID(instanciaTarefa);
     }
 
-    public static MUser getUserIfAvailable() {
+    public static SUser getUserIfAvailable() {
         return getConfigBean().getUserService().getUserIfAvailable();
     }
 
@@ -138,7 +155,7 @@ public final class Flow {
         getConfigBean().notifyListeners(operation);
     }
 
-    static boolean canBeAllocated(MUser pessoa) {
+    static boolean canBeAllocated(SUser pessoa) {
         return getConfigBean().getUserService().canBeAllocated(pessoa);
     }
 

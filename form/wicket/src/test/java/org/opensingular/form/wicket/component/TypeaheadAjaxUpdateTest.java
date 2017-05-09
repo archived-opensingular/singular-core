@@ -1,35 +1,42 @@
 package org.opensingular.form.wicket.component;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.TextField;
+import org.junit.Before;
+import org.junit.Test;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.junit.Test;
+import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 /**
  * Verifica se é possivel selecionar um valor apos
  * o componente de typeahead ser atualizado via ajax por outro componente.
  * <p>
- * Ultima execução : 08/04/2016
+ * Ultima execução : 07/03/2017
  * Falhou: Não que eu saiba
  */
-public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
+public class TypeaheadAjaxUpdateTest {
+    private SingularDummyFormPageTester tester;
 
-    STypeString                 genero;
-    STypeComposite<SIComposite> pessoa;
+    private static STypeString                 genero;
+    private static STypeComposite<SIComposite> pessoa;
 
-    @Override
-    protected void buildBaseType(STypeComposite<?> baseType) {
+    private static void buildBaseType(STypeComposite<?> baseType) {
 
         genero = baseType.addFieldString("genero");
         genero.selectionOf("Feminino", "Masculino");
@@ -44,7 +51,7 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
                 .display("${nome}")
                 .autoConverterOf(Pessoa.class)
                 .simpleProvider((SimpleProvider<Pessoa, SIComposite>) ins -> {
-                    final Optional<String> genero1 = ins.findNearestValue(TypeaheadAjaxUpdateTest.this.genero);
+                    final Optional<String> genero1 = ins.findNearestValue(TypeaheadAjaxUpdateTest.genero);
                     if (genero1.isPresent()) {
                         if (genero1.get().equals("Masculino")) {
                             return Collections.singletonList(Pessoa.of(20, "Danilo"));
@@ -60,61 +67,62 @@ public class TypeaheadAjaxUpdateTest extends SingularFormBaseTest {
                 .visible(ins -> ins.findNearestValue(genero, String.class).isPresent());
     }
 
+    @Before
+    public void setUp(){
+        tester = new SingularDummyFormPageTester();
+        tester.getDummyPage().setTypeBuilder(TypeaheadAjaxUpdateTest::buildBaseType);
+        tester.getDummyPage().setAsEditView();
+        tester.startDummyPage();
+    }
+
     @Test
     public void assertVisibility() {
-        final FormComponent selecaoGenero = findFirstFormComponentsByType(page.getForm(), genero);
-        final FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
-        tester.assertInvisible(input.getPageRelativePath());
-        form.select(getFormRelativePath(selecaoGenero), 0);
-        tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-        tester.assertVisible(input.getPageRelativePath());
+        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTarget();
+        tester.assertInvisible(pessoaComponent.getPageRelativePath());
+
+        tester.getAssertionsForm().getSubCompomentWithType(pessoa).assertSInstance();
+
+        DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
+
+        tester.newFormTester().select(getFormRelativePath(dropDown), 0);
+        tester.executeAjaxEvent(dropDown, SINGULAR_PROCESS_EVENT);
+
+        tester.assertVisible(pessoaComponent.getPageRelativePath());
     }
 
     @Test
     public void assertUpdate() {
-
-        FormComponent selecaoGenero = findFirstFormComponentsByType(page.getForm(), genero);
-        FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
+        DropDownChoice dropDownGenero =  tester.getAssertionsForm()
+                .getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
         {
-            form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-            setAndCheckValue(input);
+            tester.newFormTester().select(getFormRelativePath(dropDownGenero), 1);
+            tester.executeAjaxEvent(dropDownGenero, SINGULAR_PROCESS_EVENT);
+
+            setAndCheckValue();
         }
 
         {
-            form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-            setAndCheckValue(input);
-        }
+            tester.newFormTester().select(getFormRelativePath(dropDownGenero), 0);
+            tester.executeAjaxEvent(dropDownGenero, SINGULAR_PROCESS_EVENT);
 
+            setAndCheckValue();
+        }
     }
 
-    @Test
-    public void assertSave() {
+    private void setAndCheckValue() {
+        Component inputNameComponent = tester.getAssertionsForm().getSubComponents(TextField.class).get(1).getTarget();
 
-        FormComponent selecaoGenero = findFirstFormComponentsByType(page.getForm(), genero);
-        FormComponent input         = findFirstFormComponentsByType(page.getForm(), pessoa);
+        tester.newFormTester().setValue(inputNameComponent, "Danilo");
+        tester.executeAjaxEvent(inputNameComponent, SINGULAR_PROCESS_EVENT);
 
-        {
-            form.select(getFormRelativePath(selecaoGenero), 1);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-            setAndCheckValue(input);
-        }
-
-        {
-            form.select(getFormRelativePath(selecaoGenero), 0);
-            tester.executeAjaxEvent(selecaoGenero, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-            setAndCheckValue(input);
-        }
-
-        assertThat(input.getModel().getObject()).isNotNull();
+        List<SInstance> listITems = (List<SInstance>) tester.getAssertionsForm()
+                .getSubCompomentWithType(pessoa).assertSInstance().getTarget().getValue();
+        assertThat(listITems.get(1).getValue()).isNotNull();
     }
 
-    private void setAndCheckValue(FormComponent input) {
-        form.setValue(input, "Danilo");
-        tester.executeAjaxEvent(input, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
-        assertThat(input.getModel().getObject()).isNotNull();
+    private String getFormRelativePath(FormComponent component) {
+        return component.getPath().replace(component.getForm().getRootForm().getPath() + ":", StringUtils.EMPTY);
     }
 
     public static class Pessoa implements Serializable {

@@ -16,11 +16,10 @@
 
 package org.opensingular.flow.core.variable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-
 import org.opensingular.flow.core.SingularFlowException;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 public class DefaultVarDefinitionMap implements VarDefinitionMap {
 
@@ -43,8 +42,8 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
     }
 
     @Override
-    public VarInstanceMap<?> newInstanceMap() {
-        return new VarInstanceMapImpl(getVarService());
+    public VarInstanceMap<?,?> newInstanceMap() {
+        return new VarInstanceMapImpl(this);
     }
 
     @Override

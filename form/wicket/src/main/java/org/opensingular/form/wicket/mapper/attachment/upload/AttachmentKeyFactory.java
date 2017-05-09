@@ -28,11 +28,11 @@ import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 public class AttachmentKeyFactory  implements Serializable {
 
-    public AttachmentKey get() {
+    public AttachmentKey make() {
         return new AttachmentKey(UUID.randomUUID().toString());
     }
 
-    public AttachmentKey get(HttpServletRequest req) {
+    public AttachmentKey makeFromRequestPathOrNull(HttpServletRequest req) {
         String rawKey = substringAfterLast(defaultString(req.getPathTranslated()), File.separator);
         if(!StringUtils.isBlank(rawKey)){
             return new AttachmentKey(rawKey);

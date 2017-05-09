@@ -16,14 +16,9 @@
 
 package org.opensingular.flow.rest.client;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.flow.core.service.IFlowMetadataService;
 import org.opensingular.lib.commons.util.Loggable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,10 +28,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import org.opensingular.flow.core.MBPMUtil;
-import org.opensingular.flow.core.authorization.AccessLevel;
-import org.opensingular.flow.core.service.IFlowMetadataService;
-import static org.opensingular.flow.core.service.IFlowMetadataREST.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_DIAGRAM;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_HAS_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_WITH_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_INSTANCE_HAS_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.generateGroupToken;
 
 class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     

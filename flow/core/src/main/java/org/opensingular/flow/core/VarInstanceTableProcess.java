@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.core;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMapImpl;
+
+import java.util.List;
+import java.util.Objects;
 
 public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
@@ -47,12 +47,12 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
         List<? extends IEntityVariableInstance> variaveis_ = iModelProcessInstance.getVariables();
         if (variaveis_ != null) {
             for (IEntityVariableInstance dadosVariavel : variaveis_) {
-                VarInstance v = getVariavel(dadosVariavel.getName());
+                VarInstance v = getVariable(dadosVariavel.getName());
                 if (v == null) {
-                    v = addDefinicao(getVarService().newDefinitionString(dadosVariavel.getName(), dadosVariavel.getName(), null));
+                    v = addDefinition(getVarService().newDefinitionString(dadosVariavel.getName(), dadosVariavel.getName(), null));
                 }
-                v.setValue(dadosVariavel.getValue());
-                v.getMetaData().set(PROP_DB_COD, dadosVariavel.getCod());
+                v.setValueFromPersistence(dadosVariavel.getValue());
+                v.setMetaDataValue(PROP_DB_COD, dadosVariavel.getCod());
             }
         }
     }
@@ -69,10 +69,10 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     @Override
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
-            Integer dbCod = changedVar.getMetaData().get(PROP_DB_COD);
+            Integer dbCod = changedVar.getMetaDataValue(PROP_DB_COD);
             Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
-                changedVar.getMetaData().set(PROP_DB_COD, dbCod2);
+                changedVar.setMetaDataValue(PROP_DB_COD, dbCod2);
             }
         }
     }

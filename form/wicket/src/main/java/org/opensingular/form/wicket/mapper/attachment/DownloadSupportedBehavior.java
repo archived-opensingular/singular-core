@@ -15,17 +15,6 @@
  */
 package org.opensingular.form.wicket.mapper.attachment;
 
-import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tika.io.IOUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
@@ -49,6 +38,16 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 
 /**
  * Behavior a ser adicionado ao componente de upload/download para permitir download dos arquivos
@@ -80,9 +79,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         if (model.getObject().getDocument().isAttachmentPersistenceTemporaryHandlerSupported()) {
             services.add(model.getObject().getDocument().getAttachmentPersistenceTemporaryHandler());
         }
-        if (model.getObject().getDocument().isAttachmentPersistencePermanentHandlerSupported()) {
-            services.add(model.getObject().getDocument().getAttachmentPersistencePermanentHandler());
-        }
+        model.getObject().getDocument().getAttachmentPersistencePermanentHandler().ifPresent(h -> services.add(h));
         return services;
     }
 
@@ -102,6 +99,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         try {
             handleRequest();
         } catch (IOException e) {
+            getLogger().debug(null, e);
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
@@ -171,7 +169,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
                     resourceResponse.setWriteCallback(new WriteCallback() {
                         @Override
                         public void writeData(Attributes attributes) throws IOException {
-                            try (InputStream inputStream = fileRef.getInputStream()) {
+                            try (InputStream inputStream = fileRef.getContentAsInputStream()) {
                                 IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
                                 /*Desregistrando recurso compartilhado*/
                                 WebApplication.get().unmount(url);

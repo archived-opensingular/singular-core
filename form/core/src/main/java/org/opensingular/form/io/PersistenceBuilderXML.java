@@ -17,13 +17,14 @@
 package org.opensingular.form.io;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.internal.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 public class PersistenceBuilderXML {
 
     private boolean persistId = true;
     private boolean persistNull = false;
     private boolean persistAttributes = false;
+    private boolean returnNullXML = true;
 
     public PersistenceBuilderXML withPersistId(boolean v) {
         persistId = v;
@@ -40,6 +41,15 @@ public class PersistenceBuilderXML {
         return this;
     }
 
+    /**
+     * No caso do XML resultante não conter nenhum nó, se true implica em retorna um MELement null. Se false, retorna um
+     * XML apenas com o nó raiz.
+     */
+    public PersistenceBuilderXML withReturnNullXML(boolean v) {
+        returnNullXML = v;
+        return this;
+    }
+
     public boolean isPersistId() {
         return persistId;
     }
@@ -52,8 +62,14 @@ public class PersistenceBuilderXML {
         return persistAttributes;
     }
 
+    /**
+     * Se true, indica que o resultado pode gerar um XML null. Se false, indica que minimamente retornara ao menos um
+     * Elment com conteudo vazio.
+     */
+    public boolean isReturnNullXML() { return returnNullXML; }
+
     public MElement toXML(SInstance instancia) {
-        return MformPersistenciaXML.toXML(null, null, instancia, this);
+        return SFormXMLUtil.toXML(null, null, instancia, this);
     }
 
 }

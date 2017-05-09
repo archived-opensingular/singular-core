@@ -19,7 +19,13 @@ package org.opensingular.form.document;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
-import org.opensingular.form.*;
+import org.opensingular.form.RefService;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypes;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
@@ -30,8 +36,14 @@ import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 import org.opensingular.form.validation.IValidationError;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -101,7 +113,7 @@ public class SDocument {
      * Registra a persistência temporária de anexos. A persistência temporária
      * guarda os anexos em quanto o documento não é saldo.
      */
-    public void setAttachmentPersistenceTemporaryHandler(RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> ref) {
+    public void setAttachmentPersistenceTemporaryHandler(RefService<? extends IAttachmentPersistenceHandler<?>> ref) {
         bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
     }
 
@@ -110,13 +122,13 @@ public class SDocument {
      * anexos salvos anteriormente e no momento de salvar o anexos que estavam
      * na persitência temporária.
      */
-    public void setAttachmentPersistencePermanentHandler(RefService<IAttachmentPersistenceHandler<? extends IAttachmentRef>> ref) {
+    public void setAttachmentPersistencePermanentHandler(RefService<? extends IAttachmentPersistenceHandler<?>> ref) {
         bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
 
     }
 
     public boolean isAttachmentPersistenceTemporaryHandlerSupported() {
-        return lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class) != null;
+        return lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class).isPresent();
     }
 
     /**
@@ -128,17 +140,15 @@ public class SDocument {
      * por default.
      */
     @SuppressWarnings("unchecked")
+    @Nonnull
     public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistenceTemporaryHandler() {
-        IAttachmentPersistenceHandler<? extends IAttachmentRef> ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
-        if (ref == null) {
-            ref = new InMemoryAttachmentPersistenceHandler();
-            setAttachmentPersistenceTemporaryHandler(RefService.of(ref));
+        Optional<IAttachmentPersistenceHandler> ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        if (ref.isPresent()) {
+            return ref.get();
         }
-        return ref;
-    }
-
-    public boolean isAttachmentPersistencePermanentHandlerSupported() {
-        return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class) != null;
+        InMemoryAttachmentPersistenceHandler ref2 = new InMemoryAttachmentPersistenceHandler();
+        setAttachmentPersistenceTemporaryHandler(RefService.of(ref2));
+        return ref2;
     }
 
     /**
@@ -147,13 +157,21 @@ public class SDocument {
      * persistencia temporária, no momento de salvar o formulário.
      */
     @SuppressWarnings("unchecked")
-    public IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistencePermanentHandler() {
-        return lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+    public Optional<IAttachmentPersistenceHandler<? extends IAttachmentRef>> getAttachmentPersistencePermanentHandler() {
+        return (Optional<IAttachmentPersistenceHandler<?>>) (Optional) lookupLocalService(FILE_PERSISTENCE_SERVICE,
+                IAttachmentPersistenceHandler.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private IAttachmentPersistenceHandler<? extends IAttachmentRef>
+    getAttachmentPersistencePermanentHandlerOrException() {
+        return registry.lookupLocalServiceOrException(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     /**
      * Obtêm a instância que representa o documento com um todo.
      */
+    @Nonnull
     public SInstance getRoot() {
         if (root == null) {
             throw new SingularFormException("Instancia raiz não foi configurada");
@@ -193,10 +211,6 @@ public class SDocument {
             throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
         }
         documentFactory = context;
-        if (context.getDocumentFactoryRef() == null) {
-            throw new SingularFormException(
-                    context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
-        }
         ServiceRegistry sr = documentFactory.getServiceRegistry();
         if (sr != null) {
             addServiceRegistry(sr);
@@ -221,14 +235,22 @@ public class SDocument {
         return registry.services();
     }
 
-    /**
-     * Tenta encontrar um serviço da classe solicitada supondo que o nome no
-     * registro é o nome da própria classe.
-     *
-     * @return Null se não encontrado ou se o conteúdo do registro for null.
-     */
-    public <T> T lookupService(Class<T> targetClass) {
+    /** Tenta encontrar um serviço da classe solicitada supondo que o nome no registro é o nome da própria classe. */
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
         return registry.lookupService(targetClass);
+    }
+
+    /**
+     * Tenta encontrar um serviço da classe solicitada supondo que o nome no registro é o nome da própria classe. Senão
+     * encontrar, então dispara exception.
+     */
+    @Nonnull
+    public <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
+        return lookupService(targetClass).orElseThrow(() -> new SingularFormException(
+                "O serviço " + targetClass.getName() +
+                        " não está configurado na instância (no Document). Provavelmente o DocumentFactory não foi " +
+                        "configurado corretamente", getRoot()));
     }
 
     /**
@@ -238,17 +260,15 @@ public class SDocument {
      *
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
-    public <T> T lookupService(String name, Class<T> targetClass) {
+    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
         return registry.lookupService(name, targetClass);
     }
 
     /**
      * Tenta encontrar um serviço da classe solicitada registrado <u>diretamente no documento</u> supondo que o nome no
      * registro é o nome da própria classe.
-     *
-     * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
-    public <T> T lookupLocalService(Class<T> targetClass) {
+    public <T> Optional<T> lookupLocalService(Class<T> targetClass) {
         return registry.lookupLocalService(targetClass);
     }
 
@@ -256,10 +276,9 @@ public class SDocument {
      * Tenta encontrar um serviço registrado <u>diretamente no documento</u> com
      * o nome informado. Se o resultado não for null e não implementar a classe
      * solicitada, dispara exception.
-     *
-     * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
-    public <T> T lookupLocalService(String name, Class<T> targetClass) {
+    @Nonnull
+    public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
         return registry.lookupLocalService(name, targetClass);
     }
 
@@ -305,8 +324,8 @@ public class SDocument {
     }
 
     public void persistFiles() {
-        IAttachmentPersistenceHandler<? extends IAttachmentRef> persistent = getAttachmentPersistencePermanentHandler();
-        IAttachmentPersistenceHandler<? extends IAttachmentRef> temporary  = getAttachmentPersistenceTemporaryHandler();
+        IAttachmentPersistenceHandler<?> persistent = getAttachmentPersistencePermanentHandlerOrException();
+        IAttachmentPersistenceHandler<?> temporary  = getAttachmentPersistenceTemporaryHandler();
         persistent.getAttachmentPersistenceHelper().doPersistence(this, temporary, persistent);
     }
 

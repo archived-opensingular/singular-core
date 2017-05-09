@@ -16,46 +16,45 @@
 
 package org.opensingular.flow.core;
 
+import com.google.common.collect.Lists;
+import org.opensingular.flow.core.entity.AccessStrategyType;
+import org.opensingular.flow.core.entity.IEntityRoleInstance;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
-
-import org.opensingular.flow.core.entity.AccessStrategyType;
-import org.opensingular.flow.core.entity.IEntityRoleInstance;
-
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
-    public static RoleAccessStrategy of(MProcessRole processRole) {
+    public static RoleAccessStrategy of(SProcessRole processRole) {
         return new RoleAccessStrategy(processRole);
     }
 
-    public static RoleAccessStrategy of(MProcessRole executionRole, MProcessRole visualizeRole) {
+    public static RoleAccessStrategy of(SProcessRole executionRole, SProcessRole visualizeRole) {
         return new RoleAccessStrategy(executionRole, visualizeRole);
     }
 
-    private final MProcessRole executionRole;
+    private final SProcessRole executionRole;
 
-    private final MProcessRole visualizeRole;
+    private final SProcessRole visualizeRole;
 
-    protected RoleAccessStrategy(MProcessRole mPapelExecucao) {
+    protected RoleAccessStrategy(SProcessRole mPapelExecucao) {
         this(mPapelExecucao, null);
     }
 
-    protected RoleAccessStrategy(MProcessRole mPapelExecucao, MProcessRole mPapelVisualizacao) {
+    protected RoleAccessStrategy(SProcessRole mPapelExecucao, SProcessRole mPapelVisualizacao) {
         super();
         this.executionRole = mPapelExecucao;
         this.visualizeRole = mPapelVisualizacao;
     }
 
-    public MProcessRole getPapelExecucao() {
+    public SProcessRole getPapelExecucao() {
         return executionRole;
     }
 
     @Override
-    public boolean canExecute(ProcessInstance instance, MUser user) {
+    public boolean canExecute(ProcessInstance instance, SUser user) {
         for (IEntityRoleInstance entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole) && user.is(entityRole.getUser())) {
                 return true;
@@ -65,7 +64,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public boolean canVisualize(ProcessInstance instance, MUser user) {
+    public boolean canVisualize(ProcessInstance instance, SUser user) {
         if (visualizeRole != null) {
             for (IEntityRoleInstance entityRole : instance.getUserRoles()) {
                 if (isSameRole(visualizeRole, entityRole) && user.is(entityRole.getUser())) {
@@ -76,7 +75,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
         return canExecute(instance, user);
     }
 
-    private boolean isSameRole(MProcessRole processRole, IEntityRoleInstance entityRole) {
+    private boolean isSameRole(SProcessRole processRole, IEntityRoleInstance entityRole) {
         return entityRole.getRole().getAbbreviation().equalsIgnoreCase(processRole.getAbbreviation());
     }
 
@@ -92,7 +91,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public List<MUser> listAllocableUsers(ProcessInstance instance) {
+    public List<SUser> listAllocableUsers(ProcessInstance instance) {
         return instance.getUserRoles()
                 .stream()
                 .filter(entityRole -> isSameRole(executionRole, entityRole))
@@ -103,12 +102,12 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+    public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
         return Lists.newArrayList("Papel " + executionRole.getName());
     }
 
     @Override
-    public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, MTask<?> task) {
+    public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
         if (visualizeRole == null) {
             return getExecuteRoleNames(definicao, task);
         }
@@ -121,7 +120,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public MUser getAutomaticAllocatedUser(ProcessInstance instancia, TaskInstance tarefa) {
+    public SUser getAutomaticAllocatedUser(ProcessInstance instancia, TaskInstance tarefa) {
         IEntityRoleInstance role = instancia.getRoleUserByAbbreviation(executionRole.getName());
         return role != null ? role.getUser() : null;
     }

@@ -20,8 +20,9 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.validation.IInstanceValidatable;
 import org.opensingular.form.validation.SingularEmailValidator;
+import org.opensingular.lib.commons.util.Loggable;
 
-public enum MEmailValidator implements IInstanceValueValidator<SIString, String>  {
+public enum MEmailValidator implements IInstanceValueValidator<SIString, String>, Loggable {
 
     /**
      * Local address is considered invalid
@@ -50,6 +51,7 @@ public enum MEmailValidator implements IInstanceValueValidator<SIString, String>
                 validatable.error("E-mail inválido");
             }
         } catch (SingularFormException e){
+            getLogger().debug(null, e);
             validatable.error(e.getMessage());
         }
     }

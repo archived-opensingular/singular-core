@@ -16,34 +16,35 @@
 
 package org.opensingular.flow.core.builder;
 
-import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import org.opensingular.flow.core.IExecutionDateStrategy;
-import org.opensingular.flow.core.MProcessRole;
-import org.opensingular.flow.core.MTaskEnd;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.StartedTaskListener;
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.DashboardView;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.IRoleChangeListener;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ITaskPredicate;
-import org.opensingular.flow.core.MTask;
-import org.opensingular.flow.core.MTaskJava;
-import org.opensingular.flow.core.MTaskPeople;
-import org.opensingular.flow.core.MTaskWait;
-import org.opensingular.flow.core.MTransition;
+import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.RoleAccessStrategy;
+import org.opensingular.flow.core.SProcessRole;
+import org.opensingular.flow.core.SStart;
+import org.opensingular.flow.core.STask;
+import org.opensingular.flow.core.STaskEnd;
+import org.opensingular.flow.core.STaskJava;
+import org.opensingular.flow.core.STaskPeople;
+import org.opensingular.flow.core.STaskWait;
+import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.flow.core.UserRoleSettingStrategy;
 import org.opensingular.flow.core.defaults.EmptyUserRoleSettingStrategy;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
+import org.opensingular.lib.commons.base.SingularUtil;
 
-public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BTask, BUILDER_JAVA extends BJava<?>, BUILDER_PEOPLE extends BPeople<?>, BUILDER_WAIT extends BWait<?>, BUILDER_END extends BEnd<?>, BUILDER_TRANSITION extends BTransition<?>, BUILDER_PAPEL extends BProcessRole<?>, TASK_DEF extends ITaskDefinition> {
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderPeople<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_PAPEL extends BuilderProcessRole<?>, TASK_DEF extends ITaskDefinition> {
 
     private final MAPA flowMap;
 
@@ -53,19 +54,21 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
 
     protected abstract MAPA newFlowMap(DEF processDefinition);
 
-    protected abstract BUILDER_TASK newTask(MTask<?> task);
+    protected abstract BUILDER_TASK newTask(STask<?> task);
 
-    protected abstract BUILDER_JAVA newJavaTask(MTaskJava task);
+    protected abstract BUILDER_JAVA newJavaTask(STaskJava task);
 
-    protected abstract BUILDER_PEOPLE newPeopleTask(MTaskPeople task);
+    protected abstract BUILDER_PEOPLE newPeopleTask(STaskPeople task);
 
-    protected abstract BUILDER_WAIT newWaitTask(MTaskWait task);
+    protected abstract BUILDER_WAIT newWaitTask(STaskWait task);
 
-    protected abstract BUILDER_END newEndTask(MTaskEnd task);
+    protected abstract BUILDER_END newEndTask(STaskEnd task);
 
-    protected abstract BUILDER_TRANSITION newTransition(MTransition transition);
+    protected abstract BUILDER_START newStart(SStart start);
 
-    protected abstract BUILDER_PAPEL newProcessRole(MProcessRole transicao);
+    protected abstract BUILDER_TRANSITION newTransition(STransition transition);
+
+    protected abstract BUILDER_PAPEL newProcessRole(SProcessRole transicao);
 
     protected final MAPA getFlowMap() {
         return flowMap;
@@ -75,29 +78,29 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return flowMap;
     }
 
-    public void setStartTask(TASK_DEF taskDefinition) {
+    public BUILDER_START setStart(TASK_DEF taskDefinition) {
         MAPA flowMap = getFlowMap();
-        flowMap.setStartTask(flowMap.getTask(taskDefinition));
+        return newStart(flowMap.setStart(taskDefinition));
     }
 
     public <T extends ProcessInstance> void setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
         getFlowMap().setRoleChangeListener(roleChangeListener);
     }
 
-    private BTask toBuilder(MTask<?> task) {
-        if (task instanceof MTaskPeople) {
-            return newPeopleTask((MTaskPeople) task);
-        } else if (task instanceof MTaskJava) {
-            return newJavaTask((MTaskJava) task);
-        } else if (task instanceof MTaskWait) {
-            return newWaitTask((MTaskWait) task);
-        } else if (task instanceof MTaskEnd) {
-            return newEndTask((MTaskEnd) task);
+    private BuilderTask toBuilder(STask<?> task) {
+        if (task instanceof STaskPeople) {
+            return newPeopleTask((STaskPeople) task);
+        } else if (task instanceof STaskJava) {
+            return newJavaTask((STaskJava) task);
+        } else if (task instanceof STaskWait) {
+            return newWaitTask((STaskWait) task);
+        } else if (task instanceof STaskEnd) {
+            return newEndTask((STaskEnd) task);
         }
-        throw new SingularFlowException("Task type " + task.getClass().getName() + " not supported");
+        throw new SingularFlowException("Task type " + task.getClass().getName() + " not supported", build());
     }
 
-    public void forEach(Consumer<BTask> consumer) {
+    public void forEach(Consumer<BuilderTask> consumer) {
         getFlowMap().getTasks().stream().map(t -> toBuilder(t)).forEach(consumer);
     }
 
@@ -135,11 +138,11 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return task;
     }
 
-    public BUILDER_PEOPLE addPeopleTask(TASK_DEF taskDefinition, BProcessRole<?> requiredRole) {
+    public BUILDER_PEOPLE addPeopleTask(TASK_DEF taskDefinition, BuilderProcessRole<?> requiredRole) {
         return addPeopleTask(taskDefinition, RoleAccessStrategy.of(requiredRole.getProcessRole()));
     }
 
-    public BUILDER_PEOPLE addPeople(TASK_DEF taskDefinition, BProcessRole<?> requiredExecutionRole, BProcessRole<?> requiredVisualizeRole) {
+    public BUILDER_PEOPLE addPeople(TASK_DEF taskDefinition, BuilderProcessRole<?> requiredExecutionRole, BuilderProcessRole<?> requiredVisualizeRole) {
         return addPeopleTask(taskDefinition, RoleAccessStrategy.of(requiredExecutionRole.getProcessRole(), requiredVisualizeRole.getProcessRole()));
     }
 
@@ -176,7 +179,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
      *
      * @return Sempre diferente de null
      */
-    protected MTask<?> getTask(TASK_DEF taskRef) {
+    protected STask<?> getTask(TASK_DEF taskRef) {
         return getFlowMap().getTask(taskRef);
     }
 
@@ -184,7 +187,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return getFlowMap().getTaskWithName(taskRef.getName()) != null;
     }
 
-    protected BUILDER_TRANSITION addTransition(BTask origin, String actionName, TASK_DEF destination) {
+    protected BUILDER_TRANSITION addTransition(BuilderTask origin, String actionName, TASK_DEF destination) {
         return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
     
@@ -197,11 +200,11 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         getFlowMap().getAllTasks().forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
     }
 
-    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy, Predicate<MTask<?>> applyToPredicate) {
+    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy, Predicate<STask<?>> applyToPredicate) {
         getFlowMap().getAllTasks().stream().filter(applyToPredicate).forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
     }
 
-    public FlowBuilder<DEF, MAPA, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
+    public FlowBuilder<DEF, MAPA, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
         getFlowMap().addDashboardView(dashboardView);
         return this;
     }
@@ -212,5 +215,9 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
      *
      * @param listener - listener a ser adicionado
      */
-    public abstract void addListenerToAllTasks(StartedTaskListener listener);
+    public void addListenerToAllTasks(StartedTaskListener listener) {
+        for (STask<?> sTask : getFlowMap().getAllTasks()) {
+            sTask.addStartedTaskListener(listener);
+        }
+    }
 }

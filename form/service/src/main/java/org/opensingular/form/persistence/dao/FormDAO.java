@@ -16,8 +16,12 @@
 package org.opensingular.form.persistence.dao;
 
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
+
+import java.util.List;
 
 public class FormDAO extends BaseDAO<FormEntity, Long> {
 
@@ -25,9 +29,35 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
         super(FormEntity.class);
     }
 
+    public void delete(Long key) {
+        find(key).ifPresent(formEntity -> {
+            getSession().delete(formEntity.getCurrentFormVersionEntity());
+            getSession().delete(formEntity);
+        });
+    }
+
     @Override
     public void saveOrUpdate(FormEntity novoObj) {
         super.saveOrUpdate(novoObj);
         getSession().flush();
     }
+
+    public List<FormEntity> listByFormAbbreviation(String formAbbreviation) {
+        return getfindByFormAbbreviation(formAbbreviation).list();
+    }
+
+    public List<FormEntity> listByFormAbbreviation(String formAbbreviation, long first, long max) {
+        return getfindByFormAbbreviation(formAbbreviation)
+                .setFirstResult((int) first)
+                .setMaxResults((int) max)
+                .list();
+    }
+
+    private Criteria getfindByFormAbbreviation(String formAbbreviation) {
+        return getSession().createCriteria(FormEntity.class)
+                .createAlias("formType", "formType")
+                .add(Restrictions.eq("formType.abbreviation", formAbbreviation));
+    }
+
+
 }

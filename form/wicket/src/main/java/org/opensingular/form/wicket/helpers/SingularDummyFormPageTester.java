@@ -77,7 +77,7 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
      */
     public final SingularDummyFormPageTester startDummyPage() {
         if (page.getTypeBuilder() == null) {
-            throw new RuntimeException("page.getTypeBuilder() está null (configuare para o teste)");
+            throw new IllegalStateException("page.getTypeBuilder() está null (configure para o teste)");
         }
         startPage(page);
         return this;
@@ -98,17 +98,17 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
      */
     public AssertionsSType findTypeBySimpleName(String simpleName) {
 
-        List<SType<?>> types = SInstances.streamDescendants(getDummyPage().getCurrentInstance(), true)
+        List<SType<?>> types = SInstances.streamDescendants(getDummyPage().getInstance(), true)
                 .filter(ins -> ins.getType().getNameSimple().equals(simpleName))
                 .map(SInstance::getType)
                 .collect(Collectors.toList());
 
         if(types.isEmpty()){
-            throw new RuntimeException("O nome informado não pertence a nenhum tipo da instancia atual");
+            throw new IllegalArgumentException("O nome informado não pertence a nenhum tipo da instancia atual");
         }
 
         if(types.size() > 1){
-            throw new RuntimeException("O nome informado pertence a mais de um elemento da instancia atual");
+            throw new IllegalArgumentException("O nome informado pertence a mais de um elemento da instancia atual");
         }
 
         return new AssertionsSType(types.get(0));

@@ -61,4 +61,12 @@ public class AssertionsWComponentList<T extends Component>
         isSizeAtLeast(index + 1);
         return new AssertionsWComponent(getTarget().get(index));
     }
+
+    public AssertionsWComponent first() {
+        return get(0);
+    }
+
+    public AssertionsWComponent last() {
+        return get(getTarget().size() - 1);
+    }
 }

@@ -16,10 +16,10 @@
 
 package org.opensingular.flow.core.entity;
 
+import org.opensingular.flow.core.SUser;
+
 import java.util.Date;
 import java.util.List;
-
-import org.opensingular.flow.core.MUser;
 
 public interface IEntityProcessInstance extends IEntityByCod<Integer> {
 
@@ -29,7 +29,7 @@ public interface IEntityProcessInstance extends IEntityByCod<Integer> {
 
     void setDescription(String description);
 
-    MUser getUserCreator();
+    SUser getUserCreator();
 
     Date getBeginDate();
 

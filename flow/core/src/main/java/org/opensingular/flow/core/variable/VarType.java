@@ -16,7 +16,11 @@
 
 package org.opensingular.flow.core.variable;
 
-public interface VarType {
+import java.io.Serializable;
+
+public interface VarType<TYPE> extends Serializable {
+
+    public Class<TYPE> getClassTypeContent();
 
     public String getName();
 
@@ -25,4 +29,10 @@ public interface VarType {
     public String toDisplayString(Object valor, VarDefinition varDefinition);
 
     public String toPersistenceString(VarInstance varInstance);
+
+    /** Recupera o valor original a partir da versão persistida como String do dado. */
+    TYPE fromPersistenceString(String persistenceValue) throws SingularFlowConvertingValueException;
+
+    /** Convert o valor informado para o tipo nativo do tipo. */
+    TYPE convert(Object original) throws SingularFlowConvertingValueException;
 }

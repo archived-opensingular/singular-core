@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular</artifactId>
-        <version>1.5.16-SNAPSHOT</version>
+        <version>1.6.3-RC</version>
     </parent>
 
     <artifactId>singular-form</artifactId>
@@ -17,8 +17,6 @@
         <module>core</module>
         <module>service</module>
         <module>wicket</module>
-        <module>ui-showcase</module>
-        <module>form-samples</module>
     </modules>
 
 </project>

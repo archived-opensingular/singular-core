@@ -18,7 +18,14 @@ package org.opensingular.form;
 
 import org.opensingular.form.builder.selection.SSelectionBuilder;
 import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.type.core.*;
+import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDateTime;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.view.SView;
@@ -26,8 +33,16 @@ import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionBySelect;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
@@ -63,22 +78,18 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return getFields();
     }
 
-    private void checkNameNewField(String localName, SType<?> type) {
-        if(fieldsLocal != null) {
-            if (localName == null) {
-                localName = type.getNameSimple();
+    private void checkNameNewField(@Nonnull String fieldName) {
+        Objects.requireNonNull(fieldName);
+        if(fieldsLocal != null && fieldsLocal.containsKey(fieldName)) {
+            String msg = "Tentativa de criar um segundo campo com o nome '" + fieldName + "' em " + this;
+            SingularFormException e = new SingularFormException(msg, this);
+            String probableWrongCall = detectIfProbableOnLoadTypeSuperCall(e);
+            if (probableWrongCall != null) {
+                e = new SingularFormException(msg +
+                        ". Verifique se não ocorreu uma chamada indevida de super.onLoadType() (nao dever haver " +
+                        "essa chamada) na linha\n   " + probableWrongCall, this);
             }
-            if(fieldsLocal.containsKey(localName)) {
-                String msg = "Tentativa de criar um segundo campo com o nome '" + localName + "' em " + this;
-                SingularFormException e = new SingularFormException(msg, this);
-                String probableWrongCall = detectIfProbableOnLoadTypeSuperCall(e);
-                if (probableWrongCall != null) {
-                    e = new SingularFormException(msg +
-                            ". Verifique se não ocorreu uma chamada indevida de super.onLoadType() (nao dever haver " +
-                            "essa chamada) na linha\n   " + probableWrongCall);
-                }
-                throw e;
-            }
+            throw e;
         }
     }
 
@@ -165,14 +176,15 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldSimpleName, resolveType(typeClass));
     }
 
-    //TODO: FABS : THIS IS UNTESTED
     /**
      * Cria um novo campo com o nome informado como sendo do tipo informado.
      */
-    public <T extends SType<?>> T addField(String fieldSimpleName, T parentType) {
-        checkNameNewField(fieldSimpleName, parentType);
-        T field = extendType(fieldSimpleName, parentType);
-        return addInternal(fieldSimpleName, field);
+    @Nonnull
+    public <T extends SType<?>> T addField(@Nullable String fieldSimpleName, @Nonnull T parentType) {
+        String resolvedName = SFormUtil.resolveName(fieldSimpleName, this);
+        checkNameNewField(resolvedName);
+        T field = extendType(resolvedName, parentType);
+        return addInternal(resolvedName, field);
     }
 
     /**
@@ -185,8 +197,9 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     /**
      * Cria um novo campo lista com o nome informado e sendo o tipo de seus elementos o tipo informado.
      */
-    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(String fieldSimpleName, T elementsType) {
-        checkNameNewField(fieldSimpleName, null);
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull T elementsType) {
+        checkNameNewField(fieldSimpleName);
         STypeList<T, I> novo = createTypeListOf(fieldSimpleName, elementsType);
         return addInternal(fieldSimpleName, novo);
     }
@@ -196,9 +209,10 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      * nome infomado. O novo tipo composite é criado sem campos, devendo ser estruturado
      * na sequencia.
      */
-    public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(String fieldSimpleName,
-            String simpleNameNewCompositeType) {
-        checkNameNewField(fieldSimpleName, null);
+    @Nonnull
+    public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(@Nonnull String fieldSimpleName,
+            @Nonnull String simpleNameNewCompositeType) {
+        checkNameNewField(fieldSimpleName);
         STypeList<STypeComposite<I>, I> novo = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
         return addInternal(fieldSimpleName, novo);
     }
@@ -218,9 +232,10 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     public STypeAttachment addFieldAttachment(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeAttachment.class);
     }
-    
-    public STypeAttachmentList addFieldListOfAttachment(String listName, String fieldName) {
-        checkNameNewField(listName,null);
+
+    @Nonnull
+    public STypeAttachmentList addFieldListOfAttachment(@Nonnull String listName, @Nonnull String fieldName) {
+        checkNameNewField(listName);
         STypeAttachmentList novo = extendType(listName, STypeAttachmentList.class);
         novo.setView(SViewAttachmentList::new);
         novo.setElementsTypeFieldName(fieldName);
@@ -460,7 +475,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
             if (fields != null) {
                 return garantirLista().get(fieldIndex);
             }
-            throw new SingularFormException("Indice do campo incorreto: " + fieldIndex);
+            throw new SingularFormException("Indice do campo incorreto: " + fieldIndex, this);
         }
 
         private List<SType<?>> garantirLista() {

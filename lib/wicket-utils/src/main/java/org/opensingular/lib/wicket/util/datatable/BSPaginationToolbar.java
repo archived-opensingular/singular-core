@@ -31,13 +31,18 @@ public class BSPaginationToolbar extends AbstractToolbar {
     public BSPaginationToolbar(DataTable<?, ?> table) {
         super(table);
         paginator = new WebMarkupContainer("paginator");
+        BSPaginationPanel pagination = newPagination("pagination", table);
         add(paginator);
-        paginator.add(new BSPaginationPanel("pagination", table));
+        paginator.add(pagination);
         itensPerPageSelector = $b.addAjaxUpdate(
                 new BSItemsPerPageDropDown("itemsPerPage", getTable()),
                 (a, c) -> a.add(getTable()))
                 .getTargetComponent();
         add(itensPerPageSelector);
+    }
+
+    protected BSPaginationPanel newPagination(String id, DataTable<?, ?> table) {
+        return new BSPaginationPanel(id, table);
     }
 
     private Long getInitialRowsPerPage() {

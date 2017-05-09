@@ -1,0 +1,311 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.opensingular.flow.core;
+
+import org.opensingular.flow.core.entity.TransitionType;
+import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataEnabled;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+@SuppressWarnings({ "serial", "unchecked" })
+public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
+
+    private final FlowMap flowMap;
+    private final String name;
+    private final String abbreviation;
+
+    private final List<STransition> transitions = new LinkedList<>();
+    private final Map<String, STransition> transitionsByName = new HashMap<>();
+    private List<IConditionalTaskAction> automaticActions;
+
+    private List<StartedTaskListener> startedTaskListeners;
+
+    private STransition defaultTransition;
+
+    private TaskAccessStrategy<ProcessInstance> accessStrategy;
+
+    private transient int order;
+
+    private MetaData metaData;
+
+    public STask(FlowMap flowMap, String name, String abbreviation) {
+        Objects.requireNonNull(flowMap);
+        Objects.requireNonNull(name);
+        this.flowMap = flowMap;
+        this.name = name;
+        this.abbreviation = abbreviation;
+    }
+
+    public K with(Consumer<K> consumer) {
+        consumer.accept((K) this);
+        return (K) this;
+    }
+
+    public abstract boolean canReallocate();
+
+    public abstract IEntityTaskType getTaskType();
+
+    public boolean isImmediateExecution() {
+        return false;
+    }
+
+    public String getDescription() {
+        return String.format("(%s) %s", getTaskType().getAbbreviation(), getName());
+    }
+
+    public final String getName() {
+        return name;
+    }
+
+    public final String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public String getCompleteName() {
+        return getFlowMap().getProcessDefinition().getKey() + '.' + name;
+    }
+
+    public final boolean isEnd() {
+        return getTaskType() == TaskType.END;
+    }
+
+    public final boolean isJava() {
+        return getTaskType() == TaskType.JAVA;
+    }
+
+    public final boolean isPeople() {
+        return getTaskType() == TaskType.PEOPLE;
+    }
+
+    public final boolean isWait() {
+        return getTaskType() == TaskType.WAIT;
+    }
+
+    public final boolean is(ITaskDefinition taskDefinition) {
+        return getAbbreviation().equalsIgnoreCase(taskDefinition.getKey());
+    }
+
+    public IEntityTaskType getEffectiveTaskType() {
+        IEntityTaskType tipo = getTaskType();
+        if (tipo != TaskType.WAIT && (this instanceof STaskJava) && ((STaskJava) this).getScheduleData() != null) {
+            tipo = TaskType.WAIT;
+        }
+        return tipo;
+    }
+
+    public boolean isExecutable() {
+        return false;
+    }
+
+    @Override
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
+    }
+
+    @Override
+    @Nonnull
+    public MetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new MetaData();
+        }
+        return metaData;
+    }
+
+    public STransition addTransition(String actionName, STask<?> destination, boolean showTransitionInExecution) {
+        return addTransition(actionName, destination).withAccessControl(TransitionAccessStrategyImpl.enabled(showTransitionInExecution));
+    }
+
+    public STransition addTransition(String actionName, STask<?> destination) {
+        return addTransition(flowMap.newTransition(this, actionName, destination, TransitionType.H));
+    }
+
+    public STransition addTransition(STask<?> destination) {
+        return addTransition(flowMap.newTransition(this, destination.getName(), destination, TransitionType.H));
+    }
+
+    public STransition addAutomaticTransition(ITaskPredicate predicate, STask<?> destination) {
+        STransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
+        transition.setPredicate(predicate);
+        addAutomaticAction(TaskActions.executeTransition(predicate, transition));
+        return addTransition(transition);
+    }
+
+    public void setDefaultTransition(STransition defaultTransition) {
+        if(this.defaultTransition != null){
+            throw new SingularFlowException(createErrorMsg("Default transition already defined"), this).addTransitions(
+                    this);
+        }
+        this.defaultTransition = defaultTransition;
+    }
+    
+    public STransition getDefaultTransition() {
+        return defaultTransition;
+    }
+
+    private STransition addTransition(STransition transition) {
+        if (transitionsByName.containsKey(transition.getName().toLowerCase())) {
+            throw new SingularFlowException(
+                    createErrorMsg("Transition with name '" + transition.getName() + "' already defined"), this)
+                    .addTransitions(this);
+        }
+        transitions.add(transition);
+        transitionsByName.put(transition.getName().toLowerCase(), transition);
+        return transition;
+    }
+
+    public void addAutomaticAction(ITaskPredicate predicate, ITaskAction action) {
+        addAutomaticAction(TaskActions.conditionalAction(predicate, action));
+    }
+
+    private void addAutomaticAction(IConditionalTaskAction action) {
+        if (automaticActions == null) {
+            automaticActions = new ArrayList<>(2);
+        }
+        automaticActions.add(action);
+    }
+
+    public List<IConditionalTaskAction> getAutomaticActions() {
+        if (automaticActions == null) {
+            return Collections.emptyList();
+        }
+        return automaticActions;
+    }
+
+    public void execute(ExecutionContext execucaoTask) {
+        throw new SingularFlowException("Operation not supported", this);
+    }
+
+    /** Lista de transições partindo da task atual. */
+    @Nonnull
+    public List<STransition> getTransitions() {
+        return transitions;
+    }
+
+    /** Recupera a transição com o nome informado ou dispara exception senão encontrar. */
+    @Nonnull
+    public STransition getTransitionOrException(@Nonnull String transitionName) {
+        return getTransition(transitionName).orElseThrow(() -> new SingularFlowTransactionNotFoundException(
+                createErrorMsg("Transição '" + transitionName + "' não encontrada em '" + getName() + "'"), this)
+                .addTransitions(this));
+    }
+
+    /** Descobre qual a transição default ou dispara exception senão encontrar. */
+    @Nonnull
+    final STransition resolveDefaultTransitionOrException() {
+        List<STransition> transitions = getTransitions();
+        if (transitions.size() == 1) {
+            return transitions.get(0);
+        } else if (transitions.isEmpty()) {
+            throw new SingularFlowException(createErrorMsg("não definiu nenhuma transicao"), this);
+        } else if (defaultTransition != null) {
+            return defaultTransition;
+        }
+        throw new SingularFlowTransactionNotFoundException(createErrorMsg(
+                "possui várias transações e não definiu transicao default. Defina a transação default ou explicite " +
+                        "qual transação deve ser executada."),
+                this).addTransitions(this);
+    }
+
+    /** Recupera a transição com o nome informado. */
+    @Nonnull
+    public Optional<STransition> getTransition(@Nonnull String transitionName) {
+        Objects.requireNonNull(transitionName);
+        return Optional.ofNullable(transitionsByName.get(transitionName.toLowerCase()));
+    }
+
+    public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask) {
+        if (startedTaskListeners != null) {
+            for (StartedTaskListener listener : startedTaskListeners) {
+                listener.onTaskStart(taskInstance, execucaoTask);
+            }
+        }
+    }
+
+    public K addStartedTaskListener(StartedTaskListener startedTaskListener) {
+        if (this.startedTaskListeners == null) {
+            this.startedTaskListeners = new LinkedList<>();
+        }
+        this.startedTaskListeners.add(startedTaskListener);
+        return (K) this;
+    }
+
+    public FlowMap getFlowMap() {
+        return flowMap;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    final void setOrder(int order) {
+        this.order = order;
+    }
+
+    public K addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
+        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, accessStrategy);
+        return (K) this;
+    }
+
+    public K addVisualizeStrategy(TaskAccessStrategy<?> accessStrategy) {
+        return addAccessStrategy(accessStrategy.getOnlyVisualize());
+    }
+
+    public final <T extends ProcessInstance> TaskAccessStrategy<T> getAccessStrategy() {
+        return (TaskAccessStrategy<T>) accessStrategy;
+    }
+
+    final String createErrorMsg(String message) {
+        return "Processo '" + getFlowMap().getProcessDefinition().getName() + "' : Task '" +name + "' -> " + message;
+    }
+
+    void verifyConsistency() {
+
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + '(' + name + ')';
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        STask<?> other = (STask<?>) obj;
+        return Objects.equals(flowMap, other.flowMap) && Objects.equals(name, other.name);
+    }
+}

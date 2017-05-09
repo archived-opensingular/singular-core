@@ -64,9 +64,18 @@ public interface IBSGridCol<THIS extends Component> {
 
     default AttributeAppender newBSGridColBehavior() {
         return new AttributeAppender("class", new AbstractReadOnlyModel<CharSequence>() {
+            @Override
             public CharSequence getObject() {
                 StringBuilder sb = new StringBuilder();
 
+                appendColValue(sb);
+                appendColOffset(sb);
+                appendHidden(sb);
+
+                return sb;
+            }
+
+            public void appendColValue(StringBuilder sb) {
                 if (xs() > 0)
                     sb.append(" col-xs-").append(xs());
                 if (sm() > 0)
@@ -75,7 +84,9 @@ public interface IBSGridCol<THIS extends Component> {
                     sb.append(" col-md-").append(md());
                 if (lg() > 0)
                     sb.append(" col-lg-").append(lg());
+            }
 
+            public void appendColOffset(StringBuilder sb) {
                 if (xsOffset() > 0)
                     sb.append(" col-xs-offset-").append(xsOffset());
                 if (smOffset() > 0)
@@ -84,7 +95,9 @@ public interface IBSGridCol<THIS extends Component> {
                     sb.append(" col-md-offset-").append(mdOffset());
                 if (lgOffset() > 0)
                     sb.append(" col-lg-offset-").append(lgOffset());
+            }
 
+            public void appendHidden(StringBuilder sb) {
                 if (xsHidden())
                     sb.append(" hidden-xs");
                 if (smHidden())
@@ -93,8 +106,6 @@ public interface IBSGridCol<THIS extends Component> {
                     sb.append(" hidden-md");
                 if (lgHidden())
                     sb.append(" hidden-lg");
-
-                return sb;
             }
         }, " ");
     }

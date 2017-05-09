@@ -16,14 +16,24 @@
 
 package org.opensingular.flow.core.variable;
 
+import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataEnabled;
+
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
-import org.opensingular.flow.core.property.MetaData;
-
 //TODO marcar a variável quando esta for utilizada. Essa interface deve obrigar a implementacao de um metodo para essa verificacao
-public interface VarInstance {
+public interface VarInstance extends Serializable, MetaDataEnabled {
 
     VarInstance setValue(Object valor);
+
+    default void setValueFromPersistence(@Nullable String persistenceValue) {
+        if (persistenceValue == null) {
+            setValue(null);
+        } else {
+            setValue(getDefinition().fromPersistenceString(persistenceValue));
+        }
+    }
 
     VarDefinition getDefinition();
 
@@ -57,5 +67,6 @@ public interface VarInstance {
         return getDefinition().getType();
     }
 
-    void setChangeListner(VarInstanceMap<?> changeListener);
+    void setChangeListner(VarInstanceMap<?,?> changeListener);
+
 }

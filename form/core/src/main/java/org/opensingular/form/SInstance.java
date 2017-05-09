@@ -23,14 +23,22 @@ import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.internal.xml.MElement;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.validation.IValidationError;
+import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class SInstance implements SAttributeEnabled {
@@ -41,7 +49,8 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private SType<?> type;
 
-    private Map<String, SInstance> attributes;
+    @Nullable
+    private AttributeValuesManagerForSInstance attributes;
 
     private SDocument document;
 
@@ -55,25 +64,34 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Informações encontradas na persitência, mas sem correspondência no tipo na instância atual.
      */
-    private List<MElement>                     unreadInfo;
+    private List<MElement> unreadInfo;
     private InstanceSerializableRef<SInstance> serializableRef;
-    private ISInstanceListener.EventCollector  eventCollector;
+    private ISInstanceListener.EventCollector eventCollector;
 
     public SType<?> getType() {
         return type;
     }
 
+    /** Retorna o documento ao qual pertence a instância atual. */
+    @Nonnull
     public SDocument getDocument() {
         return document;
+    }
+
+    /** Retorna a instância raiz da instância atual.
+     *  @see SDocument#getRoot()
+     */
+    @Nonnull
+    public SInstance getRoot() {
+        return document.getRoot();
     }
 
     /**
      * Retorna um ID único dentre as instâncias do mesmo documento. Um ID nunca
      * é reutilizado, mesmo se a instancia for removida de dentro do documento.
      * Funcionamento semelhante a uma sequence de banco de dados.
-     *
-     * @return Nunca Null
      */
+    @Nonnull
     public Integer getId() {
         if (id == null) {
             id = document.nextId();
@@ -109,18 +127,32 @@ public abstract class SInstance implements SAttributeEnabled {
      * retornam true.
      */
     public boolean isAttribute() {
-        return getFlag(InstanceFlags.IS_ATRIBUTO);
+        return attributeInstanceInfo != null;
     }
 
-    final void setAsAttribute(String fullName, SType<?> attributeOwner) {
-        setFlag(InstanceFlags.IS_ATRIBUTO, true);
-        attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
+    final void setAsAttribute(AttrInternalRef ref, SType<?> attributeOwner) {
+        attributeInstanceInfo = new AttributeInstanceInfo(ref, attributeOwner);
 
     }
 
-    final void setAsAttribute(String fullName, SInstance attributeOwner) {
-        setFlag(InstanceFlags.IS_ATRIBUTO, true);
-        attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
+    final void setAsAttribute(AttrInternalRef ref, SInstance attributeOwner) {
+        attributeInstanceInfo = new AttributeInstanceInfo(ref, attributeOwner);
+    }
+
+    /**
+     * Indica se a instancia é um atributo cujo valor foi lido em carater temporário e que deve ser convertido para o
+     * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
+     */
+    final void setAttributeShouldMigrate() {
+        setFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE, true);
+    }
+
+    /**
+     * Indica se a instancia é um atributo cujo valor foi lido em carater temporário e que deve ser convertido para o
+     * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
+     */
+    final boolean isAttributeShouldMigrate() {
+        return getFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE);
     }
 
     /**
@@ -149,11 +181,10 @@ public abstract class SInstance implements SAttributeEnabled {
         if (this.parent != null && pai != null) {
             throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
                     + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
-                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()));
+                    + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()), this);
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
-            setFlag(InstanceFlags.IS_ATRIBUTO, true);
             attributeInstanceInfo = pai.attributeInstanceInfo;
         }
     }
@@ -173,17 +204,148 @@ public abstract class SInstance implements SAttributeEnabled {
         this.type = type;
     }
 
-    public void setValue(Object value) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
-    }
+    public abstract void setValue(Object value);
 
     public abstract Object getValue();
+
+    /**
+     * Resolves a field instance and sets its value.
+     * @param value new value
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @param <VAL> value
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
+    public <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends STypeSimple<TI, VAL>,
+            TI extends SISimple<VAL>,
+            VAL extends Serializable> void setValue(
+                    VAL value,
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        getField(rootTypeClass, targetTypeFunction).setValue(value);
+    }
+
+    /**
+     * Resolves a field instance and returns its value, or null if empty.
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @param <VAL> value
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
+    public <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SISimple<VAL>,
+            VAL extends Serializable> VAL getValue(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        return findField(rootTypeClass, targetTypeFunction)
+                .map(SISimple::getValue)
+                .orElse(null);
+    }
+
+    /**
+     * Resolves a field instance and returns its optional value.
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @param <VAL> value
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
+    public <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SISimple<VAL>,
+            VAL extends Serializable> Optional<VAL> findValue(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        return findField(rootTypeClass, targetTypeFunction).map(f -> (VAL) f.getValue());
+    }
+
+
+    /**
+     * Resolves a field instance and returns it, or null if empty.
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
+    private <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SInstance> TI getField(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        return findField(rootTypeClass, targetTypeFunction).get();
+    }
+
+    /**
+     * Resolves a field instance and returns it as an Optional (empty if type not found as a descendant).
+     * @param rootTypeClass root type class
+     * @param targetTypeFunction function that receives the root type and returns the field type
+     * @param <RT> root type
+     * @param <RI> root instance
+     * @param <TT> target type
+     * @param <TI> target instance
+     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
+     */
+    public  <RT extends SType<RI>,
+            RI extends SInstance,
+            TT extends SType<TI>,
+            TI extends SInstance> Optional<TI> findField(
+                    Class<RT> rootTypeClass,
+                    IFunction<RT, TT> targetTypeFunction) {
+
+        if (!rootTypeClass.isAssignableFrom(this.getType().getClass())) {
+            throw new SingularInvalidTypeException(this, rootTypeClass);
+        }
+        final RI rootInstance = (RI) this;
+        final RT rootType = (RT) rootInstance.getType();
+        final TT targetType = targetTypeFunction.apply(rootType);
+
+        if (!STypes.listAscendants(targetType, true).contains(rootType)) {
+            throw new SingularInvalidFieldTypeException(rootType, targetType);
+        } else if (rootType == targetType) {
+            return Optional.of((TI) rootInstance);
+        } else if (rootInstance instanceof SIComposite) {
+            return ((SIComposite) rootInstance).findDescendant(targetType);
+        }
+        return Optional.empty();
+    }
+
 
     <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
         return convert(getValue(), resultClass);
     }
 
-    /** Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade. */
+    /**
+     * Apaga os valores associados a instância. Se for uma lista ou composto, apaga os valores em profundidade.
+     */
     public abstract void clearInstance();
 
     /**
@@ -207,18 +369,18 @@ public abstract class SInstance implements SAttributeEnabled {
     public abstract boolean isEmptyOfData();
 
     public Object getValueWithDefault() {
-        return getValue(null);
+        return getValue((Class<?>) null);
     }
 
     public final <T> T getValueWithDefault(Class<T> resultClass) {
         return convert(getValueWithDefault(), resultClass);
     }
 
-    public final <T> T getValue(Class<T> resultClass) {
+    public final <T> T getValue(@Nullable Class<T> resultClass) {
         return convert(getValue(), resultClass);
     }
 
-    <T> T convert(Object value, Class<T> resultClass) {
+    <T> T convert(@Nullable Object value, @Nullable Class<T> resultClass) {
         if (resultClass == null || value == null) {
             return (T) value;
         } else if (resultClass.isInstance(value)) {
@@ -227,67 +389,92 @@ public abstract class SInstance implements SAttributeEnabled {
         return getType().convert(value, resultClass);
     }
 
-    final <T> T getValue(PathReader pathReader, Class<T> resultClass) {
+    public final <T> T getValue(@Nonnull String fieldPath) {
+        return getValue(new PathReader(fieldPath), null);
+    }
+
+    public final <T> T getValue(@Nonnull String fieldPath, @Nullable Class<T> resultClass) {
+        return getValue(new PathReader(fieldPath), resultClass);
+    }
+
+    final <T> T getValue(@Nonnull PathReader pathReader, @Nullable Class<T> resultClass) {
         SInstance instance = this;
+        PathReader currentPath = pathReader;
         while (true) {
-            if (pathReader.isEmpty()) {
+            if (currentPath.isEmpty()) {
                 return instance.getValue(resultClass);
             }
-            SInstance children = instance.getFieldLocalWithoutCreating(pathReader);
+            SInstance children = instance.getFieldLocalWithoutCreating(currentPath);
             if (children == null) {
-                SFormUtil.resolveFieldType(instance.getType(), pathReader);
+                SFormUtil.resolveFieldType(instance.getType(), currentPath);
                 return null;
             }
             instance = children;
-            pathReader = pathReader.next();
+            currentPath = currentPath.next();
         }
     }
 
     SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+        throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
     <T> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported(), this);
     }
 
     void setValue(PathReader pathReader, Object value) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+        throw new SingularFormException(erroMsgMethodUnsupported(),this);
     }
 
-    final SInstance getField(PathReader pathReader) {
+    public SInstance getField(String path) {
+        return getField(new PathReader(path));
+    }
+
+    public Optional<SInstance> getFieldOpt(String path) {
+        return getFieldOpt(new PathReader(path));
+    }
+
+    /**
+     * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
+     * informado. Caso não seja do mesmo tipo, dispara uma exception.
+     */
+    public <II extends SInstance> II getField(SType<II> type) {
+        SInstance instance = getField(type.getNameSimple());
+        type.checkIfIsInstanceOf(instance);
+        return (II) instance;
+    }
+
+    @Nonnull
+    final SInstance getField(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            instance = instance.getFieldLocal(pathReader);
-            if (pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; ; currentPath = currentPath.next()) {
+            instance = instance.getFieldLocal(currentPath);
+            if (currentPath.isLast()) {
                 return instance;
-            } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
-            pathReader = pathReader.next();
         }
     }
 
-    SInstance getFieldLocal(PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+    @Nullable
+    SInstance getFieldLocal(@Nonnull PathReader pathReader) {
+        throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
-    final Optional<SInstance> getFieldOpt(PathReader pathReader) {
+    @Nonnull
+    final Optional<SInstance> getFieldOpt(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
-            if (!result.isPresent() || pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; ; currentPath = currentPath.next()) {
+            Optional<SInstance> result = instance.getFieldLocalOpt(currentPath);
+            if (!result.isPresent() || currentPath.isLast()) {
                 return result;
-            } else if (!(instance instanceof ICompositeInstance)) {
-                throw new SingularFormException(pathReader.getErrorMsg(instance, "Não suporta leitura de subCampos"), instance);
             }
             instance = result.get();
-            pathReader = pathReader.next();
         }
     }
 
-    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
-        throw new SingularFormException(erroMsgMethodUnsupported());
+    @Nonnull
+    Optional<SInstance> getFieldLocalOpt(@Nonnull PathReader pathReader) {
+        throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
     public String toStringDisplayDefault() {
@@ -299,75 +486,86 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Override
-    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
-        SInstance instanceAtr = getOrCreateAttribute(attributeFullName);
-        if (subPath != null) {
-            instanceAtr.setValue(new PathReader(subPath), value);
-        } else {
-            instanceAtr.setValue(value);
-        }
+    public final <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {
+        getAttributesMap().setAttributeValue(atr, value);
     }
 
     @Override
-    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> valueCalculation) {
-        SInstance instanceAtr = getOrCreateAttribute(attributeFullName);
-        setValueCalculation(instanceAtr, subPath, valueCalculation);
+    public void setAttributeValue(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable Object value) {
+        getAttributesMap().setAttributeValue(attributeFullName, subPath, value);
     }
 
-    static <V> void setValueCalculation(SInstance instance, String subPath, SimpleValueCalculation<V> valueCalculation) {
-        if (subPath != null) {
-            instance = instance.getField(new PathReader(subPath));
-        }
-        if (!(instance instanceof SISimple)) {
-            throw new SingularFormException("O atributo " + instance.getPathFull() + " não é do tipo " + SISimple.class.getName(),
-                    instance);
-        }
-        ((SISimple) instance).setValueCalculation(valueCalculation);
+    @Override
+    public final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
+            @Nullable SimpleValueCalculation<V> value) {
+        getAttributesMap().setAttributeCalculation(atr, value);
     }
 
-    private SInstance getOrCreateAttribute(String attributeFullName) {
-        SInstance instanceAtr = null;
+    @Override
+    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+            @Nullable SimpleValueCalculation<V> valueCalculation) {
+        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
+    }
+
+    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable  String value) {
+        AttrInternalRef ref = getDictionary().getAttribureRefereceOrCreateLazy(attributeName);
+        getAttributesMap().setAttributeValue(ref, null, value);
+    }
+
+    @Nonnull
+    private AttributeValuesManagerForSInstance getAttributesMap() {
         if (attributes == null) {
-            attributes = new LinkedHashMap<>();
-        } else {
-            instanceAtr = attributes.get(attributeFullName);
+            attributes = new AttributeValuesManagerForSInstance(this);
         }
-        if (instanceAtr == null) {
-            SType<?> attributeType = getType().getAttributeDefinedHierarchy(attributeFullName);
-            instanceAtr = attributeType.newInstance(getDocument());
-            instanceAtr.setAsAttribute(attributeFullName, this);
-            attributes.put(attributeFullName, instanceAtr);
-        }
-        return instanceAtr;
+        return attributes;
     }
 
     /**
-     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
+     * hierarquia.
      */
-    public Optional<SInstance> getAttribute(String fullName) {
-        return attributes == null ? Optional.empty() : Optional.ofNullable(attributes.get(fullName));
+    @Nonnull
+    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
+        return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
     @Override
-    public final <V> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public final <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(attributeFullName), resultClass);
+    }
+
+    @Nullable
+    public final <T> T getAttributeValue(@Nonnull AtrRef<?, ?, ?> atr, @Nullable Class<T> resultClass) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), resultClass);
+    }
+
+    @Nullable
+    public final <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
+    }
+
+    public final boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
+        return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
+    }
+
+    @Nullable
+    private <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         if (attributes != null) {
-            SInstance attribute = attributes.get(fullName);
-            if (attribute != null) {
-                return attribute.getValueInTheContextOf(this, resultClass);
-            }
+            return attributes.getAttributeValue(ref, resultClass);
         }
-        return getType().getValueInTheContextOf(this, fullName, resultClass);
+        return AttributeValuesManagerForSInstance.getAttributeValueFromType(this, ref, resultClass);
     }
 
     /**
      * Lista todos os atributos com valor associado diretamente à instância atual.
-     *
-     * @return Nunca null
      */
+    @Nonnull
     public Collection<SInstance> getAttributes() {
-        return attributes == null ? Collections.emptyList() : attributes.values();
+        return AttributeValuesManager.staticGetAttributes(attributes);
     }
 
+    @Nullable
     public SInstance getParent() {
         return this.parent;
     }
@@ -407,12 +605,8 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T as(Class<T> classeAlvo) {
-        if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
-            return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
-        }
-        throw new SingularFormException(
-                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
+    public <T> T as(Class<T> targetClass) {
+        return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) targetClass);
     }
 
     @Override
@@ -520,7 +714,7 @@ public abstract class SInstance implements SAttributeEnabled {
         onRemove();
         if (getFlag(InstanceFlags.REMOVENDO_INSTANCIA)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()", this);
         }
         setParent(null);
         removeChildren();
@@ -531,7 +725,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public void removeChildren() {
         if (this instanceof ICompositeInstance) {
-            ((ICompositeInstance) this).getChildren().stream().forEach(child -> child.internalOnRemove());
+            ((ICompositeInstance) this).getChildren().forEach(child -> child.internalOnRemove());
         }
     }
 
@@ -588,8 +782,8 @@ public abstract class SInstance implements SAttributeEnabled {
      * escrevendo-o.
      */
     StringBuilder toStringInternal() {
-        StringBuilder sb   = new StringBuilder();
-        String        name = getClass().getName();
+        StringBuilder sb = new StringBuilder();
+        String name = getClass().getName();
         if (name.startsWith(SInstance.class.getPackage().getName())) {
             sb.append(getClass().getSimpleName());
         } else {
@@ -680,4 +874,9 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         return Collections.emptyList();
     }
+
+    public SInstance getDocumentRoot(){
+        return document.getRoot();
+    }
+
 }

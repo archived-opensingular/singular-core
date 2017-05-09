@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -39,10 +40,9 @@ public class PackageBuilder {
      * Recupera o tipo, já carregado no dicionário, da classe informada. Senão estiver carregado ainda, busca carregá-lo
      * e as definições do pacote a que pertence. Senão encontrar no dicionário e nem conseguir encontrar para carregar,
      * então dispara Exception. É o mesmo que chamar {@link SDictionary#getType(Class)}.
-     *
-     * @return Nunca Null.
      */
-    public <T extends SType<?>> T getType(Class<T> typeClass) {
+    @Nonnull
+    public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
         return getDictionary().getType(typeClass);
     }
 
@@ -53,6 +53,7 @@ public class PackageBuilder {
      *
      * @return O pacote carregado
      */
+    @Nonnull
     public <T extends SPackage> T loadPackage(Class<T> packageClass) {
         return getDictionary().loadPackage(packageClass);
     }
@@ -69,8 +70,8 @@ public class PackageBuilder {
         return sPackage.extendType(simpleNameNewType, parentType);
     }
 
-    public <T extends SType<?>> T createType(Class<T> newTypeClass) {
-        return sPackage.registerType(MapByName.newInstance(newTypeClass), newTypeClass);
+    public <T extends SType<?>> T createType(@Nonnull Class<T> newTypeClass) {
+        return sPackage.registerType(newTypeClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -111,28 +112,13 @@ public class PackageBuilder {
         return attribute;
     }
 
-    public SType<?> getAttribute(AtrRef<?, ?, ?> atr) {
-        SType<?> attribute = getAttributeOptional(atr);
-        if (attribute == null) {
-            throw new SingularFormException("O atributo '" + atr.getNameFull() + "' não está definido");
-        }
-        return attribute;
+    @Nonnull
+    public SType<?> getAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
+        return Objects.requireNonNull(ref.getType());
     }
 
-    private SType<?> getAttributeOptional(AtrRef<?, ?, ?> atr) {
-        getDictionary().loadPackage(atr.getPackageClass());
-
-        if (atr.isNotBindDone()) {
-            return null;
-        }
-        SType<?> type = getDictionary().getTypeOptional(atr.getNameFull());
-        if (type != null) {
-            type.checkIfIsAttribute();
-        }
-        return type;
-    }
-
-    public <T extends SType<?>> T createAttributeIntoType(Class<? extends SType> targetTypeClass, AtrRef<T, ?, ?> atr) {
+    public <T extends SType<?>> T createAttributeIntoType(@Nonnull Class<? extends SType> targetTypeClass, @Nonnull AtrRef<T, ?, ?> atr) {
 
         Class attributeTypeClass = atr.isSelfReference() ? targetTypeClass : atr.getTypeClass();
         T attributeType = (T) getType(attributeTypeClass);
@@ -148,24 +134,25 @@ public class PackageBuilder {
         return createAttributeIntoType(getType(targetTypeClass), attributeSimpleName, attributeTypeClass);
     }
 
-    public <T extends SType<?>> T createAttributeIntoType(SType<?> targetType, String attributeSimpleName,
-                                                          Class<T> attributeTypeClass) {
+    public <T extends SType<?>> T createAttributeIntoType(@Nonnull SType<?> targetType,
+            @Nonnull String attributeSimpleName, @Nonnull Class<T> attributeTypeClass) {
         return createAttributeIntoType(targetType, attributeSimpleName, getType(attributeTypeClass));
     }
 
-    public <T extends SType<?>> T createAttributeIntoType(SType<?> targetType, String attributeSimpleName, T attributeType) {
+    public <T extends SType<?>> T createAttributeIntoType(@Nonnull SType<?> targetType, @Nonnull String attributeSimpleName, @Nonnull T attributeType) {
         return createAttributeIntoTypeInternal(targetType, sPackage.getName() + "." + attributeSimpleName,
                 attributeSimpleName, attributeType, false);
     }
 
-    private <T extends SType<?>> T createAttributeIntoTypeInternal(SType<?> targetType, String attrFullName,
-                                                                   String attrSimpleName, T attributeType,
+    @Nonnull
+    private <T extends SType<?>> T createAttributeIntoTypeInternal(@Nonnull SType<?> targetType, @Nonnull String attrFullName,
+                                                                   String attrSimpleName, @Nonnull T attributeType,
                                                                    boolean selfReference) {
         getDictionary().getTypesInternal().verifyMustNotBePresent(attrFullName, sPackage);
         SScopeBase scope = Objects.equals(targetType.getPackage(), sPackage) ? targetType : sPackage;
+
         T attributeDef = scope.extendType(attrSimpleName, attributeType);
-        attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo(targetType, selfReference));
-        targetType.addAttribute(attributeDef);
+        getDictionary().registeAttribute(attributeDef, targetType, selfReference);
         return attributeDef;
     }
 
@@ -181,7 +168,7 @@ public class PackageBuilder {
         getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull(), sPackage);
 
         T attributeDef = sPackage.extendType(atr.getNameSimple(), attributeType);
-        attributeDef.setAttributeDefinitionInfo(new AttributeDefinitionInfo());
+        getDictionary().registeAttribute(attributeDef);
         return attributeDef;
     }
 

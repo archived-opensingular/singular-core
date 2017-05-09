@@ -16,8 +16,16 @@
 
 package org.opensingular.form.wicket.util;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -25,18 +33,12 @@ import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.validation.IValidationError;
-import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public abstract class WicketFormUtils {
     private static final MetaDataKey<Integer>         KEY_INSTANCE_ID       = new MetaDataKey<Integer>() {};
@@ -98,21 +100,9 @@ public abstract class WicketFormUtils {
             .filter(c -> instanciaIfAware(c.getDefaultModel()).orElse(null) == instance)
             .findAny();
     }
-    public static Stream<Component> streamComponentsByInstance(Component anyComponent, BiPredicate<Component, SInstance> predicate) {
-        MarkupContainer rootContainer = streamAscendants(anyComponent)
-                .map(c -> getRootContainer(c))
-                .filter(c -> c != null)
-                .findAny().orElse(null);
-        if (rootContainer == null) {
-            return null;
-        }
-        return streamDescendants(rootContainer)
-            .filter(c -> c.getDefaultModel() instanceof ISInstanceAwareModel<?>)
-            .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
-    }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
-            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
             : Optional.empty();
     }
 
@@ -126,41 +116,6 @@ public abstract class WicketFormUtils {
             .flatMap(WicketUtils.$L.recursiveIterable(c -> (c instanceof Iterable<?>) ? (Iterable<Component>) c : null));
     }
 
-    public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container) {
-
-        final Map<Integer, Collection<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
-
-        container.visitChildren((component, visit) -> {
-            final IModel<?> model = component.getDefaultModel();
-            final SInstance instance;
-            if (model == null) {
-                return;
-            } else if (model.getObject() instanceof SInstance) {
-                instance = (SInstance) model.getObject();
-            } else if (model instanceof ISInstanceAwareModel<?>) {
-                instance = ((ISInstanceAwareModel<?>) model).getMInstancia();
-            } else {
-                return;
-            }
-
-            final Collection<IValidationError> errors = instanceErrors.get(instance.getId());
-            if (errors != null) {
-                for (IValidationError error : errors) {
-                    switch (error.getErrorLevel()) {
-                        case ERROR:
-                            component.error(error.getMessage());
-                            break;
-                        case WARNING:
-                            component.warn(error.getMessage());
-                            break;
-                        default:
-                            throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
-                    }
-                }
-            }
-        });
-    }
-
     public static Optional<SInstance> resolveInstance(Component component) {
         return (component != null)
             ? resolveInstance(component.getDefaultModel())
@@ -169,11 +124,10 @@ public abstract class WicketFormUtils {
 
     public static Optional<SInstance> resolveInstance(final IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
-            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getMInstancia())
+            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
             : Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     public static String generateTitlePath(Component parentContainer,
                                            SInstance parentContext,
                                            Component childComponent,
@@ -203,6 +157,7 @@ public abstract class WicketFormUtils {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private static void addTitle(Deque<String> titles, String title, SInstance instance, SInstance lastInstance) {
         if ((lastInstance != null) && (instance instanceof SIList<?>)) {
             int pos = findPos((SIList<SInstance>) instance, lastInstance);

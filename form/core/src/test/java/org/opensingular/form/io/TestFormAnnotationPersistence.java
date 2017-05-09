@@ -4,11 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.*;
-import org.opensingular.form.internal.xml.MElement;
-
-import java.util.Optional;
-
-import static org.fest.assertions.api.Assertions.assertThat;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 /**
  * @author Daniel Bordin
@@ -53,8 +49,8 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
         item.getField("name").asAtrAnnotation().text("ok");
         item.getField("qtd").asAtrAnnotation().text("qtd[1] is blank");
 
-        MElement xmlInstance = MformPersistenciaXML.toXML(instance);
-        MElement xmlAnnotation = MformPersistenciaXML.annotationToXml(instance).get();
+        MElement xmlInstance = SFormXMLUtil.toXML(instance).get();
+        MElement xmlAnnotation = SFormXMLUtil.annotationToXml(instance).get();
 
         //It's expected to be only persisted the field with value
         assertEquals(2,xmlInstance.countFilhos());
@@ -72,8 +68,8 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
 
         assertEquals(7,xmlAnnotation.countFilhos());
 
-        SIComposite instance2 = MformPersistenciaXML.fromXML(instance.getType(), xmlInstance);
-        MformPersistenciaXML.annotationLoadFromXml(instance2, xmlAnnotation);
+        SIComposite instance2 = SFormXMLUtil.fromXML(instance.getType(), xmlInstance);
+        SFormXMLUtil.annotationLoadFromXml(instance2, xmlAnnotation);
 
         assertInstance(instance2).isAnnotationTextEquals("description","ok");
         assertInstance(instance2).isAnnotationTextEquals("complement","fill the complement");
