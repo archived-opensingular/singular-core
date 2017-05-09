@@ -44,7 +44,7 @@ public final class InternalAccess {
      * @see {@link SType#setAttributeValueSavingForLatter(String, String)}
      */
     public void setAttributeValueSavingForLatter(@Nonnull SType<?> target, @Nonnull String attributeName,
-            @Nonnull String value) {
+            @Nullable String value) {
         target.setAttributeValueSavingForLatter(attributeName, value);
     }
 

@@ -25,6 +25,7 @@ import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 import java.io.ByteArrayInputStream;
@@ -182,9 +183,9 @@ public class WicketSerializationDebugUtil {
                 time = System.currentTimeMillis() - time;
 
                 msg += " deserialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
-                if (last == null || c.getClass() != last.getClass()) {
-                    msg += " !!!! DESERIALIZATED CLASS NOT OF EXPECTED TYPE result=" +
-                            (last == null ? null : last.getClass());
+                Class<?> classLast = (last == null ? null : last.getClass());
+                if (c.getClass() != classLast) {
+                    msg += " !!!! DESERIALIZATED CLASS NOT OF EXPECTED TYPE result=" + classLast;
                 }
             } finally {
                 lastVerification = msg;
@@ -197,15 +198,20 @@ public class WicketSerializationDebugUtil {
             Object last = null;
             try {
                 ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(content));
-                while (true) {
-                    last = in.readObject();
-                }
-            } catch (EOFException e) {
-                return last;
+                Object o;
+                do {
+                    o = in.readObject();
+                    if (o != null) {
+                        last = o;
+                    }
+                } while (o != null);
             } catch (Exception e) {
-                Throwables.throwIfUnchecked(e);
-                throw new RuntimeException(e);
+                if (! (e instanceof EOFException)) {
+                    Throwables.throwIfUnchecked(e);
+                    throw SingularException.rethrow(e);
+                }
             }
+            return last;
         }
     }
 

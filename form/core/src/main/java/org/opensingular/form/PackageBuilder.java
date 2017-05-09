@@ -70,7 +70,7 @@ public class PackageBuilder {
         return sPackage.extendType(simpleNameNewType, parentType);
     }
 
-    public <T extends SType<?>> T createType(Class<T> newTypeClass) {
+    public <T extends SType<?>> T createType(@Nonnull Class<T> newTypeClass) {
         return sPackage.registerType(newTypeClass);
     }
 
