@@ -136,9 +136,14 @@ public class TypeProcessorAttributeReadFromFile {
         String name = typeClass.getSimpleName();
         Class<?> context = typeClass;
         for (; context.isMemberClass(); context = context.getEnclosingClass()) {
-            name = context.getEnclosingClass().getSimpleName() + '$' + name;
+            name = concatNames(context, name);
         }
         return context.getResource(name + SUFFIX_PROPERTIES);
+    }
+
+    @Nonnull
+    private String concatNames(@Nonnull Class<?> context, @Nonnull String name) {
+        return context.getEnclosingClass().getSimpleName() + '$' + name;
     }
 
     /** Representa um lsita de valores de atributos obtidos de um arquivo específico. */
