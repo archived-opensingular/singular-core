@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.support.spring.util;
 
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -24,21 +25,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
-    private static synchronized void setup(ApplicationContext applicationContext){
+    private static synchronized void setup(ApplicationContext applicationContext) {
         ApplicationContextProvider.applicationContext = applicationContext;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
-    }
-
-    /** Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado. */
+    /**
+     * Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado.
+     */
     public static ApplicationContext get() {
         if (applicationContext == null) {
             throw SingularException.rethrow(
@@ -55,9 +55,31 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return () -> factory.apply(ApplicationContextProvider.get());
     }
 
-    /** Retorna um supplier que recuperará dinamicamente o bean a partir do contexto de aplicação atual. */
+    /**
+     * Retorna um supplier que recuperará dinamicamente o bean a partir do contexto de aplicação atual.
+     */
     public static <T> ISupplier<T> supplierOf(Class<T> beanClass) {
         return () -> ApplicationContextProvider.get().getBean(beanClass);
+    }
+
+    /**
+     * Retorna um supplier que recuperará dinamicamente o bean optional a partir do contexto de aplicação atual.
+     */
+    public static <T> ISupplier<Optional<T>> supplierOfOptional(Class<T> beanClass) {
+        return () -> {
+            try {
+                Optional.of(ApplicationContextProvider.get().getBean(beanClass));
+            } catch (Exception e) {
+                LoggerFactory.logger(ApplicationContextProvider.class).error(e.getMessage(), e);
+            }
+            return Optional.empty();
+        };
+
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ApplicationContextProvider.setup(applicationContext);
     }
 
 }

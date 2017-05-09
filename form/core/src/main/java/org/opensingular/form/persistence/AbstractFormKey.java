@@ -18,6 +18,7 @@ package org.opensingular.form.persistence;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Classe abstrata de apoio a criação de FormKey baseados em um tipo de objeto. Basta implementar o método {@link
@@ -29,7 +30,6 @@ import java.io.Serializable;
  */
 public abstract class AbstractFormKey<T extends Serializable> implements FormKey {
 
-    @Nonnull
     private final T value;
 
     public AbstractFormKey(@Nonnull String persistenceString) {
@@ -41,14 +41,14 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
             throw new SingularFormPersistenceException(
                     "O método parsePersistenceString() retornou null para a string '" + persistenceString + "'");
         }
-        this.value = newValue;
+        value = Objects.requireNonNull(newValue);
     }
 
-    public AbstractFormKey(@Nonnull T value) {
-        if (value == null) {
+    public AbstractFormKey(@Nonnull T keyValue) {
+        if (keyValue == null) {
             throw new SingularFormPersistenceException("O valor da chave não pode ser null");
         }
-        this.value = value;
+        value = keyValue;
     }
 
     @Nonnull

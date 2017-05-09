@@ -1,15 +1,11 @@
 package org.opensingular.form;
 
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SPackage;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 
+@SInfoPackage(name = "mform.exemplo.squery")
 public class SPackageTesteContatos extends SPackage {
 
     public STypeComposite<?>                                   contato;
@@ -27,10 +23,6 @@ public class SPackageTesteContatos extends SPackage {
     public STypeTelefoneNacional                               telefone;
     public STypeList<STypeString, SIString>                    emails;
     public STypeString                                         email;
-
-    public SPackageTesteContatos() {
-        super("mform.exemplo.squery");
-    }
 
     @Override
     protected void onLoadPackage(PackageBuilder pb) {

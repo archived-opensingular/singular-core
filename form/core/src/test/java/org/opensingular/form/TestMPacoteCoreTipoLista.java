@@ -317,11 +317,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertEquals((Boolean) true, tipo.isRequired());
     }
 
+    @SInfoPackage(name = "teste.pacoteListaA")
     public static final class TestPacoteListaA extends SPackage {
-
-        protected TestPacoteListaA() {
-            super("teste.pacoteListaA");
-        }
 
         @Override
         protected void onLoadPackage(PackageBuilder pb) {

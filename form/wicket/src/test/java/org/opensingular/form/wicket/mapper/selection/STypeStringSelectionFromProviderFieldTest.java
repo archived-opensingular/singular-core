@@ -2,7 +2,6 @@ package org.opensingular.form.wicket.mapper.selection;
 
 import com.google.common.collect.Lists;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -22,12 +21,10 @@ import java.util.stream.Collectors;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
-@Ignore("We have to figure out how to deal with this case of TypeAhead")
 @RunWith(Enclosed.class)
 public class STypeStringSelectionFromProviderFieldTest {
 
-    @Ignore("We have to figure out how to deal with this case of TypeAhead")
-    public static class Base extends SingularFormBaseTest {
+    public abstract static class Base extends SingularFormBaseTest {
 
         protected List<String> referenceOptions = Lists.newArrayList("strawberry", "apple", "orange", "banana", "avocado", "grapes");
         protected STypeString selectType;
@@ -51,7 +48,6 @@ public class STypeStringSelectionFromProviderFieldTest {
             return referenceOptions.stream().map(value -> getSelectKeyFromValue(value)).collect(Collectors.toList());
         }
 
-        @Test
         public void rendersAnDropDownWithSpecifiedOptionsByName() {
             tester.assertEnabled(formField(form, "favoriteFruit"));
             form.submit();
@@ -78,6 +74,10 @@ public class STypeStringSelectionFromProviderFieldTest {
             document.bindLocalService("fruitProvider", SimpleProvider.class, RefService.of(provider));
         }
 
+        @Test
+        public void rendersAnDropDownWithSpecifiedOptionsByName() {
+            super.rendersAnDropDownWithSpecifiedOptionsByName();
+        }
     }
 
 
@@ -87,7 +87,7 @@ public class STypeStringSelectionFromProviderFieldTest {
         @Override
         protected void buildBaseType(STypeComposite<?> baseType) {
             super.buildBaseType(baseType);
-            selectType.withSelectionFromProvider("nada");
+            selectType.withSelectionFromProvider(SimpleProvider.class);
         }
 
         @Override
@@ -97,6 +97,9 @@ public class STypeStringSelectionFromProviderFieldTest {
             document.bindLocalService(SimpleProvider.class, RefService.of(provider));
         }
 
+        @Test
+        public void rendersAnDropDownWithSpecifiedOptionsByName() {
+            super.rendersAnDropDownWithSpecifiedOptionsByName();
+        }
     }
-
 }

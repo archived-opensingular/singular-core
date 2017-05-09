@@ -26,6 +26,8 @@ import org.opensingular.form.view.SMultiSelectionByPicklistView;
 import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.view.SView;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -105,7 +107,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return setElementsType(simpleNameNewType, resolveType(elementsTypeClass));
     }
 
-    protected final E setElementsType(String simpleNameNewType, E elementsType) {
+    protected final E setElementsType(@Nullable String simpleNameNewType, @Nonnull E elementsType) {
         if (this.elementsType != null) {
             throw new SingularFormException("O tipo da lista já está definido", this);
         }

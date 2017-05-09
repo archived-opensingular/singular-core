@@ -1,9 +1,12 @@
 package org.opensingular.form;
 
+import org.opensingular.form.io.SFormXMLUtil;
+import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
 import org.opensingular.internal.lib.commons.xml.MElement;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * PARA USO INTERNO DA API APENAS. Dá acesso a estrutura internas do form. Os métodos aqui disponibilizados não deve ser
@@ -13,33 +16,43 @@ import java.util.Objects;
  */
 public final class InternalAccess {
 
-    private InternalAccess() {}
+    private static final InternalAccess INTERNAL_ACCESS = new InternalAccess();
 
-    public static InternalSInstance internal(SInstance instance) {
-        return new InternalSInstance(instance);
+    /** Provoca o repasse do objeto de acesso interno para as classes autorizadas pela API. */
+    public static void load() {
+        TypeProcessorAttributeReadFromFile.setInternalAccess(INTERNAL_ACCESS);
+        SFormXMLUtil.setInternalAccess(INTERNAL_ACCESS);
     }
 
-    public static final class InternalSInstance {
+    private InternalAccess() {}
 
-        private final SInstance instance;
+    /**
+     * @see {@link SInstance#addUnreadInfo(MElement)}
+     */
+    public void addUnreadInfo(SInstance instance, MElement xmlInfo) {
+        instance.addUnreadInfo(xmlInfo);
+    }
 
-        InternalSInstance(SInstance instance) {
-            this.instance = Objects.requireNonNull(instance);
-        }
+    /**
+     * @see {@link SInstance#getUnreadInfo()}
+     */
+    public List<MElement> getUnreadInfo(SInstance instance) {
+        return instance.getUnreadInfo();
+    }
 
-        /**
-         * @see {@link SInstance#addUnreadInfo(MElement)}
-         */
-        public void addUnreadInfo(MElement xmlInfo) {
-            instance.addUnreadInfo(xmlInfo);
-        }
+    /**
+     * @see {@link SType#setAttributeValueSavingForLatter(String, String)}
+     */
+    public void setAttributeValueSavingForLatter(@Nonnull SType<?> target, @Nonnull String attributeName,
+            @Nullable String value) {
+        target.setAttributeValueSavingForLatter(attributeName, value);
+    }
 
-        /**
-         * @see {@link SInstance#getUnreadInfo()}
-         */
-        public List<MElement> getUnreadInfo() {
-            return instance.getUnreadInfo();
-        }
-
+    /**
+     * @see {@link SInstance#setAttributeValueSavingForLatter(String, String)}
+     */
+    public void setAttributeValueSavingForLatter(@Nonnull SInstance target, @Nonnull String attributeName,
+            @Nullable String value) {
+        target.setAttributeValueSavingForLatter(attributeName, value);
     }
 }

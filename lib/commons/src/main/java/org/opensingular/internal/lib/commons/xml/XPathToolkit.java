@@ -301,18 +301,13 @@ public final class XPathToolkit {
      * @return Node The first node found that matches the XPath, or null.
      */
     public static Node selectNode(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
         if (isSimples(xPath)) {
-            return findSimples(contextNode, xPath);
-        } else {
-            try {
-                return XPathAPI.selectSingleNode(contextNode, xPath);
-            } catch (TransformerException e) {
-                throw SingularException.rethrow(e);
-            }
+            return findSimples(EWrapper.getOriginal(contextNode), xPath);
+        }
+        try {
+            return XPathAPI.selectSingleNode(EWrapper.getOriginal(contextNode), xPath);
+        } catch (TransformerException e) {
+            throw SingularException.rethrow(e);
         }
     }
 
@@ -348,10 +343,6 @@ public final class XPathToolkit {
      * @return Node The first node found that matches the XPath, or null.
      */
     public static MElementResult selectElements(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
         if (contextNode instanceof Element) {
             if (xPath == null) {
                 return new MElementResult((Element) contextNode);
@@ -370,11 +361,6 @@ public final class XPathToolkit {
      * @return Sempre not null. Se não encontrar nada retorna vazio.
      */
     public static List<String> getValores(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
-
         List<String> lista = null;
         if (isSelectSimples(xPath)) {
             MElementResult rs = new MElementResult((Element) contextNode, xPath);
@@ -412,13 +398,9 @@ public final class XPathToolkit {
      * @return NodeList A NodeIterator, should never be null.
      */
     public static NodeList selectNodeList(Node contextNode, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (contextNode instanceof EWrapper) {
-            contextNode = ((EWrapper) contextNode).getOriginal();
-        }
-
         try {
-            return XPathAPI.selectNodeList(contextNode, xPath);
+            // O XPath não funciona a partir o MElement
+            return XPathAPI.selectNodeList(EWrapper.getOriginal(contextNode), xPath);
         } catch (TransformerException e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }
@@ -433,13 +415,8 @@ public final class XPathToolkit {
      * @return NodeIterator A NodeIterator, should never be null.
      */
     public static NodeIterator selectNodeIterator(Node context, String xPath) {
-        // O XPath não funciona a partir o MElement
-        if (context instanceof EWrapper) {
-            context = ((EWrapper) context).getOriginal();
-        }
-
         try {
-            return XPathAPI.selectNodeIterator(context, xPath);
+            return XPathAPI.selectNodeIterator(EWrapper.getOriginal(context), xPath);
         } catch (TransformerException e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }
@@ -453,10 +430,10 @@ public final class XPathToolkit {
      * @param path Caminho a ser pesquisa deve conter apenas nomes e /
      * @return O elemento se for encontrado.
      */
-    private static Node findSimples(Node pai, String path) {
+    private static Node findSimples(final Node pai, final String nodePath) {
 
         Node resp = pai;
-
+        String path = nodePath;
         if (path.charAt(0) == '/') {
             resp = XmlUtil.getRootParent(resp);
             if (path.length() == 1) {
