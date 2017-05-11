@@ -155,6 +155,11 @@ public class BSModalWindow extends Panel {
         return this;
     }
 
+    public BSModalWindow setOnHideCallBack(IConsumer<AjaxRequestTarget> onHideCallBack) {
+        getModalBorder().setOnHideCallback(onHideCallBack);
+        return this;
+    }
+    
     private static final class NonForm extends WebMarkupContainer {
         private NonForm(String id) {
             super(id);

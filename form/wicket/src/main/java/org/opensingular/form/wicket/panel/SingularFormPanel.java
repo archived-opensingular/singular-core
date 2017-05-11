@@ -16,11 +16,22 @@
 
 package org.opensingular.form.wicket.panel;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
@@ -36,6 +47,7 @@ import org.opensingular.form.wicket.IWicketBuildListener;
 import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
@@ -44,15 +56,6 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
-
-import javax.annotation.Nonnull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos.
@@ -85,6 +88,8 @@ public class SingularFormPanel extends Panel {
     private RefSDocumentFactory            documentFactoryRef;
 
     private List<IWicketBuildListener>     buildListeners = new ArrayList<>();
+
+    final BSContainer<?>                   modalItems     = new BSContainer<>("modalItems");
 
     /**
      * Construtor do painel.
@@ -225,6 +230,10 @@ public class SingularFormPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+
+        add(new WebMarkupContainer("modalContainer")
+            .add(modalItems));
+
         if (instanceModel.getObject() == null) {
             if (instanceCreator != null) {
                 SInstance instance = instanceCreator.get();
@@ -404,7 +413,7 @@ public class SingularFormPanel extends Panel {
         }
         return Optional.of(documentFactoryRef);
     }
-    
+
     public SingularFormPanel addBuildListener(IWicketBuildListener listener) {
         this.buildListeners.add(listener);
         return this;
@@ -412,4 +421,27 @@ public class SingularFormPanel extends Panel {
     protected List<IWicketBuildListener> getBuildListeners() {
         return buildListeners;
     }
+
+//    TODO incompleto
+//    @Override
+//    public void onEvent(IEvent<?> event) {
+//        super.onEvent(event);
+//        if (event.getPayload() instanceof IShowModalEvent) {
+//            event.stop();
+//
+//            IShowModalEvent evt = (IShowModalEvent) event.getPayload();
+//
+//            BFModalWindow modal = new BFModalWindow(modalItems.newChildId());
+//            modalItems.newTag("div", modal);
+//
+//            Component content = evt.getModalContent(modal.getId() + "_body");
+//            modal.setBody(content);
+//
+//            evt.getTarget().add(modalItems.getParent());
+//
+//            modal.show(evt.getTarget());
+//
+//            modal.setOnHideCallBack(t -> modalItems.removeItem(modal));
+//        }
+//    }
 }

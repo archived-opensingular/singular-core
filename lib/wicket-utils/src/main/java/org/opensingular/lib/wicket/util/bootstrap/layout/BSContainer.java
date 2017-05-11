@@ -18,6 +18,7 @@ package org.opensingular.lib.wicket.util.bootstrap.layout;
 
 import org.opensingular.lib.wicket.util.bootstrap.BootstrapSize;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
@@ -28,8 +29,12 @@ import org.apache.wicket.model.IModel;
 
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
@@ -151,6 +156,12 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         C comp = factory.newComponent(newChildId());
         getItems().add(comp);
         return comp;
+    }
+
+    public void removeItem(Component component) {
+        Deque<MarkupContainer> deque = new LinkedList<>(WicketUtils.listParents(component, this.getItems()));
+        deque.pop();
+        getItems().remove(deque.pop());
     }
 
     public THIS setTagName(String tagName) {
