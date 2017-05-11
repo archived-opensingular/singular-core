@@ -281,7 +281,6 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param nameSpaceURI Nome do namespace. Tipicamente o name space possui o
      *                     formato de uma URL (não é obrigatório) no formato, por exemplo,
-     *                     http://www.miranteinfo.com/sisfinanceiro/cobranca/registraPagamento.
      * @param nomeRaiz     o nome do elemento que será criado. Pode conter prefixo
      *                     (ex.: "fi:ContaPagamento").
      * @return -
