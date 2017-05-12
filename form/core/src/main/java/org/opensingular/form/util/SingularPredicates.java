@@ -16,7 +16,6 @@
 
 package org.opensingular.form.util;
 
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeSimple;
@@ -26,7 +25,7 @@ import org.opensingular.form.SISimple;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Predicate;
 
 public class SingularPredicates {
@@ -68,7 +67,7 @@ public class SingularPredicates {
         return si -> !Value.notNull(si, type);
     }
 
-    public static <T extends Serializable> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsNotIn(STypeSimple<? extends SISimple<T>, T> type, Collection<T> vals) {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() == 0;
     }
 
@@ -82,7 +81,7 @@ public class SingularPredicates {
         return i -> Arrays.stream(vals).filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
-    public static <T extends Serializable> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, List<T> vals) {
+    public static <T extends Serializable> Predicate<SInstance> typeValueIsIn(STypeSimple<? extends SISimple<T>, T> type, Collection<T> vals) {
         return i -> vals.stream().filter(v -> v.equals(Value.of(i, type))).count() > 0;
     }
 
