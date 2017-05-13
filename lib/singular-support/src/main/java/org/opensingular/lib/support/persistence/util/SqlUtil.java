@@ -15,6 +15,10 @@
  */
 package org.opensingular.lib.support.persistence.util;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
@@ -23,6 +27,8 @@ import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA
  * Utility class for sql processing.
  */
 public class SqlUtil {
+
+    private static final List<String> CRUD_OPERATIONS = Arrays.asList("SELECT", "UPDATE", "DELETE", "INSERT");
 
     private SqlUtil() {}
 
@@ -53,4 +59,17 @@ public class SqlUtil {
         return replaceSchemaName(Constants.SCHEMA).equals(schemaName);
     }
 
+    public static boolean hasCompleteCrud(List<String> vals) {
+        if (CollectionUtils.isEmpty(vals)) {
+            return false;
+        }
+
+        for (String crudOperation : CRUD_OPERATIONS) {
+            if (!vals.contains(crudOperation)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

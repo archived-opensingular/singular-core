@@ -19,13 +19,13 @@ package org.opensingular.lib.wicket.util.modal;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
@@ -130,12 +130,12 @@ public class BSModalWindow extends Panel {
         return this;
     }
 
-    public BSModalWindow addButton(BSModalBorder.ButtonStyle style, ActionAjaxButton button) {
+    public BSModalWindow addButton(BSModalBorder.ButtonStyle style, AjaxButton button) {
         getModalBorder().addButton(style, button);
         return this;
     }
 
-    public BSModalWindow addButton(BSModalBorder.ButtonStyle style, IModel<String> label, ActionAjaxButton button) {
+    public BSModalWindow addButton(BSModalBorder.ButtonStyle style, IModel<String> label, AjaxButton button) {
         getModalBorder().addButton(style, label, button);
         return this;
     }

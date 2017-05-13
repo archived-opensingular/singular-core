@@ -22,6 +22,8 @@ import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.AtrBootstrap;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
@@ -34,17 +36,12 @@ import java.util.function.Function;
  */
 public interface SAttributeEnabled {
 
-    default <V> void setAttributeCalculation(AtrRef<?, ?, V> atr, SimpleValueCalculation<V> value) {
-        getDictionary().loadPackage(atr.getPackageClass());
-        setAttributeCalculation(atr.getNameFull(), null, value);
-    }
+    <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value);
 
-    <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> value);
+    <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+            @Nullable SimpleValueCalculation<V> value);
 
-    default <V> void setAttributeValue(AtrRef<?, ?, V> atr, V value) {
-        getDictionary().loadPackage(atr.getPackageClass());
-        setAttributeValue(atr.getNameFull(), null, value);
-    }
+    <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value);
 
     default void setAttributeValue(SType<?> defAttribute, Object value) {
         defAttribute.checkIfIsAttribute();
@@ -60,29 +57,27 @@ public interface SAttributeEnabled {
 
     /**
      * Lista todos os atributos com valor associado diretamente ao objeto atual.
-     * @return Nunca null
      */
+    @Nonnull
     public Collection<SInstance> getAttributes();
 
-    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
-    public Optional<SInstance> getAttribute(String fullName);
+    /**
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
+     * hierarquia.
+     */
+    @Nonnull
+    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName);
 
-    <V> V getAttributeValue(String attributeFullName, Class<V> resultClass);
+    @Nullable
+    <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass);
 
-    default <T> T getAttributeValue(AtrRef<?, ?, ?> atr, Class<T> resultClass) {
-        getDictionary().loadPackage(atr.getPackageClass());
-        return getAttributeValue(atr.getNameFull(), resultClass);
-    }
+    @Nullable
+    <T> T getAttributeValue(@Nonnull AtrRef<?, ?, ?> atr, @Nullable Class<T> resultClass);
 
-    default <V> V getAttributeValue(AtrRef<?, ?, V> atr) {
-        getDictionary().loadPackage(atr.getPackageClass());
-        return getAttributeValue(atr.getNameFull(), atr.getValueClass());
-    }
+    @Nullable
+    <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr);
 
-    default <V> boolean hasAttribute(AtrRef<?, ?, V> atr) {
-        getDictionary().loadPackage(atr.getPackageClass());
-        return getAttribute(atr.getNameFull()).isPresent();
-    }
+    boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr);
 
     default Object getAttributeValue(String attributeFullName) {
         return getAttributeValue(attributeFullName, null);

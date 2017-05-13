@@ -19,28 +19,28 @@ public class SIAttachmentTest {
 
     @Test
     public void testToStringDisplayDefaultWihOneByte() {
-        attachment.setValue(STypeAttachment.FIELD_SIZE, 1);
+        attachment.setValue(STypeAttachment.FIELD_FILE_SIZE, 1);
         attachment.setValue(STypeAttachment.FIELD_NAME, "name");
         Assertions.assertThat(attachment.toStringDisplayDefault()).isEqualTo("name (1 B)");
     }
 
     @Test
     public void testToStringDisplayDefaultWihOneKiloByte() {
-        attachment.setValue(STypeAttachment.FIELD_SIZE, ONE_KB);
+        attachment.setValue(STypeAttachment.FIELD_FILE_SIZE, ONE_KB);
         attachment.setValue(STypeAttachment.FIELD_NAME, "name");
         Assertions.assertThat(attachment.toStringDisplayDefault()).isEqualTo("name (1 KB)");
     }
 
     @Test
     public void testToStringDisplayDefaultWihOneMegaByte() {
-        attachment.setValue(STypeAttachment.FIELD_SIZE, Math.pow(ONE_KB, 2));
+        attachment.setValue(STypeAttachment.FIELD_FILE_SIZE, Math.pow(ONE_KB, 2));
         attachment.setValue(STypeAttachment.FIELD_NAME, "name");
         Assertions.assertThat(attachment.toStringDisplayDefault()).isEqualTo("name (1 MB)");
     }
 
     @Test
     public void testToStringDisplayDefaultWihOneGigaByte() {
-        attachment.setValue(STypeAttachment.FIELD_SIZE, Math.pow(ONE_KB, 3));
+        attachment.setValue(STypeAttachment.FIELD_FILE_SIZE, Math.pow(ONE_KB, 3));
         attachment.setValue(STypeAttachment.FIELD_NAME, "name");
         Assertions.assertThat(attachment.toStringDisplayDefault()).isEqualTo("name (1 GB)");
     }

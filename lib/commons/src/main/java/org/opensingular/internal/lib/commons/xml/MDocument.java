@@ -18,7 +18,6 @@ package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,26 +57,27 @@ public abstract class MDocument implements Document {
         return createMElementNS(null, qualifiedName);
     }
 
-    public MElement createMElementNS(String namespaceURI, String qualifiedName) {
-        namespaceURI = StringUtils.trimToNull(namespaceURI);
+    public MElement createMElementNS(String namespaceURI2, String qualifiedName) {
+        String resolvedNamespaceURI = StringUtils.trimToNull(namespaceURI2);
+        String resolvedQualifiedName = qualifiedName;
 
-        int pos = qualifiedName.lastIndexOf(MElementWrapper.SEPARADOR_ELEMENT);
+        int pos = resolvedQualifiedName.lastIndexOf(MElementWrapper.SEPARADOR_ELEMENT);
         String resto = null;
         if (pos != -1) {
             if (pos == 0) {
                 throw new SingularException("Criação no raiz para elemento salto não faz sentido");
             }
-            resto = qualifiedName.substring(pos + 1);
-            qualifiedName = qualifiedName.substring(0, pos);
+            resto = resolvedQualifiedName.substring(pos + 1);
+            resolvedQualifiedName = resolvedQualifiedName.substring(0, pos);
         }
-        Element novo = createElementNS(namespaceURI, qualifiedName);
-        if (namespaceURI != null) {
-            int posPrefixo = qualifiedName.indexOf(':');
+        Element novo = createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+        if (resolvedNamespaceURI != null) {
+            int posPrefixo = resolvedQualifiedName.indexOf(':');
             if ((posPrefixo == -1)) {
-                novo.setAttribute("xmlns", namespaceURI);
+                novo.setAttribute("xmlns", resolvedNamespaceURI);
             } else {
-                String prefixo = qualifiedName.substring(0, posPrefixo);
-                novo.setAttribute("xmlns:" + prefixo, namespaceURI);
+                String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
+                novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
             }
         }
         if (resto != null) {

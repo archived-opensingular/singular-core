@@ -23,10 +23,10 @@ import org.opensingular.form.event.SInstanceEvent;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.validation.IValidationError;
+import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
@@ -36,9 +36,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
@@ -51,7 +49,8 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private SType<?> type;
 
-    private Map<String, SInstance> attributes;
+    @Nullable
+    private AttributeValuesManagerForSInstance attributes;
 
     private SDocument document;
 
@@ -128,18 +127,32 @@ public abstract class SInstance implements SAttributeEnabled {
      * retornam true.
      */
     public boolean isAttribute() {
-        return getFlag(InstanceFlags.IS_ATRIBUTO);
+        return attributeInstanceInfo != null;
     }
 
-    final void setAsAttribute(String fullName, SType<?> attributeOwner) {
-        setFlag(InstanceFlags.IS_ATRIBUTO, true);
-        attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
+    final void setAsAttribute(AttrInternalRef ref, SType<?> attributeOwner) {
+        attributeInstanceInfo = new AttributeInstanceInfo(ref, attributeOwner);
 
     }
 
-    final void setAsAttribute(String fullName, SInstance attributeOwner) {
-        setFlag(InstanceFlags.IS_ATRIBUTO, true);
-        attributeInstanceInfo = new AttributeInstanceInfo(fullName, attributeOwner);
+    final void setAsAttribute(AttrInternalRef ref, SInstance attributeOwner) {
+        attributeInstanceInfo = new AttributeInstanceInfo(ref, attributeOwner);
+    }
+
+    /**
+     * Indica se a instancia é um atributo cujo valor foi lido em carater temporário e que deve ser convertido para o
+     * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
+     */
+    final void setAttributeShouldMigrate() {
+        setFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE, true);
+    }
+
+    /**
+     * Indica se a instancia é um atributo cujo valor foi lido em carater temporário e que deve ser convertido para o
+     * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
+     */
+    final boolean isAttributeShouldMigrate() {
+        return getFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE);
     }
 
     /**
@@ -172,7 +185,6 @@ public abstract class SInstance implements SAttributeEnabled {
         }
         this.parent = pai;
         if (pai != null && pai.isAttribute()) {
-            setFlag(InstanceFlags.IS_ATRIBUTO, true);
             attributeInstanceInfo = pai.attributeInstanceInfo;
         }
     }
@@ -309,21 +321,21 @@ public abstract class SInstance implements SAttributeEnabled {
                     Class<RT> rootTypeClass,
                     IFunction<RT, TT> targetTypeFunction) {
 
-        if (!rootTypeClass.isAssignableFrom(this.getType().getClass()))
+        if (!rootTypeClass.isAssignableFrom(this.getType().getClass())) {
             throw new SingularInvalidTypeException(this, rootTypeClass);
-;
+        }
         final RI rootInstance = (RI) this;
         final RT rootType = (RT) rootInstance.getType();
         final TT targetType = targetTypeFunction.apply(rootType);
 
-        if (!STypes.listAscendants(targetType, true).contains(rootType))
+        if (!STypes.listAscendants(targetType, true).contains(rootType)) {
             throw new SingularInvalidFieldTypeException(rootType, targetType);
-        else if (rootType == targetType)
+        } else if (rootType == targetType) {
             return Optional.of((TI) rootInstance);
-        else if (rootInstance instanceof SIComposite)
+        } else if (rootInstance instanceof SIComposite) {
             return ((SIComposite) rootInstance).findDescendant(targetType);
-        else
-            return Optional.empty();
+        }
+        return Optional.empty();
     }
 
 
@@ -387,17 +399,18 @@ public abstract class SInstance implements SAttributeEnabled {
 
     final <T> T getValue(@Nonnull PathReader pathReader, @Nullable Class<T> resultClass) {
         SInstance instance = this;
+        PathReader currentPath = pathReader;
         while (true) {
-            if (pathReader.isEmpty()) {
+            if (currentPath.isEmpty()) {
                 return instance.getValue(resultClass);
             }
-            SInstance children = instance.getFieldLocalWithoutCreating(pathReader);
+            SInstance children = instance.getFieldLocalWithoutCreating(currentPath);
             if (children == null) {
-                SFormUtil.resolveFieldType(instance.getType(), pathReader);
+                SFormUtil.resolveFieldType(instance.getType(), currentPath);
                 return null;
             }
             instance = children;
-            pathReader = pathReader.next();
+            currentPath = currentPath.next();
         }
     }
 
@@ -434,12 +447,11 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     final SInstance getField(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            instance = instance.getFieldLocal(pathReader);
-            if (pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; ; currentPath = currentPath.next()) {
+            instance = instance.getFieldLocal(currentPath);
+            if (currentPath.isLast()) {
                 return instance;
             }
-            pathReader = pathReader.next();
         }
     }
 
@@ -451,13 +463,12 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     final Optional<SInstance> getFieldOpt(@Nonnull PathReader pathReader) {
         SInstance instance = this;
-        while (true) {
-            Optional<SInstance> result = instance.getFieldLocalOpt(pathReader);
-            if (!result.isPresent() || pathReader.isLast()) {
+        for (PathReader currentPath = pathReader; ; currentPath = currentPath.next()) {
+            Optional<SInstance> result = instance.getFieldLocalOpt(currentPath);
+            if (!result.isPresent() || currentPath.isLast()) {
                 return result;
             }
             instance = result.get();
-            pathReader = pathReader.next();
         }
     }
 
@@ -475,76 +486,86 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Override
-    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
-        SInstance instanceAtr = getOrCreateAttribute(attributeFullName);
-        if (subPath != null) {
-            instanceAtr.setValue(new PathReader(subPath), value);
-        } else {
-            instanceAtr.setValue(value);
-        }
+    public final <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {
+        getAttributesMap().setAttributeValue(atr, value);
     }
 
     @Override
-    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> valueCalculation) {
-        SInstance instanceAtr = getOrCreateAttribute(attributeFullName);
-        setValueCalculation(instanceAtr, subPath, valueCalculation);
+    public void setAttributeValue(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable Object value) {
+        getAttributesMap().setAttributeValue(attributeFullName, subPath, value);
     }
 
-    static <V> void setValueCalculation(SInstance instance, String subPath, SimpleValueCalculation<V> valueCalculation) {
-        if (subPath != null) {
-            instance = instance.getField(new PathReader(subPath));
-        }
-        if (!(instance instanceof SISimple)) {
-            throw new SingularFormException("O atributo " + instance.getPathFull() + " não é do tipo " + SISimple.class.getName(),
-                    instance);
-        }
-        ((SISimple) instance).setValueCalculation(valueCalculation);
+    @Override
+    public final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
+            @Nullable SimpleValueCalculation<V> value) {
+        getAttributesMap().setAttributeCalculation(atr, value);
     }
 
-    private SInstance getOrCreateAttribute(String attributeFullName) {
-        SInstance instanceAtr = null;
+    @Override
+    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+            @Nullable SimpleValueCalculation<V> valueCalculation) {
+        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
+    }
+
+    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable  String value) {
+        AttrInternalRef ref = getDictionary().getAttribureRefereceOrCreateLazy(attributeName);
+        getAttributesMap().setAttributeValue(ref, null, value);
+    }
+
+    @Nonnull
+    private AttributeValuesManagerForSInstance getAttributesMap() {
         if (attributes == null) {
-            attributes = new LinkedHashMap<>();
-        } else {
-            instanceAtr = attributes.get(attributeFullName);
+            attributes = new AttributeValuesManagerForSInstance(this);
         }
-        if (instanceAtr == null) {
-            SType<?> attributeType = getType().getAttributeDefinedHierarchy(attributeFullName);
-            instanceAtr = attributeType.newInstance(getDocument());
-            instanceAtr.setAsAttribute(attributeFullName, this);
-            attributes.put(attributeFullName, instanceAtr);
-        }
-        return instanceAtr;
+        return attributes;
     }
 
     /**
-     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
+     * hierarquia.
      */
     @Nonnull
-    public Optional<SInstance> getAttribute(@Nonnull String fullName) {
-        return attributes == null ? Optional.empty() : Optional.ofNullable(attributes.get(fullName));
+    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
+        return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
     @Override
-    public final <V> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public final <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(attributeFullName), resultClass);
+    }
+
+    @Nullable
+    public final <T> T getAttributeValue(@Nonnull AtrRef<?, ?, ?> atr, @Nullable Class<T> resultClass) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), resultClass);
+    }
+
+    @Nullable
+    public final <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
+    }
+
+    public final boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
+        return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
+    }
+
+    @Nullable
+    private <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         if (attributes != null) {
-            SInstance attribute = attributes.get(fullName);
-            if (attribute != null) {
-                return attribute.getValueInTheContextOf(this, resultClass);
-            }
+            return attributes.getAttributeValue(ref, resultClass);
         }
-        return getType().getValueInTheContextOf(this, fullName, resultClass);
+        return AttributeValuesManagerForSInstance.getAttributeValueFromType(this, ref, resultClass);
     }
 
     /**
      * Lista todos os atributos com valor associado diretamente à instância atual.
-     *
-     * @return Nunca null
      */
+    @Nonnull
     public Collection<SInstance> getAttributes() {
-        return attributes == null ? Collections.emptyList() : attributes.values();
+        return AttributeValuesManager.staticGetAttributes(attributes);
     }
 
+    @Nullable
     public SInstance getParent() {
         return this.parent;
     }
@@ -704,7 +725,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public void removeChildren() {
         if (this instanceof ICompositeInstance) {
-            ((ICompositeInstance) this).getChildren().stream().forEach(child -> child.internalOnRemove());
+            ((ICompositeInstance) this).getChildren().forEach(child -> child.internalOnRemove());
         }
     }
 
@@ -738,7 +759,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public boolean hasNestedValidationErrors() {
-        return SInstances.hasAny(this, i -> hasValidationErrors());
+        return SInstances.hasAny(this, SInstance::hasValidationErrors);
     }
 
     public Collection<IValidationError> getValidationErrors() {

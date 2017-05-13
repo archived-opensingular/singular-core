@@ -18,6 +18,8 @@ package org.opensingular.form;
 
 import org.opensingular.form.calculation.SimpleValueCalculation;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
@@ -79,8 +81,8 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
-    public Optional<SInstance> getAttribute(String fullName) {
-        return getTarget().getAttribute(fullName);
+    public Optional<SInstance> getAttributeDirectly(String fullName) {
+        return getTarget().getAttributeDirectly(fullName);
     }
 
     //-----------------------------------------------------------
@@ -103,7 +105,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public <V> void setAttributeValue(AtrRef<?, ?, V> atr, V value) {
+    public <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {
         getTarget().setAttributeValue(atr, value);
     }
 
@@ -134,6 +136,11 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
 
     @Override
     public <V> V getAttributeValue(AtrRef<?, ?, V> atr) {return getTarget().getAttributeValue(atr);
+    }
+
+    @Override
+    public boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+        return getTarget().hasAttribute(atr);
     }
 
     @Override

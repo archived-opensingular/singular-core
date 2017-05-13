@@ -1,10 +1,13 @@
 package org.opensingular.form.io;
 
 import org.fest.assertions.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.AtrRef;
+import org.opensingular.form.CoreAttributesWithExternalConfigTest;
 import org.opensingular.form.InstanceSerializableRef;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
@@ -14,6 +17,7 @@ import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
@@ -21,8 +25,11 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.ServiceRegistry.Pair;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
@@ -275,6 +282,93 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
     }
 
+    /**
+     * Testa se consegue serializar/deserializar uma instancia com um atributo que não é carregado na carga do tipo,
+     * mas dinamicamente mais adiante após a criação.
+     */
+    @Test
+    public void testSerializationAttributes_withDinamicLoadedAttribute() {
+        SInstance instance = createDinamicAttributeInstance();
+        SInstance instance2 = serializarEDeserializar(instance);
+        assertCorrectAttributeRead(assertInstance(instance2));
+    }
+
+    /**
+     * Testa se consegue serializar/deserializar uma instancia com um atributo que não é carregado na carga do tipo,
+     * mas dinamicamente mais adiante após a criação.
+     */
+    @Test
+    public void testSerializationAttributes_withDinamicLoadedAttribute_twice() {
+        SInstance instance = createDinamicAttributeInstance();
+        SInstance instance2 = serializarEDeserializar(instance);
+        SInstance instance3 = serializarEDeserializar(instance2);
+        assertCorrectAttributeRead(assertInstance(instance3));
+    }
+
+    private void assertCorrectAttributeRead(AssertionsSInstance instance) {
+        //Verifica se a deserialização trouxe os dados de atributos corretos
+        AtrRef<STypeString, SIString, String> atr1 = PackageDinamicAttr.ATR_TEXT1;
+        AtrRef<STypeInteger, SIInteger, Integer> atr2 = PackageDinamicAttr.ATR_INT1;
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+
+        instance.isAttribute(atr1.getNameFull(), "V1");
+        instance.isAttribute(atr2.getNameFull(), "20");
+
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertFalse(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+
+        instance.isAttribute(atr1, "V1");
+        instance.isAttribute(atr2, 20);
+
+        //Depois das linhas a cima, então têm que ter convertido os valores
+        instance.isAttribute(atr2.getNameFull(), 20);
+        assertEquals(SIInteger.class, instance.getTarget().getAttributeDirectly(atr2.getNameFull()).get().getClass());
+
+        assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
+        assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
+    }
+
+    @NotNull
+    private SIComposite createDinamicAttributeInstance() {
+        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
+            pacote.loadPackage(SPackageBasic.class);
+            STypeComposite<?> tipoEndereco = pacote.createCompositeType("endereco");
+            tipoEndereco.addFieldString("rua");
+        });
+        instance.setValue("rua", "A");
+        instance.asAtr().label("Address");
+
+        assertFalse(instance.getDictionary().getTypeOptional(PackageDinamicAttr.ATR_TEXT1.getNameFull()).isPresent());
+        assertFalse(instance.getDictionary().getTypeOptional(PackageDinamicAttr.ATR_INT1.getNameFull()).isPresent());
+
+        //Agora força a adição dinâmica do atributo ao type
+        instance.setAttributeValue(PackageDinamicAttr.ATR_TEXT1, "V1");
+        instance.setAttributeValue(PackageDinamicAttr.ATR_INT1, 20);
+
+        assertTrue(instance.getDictionary().getTypeOptional(PackageDinamicAttr.ATR_TEXT1.getNameFull()).isPresent());
+        assertTrue(instance.getDictionary().getTypeOptional(PackageDinamicAttr.ATR_INT1.getNameFull()).isPresent());
+
+        return instance;
+    }
+
+    @SInfoPackage(name = "dinamic")
+    public static class PackageDinamicAttr extends SPackage {
+
+        public static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(
+                CoreAttributesWithExternalConfigTest.PackageDinamicAttr.class, "text1", STypeString.class,
+                SIString.class, String.class);
+
+        public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(
+                CoreAttributesWithExternalConfigTest.PackageDinamicAttr.class, "int1", STypeInteger.class,
+                SIInteger.class, Integer.class);
+
+        protected void onLoadPackage(PackageBuilder pb) {
+            pb.createAttributeIntoType(SType.class, ATR_TEXT1);
+            pb.createAttributeIntoType(SType.class, ATR_INT1);
+        }
+    }
+
     @Test
     public void testRefSerialization() {
         SIString endereco = (SIString) createSerializableTestInstance("teste.endereco",
@@ -381,6 +475,6 @@ public class TesteFormSerializationUtil extends TestCaseForm {
     }
 
     private static void assertEquivalent(SInstance original, SInstance copy) {
-        FormAssert.assertEquivalentInstance(original, copy);
+        AssertionsSInstance.assertEquivalentInstance(original, copy);
     }
 }

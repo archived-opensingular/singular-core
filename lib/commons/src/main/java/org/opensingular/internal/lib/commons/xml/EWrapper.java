@@ -17,6 +17,7 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Indica que uma classe possui um Element embutido internamente. Permite
@@ -33,4 +34,19 @@ interface EWrapper {
      */
     public Element getOriginal();
 
+    /**
+     * Desenvelopa se necessário. Ou seja, recupera a elemento original ser for um {@link EWrapper} ou então retorna o próprio
+     * valor passado.
+     */
+    public static Element getOriginal(Element element) {
+        return element instanceof EWrapper ? ((EWrapper) element).getOriginal() : element;
+    }
+
+    /**
+     * Desenvelopa se necessário. Ou seja, recupera a elemento original ser for um {@link EWrapper} ou então retorna o próprio
+     * valor passado.
+     */
+    public static Node getOriginal(Node node) {
+        return node instanceof EWrapper ? ((EWrapper) node).getOriginal() : node;
+    }
 }

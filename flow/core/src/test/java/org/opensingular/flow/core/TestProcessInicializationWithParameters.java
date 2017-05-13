@@ -22,6 +22,7 @@ import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.Pro
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -55,16 +56,13 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
         ProcessInstance pi = startCall.createAndStart();
 
         assertTrue(startInitializerCalled);
-        assertions(pi).isAtTask(Steps.Second)
-                .isVariableValue(PARAM_FLAG, 7.5d)
-                .isVariableValue(PARAM_BIG, VALUE_BIG)
-                .isVariablesSize(3, 2);
 
-        pi = reload(pi);
-        assertions(pi).isAtTask(Steps.Second)
-                .isVariableValue(PARAM_FLAG, 7.5d)
-                .isVariableValue(PARAM_BIG, VALUE_BIG)
-                .isVariablesSize(3, 2);
+        assertReloadAssert(pi, p-> {
+            assertions(p).isAtTask(Steps.Second)
+                    .isVariableValue(PARAM_FLAG, 7.5d)
+                    .isVariableValue(PARAM_BIG, VALUE_BIG)
+                    .isVariablesSize(3, 2);
+        });
     }
 
     @Test
@@ -94,10 +92,26 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
         ProcessInstance pi = startCall.createAndStart();
 
-        assertions(pi).isAtTask(Steps.Second).isVariableValue(PARAM_NOCOPY, null).isVariablesSize(3, 2);
+        assertReloadAssert(pi, p -> assertions(p).isAtTask(Steps.Second).isVariableValue(PARAM_NOCOPY, null)
+                .isVariablesSize(3, 2));
+    }
 
-        pi = reload(pi);
-        assertions(pi).isAtTask(Steps.Second).isVariableValue(PARAM_NOCOPY, null).isVariablesSize(3, 2);
+    @Test
+    public void serialization() {
+        StartCall<ProcessInstance> startCall = new ProcessWithInitializationAndParameters().prepareStartCall()
+                .setValue(PARAM_FLAG, 1.5d)
+                .setValue(PARAM_BIG, VALUE_BIG)
+                .setValue(PARAM_DT, VALUE_DT);
+
+        startCall = SingularIOUtils.serializeAndDeserialize(startCall, true);
+
+        ProcessInstance pi = startCall.createAndStart();
+
+        assertions(pi).isAtTask(Steps.Second)
+                .isVariableValue(PARAM_FLAG, 7.5d)
+                .isVariableValue(PARAM_BIG, VALUE_BIG)
+                .isVariablesSize(3, 2);
+
     }
 
     @DefinitionInfo("WithParameters")
@@ -127,7 +141,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             f.addWaitTask(StepsIP.Second);
             f.addEnd(StepsIP.End);
 
-            f.setStart(StepsIP.First).withInitializer(this::processInitializer).with(this::setupStartParameters);
+            f.setStart(StepsIP.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
             f.from(StepsIP.First).go(StepsIP.Second).thenGo(StepsIP.End);
 
             return f.build();
@@ -139,7 +153,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             start.addParamDate(PARAM_DT, false);
             start.addParamStringMultipleLines(PARAM_NOCOPY, PARAM_NOCOPY, false, 100);
 
-            start.withValidator((startCall, validationResult) -> {
+            start.setValidator((startCall, validationResult) -> {
                if( startCall.getValueBigDecimal(PARAM_BIG).doubleValue() > 50) {
                    validationResult.addErro(startCall.getVariable(PARAM_BIG), "Valor > 50");
                }

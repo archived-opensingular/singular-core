@@ -33,6 +33,17 @@ public abstract class AssertionsAbstract<T extends SAttributeEnabled, SELF exten
     }
 
     /**
+     * Verifica se o objeto atual têm um atributo equals() ao valor esperado.
+     */
+    public SELF isAttribute(String fullName, Object expected) {
+        Object actual = getTarget().getAttributeValue(fullName);
+        if (!Objects.equals(actual, expected)) {
+            throw new AssertionError(errorMsg("Valor não esperado no atributo '" + fullName, expected, actual));
+        }
+        return (SELF) this;
+    }
+
+    /**
      * Verifica se o atributo required ({@link SPackageBasic#ATR_REQUIRED}) é true.
      */
     public SELF isRequired() {

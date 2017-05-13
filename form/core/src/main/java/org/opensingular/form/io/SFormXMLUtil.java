@@ -17,15 +17,23 @@
 package org.opensingular.form.io;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.*;
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.InternalAccess;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.core.annotation.DocumentAnnotations;
+import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.internal.lib.commons.xml.MDocument;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
-import org.opensingular.form.type.core.annotation.DocumentAnnotations;
-import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
@@ -33,6 +41,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,6 +54,7 @@ public final class SFormXMLUtil {
 
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
+    private static InternalAccess internalAccess;
 
     private SFormXMLUtil() {}
 
@@ -109,11 +119,9 @@ public final class SFormXMLUtil {
         return novo;
     }
 
-    private static int verificarIds(SInstance instancia, Set<Integer> ids) {
+    private static int verificarIds(@Nonnull SInstance instancia, @Nonnull Set<Integer> ids) {
         Integer id = instancia.getId();
-        if (id == null) {
-            throw new SingularFormException("O ID da instância está null", instancia);
-        } else if (ids.contains(id)) {
+        if (ids.contains(id)) {
             throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
         }
         if (instancia instanceof ICompositeInstance) {
@@ -142,7 +150,7 @@ public final class SFormXMLUtil {
                 if (instcField.isPresent()) {
                     fromXML(instcField.get(), xmlChild);
                 } else {
-                    InternalAccess.internal(instance).addUnreadInfo(xmlChild);
+                    getInternalAccess().addUnreadInfo(instance, xmlChild);
                 }
             }
         } else if (instance instanceof SIList) {
@@ -152,7 +160,7 @@ public final class SFormXMLUtil {
                 if(childrenName.equals(xmlChild.getTagName())) {
                     fromXML(list.addNew(), xmlChild);
                 } else {
-                    InternalAccess.internal(instance).addUnreadInfo(xmlChild);
+                    getInternalAccess().addUnreadInfo(instance, xmlChild);
                 }
             }
         } else {
@@ -169,7 +177,7 @@ public final class SFormXMLUtil {
                 if (at.getName().equals(ATRIBUTO_ID)) {
                     instancia.setId(Integer.valueOf(at.getValue()));
                 } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
-                    instancia.setAttributeValue(at.getName(), at.getValue());
+                    getInternalAccess().setAttributeValueSavingForLatter(instancia, at.getName(), at.getValue());
                 }
             }
         }
@@ -381,16 +389,17 @@ public final class SFormXMLUtil {
      */
     private static MElement toXMLChildren(ConfXMLGeneration conf, SInstance instance, MElement newElement,
             List<? extends SInstance> children) {
+        MElement result = newElement;
         for (SInstance child : children) {
             MElement xmlChild = toXML(conf, child);
             if (xmlChild != null) {
-                if (newElement == null) {
-                    newElement = conf.createMElement(instance);
+                if (result == null) {
+                    result = conf.createMElement(instance);
                 }
-                newElement.appendChild(xmlChild);
+                result.appendChild(xmlChild);
             }
         }
-        return newElement;
+        return result;
     }
 
     /**
@@ -399,16 +408,32 @@ public final class SFormXMLUtil {
      */
     private static MElement toXMLOldElementWithoutType(ConfXMLGeneration conf, SInstance instance,
             MElement newElement) {
-        List<MElement> unreadInfo = InternalAccess.internal(instance).getUnreadInfo();
+        List<MElement> unreadInfo = getInternalAccess().getUnreadInfo(instance);
+        MElement result = newElement;
         if (! unreadInfo.isEmpty()) {
-            if (newElement == null) {
-                newElement = conf.createMElement(instance);
+            if (result == null) {
+                result = conf.createMElement(instance);
             }
             for(MElement extra : unreadInfo) {
-                newElement.copy(extra, null);
+                result.copy(extra, null);
             }
         }
-        return newElement;
+        return result;
+    }
+
+    /** Garante a carga do objeto a chamada internas da API. */
+    @Nonnull
+    private static final InternalAccess getInternalAccess() {
+        if (internalAccess == null) {
+            InternalAccess.load();
+            return Objects.requireNonNull(internalAccess);
+        }
+        return internalAccess;
+    }
+
+    /** Recebe o objeto que viabiliza executar chamadas internas da API (chamadas a métodos não públicos). */
+    public static final void setInternalAccess(@Nonnull InternalAccess internalAccess) {
+        SFormXMLUtil.internalAccess = internalAccess;
     }
 
     private static final class ConfXMLGeneration {
@@ -435,7 +460,7 @@ public final class SFormXMLUtil {
 
         private MElement complement(SInstance instancia, MElement element) {
             Integer id = instancia.getId();
-            if (builder.isPersistId() && id != null) {
+            if (builder.isPersistId()) {
                 element.setAttribute(ATRIBUTO_ID, id.toString());
             }
             if (builder.isPersistAttributes()) {

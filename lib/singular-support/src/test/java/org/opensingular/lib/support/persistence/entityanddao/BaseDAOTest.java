@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {DatabaseConfigurationToBeUsedByTest.class})
+@ContextConfiguration(classes = {DatabaseConfigurationMock.class})
 @Transactional
 public class BaseDAOTest {
 

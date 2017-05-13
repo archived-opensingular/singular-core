@@ -22,10 +22,13 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TaskPredicates {
@@ -56,10 +59,15 @@ public class TaskPredicates {
 
     @Nonnull
     public static Predicate<TaskInstance> simpleTaskType(@Nonnull ITaskDefinition... taskTypes) {
-        if (taskTypes.length == 1) {
-            return simpleTaskType(taskTypes[0]);
+        return simpleTaskType(Stream.of(taskTypes).collect(Collectors.toList()));
+    }
+
+    @Nonnull
+    public static Predicate<TaskInstance> simpleTaskType(List<ITaskDefinition> tasksTypes) {
+        if (tasksTypes.size() == 1) {
+            return simpleTaskType(tasksTypes.get(0));
         }
-        Set<String> keys = Stream.of(taskTypes).map(ITaskDefinition::getKey).collect(ImmutableSet.toImmutableSet());
+        Set<String> keys = tasksTypes.stream().map(ITaskDefinition::getKey).collect(ImmutableSet.toImmutableSet());
         return t -> keys.contains(t.getAbbreviation());
     }
 

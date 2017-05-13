@@ -61,8 +61,9 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     public void delete(Long id) {
         Optional<T> t = get(id);
         if (t.isPresent()) {
-            Long codContent = t.get().getCodContent();
-            delete(codContent);
+            T entity = t.get();
+            Long codContent = entity.getCodContent();
+            delete(entity);
             attachmentContentDao.delete(codContent);
         }
     }

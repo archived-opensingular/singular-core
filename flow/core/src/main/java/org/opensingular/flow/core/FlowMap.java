@@ -26,6 +26,7 @@ import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -532,7 +533,8 @@ public class FlowMap {
         return dashboardViews.get(name);
     }
 
-    public <T> FlowMap setMetaDataValue(MetaDataRef<T> propRef, T value) {
+    @Nonnull
+    public <T extends Serializable> FlowMap setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
         getProcessDefinition().setMetaDataValue(propRef, value);
         return this;
     }

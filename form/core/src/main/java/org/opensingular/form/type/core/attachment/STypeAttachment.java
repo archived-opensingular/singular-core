@@ -28,18 +28,18 @@ import org.opensingular.form.type.core.STypeString;
 @SInfoType(name = "Attachment", spackage = SPackageCore.class)
 public class STypeAttachment extends STypeComposite<SIAttachment> {
 
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_FILE_ID = "fileId";
-    public static final String FIELD_SIZE = "size";
+    public static final String FIELD_NAME      = "name";
+    public static final String FIELD_FILE_ID   = "fileId";
+    public static final String FIELD_FILE_SIZE = "fileSize";
     public static final String FIELD_HASH_SHA1 = "hashSHA1";
 
-    public static final AtrRef<STypeString, SIString, String> ATR_ORIGINAL_ID = new AtrRef<>(SPackageCore.class, "originalId", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeString, SIString, String> ATR_IS_TEMPORARY = new AtrRef<>(SPackageCore.class, "IS_TEMPORARY", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_ORIGINAL_ID = new AtrRef<>(STypeAttachment.class, "originalId", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_IS_TEMPORARY = new AtrRef<>(STypeAttachment.class, "IS_TEMPORARY", STypeString.class, SIString.class, String.class);
 
     public STypeString name;
     public STypeString fileId;
     public STypeString hashSHA1;
-    public STypeInteger size;
+    public STypeInteger fileSize;
 
     public STypeAttachment() {
         super(SIAttachment.class);
@@ -50,7 +50,7 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
         fileId = addFieldString(FIELD_FILE_ID);
         name = addFieldString(FIELD_NAME);
         hashSHA1 = addFieldString(FIELD_HASH_SHA1);
-        size = addFieldInteger(FIELD_SIZE);
+        fileSize = addFieldInteger(FIELD_FILE_SIZE);
     }
 
 }

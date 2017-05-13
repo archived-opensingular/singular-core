@@ -20,6 +20,7 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 
 import java.util.Arrays;
 import java.util.List;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 
 public class SearchModalMapperTest {
@@ -72,7 +73,7 @@ public class SearchModalMapperTest {
 
         tester.getAssertionsForm().getSubCompomentWithType(mandatoryField).assertSInstance().isValueEquals("1");
 
-        tester.executeAjaxEvent(mandatoryFieldComp, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(mandatoryFieldComp, SINGULAR_PROCESS_EVENT);
 
         tester.assertVisible(dependentFieldComp.getPageRelativePath());
     }

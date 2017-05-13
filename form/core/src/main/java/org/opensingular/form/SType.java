@@ -21,7 +21,6 @@ import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageCore;
@@ -30,6 +29,7 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,11 +51,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled {
+public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
-    private final AttributeMap attributesDefined = new AttributeMap();
-    private final MapAttributeDefinitionResolver attributesResolved;
+
+    @Nullable
+    private AttributeDefinitionManager attributesDefined;
+
+    @Nullable
+    private AttributeValuesManagerForSType attributes;
     /**
      * Classe a  ser usada para criar as instâncias do tipo atual. Pode ser null, indicado que o tipo atual é abstrato.
      */
@@ -65,7 +69,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * contabiliza a quantidade de instancias desse tipo.
      */
     protected long instanceCount;
-    @Nonnull
+
     private String nameSimple;
     private String nameFull;
     private SDictionary dictionary;
@@ -76,7 +80,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private SScope scope;
     private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
     private Set<SType<?>> dependentTypes;
-    private AttributeDefinitionInfo attributeDefinitionInfo;
+    private AttrInternalRef attrInternalRef;
     /**
      * Representa o tipo ao qual o tipo atual extende. Pode ou não ser da mesma classe do tipo atual.
      */
@@ -98,16 +102,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     protected SType(@Nullable String simpleName, @Nullable Class<? extends I> instanceClass) {
+        String resolvedName = simpleName;
         if (simpleName == null) {
-            simpleName = getInfoType().name();
-            if (StringUtils.isEmpty(simpleName)) {
-                simpleName = getClass().getSimpleName();
+            resolvedName = getInfoType().name();
+            if (StringUtils.isEmpty(resolvedName)) {
+                resolvedName = getClass().getSimpleName();
             }
         }
-        SFormUtil.validateSimpleName(simpleName);
-        this.nameSimple = simpleName;
+        this.nameSimple = SFormUtil.validateSimpleName(resolvedName);
         this.instanceClass = instanceClass;
-        attributesResolved = new MapAttributeDefinitionResolver(this);
     }
 
     private static boolean isEqualsStart(String name, String prefixo) {
@@ -131,16 +134,14 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
     }
 
+    @Nonnull
     final <S extends SType<?>> S extend(@Nullable String simpleName) {
-        if (simpleName == null) {
-            simpleName = nameSimple; //Extende usando o mesmo nome do tipo pai
-        } else {
-            SFormUtil.validateSimpleName(simpleName);
-        }
-        S newType = (S) MapByName.newInstance(getClass());
-        ((SType<I>) newType).nameSimple = simpleName;
-        ((SType<I>) newType).superType = this;
+        String nameResolved = SFormUtil.resolveName(simpleName, this);
+        nameResolved = SFormUtil.validateSimpleName(nameResolved);
 
+        S newType = (S) MapByName.newInstance(getClass());
+        ((SType<I>) newType).nameSimple = nameResolved;
+        ((SType<I>) newType).superType = this;
         return newType;
     }
 
@@ -246,23 +247,26 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this instanceof STypeComposite;
     }
 
-    final AttributeDefinitionInfo getAttributeDefinitionInfo() {
-        return attributeDefinitionInfo;
+    final AttrInternalRef getAttrInternalRef() {
+        return attrInternalRef;
     }
 
-    final void setAttributeDefinitionInfo(AttributeDefinitionInfo attributeDefinitionInfo) {
-        this.attributeDefinitionInfo = attributeDefinitionInfo;
+    final void setAttrInternalRef(AttrInternalRef attrInternalRef) {
+        if (this.attrInternalRef != null) {
+            throw new SingularFormException("Internal Error: this method shouldn't be called twice");
+        }
+        this.attrInternalRef = attrInternalRef;
     }
 
     final SInstance newAttributeInstanceFor(SType<?> typeToBeAppliedAttribute) {
         checkIfIsAttribute();
         SInstance attrInstance;
-        if (attributeDefinitionInfo.isSelfReference()) {
+        if (attrInternalRef.isSelfReference()) {
             attrInstance = typeToBeAppliedAttribute.newInstance(getDictionary().getInternalDicionaryDocument());
         } else {
             attrInstance = newInstance(getDictionary().getInternalDicionaryDocument());
         }
-        attrInstance.setAsAttribute(getName(), this);
+        attrInstance.setAsAttribute(attrInternalRef, typeToBeAppliedAttribute);
         return attrInstance;
     }
 
@@ -270,42 +274,37 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * Informa se o tipo é a definição de um atributo (de outro tipo ou de instância) ou se é um tipo comum.
      */
     public final boolean isAttribute() {
-        return attributeDefinitionInfo != null;
+        return attrInternalRef != null;
     }
 
-    final void checkIfIsAttribute() {
-        if (!isAttribute()) {
+    @Nonnull
+    final AttrInternalRef checkIfIsAttribute() {
+        if (attrInternalRef == null) {
             throw new SingularFormException("O tipo '" + getName() + "' não é um tipo atributo", this);
         }
+        return attrInternalRef;
     }
 
-    final void addAttribute(SType<?> attributeDef) {
-        attributeDef.checkIfIsAttribute();
-        SType<?> owner = attributeDef.getAttributeDefinitionInfo().getOwner();
-        if (owner != null && owner != this) {
-            throw new SingularFormException(
-                    "O Atributo '" + attributeDef.getName() + "' pertence excelusivamente ao tipo '" + owner.getName() +
-                            "'. Assim não pode ser reassociado a classe '" + getName(), this);
+    final void addAttribute(@Nonnull SType<?> attributeDef) {
+        getAttributesDefinitions().add(this, attributeDef);
+    }
+
+    @Nonnull
+    private AttributeDefinitionManager getAttributesDefinitions() {
+        if (attributesDefined == null) {
+            attributesDefined = new AttributeDefinitionManager();
         }
-
-        attributesDefined.add(attributeDef);
+        return attributesDefined;
     }
 
-    final SType<?> getAttributeDefinedLocally(String fullName) {
-        return attributesDefined.get(fullName);
+    @Nullable
+    final SType<?> getAttributeDefinedLocally(@Nonnull AttrInternalRef ref) {
+        return AttributeDefinitionManager.staticGetAttributeDefinedLocally(attributesDefined, ref);
     }
 
-    final SType<?> getAttributeDefinedHierarchy(String fullName) {
-        for (SType<?> current = this; current != null; current = current.superType) {
-            SType<?> att = current.getAttributeDefinedLocally(fullName);
-            if (att != null) {
-                return att;
-            }
-        }
-        throw new SingularFormException("Não existe atributo '" + fullName + "' em " + getName(), this);
-    }
-
-    public <M extends SInstance> M getAttributeInstance(AtrRef<?, M, ?> atr) {
+    @Nullable
+    public final <M extends SInstance> M findAttributeInstance(@Nonnull AtrRef<?, M, ?> atr) {
+        //TODO retirar o public desse método e colocar como visibilidade de pacote
         Class<M> instanceAttributeClass;
         if (atr.isSelfReference()) {
             instanceAttributeClass = (Class<M>) getInstanceClassResolved();
@@ -321,84 +320,110 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
                         "O Atributo " + atr.getNameFull() + " não define o tipo da instância do atributo", this);
             }
         }
-        SInstance instance = getAttributeInstanceInternal(atr.getNameFull());
+        SInstance instance = findAttributeInstance(atr.getNameFull());
         return instanceAttributeClass.cast(instance);
     }
 
-    final SInstance getAttributeInstanceInternal(String fullName) {
-        for (SType<?> current = this; current != null; current = current.superType) {
-            SInstance instance = current.attributesResolved.get(fullName);
-            if (instance != null) {
-                return instance;
-            }
-        }
-        return null;
+    @Nullable
+    final SInstance findAttributeInstance(@Nonnull String fullName) {
+        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(fullName);
+        return AttributeValuesManagerForSType.findAttributeInstance(this, ref);
     }
 
     @Override
-    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
-        SInstance instance = attributesResolved.getCreating(mapName(attributeFullName));
-        if (subPath != null) {
-            instance.setValue(new PathReader(subPath), value);
-        } else {
-            instance.setValue(value);
-        }
+    public final <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {
+        getAttributesMap().setAttributeValue(atr, value);
     }
 
     @Override
-    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> valueCalculation) {
-        SInstance instance = attributesResolved.getCreating(mapName(attributeFullName));
-        SInstance.setValueCalculation(instance, subPath, valueCalculation);
+    public void setAttributeValue(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable Object value) {
+        getAttributesMap().setAttributeValue(attributeFullName, subPath, value);
+    }
+
+    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable String value) {
+        AttrInternalRef ref = getDictionary().getAttribureRefereceOrCreateLazy(attributeName);
+        getAttributesMap().setAttributeValue(ref, null, value);
+    }
+
+    final <V> void setAttributeValue(@Nonnull AttrInternalRef ref, @Nullable V value) {
+        getAttributesMap().setAttributeValue(ref, null, value);
+    }
+
+    @Override
+    public final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
+            @Nullable SimpleValueCalculation<V> value) {
+        getAttributesMap().setAttributeCalculation(atr, value);
+    }
+
+    @Override
+    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+            @Nullable SimpleValueCalculation<V> valueCalculation) {
+        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
+    }
+
+    @Nonnull
+    private AttributeValuesManagerForSType getAttributesMap() {
+        if (attributes == null) {
+            attributes = new AttributeValuesManagerForSType(this);
+        }
+        return attributes;
     }
 
     /**
      * Lista todos os atributos com valor associado diretamente ao tipo atual. Não retorna os atributos consolidado do
      * tipo pai.
-     *
-     * @return Nunca null
      */
     @Override
+    @Nonnull
     public Collection<SInstance> getAttributes() {
-        return attributesResolved.getAttributes();
+        return AttributeValuesManager.staticGetAttributes(attributes);
     }
 
     /**
-     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
+     * hierarquia.
      */
     @Override
-    public Optional<SInstance> getAttribute(String fullName) {
-        return Optional.ofNullable(attributesResolved.get(fullName));
+    @Nonnull
+    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
+        return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
+    }
+
+    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    @Nullable
+    final SInstance getAttributeDirectly(@Nonnull AttrInternalRef ref) {
+        return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref);
+    }
+
+    @Nullable
+    public final <T> T getAttributeValue(@Nonnull AtrRef<?, ?, ?> atr, @Nullable Class<T> resultClass) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), resultClass);
+    }
+
+    @Nullable
+    public final <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
+    }
+
+    public final boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
+        return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
     }
 
     @Override
-    public final <V> V getAttributeValue(String fullName, Class<V> resultClass) {
-        return getValueInTheContextOf(null, fullName, resultClass);
+    @Nullable
+    public final <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass) {
+        return getAttributeValue(getDictionary().getAttributeReferenceOrException(attributeFullName), resultClass);
     }
 
-    final <V> V getValueInTheContextOf(SInstance contextInstance, String fullName, Class<V> resultClass) {
-        fullName = mapName(fullName);
-        SInstance instance = getAttributeInstanceInternal(fullName);
-        if (instance != null) {
-            if (contextInstance != null) {
-                return instance.getValueInTheContextOf(contextInstance, resultClass);
-            } else if (resultClass == null) {
-                return (V) instance.getValue();
-            } else {
-                return instance.getValueWithDefault(resultClass);
-            }
-        }
-        SType<?> atr = getAttributeDefinedHierarchy(fullName);
-        if (resultClass == null) {
-            return (V) atr.getAttributeValueOrDefaultValueIfNull();
-        }
-        return atr.getAttributeValueOrDefaultValueIfNull(resultClass);
+    @Nullable
+    private final <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
+        return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(this, null, ref, resultClass);
     }
 
-    private String mapName(String originalName) {
-        if (originalName.indexOf('.') == -1) {
-            return getName() + '.' + originalName;
-        }
-        return originalName;
+    @Nonnull
+    private AttrInternalRef mapAttributeName(@Nonnull String originalName) {
+        return getDictionary().getAttributeReferenceOrException(originalName);
     }
 
     public SType<I> with(AtrRef<?, ?, ?> attribute, Object value) {
@@ -552,9 +577,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     private boolean hasDirectOrInderectDependentType(SType<?> type) {
         if (dependentTypes != null) {
             for (SType<?> d : dependentTypes) {
-                if (type.isTypeOf(d)) {
-                    return true;
-                } else if (d.hasDirectOrInderectDependentType(type)) {
+                if (type.isTypeOf(d) || d.hasDirectOrInderectDependentType(type)) {
                     return true;
                 }
             }
@@ -730,11 +753,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     @Override
-    public void debug(int level) {
-        debug(System.out, level);
-    }
-
-    @Override
     void debug(Appendable appendable, int level) {
         try {
             pad(appendable, level);
@@ -776,7 +794,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
 
     private void debugTypeHeaderAttribute(Appendable appendable) throws IOException {
         appendable.append("defAtt ").append(getNameSimple()).append('@').append(Integer.toString(getTypeId()));
-        SType<?> owner = getAttributeDefinitionInfo().getOwner();
+        SType<?> owner = getAttrInternalRef().getOwner();
         if (owner != null && owner != getParentScope()) {
             appendable.append(" for ");
             appendNameAndId(appendable, owner);
@@ -802,14 +820,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             Collection<SInstance> attrs = getAttributes();
             if (!attrs.isEmpty()) {
                 appendable.append(" {");
-                attrs.stream().forEach(attr -> {
-                    try {
-                        appendable.append(suppressPackage(attr.getAttributeInstanceInfo().getName(), true)).append("=")
-                                .append(attr.toStringDisplay()).append("; ");
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                    }
-                });
+                attrs.forEach(attr -> debugAttribute(appendable, attr));
                 appendable.append("}");
             }
         } catch (IOException ex) {
@@ -817,13 +828,25 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         }
     }
 
+    private void debugAttribute(Appendable appendable, SInstance attr) {
+        try {
+            if (! attr.getAttributeInstanceInfo().getRef().isResolved()) {
+                appendable.append('?');
+            }
+            appendable.append(suppressPackage(attr.getAttributeInstanceInfo().getName(), true)).append("=")
+                    .append(attr.toStringDisplay()).append("; ");
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
     private void debugAttributesDefined(Appendable appendable, int level) {
-        attributesDefined.getAttributes().stream().filter(att -> !getLocalTypeOptional(att.getNameSimple())
-                .isPresent()).forEach(att -> {
+        AttributeDefinitionManager.getStaticAttributes(attributesDefined).stream().filter(att -> !getLocalTypeOptional(
+                att.getNameSimple()).isPresent()).forEach(att -> {
             try {
-                pad(appendable, level + 1).append("att ").append(suppressPackage(att.getName()))
-                        .append(':').append(suppressPackage(att.getSuperType().getName())).append(
-                        att.isSelfReference() ? " SELF" : "").append('\n');
+                pad(appendable, level + 1).append("att ").append(suppressPackage(att.getName())).append(':').append(
+                        suppressPackage(att.getSuperType().getName())).append(att.isSelfReference() ? " SELF" : "")
+                        .append('\n');
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             }

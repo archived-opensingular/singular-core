@@ -31,10 +31,12 @@ public class ValidationResult {
 
     private List<String> errors;
 
+    /** Indica se há algum erro registrado. */
     public boolean hasErros() {
         return errors != null && !errors.isEmpty();
     }
 
+    /** Registra um referente ao conjunto das variáveis. */
     public void addErro(String msg) {
         if (errors == null) {
             errors = new ArrayList<>();
@@ -42,6 +44,12 @@ public class ValidationResult {
         errors.add(msg);
     }
 
+    /** Registro um erro associado a variável indicada. */
+    public void addErro(VarDefinition var, String msg) {
+        addErro(var.getName() + ": " + msg);
+    }
+
+    /** Registro um erro associado a variável indicada. */
     public void addErro(VarInstance var, String msg) {
         addErro(var.getName() + ": " + msg);
     }

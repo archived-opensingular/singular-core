@@ -111,9 +111,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public ROLE_USER setInstanceUserRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, SUser user) {
-        user = saveUserIfNeeded(user);
+        SUser resolvedUser = saveUserIfNeeded(user);
 
-        ROLE_USER entityRole = newEntityRole(instance, role, user, Flow.getUserIfAvailable());
+        ROLE_USER entityRole = newEntityRole(instance, role, resolvedUser, Flow.getUserIfAvailable());
 
         SessionWrapper sw = getSession();
         sw.save(entityRole);
@@ -182,13 +182,13 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, SUser responsibleUser) {
-        responsibleUser = saveUserIfNeeded(responsibleUser);
+        SUser resolvedUser = saveUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
         IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
 
-        if (responsibleUser != null) {
-            task.setResponsibleUser(responsibleUser);
+        if (resolvedUser != null) {
+            task.setResponsibleUser(resolvedUser);
         }
 
         getSession().update(task);
@@ -202,9 +202,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void relocateTask(TASK_INSTANCE taskInstance, SUser user) {
-        user = saveUserIfNeeded(user);
-        taskInstance.setAllocatedUser(user);
-
+        taskInstance.setAllocatedUser(saveUserIfNeeded(user));
         updateTask(taskInstance);
     }
 
@@ -216,13 +214,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             SUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance) {
         IEntityTaskHistoricType taskHistoryType = retrieveOrCreateTaskHistoricType(typeDescription);
 
-        responsibleUser = saveUserIfNeeded(responsibleUser);
-        IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, responsibleUser);
+        SUser resolvedUser = saveUserIfNeeded(responsibleUser);
+        IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, resolvedUser);
 
-        if (dateHour == null) {
-            dateHour = new Date();
-        }
-        history.setBeginDateAllocation(dateHour);
+        history.setBeginDateAllocation(dateHour == null ? new Date() : dateHour);
         history.setDescription(detail);
 
         SessionWrapper sw = getSession();
@@ -334,34 +329,44 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     @Override
     public void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask,
             VarInstanceMap<?,?> instanceMap) {
-        if (instanceMap != null) {
-            SessionWrapper ss = getSession();
+        if (instanceMap == null) {
+            return;
+        }
+        SessionWrapper ss = getSession();
 
-            boolean salvou = false;
-            for (VarInstance variavel : instanceMap) {
-                if (variavel.getValue() != null) {
-
-                    IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
-                    String ref = variavel.getRef();
-                    IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
-
-                    IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
-                    novo.setName(ref);
-                    novo.setValue(variavel.getPersistentString());
-                    novo.setDate(dateHour);
-                    ss.save(novo);
-                    salvou = true;
+        boolean salvou = false;
+        for (VarInstance variavel : instanceMap) {
+            if (variavel.getValue() != null) {
+                try {
+                    saveOneVariable(ss, instance, originTask, destinationTask, variavel, dateHour);
+                } catch (Exception e) {
+                    throw SingularFlowException.rethrow(
+                            "Erro ao salvar variável '" + variavel.getName() + "' no histórico", e);
                 }
-            }
-            if (salvou) {
-                if (originTask != null) {
-                    ss.refresh(originTask);
-                }
-                if (destinationTask != null) {
-                    ss.refresh(destinationTask);
-                }
+                salvou = true;
             }
         }
+        if (salvou) {
+            if (originTask != null) {
+                ss.refresh(originTask);
+            }
+            if (destinationTask != null) {
+                ss.refresh(destinationTask);
+            }
+        }
+    }
+
+    private void saveOneVariable(SessionWrapper ss, PROCESS_INSTANCE instance, TASK_INSTANCE originTask,
+            TASK_INSTANCE destinationTask, VarInstance variavel, Date dateHour) {
+        boolean salvou;IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
+        String ref = variavel.getRef();
+        IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
+
+        IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
+        novo.setName(ref);
+        novo.setValue(variavel.getPersistentString());
+        novo.setDate(dateHour);
+        ss.save(novo);
     }
 
     protected abstract Class<? extends IEntityVariableType> getClassEntityVariableType();

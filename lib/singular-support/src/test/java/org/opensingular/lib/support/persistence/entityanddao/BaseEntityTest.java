@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-@ContextConfiguration(classes = DatabaseConfigurationToBeUsedByTest.class)
+@ContextConfiguration(classes = DatabaseConfigurationMock.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class BaseEntityTest {

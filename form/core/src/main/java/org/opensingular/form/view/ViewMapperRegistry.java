@@ -20,9 +20,14 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <p>
@@ -86,28 +91,27 @@ public class ViewMapperRegistry<T> implements Serializable {
      * @param view
      *            Pode ser null
      */
-    public Optional<T> getMapper(SInstance instance, SView view) {
+    @Nonnull
+    public Optional<T> getMapper(@Nonnull SInstance instance, SView view) {
         Class<? extends SType> type = instance.getType().getClass();
-        if (view.getClass() == SView.class) {
-            view = null;
-        }
-        T mapper = getMapper(type, view);
-        if (mapper == null && view != null) {
+        SView resolvedView = (view.getClass() == SView.class) ? null : view;
+        T mapper = getMapper(type, resolvedView);
+        if (mapper == null && resolvedView != null) {
             mapper = getMapper(type, null);
         }
         return Optional.ofNullable(mapper);
     }
 
-    private @Nullable T getMapper(Class<?> type, SView view) {
-        while (type != SType.class) {
-            List<RegisterEntry<T>> list = registry.get(type);
+    @Nullable
+    private T getMapper(@Nonnull Class<?> type, SView view) {
+        for (Class<?> current = type; current != SType.class; current = current.getSuperclass()) {
+            List<RegisterEntry<T>> list = registry.get(current);
             if (list != null) {
                 T selected = findEntryMoreRelevant(list, view);
                 if (selected != null) {
                     return selected;
                 }
             }
-            type = type.getSuperclass();
         }
         return null;
     }

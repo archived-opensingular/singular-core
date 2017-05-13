@@ -2,6 +2,7 @@ package org.opensingular.form.curriculo;
 
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -16,19 +17,15 @@ import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.type.util.STypePersonName;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.util.SingularPredicates;
-import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.view.SViewTab;
 
+@SInfoPackage(name = "mform.exemplo.curriculo")
 public class SPackageCurriculo extends SPackage {
 
     public static final String PACOTE         = "mform.exemplo.curriculo";
     public static final String TIPO_CURRICULO = PACOTE + ".Curriculo";
-
-    public SPackageCurriculo() {
-        super("mform.exemplo.curriculo");
-    }
 
     @Override
     protected void onLoadPackage(PackageBuilder pb) {
