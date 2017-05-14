@@ -19,41 +19,55 @@ package org.opensingular.flow.core.variable;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.lib.commons.base.SingularException;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Objects;
 
 public class DefaultVarInstance extends AbstractVarInstance {
 
-    private Serializable valor;
+    private transient Object value;
 
     public DefaultVarInstance(VarDefinition definition) {
         super(definition);
     }
 
     @Override
-    public VarInstance setValue(Object valor) {
+    public VarInstance setValue(Object value) {
         try {
-            Object antes = this.valor;
-            Object v = getDefinition().convert(valor);
-            if (v != null && !(v instanceof Serializable)) {
-                throw new SingularFlowException("O valor atribuido não é serializável")
-                        .add("varName", getName())
-                        .add("varType", getType())
-                        .add("value", v)
-                        .add("valueClass", v.getClass().getName());
-            }
-            this.valor = (Serializable) v;
-            if (needToNotifyAboutValueChanged() && !Objects.equals(antes, this.valor)) {
+            Object before = this.value;
+            this.value = getDefinition().convert(value);
+            if (needToNotifyAboutValueChanged() && !Objects.equals(before, this.value)) {
                 notifyValueChanged();
             }
             return this;
         } catch (RuntimeException e) {
-            throw SingularException.rethrow("Erro setando valor '" + valor + "' em " + getRef() + " (" + getName() + ")", e);
+            throw SingularException.rethrow(
+                    "Erro setando valor '" + value + "' em " + getRef() + " (" + getName() + ")", e);
         }
     }
 
     @Override
     public Object getValue() {
-        return valor;
+        return value;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        try {
+            out.writeObject(value);
+        } catch (NotSerializableException e) {
+            throw new SingularFlowException("O valor da variável não é serializável", e)
+                    .add("varName", getName())
+                    .add("varType", getType())
+                    .add("value", value)
+                    .add("valueClass", value.getClass().getName());
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        value = in.readObject();
+        in.defaultReadObject();
     }
 }
