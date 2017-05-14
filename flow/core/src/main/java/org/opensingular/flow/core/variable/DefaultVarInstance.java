@@ -57,11 +57,12 @@ public class DefaultVarInstance extends AbstractVarInstance {
         try {
             out.writeObject(value);
         } catch (NotSerializableException e) {
-            throw new SingularFlowException("O valor da variável não é serializável", e)
-                    .add("varName", getName())
+            SingularFlowException e2 = new SingularFlowException("O valor da variável não é serializável", e);
+            e2.add("varName", getName())
                     .add("varType", getType())
                     .add("value", value)
                     .add("valueClass", value.getClass().getName());
+            throw e2;
         }
         out.defaultWriteObject();
     }
