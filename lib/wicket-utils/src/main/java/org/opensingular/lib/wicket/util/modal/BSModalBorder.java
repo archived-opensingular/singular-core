@@ -101,37 +101,26 @@ public class BSModalBorder extends Border {
         }
     }
 
-    private static final String          DIALOG                 = "dialog";
-    private static final String          CLOSE_ICON             = "closeIcon";
-    private static final String          COMPRESS_ICON          = "compressIcon";
-    private static final String          EXPAND_ICON            = "expandIcon";
-    private static final String          TITLE                  = "title";
-    private static final String          HEADER                 = "header";
-    private static final String          FOOTER                 = "footer";
+    private static final String          DIALOG           = "dialog";
+    private static final String          CLOSE_ICON       = "closeIcon";
+    private static final String          COMPRESS_ICON    = "compressIcon";
+    private static final String          EXPAND_ICON      = "expandIcon";
+    private static final String          TITLE            = "title";
+    private static final String          HEADER           = "header";
+    private static final String          FOOTER           = "footer";
 
-    private Size                         size                   = Size.NORMAL;
-    private boolean                      dismissible            = false;
-    private boolean                      withAutoFocus          = true;
+    private Size                         size             = Size.NORMAL;
+    private boolean                      dismissible      = false;
+    private boolean                      withAutoFocus    = true;
 
-    private final RepeatingView          buttonsContainer       = new RepeatingView("buttons");
-    protected BSFeedbackPanel            feedbackGeral          = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
+    private final RepeatingView          buttonsContainer = new RepeatingView("buttons");
+    protected BSFeedbackPanel            feedbackGeral    = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
 
     private final Component              closeIcon;
     private final Component              compressIcon;
     private final Component              expandIcon;
     private IConsumer<AjaxRequestTarget> closeIconCallBack;
     private IConsumer<AjaxRequestTarget> onHideCallBack;
-    private AbstractDefaultAjaxBehavior  onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
-                                                                    private boolean executed = false;
-                                                                    @Override
-                                                                    protected void respond(AjaxRequestTarget target) {
-                                                                        onHideCallBack.accept(target);
-                                                                    }
-                                                                    @Override
-                                                                    public boolean isTemporary(Component component) {
-                                                                        return executed;
-                                                                    }
-                                                                };
 
     protected BSFeedbackPanel newFeedbackPanel(String id, BSModalBorder fence, IFeedbackMessageFilter messageFilter) {
         return new BSFeedbackPanel(id, fence, messageFilter);
@@ -378,6 +367,18 @@ public class BSModalBorder extends Border {
                 target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
                 target.add(this);
             }
+
+            final AbstractDefaultAjaxBehavior onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
+                private boolean executed = false;
+                @Override
+                protected void respond(AjaxRequestTarget target) {
+                    onHideCallBack.accept(target);
+                }
+                @Override
+                public boolean isTemporary(Component component) {
+                    return executed;
+                }
+            };
             getPage().add(onHideCallBackBehavior);
             target.appendJavaScript(onHideCallBackBehavior.getCallbackScript());
         }
