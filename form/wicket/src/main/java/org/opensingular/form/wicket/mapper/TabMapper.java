@@ -137,34 +137,40 @@ public class TabMapper extends DefaultCompositeMapper {
 
             private void configureBSColumns(SViewTab tabView, AtrBootstrap bootstrap) {
                 Integer colPreference = bootstrap.getColPreference();
-                Integer colXs         = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference));
-                Integer colSm         = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference));
-                Integer colMd         = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference));
-                Integer colLg         = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference));
+                Integer colXs         = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colSm         = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colMd         = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colLg         = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
 
+                BSTabCol content = getContent();
+                configureContentColuns(colXs, colSm, colMd, colLg, content);
+            }
+
+            private void configureContentColuns(Integer colXs, Integer colSm, Integer colMd, Integer colLg, BSTabCol content) {
                 if (colXs != null) {
                     getNavigation().xs(colXs);
-                    getContent().xs(BSTabCol.MAX_COLS - colXs);
+                    content.xs(BSTabCol.MAX_COLS - colXs);
                 }
                 if (colSm != null) {
                     getNavigation().sm(colSm);
-                    getContent().sm(BSTabCol.MAX_COLS - colSm);
+                    content.sm(BSTabCol.MAX_COLS - colSm);
                 }
                 if (colMd != null) {
                     getNavigation().md(colMd);
-                    getContent().md(BSTabCol.MAX_COLS - colMd);
+                    content.md(BSTabCol.MAX_COLS - colMd);
                 }
                 if (colLg != null) {
                     getNavigation().lg(colLg);
-                    getContent().lg(BSTabCol.MAX_COLS - colLg);
+                    content.lg(BSTabCol.MAX_COLS - colLg);
                 }
             }
 
-            private Integer resolveCol(Integer cols, Integer defaultCols) {
-                Integer c = cols != null ? cols : defaultCols;
-                return c != null && c < BSTabCol.MAX_COLS ? c : null;
-            }
         };
+    }
+
+    private Integer resolveCol(Integer cols, Integer defaultCols, int max) {
+        Integer c = cols != null ? cols : defaultCols;
+        return c != null && c < max ? c : null;
     }
 
     public String defineTabIconCss(WicketBuildContext ctx, SIComposite instance,

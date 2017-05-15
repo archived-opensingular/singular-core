@@ -139,7 +139,12 @@ public class TypeaheadComponent extends Panel {
 
     @NotNull
     private TextField<String> makeValueField() {
-        return new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
+        return new TextField<>("value_field", makeValueModel());
+    }
+
+    @NotNull
+    private AbstractSInstanceAwareModel<String> makeValueModel() {
+        return new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
             private Serializable lastValue;
@@ -174,16 +179,19 @@ public class TypeaheadComponent extends Panel {
                     getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, Boolean.TRUE);
                     getSInstance().clearInstance();
                 } else {
-                    final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
-                    if (val != null) {
-                        instance().asAtrProvider().getConverter().fillInstance(getSInstance(), val);
-                    } else {
-                        getSInstance().clearInstance();
-                    }
+                    setVallIfNullorClear(key, getSInstance());
                 }
             }
+        };
+    }
 
-        });
+    protected void setVallIfNullorClear(String key, SInstance instance) {
+        final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
+        if (val != null) {
+            instance().asAtrProvider().getConverter().fillInstance(instance, val);
+        } else {
+            instance.clearInstance();
+        }
     }
 
     @NotNull
