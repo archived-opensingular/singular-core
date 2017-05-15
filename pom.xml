@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.6.4-SNAPSHOT</version>
+    <version>1.6.4</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -275,7 +275,7 @@
         <url>${project.scm.url}</url>
         <connection>${project.scm.connection}</connection>
         <developerConnection>${project.scm.developerConnection}</developerConnection>
-      <tag>HEAD</tag>
+      <tag>1.6.4</tag>
   </scm>
 
     <profiles>
