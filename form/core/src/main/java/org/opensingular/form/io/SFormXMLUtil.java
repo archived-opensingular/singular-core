@@ -140,32 +140,44 @@ public final class SFormXMLUtil {
         instance.clearInstance();
         lerAtributos(instance, xml);
         if (instance instanceof SISimple) {
-            SISimple<?> instanceSimple = (SISimple<?>) instance;
-            STypeSimple<?, ?> type = instanceSimple.getType();
-            instance.setValue(type.fromStringPersistence(xml.getTextContent()));
+            fromXMLSISImple(instance, xml);
         } else if (instance instanceof SIComposite) {
-            SIComposite instc = (SIComposite) instance;
-            for(MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
-                Optional<SInstance> instcField = instc.getFieldOpt(xmlChild.getTagName());
-                if (instcField.isPresent()) {
-                    fromXML(instcField.get(), xmlChild);
-                } else {
-                    getInternalAccess().addUnreadInfo(instance, xmlChild);
-                }
-            }
+            fromXMLSIComposite(instance, xml);
         } else if (instance instanceof SIList) {
-            SIList<?> list = (SIList<?>) instance;
-            String childrenName = list.getType().getElementsType().getNameSimple();
-            for(MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
-                if(childrenName.equals(xmlChild.getTagName())) {
-                    fromXML(list.addNew(), xmlChild);
-                } else {
-                    getInternalAccess().addUnreadInfo(instance, xmlChild);
-                }
-            }
+            fromXMLSIList(instance, xml);
         } else {
             throw new SingularFormException(
                     "Conversão não implementando para a classe " + instance.getClass().getName(), instance);
+        }
+    }
+
+    private static void fromXMLSISImple(@Nonnull SInstance instance, @Nullable MElement xml) {
+        SISimple<?>       instanceSimple = (SISimple<?>) instance;
+        STypeSimple<?, ?> type           = instanceSimple.getType();
+        instance.setValue(type.fromStringPersistence(xml.getTextContent()));
+    }
+
+    private static void fromXMLSIList(@Nonnull SInstance instance, @Nullable MElement xml) {
+        SIList<?> list         = (SIList<?>) instance;
+        String    childrenName = list.getType().getElementsType().getNameSimple();
+        for(MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
+            if(childrenName.equals(xmlChild.getTagName())) {
+                fromXML(list.addNew(), xmlChild);
+            } else {
+                getInternalAccess().addUnreadInfo(instance, xmlChild);
+            }
+        }
+    }
+
+    private static void fromXMLSIComposite(@Nonnull SInstance instance, @Nullable MElement xml) {
+        SIComposite instc = (SIComposite) instance;
+        for(MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
+            Optional<SInstance> instcField = instc.getFieldOpt(xmlChild.getTagName());
+            if (instcField.isPresent()) {
+                fromXML(instcField.get(), xmlChild);
+            } else {
+                getInternalAccess().addUnreadInfo(instance, xmlChild);
+            }
         }
     }
 
