@@ -143,7 +143,7 @@ public final class SFormXMLUtil {
         instance.clearInstance();
         lerAtributos(instance, xml);
         if (instance instanceof SISimple) {
-            fromXMLSISImple(instance, xml);
+            fromXMLSISImple((SISimple<?>) instance, xml);
         } else if (instance instanceof SIComposite) {
             fromXMLSIComposite((SIComposite) instance, xml);
         } else if (instance instanceof SIList) {
@@ -154,10 +154,9 @@ public final class SFormXMLUtil {
         }
     }
 
-    private static void fromXMLSISImple(@Nonnull SInstance instance, @Nullable MElement xml) {
+    private static void fromXMLSISImple(@Nonnull SISimple<?> instance, @Nullable MElement xml) {
         if (xml != null) {
-            SISimple<?>       instanceSimple = (SISimple<?>) instance;
-            STypeSimple<?, ?> type           = instanceSimple.getType();
+            STypeSimple<?, ?> type = instance.getType();
             instance.setValue(type.fromStringPersistence(xml.getTextContent()));
         }
     }
