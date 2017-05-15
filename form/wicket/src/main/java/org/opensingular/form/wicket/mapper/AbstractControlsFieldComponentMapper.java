@@ -188,15 +188,15 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
                     List<?> contextList = Arrays.asList(
-                        target,
                         AbstractControlsFieldComponentMapper.this,
+                        target,
                         model,
                         model.getObject(),
                         ctx,
                         ctx.getContainer());
 
-                    SInstanceAction.Delegate delegate = new AbstractSIconActionDelegate(model::getObject, () -> contextList);
-                    action.getActionHandler().onAction(model.getObject(), delegate);
+                    SInstanceAction.Delegate delegate = new AbstractSIconActionDelegate(model::getObject, contextList);
+                    action.getActionHandler().onAction(model::getObject, delegate);
                 }
             });
 

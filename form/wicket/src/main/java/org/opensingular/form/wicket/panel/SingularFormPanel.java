@@ -17,6 +17,9 @@
 package org.opensingular.form.wicket.panel;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,6 +29,8 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -34,6 +39,7 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -51,11 +57,13 @@ import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
+import org.opensingular.form.wicket.panel.IOpenModalEvent.ButtonDef;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos.
@@ -106,7 +114,7 @@ public class SingularFormPanel extends Panel {
      * @param id        o markup id wicket
      * @param typeClass Tipo a ser utilizado para montar o formulário.
      */
-    public SingularFormPanel(@Nonnull String id, @Nonnull Class<? extends SType> typeClass) {
+    public SingularFormPanel(@Nonnull String id, @Nonnull Class<? extends SType<?>> typeClass) {
         this(id, false);
         setInstanceFromType(typeClass);
     }
@@ -171,7 +179,7 @@ public class SingularFormPanel extends Panel {
      * Define a que a instância a ser editada ser uma nova instância do type da classe informada.
      * @return 
      */
-    public final SingularFormPanel setInstanceFromType(@Nonnull Class<? extends SType> typeClass) {
+    public final SingularFormPanel setInstanceFromType(@Nonnull Class<? extends SType<?>> typeClass) {
         Objects.requireNonNull(typeClass);
         setInstanceFromType(RefType.of(typeClass));
         return this;
@@ -422,26 +430,63 @@ public class SingularFormPanel extends Panel {
         return buildListeners;
     }
 
-//    TODO incompleto
-//    @Override
-//    public void onEvent(IEvent<?> event) {
-//        super.onEvent(event);
-//        if (event.getPayload() instanceof IShowModalEvent) {
-//            event.stop();
-//
-//            IShowModalEvent evt = (IShowModalEvent) event.getPayload();
-//
-//            BFModalWindow modal = new BFModalWindow(modalItems.newChildId());
-//            modalItems.newTag("div", modal);
-//
-//            Component content = evt.getModalContent(modal.getId() + "_body");
-//            modal.setBody(content);
-//
-//            evt.getTarget().add(modalItems.getParent());
-//
-//            modal.show(evt.getTarget());
-//
-//            modal.setOnHideCallBack(t -> modalItems.removeItem(modal));
-//        }
-//    }
+    @Override
+    public void onEvent(IEvent<?> event) {
+        super.onEvent(event);
+        if (event.getPayload() instanceof IOpenModalEvent) {
+            event.stop();
+
+            IOpenModalEvent evt = (IOpenModalEvent) event.getPayload();
+
+            BFModalWindow modal = new BFModalWindow(modalItems.newChildId());
+            modalItems.newTag("div", modal);
+
+            Component content = evt.getBodyContent(modal.getId() + "_body");
+            modal.setTitleText(Model.of(evt.getModalTitle()));
+            modal.setBody(content);
+
+            Iterator<ButtonDef> buttonDefs = evt.getFooterButtons(modal::hide);
+            if (buttonDefs != null) {
+                while (buttonDefs.hasNext()) {
+                    ButtonDef def = buttonDefs.next();
+                    modal.addButton(def.style, def.label, def.button);
+                }
+            }
+
+            AjaxRequestTarget target = evt.getTarget();
+
+            target.add(modalItems.getParent());
+
+            modal.show(target);
+            modal.setOnHideCallBack(t -> {
+                Component removedComponent = modalItems.removeItem(modal);
+                if (removedComponent != null)
+                    t.appendJavaScript(JQuery.$(removedComponent) + ".remove();");
+            });
+        } else if (event.getPayload() instanceof ICloseModalEvent) {
+            ICloseModalEvent evt = (ICloseModalEvent) event.getPayload();
+
+            Deque<Component> stack = new LinkedList<>();
+            MarkupContainer container = modalItems;
+            pushChildren(stack, container);
+            while (!stack.isEmpty()) {
+                Component child = stack.pop();
+                if (child instanceof BFModalWindow) {
+                    BFModalWindow modal = (BFModalWindow) child;
+                    if (evt.matchesBodyContent(modal.getBody())) {
+                        event.stop();
+                        modal.hide(evt.getTarget());
+                        break;
+                    }
+                } else if (child instanceof MarkupContainer) {
+                    pushChildren(stack, (MarkupContainer) child);
+                }
+            }
+        }
+    }
+
+    private static void pushChildren(Deque<Component> stack, MarkupContainer container) {
+        for (Component child : container)
+            stack.push(child);
+    }
 }

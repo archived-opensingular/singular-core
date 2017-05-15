@@ -16,11 +16,10 @@
 
 package org.opensingular.lib.wicket.util.util;
 
-import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
-import org.opensingular.lib.wicket.util.jquery.JQuery;
+import java.io.Serializable;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,7 +35,6 @@ import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -45,8 +43,7 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.behavior.FormChoiceAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.FormComponentAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.IAjaxUpdateConfiguration;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 @SuppressWarnings("serial")
 public interface IBehaviorsMixin extends Serializable {

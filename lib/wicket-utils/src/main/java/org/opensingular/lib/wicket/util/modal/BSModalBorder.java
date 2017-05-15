@@ -19,6 +19,7 @@ package org.opensingular.lib.wicket.util.modal;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -100,20 +101,37 @@ public class BSModalBorder extends Border {
         }
     }
 
-    private static final String DIALOG           = "dialog";
-    private static final String CLOSE_ICON       = "closeIcon";
-    private static final String COMPRESS_ICON    = "compressIcon";
-    private static final String EXPAND_ICON      = "expandIcon";
-    private static final String TITLE            = "title";
-    private static final String HEADER           = "header";
-    private static final String FOOTER           = "footer";
+    private static final String          DIALOG                 = "dialog";
+    private static final String          CLOSE_ICON             = "closeIcon";
+    private static final String          COMPRESS_ICON          = "compressIcon";
+    private static final String          EXPAND_ICON            = "expandIcon";
+    private static final String          TITLE                  = "title";
+    private static final String          HEADER                 = "header";
+    private static final String          FOOTER                 = "footer";
 
-    private Size                size             = Size.NORMAL;
-    private boolean             dismissible      = false;
-    private boolean             withAutoFocus    = true;
+    private Size                         size                   = Size.NORMAL;
+    private boolean                      dismissible            = false;
+    private boolean                      withAutoFocus          = true;
 
-    private final RepeatingView buttonsContainer = new RepeatingView("buttons");
-    protected BSFeedbackPanel   feedbackGeral    = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
+    private final RepeatingView          buttonsContainer       = new RepeatingView("buttons");
+    protected BSFeedbackPanel            feedbackGeral          = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
+
+    private final Component              closeIcon;
+    private final Component              compressIcon;
+    private final Component              expandIcon;
+    private IConsumer<AjaxRequestTarget> closeIconCallBack;
+    private IConsumer<AjaxRequestTarget> onHideCallBack;
+    private AbstractDefaultAjaxBehavior  onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
+                                                                    private boolean executed = false;
+                                                                    @Override
+                                                                    protected void respond(AjaxRequestTarget target) {
+                                                                        onHideCallBack.accept(target);
+                                                                    }
+                                                                    @Override
+                                                                    public boolean isTemporary(Component component) {
+                                                                        return executed;
+                                                                    }
+                                                                };
 
     protected BSFeedbackPanel newFeedbackPanel(String id, BSModalBorder fence, IFeedbackMessageFilter messageFilter) {
         return new BSFeedbackPanel(id, fence, messageFilter);
@@ -122,12 +140,6 @@ public class BSModalBorder extends Border {
     protected IFeedbackMessageFilter newIFeedbackMessageFilter() {
         return new NotContainedFeedbackMessageFilter(getBodyContainer());
     }
-
-    private final Component              closeIcon;
-    private final Component              compressIcon;
-    private final Component              expandIcon;
-    private IConsumer<AjaxRequestTarget> closeIconCallBack;
-    private IConsumer<AjaxRequestTarget> onHideCallBack;
 
     public BSModalBorder(String id) {
         this(id, null);
@@ -169,9 +181,8 @@ public class BSModalBorder extends Border {
                 .add(feedbackGeral)
                 .add(buttonsFragment
                     .add(buttonsContainer)))
-            .add(new AttributeAppender("class", modalSizeModel, " "))
-
-        );
+            .add(new AttributeAppender("class", modalSizeModel, " ")));
+        ;
 
         dialog.add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('keypress', function (e) {"
             + "  var buttons = $(this).find('.btn-primary:visible');"
@@ -355,17 +366,21 @@ public class BSModalBorder extends Border {
     }
 
     public void hide(AjaxRequestTarget target) {
-        // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado 
-        clearInputs();
+        if (this.isVisible()) {
 
-        this.setVisible(false);
+            // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado 
+            clearInputs();
 
-        if (target != null) {
-            final String blockingFunction = "hide_hidden_wicket_modal";
-            target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
-            target.add(this);
+            this.setVisible(false);
+
+            if (target != null) {
+                final String blockingFunction = "hide_hidden_wicket_modal";
+                target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
+                target.add(this);
+            }
+            getPage().add(onHideCallBackBehavior);
+            target.appendJavaScript(onHideCallBackBehavior.getCallbackScript());
         }
-        IConsumer.noopIfNull(this.onHideCallBack).accept(target);
     }
 
     public void clearInputs() {
