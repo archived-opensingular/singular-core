@@ -39,6 +39,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
+import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
@@ -127,30 +128,18 @@ public class TypeaheadComponent extends Panel {
     @SuppressWarnings("unchecked")
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        labelField = new TextField<>("label_field", new Model<String>() {
-
-            private String lastDisplay;
-            private Serializable lastValue;
-
-            @Override
-            public String getObject() {
-                if (instance().isEmptyOfData()) {
-                    return null;
-                } else if (!Value.dehydrate(instance()).equals(lastValue)) {
-                    lastValue = Value.dehydrate(instance());
-                    SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
-                    if (converter != null) {
-                        Serializable converted = converter.toObject(instance());
-                        if (converted != null) {
-                            lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
-                        }
-                    }
-                }
-                return lastDisplay;
-            }
-        });
+        labelField = makeLabelField();
         c.add(labelField);
-        valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
+        valueField = makeValueField();
+        c.add(valueField);
+        dynamicFetcher = new BloodhoundDataBehavior(model, cache);
+        add(dynamicFetcher);
+        return c;
+    }
+
+    @NotNull
+    private TextField<String> makeValueField() {
+        return new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
             private Serializable lastValue;
@@ -195,10 +184,32 @@ public class TypeaheadComponent extends Panel {
             }
 
         });
-        c.add(valueField);
-        dynamicFetcher = new BloodhoundDataBehavior(model, cache);
-        add(dynamicFetcher);
-        return c;
+    }
+
+    @NotNull
+    private TextField<String> makeLabelField() {
+        return new TextField<>("label_field", new Model<String>() {
+
+            private String lastDisplay;
+            private Serializable lastValue;
+
+            @Override
+            public String getObject() {
+                if (instance().isEmptyOfData()) {
+                    return null;
+                } else if (!Value.dehydrate(instance()).equals(lastValue)) {
+                    lastValue = Value.dehydrate(instance());
+                    SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        Serializable converted = converter.toObject(instance());
+                        if (converted != null) {
+                            lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
+                        }
+                    }
+                }
+                return lastDisplay;
+            }
+        });
     }
 
     private Optional<TypeaheadCache> getValueFromChace(String key) {

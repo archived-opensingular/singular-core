@@ -139,9 +139,18 @@ public final class ConversorDataISO8601 {
                 pos_++;
                 p++;
             }
+            validar(digitosMinimos, digitosMaximos, p);
+            n = letShiftMaximo(digitosMaximos, shiftMaximo, p, n);
+            return n;
+        }
+
+        protected void validar(int digitosMinimos, int digitosMaximos, int p) {
             if ((p < digitosMinimos) || (p > digitosMaximos)) {
                 throw erroFormato();
             }
+        }
+
+        protected int letShiftMaximo(int digitosMaximos, boolean shiftMaximo, int p, int n) {
             if (shiftMaximo) {
                 for (; p < digitosMaximos; p++) {
                     n *= 10;

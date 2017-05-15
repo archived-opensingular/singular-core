@@ -54,21 +54,30 @@ public final class SingularUtil {
         boolean nextUpper = false;
         for (char c : normalized.toCharArray()) {
             if (sb.length() == 0) {
-                if (Character.isJavaIdentifierStart(c)) {
-                    c = firstCharacterUpperCase ? Character.toUpperCase(c) : Character.toLowerCase(c);
-                    sb.append(c);
-                }
+                appendLengthZero(firstCharacterUpperCase, sb, c);
             } else if (Character.isJavaIdentifierPart(c)) {
-                if (nextUpper) {
-                    c = Character.toUpperCase(c);
-                    nextUpper = false;
-                }
-                sb.append(c);
+                nextUpper = appendJavaIdentifierPart(sb, nextUpper, c);
             } else if (Character.isWhitespace(c)) {
                 nextUpper = true;
             }
         }
         return sb.toString();
+    }
+
+    protected static boolean appendJavaIdentifierPart(StringBuilder sb, boolean nextUpper, char c) {
+        if (nextUpper) {
+            c = Character.toUpperCase(c);
+            nextUpper = false;
+        }
+        sb.append(c);
+        return nextUpper;
+    }
+
+    protected static void appendLengthZero(boolean firstCharacterUpperCase, StringBuilder sb, char c) {
+        if (Character.isJavaIdentifierStart(c)) {
+            c = firstCharacterUpperCase ? Character.toUpperCase(c) : Character.toLowerCase(c);
+            sb.append(c);
+        }
     }
 
     public static String normalize(String original) {

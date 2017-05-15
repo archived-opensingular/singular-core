@@ -725,32 +725,42 @@ public abstract class MElement implements Element, Serializable {
         if ((n == null) && !StringUtils.isEmpty(value)) {
             return addElement(xPath, value);
         } else if (n instanceof Element) {
-            Node filho = n.getFirstChild();
-            if (filho == null) {
-                if (!StringUtils.isEmpty(value)) {
-                    Document d = n.getOwnerDocument();
-                    Text txt = d.createTextNode(value);
-                    n.appendChild(txt);
-                }
-            } else if (XmlUtil.isNodeTypeText(filho)) {
-                if (!StringUtils.isEmpty(value)) {
-                    filho.setNodeValue(value);
-                } else {
-                    n.removeChild(filho);
-                }
-            } else {
-                return null;
-            }
+            if (updateElement(value, n)) return null;
         } else if (n instanceof Attr) {
-            //Não há como saber quem é o pai (n.getParentNode() retorna null)
-            if (value == null) {
-                return addElement(xPath, ""); //Força a remoção do atributo
-            }
-            return addElement(xPath, value);
+            return updateAttr(xPath, value);
+
         } else {
             return null;
         }
         return n;
+    }
+
+    protected Node updateAttr(String xPath, String value) {
+        //Não há como saber quem é o pai (n.getParentNode() retorna null)
+        if (value == null) {
+            return addElement(xPath, ""); //Força a remoção do atributo
+        }
+        return addElement(xPath, value);
+    }
+
+    protected boolean updateElement(String value, Node n) {
+        Node filho = n.getFirstChild();
+        if (filho == null) {
+            if (!StringUtils.isEmpty(value)) {
+                Document d   = n.getOwnerDocument();
+                Text     txt = d.createTextNode(value);
+                n.appendChild(txt);
+            }
+        } else if (XmlUtil.isNodeTypeText(filho)) {
+            if (!StringUtils.isEmpty(value)) {
+                filho.setNodeValue(value);
+            } else {
+                n.removeChild(filho);
+            }
+        } else {
+            return true;
+        }
+        return false;
     }
 
     /**
