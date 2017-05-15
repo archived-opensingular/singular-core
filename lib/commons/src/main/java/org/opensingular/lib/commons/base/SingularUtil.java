@@ -49,12 +49,10 @@ public final class SingularUtil {
     }
 
     public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
-        if (normalize) {
-            original = normalize(original);
-        }
-        StringBuilder sb = new StringBuilder(original.length());
+        String normalized = normalize ? normalize(original) : original;
+        StringBuilder sb = new StringBuilder(normalized.length());
         boolean nextUpper = false;
-        for (char c : original.toCharArray()) {
+        for (char c : normalized.toCharArray()) {
             if (sb.length() == 0) {
                 if (Character.isJavaIdentifierStart(c)) {
                     c = firstCharacterUpperCase ? Character.toUpperCase(c) : Character.toLowerCase(c);

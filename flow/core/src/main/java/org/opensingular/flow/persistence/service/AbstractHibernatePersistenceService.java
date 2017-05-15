@@ -111,9 +111,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public ROLE_USER setInstanceUserRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, SUser user) {
-        user = saveUserIfNeeded(user);
+        SUser resolvedUser = saveUserIfNeeded(user);
 
-        ROLE_USER entityRole = newEntityRole(instance, role, user, Flow.getUserIfAvailable());
+        ROLE_USER entityRole = newEntityRole(instance, role, resolvedUser, Flow.getUserIfAvailable());
 
         SessionWrapper sw = getSession();
         sw.save(entityRole);
@@ -182,13 +182,13 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, SUser responsibleUser) {
-        responsibleUser = saveUserIfNeeded(responsibleUser);
+        SUser resolvedUser = saveUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
         IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
 
-        if (responsibleUser != null) {
-            task.setResponsibleUser(responsibleUser);
+        if (resolvedUser != null) {
+            task.setResponsibleUser(resolvedUser);
         }
 
         getSession().update(task);
@@ -202,9 +202,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void relocateTask(TASK_INSTANCE taskInstance, SUser user) {
-        user = saveUserIfNeeded(user);
-        taskInstance.setAllocatedUser(user);
-
+        taskInstance.setAllocatedUser(saveUserIfNeeded(user));
         updateTask(taskInstance);
     }
 
@@ -216,13 +214,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             SUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance) {
         IEntityTaskHistoricType taskHistoryType = retrieveOrCreateTaskHistoricType(typeDescription);
 
-        responsibleUser = saveUserIfNeeded(responsibleUser);
-        IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, responsibleUser);
+        SUser resolvedUser = saveUserIfNeeded(responsibleUser);
+        IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, resolvedUser);
 
-        if (dateHour == null) {
-            dateHour = new Date();
-        }
-        history.setBeginDateAllocation(dateHour);
+        history.setBeginDateAllocation(dateHour == null ? new Date() : dateHour);
         history.setDescription(detail);
 
         SessionWrapper sw = getSession();

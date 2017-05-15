@@ -16,20 +16,18 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.List;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Where;
-
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
+import java.util.List;
 
 /**
  * The persistent class for the TB_INSTANCIA_PROCESSO database table.
@@ -58,7 +56,7 @@ public class ProcessInstanceEntity extends AbstractProcessInstanceEntity<Actor, 
      * mas não tem como fazer isso com o @Where
      */
     public TaskInstanceEntity getCurrentTask() {
-        if (getTasks() != null && getTasks().size() > 0) {
+        if (getTasks() != null && ! getTasks().isEmpty()) {
             return getTasks().get(getTasks().size() - 1);
         }
         return null;

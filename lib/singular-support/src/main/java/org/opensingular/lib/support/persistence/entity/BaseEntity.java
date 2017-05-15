@@ -16,10 +16,10 @@
 
 package org.opensingular.lib.support.persistence.entity;
 
-import java.io.Serializable;
-
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public abstract class BaseEntity<PK extends Serializable> implements Serializable{
@@ -74,5 +74,29 @@ public abstract class BaseEntity<PK extends Serializable> implements Serializabl
             return (T) li.getImplementation();
         }
         return obj;
+    }
+
+    /**
+     * Compara duas entidades de acordo com a ordenação da chave primária. Caso uma chave seja null, então é considerado
+     * que essa entidade é menor do que a outra com chave não nula.
+     */
+    public static <KEY extends Comparable<KEY> & Serializable> int compare(BaseEntity<KEY> e1, BaseEntity<KEY> e2) {
+        if (e1 == e2) { //Também trata o caso de ambos serem null
+            return 0;
+        } else if (e1 == null) {
+            return -1;
+        } else if (e2 == null) {
+            return 1;
+        }
+        KEY k1 = e1.getCod();
+        KEY k2 = e2.getCod();
+        if (k1 == k2) { //Também trata o caso de ambos serem null
+            return 0;
+        } else if (k1 == null) {
+            return -1;
+        } else if (k2 == null) {
+            return 1;
+        }
+        return k1.compareTo(k2);
     }
 }

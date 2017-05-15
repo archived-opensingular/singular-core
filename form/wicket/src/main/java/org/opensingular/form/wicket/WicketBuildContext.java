@@ -66,6 +66,9 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+
 @SuppressWarnings("serial")
 public class WicketBuildContext implements Serializable, IFormBuildContext {
 
@@ -234,12 +237,12 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     }
 
     public static Optional<WicketBuildContext> findNearest(Component comp) {
-        do {
-            Optional<WicketBuildContext> ctx = find(comp);
-            if (ctx.isPresent())
+        for (Component c = comp; c != null; c = c.getParent()) {
+            Optional<WicketBuildContext> ctx = find(c);
+            if (ctx.isPresent()) {
                 return ctx;
-            comp = comp.getParent();
-        } while (comp != null);
+            }
+        }
         return Optional.empty();
     }
 

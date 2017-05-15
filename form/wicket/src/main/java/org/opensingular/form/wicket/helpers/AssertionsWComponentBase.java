@@ -249,9 +249,8 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     private String resolveClassName(Class<?> aClass) {
         String name = aClass.getSimpleName();
-        while (name.length() == 0) {
-            aClass = aClass.getSuperclass();
-            name = aClass.getSimpleName();
+        if (name.length() == 0) {
+            return resolveClassName(aClass.getSuperclass());
         }
         return name;
     }

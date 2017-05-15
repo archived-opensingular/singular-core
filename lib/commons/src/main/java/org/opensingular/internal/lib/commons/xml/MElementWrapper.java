@@ -94,7 +94,6 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param namespaceURI Tipicamente o name space possui o formato de uma URL
      * (não é obrigatório) no formato, por exemplo,
-     * http://www.miranteinfo.com/sisfinanceiro/cobranca/registraPagamento.
      * @param qualifiedName o nome do elemento que será criado. Pode conter
      * prefixo (ex.: "fin:ContaPagamento").
      */
@@ -405,41 +404,43 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @return o elemento que foi adicionado
      */
     static Element addElementNS(Node parent, String namespaceURI, String qualifiedName) {
-        Document d = parent.getOwnerDocument();
-
-        int pos = qualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
+        Node resolvedParent = parent;
+        Document d = resolvedParent.getOwnerDocument();
+        String resolvedNamespaceURI = namespaceURI;
+        String resolvedQualifiedName = qualifiedName;
+        int pos = resolvedQualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
         if (pos != -1) {
             if (pos == 0) {
-                parent = XmlUtil.getRootParent(parent);
+                resolvedParent = XmlUtil.getRootParent(resolvedParent);
             } else {
-                parent = getElementCriando(d, parent, namespaceURI, qualifiedName.substring(0, pos));
+                resolvedParent = getElementCriando(d, resolvedParent, resolvedNamespaceURI, resolvedQualifiedName.substring(0, pos));
             }
-            qualifiedName = qualifiedName.substring(pos + 1);
-            namespaceURI = null;
+            resolvedQualifiedName = resolvedQualifiedName.substring(pos + 1);
+            resolvedNamespaceURI = null;
         }
         Element novo;
-        if (isVazio(namespaceURI)) {
-            if ((parent.getNamespaceURI() != null) && isVazio(parent.getPrefix())) {
-                namespaceURI = parent.getNamespaceURI();
+        if (isVazio(resolvedNamespaceURI)) {
+            if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
+                resolvedNamespaceURI = resolvedParent.getNamespaceURI();
             } else {
-                namespaceURI = null; //Podia ser String vazia
+                resolvedNamespaceURI = null; //Podia ser String vazia
             }
-            novo = d.createElementNS(namespaceURI, qualifiedName);
+            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
         } else {
-            novo = d.createElementNS(namespaceURI, qualifiedName);
+            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
 
-            if (!Objects.equals(namespaceURI, parent.getNamespaceURI())) {
-                int posPrefixo = qualifiedName.indexOf(':');
+            if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
+                int posPrefixo = resolvedQualifiedName.indexOf(':');
                 if ((posPrefixo == -1)) {
-                    novo.setAttribute("xmlns", namespaceURI);
+                    novo.setAttribute("xmlns", resolvedNamespaceURI);
                 } else {
-                    String prefixo = qualifiedName.substring(0, posPrefixo);
-                    novo.setAttribute("xmlns:" + prefixo, namespaceURI);
+                    String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
+                    novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
                 }
                 //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
             }
         }
-        parent.appendChild(novo);
+        resolvedParent.appendChild(novo);
         return novo;
     }
 
@@ -451,37 +452,38 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param value o valor <code>String</code> do elemento adicionado
      * @return o elemento que foi adicionado
      */
-    static Element addElement(Element pai, String nome, String value) {
+    static Element addElement(Element pai, final String name, String value) {
         if (value == null) {
             throw new IllegalArgumentException("O set do valor de "
                     + XPathToolkit.getFullPath(pai)
                     + "/"
-                    + nome
+                    + name
                     + ": não é permitido valor null. Se for necessário um "
                     + "element empty, utilize addElement sem parâmetro valor");
         }
 
         Element novo;
-        int pos = nome.lastIndexOf('@');
+        String elementName = name;
+        int pos = elementName.lastIndexOf('@');
         if (pos != -1) {
-            String atributo = nome.substring(pos + 1);
-            if ((pos > 1) && (nome.charAt(pos - 1) == '/')) {
+            String attributeName = elementName.substring(pos + 1);
+            if ((pos > 1) && (elementName.charAt(pos - 1) == '/')) {
                 pos--; //Conse a barra antes da arroba (ex: cd/@cod)
             }
             if (pos > 0) {
-                nome = nome.substring(0, pos);
-                novo = getElementCriando(pai.getOwnerDocument(), pai, null, nome);
+                elementName = elementName.substring(0, pos);
+                novo = getElementCriando(pai.getOwnerDocument(), pai, null, elementName);
             } else {
                 novo = pai;
             }
 
             if (value.length() == 0) {
-                novo.removeAttribute(atributo);
+                novo.removeAttribute(attributeName);
             } else {
-                novo.setAttribute(atributo, value);
+                novo.setAttribute(attributeName, value);
             }
         } else {
-            novo = addElementNS(pai, null, nome);
+            novo = addElementNS(pai, null, elementName);
             if (value.length() != 0) {
                 Document d = pai.getOwnerDocument();
                 Text txt = d.createTextNode(value);
@@ -492,34 +494,37 @@ public class MElementWrapper extends MElement implements EWrapper {
         return novo;
     }
 
-    private static Element getElementCriando(Document d, Node pai, String namespaceURI,
-            String qualifiedName) {
+    private static Element getElementCriando(Document d, Node parent, final String namespaceURI,
+            final String qualifiedName) {
 
         String subTrecho = null;
-        int pos = qualifiedName.indexOf(SEPARADOR_ELEMENT);
+        String resolvedQualifiedName = qualifiedName;
+        int pos = resolvedQualifiedName.indexOf(SEPARADOR_ELEMENT);
+        Node resolvedParent = parent;
         if (pos != -1) {
             if (pos == 0) {
-                pai = XmlUtil.getRootParent(pai);
-                qualifiedName = qualifiedName.substring(1);
-                pos = qualifiedName.indexOf(SEPARADOR_ELEMENT);
+                resolvedParent = XmlUtil.getRootParent(resolvedParent);
+                resolvedQualifiedName = resolvedQualifiedName.substring(1);
+                pos = resolvedQualifiedName.indexOf(SEPARADOR_ELEMENT);
             }
             if (pos != -1) {
-                subTrecho = qualifiedName.substring(pos + 1);
-                qualifiedName = qualifiedName.substring(0, pos);
+                subTrecho = resolvedQualifiedName.substring(pos + 1);
+                resolvedQualifiedName = resolvedQualifiedName.substring(0, pos);
             }
         }
 
-        Node n = XmlUtil.nextSiblingOfTypeElement(pai.getFirstChild(), qualifiedName);
+        Node n = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
 
         Element e = (Element) n;
         if (e == null) {
-            if (isVazio(namespaceURI)) {
-                if (!isVazio(pai.getNamespaceURI()) && isVazio(pai.getPrefix())) {
-                    namespaceURI = pai.getNamespaceURI();
+            String resolvedNamespaceURI = namespaceURI;
+            if (isVazio(resolvedNamespaceURI)) {
+                if (!isVazio(resolvedParent.getNamespaceURI()) && isVazio(resolvedParent.getPrefix())) {
+                    resolvedNamespaceURI = resolvedParent.getNamespaceURI();
                 }
             }
-            e = d.createElementNS(namespaceURI, qualifiedName);
-            pai.appendChild(e);
+            e = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+            resolvedParent.appendChild(e);
         }
 
         // verifica se precisa procurar um sub-item
@@ -773,13 +778,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node insertBefore(Node arg0, Node arg1) {
-        if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original.get();
-        }
-        if (arg1 instanceof MElementWrapper) {
-            arg1 = ((MElementWrapper) arg1).original.get();
-        }
-        return original.get().insertBefore(arg0, arg1);
+        return original.get().insertBefore(EWrapper.getOriginal(arg0), EWrapper.getOriginal(arg1));
     }
 
     /**
@@ -787,10 +786,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node replaceChild(Node arg0, Node arg1) {
-        if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original.get();
-        }
-        return original.get().replaceChild(arg0, arg1);
+        return original.get().replaceChild(EWrapper.getOriginal(arg0), arg1);
     }
 
     /**
@@ -798,10 +794,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node removeChild(Node arg0) {
-        if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original.get();
-        }
-        return original.get().removeChild(arg0);
+        return original.get().removeChild(EWrapper.getOriginal(arg0));
     }
 
     /**
@@ -809,10 +802,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public Node appendChild(Node arg0) {
-        if (arg0 instanceof MElementWrapper) {
-            arg0 = ((MElementWrapper) arg0).original.get();
-        }
-        return original.get().appendChild(arg0);
+        return original.get().appendChild(EWrapper.getOriginal(arg0));
     }
 
     /**

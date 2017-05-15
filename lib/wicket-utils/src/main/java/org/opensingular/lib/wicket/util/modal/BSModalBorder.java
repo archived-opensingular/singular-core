@@ -298,7 +298,7 @@ public class BSModalBorder extends Border {
     @Override
     public BSModalBorder add(Component... children) {
         /* XXX: Verificar o problema que está ocorrendo na página de processos! */
-        if (children.length > 0 && children[0].getId().equals("buttonsFragment")) {
+        if (children.length > 0 && "buttonsFragment".equals(children[0].getId())) {
             return this;
         }
         return (BSModalBorder) super.add(children);

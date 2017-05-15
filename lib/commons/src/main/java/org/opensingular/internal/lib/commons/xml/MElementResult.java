@@ -19,13 +19,20 @@ package org.opensingular.internal.lib.commons.xml;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.TypeInfo;
+import org.w3c.dom.UserDataHandler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
+import java.util.NoSuchElementException;
 
 /**
  * Percorredor de uma lista especifica de elementos da um XML (aceita filtro
@@ -400,6 +407,9 @@ public final class MElementResult extends MElement implements EWrapper {
 
             public MElement next() {
                 MElement o = getAtual();
+                if (o == null) {
+                    throw new NoSuchElementException();
+                }
                 MElementResult.this.next();
                 return o;
             }

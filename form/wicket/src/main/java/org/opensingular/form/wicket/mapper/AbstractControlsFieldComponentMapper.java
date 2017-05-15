@@ -217,9 +217,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
-            if (ctx.isTitleInBlock()) {
-                c.setVisible(false);
-            } else if (StringUtils.isEmpty(labelModel.getObject())) {
+            if (ctx.isTitleInBlock() || StringUtils.isEmpty(labelModel.getObject())) {
                 c.setVisible(false);
             }
         }));

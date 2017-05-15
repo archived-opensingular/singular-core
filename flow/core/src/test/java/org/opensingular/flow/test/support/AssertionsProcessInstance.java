@@ -90,6 +90,15 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
         return this;
     }
 
+    /** Verifica se a descrição do processo corresponde a descrição esperada, caso contrário dispara exception. */
+    public AssertionsProcessInstance isDescription(String expectedDescription) {
+        if (!Objects.equals(expectedDescription, getTarget().getDescription())) {
+            throw new AssertionError(errorMsg("Process description diferent of the expected", expectedDescription,
+                    getTarget().getDescription()));
+        }
+        return this;
+    }
+
     /**
      * Verifica se o processo possui um histórico de tarefa compatível com a sequencia informada.
      */

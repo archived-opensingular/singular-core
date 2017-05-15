@@ -164,6 +164,5 @@ public class FileUploadServletTest {
 
     private void mockSessionAndFileUploadManager() {
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute(FileUploadManager.SESSION_KEY)).thenReturn(uploadManager);
     }
 }

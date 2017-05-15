@@ -18,6 +18,10 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 
+import javax.annotation.Nonnull;
+
+import java.util.Objects;
+
 @SuppressWarnings("rawtypes")
 public class AtrRef<T extends SType, I extends SInstance, V> {
 
@@ -31,21 +35,25 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final Class<V>                 valueClass;
 
-    private String                         nameScope;
+    private final String                   nameScope;
 
-    private String                         nameFull;
+    private final String                         nameFull;
 
     private final boolean                  selfReference;
 
-    public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends SPackage> packageClass, String nameSimple) {
+    private boolean binded;
+
+    public static AtrRef<?, ?, Object> ofSelfReference(@Nonnull Class<? extends SPackage> packageClass,
+            @Nonnull String nameSimple) {
         return new AtrRef(packageClass, nameSimple, null, null, null);
     }
 
-    public AtrRef(Class<? extends SPackage> packageClass, String nameSimple, Class<T> typeClass, Class<I> instanceClass,
-                  Class<V> valueClass) {
-        SFormUtil.validateSimpleName(nameSimple);
-        this.packageClass = packageClass;
-        this.nameSimple = nameSimple;
+    public AtrRef(@Nonnull Class<? extends SScope> scopeClass, @Nonnull String nameSimple, Class<T> typeClass,
+            Class<I> instanceClass, Class<V> valueClass) {
+        this.packageClass = SFormUtil.getPackageClassOrException(scopeClass);
+        this.nameScope = SFormUtil.getScopeNameOrException(scopeClass);
+        this.nameSimple = SFormUtil.validateSimpleName(nameSimple);
+        this.nameFull = this.nameScope + "." + this.nameSimple;
         this.typeClass = typeClass;
         this.instanceClass = instanceClass;
         this.valueClass = valueClass;
@@ -69,10 +77,6 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
     }
 
     public String getNameFull() {
-        if (isNotBindDone()) {
-            throw new SingularFormException("Atributo '" + getNameSimple() + "' ainda não associado a um pacote");
-        }
-
         return nameFull;
     }
 
@@ -81,19 +85,16 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
     }
 
     final boolean isNotBindDone() {
-        return nameScope == null;
+        return ! binded;
     }
 
     final void bind(String scopeName) {
-        if (isNotBindDone()) {
+        if (! Objects.equals(this.nameScope, scopeName)) {
+            throw new SingularFormException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
+                    + "' não podendo ser reassoaciado ao pacote '" + scopeName + "'");
+        } else if (isNotBindDone()) {
             Preconditions.checkNotNull(scopeName);
-            this.nameScope = scopeName;
-            nameFull = scopeName + "." + nameSimple;
-        } else {
-            if (!this.nameScope.equals(scopeName)) {
-                throw new SingularFormException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
-                    + "' não podendo ser reassoaciado ao pacote " + scopeName);
-            }
+            binded = true;
         }
     }
 
