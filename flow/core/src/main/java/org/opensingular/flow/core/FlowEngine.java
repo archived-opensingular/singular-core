@@ -298,7 +298,7 @@ class FlowEngine {
                 .getConfigBean().getPersistenceService();
     }
 
-    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
+    private static void validarParametrosInput(TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(taskInstance);
         if (transition.getParameters().isEmpty()) {
             return;

@@ -60,15 +60,16 @@ public class ProcessadorCodigoFonte {
     }
 
     private int processCode(String[] linhas, int i, String linha) {
+        int j = i;
         if (isBloco(linha)) {
-            i = processBlock(linhas, i);
+            j =  processBlock(linhas, j);
         } else if (isLinha(linha)) {
-            fonteFinal.add(linhas[++i]);
+            fonteFinal.add(linhas[++j]);
             linhasParaDestacar.add(fonteFinal.size());
         } else {
             fonteFinal.add(linha);
         }
-        return i;
+        return j;
     }
 
     private int processBlock(String[] linhas, int i) {
