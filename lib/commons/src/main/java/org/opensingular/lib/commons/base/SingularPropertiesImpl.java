@@ -214,7 +214,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
 
     private URL findProperties(String name) {
         try {
-            return SingularPropertiesImpl.class.getClassLoader().getResource(name);
+            return  Thread.currentThread().getContextClassLoader().getResource(name);
         } catch (Exception e) {
             throw SingularException.rethrow("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }

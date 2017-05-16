@@ -86,37 +86,23 @@ class FlowEngine {
         STask<?> currentDestiny = Objects.requireNonNull(destinyTask);
         VarInstanceMap<?, ?> currentParam = paramIn;
         while (true) {
-            if (currentTransition != null && currentOrigin == null) {
-                throw new SingularFlowException(
-                        "Não pode ser solicitada execução de uma transição específica (transition=" +
-                                currentTransition.getName() +
-                                ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
-            } else if (currentOrigin != null && !currentOrigin.isActive()) {
-                throw new SingularFlowException(
-                        "Não pode ser executada uma transição a partir da task '" + currentOrigin.getName() +
-                                "', pois a mesma já está concluida.", currentOrigin);
-            }
-            Date agora = new Date();
-            final TaskInstance newTaskInstance = processInstance.updateState(currentOrigin, currentTransition,
-                    currentDestiny, agora);
+
+            checkUpdateState(processInstance, currentOrigin, currentTransition);
+
+            final Date         agora           = new Date();
+            final TaskInstance newTaskInstance = processInstance.updateState(currentOrigin, currentTransition, currentDestiny, agora);
 
             if (currentParam != null) {
-                copyMarkedParametersToInstanceVariables(processInstance, currentParam);
-
-                if (currentOrigin != null) {
-                    //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
-                    // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
-                    // impede). O problema é uqe originTaskInstance é obrigatório
-                    getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), currentOrigin,
-                            newTaskInstance, currentParam);
-                }
+                saveParam(processInstance, currentOrigin, currentParam, agora, newTaskInstance);
             }
 
             getPersistenceService().flushSession();
+
             if (!currentDestiny.isImmediateExecution()) {
                 return executeImediate(processInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
                         newTaskInstance);
             }
+
             final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, currentParam,
                     currentTransition);
             newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
@@ -143,6 +129,37 @@ class FlowEngine {
             currentOrigin = newTaskInstance;
             currentParam = null;
         }
+    }
+
+    private static <P extends ProcessInstance> void saveParam(@Nonnull P processInstance, TaskInstance currentOrigin, VarInstanceMap<?, ?> currentParam, Date agora, TaskInstance newTaskInstance) {
+        copyMarkedParametersToInstanceVariables(processInstance, currentParam);
+        if (currentOrigin != null) {
+            //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
+            // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
+            // impede). O problema é uqe originTaskInstance é obrigatório
+            getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), currentOrigin, newTaskInstance, currentParam);
+        }
+    }
+
+    private static <P extends ProcessInstance> void checkUpdateState(@Nonnull P processInstance, TaskInstance currentOrigin, STransition currentTransition) {
+        if (isCurrentTransitionNotNullAndCurrentOriginNull(currentOrigin, currentTransition)) {
+            throw new SingularFlowException(
+                    "Não pode ser solicitada execução de uma transição específica (transition=" +
+                            currentTransition.getName() +
+                            ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
+        } else if (isCurrentOriginNotNullAndIsntActive(currentOrigin)) {
+            throw new SingularFlowException(
+                    "Não pode ser executada uma transição a partir da task '" + currentOrigin.getName() +
+                            "', pois a mesma já está concluida.", currentOrigin);
+        }
+    }
+
+    private static boolean isCurrentOriginNotNullAndIsntActive(TaskInstance currentOrigin) {
+        return currentOrigin != null && !currentOrigin.isActive();
+    }
+
+    private static boolean isCurrentTransitionNotNullAndCurrentOriginNull(TaskInstance currentOrigin, STransition currentTransition) {
+        return currentTransition != null && currentOrigin == null;
     }
 
     private static <P extends ProcessInstance> TaskInstance executeImediate(P processInstance, TaskInstance originTaskInstance,
@@ -281,7 +298,7 @@ class FlowEngine {
                 .getConfigBean().getPersistenceService();
     }
 
-    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
+    private static void validarParametrosInput(TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(taskInstance);
         if (transition.getParameters().isEmpty()) {
             return;
