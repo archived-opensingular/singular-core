@@ -18,7 +18,6 @@ package org.opensingular.flow.core;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -31,7 +30,7 @@ import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -42,44 +41,53 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class TaskInstance {
+public class TaskInstance implements Serializable {
 
     public static final String ALOCACAO = "Alocação";
     public static final String DESALOCACAO = "Desalocação";
 
-    private IEntityTaskInstance entityTask;
+    private final Integer taskCod;
 
-    private ProcessInstance processInstance;
+    private transient IEntityTaskInstance entityTask;
 
-    private transient MTask<?> flowTask;
+    private transient ProcessInstance processInstance;
+
+    private transient STask<?> flowTask;
 
     TaskInstance(@Nonnull ProcessInstance processInstance, @Nonnull IEntityTaskInstance task) {
+        this(task);
         Objects.requireNonNull(processInstance);
-        Objects.requireNonNull(task);
         if (!processInstance.getEntity().equals(task.getProcessInstance())) {
             throw new SingularFlowException(processInstance.createErrorMsg(
                     "O objeto " + task.getClass().getSimpleName() + " " + task + " não é uma tarefa filha do objeto " +
                             processInstance.getClass().getSimpleName() + " em questão"), processInstance);
         }
         this.processInstance = processInstance;
-        this.entityTask = task;
     }
 
     TaskInstance(@Nonnull IEntityTaskInstance task) {
         this.entityTask = Objects.requireNonNull(task);
+        this.taskCod = Objects.requireNonNull(task.getCod());
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
     public <X extends ProcessInstance> X getProcessInstance() {
         if (processInstance == null) {
-            processInstance = Flow.getProcessInstance(entityTask.getProcessInstance());
+            processInstance = Flow.getProcessInstance(getEntity().getProcessInstance());
         }
         return (X) processInstance;
     }
 
+    private IEntityTaskInstance getEntity() {
+        if (entityTask == null) {
+            entityTask =  Flow.getConfigBean().getPersistenceService().retrieveTaskInstanceByCodOrException(taskCod);
+        }
+        return entityTask;
+    }
+
     @Nonnull
-    public Optional<MTask<?>> getFlowTask() {
+    public Optional<STask<?>> getFlowTask() {
         if (flowTask == null) {
             flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskByAbbreviation(getTaskVersion().getAbbreviation()).orElse(null);
         }
@@ -87,7 +95,7 @@ public class TaskInstance {
     }
 
     @Nonnull
-    public MTask<?> getFlowTaskOrException() {
+    public STask<?> getFlowTaskOrException() {
         return getFlowTask().orElseThrow(() -> new SingularFlowException(
                 "Era esperado encontra a definição para a entidade de tarefa, mas não há correspondente entre o BD e " +
                         "a definição do processo",
@@ -95,7 +103,7 @@ public class TaskInstance {
     }
 
     public Serializable getId() {
-        return entityTask.getCod();
+        return taskCod;
     }
 
     public String getFullId() {
@@ -106,22 +114,22 @@ public class TaskInstance {
         return Flow.getDefaultHrefFor(this);
     }
 
-    public MUser getAllocatedUser() {
-        return entityTask.getAllocatedUser();
+    public SUser getAllocatedUser() {
+        return getEntity().getAllocatedUser();
     }
 
-    public MUser getResponsibleUser() {
-        return entityTask.getResponsibleUser();
+    public SUser getResponsibleUser() {
+        return getEntity().getResponsibleUser();
     }
 
     public Date getTargetEndDate() {
-        return entityTask.getTargetEndDate();
+        return getEntity().getTargetEndDate();
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
     public final <X extends IEntityTaskInstance> X getEntityTaskInstance() {
-        entityTask = getPersistenceService().retrieveTaskInstanceByCodOrException(entityTask.getCod());
+        entityTask = getPersistenceService().retrieveTaskInstanceByCodOrException(taskCod);
         return (X) entityTask;
     }
 
@@ -136,12 +144,12 @@ public class TaskInstance {
     }
 
     private IEntityTaskVersion getTaskVersion() {
-        return entityTask.getTaskVersion();
+        return getEntity().getTaskVersion();
     }
 
     @Nonnull
     public String getName() {
-        return getFlowTask().map(MTask::getName).orElseGet(() -> getTaskVersion().getName());
+        return getFlowTask().map(STask::getName).orElseGet(() -> getTaskVersion().getName());
     }
 
     public String getAbbreviation() {
@@ -161,38 +169,38 @@ public class TaskInstance {
     }
 
     public Date getBeginDate() {
-        return entityTask.getBeginDate();
+        return getEntity().getBeginDate();
     }
 
     public Date getEndDate() {
-        return entityTask.getEndDate();
+        return getEntity().getEndDate();
     }
 
 
     public boolean isFinished() {
-        return entityTask.isFinished();
+        return getEntity().isFinished();
     }
 
     public boolean isActive() {
-        return entityTask.isActive();
+        return getEntity().isActive();
     }
 
     public boolean isEnd() {
-        return getFlowTask().map(MTask::isEnd).orElseGet(() -> getTaskVersion().isEnd());
+        return getFlowTask().map(STask::isEnd).orElseGet(() -> getTaskVersion().isEnd());
     }
 
     public boolean isPeople() {
-        return getFlowTask().map(MTask::isPeople).orElseGet(() -> getTaskVersion().isPeople());
+        return getFlowTask().map(STask::isPeople).orElseGet(() -> getTaskVersion().isPeople());
     }
 
     public boolean isWait() {
-        return getFlowTask().map(MTask::isWait).orElseGet(() -> getTaskVersion().isWait());
+        return getFlowTask().map(STask::isWait).orElseGet(() -> getTaskVersion().isWait());
     }
 
     /** Verifica se o tipo da tarefa corresponde ao informado. */
     public boolean isAtTask(@Nonnull ITaskDefinition expectedTaskType) {
         Objects.requireNonNull(expectedTaskType);
-        Optional<MTask<?>> taskType = getFlowTask();
+        Optional<STask<?>> taskType = getFlowTask();
         if (taskType.isPresent()) {
             return taskType.get().is(expectedTaskType);
         }
@@ -207,8 +215,7 @@ public class TaskInstance {
     /** Prepara para execução a transação default da instância. Senão existir transição default, dispara exception. */
     @Nonnull
     public TransitionCall prepareTransition() {
-        return new TransitionCall(
-                new TransitionRef(this, getFlowTaskOrException().resolveDefaultTransitionOrException()));
+        return new TransitionCall(new RefTransition(this));
     }
 
     /**
@@ -218,23 +225,22 @@ public class TaskInstance {
     @Nonnull
     public TransitionCall prepareTransition(@Nonnull String transitionName) {
         Objects.requireNonNull(transitionName);
-        return new TransitionCall(
-                new TransitionRef(this, getFlowTaskOrException().getTransitionOrException(transitionName)));
+        return new TransitionCall(new RefTransition(this, transitionName));
     }
 
-    public void relocateTask(MUser author, MUser user,
+    public void relocateTask(SUser author, SUser user,
                              boolean notify, String relocationCause) {
         relocateTask(author, user, notify, relocationCause, null);
     }
 
-    public void relocateTask(MUser author, MUser user,
+    public void relocateTask(SUser author, SUser user,
                              boolean notify, String relocationCause,
                              Integer versionStamp) {
         if (user != null && !isPeople()) {
             throw new SingularFlowException(
                     "A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa", this);
         }
-        MUser pessoaAlocadaAntes = getAllocatedUser();
+        SUser pessoaAlocadaAntes = getAllocatedUser();
         if (Objects.equals(user, pessoaAlocadaAntes)) {
             return;
         }
@@ -276,7 +282,7 @@ public class TaskInstance {
 
         IEntityProcessInstance childProcessInstanceEntity = childProcessInstance.getEntity();
 
-        getPersistenceService().setParentTask(childProcessInstanceEntity, entityTask);
+        getPersistenceService().setParentTask(childProcessInstanceEntity, getEntity());
 
         if (historyType != null) {
             log(historyType, childProcessInstanceEntity.getDescription(),
@@ -295,7 +301,7 @@ public class TaskInstance {
      */
     @Nonnull
     public List<ProcessInstance> getChildProcesses() {
-        return Flow.getProcessInstances(entityTask.getChildProcesses());
+        return Flow.getProcessInstances(getEntity().getChildProcesses());
     }
 
     private void notifyStateUpdate() {
@@ -306,22 +312,24 @@ public class TaskInstance {
         return log(tipoHistorico, detalhamento, null, Flow.getUserIfAvailable(), null);
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada) {
+    public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada) {
         return log(tipoHistorico, detalhamento, alocada, Flow.getUserIfAvailable(), null);
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada, MUser autor, Date dataHora) {
+    public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada, SUser autor, Date dataHora) {
         return log(tipoHistorico, detalhamento, alocada, autor, dataHora, null);
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada, MUser autor, Date dataHora,
+    public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada, SUser autor, Date dataHora,
             IEntityProcessInstance demandaFilha) {
-        IEntityTaskInstanceHistory historico = getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada,
-                autor, dataHora, demandaFilha);
+        IEntityTaskInstanceHistory historico = getPersistenceService().saveTaskHistoricLog(getEntity(), tipoHistorico,
+                detalhamento, alocada, autor, dataHora, demandaFilha);
         return new TaskHistoricLog(historico);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion,
+            IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion,
+            IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
         return getProcessInstance().getProcessDefinition().getPersistenceService();
     }
 
@@ -333,7 +341,7 @@ public class TaskInstance {
             sb.append(" - ").append(descricao);
         }
         if (adicionarAlocado) {
-            MUser p = getAllocatedUser();
+            SUser p = getAllocatedUser();
             if (p != null) {
                 sb.append(" (").append(p.getSimpleName()).append(')');
             }
@@ -348,18 +356,18 @@ public class TaskInstance {
      */
     @SuppressWarnings("unchecked")
     @Nonnull
-    public List<MUser> getDirectlyResponsibles() {
-        MUser allocatedUser = getAllocatedUser();
+    public List<SUser> getDirectlyResponsibles() {
+        SUser allocatedUser = getAllocatedUser();
         if (allocatedUser != null) {
             return ImmutableList.of(allocatedUser);
         }
         return getFlowTask()
                 .filter(task -> task.isPeople() || (task.isWait() && task.getAccessStrategy() != null))
-                .map(task -> (List<MUser>) getPersistenceService().retrieveUsersByCod(getFirstLevelUsersCodWithAccess(task)))
+                .map(task -> (List<SUser>) getPersistenceService().retrieveUsersByCod(getFirstLevelUsersCodWithAccess(task)))
                 .orElse(Collections.emptyList());
     }
 
-    private Set<Integer> getFirstLevelUsersCodWithAccess(@Nonnull MTask<?> flowTask) {
+    private Set<Integer> getFirstLevelUsersCodWithAccess(@Nonnull STask<?> flowTask) {
 
         TaskAccessStrategy<ProcessInstance> accessStrategy = flowTask.getAccessStrategy();
         IEntityTaskVersion taskVersion = getTaskVersion();

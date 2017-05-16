@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
@@ -61,7 +61,6 @@ public class FileUploadProcessorTest {
     @Test
     public void testProcesessWithNotAllowedFileType() throws Exception {
         when(fileItem.getSize()).thenReturn(10L);
-        when(uploadInfo.isFileTypeAllowed(anyString())).thenReturn(false);
 
         List<UploadResponseInfo> response = processor.process(fileItem, uploadInfo, manager);
 

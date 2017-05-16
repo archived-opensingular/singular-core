@@ -68,13 +68,9 @@ public class FreemarkerUtil {
     }
 
     public static String safeWrap(String template) {
-        final Matcher      matcher = Pattern.compile("((?<=\\$\\{)(.*?)+(?=\\}))").matcher(template);
-        final StringBuffer buffer  = new StringBuffer();
-        while (matcher.find()) {
-            matcher.appendReplacement(buffer, String.format("(%s)!''", matcher.group()));
-        }
-        matcher.appendTail(buffer);
-        return buffer.toString();
+        return template
+                .replaceAll("\\$\\{", "\\${(")
+                .replaceAll("}", ")!''}");
     }
 
 }

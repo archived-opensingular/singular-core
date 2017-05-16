@@ -198,10 +198,10 @@ public class DocumentAnnotations {
         } else if (newAnnotation.getTargetPath() != null) {
             try {
                 String[] path = StringUtils.split(newAnnotation.getTargetPath(), '/');
-                SInstance instance = findByXPathAndId(document, instancesById, path, path.length - 1);
-                if (instance != null) {
-                    newAnnotation.setTarget(instance);
-                    annotationsMap.put(instance.getId(), newAnnotation);
+                Optional<SInstance> instance = findByXPathAndId(document, instancesById, path, path.length - 1);
+                if (instance.isPresent()) {
+                    newAnnotation.setTarget(instance.get());
+                    annotationsMap.put(instance.get().getId(), newAnnotation);
                 }
             } catch (Exception e) {
                 throw new SingularFormException("Erro lendo path da anotação: " + newAnnotation.getTargetPath(), e);
@@ -214,9 +214,9 @@ public class DocumentAnnotations {
      * instância não foi salva pois o conteudo estava vazio, mas a anotação continua sendo valida assim mesmo. Espera
      * trabalhar em cima de um path no formato "order[@id=1]/address[@id=4]/street[@id=5]".
      *
-     * @return Retorna null senão for possível localizar.
+     * @return Optional<SInstance>
      */
-    private SInstance findByXPathAndId(SDocument document, Map<Integer, SInstance> instancesById, String[] path,
+    private Optional<SInstance> findByXPathAndId(SDocument document, Map<Integer, SInstance> instancesById, String[] path,
             int index) {
         int pos = path[index].lastIndexOf('=');
         if (pos <= 0) {
@@ -225,7 +225,7 @@ public class DocumentAnnotations {
         Integer id = Integer.valueOf(path[index].substring(pos+1,path[index].length()-1));
         SInstance instance = instancesById.get(id);
         if (instance != null) {
-            return instance;
+            return Optional.of(instance);
         }
         pos = path[index].indexOf('[');
         if (pos <= 0) {
@@ -235,15 +235,15 @@ public class DocumentAnnotations {
 
         if (index == 0) {
             if (document.getRoot().getName().equals(name)) {
-                return document.getRoot();
+                return Optional.ofNullable(document.getRoot());
             }
         } else {
-            SInstance parent = findByXPathAndId(document, instancesById, path, index - 1);
-            if (parent instanceof SIComposite) {
-                return ((SIComposite) parent).getField(name);
+            Optional<SInstance> parent = findByXPathAndId(document, instancesById, path, index - 1);
+            if (parent.isPresent() && parent.get() instanceof SIComposite) {
+                return parent.get().getFieldOpt(name);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -260,7 +260,7 @@ public class DocumentAnnotations {
                     //localiza a instancia correspondente no formulario destino
                     SInstance targetInstance = document.getRoot();
                     if (pathFromRoot != null){
-                        targetInstance = ((SIComposite) document.getRoot()).getField(pathFromRoot);
+                        targetInstance = document.getRoot().getFieldOpt(pathFromRoot).orElse(targetInstance);
                     }
                     //Copiando todos os valores da anotação (inclusive o id na sinstance antiga)
                     SIAnnotation targetAnnotation = getAnnotationOrCreate(targetInstance, sourceAnnotation.getClassifier());

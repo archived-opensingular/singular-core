@@ -145,6 +145,7 @@ public class BSGrid extends BSContainer<BSGrid> {
     }
 
     public BSGrid setAddContainerClass(boolean add) {
+        add(CONTAINER_BEHAVIOR, CONTAINER_FLUID_BEHAVIOR);
         remove(CONTAINER_BEHAVIOR, CONTAINER_FLUID_BEHAVIOR);
         if (add)
             add(CONTAINER_BEHAVIOR);
@@ -152,6 +153,7 @@ public class BSGrid extends BSContainer<BSGrid> {
     }
 
     public BSGrid setAddContainerFluidClass(boolean add) {
+        add(CONTAINER_BEHAVIOR, CONTAINER_FLUID_BEHAVIOR);
         remove(CONTAINER_BEHAVIOR, CONTAINER_FLUID_BEHAVIOR);
         if (add)
             add(CONTAINER_FLUID_BEHAVIOR);

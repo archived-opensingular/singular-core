@@ -8,6 +8,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class DataSubmissionTest {
 
@@ -46,8 +47,8 @@ public class DataSubmissionTest {
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1").isNotNull();
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2").isNotNull();
 
         tester.newFormTester().submit();
 
@@ -72,8 +73,8 @@ public class DataSubmissionTest {
         tester.startDummyPage();
         data2.asAtr().enabled(false);
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1").isNotNull();
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2").isNotNull();
 
         tester.newFormTester().submit();
 
@@ -120,7 +121,7 @@ public class DataSubmissionTest {
         tester.getAssertionsForm().getSubCompomentWithId("data2").assertSInstance().isNotNull().isValueEquals("value2");
 
         tester.newFormTester().setValue(data1Assert.getTarget(), "clear");
-        tester.executeAjaxEvent(data1Assert.getTarget(), IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(data1Assert.getTarget(), SINGULAR_PROCESS_EVENT);
 
         tester.getAssertionsForm().getSubCompomentWithId("data1").assertSInstance().isNotNull().isValueEquals("clear");
         tester.getAssertionsForm().getSubCompomentWithId("data2").assertSInstance().isValueNull();

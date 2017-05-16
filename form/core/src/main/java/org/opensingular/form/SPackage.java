@@ -16,11 +16,13 @@
 
 package org.opensingular.form;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang3.NotImplementedException;
 
 public class SPackage extends SScopeBase {
 
@@ -34,22 +36,27 @@ public class SPackage extends SScopeBase {
         this(null);
     }
 
-    protected SPackage(String name) {
-        if (name == null) {
+    protected SPackage(@Nullable String name) {
+        String nameResolved = name;
+        if (nameResolved == null) {
             if (getClass() == SPackage.class) {
-                throw new SingularFormException("Deve ser utilizado o construtor " + SPackage.class.getSimpleName() + "(String) ou "
-                        + SPackage.class.getSimpleName() + " deve ser derivado");
+                throw new SingularFormException(
+                        "Deve ser utilizado o construtor " + SPackage.class.getSimpleName() + "(String) ou " +
+                                SPackage.class.getSimpleName() + " deve ser derivado");
             }
-            name = SFormUtil.getInfoPackageName(this.getClass());
-            if (name == null) {
-                name = getClass().getName();
-            }
+            nameResolved = SFormUtil.getInfoPackageName(this.getClass());
+        } else if (getClass() != SPackage.class) {
+            throw new SingularFormException(
+                    "Para uma classe derivada de " + getClass().getSimpleName() + ", não deve ser usado o construtor " +
+                            SPackage.class.getSimpleName() + "(String) . Use o construtor " +
+                            SPackage.class.getSimpleName() + "() e informe o nome do pacote usando a anotação @" +
+                            SInfoPackage.class.getSimpleName());
         }
-        SFormUtil.validatePackageName(name);
-        this.name = name;
+        this.name = SFormUtil.validatePackageName(nameResolved);
     }
 
     @Override
+    @Nonnull
     public String getName() {
         return name;
     }
@@ -58,10 +65,11 @@ public class SPackage extends SScopeBase {
      * Método para ser sobescrito que é chamado no pacote para que o mesmo crie os seus tipos, crie atributos e
      * configure os tipos.
      */
-    protected void onLoadPackage(PackageBuilder pb) {
+    protected void onLoadPackage(@Nonnull PackageBuilder pb) {
     }
 
     @Override
+    @Nullable
     public SScope getParentScope() {
         return null;
     }
@@ -81,15 +89,15 @@ public class SPackage extends SScopeBase {
         super.debug(appendable, level + 1);
     }
 
-    protected static boolean isNull(SISimple<?> field) {
+    protected static boolean isNull(@Nullable SISimple<?> field) {
         return field == null || field.isNull();
     }
 
-    protected static boolean isNotNull(SISimple<?> field) {
+    protected static boolean isNotNull(@Nullable SISimple<?> field) {
         return field != null && !field.isNull();
     }
 
-    protected static boolean isTrue(SISimple<?> field) {
+    protected static boolean isTrue(@Nullable SISimple<?> field) {
         if (field != null) {
             return field.getValueWithDefault(Boolean.class);
         }
@@ -97,7 +105,11 @@ public class SPackage extends SScopeBase {
     }
 
     @Override
+    @Nonnull
     public SDictionary getDictionary() {
+        if (dictionary == null) {
+            throw new SingularFormException("Internal error: dictionary is null");
+        }
         return dictionary;
     }
 

@@ -64,7 +64,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     final void start() {
         for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
-            for (MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
+            for (STaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
                 if (!task.isImmediateExecution()) {
                     getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }
@@ -305,7 +305,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // ------- Consultas ----------------------------------------------
 
-    public final List<? extends ProcessDefinition<?>> getEnabledProcessForCreationBy(MUser user) {
+    public final List<? extends ProcessDefinition<?>> getEnabledProcessForCreationBy(SUser user) {
         return getDefinitions().stream().filter(d -> d.canBeCreatedBy(user)).sorted().collect(Collectors.toList());
     }
 
@@ -329,7 +329,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         return new QuartzScheduleService();
     }
 
-    public final Object executeTask(MTaskJava task) {
+    public final Object executeTask(STaskJava task) {
         final IProcessDataService<?> dataService = task.getFlowMap().getProcessDefinition().getDataService();
         final Collection<? extends ProcessInstance> instancias = dataService.retrieveAllInstancesIn(task);
         if (task.isCalledInBlock()) {

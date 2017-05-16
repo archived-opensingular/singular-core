@@ -49,28 +49,36 @@ public final class SingularUtil {
     }
 
     public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
-        if (normalize) {
-            original = normalize(original);
-        }
-        StringBuilder sb = new StringBuilder(original.length());
+        String normalized = normalize ? normalize(original) : original;
+        StringBuilder sb = new StringBuilder(normalized.length());
         boolean nextUpper = false;
-        for (char c : original.toCharArray()) {
+        for (char c : normalized.toCharArray()) {
             if (sb.length() == 0) {
-                if (Character.isJavaIdentifierStart(c)) {
-                    c = firstCharacterUpperCase ? Character.toUpperCase(c) : Character.toLowerCase(c);
-                    sb.append(c);
-                }
+                appendLengthZero(firstCharacterUpperCase, sb, c);
             } else if (Character.isJavaIdentifierPart(c)) {
-                if (nextUpper) {
-                    c = Character.toUpperCase(c);
-                    nextUpper = false;
-                }
-                sb.append(c);
+                nextUpper = appendJavaIdentifierPart(sb, nextUpper, c);
             } else if (Character.isWhitespace(c)) {
                 nextUpper = true;
             }
         }
         return sb.toString();
+    }
+
+    protected static boolean appendJavaIdentifierPart(StringBuilder sb, boolean nextUpper, char c) {
+        char _c = c;
+        if (nextUpper) {
+            _c = Character.toUpperCase(_c);
+        }
+        sb.append(_c);
+        return false;
+    }
+
+    protected static void appendLengthZero(boolean firstCharacterUpperCase, StringBuilder sb, char c) {
+        char _c = c;
+        if (Character.isJavaIdentifierStart(_c)) {
+            _c = firstCharacterUpperCase ? Character.toUpperCase(_c) : Character.toLowerCase(_c);
+            sb.append(_c);
+        }
     }
 
     public static String normalize(String original) {

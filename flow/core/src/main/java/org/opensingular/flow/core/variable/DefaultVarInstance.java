@@ -16,13 +16,15 @@
 
 package org.opensingular.flow.core.variable;
 
+import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.lib.commons.base.SingularException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 public class DefaultVarInstance extends AbstractVarInstance {
 
-    private Object valor;
+    private Serializable valor;
 
     public DefaultVarInstance(VarDefinition definition) {
         super(definition);
@@ -32,7 +34,15 @@ public class DefaultVarInstance extends AbstractVarInstance {
     public VarInstance setValue(Object valor) {
         try {
             Object antes = this.valor;
-            this.valor = getDefinition().convert(valor);
+            Object v = getDefinition().convert(valor);
+            if (v != null && !(v instanceof Serializable)) {
+                throw new SingularFlowException("O valor atribuido não é serializável")
+                        .add("varName", getName())
+                        .add("varType", getType())
+                        .add("value", v)
+                        .add("valueClass", v.getClass().getName());
+            }
+            this.valor = (Serializable) v;
             if (needToNotifyAboutValueChanged() && !Objects.equals(antes, this.valor)) {
                 notifyValueChanged();
             }

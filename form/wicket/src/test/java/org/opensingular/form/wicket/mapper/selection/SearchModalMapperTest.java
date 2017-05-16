@@ -20,6 +20,7 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 
 import java.util.Arrays;
 import java.util.List;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 
 public class SearchModalMapperTest {
@@ -63,8 +64,8 @@ public class SearchModalMapperTest {
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
-        Button openModalButton = (Button) tester.getAssertionsForm()
-                .findSubComponent(b -> b.getId().equals(SearchModalPanel.MODAL_TRIGGER_ID)).getTarget();
+        Button openModalButton = tester.getAssertionsForm()
+                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(openModalButton, "click");
 
         AssertionsWComponentList links = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);
@@ -72,7 +73,7 @@ public class SearchModalMapperTest {
 
         tester.getAssertionsForm().getSubCompomentWithType(mandatoryField).assertSInstance().isValueEquals("1");
 
-        tester.executeAjaxEvent(mandatoryFieldComp, IWicketComponentMapper.SINGULAR_PROCESS_EVENT);
+        tester.executeAjaxEvent(mandatoryFieldComp, SINGULAR_PROCESS_EVENT);
 
         tester.assertVisible(dependentFieldComp.getPageRelativePath());
     }

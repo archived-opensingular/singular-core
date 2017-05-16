@@ -97,7 +97,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         getSession().evict(o);
     }
 
-    public <T> List<T> findByProperty(String propertyName, String value) {
+    public List<T> findByProperty(String propertyName, String value) {
         return findByProperty(propertyName, value, null, null);
     }
 
@@ -144,12 +144,9 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
     public <T> List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
         Criteria criteria = getSession().createCriteria(tipo);
 
-        if (matchMode == null) {
-            matchMode = MatchMode.EXACT;
-        }
-
         if (value != null && !value.isEmpty()) {
-            criteria.add(Restrictions.ilike(propertyName, value, matchMode));
+            MatchMode mode = matchMode == null ? MatchMode.EXACT : matchMode;
+            criteria.add(Restrictions.ilike(propertyName, value, mode));
         }
 
         if (maxResults != null) {
@@ -169,5 +166,9 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
     protected final static <K> Optional<K> findUniqueResult(Class<K> expectedResultClass, Query query) {
         Object result = query.setMaxResults(1).uniqueResult();
         return Optional.ofNullable(expectedResultClass.cast(result));
+    }
+
+    public void flush() {
+        getSession().flush();
     }
 }

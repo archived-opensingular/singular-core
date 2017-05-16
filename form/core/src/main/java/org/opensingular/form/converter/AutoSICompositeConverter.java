@@ -16,13 +16,13 @@
 
 package org.opensingular.form.converter;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SingularFormException;
 import net.vidageek.mirror.dsl.Mirror;
 import net.vidageek.mirror.get.dsl.GetterHandler;
 import net.vidageek.mirror.set.dsl.FieldSetter;
 import net.vidageek.mirror.set.dsl.SetterHandler;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 
 import java.io.Serializable;
 
@@ -46,7 +46,7 @@ public class AutoSICompositeConverter<T extends Serializable> implements SInstan
     @Override
     public void fillInstance(SInstance ins, T obj) {
         if (!(ins instanceof SIComposite)) {
-            throw new SingularFormException("AutoSICompositeConverter somente funciona com instancias compostas.");
+            throw new SingularFormException("AutoSICompositeConverter somente funciona com instancias compostas.", ins);
         }
         final SIComposite   cins          = (SIComposite) ins;
         final GetterHandler getterHandler = new Mirror().on(obj).get();
@@ -56,7 +56,7 @@ public class AutoSICompositeConverter<T extends Serializable> implements SInstan
     @Override
     public T toObject(SInstance ins) {
         if (!(ins instanceof SIComposite)) {
-            throw new SingularFormException("AutoSICompositeConverter somente funciona com instancias compostas.");
+            throw new SingularFormException("AutoSICompositeConverter somente funciona com instancias compostas.", ins);
         }
         if (ins.isEmptyOfData()) {
             return null;

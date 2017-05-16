@@ -25,7 +25,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.*;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.validation.IValidationError;
@@ -38,7 +44,7 @@ import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
-import org.opensingular.form.wicket.mapper.AbstractListaMapper;
+import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
@@ -60,7 +66,12 @@ import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -96,7 +107,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void addBehaviours() {
-        footer.add($b.visibleIf(() -> AbstractListaMapper.canAddItems(ctx)));
+        footer.add($b.visibleIf(() -> AbstractListMapper.canAddItems(ctx)));
         addButton.add(WicketUtils.$b.attr("title", addButtonLabel.getDefaultModel()));
         addButton.setEscapeModelStrings(false);
     }
@@ -116,7 +127,7 @@ public class MasterDetailPanel extends Panel {
         body = new WebMarkupContainer("body");
         footer = new WebMarkupContainer("footer");
         addButton = newAddAjaxLink();
-        addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListaMapper.defineLabel(ctx)));
+        addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
     }

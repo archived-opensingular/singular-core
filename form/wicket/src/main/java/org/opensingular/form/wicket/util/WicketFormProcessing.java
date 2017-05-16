@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -34,26 +35,27 @@ import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.ISInstanceListener.EventCollector;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toSet;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -62,14 +64,15 @@ import static java.util.stream.Collectors.toSet;
  */
 public class WicketFormProcessing implements Loggable {
 
-    public final static  MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
+    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
     };
-    private final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
+    private final static MetaDataKey<Boolean> MDK_PROCESSED = new MetaDataKey<Boolean>() {
     };
-    public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
+    public final static MetaDataKey<Boolean> MDK_FIELD_UPDATED = new MetaDataKey<Boolean>() {
     };
 
-    private WicketFormProcessing() {}
+    private WicketFormProcessing() {
+    }
 
     public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
@@ -102,7 +105,7 @@ public class WicketFormProcessing implements Loggable {
             }
 
             final SInstance baseInstance = baseInstanceModel.getObject();
-            final SDocument document     = baseInstance.getDocument();
+            final SDocument document = baseInstance.getDocument();
 
             // Validação do valor do componente
             boolean hasErrors = false;
@@ -137,11 +140,11 @@ public class WicketFormProcessing implements Loggable {
      */
     private static String getIndexesKey(String path) {
 
-        final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
+        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
 
-        final Matcher       matcher = indexFinder.matcher(path);
-        final StringBuilder key     = new StringBuilder();
+        final Matcher matcher = indexFinder.matcher(path);
+        final StringBuilder key = new StringBuilder();
 
         while (matcher.find()) {
             key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
@@ -178,16 +181,24 @@ public class WicketFormProcessing implements Loggable {
      * @param i instancia a ser avaliada
      * @see <a href="https://www.pivotaltracker.com/story/show/131103577">[#131103577]</a>
      */
-    private static void evaluateUpdateListeners(SInstance i) {
-        SInstances
+    private static Set<SInstance> evaluateUpdateListenersAndCollect(SInstance i) {
+        return SInstances
                 .streamDescendants(i.getRoot(), true)
                 .filter(isDependantOf(i))
                 .filter(WicketFormProcessing::isNotOrphan)
                 .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
-                .forEach(dependant -> {
-                    ofNullable(dependant.asAtr().getUpdateListener()).ifPresent(x -> x.accept(dependant));
-                    WicketFormProcessing.evaluateUpdateListeners(dependant);
-                });
+                .map(dependant -> {
+                    List<SInstance> instances = new ArrayList<>();
+                    IConsumer<SInstance> updateListener = dependant.asAtr().getUpdateListener();
+                    if (updateListener != null) {
+                        updateListener.accept(dependant);
+                    }
+                    instances.add(dependant);
+                    instances.addAll(WicketFormProcessing.evaluateUpdateListenersAndCollect(dependant));
+                    return instances;
+                })
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     private static Predicate<SInstance> isDependantOf(SInstance i) {
@@ -202,73 +213,48 @@ public class WicketFormProcessing implements Loggable {
         return !isOrphan(i);
     }
 
-    public static void onFieldProcess(Component component, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstanceModel) {
+    /**
+     * Busca todas as instancias dependentes da instancia informada e executa o update listener.
+     * Apos a execução ira procurar os componente de tela vinculados as instancias atualizadas
+     * e atulizar via ajax
+     *
+     * @param page     a pagina
+     * @param target   o ajaxtarget
+     * @param instance a instancia
+     */
+    public static void processDependentTypes(Page page, AjaxRequestTarget target, SInstance instance) {
+        updateBoundComponents(page, target, new HashSet<>(evaluateUpdateListenersAndCollect(instance)));
+    }
 
-        if (fieldInstanceModel == null || fieldInstanceModel.getObject() == null) {
+    /**
+     * Atualiza todos os componentes vinculados as instancias informadas
+     */
+    private static void updateBoundComponents(Page page, AjaxRequestTarget target, Set<SInstance> instances) {
+        page.visitChildren(Component.class, new SInstanceBoudComponentUpdateVisitor(target, instances));
+    }
+
+    public static void onFieldProcess(Component component, AjaxRequestTarget target, IModel<? extends SInstance> model) {
+
+        SInstance instance;
+
+        if (model == null || (instance = model.getObject()) == null || target == null) {
             return;
         }
 
-        final SInstance                         fieldInstance  = fieldInstanceModel.getObject();
-        final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
+        validate(component, target, instance);
 
-        evaluateUpdateListeners(fieldInstance);
-        updateAttributes(fieldInstance, eventCollector);
-        validate(component, target, fieldInstance);
+        Set<SInstance> updatedInstances = evaluateUpdateListenersAndCollect(instance);
 
-        if (target != null) {
+        EventCollector eventCollector = new EventCollector();
 
-            final Set<Integer> updatedInstanceIds = eventCollector.streamEvents()
-                    .map(event -> event.getSource().getId())
-                    .collect(toSet());
+        updateAttributes(instance, eventCollector);
 
-            final Predicate<SType<?>> isDependent         = (type) -> fieldInstance.getType().isDependentType(type);
-            final Predicate<SType<?>> isElementsDependent = (type) -> type.isList() && isDependent.test(((STypeList<?, ?>) type).getElementsType());
+        Set<SInstance> instancesToUpdateComponents = new HashSet<>();
 
-            final Predicate<SInstance> shouldRefreshPredicate = childInstance -> {
+        instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
+        instancesToUpdateComponents.addAll(updatedInstances);
 
-                if (childInstance == null) {
-                    return false;
-                } else if (updatedInstanceIds.contains(childInstance.getId())) {
-                    return true;
-                }
-
-                final SType<?> type = childInstance.getType();
-
-                return (isDependent.test(type) || isElementsDependent.test(type)) && isNotInListOrIsBothInSameList(fieldInstance, childInstance);
-
-            };
-
-            final Predicate<SInstance> shouldntGoDepper = i -> !isParentsVisible(i);
-
-            final Consumer<MarkupContainer> refreshDependentComponentsConsumer = rc -> rc.visitChildren(Component.class, (c, visit) -> {
-                ISInstanceAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
-                    final SInstance ins = model.getSInstance();
-                    if (shouldntGoDepper.test(ins)) {
-                        visit.dontGoDeeper();
-                    } else {
-                        if (shouldRefreshPredicate.test(ins)) {
-                            refreshComponentOrCellContainer(target, c);
-                        }
-                    }
-                });
-            });
-
-            // Componentes no formulario "chapado"
-            WicketBuildContext
-                    .findTopLevel(component)
-                    .map(WicketBuildContext::getContainer)
-                    .ifPresent(refreshDependentComponentsConsumer);
-
-            final Consumer<WicketBuildContext> refreshComponentsInModalConsumer = ctx -> ctx
-                    .streamParentContexts()
-                    .map(WicketBuildContext::getExternalContainer)
-                    .forEach(refreshDependentComponentsConsumer);
-
-            WicketBuildContext
-                    .findNearest(component)
-                    .ifPresent(refreshComponentsInModalConsumer);
-
-        }
+        updateBoundComponents(component.getPage(), target, instancesToUpdateComponents);
     }
 
     private static boolean isNotInListOrIsBothInSameList(SInstance a, SInstance b) {
@@ -286,7 +272,7 @@ public class WicketFormProcessing implements Loggable {
 
 
     private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
-            if (!isSkipValidationOnRequest()) {
+        if (!isSkipValidationOnRequest()) {
 
             final InstanceValidationContext validationContext;
 
@@ -317,34 +303,16 @@ public class WicketFormProcessing implements Loggable {
         }
     }
 
-    /**
-     * Verifica se existe na hierarquia, ignora a si proprio.
-     */
-    private static boolean isParentsVisible(SInstance si) {
-        if (si == null) {
-            return false;
-        }
-        if (si.getParent() == null) {
-            return true;
-        }
-        for (SInstance i = si.getParent(); i.getParent() != null; i = i.getParent()) {
-            if (!(i.asAtr().isVisible() && i.asAtr().exists())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static boolean isSkipValidationOnRequest() {
         return RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) != null && RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST);
     }
 
-    private static void updateAttributes(final SInstance fieldInstance, ISInstanceListener.EventCollector eventCollector) {
+    private static void updateAttributes(final SInstance fieldInstance, EventCollector eventCollector) {
         final SDocument document = fieldInstance.getDocument();
         document.updateAttributes(eventCollector);
     }
 
-    private static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
+    public static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
             target.add(WicketFormUtils.resolveRefreshingComponent(

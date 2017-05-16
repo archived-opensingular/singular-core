@@ -4,8 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
-import org.opensingular.form.internal.xml.MParser;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.form.io.SFormXMLUtil;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -23,7 +29,7 @@ public class STypeListTest extends TestCaseForm {
 
     @Before
     public void setUp() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
+        PackageBuilder pkt = createTestPackage();
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");
         listType = baseType.addFieldListOfComposite("listField", "subStuff");

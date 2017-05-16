@@ -20,9 +20,19 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.opensingular.form.*;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.*;
+import org.opensingular.form.document.DefaultServiceRegistry;
+import org.opensingular.form.document.RefSDocumentFactory;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.form.document.TypeLoader;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.component.SingularFormWicket;
@@ -192,10 +202,7 @@ class MockTypeLoader extends TypeLoader<String> implements Serializable {
 
     @Nonnull
     private SType<?> loadTypeImpl2(String typeId) {
-        SType<?> typeOptional = dictionary.getTypeOptional(typeId);
-        if (typeOptional != null) {
-            return typeOptional;
-        }
-        return dictionary.createNewPackage(typeId).createCompositeType("mockRoot");
+        return dictionary.getTypeOptional(typeId).orElseGet(() -> (SType<?>) dictionary.createNewPackage(typeId)
+                .createCompositeType("mockRoot"));
     }
 }

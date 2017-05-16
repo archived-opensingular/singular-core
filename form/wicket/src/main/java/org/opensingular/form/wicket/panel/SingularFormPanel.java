@@ -339,7 +339,7 @@ public class SingularFormPanel extends Panel {
      * do Wicket.
      */
     public final void setInstanceInitializer(Consumer<SInstance> instanceInitializer) {
-        if(instanceInitializer != null) {
+        if (this.instanceInitializer != null) {
             throw new SingularFormException("O instanceInitializer ja está configurado");
         }
         this.instanceInitializer = instanceInitializer;

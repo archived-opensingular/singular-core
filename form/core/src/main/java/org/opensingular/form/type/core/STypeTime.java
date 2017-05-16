@@ -58,6 +58,9 @@ public class STypeTime extends STypeSimple<SITime, Date> {
 
     @Override
     protected String toStringPersistence(Date originalValue) {
+        if (originalValue == null) {
+            return null;
+        }
         return (new SimpleDateFormat(FORMAT)).format(originalValue);
     }
 

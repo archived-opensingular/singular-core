@@ -19,7 +19,9 @@ package org.opensingular.form.validation.validator;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.validation.IInstanceValidatable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,9 +42,9 @@ public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
         }
     }
 
-    private boolean isValid(String cpf) {
+    private boolean isValid(String cpfCandidate) {
         try {
-            cpf = MCNPJValidator.unmask(cpf);
+            String cpf = MCNPJValidator.unmask(cpfCandidate);
             if (invalidPatterns.contains(cpf)) {
                 return false;
             }

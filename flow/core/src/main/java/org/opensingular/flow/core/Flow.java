@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.view.Lnk;
+import org.opensingular.lib.commons.net.Lnk;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -147,7 +147,7 @@ public final class Flow {
         return getConfigBean().generateID(instanciaTarefa);
     }
 
-    public static MUser getUserIfAvailable() {
+    public static SUser getUserIfAvailable() {
         return getConfigBean().getUserService().getUserIfAvailable();
     }
 
@@ -155,7 +155,7 @@ public final class Flow {
         getConfigBean().notifyListeners(operation);
     }
 
-    static boolean canBeAllocated(MUser pessoa) {
+    static boolean canBeAllocated(SUser pessoa) {
         return getConfigBean().getUserService().canBeAllocated(pessoa);
     }
 

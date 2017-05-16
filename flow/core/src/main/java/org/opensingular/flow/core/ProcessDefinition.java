@@ -16,10 +16,8 @@
 
 package org.opensingular.flow.core;
 
-import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityProcessInstance;
@@ -31,14 +29,14 @@ import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataEnabled;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
-import org.opensingular.flow.core.view.Lnk;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -66,7 +65,7 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance>
-        implements Comparable<ProcessDefinition<?>> {
+        implements Comparable<ProcessDefinition<?>>, MetaDataEnabled {
 
     static final Logger logger = LoggerFactory.getLogger(ProcessDefinition.class);
 
@@ -152,34 +151,24 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
 
     /**
-     * <p>
-     * Método responsável pela criação do mapa de fluxo.
-     * </p>
-     *
-     * @return o mapa de fluxo para este processo.
+     * Método a ser implementado com a criação do fluxo do processo.
      */
+    @Nonnull
     protected abstract FlowMap createFlowMap();
 
     /**
-     * <p>
      * Retorna o {@link FlowMap} para esta definição de processo.
-     * </p>
-     *
-     * @return o {@link FlowMap}.
      */
     @Nonnull
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
-            if (novo == null){
-                novo = new FlowMap(this);
-            }
-            configureActions(novo);
+            Objects.requireNonNull(novo);
             if (novo.getProcessDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
             novo.verifyConsistency();
-            MBPMUtil.calculateTaskOrder(novo);
+            SFlowUtil.calculateTaskOrder(novo);
             flowMap = novo;
         }
         return flowMap;
@@ -273,72 +262,20 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
      */
     protected final ProcessScheduledJob addScheduledJob(String name) {
-        name = StringUtils.trimToNull(name);
+        String jobName = StringUtils.trimToNull(name);
 
-        final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
+        ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, jobName);
 
-        if (scheduledJobsByName.containsKey(name)) {
-            throw new SingularFlowException("A Job with name '" + name + "' is already defined.", this);
+        if (scheduledJobsByName.containsKey(jobName)) {
+            throw new SingularFlowException("A Job with name '" + jobName + "' is already defined.", this);
         }
-        scheduledJobsByName.put(name, scheduledJob);
+        scheduledJobsByName.put(jobName, scheduledJob);
         return scheduledJob;
     }
 
     @Nonnull
     final Collection<ProcessScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
-    }
-
-    /**
-     * <p>
-     * Retorna o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @param defaultValue
-     *            o valor padrão do metadado.
-     * @return o valor do metadado especificado; ou o valor padrão caso não
-     *         encontre o metadado especificado.
-     */
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
-        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
-    }
-
-    /**
-     * <p>
-     * Retorna o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @return o valor do metadado especificado; ou {@code null} caso não
-     *         encontre o metadado especificado.
-     */
-    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
-        return metaData == null ? null : getMetaData().get(propRef);
-    }
-
-    /**
-     * <p>
-     * Configura o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @param value
-     *            o valor do metadado a ser configurado.
-     * @return esta definição de processo já com o metadado definido.
-     */
-    protected <T> ProcessDefinition<I> setMetaDataValue(MetaDataRef<T> propRef, T value) {
-        getMetaData().set(propRef, value);
-        return this;
     }
 
     /**
@@ -371,7 +308,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if (version == null) {
             entityVersionCod = null;
             throw new SingularFlowException(
-                    createErrorMsg("Definicao demanda inconsistente com o BD: codigo não encontrado"), this);
+                    createErrorMsg(String.format("Definicao demanda inconsistente com o BD: codigo '%d' não encontrado", entityVersionCod)), this);
         }
 
         return version;
@@ -393,7 +330,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @throws SingularException
      *             caso não encontre a tarefa.
      */
-    public MTask<?> getTask(ITaskDefinition taskDefinition) {
+    public STask<?> getTask(ITaskDefinition taskDefinition) {
         return getFlowMap().getTask(taskDefinition);
     }
 
@@ -401,7 +338,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
     }
 
-    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull MTask<?> task) {
+    final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
         IEntityTaskVersion version = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
         if (version == null) {
@@ -447,7 +384,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            a tarefa informada.
      * @return a entidade persistente.
      */
-    public final IEntityTaskDefinition getEntityTaskDefinition(MTask<?> task) {
+    public final IEntityTaskDefinition getEntityTaskDefinition(STask<?> task) {
         return getEntityTaskDefinitionOrException(task.getAbbreviation());
     }
 
@@ -568,7 +505,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            o usuário especificado.
      * @return o <i>link resolver</i>.
      */
-    public final Lnk getCreatePageFor(MUser user) {
+    public final Lnk getCreatePageFor(SUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
     }
 
@@ -613,7 +550,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa
      *         ser configurado; {@code false} caso contrário.
      */
-    public boolean canBeCreatedBy(MUser user) {
+    public boolean canBeCreatedBy(SUser user) {
         return isCreatedByUser();
     }
 
@@ -643,14 +580,21 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         this.name = name;
     }
 
-    final MetaData getMetaData() {
+    @Override
+    @Nonnull
+    public Optional<MetaData> getMetaDataOpt() {
+        return Optional.ofNullable(metaData);
+    }
+
+    @Override
+    public MetaData getMetaData() {
         if (metaData == null) {
             metaData = new MetaData();
         }
         return metaData;
     }
 
-    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends MTask<?>> stream) {
+    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends STask<?>> stream) {
         return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
     }
 
@@ -712,7 +656,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     public StartCall<I> prepareStartCall() {
-        return new StartCall<I>(this, getFlowMap().getStart());
+        return new StartCall<I>(this, new RefStart(getFlowMap().getStart()));
     }
 
 
@@ -797,9 +741,5 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         result = getCategory().hashCode();
         result = 31 * result + getName().hashCode();
         return result;
-    }
-
-    protected void configureActions(FlowMap flowMap){
-
     }
 }

@@ -22,7 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
-public abstract class AbstractVarInstanceMap<K extends VarInstance> implements VarInstanceMap<K> {
+public abstract class AbstractVarInstanceMap<K extends VarInstance, SELF extends AbstractVarInstanceMap<K, SELF>>
+        implements VarInstanceMap<K, SELF> {
 
     private LinkedHashMap<String, K> variaveis = new LinkedHashMap<>();
 
@@ -32,7 +33,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
         this.varService = varService;
     }
 
-    public AbstractVarInstanceMap(VarInstanceMap<?> instances) {
+    public AbstractVarInstanceMap(VarInstanceMap<?,?> instances) {
         varService = VarService.getVarService(instances);
         for (VarInstance var : instances) {
             addDefinition(var.getDefinition()).setValue(var.getValue());
@@ -41,9 +42,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
 
     public AbstractVarInstanceMap(VarDefinitionMap<?> definitions) {
         varService = VarService.getVarService(definitions);
-        for (VarDefinition def : definitions) {
-            addDefinition(def);
-        }
+        addDefinitions(definitions);
     }
 
     @Override

@@ -1,20 +1,22 @@
 package org.opensingular.form;
 
-import junit.framework.TestCase;
-import org.junit.runners.Parameterized;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.form.helpers.AssertionsSType;
-import org.opensingular.internal.lib.commons.test.SingularTestUtil;
-import org.opensingular.lib.commons.util.Loggable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.junit.runners.Parameterized;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.form.helpers.AssertionsSType;
+import org.opensingular.internal.lib.commons.test.RunnableEx;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.util.Loggable;
+
+import junit.framework.TestCase;
 
 public abstract class TestCaseForm extends TestCase implements Loggable {
 
@@ -66,6 +68,14 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     protected final SDictionary createTestDictionary() {
         return dictionaryFactory.get();
+    }
+
+    protected final PackageBuilder createTestPackage() {
+        return createTestPackage("teste");
+    }
+
+    protected final PackageBuilder createTestPackage(String packageName) {
+        return createTestDictionary().createNewPackage(packageName);
     }
 
     /** Cria assertivas para um {@link SType}. */
@@ -157,28 +167,28 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, String trechoMsgEsperada) {
+    public static void assertException(RunnableEx acao, String trechoMsgEsperada) {
         SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
+    public static void assertException(RunnableEx acao, String trechoMsgEsperada, String msgFailException) {
         SingularTestUtil.assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada) {
         SingularTestUtil.assertException(acao, exceptionEsperada, null, null);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada,
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada,
             String trechoMsgEsperada) {
         SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, null);
     }
 
     @Deprecated
-    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
+    public static void assertException(RunnableEx acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
         SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, msgFailException);
     }

@@ -20,13 +20,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.CollectionUtils;
-import org.opensingular.flow.core.builder.ITaskDefinition;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,15 +49,15 @@ public class FlowMap {
 
     private final ProcessDefinition<?> processDefinition;
 
-    private final Map<String, MTask<?>> tasksByName = new HashMap<>();
+    private final Map<String, STask<?>> tasksByName = new HashMap<>();
 
-    private final Map<String, MTask<?>> tasksByAbbreviation = new HashMap<>();
+    private final Map<String, STask<?>> tasksByAbbreviation = new HashMap<>();
 
-    private final Map<String, MTaskEnd> endTasks = new HashMap<>();
+    private final Map<String, STaskEnd> endTasks = new HashMap<>();
 
-    private final Map<String, MProcessRole> rolesByAbbreviation = new HashMap<>();
+    private final Map<String, SProcessRole> rolesByAbbreviation = new HashMap<>();
 
-    private MStart start;
+    private SStart start;
 
     private IRoleChangeListener roleChangeListener;
 
@@ -82,8 +82,8 @@ public class FlowMap {
      * @param type o tipo de transição.
      * @return a nova transição criada.
      */
-    protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, TransitionType type) {
-        return new MTransition(origin, name, destinarion, type);
+    protected STransition newTransition(STask<?> origin, String name, STask<?> destinarion, TransitionType type) {
+        return new STransition(origin, name, destinarion, type);
     }
 
     /**
@@ -93,7 +93,7 @@ public class FlowMap {
      * @return as tarefas definidas.
      */
     @Nonnull
-    public Collection<MTask<?>> getTasks() {
+    public Collection<STask<?>> getTasks() {
         return tasksByName.values();
     }
 
@@ -103,7 +103,7 @@ public class FlowMap {
      * @return todas as tarefas definidas.
      */
     @Nonnull
-    public Collection<MTask<?>> getAllTasks() {
+    public Collection<STask<?>> getAllTasks() {
         return CollectionUtils.union(getTasks(), getEndTasks());
     }
 
@@ -113,8 +113,8 @@ public class FlowMap {
      * @return as tarefas definidas do tipo {@link TaskType#PEOPLE} ou uma lista vazia.
      */
     @Nonnull
-    public Collection<MTaskPeople> getPeopleTasks() {
-        return (Collection<MTaskPeople>) getTasks(TaskType.PEOPLE);
+    public Collection<STaskPeople> getPeopleTasks() {
+        return (Collection<STaskPeople>) getTasks(TaskType.PEOPLE);
     }
 
     /**
@@ -123,8 +123,8 @@ public class FlowMap {
      * @return as tarefas definidas do tipo {@link TaskType#JAVA} ou uma lista vazia.
      */
     @Nonnull
-    public Collection<MTaskJava> getJavaTasks() {
-        return (Collection<MTaskJava>) getTasks(TaskType.JAVA);
+    public Collection<STaskJava> getJavaTasks() {
+        return (Collection<STaskJava>) getTasks(TaskType.JAVA);
     }
 
     /**
@@ -133,8 +133,8 @@ public class FlowMap {
      * @return as tarefas definidas do tipo {@link TaskType#WAIT} ou uma lista vazia.
      */
     @Nonnull
-    public Collection<MTaskWait> getWaitTasks() {
-        return (Collection<MTaskWait>) getTasks(TaskType.WAIT);
+    public Collection<STaskWait> getWaitTasks() {
+        return (Collection<STaskWait>) getTasks(TaskType.WAIT);
     }
 
     /**
@@ -144,11 +144,11 @@ public class FlowMap {
      * @return as tarefas definidas do tipo especificado ou uma lista vazia
      */
     @Nonnull
-    public Collection<? extends MTask<?>> getTasks(IEntityTaskType IEntityTaskType) {
-        final Builder<MTask<?>> builder = ImmutableList.builder();
-        for (final MTask mTask : getTasks()) {
-            if (mTask.getTaskType() == IEntityTaskType) {
-                builder.add(mTask);
+    public Collection<? extends STask<?>> getTasks(IEntityTaskType IEntityTaskType) {
+        final Builder<STask<?>> builder = ImmutableList.builder();
+        for (final STask sTask : getTasks()) {
+            if (sTask.getTaskType() == IEntityTaskType) {
+                builder.add(sTask);
             }
         }
         return builder.build();
@@ -160,7 +160,7 @@ public class FlowMap {
      * @return as tarefas definidas do tipo fim.
      */
     @Nonnull
-    public Collection<MTaskEnd> getEndTasks() {
+    public Collection<STaskEnd> getEndTasks() {
         return endTasks.values();
     }
 
@@ -180,7 +180,7 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return o papel definido; {@code null} caso não haja papel com a sigla especificada.
      */
-    public MProcessRole getRoleWithAbbreviation(String abbreviation) {
+    public SProcessRole getRoleWithAbbreviation(String abbreviation) {
         return rolesByAbbreviation.get(abbreviation.toLowerCase());
     }
 
@@ -189,7 +189,7 @@ public class FlowMap {
      *
      * @return todos os papeis definidos.
      */
-    public Collection<MProcessRole> getRoles() {
+    public Collection<SProcessRole> getRoles() {
         return ImmutableSet.copyOf(rolesByAbbreviation.values());
     }
 
@@ -202,12 +202,12 @@ public class FlowMap {
      * @param automaticUserAllocation indicador de alocação automática.
      * @return o papel adicionado ao mapa.
      */
-    public MProcessRole addRoleDefinition(String name, String abbreviation,
+    public SProcessRole addRoleDefinition(String name, String abbreviation,
             UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
-        final MProcessRole processRole = new MProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
+        final SProcessRole processRole = new SProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
-            throw new SingularFlowException(createErrorMsg("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined"));
+            throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
         }
         rolesByAbbreviation.put(processRole.getAbbreviation().toLowerCase(), processRole);
         return processRole;
@@ -233,7 +233,7 @@ public class FlowMap {
      * @param previousUser o usuário anteriormente atribuído ao papel.
      * @param newUser o novo usuário atribuído ao papel.
      */
-    public void notifyRoleChange(final ProcessInstance instance, final MProcessRole role, MUser previousUser, MUser newUser) {
+    public void notifyRoleChange(final ProcessInstance instance, final SProcessRole role, SUser previousUser, SUser newUser) {
         if (roleChangeListener != null) {
             roleChangeListener.execute(instance, role, previousUser, newUser);
         }
@@ -245,21 +245,19 @@ public class FlowMap {
      * @param task a tarefa para adicionar.
      * @return a tarefa adicionada.
      */
-    protected <T extends MTask> T addTask(T task) {
+    protected <T extends STask> T addTask(T task) {
 
         String name = task.getName();
         String abbreviation = task.getAbbreviation();
 
+        if (tasksByAbbreviation.containsKey(abbreviation)) {
+            throw new SingularFlowException("Task with abbreviation '" + abbreviation + "' already defined", this);
+        }
         if (tasksByName.containsKey(name)) {
-            throw new SingularFlowException(createErrorMsg("Task with name '" + name + "' already defined"));
+            throw new SingularFlowException("Task with name '" + name + "' already defined", this);
         }
 
         tasksByName.put(name, task);
-
-        if (tasksByAbbreviation.containsKey(abbreviation)) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' already defined"));
-        }
-
         tasksByAbbreviation.put(abbreviation, task);
 
         return task;
@@ -271,8 +269,8 @@ public class FlowMap {
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
      */
-    public MTaskPeople addPeopleTask(ITaskDefinition definition) {
-        return addTask(new MTaskPeople(this, definition.getName(), definition.getKey()));
+    public STaskPeople addPeopleTask(ITaskDefinition definition) {
+        return addTask(new STaskPeople(this, definition.getName(), definition.getKey()));
     }
 
     /**
@@ -281,8 +279,8 @@ public class FlowMap {
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
      */
-    public MTaskJava addJavaTask(ITaskDefinition definition) {
-        return addTask(new MTaskJava(this, definition.getName(), definition.getKey()));
+    public STaskJava addJavaTask(ITaskDefinition definition) {
+        return addTask(new STaskJava(this, definition.getName(), definition.getKey()));
     }
 
     /**
@@ -291,7 +289,7 @@ public class FlowMap {
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
      */
-    public MTaskWait addWaitTask(ITaskDefinition definition) {
+    public STaskWait addWaitTask(ITaskDefinition definition) {
         return addWaitTask(definition, null);
     }
 
@@ -306,9 +304,9 @@ public class FlowMap {
      * @param dateExecutionStrategy a estratégia de execução.
      * @return a nova tarefa criada e adicionada.
      */
-    public <T extends ProcessInstance> MTaskWait addWaitTask(ITaskDefinition definition,
+    public <T extends ProcessInstance> STaskWait addWaitTask(ITaskDefinition definition,
             IExecutionDateStrategy<T> dateExecutionStrategy) {
-        return addTask(new MTaskWait(this, definition.getName(), definition.getKey(), dateExecutionStrategy));
+        return addTask(new STaskWait(this, definition.getName(), definition.getKey(), dateExecutionStrategy));
     }
 
     /**
@@ -317,7 +315,7 @@ public class FlowMap {
      * @param initialTask a definição da tarefa que corresponde à inicial.
      * @return a tarefa inicial.
      */
-    public MStart setStart(ITaskDefinition initialTask) {
+    public SStart setStart(ITaskDefinition initialTask) {
         return setStart(getTask(initialTask));
     }
 
@@ -327,25 +325,15 @@ public class FlowMap {
      * @param task a tarefa inicial.
      * @return a tarefa inicial.
      */
-    public MStart setStart(MTask<?> task) {
+    public SStart setStart(STask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
-            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"), this);
+            throw new SingularFlowException("The task does not belong to this flow", this);
         } else if (start != null) {
-            throw new SingularFlowException(createErrorMsg("The start point is already setted"), this);
+            throw new SingularFlowException("The start point is already setted", this);
         }
-        start = new MStart(task);
+        start = new SStart(task);
         return start;
-    }
-
-    /**
-     * <p>Verifica se há pelo menos duas tarefas do tipo {@link TaskType#PEOPLE} neste mapa.</p>
-     *
-     * @return {@code true} caso haja pelo menos duas tarefas do tipo {@link TaskType#PEOPLE};
-     * {@code false} caso contrário.
-     */
-    public boolean hasMultiplePeopleTasks() {
-        return (getPeopleTasks().size() > 1);
     }
 
     /**
@@ -353,9 +341,9 @@ public class FlowMap {
      *
      * @return a tarefa inicial.
      */
-    public MStart getStart() {
+    public SStart getStart() {
         if (start == null) {
-            throw new SingularFlowException(createErrorMsg("Task inicial não definida no processo"), this);
+            throw new SingularFlowException("Task inicial não definida no processo", this);
         }
         return start;
     }
@@ -375,13 +363,13 @@ public class FlowMap {
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
      */
-    public MTaskEnd addEnd(ITaskDefinition definition) {
+    public STaskEnd addEnd(ITaskDefinition definition) {
         Objects.requireNonNull(definition.getKey());
         Objects.requireNonNull(definition.getName());
         if (endTasks.containsKey(definition.getName())) {
-            throw new SingularFlowException(createErrorMsg("End task '" + definition.getName() + "' already defined"));
+            throw new SingularFlowException("End task '" + definition.getName() + "' already defined", this);
         }
-        final MTaskEnd fim = new MTaskEnd(this, definition.getName(), definition.getKey());
+        final STaskEnd fim = new STaskEnd(this, definition.getName(), definition.getKey());
         endTasks.put(definition.getName(), fim);
         tasksByAbbreviation.put(fim.getAbbreviation(), fim);
         return fim;
@@ -393,7 +381,7 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
      */
-    public Optional<MTask<?>> getTaskByAbbreviation(String abbreviation) {
+    public Optional<STask<?>> getTaskByAbbreviation(String abbreviation) {
         return Optional.ofNullable(tasksByAbbreviation.get(abbreviation));
     }
 
@@ -404,13 +392,9 @@ public class FlowMap {
      * @return a tarefa deste mapa com a sigla especificada.
      * @throws SingularFlowException caso não encontre tarefa com a sigla especificada.
      */
-    public MTask<?> getTaskByAbbreviationOrException(String abbreviation) {
-        MTask<?> t = tasksByAbbreviation.get(abbreviation);
-        if (t == null) {
-            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"),
-                    this);
-        }
-        return t;
+    public STask<?> getTaskByAbbreviationOrException(String abbreviation) {
+        return getTaskByAbbreviation(abbreviation).orElseThrow(
+                () -> new SingularFlowException("Task with abbreviation '" + abbreviation + "' not found", this));
     }
 
     /**
@@ -419,8 +403,8 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
      */
-    public Optional<MTaskPeople> getPeopleTaskByAbbreviation(String abbreviation) {
-        return getTaskByAbbreviation(abbreviation).map(task -> castCheck(task, MTaskPeople.class, abbreviation));
+    public Optional<STaskPeople> getPeopleTaskByAbbreviation(String abbreviation) {
+        return getTaskByAbbreviation(abbreviation).map(task -> castCheck(task, STaskPeople.class, abbreviation));
     }
 
     /**
@@ -430,18 +414,18 @@ public class FlowMap {
      * @return a tarefa deste mapa com a sigla especificada.
      * @throws SingularFlowException caso não encontre tarefa com a sigla especificada.
      */
-    public MTaskPeople getPeopleTaskByAbbreviationOrException(String abbreviation) {
-        return castCheck(getTaskByAbbreviationOrException(abbreviation), MTaskPeople.class, abbreviation);
+    public STaskPeople getPeopleTaskByAbbreviationOrException(String abbreviation) {
+        return castCheck(getTaskByAbbreviationOrException(abbreviation), STaskPeople.class, abbreviation);
     }
 
-    private <T extends MTask> T castCheck(MTask<?> target, Class<T> expectedClass, String abbreviation) {
+    private <T extends STask> T castCheck(STask<?> target, Class<T> expectedClass, String abbreviation) {
         if (target == null) {
             return null;
         } else if (expectedClass.isInstance(target)) {
             return expectedClass.cast(target);
         }
-        throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' found, but it is of type "
-                + target.getClass().getName() + " and was expected to be " + expectedClass.getClass().getName()));
+        throw new SingularFlowException("Task with abbreviation '" + abbreviation + "' found, but it is of type "
+                + target.getClass().getName() + " and was expected to be " + expectedClass.getName(), this);
     }
 
     /**
@@ -451,11 +435,11 @@ public class FlowMap {
      * @return a definição da tarefa informada.
      * @throws SingularException caso não encontre a tarefa.
      */
-    public MTask<?> getTask(ITaskDefinition taskDefinition) {
-        MTask<?> task = getTaskWithName(taskDefinition.getName());
+    public STask<?> getTask(ITaskDefinition taskDefinition) {
+        STask<?> task = getTaskWithName(taskDefinition.getName());
         if (task == null) {
-            throw SingularException.rethrow(
-                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey());
+            throw new SingularFlowException(
+                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey(), this);
         }
         return task;
     }
@@ -466,15 +450,15 @@ public class FlowMap {
      * @param name o nome especificado.
      * @return a tarefa deste mapa com o nome especificado; ou {@code null} caso não a encontre.
      */
-    public MTask<?> getTaskWithName(String name) {
+    public STask<?> getTaskWithName(String name) {
         if (tasksByName.containsKey(name)) {
             return tasksByName.get(name);
         }
         return endTasks.get(name);
     }
 
-    public List<MTask<?>> getTasksWithMetadata(MetaDataRef ref) {
-        return (List<MTask<?>>) getAllTasks().stream()
+    public List<STask<?>> getTasksWithMetadata(MetaDataRef ref) {
+        return (List<STask<?>>) getAllTasks().stream()
                 .filter(t -> t.getMetaData().get(ref) != null)
                 .collect(Collectors.toList());
     }
@@ -492,39 +476,35 @@ public class FlowMap {
     public void verifyConsistency() {
         verifyTasksConsistency();
         if(start == null){
-            throw new SingularFlowException(createErrorMsg("There is no initial task set"), this);
+            throw new SingularFlowException("There is no initial task set", this);
         }
         checkRouteToTheEnd();
     }
 
     private void verifyTasksConsistency() {
-        tasksByAbbreviation.values().stream().forEach(MTask::verifyConsistency);
+        tasksByAbbreviation.values().stream().forEach(STask::verifyConsistency);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     private void checkRouteToTheEnd() {
-        final Set<MTask<?>> tasks = new HashSet<>(tasksByName.values());
+        final Set<STask<?>> tasks = new HashSet<>(tasksByName.values());
         while (removeIfReachesTheEnd(tasks)) {
             /* CORPO VAZIO */
         }
         if (!tasks.isEmpty()) {
-            throw new SingularFlowException(createErrorMsg("The following tasks have no way to reach the end: "
-                    + joinTaskNames(tasks)));
+            throw new SingularFlowException("The following tasks have no way to reach the end: "
+                    + joinTaskNames(tasks), this);
         }
     }
 
-    private static boolean removeIfReachesTheEnd(Set<MTask<?>> tasks) {
+    private static boolean removeIfReachesTheEnd(Set<STask<?>> tasks) {
         return tasks.removeIf((task) -> task.getTransitions().stream()
                 .anyMatch((transition) -> transition.getDestination().isEnd()
                         || !tasks.contains(transition.getDestination())));
     }
 
-    private static String joinTaskNames(Set<MTask<?>> tasks) {
-        return tasks.stream().map(MTask::getName).collect(Collectors.joining(", "));
-    }
-
-    final String createErrorMsg(String msg) {
-        return getProcessDefinition() + " -> " + msg;
+    private static String joinTaskNames(Set<STask<?>> tasks) {
+        return tasks.stream().map(STask::getName).collect(Collectors.joining(", "));
     }
 
     /**
@@ -553,7 +533,8 @@ public class FlowMap {
         return dashboardViews.get(name);
     }
 
-    public <T> FlowMap setMetaDataValue(MetaDataRef<T> propRef, T value) {
+    @Nonnull
+    public <T extends Serializable> FlowMap setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
         getProcessDefinition().setMetaDataValue(propRef, value);
         return this;
     }

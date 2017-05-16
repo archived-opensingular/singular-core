@@ -20,17 +20,29 @@ import junit.framework.AssertionFailedError;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.type.core.attachment.AttachmentTestUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeA;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeB;
 import org.opensingular.form.util.diff.TestDocumentDiff.TestDiffPackage.TestCompositeC;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -320,8 +332,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testListSimple() {
-        STypeList<STypeString, SIString> typeNomes = createTestDictionary().createNewPackage("test").createListTypeOf(
-                "nomes", STypeString.class);
+        STypeList<STypeString, SIString> typeNomes = createTestPackage().createListTypeOf("nomes", STypeString.class);
 
         SIList<SIString> iL1 = typeNomes.newInstance();
         SIList<SIString> iL2 = typeNomes.newInstance();
@@ -416,7 +427,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testListOfComposite() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        PackageBuilder pkg = createTestPackage();
         STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
         typeCs.asAtr().label("Clients");
 
@@ -535,7 +546,7 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testListOfCompositeEmpty() {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
+        PackageBuilder pkg = createTestPackage();
         STypeList<TestCompositeC, SIComposite> typeCs = pkg.createListTypeOf("Cs", TestCompositeC.class);
 
         SIList<SIComposite>[] iL = new SIList[6];
@@ -568,68 +579,70 @@ public class TestDocumentDiff extends TestCaseForm {
 
     @Test
     public void testAttachment() throws IOException {
-        PackageBuilder pkg = createTestDictionary().createNewPackage("test");
-        STypeComposite<SIComposite> typeOrder = pkg.createCompositeType("order");
-        STypeAttachment typeFile1 = typeOrder.addFieldAttachment("file", false);
-        STypeAttachment typeFile2 = pkg.getDictionary().getType(STypeAttachment.class);
+        TempFileProvider.create(this, tmpProvider -> {
+            PackageBuilder pkg = createTestPackage();
+            STypeComposite<SIComposite> typeOrder = pkg.createCompositeType("order");
+            STypeAttachment typeFile1 = typeOrder.addFieldAttachment("file", false);
+            STypeAttachment typeFile2 = pkg.getDictionary().getType(STypeAttachment.class);
 
-        byte[] content0 = new byte[]{};
-        byte[] content1 = new byte[]{10, 20, 30};
-        byte[] content2 = new byte[]{1, 2, 3, 4};
+            byte[] content0 = new byte[]{};
+            byte[] content1 = new byte[]{10, 20, 30};
+            byte[] content2 = new byte[]{1, 2, 3, 4};
 
-        SIAttachment fS20 = typeFile2.newInstance();
-        SIAttachment fS21 = typeFile2.newInstance();
-        fS21.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
-        SIAttachment fS22 = typeFile2.newInstance();
-        fS22.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
-        SIAttachment fS23 = typeFile2.newInstance();
-        fS23.setContent("f00", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
-        SIAttachment fS24 = typeFile2.newInstance();
-        fS24.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content2), content2.length);
-        SIAttachment fS25 = typeFile2.newInstance();
-        fS25.setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content2), content2.length);
-        fS25.clearInstance();
+            SIAttachment fS20 = typeFile2.newInstance();
+            SIAttachment fS21 = typeFile2.newInstance();
+            fS21.setContent("f0", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
+            SIAttachment fS22 = typeFile2.newInstance();
+            fS22.setContent("f0", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
+            SIAttachment fS23 = typeFile2.newInstance();
+            fS23.setContent("f00", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
+            SIAttachment fS24 = typeFile2.newInstance();
+            fS24.setContent("f0", tmpProvider.createTempFile(content2), content2.length, HashUtil.toSHA1Base16(content2));
+            SIAttachment fS25 = typeFile2.newInstance();
+            fS25.setContent("f0", tmpProvider.createTempFile(content2), content2.length, HashUtil.toSHA1Base16(content2));
+            fS25.clearInstance();
 
-        AssertionsDiff diff;
-        diff = diff(fS20, fS20, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
-        diff = diff(fS20, null, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
-        diff = diff(null, fS20, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
-        diff = diff(fS21, fS21, 0).assertUnchanged(0).compact(0).assertUnchanged(0);
-        diff = diff(null, fS21, 1).assertNew(0).compact(1).assertNew(0);
-        diff = diff(fS20, fS21, 1).assertNew(0).compact(1).assertNew(0);
-        diff = diff(fS21, fS20, 1).assertDeleted(0).compact(1).assertDeleted(0);
-        diff = diff(fS21, null, 1).assertDeleted(0).compact(1).assertDeleted(0);
+            AssertionsDiff diff;
+            diff = diff(fS20, fS20, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+            diff = diff(fS20, null, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+            diff = diff(null, fS20, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+            diff = diff(fS21, fS21, 0).assertUnchanged(0).compact(0).assertUnchanged(0);
+            diff = diff(null, fS21, 1).assertNew(0).compact(1).assertNew(0);
+            diff = diff(fS20, fS21, 1).assertNew(0).compact(1).assertNew(0);
+            diff = diff(fS21, fS20, 1).assertDeleted(0).compact(1).assertDeleted(0);
+            diff = diff(fS21, null, 1).assertDeleted(0).compact(1).assertDeleted(0);
 
-        diff = diff(fS21, fS22, 0).assertUnchanged(0).compact(0).assertUnchanged(0);
+            diff = diff(fS21, fS22, 0).assertUnchanged(0).compact(0).assertUnchanged(0);
 
-        diff = diff(fS21, fS23, 1).assertChanged(0).compact(1).assertChanged(0);
-        diff = diff(fS21, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
-        diff = diff(fS23, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
+            diff = diff(fS21, fS23, 1).assertChanged(0).compact(1).assertChanged(0);
+            diff = diff(fS21, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
+            diff = diff(fS23, fS24, 1).assertChanged(0).compact(1).assertChanged(0);
 
-        diff = diff(fS20, fS25, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
+            diff = diff(fS20, fS25, 0).assertUnchangedEmpty(0).compact(0).assertUnchangedEmpty(0);
 
-        SIComposite o1 = typeOrder.newInstance();
-        SIComposite o2 = typeOrder.newInstance();
-        o2.getField(typeFile1).setContent("f0", AttachmentTestUtil.writeBytesToTempFile(content1), content1.length);
-        SIComposite o3 = typeOrder.newInstance();
-        o3.getField(typeFile1).setContent("f1", AttachmentTestUtil.writeBytesToTempFile(content2), content2.length);
-        o3.clearInstance();
+            SIComposite o1 = typeOrder.newInstance();
+            SIComposite o2 = typeOrder.newInstance();
+            o2.getField(typeFile1).setContent("f0", tmpProvider.createTempFile(content1), content1.length, HashUtil.toSHA1Base16(content1));
+            SIComposite o3 = typeOrder.newInstance();
+            o3.getField(typeFile1).setContent("f1", tmpProvider.createTempFile(content2), content2.length, HashUtil.toSHA1Base16(content2));
+            o3.clearInstance();
 
-        diff = diff(o1, o1, 0).assertUnchangedEmpty(1);
-        diff.get(0).assertUnchangedEmpty(0);
-        diff.compact(0).assertUnchangedEmpty(0);
+            diff = diff(o1, o1, 0).assertUnchangedEmpty(1);
+            diff.get(0).assertUnchangedEmpty(0);
+            diff.compact(0).assertUnchangedEmpty(0);
 
-        diff = diff(o1, o2, 1).assertNew(1);
-        diff.get(0).assertNew(0).isNewer(o2.getField("file"));
-        diff.compact(1).assertNew(0).isNewer(o2.getField("file"));
+            diff = diff(o1, o2, 1).assertNew(1);
+            diff.get(0).assertNew(0).isNewer(o2.getField("file"));
+            diff.compact(1).assertNew(0).isNewer(o2.getField("file"));
 
-        diff = diff(o1, o3, 0).assertUnchangedEmpty(1);
-        diff.get(0).assertUnchangedEmpty(0);
-        diff.compact(0).assertUnchangedEmpty(0);
+            diff = diff(o1, o3, 0).assertUnchangedEmpty(1);
+            diff.get(0).assertUnchangedEmpty(0);
+            diff.compact(0).assertUnchangedEmpty(0);
 
-        diff = diff(o2, o3, 1).assertDeleted(1);
-        diff.get(0).assertDeleted(0).isOriginal(o2.getField("file"));
-        diff.compact(1).assertDeleted(0).isOriginal(o2.getField("file"));
+            diff = diff(o2, o3, 1).assertDeleted(1);
+            diff.get(0).assertDeleted(0).isOriginal(o2.getField("file"));
+            diff.compact(1).assertDeleted(0).isOriginal(o2.getField("file"));
+        });
     }
 
     private void assertDiffNew(DiffInfo info, int expectedChildren) {
@@ -923,7 +936,7 @@ public class TestDocumentDiff extends TestCaseForm {
         }
 
         public AssertionsDiff assertNames(String expectedSimpleName, String expectedSimpleLabel, String expectedName,
-                String expectedLabel) {
+                                          String expectedLabel) {
             assertEquals(expectedSimpleName, info.getSimpleName());
             assertEquals(expectedSimpleLabel, info.getSimpleLabel());
             assertEquals(expectedName, info.getName());

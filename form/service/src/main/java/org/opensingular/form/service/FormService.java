@@ -25,10 +25,11 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.persistence.AbstractBasicFormPersistence;
 import org.opensingular.form.persistence.AnnotationKey;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyLong;
+import org.opensingular.form.persistence.FormKeyManager;
+import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
@@ -58,9 +59,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
-public class FormService extends AbstractBasicFormPersistence<SInstance, FormKeyLong> implements IFormService {
+public class FormService implements IFormService {
 
     private final static boolean KEEP_ANNOTATIONS = true;
+
+    private final FormKeyManager<? extends FormKey> formKeyManager;
 
     @Inject
     private FormDAO formDAO;
@@ -81,32 +84,68 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     private FormFieldService formFieldService;
 
     public FormService() {
-        super(FormKeyLong.class);
+        this.formKeyManager = new FormKeyManager<>(FormKeyLong.class, e -> addInfo(e));
+    }
+
+    /** Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey. */
+    @Nonnull
+    private final FormKeyManager<FormKey> getFormKeyManager() {
+        return (FormKeyManager<FormKey>) formKeyManager;
+    }
+
+    @Nonnull
+    public FormKey keyFromObject(@Nonnull Object objectValueToBeConverted) {
+        return formKeyManager.keyFromObject(objectValueToBeConverted);
     }
 
     @Override
-    @Nonnull
-    public FormKey insert(SInstance instance, Integer inclusionActor) {
-        FormKey key = super.insert(instance, inclusionActor);
-        FormTypeEntity formType = getOrCreateNewFormTypeEntity(instance.getType());
-
-        FormEntity formEntity = loadFormEntity(key);
-        FormVersionEntity formVersion = formEntity.getCurrentFormVersionEntity();
-        formFieldService.saveFields(instance, formType, formVersion);
-        return key;
+    public void update(@Nonnull SInstance instance, Integer inclusionActor) {
+        FormKey key = getFormKeyManager().readFormKeyOrException(instance);
+        updateInternal(loadFormEntity(key), instance, inclusionActor);
     }
 
     @Override
     @Nonnull
     public FormKey insertOrUpdate(@Nonnull SInstance instance, Integer inclusionActor) {
-        FormKey key = super.insertOrUpdate(instance, inclusionActor);
-        FormTypeEntity formType = getOrCreateNewFormTypeEntity(instance.getType());
+        Optional<FormKey> key = getFormKeyManager().readFormKeyOptional(instance);
+        if (key.isPresent()) {
+            updateInternal(loadFormEntity(key.get()), instance, inclusionActor);
+            return key.get();
+        }
+        return insertImpl(instance, inclusionActor);
+    }
 
-        FormEntity formEntity = loadFormEntity(key);
-        FormVersionEntity formVersion = formEntity.getCurrentFormVersionEntity();
+    @Override
+    @Nonnull
+    public FormKey insert(@Nonnull SInstance instance, Integer inclusionActor) {
+        if (instance == null) {
+            throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
+        }
+        return insertImpl(instance, inclusionActor);
+    }
 
-        formFieldService.saveFields(instance, formType, formVersion);
+    @Nonnull
+    private FormKey insertImpl(@Nonnull SInstance instance, Integer inclusionActor) {
+        FormKey key = insertInternal(instance, inclusionActor);
+        getFormKeyManager().validKeyOrException(key, instance,
+                "Era esperado que o insert interno gerasse uma FormKey, mas retornou null");
+        FormKey.set(instance, key);
         return key;
+    }
+
+    @Override
+    public final boolean isPersistent(@Nonnull SInstance instance) {
+        return getFormKeyManager().isPersistent(instance);
+    }
+
+    /**
+     * Método chamado para adicionar informção do serviço de persistência à exception. Pode ser ser sobreescito para
+     * acrescimo de maiores informações.
+     */
+    @Nonnull
+    private SingularFormPersistenceException addInfo(@Nonnull SingularFormPersistenceException exception) {
+        exception.add("persitence", toString());
+        return exception;
     }
 
     @Nonnull
@@ -178,8 +217,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return internalLoadSInstance(key, refType, documentFactory, formVersionEntity);
     }
 
-    @Override
-    protected FormKeyLong insertInternal(@Nonnull SInstance instance, Integer inclusionActor) {
+    private FormKeyLong insertInternal(@Nonnull SInstance instance, Integer inclusionActor) {
         FormEntity entity = saveNewFormEntity(instance);
         saveOrUpdateFormVersion(instance, entity, new FormVersionEntity(), inclusionActor, KEEP_ANNOTATIONS);
         return new FormKeyLong(entity.getCod());
@@ -274,7 +312,7 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
     @Override
     @Nonnull
     public FormEntity loadFormEntity(@Nonnull FormKey key) {
-        return formDAO.findOrException(checkKeyOrException(key, null).longValue());
+        return formDAO.findOrException(((FormKeyLong) formKeyManager.validKeyOrException(key)).longValue());
     }
 
     @Override
@@ -283,20 +321,9 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return formVersionDAO.findOrException(Objects.requireNonNull(versionId));
     }
 
-    @Override
-    @Nonnull
-    protected void updateInternal(@Nonnull FormKeyLong key, @Nonnull SInstance instance, Integer inclusionActor) {
-        updateInternal(loadFormEntity(key), instance, inclusionActor);
-    }
-
-    protected void updateInternal(@Nonnull FormEntity entity, @Nonnull SInstance instance, Integer inclusionActor) {
+    private void updateInternal(@Nonnull FormEntity entity, @Nonnull SInstance instance, Integer inclusionActor) {
         saveOrUpdateFormVersion(instance, entity, entity.getCurrentFormVersionEntity(), inclusionActor, KEEP_ANNOTATIONS);
         formDAO.saveOrUpdate(entity);
-    }
-
-    @Override
-    protected void deleteInternal(@Nonnull FormKeyLong key) {
-        throw new UnsupportedOperationException("Metodo nao implementado");
     }
 
     /**
@@ -320,15 +347,14 @@ public class FormService extends AbstractBasicFormPersistence<SInstance, FormKey
         return SFormXMLUtil.toStringXMLOrEmptyXML(instance);
     }
 
-    @Override
-    public FormKey newVersion(SInstance instance, Integer inclusionActor) {
-        return super.newVersion(instance, inclusionActor);
+    public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor){
+        return newVersion(instance,inclusionActor, true);
     }
 
     @Override
     @Nonnull
     public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
-        FormKey    formKey    = readKeyAttributeOrException(instance);
+        FormKey    formKey    = getFormKeyManager().readFormKeyOrException(instance);
         FormEntity formEntity = loadFormEntity(formKey);
         saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), inclusionActor, keepAnnotations);
         return formKey;

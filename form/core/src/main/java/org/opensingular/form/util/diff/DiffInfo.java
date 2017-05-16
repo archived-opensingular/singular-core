@@ -23,7 +23,12 @@ import org.opensingular.form.internal.PathReader;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -384,38 +389,54 @@ public final class DiffInfo implements Serializable {
     /** Gera o nome ou índice que representa o caminha do item informado. */
     private static void addPathItem(StringBuilder sb, DiffInfo info, boolean hasPrevious, boolean showLabel) {
         if (info.isElementOfAList()) {
-            if (showLabel) {
-                if (hasPrevious) {
-                    sb.append(" : ");
-                }
-                if (info.originalIndex != -1) {
-                    sb.append("Linha ").append(info.originalIndex + 1);
-                } else {
-                    sb.append("Linha nova");
-                }
-            } else {
-                sb.append('[');
-                if (info.newerIndex == info.originalIndex) {
-                    sb.append(info.originalIndex);
-                } else {
-                    sb.append(info.originalIndex == -1 ? " " : info.originalIndex);
-                    sb.append('>').append(info.newerIndex == -1 ? " " : info.newerIndex);
-                }
-                sb.append(']');
-            }
+            addPathList(sb, info, hasPrevious, showLabel);
         } else {
-            if (hasPrevious) {
-                if (showLabel) {
-                    sb.append(" : ");
-                } else {
-                    sb.append('.');
-                }
-            }
-            if (showLabel && info.simpleLabel != null) {
-                sb.append(info.simpleLabel);
+            addPathSimple(sb, info, hasPrevious, showLabel);
+        }
+    }
+
+    private static void addPathList(StringBuilder sb, DiffInfo info, boolean hasPrevious, boolean showLabel) {
+        if (showLabel) {
+            addPathListWithShowLabel(sb, info, hasPrevious);
+        } else {
+            addPathListWhitoutShowLabel(sb, info);
+        }
+    }
+
+    private static void addPathListWhitoutShowLabel(StringBuilder sb, DiffInfo info) {
+        sb.append('[');
+        if (info.newerIndex == info.originalIndex) {
+            sb.append(info.originalIndex);
+        } else {
+            sb.append(info.originalIndex == -1 ? " " : info.originalIndex);
+            sb.append('>').append(info.newerIndex == -1 ? " " : info.newerIndex);
+        }
+        sb.append(']');
+    }
+
+    private static void addPathListWithShowLabel(StringBuilder sb, DiffInfo info, boolean hasPrevious) {
+        if (hasPrevious) {
+            sb.append(" : ");
+        }
+        if (info.originalIndex != -1) {
+            sb.append("Linha ").append(info.originalIndex + 1);
+        } else {
+            sb.append("Linha nova");
+        }
+    }
+
+    private static void addPathSimple(StringBuilder sb, DiffInfo info, boolean hasPrevious, boolean showLabel) {
+        if (hasPrevious) {
+            if (showLabel) {
+                sb.append(" : ");
             } else {
-                sb.append(info.simpleName);
+                sb.append('.');
             }
+        }
+        if (showLabel && info.simpleLabel != null) {
+            sb.append(info.simpleLabel);
+        } else {
+            sb.append(info.simpleName);
         }
     }
 
@@ -448,25 +469,7 @@ public final class DiffInfo implements Serializable {
         }
         try {
             pad(appendable, level);
-            switch (type) {
-                case UNCHANGED_WITH_VALUE:
-                    appendable.append('1');
-                    break;
-                case UNCHANGED_EMPTY:
-                    appendable.append('0');
-                    break;
-                case CHANGED_NEW:
-                    appendable.append('+');
-                    break;
-                case CHANGED_DELETED:
-                    appendable.append('-');
-                    break;
-                case CHANGED_CONTENT:
-                    appendable.append('~');
-                    break;
-                default:
-                    appendable.append('?');
-            }
+            appendType(appendable);
             appendable.append(getPath(showLabel));
             if (StringUtils.isNotBlank(detail)) {
                 appendable.append(" : ").append(detail);
@@ -479,6 +482,28 @@ public final class DiffInfo implements Serializable {
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    private void appendType(Appendable appendable) throws IOException {
+        switch (type) {
+            case UNCHANGED_WITH_VALUE:
+                appendable.append('1');
+                break;
+            case UNCHANGED_EMPTY:
+                appendable.append('0');
+                break;
+            case CHANGED_NEW:
+                appendable.append('+');
+                break;
+            case CHANGED_DELETED:
+                appendable.append('-');
+                break;
+            case CHANGED_CONTENT:
+                appendable.append('~');
+                break;
+            default:
+                appendable.append('?');
         }
     }
 

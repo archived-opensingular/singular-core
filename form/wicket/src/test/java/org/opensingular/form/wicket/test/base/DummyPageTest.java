@@ -23,7 +23,7 @@ public class DummyPageTest {
         tester.assertRenderedPage(DummyPage.class);
 
         tester.getAssertionsForm().isNotNull();
-        tester.getAssertionsForm().getSubCompomentWithId("mockString");
+        tester.getAssertionsForm().getSubCompomentWithId("mockString").isNotNull();
         tester.getAssertionsForSubComp("mockString").isNotNull();
     }
 }

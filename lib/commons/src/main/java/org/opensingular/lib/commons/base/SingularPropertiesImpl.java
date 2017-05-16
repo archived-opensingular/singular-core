@@ -23,11 +23,21 @@ import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -181,8 +191,8 @@ public final class SingularPropertiesImpl implements SingularProperties {
 
     private Properties loadNotOverriding(Properties newProperties, String propertiesName, URL propertiesUrl) {
         Properties props;
-        try (InputStream input = propertiesUrl.openStream()) {
-            props = PropertiesUtils.load(propertiesUrl, StandardCharsets.UTF_8.name());
+        try {
+            props = PropertiesUtils.load(propertiesUrl);
         } catch (IOException e) {
             throw SingularException.rethrow("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
         }
@@ -204,7 +214,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
 
     private URL findProperties(String name) {
         try {
-            return SingularPropertiesImpl.class.getClassLoader().getResource(name);
+            return  Thread.currentThread().getContextClassLoader().getResource(name);
         } catch (Exception e) {
             throw SingularException.rethrow("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }

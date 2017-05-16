@@ -26,6 +26,7 @@ import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -96,7 +97,8 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
         return toStringPersistence(value);
     }
 
-    public VALUE fromString(String value) {
+    @Nullable
+    public VALUE fromString(@Nullable String value) {
         throw new UnsupportedOperationException("Não implementado");
     }
 

@@ -21,12 +21,15 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.opensingular.lib.commons.util.Loggable;
 
 /**
  * The base class of all runtime exceptions for Singular.
  */
-public class SingularException extends RuntimeException {
+public class SingularException extends RuntimeException implements Loggable {
 
 
     private List<InfoEntry> entries;
@@ -45,7 +48,7 @@ public class SingularException extends RuntimeException {
      *
      * @param msg the error message
      */
-    protected SingularException(String msg) {
+    public SingularException(String msg) {
         super(msg);
     }
 
@@ -88,6 +91,11 @@ public class SingularException extends RuntimeException {
         }
     }
 
+    /** Verifica se já foi adicinada uma informação de detalhe com o label informado. */
+    public boolean containsEntry(String label) {
+        return entries != null && entries.stream().anyMatch(e -> Objects.equals(label, e.label));
+    }
+
     /**
      * Adiciona um nova linha de informação extra na exception a ser exibida junto com a mensagem da mesma.
      *
@@ -118,6 +126,7 @@ public class SingularException extends RuntimeException {
             value = valueSupplier == null ? null : valueSupplier.get();
         } catch (Exception e) {
             //Ignora a exception para não bloquear a geração da Exception atual
+            getLogger().debug(null, e);
             return this;
         }
         return add(0, label, value);
@@ -152,7 +161,7 @@ public class SingularException extends RuntimeException {
         msg.append(super.getMessage());
         int max = 0;
         for (InfoEntry entry : entries) {
-            if (entry != null) {
+            if (entry != null && entry.label != null) {
                 max = Math.max(max, entry.label.length());
             }
         }

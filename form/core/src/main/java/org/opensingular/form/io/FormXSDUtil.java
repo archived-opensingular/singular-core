@@ -17,17 +17,22 @@
 package org.opensingular.form.io;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.*;
-import org.opensingular.form.internal.xml.MElement;
-import org.opensingular.form.internal.xml.MParser;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
 import org.w3c.dom.Node;
 
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -151,7 +156,7 @@ public class FormXSDUtil {
             if (newType.isList()) {
                 ((STypeList) newType).withMiniumSizeOf(minOccurs);
             } else {
-                throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"));
+                throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"), newType);
             }
         }
     }
@@ -160,14 +165,14 @@ public class FormXSDUtil {
         String value = element.getAttr("maxOccurs");
         if ("unbounded".equalsIgnoreCase(value)) {
             if (!newType.isList()) {
-                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
+                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"), newType);
             }
         } else if (value != null) {
             int maxOccurs = Integer.parseInt(value);
             if (newType.isList()) {
                 ((STypeList) newType).withMaximumSizeOf(maxOccurs);
             } else if (maxOccurs != 1) {
-                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"));
+                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"), newType);
             }
         }
     }
@@ -295,6 +300,9 @@ public class FormXSDUtil {
 
                 @Override
                 public ElementReader next() {
+                    if (current == null) {
+                        throw new NoSuchElementException();
+                    }
                     ElementReader result = new ElementReader(xsdContext, current);
                     current = current.getProximoIrmao();
                     return result;

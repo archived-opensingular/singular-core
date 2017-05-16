@@ -16,7 +16,10 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
+
+import javax.annotation.Nonnull;
 
 /**
  * Objeto para a preparação para execução do início de um processo.
@@ -25,28 +28,51 @@ import org.opensingular.flow.core.variable.VarInstanceMap;
  */
 public final class StartCall<I extends ProcessInstance> extends CallWithParameters<StartCall<I>> {
 
-    private final ProcessDefinition<I> processDefinition;
+    private final RefStart start;
 
-    private final MStart start;
-
-    StartCall(ProcessDefinition<I> processDefinition, MStart start) {this.processDefinition = processDefinition;
+    StartCall(ProcessDefinition<I> processDefinition, RefStart start) {
         this.start = start;
+        if (getProcessDefinition() != processDefinition) {
+            throw new SingularFlowException("Erro interno: processDefinition diferentes").add(getProcessDefinition())
+                    .add(processDefinition);
+        }
     }
 
+    /**
+     * Cria a isntância do processo e dispara a execução do mesmo. Se existir, chama o código associado a inicialziação
+     * do processo.
+     */
+    @Nonnull
     public I createAndStart() {
         return FlowEngine.createAndStart(this);
     }
 
+    /**
+     *  Verifica se os parâmetros atuais da chamada atende os requisitos da chamada.
+     *  @see SStart#setStartValidator(SStart.IStartValidator)
+     */
     @Override
-    protected VarInstanceMap<?> newParameters() {
-        return start.newCallParameters();
+    public ValidationResult validate() {
+        ValidationResult result = super.validate();
+        if (! result.hasErros() && getStart().getStartValidator() != null) {
+            result = new ValidationResult();
+            getStart().getStartValidator().validate((StartCall<ProcessInstance>) this, result);
+        }
+        return result;
     }
 
-    public MStart getStart() {
-        return start;
+    @Override
+    protected VarInstanceMap<?,?> newParameters() {
+        return getStart().getParameters().newInstanceMap();
     }
 
+    /** Definição desse ponto de inicialização segunda a definiçao do próprio processo. */
+    public SStart getStart() {
+        return start.get();
+    }
+
+    /** Retorna a definição do processo que será inicializado. */
     public ProcessDefinition<I> getProcessDefinition() {
-        return processDefinition;
+        return (ProcessDefinition<I>) getStart().getFlowMap().getProcessDefinition();
     }
 }

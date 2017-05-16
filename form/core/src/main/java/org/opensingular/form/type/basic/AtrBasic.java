@@ -25,8 +25,15 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -92,7 +99,7 @@ public class AtrBasic extends STranslatorForAttribute {
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
                 Stream.of(value)
-                        .flatMap(it -> Stream.of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                        .flatMap(it -> Stream.<String>of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
                         .collect(joining(",")));
         return this;
     }
@@ -171,6 +178,14 @@ public class AtrBasic extends STranslatorForAttribute {
     public AtrBasic exists(Predicate<SInstance> value) {
         setAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION, value);
         return this;
+    }
+
+    public AtrBasic replaceExists(IFunction<Predicate<SInstance>, Predicate<SInstance>> replacementFunction) {
+        Predicate<SInstance> currentExists = getAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION);
+        if(currentExists == null){
+            currentExists = (i) -> Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
+        }
+        return exists(replacementFunction.apply(currentExists));
     }
 
     public boolean exists() {

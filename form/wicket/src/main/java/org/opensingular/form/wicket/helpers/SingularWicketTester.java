@@ -16,13 +16,26 @@
 
 package org.opensingular.form.wicket.helpers;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.opensingular.form.SType;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.internal.form.wicket.util.WicketSerializationDebugUtil;
 
 import javax.servlet.ServletContext;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.google.common.io.LineReader;
 
 /**
  * Um WicketTester com configuração básicas do Singular para facilitar a criação de testes.
@@ -34,6 +47,8 @@ public class SingularWicketTester extends WicketTester {
     public SingularWicketTester() {
         setup();
     }
+
+
 
     @Deprecated
     public SingularWicketTester(boolean turnOnSerializationCheck) {
@@ -93,6 +108,11 @@ public class SingularWicketTester extends WicketTester {
         return new AssertionsWComponent(getLastRenderedPage());
     }
 
+    public final AssertionsSInstance getAssertionsInstance() {
+        checkIfStartPageCalled();
+        return getAssertionsPage().getSubCompomentWithSInstance().assertSInstance();
+    }
+
     /** Criar um objeto de assertivas para o form da última página executada (assume que o ID é 'form'). */
     public final AssertionsWComponent getAssertionsForm() {
         return getAssertionsForPath("form");
@@ -116,7 +136,44 @@ public class SingularWicketTester extends WicketTester {
 
     private void checkIfStartPageCalled() {
         if (getLastRenderedPage() == null) {
-            throw new RuntimeException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
+            throw new IllegalStateException("deve ser antes chamado o método SingularDummyFormPageTester.startDummyPage()");
         }
+    }
+
+    public SingularFormTester newSingularFormTester(String path) {
+        return newSingularFormTester(path, true);
+    }
+
+    public SingularFormTester newSingularFormTester(String path, boolean fillBlankString) {
+        return new SingularFormTester(path, (Form<?>)getComponentFromLastRenderedPage(path), this, fillBlankString);
+    }
+
+    public <T extends SType<?>> STypeTester<T> newSingularSTypeTester(Class<? extends T> sypeClass){
+        return new STypeTester<>(this, sypeClass);
+    }
+
+    public void checkToastrSuccessMessage(String expectedMessage) {
+
+        List<String> foundMessages = new ArrayList<>();
+
+        IOUtils.lineIterator(new StringReader(getLastResponse().getDocument()))
+            .forEachRemaining(
+                line -> {
+                    if (line.startsWith("toastr.success")) {
+                        String message = extractMessage(line);
+                        foundMessages.add(message);
+                    }
+                }
+        );
+
+        if (!foundMessages.contains(expectedMessage)) {
+            throw new AssertionError(String.format("Não foi possível encontrar a mensagem '%s', mensagens encontradas: '%s'", expectedMessage, foundMessages));
+        }
+
+    }
+
+    private String extractMessage(String line) {
+        return line.replace("toastr.success('', '", "")
+                .replace("');", "").trim();
     }
 }

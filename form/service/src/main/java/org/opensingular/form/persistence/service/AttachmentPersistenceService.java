@@ -33,7 +33,11 @@ import org.opensingular.lib.commons.base.SingularUtil;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +53,9 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     protected AttachmentContentDao<C> attachmentContentDao;
 
     @Override
-    public AttachmentRef addAttachment(File file, long length, String name) {
+    public AttachmentRef addAttachment(File file, long length, String name, String hashSha1) {
         try (FileInputStream fs = new FileInputStream(file)) {
-            T attachment = attachmentDao.insert(fs, length, name);
+            T attachment = attachmentDao.insert(fs, length, name, hashSha1);
             return createRef(attachment);
         } catch (IOException e) {
             throw SingularException.rethrow(e);
@@ -60,7 +64,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
 
     @Override
     public AttachmentCopyContext<AttachmentRef> copy(IAttachmentRef attachmentRef, SDocument document) {
-        try (InputStream is = attachmentRef.getInputStream()) {
+        try (InputStream is = attachmentRef.getContentAsInputStream()) {
             T file = attachmentDao.insert(is, attachmentRef.getSize(), attachmentRef.getName(), attachmentRef.getHashSHA1());
             return new AttachmentCopyContext<>(createRef(file));
         } catch (IOException e) {

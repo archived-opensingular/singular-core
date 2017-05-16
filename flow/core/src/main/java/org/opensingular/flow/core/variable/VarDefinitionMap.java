@@ -26,7 +26,7 @@ public interface VarDefinitionMap<K extends VarDefinition> extends VarServiceEna
 
     public K getDefinition(String ref);
 
-    public VarInstanceMap<?> newInstanceMap();
+    public VarInstanceMap<?,?> newInstanceMap();
 
     @SuppressWarnings("unchecked")
     public default Stream<K> stream() {
@@ -65,6 +65,14 @@ public interface VarDefinitionMap<K extends VarDefinition> extends VarServiceEna
 
     public default K addVariableBoolean(String ref, String name) {
         return addVariable(getVarService().newDefinitionBoolean(ref, name));
+    }
+
+    public default K addVariableBigDecimal(String ref) {
+        return addVariableBigDecimal(ref, ref);
+    }
+
+    public default K addVariableBigDecimal(String ref, String name) {
+        return addVariable(getVarService().newDefinitionBigDecimal(ref, name));
     }
 
     public default K addVariableDouble(String ref) {

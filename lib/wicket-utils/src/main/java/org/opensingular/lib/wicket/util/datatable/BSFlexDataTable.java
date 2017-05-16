@@ -38,7 +38,6 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-
 import org.opensingular.lib.wicket.util.datatable.column.IRowMergeableColumn;
 
 public class BSFlexDataTable<T, S> extends BSDataTable<T, S> {
@@ -171,6 +170,7 @@ public class BSFlexDataTable<T, S> extends BSDataTable<T, S> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected IItemFactory<T> newItemFactory() {
             return (index, model) -> {
                 String id = DefaultDataGridView.this.newChildId();
@@ -178,10 +178,13 @@ public class BSFlexDataTable<T, S> extends BSDataTable<T, S> {
                 DefaultDataGridView.this.populateItem(item);
 
                 RepeatingView cells = (RepeatingView) item.get("cells");
-                Iterator<Component> cellItems = cells.iterator();
-                for (int columnIndex = 0; cellItems.hasNext(); columnIndex++) {
-                    Item<ICellPopulator<T>> cellItem = (Item<ICellPopulator<T>>) cellItems.next();
+
+                int columnIndex = 0;
+                for (Iterator<Component> it = cells.iterator(); it.hasNext(); ) {
+                    Item<ICellPopulator<T>> cellItem = (Item<ICellPopulator<T>>) it.next();
                     postPopulateCellItem(cellItem, columnIndex, model);
+
+                    columnIndex++;
                 }
                 return item;
             };

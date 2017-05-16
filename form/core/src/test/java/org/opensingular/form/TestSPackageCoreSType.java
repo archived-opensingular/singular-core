@@ -1,9 +1,9 @@
 package org.opensingular.form;
 
-import org.opensingular.form.type.core.STypeString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.type.core.STypeString;
 
 /**
  * Testa funcionaldiades básicas de SType.
@@ -19,7 +19,7 @@ public class TestSPackageCoreSType extends TestCaseForm {
 
     @Test
     public void testGetDependenteTypeIsMuttable() {
-        PackageBuilder              pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder              pb = createTestPackage();
         STypeComposite<SIComposite> typeRec1 = pb.createCompositeType("Rec1");
         STypeString field11 = typeRec1.addFieldString("field1");
         STypeString field12 = typeRec1.addFieldString("field2");
@@ -31,7 +31,7 @@ public class TestSPackageCoreSType extends TestCaseForm {
 
     @Test
     public void testDependsOn() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<SIComposite> typeRec1 = pb.createCompositeType("Rec1");
         STypeString field11 = typeRec1.addFieldString("field1");
@@ -49,7 +49,7 @@ public class TestSPackageCoreSType extends TestCaseForm {
 
     @Test
     public void testDependsOnWithExtension() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<SIComposite> typeRec1 = pb.createCompositeType("Rec1");
         STypeString field11 = typeRec1.addFieldString("field1");
@@ -97,7 +97,7 @@ public class TestSPackageCoreSType extends TestCaseForm {
 
     @Test
     public void testDependsOnReferenciaCircular() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<SIComposite> typeRec1 = pb.createCompositeType("Rec1");
         STypeString field11 = typeRec1.addFieldString("field1");

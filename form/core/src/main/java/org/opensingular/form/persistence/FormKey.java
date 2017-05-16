@@ -66,6 +66,7 @@ public interface FormKey extends Serializable {
     }
 
     /** Retorna a {@link FormKey} do {@link SDocument}, se o identificado existir. */
+    @Nonnull
     static Optional<FormKey> fromOpt(SDocument document) {
         Objects.requireNonNull(document);
         return Optional.ofNullable((FormKey) document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));

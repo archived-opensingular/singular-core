@@ -24,20 +24,39 @@
     <wicket:fragment wicket:id="FormFragment">
         <form wicket:id="form">
             <div wicket:id="content"></div>
-            <div>
-                <button wicket:id="save" class="btn btn-primary">Save</button>
-                <a href="#" wicket:id="cancel" class="btn btn-link">Cancel</a>
+            <div class="form-actions noborder">
+                <button wicket:id="save" class="btn save-btn">Salvar</button>
+                <a href="#" wicket:id="cancel" class="btn cancel-btn">Cancelar</a>
             </div>
         </form>
     </wicket:fragment>
 
     <wicket:fragment wicket:id="ListFragment">
-        <div>
-            <a class="btn btn-link" wicket:id="create"><i class="fa fa-plus"></i> New</a>
-        </div>
-        <table wicket:id="table"></table>
-    </wicket:fragment>
 
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i wicket:id="crudIcon"></i>
+                    <span class="caption-subject bold uppercase"> <span wicket:id="crudTitle"/></span>
+                </div>
+                <div class="actions">
+                    <a href="javascript:;" wicket:id="create" class="btn">
+                        <i class="fa fa-plus"></i> Novo </a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="dataTables_wrapper no-footer table-responsive">
+                    <table wicket:id="table"></table>
+                </div>
+            </div>
+        </div>
+
+    </wicket:fragment>
+    <style type="text/css">
+        .action-column {
+            text-align: right;
+        }
+    </style>
 </wicket:panel>
 </body>
 </html>

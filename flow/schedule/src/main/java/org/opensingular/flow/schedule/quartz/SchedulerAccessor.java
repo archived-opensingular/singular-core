@@ -15,8 +15,6 @@
  */
 package org.opensingular.flow.schedule.quartz;
 
-import java.util.*;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Calendar;
@@ -35,6 +33,13 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.simpl.SimpleClassLoadHelper;
 import org.quartz.spi.ClassLoadHelper;
 import org.quartz.xml.XMLSchedulingDataProcessor;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Common base class for accessing a Quartz Scheduler, i.e. for registering jobs,
@@ -234,27 +239,14 @@ public abstract class SchedulerAccessor {
      */
     protected boolean addTriggerToScheduler(Trigger trigger) throws SchedulerException {
         boolean triggerExists = triggerExists(trigger);
-        if (!triggerExists || this.overwriteExistingJobs) {
+        if (isNewTriggerOrOverwriteExistingJobs(triggerExists)) {
             // Check if the Trigger is aware of an associated JobDetail.
             JobDetail jobDetail = findJobDetail(trigger);
             if (jobDetail != null) {
-                // Automatically register the JobDetail too.
-                if (!this.jobDetails.contains(jobDetail) && addJobToScheduler(jobDetail)) {
-                    this.jobDetails.add(jobDetail);
-                }
+                registerJob(jobDetail);
             }
             if (!triggerExists) {
-                try {
-                    getScheduler().scheduleJob(trigger);
-                } catch (ObjectAlreadyExistsException ex) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Unexpectedly found existing trigger, assumably due to cluster race condition: " +
-                                ex.getMessage() + " - can safely be ignored");
-                    }
-                    if (this.overwriteExistingJobs) {
-                        rescheduleJob(trigger);
-                    }
-                }
+                scheduleJob(trigger);
             } else {
                 rescheduleJob(trigger);
             }
@@ -262,6 +254,31 @@ public abstract class SchedulerAccessor {
         } else {
             return false;
         }
+    }
+
+    private void scheduleJob(Trigger trigger) throws SchedulerException {
+        try {
+            getScheduler().scheduleJob(trigger);
+        } catch (ObjectAlreadyExistsException ex) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Unexpectedly found existing trigger, assumably due to cluster race condition: " +
+                        ex.getMessage() + " - can safely be ignored", ex);
+            }
+            if (this.overwriteExistingJobs) {
+                rescheduleJob(trigger);
+            }
+        }
+    }
+
+    private void registerJob(JobDetail jobDetail) throws SchedulerException {
+        // Automatically register the JobDetail too.
+        if (!this.jobDetails.contains(jobDetail) && addJobToScheduler(jobDetail)) {
+            this.jobDetails.add(jobDetail);
+        }
+    }
+
+    private boolean isNewTriggerOrOverwriteExistingJobs(boolean triggerExists) {
+        return !triggerExists || this.overwriteExistingJobs;
     }
 
     /**

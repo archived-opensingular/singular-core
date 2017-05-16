@@ -23,7 +23,11 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.markup.head.*;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -35,6 +39,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
+import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
@@ -50,7 +55,11 @@ import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.newLinkedHashMap;
@@ -119,37 +128,30 @@ public class TypeaheadComponent extends Panel {
     @SuppressWarnings("unchecked")
     private WebMarkupContainer buildContainer() {
         WebMarkupContainer c = new WebMarkupContainer("typeahead_container");
-        labelField = new TextField<>("label_field", new Model<String>() {
-
-            private String lastDisplay;
-            private Serializable lastValue;
-
-            @Override
-            public String getObject() {
-                if (instance().isEmptyOfData()) {
-                    return null;
-                } else if (!Value.dehydrate(instance()).equals(lastValue)) {
-                    lastValue = Value.dehydrate(instance());
-                    SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
-                    if (converter != null) {
-                        Serializable converted = converter.toObject(instance());
-                        if (converted != null) {
-                            lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
-                        }
-                    }
-                }
-                return lastDisplay;
-            }
-        });
+        labelField = makeLabelField();
         c.add(labelField);
-        valueField = new TextField<>("value_field", new AbstractSInstanceAwareModel<String>() {
+        valueField = makeValueField();
+        c.add(valueField);
+        dynamicFetcher = new BloodhoundDataBehavior(model, cache);
+        add(dynamicFetcher);
+        return c;
+    }
+
+    @NotNull
+    private TextField<String> makeValueField() {
+        return new TextField<>("value_field", makeValueModel());
+    }
+
+    @NotNull
+    private AbstractSInstanceAwareModel<String> makeValueModel() {
+        return new AbstractSInstanceAwareModel<String>() {
 
             private String lastId;
             private Serializable lastValue;
 
             @Override
             public SInstance getSInstance() {
-                return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getSInstance).orElse(null);
+                return ISInstanceAwareModel.optionalSInstance(model).orElse(null);
             }
 
             @Override
@@ -177,20 +179,45 @@ public class TypeaheadComponent extends Panel {
                     getRequestCycle().setMetaData(WicketFormProcessing.MDK_SKIP_VALIDATION_ON_REQUEST, Boolean.TRUE);
                     getSInstance().clearInstance();
                 } else {
-                    final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
-                    if (val != null) {
-                        instance().asAtrProvider().getConverter().fillInstance(getSInstance(), val);
-                    } else {
-                        getSInstance().clearInstance();
-                    }
+                    setVallIfNullorClear(key, getSInstance());
                 }
             }
+        };
+    }
 
+    protected void setVallIfNullorClear(String key, SInstance instance) {
+        final Serializable val = getValueFromChace(key).map(TypeaheadCache::getTrueValue).orElse(getValueFromProvider(key).orElse(null));
+        if (val != null) {
+            instance().asAtrProvider().getConverter().fillInstance(instance, val);
+        } else {
+            instance.clearInstance();
+        }
+    }
+
+    @NotNull
+    private TextField<String> makeLabelField() {
+        return new TextField<>("label_field", new Model<String>() {
+
+            private String lastDisplay;
+            private Serializable lastValue;
+
+            @Override
+            public String getObject() {
+                if (instance().isEmptyOfData()) {
+                    return null;
+                } else if (!Value.dehydrate(instance()).equals(lastValue)) {
+                    lastValue = Value.dehydrate(instance());
+                    SInstanceConverter<Serializable, SInstance> converter = instance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        Serializable converted = converter.toObject(instance());
+                        if (converted != null) {
+                            lastDisplay = instance().asAtrProvider().getDisplayFunction().apply(converted);
+                        }
+                    }
+                }
+                return lastDisplay;
+            }
         });
-        c.add(valueField);
-        dynamicFetcher = new BloodhoundDataBehavior(model, cache);
-        add(dynamicFetcher);
-        return c;
     }
 
     private Optional<TypeaheadCache> getValueFromChace(String key) {
@@ -214,7 +241,7 @@ public class TypeaheadComponent extends Panel {
         if (provider != null) {
             stream = provider.load(providerContext).stream();
         } else {
-            throw new SingularFormException("Nenhum provider foi informado");
+            throw new SingularFormException("Nenhum provider foi informado", instance());
         }
 
         return stream.filter(o -> instance().asAtrProvider().getIdFunction().apply(o).equals(key)).findFirst();
@@ -323,7 +350,7 @@ public class TypeaheadComponent extends Panel {
     }
 
     private SInstance instance() {
-        return ISInstanceAwareModel.optionalCast(model).map(ISInstanceAwareModel::getSInstance).orElse(null);
+        return ISInstanceAwareModel.optionalSInstance(model).orElse(null);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

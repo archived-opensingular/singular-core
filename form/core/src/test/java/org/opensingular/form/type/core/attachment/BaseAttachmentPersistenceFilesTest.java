@@ -1,13 +1,14 @@
 package org.opensingular.form.type.core.attachment;
 
-import com.google.common.io.ByteStreams;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.form.io.HashUtil;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +16,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opensingular.form.type.core.attachment.AttachmentTestUtil.*;
 
 @RunWith(value = Parameterized.class)
 abstract public class BaseAttachmentPersistenceFilesTest {
@@ -28,6 +28,18 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     public BaseAttachmentPersistenceFilesTest(byte[] content, String hash) {
         this.content = content;
         this.hash = hash;
+    }
+
+    protected TempFileProvider tmpProvider;
+
+    @Before
+    public void createTmpProvider() {
+        tmpProvider = TempFileProvider.createForUseInTryClause(this);
+    }
+
+    @After
+    public void cleanTmpProvider() {
+        tmpProvider.deleteOrException();
     }
 
     @Before
@@ -45,7 +57,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
                 {"np".getBytes(Charset.forName(StandardCharsets.UTF_8.name())), "003fffd5649fc27c0fc0d15a402a4fe5b0444ce7"},
                 {"1234".getBytes(Charset.forName(StandardCharsets.UTF_8.name())), "7110eda4d09e062aa5e4a390b0a572ac0d2c0220"},
                 {"TesteTesteTeste".getBytes(), "ceecae2e6034de45a8303a31e9e96adb37c2443f" },
-            { "MiranteMiranteMiranteMirante".getBytes(Charset.forName(StandardCharsets.UTF_8.name())), "79244437e10faf670b335edc3e3aada33e6790f8" },
+            { "TestTesteTeste".getBytes(Charset.forName(StandardCharsets.UTF_8.name())), "965a7dcefe3755139f4943c5bcbae915f9844c64" },
             { "sha1 this string".getBytes(Charset.forName(StandardCharsets.UTF_8.name())), "cf23df2207d99a74fbe169e3eba035e633b65d94" },
             { "The quick brown fox jumps over the lazy dog".getBytes(Charset.forName(StandardCharsets.UTF_8.name())), "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" },
             { newByteArray(10 * 1024 * 1024, (byte) 0), "8c206a1a87599f532ce68675536f0b1546900d7a"},
@@ -59,19 +71,21 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         return grande;
     }
 
-    @Test public void createReferenceWithProperDataUsingStream() throws Exception {    
-        assertReference(persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName));
+    @Test
+    public void createReferenceWithProperDataUsingStream() throws Exception {
+        assertReference(persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length, fileName, HashUtil.toSHA1Base16(content)));
     }
 
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHashSHA1());
         assertEquals(content.length, ref.getSize());
-        assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.getInputStream())));
+        assertTrue(Arrays.equals(content, ref.getContentAsByteArray()));
     }
 
-    
-    @Test public void recoverReferenceWithSameDataUsingStream() throws Exception {    
-        IAttachmentRef original = persistenHandler.addAttachment(writeBytesToTempFile(new ByteArrayInputStream(content)), content.length, fileName);
+    @Test
+    public void recoverReferenceWithSameDataUsingStream() throws Exception {
+        IAttachmentRef original = persistenHandler.addAttachment(tmpProvider.createTempFile(content), content.length,
+                fileName, HashUtil.toSHA1Base16(content));
         IAttachmentRef returned = persistenHandler.getAttachment(original.getId());
         assertReference(original, returned);
     }
@@ -80,10 +94,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         assertEquals(returned.getHashSHA1(), original.getHashSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
-                ByteStreams.toByteArray(original.getInputStream())));
-        assertTrue(Arrays.equals(ByteStreams.toByteArray(returned.getInputStream()),
-                ByteStreams.toByteArray(original.getInputStream())));
+        assertTrue(Arrays.equals(returned.getContentAsByteArray(), original.getContentAsByteArray()));
+        assertTrue(Arrays.equals(returned.getContentAsByteArray(), original.getContentAsByteArray()));
     }
-
 }

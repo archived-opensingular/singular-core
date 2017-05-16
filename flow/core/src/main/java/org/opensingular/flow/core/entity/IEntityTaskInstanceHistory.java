@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.core.entity;
 
-import java.util.Date;
+import org.opensingular.flow.core.SUser;
 
-import org.opensingular.flow.core.MUser;
+import java.util.Date;
 
 public interface IEntityTaskInstanceHistory extends IEntityByCod<Integer> {
 
@@ -32,9 +32,9 @@ public interface IEntityTaskInstanceHistory extends IEntityByCod<Integer> {
 
     void setEndDateAllocation(Date endDateAllocation);
 
-    MUser getAllocatedUser();
+    SUser getAllocatedUser();
 
-    MUser getAllocatorUser();
+    SUser getAllocatorUser();
 
     String getDescription();
 

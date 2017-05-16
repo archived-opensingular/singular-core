@@ -9,7 +9,7 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.internal.xml.MParser;
+import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.form.io.SFormXMLUtil;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -26,7 +26,7 @@ public class STypeCompositeTest extends TestCaseForm {
 
     @Before
     public void setUp() {
-        PackageBuilder pkt = createTestDictionary().createNewPackage("pkt");
+        PackageBuilder pkt = createTestPackage();
         baseType = pkt.createCompositeType("baseType");
         name = baseType.addFieldString("name");
         subStuff = baseType.addFieldComposite("subStuff");

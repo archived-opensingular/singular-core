@@ -1,6 +1,9 @@
 package org.opensingular.form;
 
 import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaB;
 import org.opensingular.form.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInternaC;
@@ -9,9 +12,6 @@ import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testTipoCompostoCriacao() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<?> tipoEndereco = pb.createCompositeType("endereco");
         tipoEndereco.addField("rua", STypeString.class);
@@ -94,7 +94,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testeComposicaoCamposQuandoUmCompostoExtendeOutroComposto() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<?> tipoBloco = pb.createCompositeType("bloco");
         STypeString typeNome = tipoBloco.addFieldString("nome");
@@ -130,7 +130,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testCriacaoDinamicaDeCamposNaInstancia() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldInteger("inicio");
@@ -160,13 +160,13 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNotNull(bloco.getValue("itens[0]"));
         assertNull(bloco.getValue("itens[0].qtd"));
         bloco.setValue("itens[0].qtd", 10);
-        assertEquals(bloco.getValue("itens[0].qtd"), 10);
+        assertEquals((Object) bloco.getValue("itens[0].qtd"), 10);
 
         assertCriacaoDinamicaSubCampo(bloco, "subBloco", 3, 4);
         assertCriacaoDinamicaSubCampo(bloco.getFieldComposite("subBloco"), "teste", 0, 1);
         assertNull(bloco.getValue("subBloco.teste"));
         bloco.setValue("subBloco.teste", true);
-        assertEquals(bloco.getValue("subBloco.teste"), true);
+        assertEquals((Object) bloco.getValue("subBloco.teste"), true);
 
         // Testa criando em cadeia
         bloco = tipoBloco.newInstance();
@@ -191,7 +191,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoSimples() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldListOf("enderecos", STypeString.class);
@@ -230,7 +230,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoComposto() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         STypeList<STypeComposite<SIComposite>, SIComposite> tipoEnderecos = tipoBloco.addFieldListOfComposite("enderecos", "endereco");
@@ -296,7 +296,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testeOnCargaTipoChamadaSubTipo() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         TestTipoCompositeComCargaInterna tipo = pb.createType("derivado", TestTipoCompositeComCargaInterna.class);
 
         TestTipoCompositeComCargaInterna tipoPai = pb.getDictionary().getType(TestTipoCompositeComCargaInterna.class);
@@ -313,7 +313,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testExtensionTypeFromClassWithSubTypeFromClass() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("test");
+        PackageBuilder pb = createTestPackage();
         TestTipoCompositeComCargaInternaB typeD = pb.createType("typeD", TestTipoCompositeComCargaInternaB.class);
         typeD.addFieldString("info");
         assertType(typeD).isExtensionCorrect(TestTipoCompositeComCargaInternaB.class);
@@ -591,7 +591,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testGetFieldOpt() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createCompositeType("bloco");
         tipoBloco.addFieldString("ba");
@@ -648,7 +648,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     @Test
     public void testTentativaDeCampoComNomeDuplicado() {
-        PackageBuilder pb = createTestDictionary().createNewPackage("teste");
+        PackageBuilder pb = createTestPackage();
         STypeComposite<SIComposite> block = pb.createCompositeType("block");
         block.addFieldString("field1");
         assertException(() -> block.addFieldString("field1"), "Tentativa de criar um segundo campo com o nome");

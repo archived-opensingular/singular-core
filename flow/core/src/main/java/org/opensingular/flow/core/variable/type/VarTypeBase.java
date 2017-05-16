@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.variable.type;
 
-import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.variable.SingularFlowConvertingValueException;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarType;
 
@@ -57,14 +57,33 @@ public abstract class VarTypeBase<TYPE> implements VarType<TYPE> {
         } else if (original instanceof String) {
             return fromPersistenceString((String) original);
         }
-        TYPE result = convertNotDirectCompatible(original);
-        if (result == null) {
-            throw new SingularFlowException(
-                    "Não foi possível converte o valor para o tipo " + getClassTypeContent().getName()).add("value",
-                    original);
+        try {
+            TYPE result = convertNotDirectCompatible(original);
+            if (result != null) {
+                return result;
+            }
+        } catch(Exception e) {
+            throw rethrow(e, original);
         }
-        return result;
+        throw rethrow(null, original);
     }
+
+    public final TYPE fromPersistenceString(String persistenceValue) throws SingularFlowConvertingValueException {
+        try {
+            return fromPersistenceStringImpl(persistenceValue);
+        } catch(Exception e) {
+            throw rethrow(e, persistenceValue);
+        }
+    }
+
+    private SingularFlowConvertingValueException rethrow(Exception e, Object originalValue) {
+        return SingularFlowConvertingValueException.rethrow(e, this, originalValue)
+                .addValueBeingConverted(originalValue);
+    }
+
+    /** Deve ser implementando pela subclasse com a lógica específica de conversão. */
+    protected abstract TYPE fromPersistenceStringImpl(String persistenceValue) throws
+            SingularFlowConvertingValueException;
 
     /** Chamado para converte um objeto não nativo do tipo. Se retornar null, significa que não conseguiu converte.*/
     @Nullable

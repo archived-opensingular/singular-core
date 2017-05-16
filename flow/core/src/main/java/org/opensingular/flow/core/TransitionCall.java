@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 
 import javax.annotation.Nonnull;
@@ -29,22 +30,35 @@ import java.util.Objects;
  */
 public final class TransitionCall extends CallWithParameters<TransitionCall> {
 
-    private final TransitionRef transition;
+    private final RefTransition transition;
 
-    TransitionCall(@Nonnull TransitionRef transition) {
+    TransitionCall(@Nonnull RefTransition transition) {
         this.transition = Objects.requireNonNull(transition);
     }
 
+    /**
+     *  Verifica se os parâmetros atuais da chamada atende os requisitos da chamada.
+     *  @see STransition#setParametersValidator(STransition.ITransitionParametersValidator)
+     */
     @Override
-    protected VarInstanceMap<?> newParameters() {
-        return transition.newTransationParameters();
+    public ValidationResult validate() {
+        ValidationResult result = super.validate();
+        if (! result.hasErros()) {
+            result = transition.getTransition().validate(transition, this);
+        }
+        return result;
+    }
+
+    @Override
+    protected VarInstanceMap<?,?> newParameters() {
+        return transition.getTransition().newTransitionParameters(transition);
     }
 
     /**
      * Executa a transição sobre a task sendo referenciada.
      */
     public void go() {
-        FlowEngine.executeTransition(transition.getOriginTaskInstance(), transition.getTransition(), parameters());
+        FlowEngine.executeTransition(transition.getOriginTaskInstance(), transition.getTransition(), getParameters());
     }
 
 }

@@ -23,13 +23,20 @@ import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.view.ViewResolver;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SDictionary {
 
     private final MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
 
     private final MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
+
+    private final Map<String, AttrInternalRef> attributes = new HashMap<>(currentAvarageAttributes);
 
     private final SDocument internalDocument = new SDocument();
 
@@ -90,7 +97,8 @@ public class SDictionary {
      *
      * @return O pacote carregado
      */
-    public <T extends SPackage> T loadPackage(Class<T> packageClass) {
+    @Nonnull
+    public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
         }
@@ -101,6 +109,17 @@ public class SDictionary {
             carregarInterno(novo);
         }
         return novo;
+    }
+
+    /**
+     * Carrega no dicionário o pacote do atributo informado, se ainda não tiver sido carregado. É seguro chamar é
+     * método mais de uma vez para o mesmo pacote.
+     *
+     * @return O pacote carregado
+     */
+    @Nonnull
+    final SPackage loadPackageFor(@Nonnull AtrRef<?, ?, ?> atr) {
+        return loadPackage(atr.getPackageClass());
     }
 
     public PackageBuilder createNewPackage(String nome) {
@@ -116,37 +135,37 @@ public class SDictionary {
      * estiver carregado ainda, busca carregá-lo e as definições do pacote a que
      * pertence. Senão encontrar no dicionário e nem conseguir encontrar para
      * carregar, então dispara Exception.
-     *
-     * @return Nunca Null.
      */
     @Nonnull
     public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
-        T typeRef = getTypeOptional(typeClass);
+        Objects.requireNonNull(typeClass);
+        T typeRef = types.get(typeClass);
         if (typeRef == null) {
-            throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
+            Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
+            SPackage typePackage = loadPackage(classPacote);
+            typeRef = types.get(typeClass);
+            if (typeRef == null) {
+                //O tipo é de carga lazy e não se auto registrou no pacote, então regista agora
+                typeRef = registeLazyTypeIntoPackage(typePackage, typeClass);
+            }
         }
         return typeRef;
     }
 
-    public <T extends SType<?>> T getTypeOptional(Class<T> typeClass) {
-        T tipoRef = types.get(typeClass);
-        if (tipoRef == null) {
-            Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
-            loadPackage(classPacote);
-            tipoRef = types.get(typeClass);
-        }
-        return tipoRef;
+    /** Adiciona o tipo informado no pacote. */
+    @Nonnull
+    private <T extends SType<?>> T registeLazyTypeIntoPackage(@Nonnull SPackage typePackage, @Nonnull Class<T> typeClass) {
+        Objects.requireNonNull(typePackage);
+        Objects.requireNonNull(typeClass);
+        return typePackage.registerType(typeClass);
     }
 
     public SType<?> getType(String fullNamePath) {
-        SType<?> type = getTypeOptional(fullNamePath);
-        if (type == null) {
-            throw new SingularFormException("Tipo '" + fullNamePath + "' não encontrado");
-        }
-        return type;
+        return getTypeOptional(fullNamePath).orElseThrow(
+                () -> new SingularFormException("Tipo '" + fullNamePath + "' não encontrado"));
     }
 
-    public SType<?> getTypeOptional(String pathFullName) {
+    public Optional<SType<?>> getTypeOptional(String pathFullName) {
         SType<?> t = types.get(pathFullName);
         if (t == null) {
             // Verifica se é um tipo dos pacotes com carga automática do
@@ -157,7 +176,7 @@ public class SDictionary {
                 t = types.get(pathFullName);
             }
         }
-        return t;
+        return Optional.ofNullable(t);
     }
 
     public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> classeTipo) {
@@ -169,7 +188,8 @@ public class SDictionary {
     }
 
     @SuppressWarnings("unchecked")
-    final <T extends SType<?>> void registeType(SScope scope, T newType, Class<T> classForRegister) {
+    final <T extends SType<?>> void registeType(@Nonnull SScope scope, @Nonnull T newType,
+            @Nullable Class<T> classForRegister) {
         if (classForRegister != null) {
             Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
             SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
@@ -193,7 +213,8 @@ public class SDictionary {
         types.add(newType, (Class<SType<?>>) classForRegister);
     }
 
-    private static SPackage findPackage(SScope scope) {
+    private static SPackage findPackage(SScope currentScope) {
+        SScope scope = currentScope;
         while (scope != null && !(scope instanceof SPackage)) {
             scope = scope.getParentScope();
         }
@@ -233,5 +254,124 @@ public class SDictionary {
             pendingTypeProcessorExecution = ArrayListMultimap.create();
         }
         pendingTypeProcessorExecution.put(type, runnable);
+    }
+
+    /**
+     * Registra um atributo que pode ser associado a vários {@link SType} diferentes.
+     */
+    @Nonnull
+    final AttrInternalRef registeAttribute(@Nonnull SType<?> attr) {
+        AttrInternalRef ref = registeAttribute(attr.getName());
+        ref.resolve(attr);
+        return ref;
+    }
+
+    /**
+     * Registra um atributo que pertence a um único tipo (não pode ser associado novamente a outro tipo) e que pode ser
+     * do tipo auto referência (atributo cujo valor é o mesmo do tipo ao qual está
+     * associado).
+     */
+    @Nonnull
+    final AttrInternalRef registeAttribute(@Nonnull SType<?> attr, @Nonnull SType<?> owner, boolean selfReference) {
+        AttrInternalRef ref = registeAttribute(attr.getName());
+        ref.resolve(attr, owner, selfReference);
+        owner.addAttribute(attr);
+        return ref;
+    }
+
+    /**
+     * Faz um registro de atributo pendente, ou seja, sem especificar o tipo do mesmo. Esse registro provavelmente será
+     * corretamente associado mais tarde.
+     */
+    @Nonnull
+    final AttrInternalRef getAttribureRefereceOrCreateLazy(@Nonnull String attributeName) {
+        AttrInternalRef ref = getAttributeReference(attributeName);
+        if (ref == null) {
+            ref = registeAttribute(attributeName);
+        }
+        return ref;
+    }
+
+    /**
+     * Tenta registra um novo atributo com o nome informado. Se houver um registro de atributo pendente de resolução,
+     * retorna esse em vez de criar um novo.
+     */
+    @Nonnull
+    private AttrInternalRef registeAttribute(@Nonnull String attributeName) {
+        AttrInternalRef ref = new AttrInternalRef(this, attributeName, attributes.size());
+        AttrInternalRef previusValue = attributes.putIfAbsent(ref.getName(), ref);
+        if (previusValue == null) {
+            incAttribute(ref.getIndex().intValue() == 0);
+            attributesArrayInicialSize = Math.max(attributes.size(), currentAvarageAttributes);
+            return ref;
+        } else if (previusValue.isResolved()) {
+            throw new SingularFormException("Internal Error: attribute '" + attributeName + " already definied");
+        }
+        return previusValue;
+    }
+
+    /**
+     * Atualiza a estatisticas de criação de atributos em dicionários a fim de viabilizar descobrir o tamanho métodos do
+     * registro de atributos.
+     */
+    private static void incAttribute(boolean newDictionarie) {
+        if (newDictionarie) {
+            countDictionaries++;
+        }
+        countAttributes++;
+        if (countDictionaries == 10000) {
+            synchronized (SDictionary.class) {
+                if (countDictionaries == 10000) {
+                    currentAvarageAttributes = (countAttributes + countDictionaries - 1) / countDictionaries;
+                    countDictionaries = 0;
+                    countAttributes = 0;
+                }
+            }
+        }
+    }
+
+    private static int countDictionaries = 0;
+    private static int countAttributes = 0;
+    private static int currentAvarageAttributes = 30;
+
+    private int attributesArrayInicialSize = currentAvarageAttributes;
+
+    /** Retorna o tamanho inicial para a criação de arrays para referência para atributos. */
+    final int getAttributesArrayInicialSize() {
+        return attributesArrayInicialSize;
+    }
+
+    /** Retorna a referência ao atributo solicitado se já existir registro de referência ao mesmo. */
+    @Nullable
+    final AttrInternalRef getAttributeReference(@Nonnull String fullName) {
+        return attributes.get(fullName);
+    }
+
+    /**
+     * Retorna a referência ao atributo solicitado se já existir registro de referência ao mesmo no dicionário ou
+     * dispara uma exception se não existir.
+     */
+    @Nonnull
+    final AttrInternalRef getAttributeReferenceOrException(@Nonnull String fullName) {
+        AttrInternalRef ref = getAttributeReference(fullName);
+        if (ref == null) {
+            throw new SingularFormException("O atributo '" + fullName + "' não foi registrado");
+        }
+        return ref;
+    }
+
+    /**
+     * Retorna a referência ao atributo solicitado se já existir registro de referência ao mesmo no dicionário. Senão
+     * existir a referência ainda, então provoca a carga do pacote associado ao mesmo.
+     */
+    @Nonnull
+    final AttrInternalRef getAttributeReferenceOrException(@Nonnull AtrRef<?, ?, ?> atr) {
+        Objects.requireNonNull(atr);
+        AttrInternalRef ref = getAttributeReference(atr.getNameFull());
+        if (ref == null || !ref.isResolved()) {
+            loadPackageFor(atr);
+            ref = getAttributeReferenceOrException(atr.getNameFull());
+        }
+        return ref;
     }
 }

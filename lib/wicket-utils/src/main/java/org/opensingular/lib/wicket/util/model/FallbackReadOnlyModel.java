@@ -27,7 +27,7 @@ public class FallbackReadOnlyModel<T>
 
     private final IModel<T>[] models;
 
-    @SuppressWarnings("unchecked")
+    @SafeVarargs
     public FallbackReadOnlyModel(IModel<T>... models) {
         this.models = Arrays.copyOf(models, models.length);
     }

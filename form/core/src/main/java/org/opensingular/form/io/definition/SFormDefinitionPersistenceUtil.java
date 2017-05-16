@@ -21,6 +21,7 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIList;
+import org.opensingular.form.SScope;
 import org.opensingular.form.SScopeBase;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -59,15 +61,16 @@ public class SFormDefinitionPersistenceUtil {
 
 
     private static void ensureType(ContextArchive ctx, SType<?> type) {
-        Object i;
-        while ((i = type.getParentScope()) instanceof SType) {
-            type = (SType<?>) i;
+        SType<?> currentType = type;
+        for (SScope t = type.getParentScope(); t instanceof SType; t = ((SType<?>) t).getParentScope()) {
+            currentType = (SType<?>) t;
         }
-        if (!ctx.isNecessaryToArchive(type) || ctx.isAlreadyArchived(type)) {
+
+        if (!ctx.isNecessaryToArchive(currentType) || ctx.isAlreadyArchived(currentType)) {
             return;
         }
-        SIPersistenceType pType = ctx.createTypeInPackage(type);
-        writeType(ctx, pType, type);
+        SIPersistenceType pType = ctx.createTypeInPackage(currentType);
+        writeType(ctx, pType, currentType);
     }
 
     private static void writeType(ContextArchive ctx, SIPersistenceType pType, SType<?> type) {
@@ -111,12 +114,12 @@ public class SFormDefinitionPersistenceUtil {
 
     private static SType<?> resolveSuperType(ContextUnarchive ctx, SScopeBase scopeNewType, SIPersistenceType pType) {
         String superTypeName = ctx.translateTypeName(pType.getSuperType());
-        SType<?> superType = ctx.getDictionary().getTypeOptional(superTypeName);
-        if(superType == null) {
-            throw new SingularFormException("Ao ler o tipo '" + scopeNewType.getName() + "." + pType.getSimpleName()
-                    + "' não foi encontrado a definição do seu tipo '" + superTypeName + "' nas definições sendo importadas.");
+        Optional<SType<?>> superType = ctx.getDictionary().getTypeOptional(superTypeName);
+        if(superType.isPresent()) {
+            return superType.get();
         }
-        return superType;
+        throw new SingularFormException("Ao ler o tipo '" + scopeNewType.getName() + "." + pType.getSimpleName()
+                + "' não foi encontrado a definição do seu tipo '" + superTypeName + "' nas definições sendo importadas.");
     }
 
     private static void readMembers(ContextUnarchive ctx, STypeComposite<?> newComposite, SIList<SIPersistenceType> members) {

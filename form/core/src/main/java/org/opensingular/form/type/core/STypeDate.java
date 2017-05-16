@@ -16,7 +16,10 @@
 
 package org.opensingular.form.type.core;
 
-import com.google.common.base.Strings;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -27,17 +30,12 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 import org.opensingular.lib.commons.base.SingularUtil;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.common.base.Strings;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
 
 @SInfoType(name = "Date", spackage = SPackageCore.class)
 public class STypeDate extends STypeSimple<SIDate, Date> {
-
-    private static final Logger LOGGER = Logger.getLogger(SIDate.class.getName());
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -59,6 +57,7 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
         try {
             return isoFormarter().parseLocalDate(value).toDate();
         } catch (Exception e) {
+            getLogger().debug(null, e);
             try{
                 return latinFormatter().parse(value);
             } catch (Exception ex) {
@@ -69,7 +68,7 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
 
     private Date handleError(String value, Exception e) {
         String msg = String.format("Can't parse value '%s' with format '%s'.", value, "dd/MM/yyyy");
-        LOGGER.log(Level.WARNING, msg, e);
+        getLogger().warn(msg, e);
         throw SingularUtil.propagate(e);
     }
 

@@ -89,4 +89,11 @@ public class ConversionUtilsTest {
         assertEquals(DEFAULT_VALUE, toLongHumane("@#))$!#$%", DEFAULT_VALUE));
         //@formatter:on
     }
+
+    @Test
+    public void testToIntHumane(){
+        assertEquals(-10000L, toIntHumane("-10.000", (int) DEFAULT_VALUE));
+        assertEquals(DEFAULT_VALUE, toIntHumane("12147483647", (int) DEFAULT_VALUE));
+        assertEquals(DEFAULT_VALUE, toIntHumane("-12147483648", (int) DEFAULT_VALUE));
+    }
 }

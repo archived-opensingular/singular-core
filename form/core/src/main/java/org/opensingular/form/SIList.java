@@ -84,11 +84,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
     
     @Override
-    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
-        return getValue(new PathReader(fieldPath), resultClass);
-    }
-
-    @Override
     public boolean isEmptyOfData() {
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
@@ -155,16 +150,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    public SInstance getField(String path) {
-        return getField(new PathReader(path));
-    }
-
-    @Override
-    public Optional<SInstance> getFieldOpt(String path) {
-        return getFieldOpt(new PathReader(path));
-    }
-
-    @Override
     final SInstance getFieldLocal(PathReader pathReader) {
         SInstance instance = getChecking(pathReader);
         if (instance == null) {
@@ -197,18 +182,18 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             if (pathReader == null) {
                 throw new SingularFormException(msg, this);
             }
-            throw new SingularFormException(pathReader.getErrorMsg(this, msg));
+            throw new SingularFormException(pathReader.getErrorMsg(this, msg), this);
         }
         return values.get(index);
     }
 
     private int resolveIndex(PathReader pathReader) {
         if (!pathReader.isIndex()) {
-            throw new SingularFormException(pathReader.getErrorMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getToken() + "'"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, "Era esperado um indice do elemento (exemplo field[1]), mas em vez disso foi solicitado '" + pathReader.getToken() + "'"), this);
         }
         int index = pathReader.getIndex();
         if (index < 0) {
-            throw new SingularFormException(pathReader.getErrorMsg(this, index + " é um valor inválido de índice"));
+            throw new SingularFormException(pathReader.getErrorMsg(this, index + " é um valor inválido de índice"), this);
         }
         return index;
     }
@@ -365,28 +350,19 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         SIList<?> other = (SIList<?>) obj;
-        if (size() != other.size()) {
+        if (size() != other.size() || !getType().equals(other.getType()) || !Objects.equals(getElementsType(),
+                other.getElementsType())) {
             return false;
-        } else if (!getType().equals(other.getType())) {
-            return false;
-        } else if (!Objects.equals(getElementsType(), other.getElementsType()))
-            return false;
+        }
         for (int i = size() - 1; i != -1; i--) {
             if (!Objects.equals(get(i), other.get(i))) {
                 return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s(%s)", getClass().getSimpleName(), getAllChildren());
     }
 
     public E first() {

@@ -6,7 +6,7 @@ public class TestCasePersistenceHandlerInMemory extends TestCasePersistenceHandl
 
     @Override
     protected IAttachmentPersistenceHandler setupHandler() {
-        return new InMemoryAttachmentPersistenceHandler();
+        return new InMemoryAttachmentPersistenceHandler(tmpProvider.createTempDir());
     }
 
 }
