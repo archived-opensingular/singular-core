@@ -21,43 +21,53 @@ import java.io.Serializable;
 
 public interface VarService extends Serializable {
 
+    @Nonnull
     VarService deserialize();
 
     @Nonnull
     VarDefinitionMap<?> newVarDefinitionMap();
 
     /* TODO Verifica se ficou em uso no final, senão apagar */
+    @Nonnull
     VarInstance newVarInstance(VarDefinition def);
 
     @Nonnull
-    VarDefinition newDefinition(String ref, String name, VarType type);
+    VarDefinition newDefinition(@Nonnull String ref, String name, @Nonnull VarType type);
+
+    /**
+     * Cria uma definição para uma classe específica. Use preferencialmente os métodos addDefinitionXXXX com um tipo ja
+     * previsto.
+     */
+    @Nonnull
+    VarDefinition newDefinitionCustom(@Nonnull String ref, String name, @Nonnull Class<?> variableClass);
 
     @Nonnull
-    VarDefinition newDefinitionString(String ref, String name, Integer tamanhoMaximo);
+    VarDefinition newDefinitionString(@Nonnull String ref, String name, Integer tamanhoMaximo);
 
     @Nonnull
-    VarDefinition newDefinitionMultiLineString(String ref, String name, Integer tamanhoMaximo);
+    VarDefinition newDefinitionMultiLineString(@Nonnull String ref, String name, Integer tamanhoMaximo);
 
     @Nonnull
-    VarDefinition newDefinitionDate(String ref, String name);
+    VarDefinition newDefinitionDate(@Nonnull String ref, String name);
 
     @Nonnull
-    VarDefinition newDefinitionInteger(String ref, String name);
+    VarDefinition newDefinitionInteger(@Nonnull String ref, String name);
 
     @Nonnull
-    VarDefinition newDefinitionBoolean(String ref, String name);
+    VarDefinition newDefinitionBoolean(@Nonnull String ref, String name);
 
     @Nonnull
-    VarDefinition newDefinitionDouble(String ref, String name);
+    VarDefinition newDefinitionDouble(@Nonnull String ref, String name);
 
     @Nonnull
-    VarDefinition newDefinitionBigDecimal(String ref, String name);
+    VarDefinition newDefinitionBigDecimal(@Nonnull String ref, String name);
 
     static VarService basic() {
         return DefaultVarService.DEFAULT_VAR_SERVICE;
     }
 
-    static VarService getVarService(VarServiceEnabled source) {
+    @Nonnull
+    static VarService getVarService(@Nonnull VarServiceEnabled source) {
         VarService s = source.getVarService();
         if (s == null) {
             throw new UnsupportedOperationException("Falta implementar VarServiceBasic.class");
