@@ -420,27 +420,40 @@ public class MElementWrapper extends MElement implements EWrapper {
         }
         Element novo;
         if (isVazio(resolvedNamespaceURI)) {
-            if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
-                resolvedNamespaceURI = resolvedParent.getNamespaceURI();
-            } else {
-                resolvedNamespaceURI = null; //Podia ser String vazia
-            }
-            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+            novo = addElementNSVazio(resolvedParent, d, resolvedQualifiedName);
         } else {
-            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
-
-            if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
-                int posPrefixo = resolvedQualifiedName.indexOf(':');
-                if ((posPrefixo == -1)) {
-                    novo.setAttribute("xmlns", resolvedNamespaceURI);
-                } else {
-                    String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
-                    novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
-                }
-                //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
-            }
+            novo = addElementNSNaoVazio(resolvedParent, d, resolvedNamespaceURI, resolvedQualifiedName);
         }
         resolvedParent.appendChild(novo);
+        return novo;
+    }
+
+    private static Element addElementNSNaoVazio(Node resolvedParent, Document d, String resolvedNamespaceURI, String resolvedQualifiedName) {
+        Element novo;
+        novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+
+        if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
+            int posPrefixo = resolvedQualifiedName.indexOf(':');
+            if ((posPrefixo == -1)) {
+                novo.setAttribute("xmlns", resolvedNamespaceURI);
+            } else {
+                String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
+                novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
+            }
+            //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
+        }
+        return novo;
+    }
+
+    private static Element addElementNSVazio(Node resolvedParent, Document d, String resolvedQualifiedName) {
+        String  resolvedNamespaceURI;
+        Element novo;
+        if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
+            resolvedNamespaceURI = resolvedParent.getNamespaceURI();
+        } else {
+            resolvedNamespaceURI = null; //Podia ser String vazia
+        }
+        novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
         return novo;
     }
 
