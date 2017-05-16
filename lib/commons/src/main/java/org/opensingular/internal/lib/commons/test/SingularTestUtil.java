@@ -97,7 +97,7 @@ public final class SingularTestUtil {
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
             } else {
-                String msg = "Era esperado " + expectedException.getSimpleName() + "'";
+                String msg = "Era esperado '" + expectedException.getSimpleName() + "'";
                 msg += " no entanto ocorreu a exceção '" + e.getClass().getSimpleName() + "'";
                 throw new AssertionError(msg, e);
             }
