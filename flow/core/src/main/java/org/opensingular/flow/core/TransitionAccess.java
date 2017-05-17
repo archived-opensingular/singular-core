@@ -16,9 +16,11 @@
 
 package org.opensingular.flow.core;
 
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
-public class TransitionAccess {
+public class TransitionAccess implements Serializable {
 
     private final TransitionVisibilityLevel level;
     private final String                    message;
@@ -52,8 +54,8 @@ public class TransitionAccess {
         return level == TransitionVisibilityLevel.ENABLED_AND_VISIBLE || level == TransitionVisibilityLevel.DISABLED_AND_VISIBLE;
     }
 
-    public String getMessage() {
-        return message;
+    public Optional<String> getMessage() {
+        return Optional.ofNullable(message);
     }
 
 }

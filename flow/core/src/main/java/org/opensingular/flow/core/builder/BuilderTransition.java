@@ -54,11 +54,6 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
-    public default SELF hidden() {
-        getTransition().withAccessControl(UITransitionAccessStrategyImplUI.enabled(false));
-        return self();
-    }
-    
     public default SELF uiAccess(UITransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         getTransition().withAccessControl(accessStrategy);
         return self();
@@ -90,6 +85,10 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     }
 
     public default  <T extends Serializable>  SELF uiDisabled(){
-        return uiAccess(UITransitionAccessStrategyImplUI.enabled(false));
+        return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, null));
+
+    }
+    public default  <T extends Serializable>  SELF uiDisabled(String message){
+        return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, message));
     }
 }

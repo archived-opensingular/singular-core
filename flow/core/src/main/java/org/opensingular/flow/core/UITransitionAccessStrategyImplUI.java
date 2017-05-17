@@ -33,12 +33,12 @@ public class UITransitionAccessStrategyImplUI<X extends TaskInstance> implements
         return new UITransitionAccessStrategyImplUI<>(strategyImpl);
     }
 
-    public static <T extends TaskInstance> UITransitionAccessStrategy<T> enabled(boolean enabled) {
+    public static <T extends TaskInstance> UITransitionAccessStrategy<T> enabled(boolean enabled, String message) {
         return (instance) -> {
             if (enabled) {
-                return new TransitionAccess(TransitionVisibilityLevel.ENABLED_AND_VISIBLE, null);
+                return new TransitionAccess(TransitionVisibilityLevel.ENABLED_AND_VISIBLE, message);
             } else {
-                return new TransitionAccess(TransitionVisibilityLevel.DISABLED_AND_VISIBLE, null);
+                return new TransitionAccess(TransitionVisibilityLevel.DISABLED_AND_VISIBLE, message);
             }
         };
     }
