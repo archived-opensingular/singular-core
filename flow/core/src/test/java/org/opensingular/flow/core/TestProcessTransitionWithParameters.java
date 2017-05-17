@@ -47,6 +47,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Nonnull
     private ProcessInstance createTestProcess() {
+
         StartCall<ProcessInstance> startCall = new ProcessTranisitonWithParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, "A")
                 .setValue(PARAM_BIG, VALUE_BIG1);

@@ -20,32 +20,40 @@ import java.util.Objects;
 
 public class TransitionAccess {
 
-    private final TransitionAccessLevel level;
-    private final String message;
+    private final TransitionVisibilityLevel level;
+    private final String                    message;
 
-    public TransitionAccess(TransitionAccessLevel transitionAccessLevel, String message) {
-        Objects.requireNonNull(transitionAccessLevel);
-        this.level = transitionAccessLevel;
+    public enum TransitionVisibilityLevel {
+        /**
+         * Interface must display an action input/link enabled
+         */
+        ENABLED_AND_VISIBLE,
+        /**
+         * Interface must display an action input/link disabled
+         */
+        DISABLED_AND_VISIBLE,
+        /**
+         * Interface must not display any action input/link
+         */
+        DISABLED_AND_HIDDEN;
+    }
+
+    public TransitionAccess(TransitionVisibilityLevel transitionVisibilityLevel, String message) {
+        Objects.requireNonNull(transitionVisibilityLevel);
+        this.level = transitionVisibilityLevel;
         this.message = message;
     }
 
     public boolean isEnabled() {
-        return level == TransitionAccessLevel.ENABLED || level == TransitionAccessLevel.ENABLED_BUT_HIDDEN;
+        return level == TransitionVisibilityLevel.ENABLED_AND_VISIBLE;
     }
 
     public boolean isVisible() {
-        return level == TransitionAccessLevel.ENABLED || level == TransitionAccessLevel.DISABLED_BUT_VISIBLE;
+        return level == TransitionVisibilityLevel.ENABLED_AND_VISIBLE || level == TransitionVisibilityLevel.DISABLED_AND_VISIBLE;
     }
 
     public String getMessage() {
         return message;
-    }
-
-    public enum TransitionAccessLevel {
-        ENABLED,
-        ENABLED_BUT_HIDDEN,
-        DISABLED_BUT_VISIBLE,
-        DISABLED_AND_HIDDEN;
     }
 
 }

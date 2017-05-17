@@ -21,8 +21,8 @@ import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.TransitionAccessStrategy;
-import org.opensingular.flow.core.TransitionAccessStrategyImpl;
+import org.opensingular.flow.core.UITransitionAccessStrategy;
+import org.opensingular.flow.core.UITransitionAccessStrategyImplUI;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 import javax.annotation.Nonnull;
@@ -54,12 +54,12 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
-    public default SELF hideInExecution() {
-        getTransition().withAccessControl(TransitionAccessStrategyImpl.enabled(false));
+    public default SELF hidden() {
+        getTransition().withAccessControl(UITransitionAccessStrategyImplUI.enabled(false));
         return self();
     }
     
-    public default SELF setAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    public default SELF uiAccess(UITransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         getTransition().withAccessControl(accessStrategy);
         return self();
     }
@@ -83,5 +83,13 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     public default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
         getTransition().setMetaDataValue(propRef, value);
         return self();
+    }
+
+    public default <T extends Serializable> SELF uiHidden(){
+        return uiAccess(UITransitionAccessStrategyImplUI.visible(false));
+    }
+
+    public default  <T extends Serializable>  SELF uiDisabled(){
+        return uiAccess(UITransitionAccessStrategyImplUI.enabled(false));
     }
 }
