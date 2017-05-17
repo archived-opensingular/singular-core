@@ -17,11 +17,14 @@
 package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.variable.type.VarTypeBoolean;
+import org.opensingular.flow.core.variable.type.VarTypeCustom;
 import org.opensingular.flow.core.variable.type.VarTypeDate;
 import org.opensingular.flow.core.variable.type.VarTypeDecimal;
 import org.opensingular.flow.core.variable.type.VarTypeDouble;
 import org.opensingular.flow.core.variable.type.VarTypeInteger;
 import org.opensingular.flow.core.variable.type.VarTypeString;
+
+import javax.annotation.Nonnull;
 
 public class DefaultVarService implements VarService {
 
@@ -45,6 +48,13 @@ public class DefaultVarService implements VarService {
     @Override
     public VarDefinition newDefinition(String ref, String name, VarType type) {
         return new VarDefinitionImpl(ref, name, type, false);
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull
+    @Override
+    public VarDefinition newDefinitionCustom(@Nonnull String ref, String name, @Nonnull Class<?> variableClass) {
+        return new VarDefinitionImpl(ref, name, new VarTypeCustom(variableClass), false);
     }
 
     @Deprecated
