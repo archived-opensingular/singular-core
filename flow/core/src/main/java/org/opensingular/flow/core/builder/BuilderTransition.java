@@ -80,15 +80,15 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
 
-    public default <T extends Serializable> SELF uiHidden(){
+    public default SELF uiHidden(){
         return uiAccess(UITransitionAccessStrategyImplUI.visible(false));
     }
 
-    public default  <T extends Serializable>  SELF uiDisabled(){
+    public default SELF uiDisabled(){
         return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, null));
 
     }
-    public default  <T extends Serializable>  SELF uiDisabled(String message){
+    public default SELF uiDisabled(String message){
         return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, message));
     }
 }
