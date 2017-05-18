@@ -68,7 +68,6 @@ public class ProcessInstance implements Serializable {
     private transient ExecutionContext executionContext;
 
     private transient VarInstanceMap<?, ?> variables;
-    private Object previousTask;
 
     final void setProcessDefinition(ProcessDefinition<?> processDefinition) {
         if (processDefinitionRef != null) {
