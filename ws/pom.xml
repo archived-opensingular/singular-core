@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular</artifactId>
-        <version>1.6.5-RC</version>
+        <version>1.6.5-RC2</version>
     </parent>
 
     <artifactId>singular-ws</artifactId>

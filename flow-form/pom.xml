@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.opensingular</groupId>
 		<artifactId>singular</artifactId>
-		<version>1.6.5-RC</version>
+		<version>1.6.5-RC2</version>
 	</parent>
 
 	<artifactId>singular-flow-form</artifactId>
@@ -17,17 +17,17 @@
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-form-core</artifactId>
-			<version>1.6.5-RC</version>
+			<version>1.6.5-RC2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-flow-core</artifactId>
-			<version>1.6.5-RC</version>
+			<version>1.6.5-RC2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-support</artifactId>
-			<version>1.6.5-RC</version>
+			<version>1.6.5-RC2</version>
 		</dependency>
 	</dependencies>
 </project>
