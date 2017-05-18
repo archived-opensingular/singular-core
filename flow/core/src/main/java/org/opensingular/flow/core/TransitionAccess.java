@@ -40,6 +40,10 @@ public class TransitionAccess implements Serializable {
         DISABLED_AND_HIDDEN;
     }
 
+    public TransitionAccess(TransitionVisibilityLevel transitionVisibilityLevel) {
+        this(transitionVisibilityLevel, null);
+    }
+
     public TransitionAccess(TransitionVisibilityLevel transitionVisibilityLevel, String message) {
         Objects.requireNonNull(transitionVisibilityLevel);
         this.level = transitionVisibilityLevel;
