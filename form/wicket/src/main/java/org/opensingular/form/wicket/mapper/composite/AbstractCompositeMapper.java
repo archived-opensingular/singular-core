@@ -79,11 +79,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
                 ctx.getContainer().appendTag("div", new AnnotationComponent("annotation", ctx, model));
             }
             
-            //aqui
-//            AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
-//            BSContainer<?> container = ctx.getContainer();
-//            container.newTag("span", true, "class='help-block'", container.newComponent(id -> (Label) new Label(id, subtitle).setEscapeModelStrings(true)));
-            
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
@@ -192,8 +187,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             final BSGrid         grid      = parentCol.newGrid();
 
             addLabelIfNeeded(ctx, grid);
-//            addSubtitleIfNeeded(ctx, grid);
-            
+
             grid.add(DisabledClassBehavior.getInstance());
             grid.setDefaultModel(model);
 
