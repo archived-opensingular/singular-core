@@ -16,8 +16,9 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -26,11 +27,11 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -40,6 +41,7 @@ import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.annotation.AnnotationComponent;
+import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
@@ -76,7 +78,12 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             if (renderAnnotations()) {
                 ctx.getContainer().appendTag("div", new AnnotationComponent("annotation", ctx, model));
             }
-
+            
+            //aqui
+//            AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
+//            BSContainer<?> container = ctx.getContainer();
+//            container.newTag("span", true, "class='help-block'", container.newComponent(id -> (Label) new Label(id, subtitle).setEscapeModelStrings(true)));
+            
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
@@ -142,14 +149,31 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
             IModel<String> label = $m.ofValue(trimToEmpty(getInstance().asAtr().getLabel()));
             if (isNotBlank(label.getObject())) {
+                //subtitle
+                AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
                 BSCol column = grid.newColInRow();
-                column.appendTag("h5", new Label("_title", label));
+                
+                column.appendTag("h5", new Label("_title", label));    
                 ctx.configureContainer(label);
                 column.setVisible(!ctx.getParent().isTitleInBlock());
+
+                if(isNotBlank(subtitle.getObject())){
+                    column.newTag("span", true, "class='help-block subtitle'", column.newComponent(id -> (Label) new Label(id, subtitle).setEscapeModelStrings(true)));
+                }
+                
                 return column;
             }
             return null;
         }
+        
+        protected void addSubtitleIfNeeded(WicketBuildContext ctx, final BSGrid grid){
+            AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
+            if(isNotBlank(subtitle.getObject())){
+                BSCol column = grid.newColInRow();
+                column.newTag("span", true, "class='subtitle'", column.newComponent(id -> (Label) new Label(id, subtitle).setEscapeModelStrings(true)));
+            }
+        }
+        
 
         protected Optional<MarkupContainer> findFeedbackAwareParent() {
             return Optional.ofNullable(ctx.getContainer().visitParents(MarkupContainer.class, (c, v) -> {
@@ -162,14 +186,14 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper 
             return ctx.getRootContext().getAnnotationMode().enabled() &&
                     getInstance().asAtrAnnotation().isAnnotated();
         }
-
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
 
             final BSContainer<?> parentCol = ctx.getContainer();
             final BSGrid         grid      = parentCol.newGrid();
 
             addLabelIfNeeded(ctx, grid);
-
+//            addSubtitleIfNeeded(ctx, grid);
+            
             grid.add(DisabledClassBehavior.getInstance());
             grid.setDefaultModel(model);
 
