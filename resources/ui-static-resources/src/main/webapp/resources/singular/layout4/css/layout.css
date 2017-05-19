@@ -2805,3 +2805,17 @@ Login page
 
 .has-error > div > .richtext-panel {
   border: 1px solid #e82724; }
+  
+.subtitle {
+	color: #bababa !important;
+	font-size: 13px !important;
+	margin-top: -10px !important;
+	margin-bottom: 10px !important;
+}
+
+.subtitle_comp { 
+	color: #bababa !important;
+	font-size: 13px !important;
+	margin-top: -6px !important;
+	margin-bottom: 10px !important;
+}

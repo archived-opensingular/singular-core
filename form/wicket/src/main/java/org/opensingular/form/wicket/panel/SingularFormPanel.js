@@ -30,11 +30,10 @@ jQuery(document).ready(function () {
         	}
         };
         
-        Wicket.Event.subscribe('/ajax/call/complete', function (evt, attrs, jqXHR, textStatus) {
-	
+        function align(selector, evt, attrs, jqXHR, textStatus) {
 	        var fieldsByTopPosition = {};
-	
-	        jQuery('div > div.can-have-error').each(function () {
+	        
+	    	jQuery(selector).each(function () {
 	            var $this       = $(this);
 	            if(!$this.hasClass('upload-panel-body')) {//deve ignorar o painel de anexo
                     var topPosition = $this.offset().top;
@@ -47,7 +46,7 @@ jQuery(document).ready(function () {
                     fieldsList.push($this);
                 }
 	        });
-	
+	        
 	        for (var topPosition in fieldsByTopPosition) {
 	            if (fieldsByTopPosition.hasOwnProperty(topPosition)) {
 	                var maxFieldHeight = 0;
@@ -72,6 +71,32 @@ jQuery(document).ready(function () {
 	                }
 	            }
 	        }
+        } 
+                
+
+ 
+        Wicket.Event.subscribe('/ajax/call/complete', function(evt, attrs, jqXHR, textStatus){
+        	  	align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
+        	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
+        	});
+        
+      
+        
+        var delay = (function(){
+        	  var timer = 0;
+        	  return function(callback, ms){
+        	    clearTimeout (timer);
+        	    timer = setTimeout(callback, ms);
+        	  };
+        })();
+        
+        $(window).resize(function() {
+            delay(function(evt, attrs, jqXHR, textStatus){
+                //alert('Resize...'); 
+           	  	align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
+           	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
+            }, 5);
         });
+        
     }
 });
