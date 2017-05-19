@@ -73,15 +73,12 @@ jQuery(document).ready(function () {
 	        }
         } 
                 
-
- 
+        
         Wicket.Event.subscribe('/ajax/call/complete', function(evt, attrs, jqXHR, textStatus){
-        	  	align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
-        	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
-        	});
-        
-      
-        
+	        		align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
+	        	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
+        });
+
         var delay = (function(){
         	  var timer = 0;
         	  return function(callback, ms){
@@ -90,13 +87,20 @@ jQuery(document).ready(function () {
         	  };
         })();
         
-        $(window).resize(function() {
-            delay(function(evt, attrs, jqXHR, textStatus){
-                //alert('Resize...'); 
-           	  	align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
-           	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
-            }, 5);
+        $(document).ready(function(evt, attrs, jqXHR, textStatus){
+        	align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
+    	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
         });
+        
+        
+//        $(window).resize(function(evt, attrs, jqXHR, textStatus) {
+//        	underscore_debounce(function(evt, attrs, jqXHR, textStatus){
+//                //alert('Resize...'); 
+//           	  	align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
+//           	  	align('div > span.help-block', evt, attrs, jqXHR, textStatus);
+//           	  	console.log("executou");
+//            }, 100);
+//        });
         
     }
 });
