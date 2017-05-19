@@ -108,11 +108,18 @@ public class FormService implements IFormService {
     @Nonnull
     public FormKey insertOrUpdate(@Nonnull SInstance instance, Integer inclusionActor) {
         Optional<FormKey> key = getFormKeyManager().readFormKeyOptional(instance);
+        FormKey updatedKey;
         if (key.isPresent()) {
             updateInternal(loadFormEntity(key.get()), instance, inclusionActor);
-            return key.get();
+            updatedKey = key.get();
+        } else {
+            updatedKey = insertImpl(instance, inclusionActor);
         }
-        return insertImpl(instance, inclusionActor);
+
+        FormEntity formEntity = loadFormEntity(updatedKey);
+        formFieldService.saveFields(instance, formEntity.getFormType(), formEntity.getCurrentFormVersionEntity());
+
+        return updatedKey;
     }
 
     @Override

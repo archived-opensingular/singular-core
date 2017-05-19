@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
@@ -275,6 +276,7 @@ public final class SFormUtil {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
                 addPackage(builder, SPackageUtil.class);
                 addPackage(builder, SPackageBootstrap.class);
+                addPackage(builder, SPackagePersistence.class);
                 addPackage(builder, SPackageCountryBrazil.class);
                 return builder.build();
             });

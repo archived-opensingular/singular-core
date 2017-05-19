@@ -1,48 +1,37 @@
 package org.opensingular.form.persistence.service;
 
-import org.opensingular.form.persistence.dao.ReportDAO;
-import org.opensingular.form.persistence.dto.BaseDTO;
-import org.opensingular.form.persistence.dto.PeticaoPrimariaDTO;
+public class FormReportQueryBuilder {
 
-import javax.inject.Inject;
-import java.util.List;
-
-public class TransposeService {
-
-    //TODO Leo Valeriano - Definir a melhor maneira de informar o form a ser pesquisado
-    private String       form            = "mform.peticao.STypePeticaoPrimariaSimplificada";
+    private String       form;
     private StringBuffer casesForColumns = new StringBuffer();
     private StringBuffer where           = new StringBuffer();
-    private TransposeService instance;
 
-    @Inject
-    private ReportDAO reportDAO;
-
-    private TransposeService() {
+    private FormReportQueryBuilder() {
         //hidden constructor, use getInstance
     }
 
-    public List<? extends BaseDTO> list() {
-        return reportDAO.listDtos(generateSql(), PeticaoPrimariaDTO.class);
+    public static FormReportQueryBuilder getInstance() {
+        return new FormReportQueryBuilder();
     }
 
-    public static TransposeService getInstance() {
-        return new TransposeService();
+    public FormReportQueryBuilder withForm(String form) {
+        this.form = form;
+        return this;
     }
 
-    public TransposeService addColumn(String field, String type, String alias) {
+    public FormReportQueryBuilder addColumn(String field, String type, String alias) {
         casesForColumns.append(", MAX(CASE WHEN c.TXT_CAMINHO_CAMPO = '" + field +  "' THEN v.TXT_VALOR END) AS " + alias + "\n");
         return this;
     }
 
-    public TransposeService addFilter(String column, String operator, String value) {
+    public FormReportQueryBuilder addFilter(String column, String operator, String value) {
         where.append(" AND " + column + " " + operator + " '" + value + "' \n");
         return this;
     }
 
-    public String generateSql() {
+    public String buildSql() {
         StringBuffer sb = new StringBuffer("SELECT * FROM (\n");
-        sb.append("SELECT 1 as codVersaoFormulario --v.CO_VERSAO_FORMULARIO as codVersaoFormulario\n");
+        sb.append("SELECT v.CO_VERSAO_FORMULARIO as codVersaoFormulario \n");
         sb.append(casesForColumns);
         sb.append("FROM DBSINGULAR.TB_CACHE_CAMPO c \n");
         sb.append("    INNER JOIN DBSINGULAR.TB_CACHE_VALOR v ON v.CO_CACHE_CAMPO = c.CO_CACHE_CAMPO \n");
@@ -54,6 +43,5 @@ public class TransposeService {
         sb.append(where);
         return  sb.toString();
     }
-
 
 }

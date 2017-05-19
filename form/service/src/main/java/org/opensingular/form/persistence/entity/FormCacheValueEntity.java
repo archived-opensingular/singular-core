@@ -116,7 +116,11 @@ public class FormCacheValueEntity  extends BaseEntity<Long> {
             } else if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
                 numberValue = (BigDecimal) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
             } else {
-                stringValue = instance.getValue().toString();
+                String valor = instance.getValue().toString();
+                if (valor.length() >= 2048) {
+                    valor = instance.getValue().toString().substring(0, 2047);
+                }
+                stringValue = valor;
             }
         }
     }

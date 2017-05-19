@@ -9,9 +9,12 @@ import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
 import org.opensingular.form.persistence.entity.FormCacheValueEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 @Transactional
 public class FormFieldService implements IFormFieldService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FormFieldService.class);
 
     @Inject
     private FormCacheFieldDAO formCacheFieldDAO;
@@ -42,6 +47,8 @@ public class FormFieldService implements IFormFieldService {
         FormTypeEntity formType = formVersion.getFormEntity().getFormType();
         List<SInstance> fieldsInInstance = ((SIComposite) instance).getFields();
 
+        List<String> fieldsToIndex = new ArrayList<>();
+
         for (SInstance field : fieldsInInstance) {
             if (field instanceof SIList) {
                 LoadMapWithItensFromList(mapFields, (SIList)field, formVersion);
@@ -54,10 +61,16 @@ public class FormFieldService implements IFormFieldService {
                 }
             }
 
-            String fieldName = field.getType().getName().replace(formType.getAbbreviation() + ".", "");
-            FormCacheFieldEntity formField = new FormCacheFieldEntity(fieldName, formType);
-            FormCacheValueEntity formValue = new FormCacheValueEntity(formField, formVersion, field);
-            mapFields.put(formField, formValue);
+            //TODO resolver a indicacao de persitencia para tipos compostos
+//            if (field.asAtrPersistence().isPersistent()) {
+                System.out.println(field.getName() + " é persistente: " + field.asAtrPersistence().isPersistent());
+
+                String fieldName = field.getType().getName().replace(formType.getAbbreviation() + ".", "");
+                FormCacheFieldEntity formField = new FormCacheFieldEntity(fieldName, formType);
+                FormCacheValueEntity formValue = new FormCacheValueEntity(formField, formVersion, field);
+                mapFields.put(formField, formValue);
+//            }
+
         }
     }
 
@@ -68,7 +81,7 @@ public class FormFieldService implements IFormFieldService {
     }
 
     private void saveMap(Map<FormCacheFieldEntity, FormCacheValueEntity> mapFields) {
-        System.out.println("Starting batch insert");
+        LOGGER.info("Starting batch insert ");
         long startNanos = System.nanoTime();
 
         mapFields.forEach((field, value) -> {
@@ -78,7 +91,7 @@ public class FormFieldService implements IFormFieldService {
         });
 
         long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-        System.out.println("Batch insert took " + duration + " millis");
+        LOGGER.info("Batch insert took " + duration + " millis");
     }
 
 }
