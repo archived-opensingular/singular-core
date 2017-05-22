@@ -15,16 +15,30 @@
  */
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
-import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.*;
-import java.util.HashMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+
+import java.util.HashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.BS;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.LG;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.LG_HIDDEN;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.LG_OFFSET;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.MD;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.MD_HIDDEN;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.MD_OFFSET;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.SM;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.SM_HIDDEN;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.SM_OFFSET;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.XS;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.XS_HIDDEN;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.InternoNaoUse.XS_OFFSET;
 
 
 @SuppressWarnings("unchecked")
@@ -63,7 +77,9 @@ public interface IBSGridCol<THIS extends Component> {
     }
 
     default AttributeAppender newBSGridColBehavior() {
+
         return new AttributeAppender("class", new AbstractReadOnlyModel<CharSequence>() {
+
             @Override
             public CharSequence getObject() {
                 StringBuilder sb = new StringBuilder();
@@ -75,39 +91,40 @@ public interface IBSGridCol<THIS extends Component> {
                 return sb;
             }
 
-            public void appendColValue(StringBuilder sb) {
-                if (xs() > 0)
-                    sb.append(" col-xs-").append(xs());
-                if (sm() > 0)
-                    sb.append(" col-sm-").append(sm());
-                if (md() > 0)
-                    sb.append(" col-md-").append(md());
-                if (lg() > 0)
-                    sb.append(" col-lg-").append(lg());
-            }
-
-            public void appendColOffset(StringBuilder sb) {
-                if (xsOffset() > 0)
-                    sb.append(" col-xs-offset-").append(xsOffset());
-                if (smOffset() > 0)
-                    sb.append(" col-sm-offset-").append(smOffset());
-                if (mdOffset() > 0)
-                    sb.append(" col-md-offset-").append(mdOffset());
-                if (lgOffset() > 0)
-                    sb.append(" col-lg-offset-").append(lgOffset());
-            }
-
-            public void appendHidden(StringBuilder sb) {
-                if (xsHidden())
-                    sb.append(" hidden-xs");
-                if (smHidden())
-                    sb.append(" hidden-sm");
-                if (mdHidden())
-                    sb.append(" hidden-md");
-                if (lgHidden())
-                    sb.append(" hidden-lg");
-            }
         }, " ");
+    }
+
+    default void appendColValue(StringBuilder sb) {
+        if (xs() > 0)
+            sb.append(" col-xs-").append(xs());
+        if (sm() > 0)
+            sb.append(" col-sm-").append(sm());
+        if (md() > 0)
+            sb.append(" col-md-").append(md());
+        if (lg() > 0)
+            sb.append(" col-lg-").append(lg());
+    }
+
+    default void appendColOffset(StringBuilder sb) {
+        if (xsOffset() > 0)
+            sb.append(" col-xs-offset-").append(xsOffset());
+        if (smOffset() > 0)
+            sb.append(" col-sm-offset-").append(smOffset());
+        if (mdOffset() > 0)
+            sb.append(" col-md-offset-").append(mdOffset());
+        if (lgOffset() > 0)
+            sb.append(" col-lg-offset-").append(lgOffset());
+    }
+
+    default void appendHidden(StringBuilder sb) {
+        if (xsHidden())
+            sb.append(" hidden-xs");
+        if (smHidden())
+            sb.append(" hidden-sm");
+        if (mdHidden())
+            sb.append(" hidden-md");
+        if (lgHidden())
+            sb.append(" hidden-lg");
     }
 
     default THIS xs(int colspan) {
