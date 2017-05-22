@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>1.6.5-SNAPSHOT</version>
+        <version>1.6.5</version>
     </parent>
 
     <artifactId>singular-support</artifactId>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.6.5-SNAPSHOT</version>
+            <version>1.6.5</version>
         </dependency>
 
         <!-- HIBERNATE -->
