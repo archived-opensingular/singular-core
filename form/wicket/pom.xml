@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.6.3</version>
+        <version>1.6.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-form-wicket</artifactId>
@@ -47,19 +47,19 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-core</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.6-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-wicket-utils</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.6-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.6-SNAPSHOT</version>
         </dependency>
 
         <!--  WICKET DEPENDENCIES -->
@@ -136,8 +136,8 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.7.22</version>
             <scope>test</scope>
         </dependency>
 

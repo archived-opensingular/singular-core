@@ -733,11 +733,11 @@ public class TestMElement {
         MElement novo    = paiNovo.copy(raiz, null);
         isIgual(raiz, novo);
 
-        MElement paiNovo2 = MElement.newInstance("http://www.miranteinfo.com", "pai-b");
+        MElement paiNovo2 = MElement.newInstance("http://www.opensingular.com", "pai-b");
         MElement novo2    = paiNovo2.copy(raiz, null);
         isIgual(raiz, novo2);
 
-        MElement paiNovo3 = MElement.newInstance("http://www.miranteinfo.com", "p:pai-c");
+        MElement paiNovo3 = MElement.newInstance("http://www.opensingular.com", "p:pai-c");
         MElement novo3    = paiNovo3.copy(raiz, null);
         isIgual(raiz, novo3);
     }

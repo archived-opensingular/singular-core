@@ -688,33 +688,36 @@ public class ProcessInstance implements Serializable {
             throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation, this);
         }
         SUser previousUser = getUserWithRole(sProcessRole.getAbbreviation());
+        if (Objects.isNull(previousUser)) {
+            addOrReplaceUserRoleForNewUser(newUser, sProcessRole);
+        } else if (Objects.isNull(newUser)|| !previousUser.equals(newUser)) {
+            addOrReplaceUserRoleForPreviousUser(newUser, sProcessRole, previousUser);
+        }
+    }
 
-        if (previousUser == null) {
-            if (newUser != null) {
-                addUserRole(sProcessRole, newUser);
-                getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, null, newUser);
-
-                Optional<TaskInstance> latestTask = getTaskNewer();
-                if (latestTask.isPresent()) {
-                    latestTask.get().log("Papel definido", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName()));
-                }
+    private void addOrReplaceUserRoleForPreviousUser(SUser newUser, SProcessRole sProcessRole, SUser previousUser) {
+        IEntityProcessInstance entityTmp = getEntity();
+        getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(sProcessRole.getAbbreviation()));
+        if (Objects.nonNull(newUser)) {
+            addUserRole(sProcessRole, newUser);
+        }
+        getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, previousUser, newUser);
+        Optional<TaskInstance> latestTask = getTaskNewer();
+        if (latestTask.isPresent()) {
+            if (Objects.nonNull(newUser)) {
+                latestTask.get().log("Papel alterado", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName()));
+            } else {
+                latestTask.get().log("Papel removido", sProcessRole.getName());
             }
-        } else if (newUser == null || !previousUser.equals(newUser)) {
-            IEntityProcessInstance entityTmp = getEntity();
-            getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(sProcessRole.getAbbreviation()));
-            if (newUser != null) {
-                addUserRole(sProcessRole, newUser);
-            }
+        }
+    }
 
-            getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, previousUser, newUser);
+    private void addOrReplaceUserRoleForNewUser(SUser newUser, SProcessRole sProcessRole) {
+        if (Objects.nonNull(newUser)) {
+            addUserRole(sProcessRole, newUser);
+            getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, null, newUser);
             Optional<TaskInstance> latestTask = getTaskNewer();
-            if (latestTask.isPresent()) {
-                if (newUser != null) {
-                    latestTask.get().log("Papel alterado", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName()));
-                } else {
-                    latestTask.get().log("Papel removido", sProcessRole.getName());
-                }
-            }
+            latestTask.ifPresent(taskInstance -> taskInstance.log("Papel definido", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName())));
         }
     }
 
@@ -810,7 +813,7 @@ public class ProcessInstance implements Serializable {
      * <p>
      * Retorna os usuários alocados nas tarefas ativas
      * </p>
-     * 
+     *
      * @return a lista de usuários (<i>null safe</i>).
      */
     public Set<SUser> getAllocatedUsers() {

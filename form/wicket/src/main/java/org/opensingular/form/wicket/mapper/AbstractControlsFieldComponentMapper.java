@@ -16,6 +16,13 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -28,20 +35,12 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
-import org.opensingular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper {
 
@@ -77,8 +76,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
             .add($b.classAppender("hidden-sm"))
-            .add($b.classAppender("hidden-md"))
-            .add(InvisibleIfNullOrEmptyBehavior.getInstance());
+            .add($b.classAppender("hidden-md"));
+            //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
 

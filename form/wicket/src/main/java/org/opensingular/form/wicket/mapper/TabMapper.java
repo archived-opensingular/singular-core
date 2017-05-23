@@ -16,37 +16,36 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.feedback.FeedbackFence;
-import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.lib.commons.lambda.ISupplier;
+import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.basic.AtrBootstrap;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
-import org.opensingular.form.validation.IValidationError;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.panel.BSPanelGrid;
+import org.opensingular.lib.commons.lambda.ISupplier;
+
+import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class TabMapper extends DefaultCompositeMapper {
 
@@ -57,7 +56,42 @@ public class TabMapper extends DefaultCompositeMapper {
         final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) ctx.getModel().getObject().getType();
         SViewTab                          tabView   = (SViewTab) tComposto.getView();
 
-        BSPanelGrid panel = new BSPanelGrid("panel") {
+        BSPanelGrid panel = newGrid(ctx);
+
+        if (ctx.getCurrentInstance().getParent() == null) {
+            panel.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> set) {
+                    set.add("singular-container-tab");
+                    return set;
+                }
+            });
+        }
+
+        SIComposite instance = (SIComposite) ctx.getModel().getObject();
+        for (SViewTab.STab tab : tabView.getTabs()) {
+            defineTabIconCss(ctx, instance, tab.getTypesName());
+            IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
+            BSPanelGrid.BSTab t                 = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesName(), baseInstanceModel);
+            t.iconClass((m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t.getSubtree()));
+        }
+
+        final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
+        if (isNotBlank(label.getObject())) {
+            ctx.getContainer().newTag("h4", new Label("_title", label));
+        }
+
+        ctx.getContainer().newTag("div", panel);
+
+        SViewTab.STab tabDefault = tabView.getDefaultTab();
+
+        renderTab(tabDefault.getTypesName(), panel, ctx);
+
+    }
+
+    @NotNull
+    protected BSPanelGrid newGrid(WicketBuildContext ctx) {
+        return new BSPanelGrid("panel") {
 
             @Override
             protected void onInitialize() {
@@ -98,65 +132,45 @@ public class TabMapper extends DefaultCompositeMapper {
                 SViewTab     tabView   = (SViewTab) instance.getType().getView();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
                 // da prioridade ao que foi definido na View e nos atributos em seguida
-                Integer colPreference = bootstrap.getColPreference();
-                Integer colXs         = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference));
-                Integer colSm         = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference));
-                Integer colMd         = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference));
-                Integer colLg         = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference));
+                configureBSColumns(tabView, bootstrap);
+            }
 
+            private void configureBSColumns(SViewTab tabView, AtrBootstrap bootstrap) {
+                Integer colPreference = bootstrap.getColPreference();
+                Integer colXs         = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colSm         = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colMd         = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colLg         = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+
+                BSTabCol content = getContent();
+                configureContentColuns(colXs, colSm, colMd, colLg, content);
+            }
+
+            private void configureContentColuns(Integer colXs, Integer colSm, Integer colMd, Integer colLg, BSTabCol content) {
                 if (colXs != null) {
                     getNavigation().xs(colXs);
-                    getContent().xs(BSTabCol.MAX_COLS - colXs);
+                    content.xs(BSTabCol.MAX_COLS - colXs);
                 }
                 if (colSm != null) {
                     getNavigation().sm(colSm);
-                    getContent().sm(BSTabCol.MAX_COLS - colSm);
+                    content.sm(BSTabCol.MAX_COLS - colSm);
                 }
                 if (colMd != null) {
                     getNavigation().md(colMd);
-                    getContent().md(BSTabCol.MAX_COLS - colMd);
+                    content.md(BSTabCol.MAX_COLS - colMd);
                 }
                 if (colLg != null) {
                     getNavigation().lg(colLg);
-                    getContent().lg(BSTabCol.MAX_COLS - colLg);
+                    content.lg(BSTabCol.MAX_COLS - colLg);
                 }
             }
 
-            private Integer resolveCol(Integer cols, Integer defaultCols) {
-                Integer c = cols != null ? cols : defaultCols;
-                return c != null && c < BSTabCol.MAX_COLS ? c : null;
-            }
         };
+    }
 
-        if (ctx.getCurrentInstance().getParent() == null) {
-            panel.add(new ClassAttributeModifier() {
-                @Override
-                protected Set<String> update(Set<String> set) {
-                    set.add("singular-container-tab");
-                    return set;
-                }
-            });
-        }
-
-        SIComposite instance = (SIComposite) ctx.getModel().getObject();
-        for (SViewTab.STab tab : tabView.getTabs()) {
-            defineTabIconCss(ctx, instance, tab.getTypesName());
-            IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
-            BSPanelGrid.BSTab t                 = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesName(), baseInstanceModel);
-            t.iconClass((m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t.getSubtree()));
-        }
-
-        final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
-        if (isNotBlank(label.getObject())) {
-            ctx.getContainer().newTag("h4", new Label("_title", label));
-        }
-
-        ctx.getContainer().newTag("div", panel);
-
-        SViewTab.STab tabDefault = tabView.getDefaultTab();
-
-        renderTab(tabDefault.getTypesName(), panel, ctx);
-
+    private Integer resolveCol(Integer cols, Integer defaultCols, int max) {
+        Integer c = cols != null ? cols : defaultCols;
+        return c != null && c < max ? c : null;
     }
 
     public String defineTabIconCss(WicketBuildContext ctx, SIComposite instance,

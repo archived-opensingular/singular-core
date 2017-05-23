@@ -16,7 +16,7 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -34,15 +34,14 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.resource.Icone;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -214,7 +213,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public Label newHelpBlock(IModel<String> textModel, boolean escapeLabelString) {
-        return super.newTag("span", true, "class='help-block'", newComponent(id -> (Label) new Label(id, textModel).setEscapeModelStrings(escapeLabelString)));
+        return super.newTag("span", true, "class='help-block subtitle_comp'", newComponent(id -> (Label) new Label(id, textModel).setEscapeModelStrings(escapeLabelString)));
     }
     public Label newHelpBlock(IModel<String> textModel) {
         return newHelpBlock(textModel, true);
