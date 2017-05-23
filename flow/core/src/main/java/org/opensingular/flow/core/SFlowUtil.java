@@ -38,8 +38,8 @@ public class SFlowUtil {
     private SFlowUtil() {}
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(),
-                s2.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(), definicao));
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(),
+                s2.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, ProcessDefinition<?> definicao) {

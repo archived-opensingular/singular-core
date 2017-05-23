@@ -35,7 +35,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
     default void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
         component.setOutputMarkupId(true);
         adjustJSEvents(component);
-        new AjaxUpdateListenersFactory().getBehaviorsForm(component, model, listener).stream().forEach(component::add);
+        new AjaxUpdateListenersFactory().getBehaviorsForm(component, model, listener).forEach(component::add);
     }
 
     default void adjustJSEvents(Component comp) {

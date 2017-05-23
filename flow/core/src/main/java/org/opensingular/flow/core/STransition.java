@@ -39,8 +39,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final TransitionType type;
     private final String         abbreviation;
 
-    private TransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<SProcessRole>                     rolesToDefineUser;
+    private UITransitionAccessStrategy<TaskInstance> accessStrategy;
+    private List<SProcessRole>                       rolesToDefineUser;
 
     private MetaData metaData;
 
@@ -58,17 +58,17 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public STransition withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    public STransition withAccessControl(UITransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         if (this.accessStrategy != null) {
             throw new SingularFlowException("Access strategy already defined");
         }
-        this.accessStrategy = (TransitionAccessStrategy<TaskInstance>) accessStrategy;
+        this.accessStrategy = (UITransitionAccessStrategy<TaskInstance>) accessStrategy;
         return this;
     }
 
     public TransitionAccess getAccessFor(TaskInstance taskInstance) {
         if (accessStrategy == null) {
-            return new TransitionAccess(TransitionAccess.TransitionAccessLevel.ENABLED, null);
+            return new TransitionAccess(TransitionAccess.TransitionVisibilityLevel.ENABLED_AND_VISIBLE, null);
         }
         return accessStrategy.getAccess(taskInstance);
     }

@@ -23,7 +23,12 @@ import org.opensingular.form.internal.PathReader;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -392,23 +397,31 @@ public final class DiffInfo implements Serializable {
 
     private static void addPathList(StringBuilder sb, DiffInfo info, boolean hasPrevious, boolean showLabel) {
         if (showLabel) {
-            if (hasPrevious) {
-                sb.append(" : ");
-            }
-            if (info.originalIndex != -1) {
-                sb.append("Linha ").append(info.originalIndex + 1);
-            } else {
-                sb.append("Linha nova");
-            }
+            addPathListWithShowLabel(sb, info, hasPrevious);
         } else {
-            sb.append('[');
-            if (info.newerIndex == info.originalIndex) {
-                sb.append(info.originalIndex);
-            } else {
-                sb.append(info.originalIndex == -1 ? " " : info.originalIndex);
-                sb.append('>').append(info.newerIndex == -1 ? " " : info.newerIndex);
-            }
-            sb.append(']');
+            addPathListWhitoutShowLabel(sb, info);
+        }
+    }
+
+    private static void addPathListWhitoutShowLabel(StringBuilder sb, DiffInfo info) {
+        sb.append('[');
+        if (info.newerIndex == info.originalIndex) {
+            sb.append(info.originalIndex);
+        } else {
+            sb.append(info.originalIndex == -1 ? " " : info.originalIndex);
+            sb.append('>').append(info.newerIndex == -1 ? " " : info.newerIndex);
+        }
+        sb.append(']');
+    }
+
+    private static void addPathListWithShowLabel(StringBuilder sb, DiffInfo info, boolean hasPrevious) {
+        if (hasPrevious) {
+            sb.append(" : ");
+        }
+        if (info.originalIndex != -1) {
+            sb.append("Linha ").append(info.originalIndex + 1);
+        } else {
+            sb.append("Linha nova");
         }
     }
 

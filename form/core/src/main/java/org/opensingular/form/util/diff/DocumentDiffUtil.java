@@ -16,14 +16,28 @@
 
 package org.opensingular.form.util.diff;
 
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Classe utilitária para cálculo da diferença na estrutura e conteúdo de SDocument ou SIntance. <p>Aceita comparar
@@ -235,31 +249,39 @@ public final class DocumentDiffUtil {
         boolean newerEmpty = newer == null || newer.getFileId() == null;
 
         if (originalEmpty) {
-            if (newerEmpty) {
-                info.setType(DiffType.UNCHANGED_EMPTY);
-            } else {
-                info.setType(DiffType.CHANGED_NEW);
-                info.setDetail(newer.toStringDisplay());
-            }
+            calculateDiffAttachmentWhenOriginalEmpty(info, newer, newerEmpty);
         } else if (newerEmpty) {
             info.setType(DiffType.CHANGED_DELETED);
         } else {
-            if (!Objects.equals(original.getFileName(), newer.getFileName())) {
-                if (Objects.equals(original.getFileHashSHA1(), newer.getFileHashSHA1())) {
-                    info.setDetail("Nome alterado de '" + original.getFileName() + "' para '" + newer.getFileName() +
-                            "', mas conteúdo identico (" + original.fileSizeToString() + ')');
-                } else {
-                    info.setDetail("Conteúdo alterado e nome alterado de '" + original.toStringDisplay() + "' para '" +
-                            newer.toStringDisplay() + "'");
-                }
-                info.setType(DiffType.CHANGED_CONTENT);
-            } else if (!Objects.equals(original.getFileHashSHA1(), newer.getFileHashSHA1())) {
-                info.setDetail("Nome do arquivo o mesmo, mas conteúdo alterado (tamanho anterior " +
-                        original.fileSizeToString() + ", novo tamanho " + newer.fileSizeToString() + ')');
-                info.setType(DiffType.CHANGED_CONTENT);
+            calculateDiffAttachmentWhenBothExists(info, original, newer);
+        }
+    }
+
+    private static void calculateDiffAttachmentWhenBothExists(DiffInfo info, SIAttachment original, SIAttachment newer) {
+        if (!Objects.equals(original.getFileName(), newer.getFileName())) {
+            if (Objects.equals(original.getFileHashSHA1(), newer.getFileHashSHA1())) {
+                info.setDetail("Nome alterado de '" + original.getFileName() + "' para '" + newer.getFileName() +
+                        "', mas conteúdo identico (" + original.fileSizeToString() + ')');
             } else {
-                info.setType(DiffType.UNCHANGED_WITH_VALUE);
+                info.setDetail("Conteúdo alterado e nome alterado de '" + original.toStringDisplay() + "' para '" +
+                        newer.toStringDisplay() + "'");
             }
+            info.setType(DiffType.CHANGED_CONTENT);
+        } else if (!Objects.equals(original.getFileHashSHA1(), newer.getFileHashSHA1())) {
+            info.setDetail("Nome do arquivo o mesmo, mas conteúdo alterado (tamanho anterior " +
+                    original.fileSizeToString() + ", novo tamanho " + newer.fileSizeToString() + ')');
+            info.setType(DiffType.CHANGED_CONTENT);
+        } else {
+            info.setType(DiffType.UNCHANGED_WITH_VALUE);
+        }
+    }
+
+    private static void calculateDiffAttachmentWhenOriginalEmpty(DiffInfo info, SIAttachment newer, boolean newerEmpty) {
+        if (newerEmpty) {
+            info.setType(DiffType.UNCHANGED_EMPTY);
+        } else {
+            info.setType(DiffType.CHANGED_NEW);
+            info.setDetail(newer.toStringDisplay());
         }
     }
 

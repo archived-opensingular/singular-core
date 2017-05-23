@@ -42,22 +42,23 @@ public final class ConversorDataISO8601 {
      */
     private static final char SEPARADOR_DATA_HORA = 'T';
 
-    private static final byte ANO = 1;
-    private static final byte MES = 2;
-    private static final byte DIA = 3;
-    private static final byte HORA = 4;
-    private static final byte MINUTO = 5;
+    private static final byte ANO     = 1;
+    private static final byte MES     = 2;
+    private static final byte DIA     = 3;
+    private static final byte HORA    = 4;
+    private static final byte MINUTO  = 5;
     private static final byte SEGUNDO = 6;
-    private static final byte MILI = 7;
-    private static final byte NANO = 8;
+    private static final byte MILI    = 7;
+    private static final byte NANO    = 8;
 
-    private ConversorDataISO8601() {}
+    private ConversorDataISO8601() {
+    }
 
     public static String format(java.util.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
 
-        int mili = gc.get(Calendar.MILLISECOND);
+        int  mili      = gc.get(Calendar.MILLISECOND);
         byte prescisao = SEGUNDO;
         if (mili != 0) {
             prescisao = MILI;
@@ -107,7 +108,7 @@ public final class ConversorDataISO8601 {
      */
     private static class LeitorString {
         private final String texto_;
-        private int pos_;
+        private       int    pos_;
 
         public LeitorString(String texto) {
             texto_ = texto;
@@ -118,8 +119,8 @@ public final class ConversorDataISO8601 {
         }
 
         public int lerNumero(int digitosMinimos, int digitosMaximos, boolean shiftMaximo) {
-            int p = 0;
-            int n = 0;
+            int  p = 0;
+            int  n = 0;
             char c;
             while (pos_ < texto_.length()) {
                 c = texto_.charAt(pos_);
@@ -139,15 +140,26 @@ public final class ConversorDataISO8601 {
                 pos_++;
                 p++;
             }
+            validar(digitosMinimos, digitosMaximos, p);
+            n = letShiftMaximo(digitosMaximos, shiftMaximo, p, n);
+            return n;
+        }
+
+        protected void validar(int digitosMinimos, int digitosMaximos, int p) {
             if ((p < digitosMinimos) || (p > digitosMaximos)) {
                 throw erroFormato();
             }
+        }
+
+        protected int letShiftMaximo(int digitosMaximos, boolean shiftMaximo, int p, int n) {
+            int _p = p;
+            int _n = n;
             if (shiftMaximo) {
-                for (; p < digitosMaximos; p++) {
-                    n *= 10;
+                for (; _p < digitosMaximos; _p++) {
+                    _n *= 10;
                 }
             }
-            return n;
+            return _n;
         }
 
         public void lerSeparadorData() {
@@ -338,7 +350,7 @@ public final class ConversorDataISO8601 {
     private static void formatMiliIfNecessary(StringBuilder buffer, int mili, byte prescisao) {
         if (mili < 0) {
             throw new IllegalArgumentException("Milisegundos <0");
-        } else if (mili > 999){
+        } else if (mili > 999) {
             throw new IllegalArgumentException("Milisegundos >999");
         }
         if ((prescisao == MILI) || (prescisao == NANO)) {

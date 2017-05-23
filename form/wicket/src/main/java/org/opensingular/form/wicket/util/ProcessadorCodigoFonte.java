@@ -22,10 +22,10 @@ import java.util.List;
 
 public class ProcessadorCodigoFonte {
 
-    private final String fonte;
+    private final String        fonte;
     private final List<Integer> linhasParaDestacar;
-    private final List<String> fonteFinal;
-    private final List<String> javadocDeClasse;
+    private final List<String>  fonteFinal;
+    private final List<String>  javadocDeClasse;
     private final static List<String> LIXOS = Collections.singletonList("@formatter");
 
     public ProcessadorCodigoFonte(String fonte) {
@@ -37,19 +37,14 @@ public class ProcessadorCodigoFonte {
     }
 
     private void processar() {
-        boolean javadoc = false;
-        boolean classeIniciada = false;
-        final String[] linhas = fonte.split("\n");
+        boolean        javadoc        = false;
+        boolean        classeIniciada = false;
+        final String[] linhas         = fonte.split("\n");
 
         for (int i = 0; i < linhas.length; i += 1) {
             final String linha = linhas[i];
-
             if (javadoc) {
-                if (linha.contains("*/")) {
-                    javadoc = false;
-                } else {
-                    javadocDeClasse.add(linha.replace(" *", ""));
-                }
+                javadoc = processJavaDoc(linha);
                 continue;
             } else if (!classeIniciada) {
                 if (linha.startsWith("/**")) {
@@ -58,22 +53,40 @@ public class ProcessadorCodigoFonte {
                 }
                 classeIniciada = linha.contains("public class ");
             }
-
-            if(isLixo(linha)){
-                continue;
-            } else if (isBloco(linha)) {
-                
-                while (!isFimBloco(linhas[++i])) {
-                    fonteFinal.add(linhas[i]);
-                    linhasParaDestacar.add(fonteFinal.size());
-                }
-            } else if (isLinha(linha)) {
-                fonteFinal.add(linhas[++i]);
-                linhasParaDestacar.add(fonteFinal.size());
-            } else {
-                fonteFinal.add(linha);
+            if (!isLixo(linha)) {
+                i = processCode(linhas, i, linha);
             }
         }
+    }
+
+    private int processCode(String[] linhas, int i, String linha) {
+        int j = i;
+        if (isBloco(linha)) {
+            j =  processBlock(linhas, j);
+        } else if (isLinha(linha)) {
+            fonteFinal.add(linhas[++j]);
+            linhasParaDestacar.add(fonteFinal.size());
+        } else {
+            fonteFinal.add(linha);
+        }
+        return j;
+    }
+
+    private int processBlock(String[] linhas, int i) {
+        while (!isFimBloco(linhas[++i])) {
+            fonteFinal.add(linhas[i]);
+            linhasParaDestacar.add(fonteFinal.size());
+        }
+        return i;
+    }
+
+    private boolean processJavaDoc(String linha) {
+        if (linha.contains("*/")) {
+            return false;
+        } else {
+            javadocDeClasse.add(linha.replace(" *", ""));
+        }
+        return true;
     }
 
     private boolean isBloco(String candidato) {
@@ -88,9 +101,9 @@ public class ProcessadorCodigoFonte {
         return candidato.contains("//@destacar") || candidato.contains("// @destacar");
     }
 
-    private boolean isLixo(String canditato){
-        for(String lixo : LIXOS){
-            if(canditato.contains(lixo)){
+    private boolean isLixo(String canditato) {
+        for (String lixo : LIXOS) {
+            if (canditato.contains(lixo)) {
                 return true;
             }
         }
