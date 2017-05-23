@@ -3,30 +3,18 @@ package org.opensingular.form.service;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SISimple;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.document.RefType;
-import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormKeyInt;
-import org.opensingular.form.persistence.FormKeyLong;
-import org.opensingular.form.persistence.dto.PeticaoPrimariaDTO;
-import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
-import org.opensingular.form.persistence.entity.FormCacheValueEntity;
-import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.form.persistence.service.TransposeService;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
+import org.opensingular.form.persistence.entity.FormCacheValueEntity;
+import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FormVersionTest extends FormServiceTest {
@@ -79,32 +67,34 @@ public class FormVersionTest extends FormServiceTest {
     public void indexFieldAlreadyRegisteredDoesNotDuplicate() {
         Session  session  = sessionFactory.getCurrentSession();
         Criteria criteria = session.createCriteria(FormCacheFieldEntity.class);
-        List<FormCacheFieldEntity> result = criteria.list();
-        Assert.assertTrue(result.size() == 0);
+        List<FormCacheFieldEntity> indexedFields = criteria.list();
+        Assert.assertTrue(indexedFields.size() == 0);
 
-        FormKey pessoaKey  = insert();
-        result = criteria.list();
-        Assert.assertTrue(result.size() == 2);
+        insert();
+        indexedFields = criteria.list();
+        Assert.assertTrue(indexedFields.size() == 2);
 
-        FormKey pessoaKey2 = insert();
-        result = criteria.list();
-        Assert.assertTrue(result.size() == 2);
+        insert();
+        indexedFields = criteria.list();
+        Assert.assertTrue(indexedFields.size() == 2);
     }
 
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void indexFieldValues() {
         Session  session  = sessionFactory.getCurrentSession();
         Criteria criteria = session.createCriteria(FormCacheValueEntity.class);
-        List<FormCacheValueEntity> result = criteria.list();
-        Assert.assertTrue(result.size() == 0);
+        List<FormCacheValueEntity> indexedValues = criteria.list();
+        Assert.assertTrue(indexedValues.size() == 0);
 
-        FormKey pessoaKey  = insert();
-        result = criteria.list();
-        Assert.assertTrue(result.size() == 2);
+        insert();
+        indexedValues = criteria.list();
+        Assert.assertTrue(indexedValues.size() == 2);
 
-        FormKey pessoaKey2 = insert();
-        result = criteria.list();
-        System.out.println("Total de " + result.size());
+        insert();
+        indexedValues = criteria.list();
+        System.out.println("Total de " + indexedValues.size());
+        Assert.assertTrue(indexedValues.size() == 4);
     }
 
 }

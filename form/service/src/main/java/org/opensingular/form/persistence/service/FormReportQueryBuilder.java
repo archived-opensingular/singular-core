@@ -1,5 +1,9 @@
 package org.opensingular.form.persistence.service;
 
+/**
+ * Fornece meios de se obter uma consulta SQL baseada num Formulario indexado.
+ * Recebe o SType que representa o form e os atributos que devem ser retornados na consulta.
+ */
 public class FormReportQueryBuilder {
 
     private String       form;

@@ -128,7 +128,12 @@ public class FormService implements IFormService {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
         }
-        return insertImpl(instance, inclusionActor);
+
+        FormKey formKey = insertImpl(instance, inclusionActor);
+        FormEntity formEntity = loadFormEntity(formKey);
+
+        formFieldService.saveFields(instance, formEntity.getFormType(), formEntity.getCurrentFormVersionEntity());
+        return formKey;
     }
 
     @Nonnull

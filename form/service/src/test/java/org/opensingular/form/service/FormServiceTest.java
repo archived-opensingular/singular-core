@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@Rollback(value = false)
+@Rollback(value = true)
 public abstract class FormServiceTest {
 
     @Inject
