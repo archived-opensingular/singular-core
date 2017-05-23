@@ -455,7 +455,10 @@ public class SingularFormPanel extends Panel {
 
             AjaxRequestTarget target = evt.getTarget();
 
-            target.add(modalItems.getParent());
+            // adiciona uma div para a renderização da modal 
+            target.prependJavaScript(JQuery.$(modalItems.getParent()) + ""
+                + ".append('<div id=\"" + modal.getMarkupId() + "\"></div>');");
+            target.add(modal);
 
             modal.show(target);
             modal.setOnHideCallBack(t -> {
