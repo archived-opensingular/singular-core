@@ -77,11 +77,11 @@ class FieldBeansCollector {
      * @return the instance to inject into the field.
      */
     public Object getBeansToInject() {
-        if (beansToInjectMap != null && beansToInjectMap.size() > 0) {
+        if (beansToInjectMap != null && !beansToInjectMap.isEmpty()) {
             return beansToInjectMap;
         }
 
-        if (beansToInjectColl != null && beansToInjectColl.size() > 0) {
+        if (beansToInjectColl != null && !beansToInjectColl.isEmpty()) {
             return beansToInjectColl;
         }
 

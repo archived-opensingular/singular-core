@@ -116,7 +116,7 @@ class LazyInitProxyFactory {
                 e.setSuperclass(type);
                 e.setCallbackFilter(NoOpForProtectedMethodsCGLibCallbackFilter.INSTANCE);
                 e.setCallbacks(callbacks);
-                e.setNamingPolicy(WicketNamingPolicy.INSTANCE);
+                e.setNamingPolicy(SingularProxyNamingPolicy.SINGLETON);
 
                 return e.create();
             }
@@ -354,7 +354,11 @@ class LazyInitProxyFactory {
                 method.setAccessible(true);
                 return method.invoke(target, args);
             } catch (InvocationTargetException e) {
-                throw e.getTargetException();
+                if (e.getCause() instanceof Exception) {
+                    throw (Exception) e.getCause();
+                } else {
+                    throw new SingularInjectionException(null, e);
+                }
             }
         }
 
@@ -380,7 +384,7 @@ class LazyInitProxyFactory {
      */
     public static boolean isEqualsMethod(final Method method) {
         return (method.getReturnType() == boolean.class) && (method.getParameterTypes().length == 1) &&
-                (method.getParameterTypes()[0] == Object.class) && method.getName().equals("equals");
+                (method.getParameterTypes()[0] == Object.class) && "equals".equals(method.getName());
     }
 
     /**
@@ -390,8 +394,8 @@ class LazyInitProxyFactory {
      * @return true if the method is defined from Object.hashCode(), false otherwise
      */
     public static boolean isHashCodeMethod(final Method method) {
-        return (method.getReturnType() == int.class) && (method.getParameterTypes().length == 0) &&
-                method.getName().equals("hashCode");
+        return (method.getReturnType() == int.class) && (method.getParameterTypes().length == 0) && "hashCode".equals(
+                method.getName());
     }
 
     /**
@@ -402,7 +406,7 @@ class LazyInitProxyFactory {
      */
     public static boolean isToStringMethod(final Method method) {
         return (method.getReturnType() == String.class) && (method.getParameterTypes().length == 0) &&
-                method.getName().equals("toString");
+                "toString".equals(method.getName());
     }
 
     /**
@@ -412,8 +416,8 @@ class LazyInitProxyFactory {
      * @return true if the method is defined from Object.finalize(), false otherwise
      */
     public static boolean isFinalizeMethod(final Method method) {
-        return (method.getReturnType() == void.class) && (method.getParameterTypes().length == 0) &&
-                method.getName().equals("finalize");
+        return (method.getReturnType() == void.class) && (method.getParameterTypes().length == 0) && "finalize".equals(
+                method.getName());
     }
 
     /**
@@ -424,13 +428,13 @@ class LazyInitProxyFactory {
      */
     public static boolean isWriteReplaceMethod(final Method method) {
         return (method.getReturnType() == Object.class) && (method.getParameterTypes().length == 0) &&
-                method.getName().equals("writeReplace");
+                "writeReplace".equals(method.getName());
     }
 
-    public static final class WicketNamingPolicy extends DefaultNamingPolicy {
-        public static final WicketNamingPolicy INSTANCE = new WicketNamingPolicy();
+    public static final class SingularProxyNamingPolicy extends DefaultNamingPolicy {
+        public static final SingularProxyNamingPolicy SINGLETON = new SingularProxyNamingPolicy();
 
-        private WicketNamingPolicy() {
+        private SingularProxyNamingPolicy() {
             super();
         }
 

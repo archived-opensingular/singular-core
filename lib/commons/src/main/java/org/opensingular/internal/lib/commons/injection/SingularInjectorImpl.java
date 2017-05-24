@@ -89,9 +89,10 @@ public class SingularInjectorImpl implements SingularInjector {
                             " O tipo do Optional incompatível. Era esperado ser [" + fieldInfo.getType().getName() +
                                     "] mas o bean encontrado é do tipo [" + value.getClass().getName() + "]", null);
                 }
-                value = Optional.of(value);
+                field.set(object, Optional.of(value));
+            } else {
+                field.set(object, value);
             }
-            field.set(object, value);
         } else if (fieldInfo.isRequired()) {
             throw new SingularBeanNotFoundException(fieldInfo, object, "Não foi encontrado o bean", null);
         } else if (fieldInfo.isFieldOptionalBeanReference()) {
@@ -105,15 +106,14 @@ public class SingularInjectorImpl implements SingularInjector {
     @Nonnull
     private FieldInjectionInfo[] findFields(@Nonnull Class<?> clazz) {
         List<FieldInjectionInfo> matched = new ArrayList<>();
-        while (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
+        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
+            Field[] fields = c.getDeclaredFields();
             for (Field field : fields) {
                 if (field.isAnnotationPresent(Inject.class)) {
                     matched.add(factory.createCachedInfo(field));
                 }
             }
-            clazz = clazz.getSuperclass();
         }
-        return matched.size() == 0 ? EMPTY : matched.toArray(new FieldInjectionInfo[matched.size()]);
+        return matched.isEmpty() ? EMPTY : matched.toArray(new FieldInjectionInfo[matched.size()]);
     }
 }
