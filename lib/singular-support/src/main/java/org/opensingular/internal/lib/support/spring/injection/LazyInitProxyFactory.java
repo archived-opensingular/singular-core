@@ -169,7 +169,7 @@ class LazyInitProxyFactory {
             this.locator = locator;
         }
 
-        private Object readResolve() {
+        public Object readResolve() {
             Class<?> clazz;
             try {
                 clazz = Class.forName(type, false, Thread.currentThread().getContextClassLoader());

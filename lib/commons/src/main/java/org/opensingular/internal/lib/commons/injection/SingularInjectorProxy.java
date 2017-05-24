@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public abstract class SingularInjectorProxy implements SingularInjector {
 
-    private static SingularInjectorProxy emptyInjector;
+    private static volatile SingularInjectorProxy emptyInjector;
 
     private volatile SingularInjector singularInjector;
 

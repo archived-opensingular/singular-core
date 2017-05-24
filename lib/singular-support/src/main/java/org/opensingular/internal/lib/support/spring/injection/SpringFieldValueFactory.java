@@ -37,7 +37,6 @@ import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -209,60 +208,60 @@ class SpringFieldValueFactory implements SingularFieldValueFactory {
 
         // filter out beans that are not candidates for autowiring
         if (ctx instanceof AbstractApplicationContext) {
-            Iterator<String> it = names.iterator();
-            while (it.hasNext()) {
-                final String possibility = it.next();
-                BeanDefinition beanDef = getBeanDefinition(((AbstractApplicationContext) ctx).getBeanFactory(),
-                        possibility);
-                if (BeanFactoryUtils.isFactoryDereference(possibility) || possibility.startsWith("scopedTarget.") ||
-                        (beanDef != null && !beanDef.isAutowireCandidate())) {
-                    it.remove();
+            names.removeIf(s -> {
+                if (BeanFactoryUtils.isFactoryDereference(s) || s.startsWith("scopedTarget.")) {
+                    return true;
                 }
-            }
+                BeanDefinition beanDef = getBeanDefinition(((AbstractApplicationContext) ctx).getBeanFactory(), s);
+                return beanDef != null && !beanDef.isAutowireCandidate();
+            });
         }
 
         if (names.size() > 1) {
-            if (ctx instanceof AbstractApplicationContext) {
-                List<String> primaries = new ArrayList<>();
-                for (String name : names) {
-                    BeanDefinition beanDef = getBeanDefinition(((AbstractApplicationContext) ctx).getBeanFactory(),
-                            name);
-                    if (beanDef instanceof AbstractBeanDefinition) {
-                        if (beanDef.isPrimary()) {
-                            primaries.add(name);
-                        }
-                    }
-                }
-                if (primaries.size() == 1) {
-                    return primaries.get(0);
-                }
-            }
-
-            //use field name to find a match
-            int nameIndex = names.indexOf(fieldInfo.getFieldName());
-
-            if (nameIndex > -1) {
-                return names.get(nameIndex);
-            }
-
-            if (generic != null) {
-                return null;
-            }
-
-            StringBuilder msg = new StringBuilder();
-            msg.append("More than one bean of type [");
-            msg.append(clazz.getName());
-            msg.append("] found, you have to specify the name of the bean ");
-            msg.append("(@SpringBean(name=\"foo\")) or (@Named(\"foo\") if using @javax.inject classes) in order to " +
-                    "resolve this conflict. ");
-            msg.append("Matched beans: ");
-            msg.append(names.stream().collect(Collectors.joining(",")));
-            throw new SingularInjectionException(fieldInfo, null, msg, null);
+            return selectOneName(fieldInfo, clazz, generic, ctx, names);
         } else if (!names.isEmpty()) {
             return names.get(0);
         }
 
         return null;
+    }
+
+    @Nullable
+    private String selectOneName(FieldInjectionInfo fieldInfo, Class<?> clazz, Class<?> generic, ApplicationContext ctx,
+            @Nonnull List<String> names) {
+        if (ctx instanceof AbstractApplicationContext) {
+            List<String> primaries = new ArrayList<>();
+            for (String name : names) {
+                BeanDefinition beanDef = getBeanDefinition(((AbstractApplicationContext) ctx).getBeanFactory(), name);
+                if (beanDef instanceof AbstractBeanDefinition && beanDef.isPrimary()) {
+                    primaries.add(name);
+                }
+            }
+            if (primaries.size() == 1) {
+                return primaries.get(0);
+            }
+        }
+
+        //use field name to find a match
+        int nameIndex = names.indexOf(fieldInfo.getFieldName());
+
+        if (nameIndex > -1) {
+            return names.get(nameIndex);
+        }
+
+        if (generic != null) {
+            return null;
+        }
+
+        StringBuilder msg = new StringBuilder();
+        msg.append("More than one bean of type [");
+        msg.append(clazz.getName());
+        msg.append("] found, you have to specify the name of the bean ");
+        msg.append("(@SpringBean(name=\"foo\")) or (@Named(\"foo\") if using @javax.inject classes) in order to " +
+                "resolve this conflict. ");
+        msg.append("Matched beans: ");
+        msg.append(names.stream().collect(Collectors.joining(",")));
+        throw new SingularInjectionException(fieldInfo, null, msg, null);
     }
 
     public BeanDefinition getBeanDefinition(ConfigurableListableBeanFactory beanFactory, final String name) {
