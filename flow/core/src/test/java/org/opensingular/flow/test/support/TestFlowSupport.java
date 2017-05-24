@@ -65,6 +65,10 @@ public abstract class TestFlowSupport implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        configApplicationContext(applicationContext);
+    }
+
+    public static void configApplicationContext(ApplicationContext applicationContext) {
         ApplicationContextProvider.setup(applicationContext);
         try {
             myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);

@@ -35,7 +35,7 @@ public abstract class SingularInjectorProxy implements SingularInjector {
 
     private static SingularInjectorProxy emptyInjector;
 
-    private SingularInjector singularInjector;
+    private volatile SingularInjector singularInjector;
 
     private Set<Class<?>> verified = new HashSet<>();
 
