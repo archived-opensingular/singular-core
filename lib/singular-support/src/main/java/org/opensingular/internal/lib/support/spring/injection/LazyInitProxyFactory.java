@@ -16,6 +16,7 @@
 
 package org.opensingular.internal.lib.support.spring.injection;
 
+import com.google.common.collect.ImmutableSet;
 import net.sf.cglib.core.DefaultNamingPolicy;
 import net.sf.cglib.core.Predicate;
 import net.sf.cglib.proxy.Callback;
@@ -35,8 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 /**
  * A factory class that creates lazy init proxies given a type and a {@link IProxyTargetLocator}
@@ -65,7 +65,7 @@ class LazyInitProxyFactory {
      * Primitive java types and their object wrappers
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static final List PRIMITIVES = Arrays.asList(String.class, byte.class, Byte.class, short.class, Short.class,
+    private static final Set<Class<?>> PRIMITIVES = ImmutableSet.of(String.class, byte.class, Byte.class, short.class, Short.class,
             int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class,
             char.class, Character.class, boolean.class, Boolean.class);
 
@@ -169,7 +169,7 @@ class LazyInitProxyFactory {
             this.locator = locator;
         }
 
-        private Object readResolve() throws ObjectStreamException {
+        private Object readResolve() {
             Class<?> clazz;
             try {
                 clazz = Class.forName(type, false, Thread.currentThread().getContextClassLoader());

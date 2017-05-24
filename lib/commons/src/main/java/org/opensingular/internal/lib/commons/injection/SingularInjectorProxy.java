@@ -54,7 +54,7 @@ public abstract class SingularInjectorProxy implements SingularInjector {
             verified = null;
             singularInjector.inject(object);
         } else if (!verified.contains(object.getClass())) {
-            synchronized (verified) {
+            synchronized (this) {
                 Class<?> clazz = object.getClass();
                 FieldInjectionInfo fieldInfo = findInjection(object.getClass());
                 if (fieldInfo != null) {
@@ -88,13 +88,15 @@ public abstract class SingularInjectorProxy implements SingularInjector {
     @Nonnull
     static SingularInjector getEmptyInjectorImpl() {
         if (emptyInjector == null) {
-            emptyInjector = new SingularInjectorProxy() {
-                @Nullable
-                @Override
-                protected SingularInjector findInjectorIfAvailable() {
-                    return null;
-                }
-            };
+            synchronized (SingularInjectorProxy.class) {
+                emptyInjector = new SingularInjectorProxy() {
+                    @Nullable
+                    @Override
+                    protected SingularInjector findInjectorIfAvailable() {
+                        return null;
+                    }
+                };
+            }
         }
         return emptyInjector;
     }

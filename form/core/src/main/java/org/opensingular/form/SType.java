@@ -205,7 +205,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     @Nonnull
     public SDictionary getDictionary() {
         if (dictionary == null) {
-            dictionary = getParentScope().getDictionary();
+            dictionary = getPackage().getDictionary();
         }
         return dictionary;
     }
@@ -432,6 +432,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
+    public SType<I> setInitialValue(Object value) {
+        return with(SPackageBasic.ATR_INITIAL_VALUE, value);
+    }
 
     public SType<I> withDefaultValueIfNull(Object value) {
         return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
@@ -449,6 +452,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             return null;
         }
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
+    }
+
+    public Object getAttributeValueInitialValue() {
+        return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
     public SType<I> withRequired(boolean value) {

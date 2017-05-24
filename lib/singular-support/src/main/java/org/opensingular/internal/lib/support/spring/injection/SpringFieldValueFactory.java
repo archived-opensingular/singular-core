@@ -265,17 +265,17 @@ class SpringFieldValueFactory implements SingularFieldValueFactory {
         return null;
     }
 
-    public BeanDefinition getBeanDefinition(final ConfigurableListableBeanFactory beanFactory, final String name) {
-        if (beanFactory.containsBeanDefinition(name)) {
-            return beanFactory.getBeanDefinition(name);
-        } else {
-            BeanFactory parent = beanFactory.getParentBeanFactory();
-            if ((parent != null) && (parent instanceof ConfigurableListableBeanFactory)) {
-                return getBeanDefinition((ConfigurableListableBeanFactory) parent, name);
-            } else {
-                return null;
+    public BeanDefinition getBeanDefinition(ConfigurableListableBeanFactory beanFactory, final String name) {
+        ConfigurableListableBeanFactory current = beanFactory;
+        while (current != null) {
+            if (current.containsBeanDefinition(name)) {
+                return current.getBeanDefinition(name);
             }
+            BeanFactory parent = beanFactory.getParentBeanFactory();
+            current =
+                    parent instanceof ConfigurableListableBeanFactory ? (ConfigurableListableBeanFactory) parent : null;
         }
+        return null;
     }
 
     private static class FieldInjectionInfoSpring extends FieldInjectionInfo {
