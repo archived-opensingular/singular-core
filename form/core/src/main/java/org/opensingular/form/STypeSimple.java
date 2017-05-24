@@ -19,12 +19,14 @@ package org.opensingular.form;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.opensingular.form.builder.selection.SelectionBuilder;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.AtrFormula;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -181,6 +183,17 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);
         return this;
+    }
+
+    /**
+     * Configura o valor inicial da {@link SISimple} desse {@link STypeSimple}
+     * Quando a {@link SISimple} persistence é carregada o listener não é executado novamente.
+     * @param value
+     *  valor de inicialização.
+     * @return
+     */
+    public SType<I> setInitialValue(Object value) {
+        return with(SPackageBasic.ATR_INIT_LISTENER, (IConsumer<I>) i -> i.setValue(value));
     }
 
     public <T extends Enum<T>> SType selectionOfEnum(Class<T> enumType) {

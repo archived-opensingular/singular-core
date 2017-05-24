@@ -43,6 +43,7 @@ jQuery(document).ready(function () {
                 //cleanup
                 for (i = 0; i < fieldsList.length; i++) {
                     $(fieldsList[i]).css("min-height", "");
+                    $(fieldsList[i]).css("max-height", "");
                 }
 
                 for (i = 0; i < fieldsList.length; i++) {
@@ -55,6 +56,7 @@ jQuery(document).ready(function () {
 
                 for (i = 0; i < fieldsList.length && maxFieldHeight > 0; i++) {
                     $(fieldsList[i]).css("min-height", maxFieldHeight);
+                    $(fieldsList[i]).css("max-height", maxFieldHeight);
                 }
             }
         }

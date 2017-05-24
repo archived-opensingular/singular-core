@@ -140,33 +140,28 @@ public class CoreAttributesTest extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        SType<SIString> tipo = pb.createType("local", STypeString.class).withInitialValue("aqui");
+        STypeSimple<SIString, String> tipo = (STypeSimple<SIString, String>) pb.createType("local", STypeString.class).setInitialValue("aqui");
         STypeString tipoString = dicionario.getType(STypeString.class);
 
-        assertEquals("aqui", tipo.getAttributeValueInitialValue());
-        assertEquals(null, tipoString.getAttributeValueInitialValue());
 
         SIString i1 = tipo.newInstance();
         assertEquals("aqui", i1.getValue());
 
-        tipo.withInitialValue("la");
+        tipo.setInitialValue("la");
         assertEquals("aqui", i1.getValue());
-        assertEquals("la", tipo.getAttributeValueInitialValue());
         assertEquals("la", tipo.newInstance().getValue());
 
-        tipo.withInitialValue("none");
-        assertEquals("none", tipo.getAttributeValueInitialValue());
+        tipo.setInitialValue("none");
         assertEquals("none", tipo.newInstance().getValue());
 
-        tipo.withInitialValue(null);
-        assertEquals(null, tipo.getAttributeValueInitialValue());
+        tipo.setInitialValue(null);
         assertEquals(null, tipo.newInstance().getValue());
 
-        tipoString.withInitialValue("X");
+        tipoString.setInitialValue("X");
         assertEquals("X", tipoString.newInstance().getValue());
         assertEquals(null, tipo.newInstance().getValue());
 
-        tipo.withInitialValue("Y");
+        tipo.setInitialValue("Y");
         assertEquals("X", tipoString.newInstance().getValue());
         assertEquals("Y", tipo.newInstance().getValue());
     }
@@ -426,9 +421,9 @@ public class CoreAttributesTest extends TestCaseForm {
         assertTrue(!valorInicial.equals(valorIfNull));
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        T tx = (T) pb.createType("x", tipo).withInitialValue(valorInicial);
+        T tx = (T) pb.createType("x", tipo).setInitialValue(valorInicial);
         T ty = (T) pb.createType("y", tipo).withDefaultValueIfNull(valorIfNull);
-        T tz = (T) pb.createType("z", tipo).withInitialValue(valorInicial).withDefaultValueIfNull(valorIfNull);
+        T tz = (T) pb.createType("z", tipo).setInitialValue(valorInicial).withDefaultValueIfNull(valorIfNull);
 
         SInstance instX = tx.newInstance();
         assertEquals(valorInicial, instX.getValue());
