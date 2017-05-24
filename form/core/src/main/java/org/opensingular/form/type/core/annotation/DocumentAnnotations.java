@@ -18,6 +18,7 @@ package org.opensingular.form.type.core.annotation;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.*;
 import org.opensingular.form.document.RefSDocumentFactory;
@@ -323,7 +324,7 @@ public class DocumentAnnotations {
 
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */
     public boolean hasAnyRefusal(SInstance instance) {
-        return SInstances.hasAny(instance, i -> hasAnnotation(i) && !i.asAtrAnnotation().annotation().getApproved());
+        return SInstances.hasAny(instance, i -> hasAnnotation(i) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation().getApproved()));
     }
 
     /**

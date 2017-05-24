@@ -256,7 +256,7 @@ public class SPackageTest extends TestCaseForm {
             @Override
             protected void onLoadType(TypeBuilder tb) {
                 withRequired(true);
-                withInitialValue(10);
+                setInitialValue(10);
                 withDefaultValueIfNull(11);
                 with(TestPacoteA.ATR_XX, 12);
             }
@@ -393,7 +393,7 @@ public class SPackageTest extends TestCaseForm {
         TestTipoComCargaInterna tipo = dictionary.getType(TestTipoComCargaInterna.class);
 
         TestCase.assertEquals((Boolean) true, tipo.isRequired());
-        TestCase.assertEquals((Integer) 10, tipo.getAttributeValueInitialValue());
+        TestCase.assertEquals((Integer) 10, tipo.newInstance().getValue());
         TestCase.assertEquals((Integer) 11, tipo.getAttributeValueOrDefaultValueIfNull());
         TestCase.assertEquals((Integer) 12, tipo.getAttributeValue(TestPacoteA.ATR_XX));
     }
@@ -405,7 +405,7 @@ public class SPackageTest extends TestCaseForm {
         TestTipoComCargaInterna tipo       = pb.createType("derivado", TestTipoComCargaInterna.class);
 
         TestCase.assertEquals((Boolean) true, tipo.isRequired());
-        TestCase.assertEquals((Integer) 10, tipo.getAttributeValueInitialValue());
+        TestCase.assertEquals((Integer) 10, tipo.newInstance().getValue());
         TestCase.assertEquals((Integer) 11, tipo.getAttributeValueOrDefaultValueIfNull());
         TestCase.assertEquals((Integer) 12, tipo.getAttributeValue(TestPacoteA.ATR_XX));
     }
