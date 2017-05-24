@@ -16,7 +16,6 @@
 
 package org.opensingular.internal.lib.commons.injection;
 
-import com.sun.istack.internal.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -81,7 +80,7 @@ public class FieldInjectionInfo {
      * Retorna o tipo do bena a ser localizado. Nao necessariamente é o mesmo tipo do field a ser injetado (ver {@link
      * #isFieldOptionalBeanReference()}.
      */
-    @NotNull
+    @Nonnull
     public Class<?> getType() {
         return fieldType;
     }
