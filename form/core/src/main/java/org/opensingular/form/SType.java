@@ -432,10 +432,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> withInitialValue(Object value) {
-        return with(SPackageBasic.ATR_INITIAL_VALUE, value);
-
-    }
 
     public SType<I> withDefaultValueIfNull(Object value) {
         return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
@@ -453,10 +449,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             return null;
         }
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
-    }
-
-    public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
     public SType<I> withRequired(boolean value) {
@@ -918,6 +910,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return asAtr().getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
     }
 
+    /**
+     * Lambda para inicialização da {@link SInstance} desse {@link SType}
+     * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.
+     * Quando a {@link SInstance} persistence é carregada o listener não é executado novamente.
+     * @param initListener
+     * @return
+     */
     public SType<I> withInitListener(IConsumer<I> initListener) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
         return this;
