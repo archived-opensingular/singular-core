@@ -21,6 +21,7 @@ import org.opensingular.form.RefService;
 import org.opensingular.form.SingularFormException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,18 +31,25 @@ import java.util.UUID;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-public final class DefaultServiceRegistry implements ServiceRegistry {
+public final class DefaultServiceRegistry implements InternalServiceRegistry {
 
-    private final Map<String, Pair>                  servicesByName  = newHashMap();
+    private final Map<String, ServiceEntry>                  servicesByName  = newHashMap();
     private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
-    private final List<ServiceRegistry>              registries      = newArrayList();
+    private ExternalServiceRegistry externalRegistry;
 
-    public void addRegistry(ServiceRegistry r) {
-        registries.add(r);
+    void setExternalRegistry(@Nonnull ExternalServiceRegistry r) {
+        externalRegistry = r;
     }
 
+    /**  {@inheritDoc} */
+    @Nullable
+    public ExternalServiceRegistry getExternalRegistry() {
+        return externalRegistry;
+    }
+
+    /** USO INTERNO APENAS. Retorna os serviços registrados diretamente no documento. */
     @Override
-    public Map<String, Pair> services() {
+    public Map<String, ServiceEntry> services() {
         return ImmutableMap.copyOf(servicesByName);
     }
 
@@ -57,11 +65,8 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     @Nonnull
     private <T> Optional<T> lookupChainedService(@Nonnull Class<T> targetClass) {
-        for (ServiceRegistry r : registries) {
-            Optional<T> provider = r.lookupService(targetClass);
-            if (provider.isPresent()) {
-                return provider;
-            }
+        if (externalRegistry != null) {
+            return externalRegistry.lookupService(targetClass);
         }
         return Optional.empty();
     }
@@ -112,7 +117,7 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
     public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(targetClass);
-        Pair ref = servicesByName.get(name);
+        ServiceEntry ref = servicesByName.get(name);
         if (ref != null) {
             Object value = ref.provider.get();
             if (value == null) {
@@ -139,11 +144,8 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     @Nonnull
     private <T> Optional<T> lookupChainedService(@Nonnull String name, @Nonnull Class<T> targetClass) {
-        for(ServiceRegistry r : registries){
-            Optional<T> provider = r.lookupService(name, targetClass);
-            if(provider.isPresent()) {
-                return provider;
-            }
+        if (externalRegistry != null) {
+            return externalRegistry.lookupService(name, targetClass);
         }
         return Optional.empty();
     }
@@ -181,6 +183,6 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
     private <T> void bindByName(String serviceName, Class<T> registerClass, RefService<?> provider) {
         Objects.requireNonNull(registerClass);
         Objects.requireNonNull(provider);
-        servicesByName.put(Objects.requireNonNull(serviceName), new Pair(registerClass, provider));
+        servicesByName.put(Objects.requireNonNull(serviceName), new ServiceEntry(registerClass, provider));
     }
 }

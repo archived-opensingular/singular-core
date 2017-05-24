@@ -22,36 +22,44 @@ import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.STaskUserExecutable;
 import org.opensingular.flow.core.TaskAccessStrategy;
 
+import javax.annotation.Nonnull;
+
 public interface BuilderUserExecutable<SELF extends BuilderUserExecutable<SELF, TASK>, TASK extends STaskUserExecutable<?>> extends BuilderTaskSelf<SELF, TASK> {
 
     @Override
-    public default SELF addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
+    @Nonnull
+    public default SELF addAccessStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
         getTask().addAccessStrategy(accessStrategy);
         return self();
     }
 
     @Override
-    public default SELF addVisualizeStrategy(TaskAccessStrategy<?> accessStrategy) {
+    @Nonnull
+    public default SELF addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
         getTask().addVisualizeStrategy(accessStrategy);
         return self();
     }
 
-    public default SELF withExecutionPage(ITaskPageStrategy executionPage) {
+    @Nonnull
+    public default SELF withExecutionPage(@Nonnull ITaskPageStrategy executionPage) {
         getTask().setExecutionPage(executionPage);
         return self();
     }
 
-    public default SELF afterTaskGoTo(ITaskPageStrategy pageAfterTask) {
+    @Nonnull
+    public default SELF afterTaskGoTo(@Nonnull ITaskPageStrategy pageAfterTask) {
         getTask().setPageAfterTask(pageAfterTask);
         return self();
     }
 
-    public default SELF withBackPage(ITaskPageStrategy backPage) {
+    @Nonnull
+    public default SELF withBackPage(@Nonnull ITaskPageStrategy backPage) {
         getTask().setBackPage(backPage);
         return self();
     }
 
-    public default <T extends ProcessInstance> SELF withTargetDate(IExecutionDateStrategy<T> targetDateExecutionStrategy) {
+    @Nonnull
+    public default <T extends ProcessInstance> SELF withTargetDate(@Nonnull IExecutionDateStrategy<T> targetDateExecutionStrategy) {
         getTask().withTargetDate(targetDateExecutionStrategy);
         return self();
     }

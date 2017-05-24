@@ -1,5 +1,6 @@
 package org.opensingular.flow.test.support;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.hibernate.SessionFactory;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -13,8 +14,15 @@ import org.junit.runners.parameterized.TestWithParameters;
 import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.opensingular.flow.core.ProcessInstance;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
+import org.opensingular.flow.core.TestProcessBeanInjection;
 import org.opensingular.flow.test.TestDAO;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,7 +46,7 @@ import java.util.Objects;
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(TestFlowSupport.FactoryRunnerParameteziedWithSpring.class)
 @ActiveProfiles(resolver = TestFlowSupport.ParameterizedFlowProfileResolver.class)
-public abstract class TestFlowSupport {
+public abstract class TestFlowSupport implements ApplicationContextAware {
 
 
     @Parameterized.Parameter(0)
@@ -52,6 +60,23 @@ public abstract class TestFlowSupport {
 
     @Inject
     protected SessionFactory sessionFactory;
+
+    protected static MyBean myBeanRef;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ApplicationContextProvider.setup(applicationContext);
+        try {
+            myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            myBeanRef = null;
+        }
+        if (myBeanRef == null) {
+            myBeanRef = new MyBean();
+            ((ConfigurableApplicationContext) applicationContext).getBeanFactory().registerSingleton(
+                    TestProcessBeanInjection.MyBean.class.getName(), myBeanRef);
+        }
+    }
 
     protected static AssertionsProcessInstance assertions(ProcessInstance target) {
         return new AssertionsProcessInstance(target);
@@ -130,6 +155,15 @@ public abstract class TestFlowSupport {
         public String[] resolve(Class<?> testClass) {
             Objects.requireNonNull(currentProfile);
             return new String[] {currentProfile};
+        }
+    }
+
+    public static class MyBean {
+
+        private final long v = RandomUtils.nextLong(0, Long.MAX_VALUE);
+
+        public long getV() {
+            return v;
         }
     }
 }

@@ -66,5 +66,11 @@
             <version>20151123</version>
         </dependency>
 
+        <!-- JAVAX -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
     </dependencies>
 </project>

@@ -18,6 +18,7 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.TypeProcessoBeanInjector;
 import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
@@ -120,6 +121,7 @@ public abstract class SScopeBase implements SScope {
         Objects.requireNonNull(typeClass);
         T t = registerType(MapByName.newInstance(typeClass), typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
+        TypeProcessoBeanInjector.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;
     }
 

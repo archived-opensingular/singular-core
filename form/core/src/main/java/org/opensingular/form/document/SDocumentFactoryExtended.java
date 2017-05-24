@@ -17,10 +17,10 @@
 package org.opensingular.form.document;
 
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 /**
  * É um fábrica que formada pela composição de outra fábrica e acrescida de passos adicionais de setup do documento.
@@ -31,20 +31,24 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
 
     private final SDocumentFactory original;
     private final SDocumentConsumer setupSteps;
+    private final ISupplier<ExternalServiceRegistry> externalRegistryProvider;
+    private final ExternalServiceRegistry externalRegistry;
     private RefSDocumentFactoryExtended ref;
 
     SDocumentFactoryExtended(@Nonnull IConsumer<SDocument> setupStep) {
-        this(null, setupStep);
+        this(null, SDocumentConsumer.of(setupStep), null);
     }
 
-    private SDocumentFactoryExtended(SDocumentFactory original, @Nonnull IConsumer<SDocument> setupStep) {
-        this.original = original;
-        setupSteps = SDocumentConsumer.of(Objects.requireNonNull(setupStep));
+    SDocumentFactoryExtended(@Nonnull ISupplier<ExternalServiceRegistry> registryProvider) {
+        this(null, null, registryProvider);
     }
 
-    private SDocumentFactoryExtended(SDocumentFactory original, @Nonnull SDocumentConsumer setupSteps) {
+    private SDocumentFactoryExtended(@Nullable SDocumentFactory original, @Nullable SDocumentConsumer setupSteps,
+            @Nullable ISupplier<ExternalServiceRegistry> registryProvider) {
         this.original = original;
-        this.setupSteps = Objects.requireNonNull(setupSteps);
+        this.setupSteps = setupSteps;
+        this.externalRegistryProvider = registryProvider;
+        this.externalRegistry = externalRegistryProvider == null ? null : externalRegistryProvider.get();
     }
 
     /**
@@ -58,11 +62,26 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
         }
         if (original instanceof  SDocumentFactoryExtended) {
             SDocumentFactoryExtended original2 = (SDocumentFactoryExtended) original;
-            SDocumentConsumer newSteps = original2.setupSteps.extendWith(extraSetupStep);
-            return new SDocumentFactoryExtended(original2.original, newSteps);
+            SDocumentConsumer newSteps = original2.setupSteps == null ? SDocumentConsumer.of(extraSetupStep) :
+                    original2.setupSteps.extendWith(extraSetupStep);
+            return new SDocumentFactoryExtended(original2.original, newSteps, original2.externalRegistryProvider);
         }
-        return new SDocumentFactoryExtended(original, extraSetupStep);
+        return new SDocumentFactoryExtended(original, SDocumentConsumer.of(extraSetupStep), null);
     }
+
+    // Por em quanto o método abaixo não possui uso
+    //    @Nonnull
+    //    public static SDocumentFactory extend(@Nonnull SDocumentFactory original,
+    //            @Nullable ISupplier<ExternalServiceRegistry> registryProvider) {
+    //        if (registryProvider == null) {
+    //            return original;
+    //        }
+    //        if (original instanceof SDocumentFactoryExtended) {
+    //            SDocumentFactoryExtended original2 = (SDocumentFactoryExtended) original;
+    //            return new SDocumentFactoryExtended(original2.original, original2.setupSteps, registryProvider);
+    //        }
+    //        return new SDocumentFactoryExtended(original, null, registryProvider);
+    //    }
 
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
@@ -73,8 +92,11 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
     }
 
     @Override
-    public ServiceRegistry getServiceRegistry() {
-        return original == null ? null : original.getServiceRegistry();
+    public ExternalServiceRegistry getExternalServiceRegistry() {
+        if (externalRegistry != null) {
+            return externalRegistry;
+        }
+        return original == null ? null : original.getExternalServiceRegistry();
     }
 
     @Override
@@ -82,7 +104,9 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
         if (original != null) {
             original.setupDocument(document);
         }
-        setupSteps.accept(document);
+        if (setupSteps != null) {
+            setupSteps.accept(document);
+        }
     }
 
     @Override
@@ -100,6 +124,7 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
 
         private final RefSDocumentFactory refOriginalFactory;
         private final SDocumentConsumer setupSteps;
+        private final ISupplier<ExternalServiceRegistry> externalRegistry;
 
         public RefSDocumentFactoryExtended(SDocumentFactoryExtended documentFactory) {
             super(documentFactory);
@@ -109,14 +134,15 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
                 this.refOriginalFactory = documentFactory.original.getDocumentFactoryRef();
             }
             this.setupSteps = documentFactory.setupSteps;
+            this.externalRegistry = documentFactory.externalRegistryProvider;
         }
 
         @Override
         protected SDocumentFactory retrieve() {
             if (refOriginalFactory == null) {
-                return new SDocumentFactoryExtended(null, setupSteps);
+                return new SDocumentFactoryExtended(null, setupSteps, externalRegistry);
             }
-            return new SDocumentFactoryExtended(refOriginalFactory.get(), setupSteps);
+            return new SDocumentFactoryExtended(refOriginalFactory.get(), setupSteps, externalRegistry);
         }
     }
 }

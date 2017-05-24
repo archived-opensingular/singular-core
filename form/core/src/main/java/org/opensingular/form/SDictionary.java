@@ -56,7 +56,7 @@ public class SDictionary {
     private SDictionary() {
     }
 
-    final SDictionaryConfig getDictionaryConfig() {
+    public final SDictionaryConfig getDictionaryConfig() {
         return dictionaryConfig;
     }
 

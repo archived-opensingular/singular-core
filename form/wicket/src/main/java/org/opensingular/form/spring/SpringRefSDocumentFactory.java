@@ -19,6 +19,8 @@ package org.opensingular.form.spring;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.internal.lib.support.spring.SpringUtils;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
 /**
  * Referência serializável a uma fábrica de documentos que utiliza referência
@@ -33,14 +35,14 @@ public class SpringRefSDocumentFactory extends RefSDocumentFactory {
 
     public SpringRefSDocumentFactory(SpringSDocumentFactory springSDocumentFactory) {
         super(springSDocumentFactory);
-        this.springBeanName = SpringFormUtil.checkBeanName(springSDocumentFactory);
+        this.springBeanName = SpringUtils.checkBeanName(springSDocumentFactory);
     }
 
     @Override
     protected SDocumentFactory retrieve() {
         SDocumentFactory f = null;
         if (springBeanName != null) {
-            f = SpringFormUtil.getApplicationContext().getBean(springBeanName, SDocumentFactory.class);
+            f = ApplicationContextProvider.get().getBean(springBeanName, SDocumentFactory.class);
         }
         if(f != null) {
             return f;

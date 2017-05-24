@@ -40,7 +40,7 @@ final class SDocumentFactoryEmpty extends SDocumentFactory {
     }
 
     @Override
-    public ServiceRegistry getServiceRegistry() {
+    public ExternalServiceRegistry getExternalServiceRegistry() {
         return null;
     }
 

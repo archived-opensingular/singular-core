@@ -16,12 +16,9 @@
 
 package org.opensingular.form.document;
 
-import org.opensingular.form.RefService;
 import org.opensingular.form.SingularFormException;
 
 import javax.annotation.Nonnull;
-import java.io.Serializable;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,28 +29,11 @@ import java.util.Optional;
  */
 public interface ServiceRegistry {
 
-    @SuppressWarnings("serial")
-    public static class Pair implements Serializable{
-        final public Class<?>      type;
-        final public RefService<?> provider;
-
-        public Pair(Class<?> type, RefService<?> provider) {
-            this.type = type;
-            this.provider = provider;
-        }
-    }
-
-    /**
-     * List all factories for all registered services;
-     * @return factory map.
-     */
-    Map<String, Pair> services();
-
-
     /** Tries to find a service based on its class; */
     @Nonnull
     public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass);
 
+    @Nonnull
     public default <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
         return lookupService(targetClass).orElseThrow(
                 () -> new SingularFormException("Bean of class " + targetClass + " not found"));

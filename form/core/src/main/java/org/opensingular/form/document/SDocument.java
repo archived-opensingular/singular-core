@@ -203,17 +203,14 @@ public class SDocument {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
 
-    /**
-     * USO INTERNO.
-     */
-    public final void setDocumentFactory(SDocumentFactory context) {
+    final void setDocumentFactory(@Nonnull SDocumentFactory context) {
         if (documentFactory != null) {
             throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
         }
         documentFactory = context;
-        ServiceRegistry sr = documentFactory.getServiceRegistry();
+        ExternalServiceRegistry sr = documentFactory.getExternalServiceRegistry();
         if (sr != null) {
-            addServiceRegistry(sr);
+            setExternalServiceRegistry(sr);
         }
     }
 
@@ -221,18 +218,13 @@ public class SDocument {
      * Stablishes a new registry where to look for services, which is chained
      * to the default one.
      */
-    public void addServiceRegistry(ServiceRegistry registry) {
-        this.registry.addRegistry(registry);
+    public void setExternalServiceRegistry(ExternalServiceRegistry registry) {
+        this.registry.setExternalRegistry(registry);
     }
 
-    /**
-     * USO INTERNO APENAS. Retorna os serviços registrados diretamente no
-     * documento.
-     *
-     * @see ServiceRegistry#services()
-     */
-    public Map<String, ServiceRegistry.Pair> getLocalServices() {
-        return registry.services();
+    @Nonnull
+    public InternalServiceRegistry getRegistry() {
+        return registry;
     }
 
     /** Tenta encontrar um serviço da classe solicitada supondo que o nome no registro é o nome da própria classe. */

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -204,7 +205,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     @Nonnull
     public SDictionary getDictionary() {
         if (dictionary == null) {
-            dictionary = getPackage().getDictionary();
+            dictionary = getParentScope().getDictionary();
         }
         return dictionary;
     }
@@ -663,7 +664,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * se existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     public final I newInstance() {
-        return newInstance(true);
+        return newInstance(true, new SDocument());
     }
 
     /**
@@ -673,9 +674,14 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param executeInstanceInitListeners Indica se deve executar executa os códigos de inicialização dos tipos se
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
-    public final I newInstance(boolean executeInstanceInitListeners) {
-        SDocument owner    = new SDocument();
-        I         instance = newInstance(this, owner);
+    final I newInstance(boolean executeInstanceInitListeners, @Nonnull SDocument owner) {
+        if (owner.getRegistry().getExternalRegistry() == null) {
+            ExternalServiceRegistry external = getDictionary().getDictionaryConfig().getExternalRegistry();
+            if (external != null) {
+                owner.setExternalServiceRegistry(external);
+            }
+        }
+        I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {
             instance.init();
@@ -708,6 +714,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             I newInstance = instanceClass.newInstance();
             newInstance.setDocument(owner);
             newInstance.setType(this);
+            SFormUtil.inject(newInstance);
             if (newInstance instanceof SISimple) {
                 Object valorInicial = original.getAttributeValueInitialValue();
                 if (valorInicial != null) {

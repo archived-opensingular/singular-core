@@ -16,15 +16,17 @@
 
 package org.opensingular.form.spring;
 
+import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.Collections;
-import java.util.Map;
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -32,58 +34,43 @@ import java.util.Optional;
  * to the spring context.
  *
  * @author Fabricio Buzeto
+ * @author Daniel C. Bordin
  */
-public class SpringServiceRegistry implements ServiceRegistry,
-        ApplicationContextAware, Loggable {
+public class SpringServiceRegistry implements ExternalServiceRegistry, ApplicationContextAware, Loggable {
 
-    private ApplicationContext applicationContext;
+    private SingularInjector injector;
 
-    public SpringServiceRegistry() {
-    }
+    public SpringServiceRegistry() { }
 
-    public SpringServiceRegistry(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @Override
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull String name, @Nonnull Class<T> targetClass) {
+        return ApplicationContextProvider.getBeanOpt(name, targetClass);
     }
 
     @Override
-    public Map<String, Pair> services() {
-        return Collections.emptyMap();
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
+        return ApplicationContextProvider.getBeanOpt(targetClass);
     }
 
     @Override
-    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
-        try {
-            return Optional.ofNullable(applicationContext.getBean(name, targetClass));
-        } catch (NoSuchBeanDefinitionException ex) {
-            getLogger().debug(null, ex);
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public <T> Optional<T> lookupService(Class<T> targetClass) {
-        try {
-            return Optional.ofNullable(applicationContext.getBean(targetClass));
-        } catch (NoSuchBeanDefinitionException ex) {
-            getLogger().debug(null, ex);
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<Object> lookupService(String name) {
-        try {
-            return Optional.ofNullable(applicationContext.getBean(name));
-        } catch (NoSuchBeanDefinitionException ex) {
-            getLogger().debug(null, ex);
-            return Optional.empty();
-        }
+    @Nonnull
+    public Optional<Object> lookupService(@Nonnull String name) {
+        return ApplicationContextProvider.getBeanOpt(name);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-        SpringFormUtil.setApplicationContext(applicationContext);
+        ApplicationContextProvider.setup(applicationContext);
     }
 
+    @Nonnull
+    @Override
+    public SingularInjector lookupSingularInjector() {
+        if (injector == null) {
+            injector = SingularSpringInjector.get();
+        }
+        return injector;
+    }
 }

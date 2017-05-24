@@ -16,21 +16,22 @@
 
 package org.opensingular.form.spring;
 
+import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.io.Serializable;
+import javax.annotation.Nonnull;
 
 /**
  * Implementação padrão da fábrica de documento para uso junto com o Spring.
  * Essa factory já tem a capacidade de integrar com o Spring para prover
- * implementações padrões do {@link #getServiceRegistry()}, retornando o próprio
+ * implementações padrões do {@link #getExternalServiceRegistry()}, retornando o próprio
  * Spring, e do {@link #getDocumentFactoryRef()}, que retornar uma referência
  * que usurá o Spring para recuperar a própria fábrica.
  *
@@ -40,13 +41,19 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
 
     private String springBeanName;
 
+    private SpringServiceRegistry registry;
+
     /**
      * Retorna como registro de serviço um proxy para o próprio
      * ApplicationContext do Spring.
      */
     @Override
-    public ServiceRegistry getServiceRegistry() {
-        return new SpringServiceRegistry(SpringFormUtil.getApplicationContext());
+    @Nonnull
+    public ExternalServiceRegistry getExternalServiceRegistry() {
+        if (registry == null) {
+            registry = new SpringServiceRegistry();
+        }
+        return registry;
     }
 
     /**
@@ -61,7 +68,7 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringFormUtil.setApplicationContext(applicationContext);
+        ApplicationContextProvider.setup(applicationContext);
     }
 
     @Override
