@@ -175,17 +175,6 @@ public class PanelListMapper extends AbstractListMapper {
                 appendRemoverIconButton(this, form, item, btnCell).add($b.classAppender("pull-right"));
             }
 
-            if (viewMode == ViewMode.EDIT) {
-                btnCell
-                        .newTemplateTag(tp -> ""
-                                + "<i"
-                                + " style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.PENCIL + " pull-right' />");
-            } else {
-                btnCell
-                        .newTemplateTag(tp -> ""
-                                + "<i"
-                                + " style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.EYE + " pull-right' />");
-            }
         }
 
         private void buildBody(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
