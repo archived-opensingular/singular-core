@@ -432,10 +432,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> setInitialValue(Object value) {
-        return with(SPackageBasic.ATR_INITIAL_VALUE, value);
-    }
-
     public SType<I> withDefaultValueIfNull(Object value) {
         return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
     }
@@ -452,10 +448,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             return null;
         }
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
-    }
-
-    public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
     public SType<I> withRequired(boolean value) {
@@ -714,12 +706,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             newInstance.setDocument(owner);
             newInstance.setType(this);
             SFormUtil.inject(newInstance);
-            if (newInstance instanceof SISimple) {
-                Object valorInicial = original.getAttributeValueInitialValue();
-                if (valorInicial != null) {
-                    newInstance.setValue(valorInicial);
-                }
-            }
             instanceCount++;
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
