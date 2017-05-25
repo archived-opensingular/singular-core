@@ -154,7 +154,7 @@ public class PanelListMapper extends AbstractListMapper {
                     if (view.getHeaderPath() != null) {
                         return Optional.ofNullable(Value.of(item.getModelObject(), view.getHeaderPath())).orElse("").toString();
                     } else {
-                        return "";
+                        return item.getModelObject().toStringDisplay();
                     }
                 }
             };
