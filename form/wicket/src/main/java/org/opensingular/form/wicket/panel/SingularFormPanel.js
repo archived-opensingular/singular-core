@@ -54,13 +54,13 @@ jQuery(document).ready(function () {
                 }
 
                 for (i = 0; i < fieldsList.length && maxFieldHeight > 0; i++) {
-                    applyStyle($(fieldsList[i]));
+                    applyStyle($(fieldsList[i]), maxFieldHeight );
                 }
             }
         }
     }
 
-    function applyStyle(field){
+    function applyStyle(field, maxFieldHeight){
         field.css("min-height", maxFieldHeight);
         //field.css("max-height", maxFieldHeight);// max height gera efeito colateral negativo no STypeHTML do showcase
     }
