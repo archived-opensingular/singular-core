@@ -16,6 +16,14 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
+import java.io.Serializable;
+import java.util.Optional;
+
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -35,20 +43,13 @@ import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
+import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
-
-import java.io.Serializable;
-import java.util.Optional;
-
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class PanelListMapper extends AbstractListMapper {
 
@@ -58,7 +59,7 @@ public class PanelListMapper extends AbstractListMapper {
     }
 
     public MetronicPanel newpanel(String id, WicketBuildContext ctx) {
-        final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
+        final IModel<SIList<SInstance>> listaModel = new ReadOnlyCurrentInstanceModel<>(ctx);
         final SIList<?>                 iLista     = listaModel.getObject();
         final IModel<String>            label      = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
         final SViewListByForm           view       = (SViewListByForm) ctx.getView();
