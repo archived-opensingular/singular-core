@@ -22,7 +22,7 @@ jQuery(document).ready(function () {
 
         jQuery(selector).each(function () {
             var $this = $(this);
-            if (!$this.hasClass("upload-panel-body")) {//deve ignorar o painel de anexo
+            if (!$this.hasClass("upload-panel-body")) {//deve ignorar o painel de anexo e o ckeditor
                 var topPosition = $this.offset().top;
                 var fieldsList = fieldsByTopPosition[topPosition];
 
@@ -42,8 +42,7 @@ jQuery(document).ready(function () {
 
                 //cleanup
                 for (i = 0; i < fieldsList.length; i++) {
-                    $(fieldsList[i]).css("min-height", "");
-                    $(fieldsList[i]).css("max-height", "");
+                    removeStyle($(fieldsList[i]));
                 }
 
                 for (i = 0; i < fieldsList.length; i++) {
@@ -55,11 +54,20 @@ jQuery(document).ready(function () {
                 }
 
                 for (i = 0; i < fieldsList.length && maxFieldHeight > 0; i++) {
-                    $(fieldsList[i]).css("min-height", maxFieldHeight);
-                    $(fieldsList[i]).css("max-height", maxFieldHeight);
+                    applyStyle($(fieldsList[i]), maxFieldHeight );
                 }
             }
         }
+    }
+
+    function applyStyle(field, maxFieldHeight){
+        field.css("min-height", maxFieldHeight);
+        //field.css("max-height", maxFieldHeight);// max height gera efeito colateral negativo no STypeHTML do showcase
+    }
+
+    function removeStyle(field){
+        field.css("min-height", "");
+        //field.css("max-height", ""); // max height gera efeito colateral negativo no STypeHTML do showcase
     }
 
     if (window.SingularFormPanel === undefined) {
@@ -78,23 +86,6 @@ jQuery(document).ready(function () {
                     });
             }
         };
-
-        // var delay = (function () {
-        //     var timer = 0;
-        //     return function (callback, ms) {
-        //         clearTimeout(timer);
-        //         timer = setTimeout(callback, ms);
-        //     };
-        // })();
-        //
-        // $(window).resize(function (evt, attrs, jqXHR, textStatus) {
-        //     underscore_debounce(function (evt, attrs, jqXHR, textStatus) {
-        //         //alert('Resize...');
-        //         align('div > div.can-have-error', evt, attrs, jqXHR, textStatus);
-        //         align('div > span.help-block', evt, attrs, jqXHR, textStatus);
-        //         console.log("executou");
-        //     }, 100);
-        // });
     }
 
     function alignHelpBlockAndErros() {
