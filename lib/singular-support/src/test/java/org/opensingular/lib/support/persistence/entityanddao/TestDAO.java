@@ -1,6 +1,5 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.opensingular.lib.support.persistence.BaseDAO;
@@ -8,6 +7,7 @@ import org.opensingular.lib.support.persistence.BaseDAO;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class TestDAO extends BaseDAO<TestEntity, Integer> {
     }
 
     public List<TestEntity> findByName(String nome){
-        Map<String, Object> params = new HashedMap();
+        Map<String, Object> params = new HashMap();
         params.put("name", nome);
 
         Query query = getSession().createQuery("from "+TestEntity.class.getName()+" as t where t.name = :name");
@@ -30,7 +30,7 @@ public class TestDAO extends BaseDAO<TestEntity, Integer> {
     }
 
     public List<String> findNameSavedAfterDate(Date date){
-        Map<String, Object> params = new HashedMap();
+        Map<String, Object> params = new HashMap();
         params.put("date", date);
 
         Query query = getSession().createQuery("select t.name from "+TestEntity.class.getName()+" as t where t.date > :date");
@@ -39,7 +39,7 @@ public class TestDAO extends BaseDAO<TestEntity, Integer> {
     }
 
     public TestEntity findByCod(Integer cod){
-        Map<String, Object> params = new HashedMap();
+        Map<String, Object> params = new HashMap();
         params.put("cod", cod);
 
         Query query = getSession().createQuery("from "+TestEntity.class.getName()+" as t where t.cod = :cod");
@@ -49,7 +49,7 @@ public class TestDAO extends BaseDAO<TestEntity, Integer> {
     }
 
     public List<TestEntity> findAllByCod(List<Integer> codigos){
-        Map<String, Object> params = new HashedMap();
+        Map<String, Object> params = new HashMap();
         params.put("codigos", codigos);
 
         Query query = getSession().createQuery("from "+TestEntity.class.getName()+" as t where t.cod in (:codigos)");
@@ -64,7 +64,7 @@ public class TestDAO extends BaseDAO<TestEntity, Integer> {
     }
 
     public Optional<TestEntity> findUniqueResultQueryTest(String name){
-        Map<String, Object> params = new HashedMap();
+        Map<String, Object> params = new HashMap();
         params.put("name", name);
 
         Query query = getSession()

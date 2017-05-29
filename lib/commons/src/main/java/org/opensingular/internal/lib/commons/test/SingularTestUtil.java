@@ -16,6 +16,9 @@
 
 package org.opensingular.internal.lib.commons.test;
 
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -117,5 +120,26 @@ public final class SingularTestUtil {
             return findExpectedException(e.getCause(), expectedException, expectedExceptionMsgPart);
         }
         return false;
+    }
+
+    /**
+     * Executa a task informada pelo tempo informado e verifica quantas repetições foram possíveis por segundo, jogando
+     * o resultado para o console.
+     */
+    public static void performance(String testName, int durationInSeconds, Runnable task) {
+        int count = 0;
+        long time = System.currentTimeMillis();
+        long timeEnd = time + durationInSeconds * 1000;
+        while (System.currentTimeMillis() < timeEnd) {
+            for (int i = 0; i < 100; i++) {
+                task.run();
+                count++;
+            }
+        }
+        time = System.currentTimeMillis() - time;
+        double resultPerSecond = 1000.0 * count / time;
+        System.out.println("-------------------------------------------");
+        System.out.println("  " + testName + ": T=" + SingularIOUtils.humanReadableMiliSeconds(time) + " R=" + count +
+                "  qtd/seg=" + ConversorToolkit.printNumber(resultPerSecond, 0));
     }
 }

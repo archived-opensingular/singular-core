@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 
@@ -50,9 +49,6 @@ public class TypeProcessorAttributeReadFromFile {
 
     /** Instância única do processador. */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
-
-    /** Objeto de acesso a metodos internos da API. */
-    private static InternalAccess internalAccess;
 
     /**
      * Cache com informações sobre a presença ou não de arquivos de definição de atribuitos associados a um classe
@@ -76,7 +72,7 @@ public class TypeProcessorAttributeReadFromFile {
                 if (entry.subFieldPath != null) {
                     target = target.getLocalType(entry.subFieldPath);
                 }
-                getInternalAccess().setAttributeValueSavingForLatter(target, entry.attributeName,
+                InternalAccess.INTERNAL.setAttributeValueSavingForLatter(target, entry.attributeName,
                         entry.attributeValue);
             } catch (Exception e) {
                 String key = (entry.subFieldPath == null ? "" : entry.subFieldPath) + '@' + entry.attributeName;
@@ -158,21 +154,6 @@ public class TypeProcessorAttributeReadFromFile {
             this.url = url;
             this.definitions = definitions;
         }
-    }
-
-    /** Recebe o objeto que viabiliza executar chamadas internas da API (chamadas a métodos não públicos). */
-    public static final void setInternalAccess(@Nonnull InternalAccess internalAccess) {
-        TypeProcessorAttributeReadFromFile.internalAccess = internalAccess;
-    }
-
-    /** Garante a carga do objeto a chamada internas da API. */
-    @Nonnull
-    private static final InternalAccess getInternalAccess() {
-        if (internalAccess == null) {
-            InternalAccess.load();
-            return Objects.requireNonNull(internalAccess);
-        }
-        return internalAccess;
     }
 
     private static class AttibuteEntry {

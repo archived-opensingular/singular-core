@@ -74,6 +74,7 @@ public class ProcessInstance implements Serializable {
             throw SingularException.rethrow("Erro Interno");
         }
         processDefinitionRef = RefProcessDefinition.of(processDefinition);
+        processDefinitionRef.get().inject(this);
     }
 
     /**
