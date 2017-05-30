@@ -71,13 +71,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-devutils</artifactId>
-      <version>${wicket.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>de.alpharogroup</groupId>
       <artifactId>wicket-toastr</artifactId>
       <version>7.1.0</version>
