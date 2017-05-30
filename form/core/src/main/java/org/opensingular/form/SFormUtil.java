@@ -20,18 +20,19 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.SourceVersion;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -152,9 +154,9 @@ public final class SFormUtil {
         final Pattern              prefixoSigla          = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
-        return StringUtils.capitalize(Arrays.asList(simpleName).stream().map(s -> lowerUpper.matcher(s).replaceAll(
-                "$1-$2")).map(s -> prefixoSigla.matcher(s).replaceAll("$1-$2")).flatMap(s -> Arrays.asList(s.split(
-                "[-_]+")).stream()).map(s -> (StringUtils.isAllUpperCase(s) ? s : StringUtils.uncapitalize(s))).map(
+        return StringUtils.capitalize(Stream.of(simpleName).map(s -> lowerUpper.matcher(s).replaceAll(
+                "$1-$2")).map(s -> prefixoSigla.matcher(s).replaceAll("$1-$2")).flatMap(s -> Stream.of(s.split(
+                "[-_]+"))).map(s -> (StringUtils.isAllUpperCase(s) ? s : StringUtils.uncapitalize(s))).map(
                 s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s).collect(joining(" ")));
     }
 
@@ -316,5 +318,17 @@ public final class SFormUtil {
      */
     public static boolean isSingularBuiltInType(SType<?> type) {
         return type.getPackage().getName().startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX);
+    }
+
+    static void inject(@Nonnull SInstance newInstance) {
+        ExternalServiceRegistry external = newInstance.getDocument().getRegistry().getExternalRegistry();
+        if (external == null) {
+            external = newInstance.getDictionary().getDictionaryConfig().getExternalRegistry();
+        }
+        if (external == null) {
+            SingularInjector.getEmptyInjector().inject(newInstance);
+        } else {
+            external.lookupSingularInjector().inject(newInstance);
+        }
     }
 }

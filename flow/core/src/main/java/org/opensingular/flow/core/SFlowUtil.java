@@ -18,6 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -144,5 +145,10 @@ public class SFlowUtil {
         throw new SingularFlowException(task.getTaskType() + " não tratado", task);
     }
 
+    /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
+    @Nonnull
+    public static <V> V inject(@Nonnull STask<?> task, @Nonnull V target) {
+        return task.inject(target);
+    }
 
 }

@@ -1,7 +1,6 @@
 package org.opensingular.form;
 
-import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.internal.lib.commons.xml.MElement;
 
 import javax.annotation.Nonnull;
@@ -16,13 +15,7 @@ import java.util.List;
  */
 public final class InternalAccess {
 
-    private static final InternalAccess INTERNAL_ACCESS = new InternalAccess();
-
-    /** Provoca o repasse do objeto de acesso interno para as classes autorizadas pela API. */
-    public static void load() {
-        TypeProcessorAttributeReadFromFile.setInternalAccess(INTERNAL_ACCESS);
-        SFormXMLUtil.setInternalAccess(INTERNAL_ACCESS);
-    }
+    public static final InternalAccess INTERNAL = new InternalAccess();
 
     private InternalAccess() {}
 
@@ -54,5 +47,10 @@ public final class InternalAccess {
     public void setAttributeValueSavingForLatter(@Nonnull SInstance target, @Nonnull String attributeName,
             @Nullable String value) {
         target.setAttributeValueSavingForLatter(attributeName, value);
+    }
+
+    /** @see {@link SType#newInstance(boolean, SDocument)}  */
+    public SInstance newInstance(@Nonnull SType target, boolean executeInstanceInitListeners,@Nonnull SDocument owner) {
+        return target.newInstance(executeInstanceInitListeners, owner);
     }
 }

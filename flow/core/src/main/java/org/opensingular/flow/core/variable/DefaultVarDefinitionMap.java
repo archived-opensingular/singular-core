@@ -18,8 +18,10 @@ package org.opensingular.flow.core.variable;
 
 import org.opensingular.flow.core.SingularFlowException;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 public class DefaultVarDefinitionMap implements VarDefinitionMap {
 
@@ -27,11 +29,12 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
 
     private final LinkedHashMap<String, VarDefinition> map = new LinkedHashMap<>();
 
-    protected DefaultVarDefinitionMap(VarService varService){
-        this.varService = varService;
+    protected DefaultVarDefinitionMap(@Nonnull VarService varService){
+        this.varService = Objects.requireNonNull(varService);
     }
 
     @Override
+    @Nonnull
     public Collection asCollection() {
         return map.values();
     }
@@ -42,12 +45,14 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
     }
 
     @Override
+    @Nonnull
     public VarInstanceMap<?,?> newInstanceMap() {
         return new VarInstanceMapImpl(this);
     }
 
     @Override
-    public VarDefinition addVariable(VarDefinition defVar) {
+    @Nonnull
+    public VarDefinition addVariable(@Nonnull VarDefinition defVar) {
         if (map.containsKey(defVar.getRef())) {
             throw new SingularFlowException("Já existe a definição '" + defVar.getRef() + "'");
         }
@@ -56,11 +61,21 @@ public class DefaultVarDefinitionMap implements VarDefinitionMap {
     }
 
     @Override
-    public VarDefinition addVariable(String ref, String name, VarType varType) {
+    @Nonnull
+    public VarDefinition addVariable(@Nonnull String ref, String name, @Nonnull VarType varType) {
         return addVariable(new VarDefinitionImpl(ref, name, varType, false));
     }
 
+    /** {@inheritDoc} */
     @Override
+    @Nonnull
+    public VarDefinition addVariableCustom(@Nonnull String ref, @Nonnull String name, @Nonnull Class variableClass) {
+        VarDefinition defVar = getVarService().newDefinitionCustom(ref, name, variableClass);
+        return addVariable(defVar);
+    }
+
+    @Override
+    @Nonnull
     public VarService getVarService() {
         return varService;
     }

@@ -39,6 +39,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
+import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -75,9 +76,9 @@ public class TableListMapper extends AbstractListMapper {
 
     private TableListPanel buildPannel(WicketBuildContext ctx, String id) {
 
-        final IModel<SIList<SInstance>> list        = $m.get(ctx::getCurrentInstance);
+        final IModel<SIList<SInstance>> list        = new ReadOnlyCurrentInstanceModel<>(ctx);
         final SViewListByTable          view        = (SViewListByTable) ctx.getView();
-        ViewMode                        viewMode    = ctx.getViewMode();
+        final ViewMode                  viewMode    = ctx.getViewMode();
         final Boolean                   isEdition   = viewMode == null || viewMode.isEdition();
         final SIList<SInstance>         iLista      = list.getObject();
         final SType<?>                  currentType = ctx.getCurrentInstance().getType();
@@ -90,6 +91,7 @@ public class TableListMapper extends AbstractListMapper {
                 (f, form) -> buildFooter(f, form, ctx));
     }
 
+
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
@@ -98,7 +100,6 @@ public class TableListMapper extends AbstractListMapper {
 
         ctx.configureContainer(label);
         header.appendTag("span", title);
-//        header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
@@ -270,20 +271,20 @@ public class TableListMapper extends AbstractListMapper {
         public TableListPanel(String id, boolean withForm) {
             super(id, withForm);
         }
-        
+
         @Override
         public IFunction<TemplatePanel, String> getTemplateFunction() {
             String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
             return (tp) -> String.format(wrapper, ""
-                + "  <div class='list-table-input'>"
-                + "    <div wicket:id='_hd' class='list-table-heading'></div>"
-                + "    <div class='list-table-body' wicket:id='_co' >"
-                + "    </div>"
-                + "    <div wicket:id='_ft' class='list-table-footer'></div>"
-                + "  </div>"
-                + "");
+                    + "  <div class='list-table-input'>"
+                    + "    <div wicket:id='_hd' class='list-table-heading'></div>"
+                    + "    <div class='list-table-body' wicket:id='_co' >"
+                    + "    </div>"
+                    + "    <div wicket:id='_ft' class='list-table-footer'></div>"
+                    + "  </div>"
+                    + "");
         }
-        
+
         public static final class TableListPanelBuilder {
 
             private TableListPanelBuilder() {

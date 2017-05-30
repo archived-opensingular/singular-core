@@ -17,6 +17,7 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.SFlowUtil;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
@@ -46,5 +47,10 @@ public interface BuilderTask {
 
     @Nonnull
     public <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value);
+
+    /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
+    public default void inject(@Nonnull Object v) {
+        SFlowUtil.inject(getTask(), v);
+    }
 
 }

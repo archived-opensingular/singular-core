@@ -148,7 +148,8 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return addTransition(flowMap.newTransition(this, destination.getName(), destination, TransitionType.H));
     }
 
-    public STransition addAutomaticTransition(ITaskPredicate predicate, STask<?> destination) {
+    public STransition addAutomaticTransition(@Nonnull ITaskPredicate predicate, @Nonnull STask<?> destination) {
+        inject(predicate);
         STransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
         transition.setPredicate(predicate);
         addAutomaticAction(TaskActions.executeTransition(predicate, transition));
@@ -178,7 +179,8 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return transition;
     }
 
-    public void addAutomaticAction(ITaskPredicate predicate, ITaskAction action) {
+    public void addAutomaticAction(@Nonnull ITaskPredicate predicate, @Nonnull ITaskAction action) {
+        inject(predicate);
         addAutomaticAction(TaskActions.conditionalAction(predicate, action));
     }
 
@@ -246,7 +248,9 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         }
     }
 
-    public K addStartedTaskListener(StartedTaskListener startedTaskListener) {
+    @Nonnull
+    public K addStartedTaskListener(@Nonnull StartedTaskListener startedTaskListener) {
+        inject(startedTaskListener);
         if (this.startedTaskListeners == null) {
             this.startedTaskListeners = new LinkedList<>();
         }
@@ -266,12 +270,16 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         this.order = order;
     }
 
-    public K addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
-        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, accessStrategy);
+    @Nonnull
+    public K addAccessStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
+        inject(accessStrategy);
+        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, (TaskAccessStrategy<ProcessInstance>) accessStrategy);
         return (K) this;
     }
 
-    public K addVisualizeStrategy(TaskAccessStrategy<?> accessStrategy) {
+    @Nonnull
+    public K addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
+        inject(accessStrategy);
         return addAccessStrategy(accessStrategy.getOnlyVisualize());
     }
 
@@ -307,5 +315,11 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
             return false;
         STask<?> other = (STask<?>) obj;
         return Objects.equals(flowMap, other.flowMap) && Objects.equals(name, other.name);
+    }
+
+    /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
+    @Nonnull
+    final <V> V inject(@Nonnull V target) {
+        return getFlowMap().getProcessDefinition().inject(target);
     }
 }
