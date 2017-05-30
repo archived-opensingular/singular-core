@@ -55,7 +55,6 @@ public class SPackageBasic extends SPackage {
 
     //@formatter:off
     public static final AtrRef<?, ?, Object>                     ATR_DEFAULT_IF_NULL    = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
-    public static final AtrRef<?, ?, Object>                     ATR_INITIAL_VALUE      = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue");
     public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                 = new AtrRef<>(SPackageBasic.class, "label", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_TRIM                  = new AtrRef<>(SPackageBasic.class, "trim", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeFormula, SIComposite, Object>                 ATR_FORMULA               = new AtrRef<>(SPackageBasic.class, "formula", STypeFormula.class, SIComposite.class, Object.class);
@@ -114,7 +113,6 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS_FUNCTION);
-        pb.createAttributeIntoType(STypeSimple.class, ATR_INITIAL_VALUE);
         pb.createAttributeIntoType(STypeSimple.class, ATR_FORMULA);
         pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(Boolean.TRUE);
         pb.createAttributeIntoType(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(Boolean.TRUE);

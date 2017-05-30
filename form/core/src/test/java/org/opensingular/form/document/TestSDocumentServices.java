@@ -107,10 +107,10 @@ public class TestSDocumentServices extends TestCaseForm {
     
     @Test public void usesAddedRegistriesForLookupByName(){
         Object provider = new Object();
-        ServiceRegistry registry = mock(ServiceRegistry.class);
+        ExternalServiceRegistry registry = mock(ExternalServiceRegistry.class);
         when(registry.lookupService("another", Object.class)).
             thenReturn(Optional.of(provider));
-        document.addServiceRegistry(registry);
+        document.setExternalServiceRegistry(registry);
         
         assertThat(document.lookupService("another", Object.class).orElse(null))
             .isEqualTo(provider);
@@ -118,9 +118,9 @@ public class TestSDocumentServices extends TestCaseForm {
     
     @Test public void usesAddedRegistriesForLookupByClass(){
         Object provider = new Object();
-        ServiceRegistry registry = mock(ServiceRegistry.class);
+        ExternalServiceRegistry registry = mock(ExternalServiceRegistry.class);
         when(registry.lookupService(Object.class)).thenReturn(Optional.of(provider));
-        document.addServiceRegistry(registry);
+        document.setExternalServiceRegistry(registry);
         
         assertThat(document.lookupService(Object.class).orElse(null)).isEqualTo(provider);
     }

@@ -37,15 +37,18 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstanciaExecucao<T> impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask));
     }
 
     default SELF call(ImplTaskJavaReturnInstanciaTarefaExecucao impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance(), execucaoTask));
     }
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstanciaExecucao<T> impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask);
             return null;
@@ -53,6 +56,7 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
     }
 
     default SELF call(ImplTaskJavaVoidInstanciaTarefaExecucao impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar(execucaoTask.getTaskInstance(), execucaoTask);
             return null;
@@ -61,15 +65,18 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstancia<T> impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) (execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance())));
     }
 
     default SELF call(ImplTaskJavaReturnInstanciaTarefa impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance()));
     }
 
     @SuppressWarnings("unchecked")
     default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstancia<T> impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar((T) execucaoTask.getProcessInstance());
             return null;
@@ -77,6 +84,7 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
     }
 
     default SELF call(ImplTaskJavaVoidInstanciaTarefa impl) {
+        inject(impl);
         return call((STaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar(execucaoTask.getTaskInstance());
             return null;

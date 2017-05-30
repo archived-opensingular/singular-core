@@ -18,6 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.AccessStrategyType;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,8 +44,10 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
 
     public abstract List<? extends SUser> listAllocableUsers(K instancia);
 
+    @Nonnull
     public abstract List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task);
 
+    @Nonnull
     public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
         return getExecuteRoleNames(definicao, task);
     }
@@ -68,7 +71,7 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         return new VisualizeOnlyTaskAccessStrategy<>(this);
     }
 
-    public TaskAccessStrategy<K> or(TaskAccessStrategy<?> e2) {
+    public TaskAccessStrategy<K> or(TaskAccessStrategy<K> e2) {
         return or(this, e2);
     }
 
@@ -76,9 +79,11 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         return AccessStrategyType.E;
     }
 
-    public static <T extends ProcessInstance> TaskAccessStrategy<T> or(TaskAccessStrategy<T> e1, TaskAccessStrategy<?> e2) {
-        if (e1 == null && e2 == null) {
-            return null;
+    public static <T extends ProcessInstance> TaskAccessStrategy<T> or(TaskAccessStrategy<T> e1, TaskAccessStrategy<T> e2) {
+        if (e1 == null) {
+            return e2;
+        } else if (e2 == null) {
+            return e1;
         }
         return new DisjunctionTaskAccessStrategy<>(e1, e2);
     }

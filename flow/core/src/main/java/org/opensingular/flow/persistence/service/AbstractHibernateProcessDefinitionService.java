@@ -246,7 +246,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return taskDefinition;
     }
 
-    private void addRolesToTaks(PROCESS_DEF process, TASK_DEF taskDefinition, List<String> roles) {
+    private void addRolesToTaks(PROCESS_DEF process, TASK_DEF taskDefinition, @Nonnull List<String> roles) {
         for (String roleName : roles) {
             PROCESS_ROLE_DEF roleDefinition = null;
             for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
