@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -431,11 +432,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> withInitialValue(Object value) {
-        return with(SPackageBasic.ATR_INITIAL_VALUE, value);
-
-    }
-
     public SType<I> withDefaultValueIfNull(Object value) {
         return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
     }
@@ -452,10 +448,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             return null;
         }
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
-    }
-
-    public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
     }
 
     public SType<I> withRequired(boolean value) {
@@ -663,7 +655,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * se existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     public final I newInstance() {
-        return newInstance(true);
+        return newInstance(true, new SDocument());
     }
 
     /**
@@ -673,9 +665,14 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param executeInstanceInitListeners Indica se deve executar executa os códigos de inicialização dos tipos se
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
-    public final I newInstance(boolean executeInstanceInitListeners) {
-        SDocument owner    = new SDocument();
-        I         instance = newInstance(this, owner);
+    final I newInstance(boolean executeInstanceInitListeners, @Nonnull SDocument owner) {
+        if (owner.getRegistry().getExternalRegistry() == null) {
+            ExternalServiceRegistry external = getDictionary().getDictionaryConfig().getExternalRegistry();
+            if (external != null) {
+                owner.setExternalServiceRegistry(external);
+            }
+        }
+        I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {
             instance.init();
@@ -708,12 +705,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             I newInstance = instanceClass.newInstance();
             newInstance.setDocument(owner);
             newInstance.setType(this);
-            if (newInstance instanceof SISimple) {
-                Object valorInicial = original.getAttributeValueInitialValue();
-                if (valorInicial != null) {
-                    newInstance.setValue(valorInicial);
-                }
-            }
+            SFormUtil.inject(newInstance);
             instanceCount++;
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
@@ -911,6 +903,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return asAtr().getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
     }
 
+    /**
+     * Lambda para inicialização da {@link SInstance} desse {@link SType}
+     * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.
+     * Quando a {@link SInstance} persistence é carregada o listener não é executado novamente.
+     * @param initListener
+     * @return
+     */
     public SType<I> withInitListener(IConsumer<I> initListener) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
         return this;

@@ -18,6 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.variable.ValidationResult;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
@@ -56,8 +57,8 @@ public class SStart extends SParametersEnabled {
      * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
      * antes do processo ser executado.
      */
-    public <I extends ProcessInstance> void setStartInitializer(IStartInitializer<I> startInitializer) {
-        this.startInitializer = startInitializer;
+    public <I extends ProcessInstance> void setStartInitializer(@Nonnull IStartInitializer<I> startInitializer) {
+        this.startInitializer = inject(startInitializer);
     }
 
     /**
@@ -73,8 +74,8 @@ public class SStart extends SParametersEnabled {
      * Define o validador deste start point a ser executado antes que a instância seja criada. O validador é
      * executado antes do inicializador definido em {@link #setStartInitializer(IStartInitializer)} .
      */
-    public <I extends ProcessInstance> void setStartValidator(IStartValidator<I> startValidator) {
-        this.startValidator = startValidator;
+    public <I extends ProcessInstance> void setStartValidator(@Nonnull IStartValidator<I> startValidator) {
+        this.startValidator = inject(startValidator);
     }
 
     @Override

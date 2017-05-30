@@ -19,6 +19,7 @@ package org.opensingular.flow.core.builder;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.variable.VarType;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 /**
@@ -43,79 +44,97 @@ public interface BuilderParametersEnabled<SELF extends BuilderParametersEnabled<
      * Adiciona um parâmetro que automaticamente atualiza a variável do processo. O parâmetro têm as mesmas
      * definições da variável.
      */
-    public default SELF addParamBindedToProcessVariable(String ref, boolean obrigatorio) {
-        getParametersEnabled().addParamBindedToProcessVariable(ref, obrigatorio);
+    public default SELF addParamBindedToProcessVariable(String ref, boolean required) {
+        getParametersEnabled().addParamBindedToProcessVariable(ref, required);
         return self();
     }
 
-    public default SELF addParamString(String ref, boolean obrigatorio, Integer tamanho) {
-        return addParamString(ref, ref, obrigatorio, tamanho);
+    public default SELF addParamString(String ref, boolean required, Integer size) {
+        return addParamString(ref, ref, required, size);
     }
 
-    public default SELF addParamString(String ref, boolean obrigatorio) {
-        return addParamString(ref, ref, obrigatorio, null);
+    public default SELF addParamString(String ref, boolean required) {
+        return addParamString(ref, ref, required, null);
     }
 
-    public default SELF addParamString(String ref, String nome, boolean obrigatorio) {
-        return addParamString(ref, nome, obrigatorio, null);
+    public default SELF addParamString(String ref, String name, boolean required) {
+        return addParamString(ref, name, required, null);
     }
 
-    public default SELF addParamString(String ref, String nome, boolean obrigatorio, Integer tamanho) {
-        getParametersEnabled().getParameters().addVariableString(ref, nome, tamanho).setRequired(obrigatorio);
+    public default SELF addParamString(String ref, String name, boolean required, Integer size) {
+        getParametersEnabled().getParameters().addVariableString(ref, name, size).setRequired(required);
         return self();
     }
 
-    public default SELF addParamStringMultipleLines(String ref, String nome, boolean obrigatorio) {
-        return addParamStringMultipleLines(ref, nome, obrigatorio, null);
+    public default SELF addParamStringMultipleLines(String ref, String name, boolean required) {
+        return addParamStringMultipleLines(ref, name, required, null);
     }
 
-    public default SELF addParamStringMultipleLines(String ref, String nome, boolean obrigatorio, Integer tamanho) {
-        getParametersEnabled().getParameters().addVariableStringMultipleLines(ref, nome, tamanho).setRequired(obrigatorio);
+    public default SELF addParamStringMultipleLines(String ref, String name, boolean required, Integer size) {
+        getParametersEnabled().getParameters().addVariableStringMultipleLines(ref, name, size).setRequired(required);
         return self();
     }
 
-    public default SELF addParamInteger(String ref, boolean obrigatorio) {
-        return addParamInteger(ref, ref, obrigatorio);
+    public default SELF addParamInteger(String ref, boolean required) {
+        return addParamInteger(ref, ref, required);
     }
 
-    public default SELF addParamInteger(String ref, String nome, boolean obrigatorio) {
-        getParametersEnabled().getParameters().addVariableInteger(ref, nome).setRequired(obrigatorio);
+    public default SELF addParamInteger(String ref, String name, boolean required) {
+        getParametersEnabled().getParameters().addVariableInteger(ref, name).setRequired(required);
         return self();
     }
 
-    public default SELF addParamBigDecimal(String ref, boolean obrigatorio) {
-        return addParamBigDecimal(ref, ref, obrigatorio);
+    public default SELF addParamBigDecimal(String ref, boolean required) {
+        return addParamBigDecimal(ref, ref, required);
     }
 
-    public default SELF addParamBigDecimal(String ref, String nome, boolean obrigatorio) {
-        getParametersEnabled().getParameters().addVariableBigDecimal(ref, nome).setRequired(obrigatorio);
+    public default SELF addParamBigDecimal(String ref, String name, boolean required) {
+        getParametersEnabled().getParameters().addVariableBigDecimal(ref, name).setRequired(required);
         return self();
     }
 
-    public default SELF addParamDouble(String ref, boolean obrigatorio) {
-        return addParamDouble(ref, ref, obrigatorio);
+    public default SELF addParamDouble(String ref, boolean required) {
+        return addParamDouble(ref, ref, required);
     }
 
-    public default SELF addParamDouble(String ref, String nome, boolean obrigatorio) {
-        getParametersEnabled().getParameters().addVariableDouble(ref, nome).setRequired(obrigatorio);
+    public default SELF addParamDouble(String ref, String name, boolean required) {
+        getParametersEnabled().getParameters().addVariableDouble(ref, name).setRequired(required);
         return self();
     }
 
-    public default SELF addParamDate(String ref, boolean obrigatorio) {
-        return addParamDate(ref, ref, obrigatorio);
+    public default SELF addParamDate(String ref, boolean required) {
+        return addParamDate(ref, ref, required);
     }
 
-    public default SELF addParamDate(String ref, String nome, boolean obrigatorio) {
-        getParametersEnabled().getParameters().addVariableDate(ref, nome).setRequired(obrigatorio);
+    public default SELF addParamDate(String ref, String name, boolean required) {
+        getParametersEnabled().getParameters().addVariableDate(ref, name).setRequired(required);
         return self();
     }
 
-    public default SELF addParam(String ref, VarType tipo, boolean obrigatorio) {
-        return addParam(ref, ref, tipo, obrigatorio);
+    /**
+     * Cria um parâmetro de uma classe específica. Use preferencialmente os métodos addParamXXXX com um tipo ja
+     * previsto.
+     */
+    public default SELF addParamCustom(@Nonnull String ref, @Nonnull Class<?> paramClass, boolean required) {
+        return addParamCustom(ref, ref, paramClass, required);
     }
 
-    public default SELF addParam(String ref, String nome, VarType varType, boolean obrigatorio) {
-        getParametersEnabled().getParameters().addVariable(ref, nome, varType).setRequired(obrigatorio);
+    /**
+     * Cria um parâmetro de uma classe específica. Use preferencialmente os métodos addParamXXXX com um tipo ja
+     * previsto.
+     */
+    public default SELF addParamCustom(@Nonnull String ref, @Nonnull String name, @Nonnull Class<?> paramClass,
+            boolean required) {
+        getParametersEnabled().getParameters().addVariableCustom(ref, name, paramClass).setRequired(required);
+        return self();
+    }
+
+    public default SELF addParam(String ref, VarType varType, boolean required) {
+        return addParam(ref, ref, varType, required);
+    }
+
+    public default SELF addParam(String ref, String name, VarType varType, boolean required) {
+        getParametersEnabled().getParameters().addVariable(ref, name, varType).setRequired(required);
         return self();
     }
 }

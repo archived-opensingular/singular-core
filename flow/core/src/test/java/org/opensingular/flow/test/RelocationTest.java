@@ -26,7 +26,11 @@ import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
+import org.opensingular.flow.test.support.TestFlowSupport;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,7 +45,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-public class RelocationTest  {
+public class RelocationTest implements ApplicationContextAware {
 
     @Inject
     protected HibernateSingularFlowConfigurationBean mbpmBean;
@@ -58,6 +62,11 @@ public class RelocationTest  {
     @BeforeClass
     public static void configProperties() {
         SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        TestFlowSupport.configApplicationContext(applicationContext);
     }
 
     @Before

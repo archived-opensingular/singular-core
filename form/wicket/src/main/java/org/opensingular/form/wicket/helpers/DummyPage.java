@@ -26,12 +26,12 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.DefaultServiceRegistry;
+import org.opensingular.form.document.ExternalServiceRegistry;
+import org.opensingular.form.document.MockExternalServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
 import org.opensingular.form.document.TypeLoader;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
@@ -139,12 +139,12 @@ public class DummyPage extends WebPage {
 
 class MockSDocumentFactory extends SDocumentFactory {
 
-    private final DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
+    private final MockExternalServiceRegistry defaultServiceRegistry = new MockExternalServiceRegistry();
 
     private final SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
-        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, () -> singularFormContextWicket);
+        defaultServiceRegistry.registerBean(SingularFormContextWicket.class, singularFormContextWicket);
     }
 
     @Override
@@ -153,7 +153,7 @@ class MockSDocumentFactory extends SDocumentFactory {
     }
 
     @Override
-    public ServiceRegistry getServiceRegistry() {
+    public ExternalServiceRegistry getExternalServiceRegistry() {
         return defaultServiceRegistry;
     }
 

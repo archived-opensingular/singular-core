@@ -21,10 +21,10 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.document.InternalServiceRegistry.ServiceEntry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry.Pair;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIInteger;
@@ -252,7 +252,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
         instancia.getDocument().bindLocalService("A", String.class, RefService.of("AA"));
         SInstance instancia2 = testSerializacao(instancia);
-        Assert.assertEquals("AA", instancia2.getDocument().lookupService("A", String.class).get());
+        Assert.assertEquals("AA", instancia2.getDocument().lookupService("A", String.class).orElse(null));
 
         // Testa itens não mantido entre serializações
         instancia.getDocument().bindLocalService("B", String.class, RefService.ofToBeDescartedIfSerialized("BB"));
@@ -323,7 +323,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
 
         //Depois das linhas a cima, então têm que ter convertido os valores
         instance.isAttribute(atr2.getNameFull(), 20);
-        assertEquals(SIInteger.class, instance.getTarget().getAttributeDirectly(atr2.getNameFull()).get().getClass());
+        assertEquals(SIInteger.class, instance.getTarget().getAttributeDirectly(atr2.getNameFull()).orElse(null).getClass());
 
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
@@ -459,7 +459,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
             assertEquals(original.getLastId(), copy.getLastId());
         }
 
-        for (Entry<String, Pair> service : original.getLocalServices().entrySet()) {
+        for (Entry<String, ServiceEntry> service : original.getRegistry().services().entrySet()) {
             Object originalService = original.lookupService(service.getKey(), Object.class).orElse(null);
             Object copyService = copy.lookupService(service.getKey(), Object.class).orElse(null);
             if (originalService == null) {
