@@ -3,12 +3,14 @@ package org.opensingular.form.service;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.persistence.dao.FormCacheFieldDAO;
 import org.opensingular.form.persistence.dao.FormCacheValueDAO;
 import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
 import org.opensingular.form.persistence.entity.FormCacheValueEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +52,10 @@ public class FormFieldService implements IFormFieldService {
         List<String> fieldsToIndex = new ArrayList<>();
 
         for (SInstance field : fieldsInInstance) {
+            if (field instanceof SIAttachment) {
+                continue;
+            }
+
             if (field instanceof SIList) {
                 LoadMapWithItensFromList(mapFields, (SIList)field, formVersion);
             }
