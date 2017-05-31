@@ -6,11 +6,14 @@ import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class TestXMLToolkitWriter {
 
     @Test
     public void testPrintNodeMethods() throws FileNotFoundException {
+        XMLMElementWriter elementWriter = new XMLMElementWriter(StandardCharsets.UTF_8);
         try(TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this)) {
             File arquivoTemp = tmpProvider.createTempFile(".txt");
             PrintWriter writer = new PrintWriter(arquivoTemp);
@@ -24,9 +27,9 @@ public class TestXMLToolkitWriter {
 
             document.createComment("comentario pra dar erro");
 
-            XMLToolkitWriter.printDocument(writer, raiz, false, false);
-            XMLToolkitWriter.printDocument(writer, raiz, false);
-            XMLToolkitWriter.printDocumentIndentado(writer, raiz, false);
+            elementWriter.printDocument(writer, raiz, false, false);
+            elementWriter.printDocument(writer, raiz, false);
+            elementWriter.printDocumentIndentado(writer, raiz, false);
             writer.close();
         }
     }
