@@ -1,5 +1,14 @@
 (function () {
-    window.SingularResourceHandler = (function () {
+    
+	//pollyfill para startsWith
+	if (!String.prototype.startsWith) {
+	    String.prototype.startsWith = function(searchString, position){
+	      position = position || 0;
+	      return this.substr(position, searchString.length) === searchString;
+	  };
+	}
+	
+	window.SingularResourceHandler = (function () {
         if (typeof $ == "undefined") {
             window.alert("jQuery não foi importado corretamente.");
             return;
