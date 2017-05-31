@@ -69,4 +69,9 @@ public abstract class SParametersEnabled {
     final static boolean isAutoBindedToProcessVariable(@Nonnull VarInstance var) {
         return isAutoBindedToProcessVariable(var.getDefinition());
     }
+
+    @Nonnull
+    final <V> V inject(@Nonnull V target) {
+        return getFlowMap().getProcessDefinition().inject(target);
+    }
 }

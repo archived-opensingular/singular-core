@@ -25,7 +25,6 @@ import java.util.Objects;
 
 public class DefaultVarDefinitionMap implements VarDefinitionMap {
 
-    @Nonnull
     private VarService varService;
 
     private final LinkedHashMap<String, VarDefinition> map = new LinkedHashMap<>();

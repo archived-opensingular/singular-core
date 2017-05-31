@@ -18,9 +18,12 @@ package org.opensingular.form.spring;
 
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.RefTypeByKey;
 import org.opensingular.form.document.TypeLoader;
+import org.opensingular.internal.lib.support.spring.SpringUtils;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
@@ -43,16 +46,25 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
         implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
+    private ExternalServiceRegistry registry;
+
+    @Nonnull
+    public Optional<ExternalServiceRegistry> getExternalRegistry() {
+        if (registry == null) {
+            registry = new SpringServiceRegistry();
+        }
+        return Optional.of(registry);
+    }
 
     @Override
     @Nonnull
     protected final Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId) {
-        return loadType(typeId).map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
+        return loadType(typeId).map(t -> new SpringRefType(SpringUtils.checkBeanName(this), typeId, t));
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringFormUtil.setApplicationContext(applicationContext);
+        ApplicationContextProvider.setup(applicationContext);
     }
 
     @Override
@@ -78,13 +90,13 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
         @Override
         @Nonnull
         public SType<?> retrieveByKey(@Nonnull KEY typeId) {
-            SpringTypeLoader<KEY> loader = SpringFormUtil.getApplicationContext().getBean(springBeanName, SpringTypeLoader.class);
+            SpringTypeLoader<KEY> loader = ApplicationContextProvider.get().getBean(springBeanName, SpringTypeLoader.class);
             if (loader == null) {
                 throw new SingularFormException(
                         "Não foi encontrado o bean de nome '" + springBeanName + "' do tipo " + SpringTypeLoader.class.getName());
             }
             return loader.loadType(typeId).orElseThrow(() -> new SingularFormException(
-                    SpringFormUtil.erroMsg(loader, " não encontrou o " + SType.class.getSimpleName() + " para o id=" + typeId)));
+                    SpringUtils.erroMsg(loader, " não encontrou o " + SType.class.getSimpleName() + " para o id=" + typeId)));
         }
 
     }

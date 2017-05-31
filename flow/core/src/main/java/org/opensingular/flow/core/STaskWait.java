@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
 
 @SuppressWarnings("unchecked")
@@ -37,7 +38,8 @@ public class STaskWait extends STaskUserExecutable<STaskWait> {
     }
 
     @Override
-    public <T extends ProcessInstance> STaskWait withTargetDate(IExecutionDateStrategy<T> targetDateExecutionStrategy) {
+    @Nonnull
+    public <T extends ProcessInstance> STaskWait withTargetDate(@Nonnull IExecutionDateStrategy<T> targetDateExecutionStrategy) {
         if(executionDateStrategy != null){
             throw new SingularFlowException("Tarefas agendadas não suportam data alvo.", this);
         }

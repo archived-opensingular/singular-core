@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core;
+package org.opensingular.form.document;
 
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
 
-@FunctionalInterface
-public interface TransitionAccessStrategy<T extends TaskInstance> {
+import javax.annotation.Nonnull;
 
-    TransitionAccess getAccess(T taskInstance);
+/**
+ * Representa um serviço externo de registro de bean e serviços.
+ *
+ * @author Daniel C. Bordin on 21/05/2017.
+ */
+public interface ExternalServiceRegistry extends ServiceRegistry {
 
+    /** Retornar o serviço de injeção de beans em um objeto. */
+    @Nonnull
+    public SingularInjector lookupSingularInjector();
 }

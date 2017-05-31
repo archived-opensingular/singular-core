@@ -18,9 +18,9 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.schedule.IScheduleData;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public class STaskJava extends STask<STaskJava> {
@@ -54,23 +54,23 @@ public class STaskJava extends STask<STaskJava> {
         return scheduleData;
     }
 
-    public <T extends ProcessInstance> STaskJava callBlock(ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
-        Objects.requireNonNull(implBloco);
-        Objects.requireNonNull(scheduleData);
+    @Nonnull
+    public <T extends ProcessInstance> STaskJava callBlock(@Nonnull ImplTaskBlock<T> implBloco,
+            @Nonnull IScheduleData scheduleData) {
         if (taskImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando call(), chamada simples"), this);
         }
-        this.blockImpl = implBloco;
-        this.scheduleData = scheduleData;
+        this.blockImpl = inject(implBloco);
+        this.scheduleData = inject(scheduleData);
         return this;
     }
 
-    public STaskJava call(ImplTaskJava impl) {
-        Objects.requireNonNull(impl);
+    @Nonnull
+    public STaskJava call(@Nonnull ImplTaskJava impl) {
         if (blockImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando callBlock(), chamada em bloco"), this);
         }
-        taskImpl = impl;
+        taskImpl = inject(impl);
         return this;
     }
 
@@ -105,6 +105,7 @@ public class STaskJava extends STask<STaskJava> {
 
     @Override
     void verifyConsistency() {
+        super.verifyConsistency();
         if (taskImpl == null && blockImpl == null) {
             throw new SingularFlowException(createErrorMsg("Não foi configurado o código de execução da tarefa"), this);
         }
