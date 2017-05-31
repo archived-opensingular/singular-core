@@ -27,6 +27,7 @@ import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 import org.opensingular.internal.lib.commons.injection.SingularInjectionException;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
 import java.io.ObjectStreamException;
@@ -59,7 +60,7 @@ import java.util.Set;
  * @author Igor Vaynberg (ivaynberg)
  * @author Daniel C. Bordin on 16/05/2017.
  */
-class LazyInitProxyFactory {
+class LazyInitProxyFactory implements Loggable{
 
     /**
      * Primitive java types and their object wrappers
@@ -209,7 +210,6 @@ class LazyInitProxyFactory {
         }
 
         /**
-         * @see net.sf.cglib.proxy.MethodInterceptor#intercept(java.lang.Object, * java.lang.reflect.Method, java
          * .lang.Object[], net.sf.cglib.proxy.MethodProxy)
          */
         @Override
@@ -254,7 +254,6 @@ class LazyInitProxyFactory {
         }
 
         /**
-         * @see org.apache.wicket.proxy.LazyInitProxyFactory.IWriteReplace#writeReplace()
          */
         @Override
         public Object writeReplace() throws ObjectStreamException {
@@ -304,7 +303,7 @@ class LazyInitProxyFactory {
      *
      * @author Igor Vaynberg (ivaynberg)
      */
-    private static class JdkHandler implements InvocationHandler, ILazyInitProxy, Serializable, IWriteReplace {
+    private static class JdkHandler implements InvocationHandler, ILazyInitProxy, Serializable, IWriteReplace, Loggable {
         private static final long serialVersionUID = 1L;
 
         private final IProxyTargetLocator locator;
@@ -326,7 +325,6 @@ class LazyInitProxyFactory {
         }
 
         /**
-         * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, * java.lang.reflect.Method, java.lang
          * .Object[])
          */
         @Override
@@ -354,8 +352,9 @@ class LazyInitProxyFactory {
                 method.setAccessible(true);
                 return method.invoke(target, args);
             } catch (InvocationTargetException e) {
+                getLogger().trace(e.getMessage(), e);
                 if (e.getCause() instanceof Exception) {
-                    throw (Exception) e.getCause();
+                    throw e.getCause();
                 } else {
                     throw new SingularInjectionException(null, e);
                 }
@@ -367,9 +366,6 @@ class LazyInitProxyFactory {
             return locator.locateProxyTarget();
         }
 
-        /**
-         * @see org.apache.wicket.proxy.LazyInitProxyFactory.IWriteReplace#writeReplace()
-         */
         @Override
         public Object writeReplace() throws ObjectStreamException {
             return new ProxyReplacement(typeName, locator);
