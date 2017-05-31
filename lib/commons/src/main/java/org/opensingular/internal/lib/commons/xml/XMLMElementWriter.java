@@ -118,7 +118,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     @Override
     public void printDocument(PrintWriter out, Element e, boolean printHeader) {
         if (printHeader) {
-            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            printHeader(out);
         }
         printElement(out, e);
     }
@@ -161,7 +161,9 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     }
 
     private void printHeader(PrintWriter out) {
-        out.print("<?xml version=\"1.0\" encoding=\"" + charset.toString() + "\"?>");
+        out.print("<?xml version=\"1.0\" encoding=\"");
+        out.print(charset);
+        out.print("\"?>");
     }
 
     private void printElement(PrintWriter out, Element e) {
