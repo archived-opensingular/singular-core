@@ -18,7 +18,7 @@ package org.opensingular.flow.core;
 
 
 @FunctionalInterface
-public interface TransitionAccessStrategy<T extends TaskInstance> {
+public interface UITransitionAccessStrategy<T extends TaskInstance> {
 
     TransitionAccess getAccess(T taskInstance);
 

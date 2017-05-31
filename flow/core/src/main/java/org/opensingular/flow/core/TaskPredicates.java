@@ -71,8 +71,8 @@ public class TaskPredicates {
         return t -> keys.contains(t.getAbbreviation());
     }
 
-    /** Cria um predicado que retorna as tarefas que são do tipo fim. */
-    public static Predicate<TaskInstance> simpleFinished() {
+    /** Cria um predicado que retorna as tarefas encerradas*/
+    public static Predicate<TaskInstance> finished() {
         return t -> t.isFinished();
     }
 
