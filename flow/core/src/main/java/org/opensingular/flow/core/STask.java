@@ -137,7 +137,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public STransition addTransition(String actionName, STask<?> destination, boolean showTransitionInExecution) {
-        return addTransition(actionName, destination).withAccessControl(TransitionAccessStrategyImpl.enabled(showTransitionInExecution));
+        return addTransition(actionName, destination).withAccessControl(UITransitionAccessStrategyImplUI.enabled(showTransitionInExecution, null));
     }
 
     public STransition addTransition(String actionName, STask<?> destination) {
