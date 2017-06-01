@@ -300,7 +300,7 @@ public class ProcessInstance implements Serializable {
      */
     public boolean canVisualize(@Nonnull SUser user) {
         Objects.requireNonNull(user);
-        Optional<STask<?>> tt = getLatestTaskOrException().getFlowTask();
+        Optional<STask<?>> tt = getLastTaskOrException().getFlowTask();
         if (tt.isPresent()) {
             if ((tt.get().isPeople() || tt.get().isWait()) && hasAllocatedUser() && isAllocated(user.getCod())) {
                 return true;
@@ -461,10 +461,10 @@ public class ProcessInstance implements Serializable {
      */
     public final void forceStateUpdate(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
-        final TaskInstance tarefaOrigem = getLatestTaskOrException();
-        List<SUser> pessoasAnteriores = getDirectlyResponsibles();
-        final Date agora = new Date();
-        TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);
+        final TaskInstance tarefaOrigem      = getLastTaskOrException();
+        List<SUser>        pessoasAnteriores = getDirectlyResponsibles();
+        final Date         agora             = new Date();
+        TaskInstance       tarefaNova        = updateState(tarefaOrigem, null, task, agora);
         tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
             null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         FlowEngine.initTask(this, task, tarefaNova);
@@ -902,9 +902,11 @@ public class ProcessInstance implements Serializable {
         return getTaskNewer(t -> true);
     }
 
-    /** Retorna a mais nova tarefa encerrada ou ativa. */
+    /**
+     * Retorna a última tarefa encerrada ou ativa.
+     */
     @Nonnull
-    public TaskInstance getLatestTaskOrException() {
+    public TaskInstance getLastTaskOrException() {
         return getTaskNewer().orElseThrow(
                 () -> new SingularFlowException(createErrorMsg("Não há nenhuma tarefa no processo"), this));
     }
@@ -933,7 +935,7 @@ public class ProcessInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getFinishedTask(@Nonnull ITaskDefinition taskRef) {
-        return getTaskNewer(TaskPredicates.simpleFinished().and(TaskPredicates.simpleTaskType(taskRef)));
+        return getTaskNewer(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(taskRef)));
     }
 
     /**
@@ -942,7 +944,7 @@ public class ProcessInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getFinishedTask(@Nonnull STask<?> tipo) {
-        return getTaskNewer(TaskPredicates.simpleFinished().and(TaskPredicates.simpleTaskType(tipo)));
+        return getTaskNewer(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(tipo)));
     }
 
     protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
@@ -961,4 +963,13 @@ public class ProcessInstance implements Serializable {
         this.executionContext = execucaoTask;
     }
 
+    /**
+     * Retorna a última tarefa encerrada.
+     * Caso a tarefa atual esteja finalizada essa será retornada.
+     * Caso a tarefa atual esteja ativa, será retornada a tarefa imediatamente anterior.
+     * @return
+     */
+    public Optional<TaskInstance> getLastFinishedTask() {
+        return getTaskNewer(TaskPredicates.finished());
+    }
 }
