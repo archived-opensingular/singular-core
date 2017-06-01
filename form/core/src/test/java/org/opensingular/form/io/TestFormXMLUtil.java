@@ -16,7 +16,7 @@ import org.opensingular.form.type.core.STypeString;
 @RunWith(Parameterized.class)
 public class TestFormXMLUtil extends TestCaseForm {
 
-    private static final String HEADER_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
+    private static final String HEADER_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     public TestFormXMLUtil(TestFormConfig testFormConfig) {
         super(testFormConfig);
