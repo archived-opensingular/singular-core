@@ -114,7 +114,7 @@ public class PeticaoTest extends TestFlowSupport {
         ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
 
         assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
-        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTaskOrException().getEndDate());
+        assertNull("Tarefa não deveria ter uma data de fim", ip.getLastTaskOrException().getEndDate());
     }
 
 //
@@ -135,7 +135,7 @@ public class PeticaoTest extends TestFlowSupport {
         ip.prepareTransition(Peticao.INDEFERIR).go();
 
         assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
-        assertNotNull("Tarefa deveria ter uma data de fim", ip.getLatestTaskOrException().getEndDate());
+        assertNotNull("Tarefa deveria ter uma data de fim", ip.getLastTaskOrException().getEndDate());
     }
 
     @Test
@@ -306,7 +306,7 @@ public class PeticaoTest extends TestFlowSupport {
     private void assertLatestTaskName(String expectedCurrentTaskName, ProcessInstance instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
-                instanciaPeticao.getLatestTaskOrException().getName());
+                instanciaPeticao.getLastTaskOrException().getName());
     }
 
     private void addDaysToTaskTargetDate(TaskInstanceEntity taskInstance, int days) {

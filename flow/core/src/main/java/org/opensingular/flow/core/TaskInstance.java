@@ -30,6 +30,7 @@ import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.service.IPersistenceService;
+import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.lib.commons.net.Lnk;
 
 import javax.annotation.Nonnull;
@@ -78,6 +79,8 @@ public class TaskInstance implements Serializable {
         }
         return (X) processInstance;
     }
+
+
 
     private IEntityTaskInstance getEntity() {
         if (entityTask == null) {
@@ -216,6 +219,17 @@ public class TaskInstance implements Serializable {
     @Nonnull
     public TransitionCall prepareTransition() {
         return new TransitionCall(new RefTransition(this));
+    }
+
+    /**
+     * Retorna empty se a transição não existir ou se nenhuma transição tiver sido executada.
+     * @return
+     */
+    public Optional<STransition> getExecutedTransition(){
+        if (isFinished() && getEntity().getExecutedTransition() != null) {
+            return getFlowTaskOrException().getTransition(entityTask.getExecutedTransition().getName());
+        }
+        return Optional.empty();
     }
 
     /**
