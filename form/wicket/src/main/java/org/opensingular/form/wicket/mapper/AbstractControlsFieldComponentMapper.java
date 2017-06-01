@@ -16,13 +16,10 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.apache.commons.lang3.StringUtils.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -30,20 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.decorator.action.SIcon;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
@@ -51,7 +41,8 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.decorator.AbstractSIconActionDelegate;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
@@ -60,9 +51,9 @@ import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    final static HintKey<Boolean>     NO_DECORATION = (HintKey<Boolean>) () -> Boolean.FALSE;
+    final static HintKey<Boolean>           NO_DECORATION            = (HintKey<Boolean>) () -> Boolean.FALSE;
 
-    private ISInstanceActionsProvider instanceActionsProvider;
+    private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
     protected abstract Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel);
 
@@ -91,11 +82,27 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         configureLabel(ctx, labelModel, hintNoDecoration, label);
 
-        Iterator<SInstanceAction> actionsIterator = actionIterator(model);
-        if (actionsIterator.hasNext()) {
-            buildActions(ctx, model, label, formGroup, actionsIterator);
-        } else {
+        List<SInstanceAction> actions = this.instanceActionsProviders.actionList(model);
+        if (actions.isEmpty()) {
             formGroup.appendLabel(label);
+        } else {
+            formGroup
+                .appendDiv(new BSControls("labelBar")
+                    .appendLabel(label)
+                    .appendDiv(new SInstanceActionsPanel("actions",
+                        model,
+                        () -> instanceActionsProviders.actionList(model)) {
+                        @Override
+                        protected List<?> createInternalContextList(AjaxRequestTarget target) {
+                            return Arrays.asList(
+                                AbstractControlsFieldComponentMapper.this,
+                                target,
+                                model,
+                                model.getObject(),
+                                ctx,
+                                ctx.getContainer());
+                        }
+                    }.add($b.classAppender("singular-form-controls"))));
         }
 
         formGroup.newHelpBlock(subtitle)
@@ -142,77 +149,6 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         }
     }
 
-    private void buildActions(WicketBuildContext ctx, final IModel<? extends SInstance> model, final BSLabel label, final BSControls formGroup, Iterator<SInstanceAction> actionsIterator) {
-        BSContainer<?> actionsContainer = new BSContainer<>("actions");
-        formGroup
-            .appendDiv(new BSControls("labelBar")
-                .appendLabel(label)
-                .appendDiv(actionsContainer
-                    .add($b.classAppender("actions"))))
-            .add(new Behavior() {
-                @Override
-                public void renderHead(Component component, IHeaderResponse response) {
-                    response.render(CssHeaderItem.forCSS(""
-                        + "\n .form-group>div>.actions {"
-                        + "\n   float:right;"
-                        + "\n   display: inline-block;"
-                        + "\n   padding: 0 0 2px;"
-                        + "\n   zoom: 70%;"
-                        + "\n }"
-                        + "\n .form-group>div>.actions>a.btn>i {"
-                        + "\n   font-size: 1.6em;"
-                        + "\n   padding: 2px 0 0 1px;"
-                        + "\n }"
-                        + "\n ",
-                        AbstractControlsFieldComponentMapper.class.getName() + "_style"));
-                }
-            });
-        while (actionsIterator.hasNext()) {
-            SInstanceAction action = actionsIterator.next();
-            SIcon icon = action.getIcon();
-            String text = action.getText();
-            String desc = action.getDescription();
-
-            BSContainer<?> link = new BSContainer<>("btn");
-            if (icon != null)
-                link.appendTag("i", new WebMarkupContainer("icon").add($b.classAppender(icon.getCssClass())))
-                    .add($b.classAppender("btn-icon-only", $m.get(() -> isBlank(text))));
-
-            if (isNotBlank(text))
-                link.appendTag("span", new Label("text", text));
-
-            if (isNotBlank(desc))
-                link.add($b.attr("title", desc));
-
-            link.add(new AjaxEventBehavior("click") {
-                @Override
-                protected void onEvent(AjaxRequestTarget target) {
-                    List<?> contextList = Arrays.asList(
-                        AbstractControlsFieldComponentMapper.this,
-                        target,
-                        model,
-                        model.getObject(),
-                        ctx,
-                        ctx.getContainer());
-
-                    SInstanceAction.Delegate delegate = new AbstractSIconActionDelegate(model::getObject, contextList);
-                    action.getActionHandler().onAction(model::getObject, delegate);
-                }
-            });
-
-            actionsContainer.appendTag("a", true, "class='btn btn-circle btn-default'", link);
-        }
-    }
-
-    private Iterator<SInstanceAction> actionIterator(final IModel<? extends SInstance> model) {
-        if (instanceActionsProvider != null) {
-            Iterable<SInstanceAction> actions = instanceActionsProvider.getActions(this, model.getObject());
-            return actions.iterator();
-        } else {
-            return Collections.emptyIterator();
-        }
-    }
-
     protected void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, BSLabel label) {
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
@@ -255,7 +191,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
     }
 
     @Override
-    public void setSInstanceActionsProvider(ISInstanceActionsProvider provider) {
-        this.instanceActionsProvider = provider;
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
     }
 }

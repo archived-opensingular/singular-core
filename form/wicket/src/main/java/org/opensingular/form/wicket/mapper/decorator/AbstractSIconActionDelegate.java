@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
@@ -70,20 +71,21 @@ public class AbstractSIconActionDelegate implements Delegate {
     }
 
     @Override
-    public void showMessage(String title, Serializable msg, String forcedFormat) {
+    public void showMessage(String title, Serializable message, String forcedFormat) {
+        Serializable serializableMessage = ObjectUtils.defaultIfNull(message, "");
         switch (defaultIfBlank(forcedFormat, "").toLowerCase()) {
 
             case "markdown":
             case "commonmark":
                 Parser parser = Parser.builder().build();
-                Node node = parser.parse(msg.toString());
+                Node node = parser.parse(serializableMessage.toString());
                 String html = HtmlRenderer.builder().build().render(node);
                 showMessage(title, html, "html");
                 return;
 
             case "text":
             case "plaintext":
-                showMessage(title, "<p>" + msg.toString() + "</p>", "html");
+                showMessage(title, "<p>" + serializableMessage.toString() + "</p>", "html");
                 return;
 
             case "html":
@@ -95,7 +97,7 @@ public class AbstractSIconActionDelegate implements Delegate {
                     //@formatter:on
                     @Override
                     public Component getBodyContent(String id) {
-                        return new TemplatePanel(id, msg.toString());
+                        return new TemplatePanel(id, serializableMessage.toString());
                     }
                     @Override
                     public Iterator<ButtonDef> getFooterButtons(IConsumer<AjaxRequestTarget> closeCallback) {
@@ -109,7 +111,7 @@ public class AbstractSIconActionDelegate implements Delegate {
                 return;
 
             default:
-                showMessage(title, msg, resolveMessageFormat(msg));
+                showMessage(title, serializableMessage, resolveMessageFormat(serializableMessage));
         }
     }
 
@@ -117,7 +119,7 @@ public class AbstractSIconActionDelegate implements Delegate {
         switch (actionType) {
             case PRIMARY:
                 return ButtonStyle.PRIMARY;
-            case CANCEL:
+            case LINK:
                 return ButtonStyle.LINK;
             case WARNING:
                 return ButtonStyle.DANGER;

@@ -45,8 +45,7 @@ public class AtrBasic extends STranslatorForAttribute {
 
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
-    public AtrBasic() {
-    }
+    public AtrBasic() {}
 
     public AtrBasic(SAttributeEnabled target) {
         super(target);
@@ -81,10 +80,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-//    public AtrBasic editSize(Integer value) {
-//        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
-//        return this;
-//    }
+    //    public AtrBasic editSize(Integer value) {
+    //        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
+    //        return this;
+    //    }
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -98,9 +97,9 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
-                Stream.of(value)
-                        .flatMap(it -> Stream.<String>of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-                        .collect(joining(",")));
+            Stream.of(value)
+                .flatMap(it -> Stream.<String> of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                .collect(joining(",")));
         return this;
     }
 
@@ -182,7 +181,7 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic replaceExists(IFunction<Predicate<SInstance>, Predicate<SInstance>> replacementFunction) {
         Predicate<SInstance> currentExists = getAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION);
-        if(currentExists == null){
+        if (currentExists == null) {
             currentExists = (i) -> Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
         }
         return exists(replacementFunction.apply(currentExists));
@@ -231,9 +230,9 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_SUBTITLE);
     }
 
-//    public Integer getEditSize() {
-//        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
-//    }
+    //    public Integer getEditSize() {
+    //        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
+    //    }
 
     public Integer getMaxLength() {
         return getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
@@ -245,8 +244,9 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public List<String> getAllowedFileTypes() {
         return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES)).map(in -> Arrays.asList(defaultString(
-                getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
-                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX))).orElse(Collections.emptyList());
+            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+            .orElse(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
@@ -277,6 +277,24 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public String getDisplayString() {
         return getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
+    }
+
+    public AtrBasic help(String val) {
+        setAttributeValue(SPackageBasic.ATR_HELP, val);
+        return this;
+    }
+
+    public String getHelp() {
+        return getAttributeValue(SPackageBasic.ATR_HELP);
+    }
+
+    public AtrBasic instruction(String val) {
+        setAttributeValue(SPackageBasic.ATR_INSTRUCTION, val);
+        return this;
+    }
+    
+    public String getInstruction() {
+        return getAttributeValue(SPackageBasic.ATR_INSTRUCTION);
     }
 
     public PhraseBreak phraseBreak() {

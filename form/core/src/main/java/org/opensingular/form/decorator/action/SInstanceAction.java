@@ -11,7 +11,7 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 public class SInstanceAction implements Serializable {
 
     public enum ActionType {
-        PRIMARY, NORMAL, CANCEL, WARNING;
+        PRIMARY, NORMAL, LINK, WARNING;
     }
 
     public interface ActionHandler extends Serializable {
@@ -23,6 +23,7 @@ public class SInstanceAction implements Serializable {
     private String        text;
     private String        description;
     private ActionHandler actionHandler;
+    private boolean       secondary = false;
 
     public SInstanceAction(ActionType type) {
         this.setType(type);
@@ -67,21 +68,23 @@ public class SInstanceAction implements Serializable {
     }
 
     public static SInstanceAction defaultCancelAction(String text) {
-        return new SInstanceAction(ActionType.CANCEL, text)
+        return new SInstanceAction(ActionType.NORMAL, text)
             .setActionHandler((i, d) -> d.closeForm(i.get()));
     }
 
     //@formatter:off
-    public ActionType      getType()        { return type         ; }
-    public String          getText()        { return text         ; }
-    public SIcon           getIcon()        { return icon         ; }
-    public String          getDescription() { return description  ; }
-    public ActionHandler getActionHandler() { return actionHandler; }
+    public ActionType      getType()          { return type         ; }
+    public String          getText()          { return text         ; }
+    public SIcon           getIcon()          { return icon         ; }
+    public String          getDescription()   { return description  ; }
+    public ActionHandler   getActionHandler() { return actionHandler; }
+    public boolean         isSecondary()      { return secondary    ; }
     public SInstanceAction setType         (ActionType       type) { this.type          = type       ; return this; }
     public SInstanceAction setText         (String           text) { this.text          = text       ; return this; }
     public SInstanceAction setIcon         (SIcon            icon) { this.icon          = icon       ; return this; }
     public SInstanceAction setDescription  (String    description) { this.description   = description; return this; }
     public SInstanceAction setActionHandler(ActionHandler handler) { this.actionHandler = handler    ; return this; }
+    public SInstanceAction setSecondary    (boolean     secondary) { this.secondary     = secondary  ; return this; }
     //@formatter:on
 
     public interface Delegate {

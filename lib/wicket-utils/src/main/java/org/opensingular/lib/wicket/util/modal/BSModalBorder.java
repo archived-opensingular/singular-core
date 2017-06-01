@@ -420,7 +420,7 @@ public class BSModalBorder extends Border {
         if (withAutoFocus) {
             sb.append(""
                 + "\n.on('shown.bs.modal',function(evt) {"
-                + "\n $(this).find('.modal-body, .modal-footer')"
+                + "\n $(this).find('.modal-body')"
                 + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
                 + "\n  .filter(':visible')"
                 + "\n  .first()"

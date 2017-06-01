@@ -49,13 +49,13 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
     @Override
     protected ICompositeViewBuilder getViewBuilder(WicketBuildContext ctx) {
-        return new CompositeViewBuilder(ctx);
+        return new BlocksCompositeViewBuilder(ctx, this);
     }
 
-    private static class CompositeViewBuilder extends AbstractCompositeViewBuilder {
+    private static class BlocksCompositeViewBuilder extends AbstractCompositeViewBuilder {
 
-        CompositeViewBuilder(WicketBuildContext ctx) {
-            super(ctx);
+        BlocksCompositeViewBuilder(WicketBuildContext ctx, AbstractCompositeMapper mapper) {
+            super(ctx, mapper);
         }
 
         @Override
