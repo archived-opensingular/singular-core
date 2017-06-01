@@ -247,7 +247,7 @@ public class SingularFormPanel extends Panel {
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
-        add(ctx.createFeedbackPanel("feedback", this).setShowBox(true));
+        addOrReplace(ctx.createFeedbackPanel("feedback", this).setShowBox(true));
 
         SingularFormContextWicket formContext = resolveFormConfigWicket();
         formContext.getUIBuilder().build(ctx, getViewMode());
