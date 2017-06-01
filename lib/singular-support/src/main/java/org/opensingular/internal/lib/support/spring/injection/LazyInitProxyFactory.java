@@ -354,7 +354,7 @@ class LazyInitProxyFactory implements Loggable{
             } catch (InvocationTargetException e) {
                 getLogger().trace(e.getMessage(), e);
                 if (e.getCause() instanceof Exception) {
-                    throw e.getCause();
+                    throw e.getCause();//NOSONAR
                 } else {
                     throw new SingularInjectionException(null, e);
                 }
