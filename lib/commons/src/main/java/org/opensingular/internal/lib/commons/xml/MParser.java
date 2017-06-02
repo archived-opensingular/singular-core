@@ -16,21 +16,22 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
-import org.opensingular.lib.commons.base.SingularException;
-import org.w3c.dom.Element;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.opensingular.lib.commons.base.SingularException;
+import org.w3c.dom.Element;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Faz o parse de um XML, já validando contra um dtd. Para os casos mais
@@ -290,6 +291,7 @@ public final class MParser {
         ErrorHandlerMElement eHandler = new ErrorHandlerMElement();
         builder.setErrorHandler(eHandler);
         Element result = builder.parse(in).getDocumentElement();
+        result.normalize();
         if (eHandler.hasErros()) {
             throw new SAXException(eHandler.getErros());
         }

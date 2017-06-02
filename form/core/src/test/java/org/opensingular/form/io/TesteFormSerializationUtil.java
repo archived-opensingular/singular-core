@@ -367,6 +367,7 @@ public class TesteFormSerializationUtil extends TestCaseForm {
             pb.createAttributeIntoType(SType.class, ATR_INT1);
         }
     }
+    
 
     @Test
     public void testRefSerialization() {
