@@ -61,7 +61,9 @@ public class ProcessadorCodigoFonte {
 
     private int processCode(String[] linhas, int i, String linha) {
         int j = i;
-        if (isBloco(linha)) {
+
+        if(isNaoMostrar(linha)){
+        } else if (isBloco(linha)) {
             j =  processBlock(linhas, j);
         } else if (isLinha(linha)) {
             fonteFinal.add(linhas[++j]);
@@ -70,6 +72,10 @@ public class ProcessadorCodigoFonte {
             fonteFinal.add(linha);
         }
         return j;
+    }
+
+    private boolean isNaoMostrar(String linha) {
+        return linha.contains("CaseItem") || linha.contains("Resource") || linha.contains("TODO");
     }
 
     private int processBlock(String[] linhas, int i) {

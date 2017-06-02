@@ -17,13 +17,19 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.Loggable;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 
 /**
  * Creation date: (24/04/2000 10:34:52)
@@ -31,7 +37,7 @@ import java.io.PrintWriter;
  * @author Daniel Bordin
  */
 
-final class XMLToolkitWriter {
+public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable {
 
     /**
      * Define o tamanho da tabulação
@@ -40,21 +46,37 @@ final class XMLToolkitWriter {
     /**
      * Tabulações predefinidas p/ evitar montagem constante de string (cache)
      */
-    private static final String[] LISTA_SPACE = new String[15];
 
-    private static final char[] ESPECIAIS = {'&', '<', '>'};
-    private static final String[] SUBSTITUTOS = {"&amp;", "&lt;", "&gt;"};
+
+    private final Charset charset;
+
 
     /**
      * Esconde o construtor por ser uma classe utilitária
      */
-    private XMLToolkitWriter() {
+    XMLMElementWriter(Charset charset) {
+        this.charset = charset;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(charset.name());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        Charset charset = Charset.forName((String) in.readObject());
+        try {
+            Field f = this.getClass().getDeclaredField("charset");
+            f.setAccessible(true);
+            f.set(this, charset);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            getLogger().error(e.getMessage(), e);
+        }
     }
 
     //printAttributes acrescentado por Joao Rafael
-    private static void printAttributes(PrintWriter out, Element e) {
+    private void printAttributes(PrintWriter out, Element e) {
         NamedNodeMap map = e.getAttributes();
-        int l = map.getLength();
+        int          l   = map.getLength();
         for (int i = 0; i < l; i++) {
             Attr a = (Attr) map.item(i);
             out.print(" ");
@@ -65,16 +87,16 @@ final class XMLToolkitWriter {
         }
     }
 
-    private static void printAttributes(PrintWriter out, Element e, boolean converteEspeciais) {
+    private void printAttributes(PrintWriter out, Element e, boolean htmlEncodeReserverdCharacters) {
         NamedNodeMap map = e.getAttributes();
-        int l = map.getLength();
+        int          l   = map.getLength();
         for (int i = 0; i < l; i++) {
             Attr a = (Attr) map.item(i);
             out.print(" ");
             out.print(a.getName());
             out.print("=\"");
             String texto = a.getValue();
-            if (converteEspeciais) {
+            if (htmlEncodeReserverdCharacters) {
                 printConverteCaracteresEspeciais(out, texto.toCharArray());
             } else {
                 out.print(texto);
@@ -87,15 +109,16 @@ final class XMLToolkitWriter {
      * Escreve o XML de forma que um eventual parse gere o mesmo XML.
      * Para impressões mais legíveis utilize printTabulado().
      *
-     * @param out saída destino
-     * @param e Elemento a partir do qual será impresso.
+     * @param out         saída destino
+     * @param e           Elemento a partir do qual será impresso.
      * @param printHeader Se true, adiciona string de indentificação de arquivo
-     * XML. Se false, depois não será possível fazer parse
-     * do resultado sem informaçoes complementares (header).
+     *                    XML. Se false, depois não será possível fazer parse
+     *                    do resultado sem informaçoes complementares (header).
      */
-    public static void printDocument(PrintWriter out, Element e, boolean printHeader) {
+    @Override
+    public void printDocument(PrintWriter out, Element e, boolean printHeader) {
         if (printHeader) {
-            out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+            printHeader(out);
         }
         printElement(out, e);
     }
@@ -104,16 +127,17 @@ final class XMLToolkitWriter {
      * Escreve o XML de forma que um eventual parse gere o mesmo XML.
      * Para impressões mais legíveis utilize printTabulado().
      *
-     * @param out saída destino
-     * @param e Elemento a partir do qual será impresso.
-     * @param printHeader Se true, adiciona string de indentificação de arquivo
-     * XML. Se false, depois não será possível fazer parse
-     * do resultado sem informaçoes complementares (header).
+     * @param out               saída destino
+     * @param e                 Elemento a partir do qual será impresso.
+     * @param printHeader       Se true, adiciona string de indentificação de arquivo
+     *                          XML. Se false, depois não será possível fazer parse
+     *                          do resultado sem informaçoes complementares (header).
      * @param converteEspeciais converte os caracteres de escape.
      */
-    public static void printDocument(PrintWriter out, Element e, boolean printHeader, boolean converteEspeciais) {
+    @Override
+    public void printDocument(PrintWriter out, Element e, boolean printHeader, boolean converteEspeciais) {
         if (printHeader) {
-            out.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+            printHeader(out);
         }
         printElement(out, e, converteEspeciais);
     }
@@ -122,20 +146,27 @@ final class XMLToolkitWriter {
      * Escreve o XML de forma que um eventual parse gere o mesmo XML.
      * Para impressões mais legíveis utilize printTabulado().
      *
-     * @param out saída destino
-     * @param e Elemento a partir do qual será impresso.
+     * @param out         saída destino
+     * @param e           Elemento a partir do qual será impresso.
      * @param printHeader Se true, adiciona string de indentificação de arquivo
-     * XML. Se false, depois não será possível fazer parse
-     * do resultado sem informaçoes complementares (header).
+     *                    XML. Se false, depois não será possível fazer parse
+     *                    do resultado sem informaçoes complementares (header).
      */
-    public static void printDocumentIndentado(PrintWriter out, Element e, boolean printHeader) {
+    @Override
+    public void printDocumentIndentado(PrintWriter out, Element e, boolean printHeader) {
         if (printHeader) {
-            out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+            printHeader(out);
         }
         printElement(out, e, 0);
     }
 
-    private static void printElement(PrintWriter out, Element e) {
+    private void printHeader(PrintWriter out) {
+        out.print("<?xml version=\"1.0\" encoding=\"");
+        out.print(charset);
+        out.print("\"?>");
+    }
+
+    private void printElement(PrintWriter out, Element e) {
         if (!e.hasChildNodes()) {
             out.print("<");
             out.print(e.getNodeName());
@@ -150,7 +181,7 @@ final class XMLToolkitWriter {
         out.print(">");
 
         NodeList nList = e.getChildNodes();
-        int tam = nList.getLength();
+        int      tam   = nList.getLength();
         for (int i = 0; i < tam; i++) {
             printNode(out, nList.item(i));
         }
@@ -159,7 +190,7 @@ final class XMLToolkitWriter {
         out.print('>');
     }
 
-    private static void printElement(PrintWriter out, Element e, boolean converteEspeciais) {
+    private void printElement(PrintWriter out, Element e, boolean converteEspeciais) {
         if (!e.hasChildNodes()) {
             out.print("<");
             out.print(e.getNodeName());
@@ -174,7 +205,7 @@ final class XMLToolkitWriter {
         out.print(">");
 
         NodeList nList = e.getChildNodes();
-        int tam = nList.getLength();
+        int      tam   = nList.getLength();
         for (int i = 0; i < tam; i++) {
             printNode(out, nList.item(i), converteEspeciais);
         }
@@ -183,7 +214,7 @@ final class XMLToolkitWriter {
         out.print('>');
     }
 
-    private static void printElement(PrintWriter out, Element e, int level) {
+    private void printElement(PrintWriter out, Element e, int level) {
         printSpace(out, level);
         if (!e.hasChildNodes()) {
             out.print('<');
@@ -199,7 +230,7 @@ final class XMLToolkitWriter {
         out.print(">");
 
         NodeList nList = e.getChildNodes();
-        int tam = nList.getLength();
+        int      tam   = nList.getLength();
 
         if (tam != 0) {
             boolean pulaLinha = (tam > 1) || !XmlUtil.isNodeTypeText(nList.item(0));
@@ -219,7 +250,7 @@ final class XMLToolkitWriter {
 
     }
 
-    private static void printNode(PrintWriter out, Node node) {
+    private void printNode(PrintWriter out, Node node) {
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
                 printElement(out, (Element) node);
@@ -233,7 +264,7 @@ final class XMLToolkitWriter {
         }
     }
 
-    private static void printNode(PrintWriter out, Node node, boolean converteEspeciais) {
+    private void printNode(PrintWriter out, Node node, boolean converteEspeciais) {
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
                 printElement(out, (Element) node, converteEspeciais);
@@ -252,22 +283,8 @@ final class XMLToolkitWriter {
         }
     }
 
-    private static void printConverteCaracteresEspeciais(PrintWriter out, char[] texto) {
-        int len = texto.length;
-        int ultimoEscrito = 0;
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (texto[i] == ESPECIAIS[j]) {
-                    out.write(texto, ultimoEscrito, i - ultimoEscrito);
-                    out.print(SUBSTITUTOS[j]);
-                    ultimoEscrito = i + 1;
-                }
-            }
-        }
-        out.write(texto, ultimoEscrito, len - ultimoEscrito);
-    }
 
-    private static void printNode(PrintWriter out, Node node, int level) {
+    private void printNode(PrintWriter out, Node node, int level) {
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
                 printElement(out, (Element) node, level);
@@ -290,12 +307,12 @@ final class XMLToolkitWriter {
         }
     }
 
-    private static void printTexto(PrintWriter out, String txt, int level) {
-        int tam = txt.length();
-        int posi = 0;
-        boolean consome = false;
-        char consomeChar = ' ';
-        char c;
+    private void printTexto(PrintWriter out, String txt, int level) {
+        int     tam         = txt.length();
+        int     posi        = 0;
+        boolean consome     = false;
+        char    consomeChar = ' ';
+        char    c;
         for (int i = 0; i < tam; i++) {
             c = txt.charAt(i);
             if (consome) {
@@ -328,7 +345,8 @@ final class XMLToolkitWriter {
         }
     }
 
-    private static void printSpace(PrintWriter out, int level) {
+    private void printSpace(PrintWriter out, int level) {
+        String[] LISTA_SPACE = new String[15];
         if (level >= LISTA_SPACE.length) {
             //Indentação maior que o cache de espaços
             for (int i = level; i != 0; i--) {

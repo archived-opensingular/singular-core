@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.internal.lib.commons.json;
+package org.opensingular.internal.lib.commons.xml;
 
 import org.json.JSONWriter;
 import org.w3c.dom.Element;
@@ -23,18 +23,27 @@ import org.w3c.dom.NodeList;
 
 import java.io.PrintWriter;
 
-public class JSONToolkit {
+public class JSONToolkit implements MElementWriter {
 
-    private JSONToolkit() {}
+    public JSONToolkit() {
+    }
 
-    public static void printJSON(PrintWriter out, Element e) {
+    private static boolean isObject(Node node) {
+        return node.getFirstChild() != null && node.getFirstChild().getNodeType() == Node.ELEMENT_NODE;
+    }
+
+    private static boolean isProperty(Node node) {
+        return node.getFirstChild() != null && node.getFirstChild().getNodeType() == Node.TEXT_NODE;
+    }
+
+    private void printJSON(PrintWriter out, Element e) {
         final JSONWriter jsonWriter = new JSONWriter(out);
         jsonWriter.object();
         printJSON(jsonWriter, e);
         jsonWriter.endObject();
     }
 
-    private static void printJSON(JSONWriter jsonWriter, Node node) {
+    private void printJSON(JSONWriter jsonWriter, Node node) {
         if (isObject(node)) {
             jsonWriter.key(node.getNodeName());
             jsonWriter.object();
@@ -49,12 +58,18 @@ public class JSONToolkit {
         }
     }
 
-    private static boolean isObject(Node node) {
-        return node.getFirstChild() != null && node.getFirstChild().getNodeType() == Node.ELEMENT_NODE;
+    @Override
+    public void printDocument(PrintWriter out, Element e, boolean printHeader) {
+        printJSON(out, e);
     }
 
-    private static boolean isProperty(Node node) {
-        return node.getFirstChild() != null && node.getFirstChild().getNodeType() == Node.TEXT_NODE;
+    @Override
+    public void printDocument(PrintWriter out, Element e, boolean printHeader, boolean converteEspeciais) {
+        printJSON(out, e);
     }
 
+    @Override
+    public void printDocumentIndentado(PrintWriter out, Element e, boolean printHeader) {
+        printJSON(out, e);
+    }
 }
