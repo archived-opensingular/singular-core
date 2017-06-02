@@ -15,7 +15,8 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
             ? Collections.emptyList()
             : Arrays.asList(new SInstanceAction(
                 SInstanceAction.ActionType.NORMAL,
-                SIcon.resolve("question"))
+                SIcon.resolve("question"),
+                "Ajuda")
                     .setActionHandler((i, d) -> d.showMessage("Ajuda", i.get().asAtr().getHelp())));
     }
 }

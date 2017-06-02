@@ -24,7 +24,7 @@ jQuery(document).ready(function () {
         		// only if no other component is focused
         		$('#'+containerId)
         			.find('input:not([type=hidden]),select,textarea,button,object,a')
-        			.filter(':visible')
+        			.filter(':visible:not(.decorator-actions *)')
         			.first()
         			.each(function(){ this.focus(); });
         	}

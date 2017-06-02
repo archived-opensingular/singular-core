@@ -18,6 +18,7 @@ import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 public abstract class SInstanceActionsPanel extends TemplatePanel {
 
@@ -28,9 +29,10 @@ public abstract class SInstanceActionsPanel extends TemplatePanel {
         return ""
             + "<div class='btn-group btn-group-md'>"
             + "  <div wicket:id='actions'>"
-            + "  <button type='button' class='btn btn-link btn-md md-skip' wicket:id='link' style='padding:0;'>"
+            + "  <button wicket:id='button' type='button'"
+            + "      class='btn btn-link btn-md md-skip' style='padding:0px;'"
+            + "      data-toggle='tooltip' data-placement='top'>"
             + "    <i wicket:id='icon'></i>"
-            + "    <span wicket:id='text'></span>"
             + "  </button>"
             + "  </div>"
             + "</div>";
@@ -46,6 +48,7 @@ public abstract class SInstanceActionsPanel extends TemplatePanel {
         this.actionsSupplier = actionsSupplier;
 
         add($b.classAppender("decorator-actions"));
+        add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
 
         add(new RefreshingView<SInstanceAction>("actions") {
             @Override
@@ -54,7 +57,7 @@ public abstract class SInstanceActionsPanel extends TemplatePanel {
                 item.setRenderBodyOnly(true);
 
                 SInstanceAction action = itemModel.getObject();
-                ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
+                ActionAjaxLink<SInstanceAction> button = new ActionAjaxLink<SInstanceAction>("button", itemModel) {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
                         final List<?> contextList = createInternalContextList(target);
@@ -69,28 +72,16 @@ public abstract class SInstanceActionsPanel extends TemplatePanel {
                 };
 
                 Label iconContainer = new Label("icon");
-                link.add(iconContainer
+                button.add(iconContainer
                     .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getCssClass())))
-                    //.add($b.classAppender("btn-icon-only", $m.get(() -> isBlank(action.getText()))))
                     .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null))));
 
-                link.add(new Label("text", $m.map(itemModel, it -> it.getText()))
-                    .add($b.visibleIf($m.map(itemModel, it -> isNotBlank(it.getText())))));
+                button
+                    .add($b.attr("title", action.getText()))
+                    .add($b.attr("data-toggle", "tooltip"))
+                    .add($b.attr("title", action.getDescription(), $m.map(itemModel, it -> isNotBlank(it.getText()))));
 
-                link.add($b.attr("title", action.getDescription(), $m.map(itemModel, it -> isNotBlank(it.getDescription()))));
-
-                //                link.add(new AjaxEventBehavior("click") {
-                //                    @Override
-                //                    protected void onEvent(AjaxRequestTarget target) {
-                //                        List<?> contextList = createInternalContextList(target);
-                //
-                //                        SInstanceAction.Delegate delegate = new AbstractSIconActionDelegate(instanceModel::getObject, contextList);
-                //                        itemModel.getObject().getActionHandler().onAction(instanceModel::getObject, delegate);
-                //                    }
-                //                });
-
-                item.add(link
-                    .add($b.classAppender("")));
+                item.add(button);
             }
             @Override
             protected Iterator<IModel<SInstanceAction>> getItemModels() {
