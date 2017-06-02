@@ -30,6 +30,7 @@ import java.util.Optional;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
@@ -52,10 +53,10 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 
@@ -172,25 +173,27 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                 BSCol column = grid.newColInRow();
 
                 if (hasLabel) {
-                    column.appendTag("h5", new BSLabel("_title", label));
+                    column.appendTag("h4", new Label("_title", label)
+                        .add($b.classAppender("singular-composite-title")));
                     ctx.configureContainer(label);
                     column.setVisible(!ctx.getParent().isTitleInBlock());
                 }
 
-                column.appendTag("div", new SInstanceActionsPanel("actions",
+                IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                    mapper,
+                    target,
                     model,
-                    () -> mapper.instanceActionsProviders.actionList(model)) {
-                    @Override
-                    protected List<?> createInternalContextList(AjaxRequestTarget target) {
-                        return Arrays.asList(
-                            mapper,
-                            target,
-                            model,
-                            model.getObject(),
-                            ctx,
-                            ctx.getContainer());
-                    }
-                }.add($b.classAppender("singular-composite")));
+                    model.getObject(),
+                    ctx,
+                    ctx.getContainer());
+
+                column
+                    .appendTag("div", new SInstanceActionsPanel("actions", model, internalContextListProvider,
+                        () -> mapper.instanceActionsProviders.actionList(model, it -> it.getPosition() < 0))
+                            .add($b.classAppender("align-left")))
+                    .appendTag("div", new SInstanceActionsPanel("actions", model, internalContextListProvider,
+                        () -> mapper.instanceActionsProviders.actionList(model, it -> it.getPosition() >= 0))
+                            .add($b.classAppender("align-right")));
 
                 return column;
             }

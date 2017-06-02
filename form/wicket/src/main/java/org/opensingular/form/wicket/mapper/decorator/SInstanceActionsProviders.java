@@ -14,6 +14,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.decorator.action.SInstanceAction;
+import org.opensingular.lib.commons.lambda.IPredicate;
 
 import com.google.common.collect.Lists;
 
@@ -30,6 +31,11 @@ public class SInstanceActionsProviders implements Serializable, ISInstanceAction
         return actionList(model).iterator();
     }
 
+    public List<SInstanceAction> actionList(final IModel<? extends SInstance> model, IPredicate<SInstanceAction> filter) {
+        return actionList(model).stream()
+            .filter(filter)
+            .collect(toList());
+    }
     public List<SInstanceAction> actionList(final IModel<? extends SInstance> model) {
         if (this.entries == null)
             return Collections.emptyList();

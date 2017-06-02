@@ -2818,20 +2818,21 @@ Login page
   margin-top: -6px !important;
   margin-bottom: 10px !important; }
 
-.singular-form-controls.decorator-actions,
-.singular-composite.decorator-actions {
+.singular-composite-title {
+  display: inline-block; }
+
+.decorator-actions {
   padding: 0 0 2px; }
-  .singular-form-controls.decorator-actions .btn > i,
-  .singular-composite.decorator-actions .btn > i {
-    padding: 2px 0 0 1px; }
-  .singular-form-controls.decorator-actions .btn:hover, .singular-form-controls.decorator-actions .btn:focus,
-  .singular-composite.decorator-actions .btn:hover,
-  .singular-composite.decorator-actions .btn:focus {
-    transition: box-shadow 0.1s cubic-bezier(0.4, 0, 1, 1), background-color 0.1s cubic-bezier(0.4, 0, 0.2, 1), color 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.36); }
+  .decorator-actions > .btn-group > .btn {
+    padding: 1px 2px 1px 2px;
+    margin: 1px 1px 1px 1px !important; }
+  .decorator-actions > .btn-group > .btn:hover, .decorator-actions > .btn-group .btn:focus {
+    color: #40BAA7;
+    background-color: #F4FFFD; }
 
-.singular-form-controls.decorator-actions {
+.decorator-actions.align-left {
+  display: inline;
+  margin-left: 1em; }
+
+.decorator-actions.align-right {
   float: right; }
-
-.singular-composite.decorator-actions {
-  display: inline; }

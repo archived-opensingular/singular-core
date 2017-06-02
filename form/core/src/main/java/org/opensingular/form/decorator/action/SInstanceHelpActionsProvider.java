@@ -13,10 +13,10 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
         return (isBlank(instance.asAtr().getHelp()))
             ? Collections.emptyList()
-            : Arrays.asList(new SInstanceAction(
-                SInstanceAction.ActionType.NORMAL,
-                SIcon.resolve("question"),
-                "Ajuda")
-                    .setActionHandler((i, d) -> d.showMessage("Ajuda", i.get().asAtr().getHelp())));
+            : Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
+                .setIcon(SIcon.resolve("question"))
+                .setText("Ajuda")
+                .setPosition(Integer.MIN_VALUE)
+                .setActionHandler((i, d) -> d.showMessage("Ajuda", i.get().asAtr().getHelp())));
     }
 }

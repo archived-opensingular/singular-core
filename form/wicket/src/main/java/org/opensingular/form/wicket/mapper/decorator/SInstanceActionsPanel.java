@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,37 +16,36 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
-public abstract class SInstanceActionsPanel extends TemplatePanel {
+public class SInstanceActionsPanel extends TemplatePanel {
 
     private static String template(TemplatePanel c) {
-        SInstanceActionsPanel p = (SInstanceActionsPanel) c;
-        List<SInstanceAction> actions = p.actionsSupplier.get();
+        //SInstanceActionsPanel p = (SInstanceActionsPanel) c;
+        //List<SInstanceAction> actions = p.actionsSupplier.get();
 
         return ""
-            + "<div class='btn-group btn-group-md'>"
-            + "  <div wicket:id='actions'>"
-            + "  <button wicket:id='button' type='button'"
-            + "      class='btn btn-link btn-md md-skip' style='padding:0px;'"
-            + "      data-toggle='tooltip' data-placement='top'>"
-            + "    <i wicket:id='icon'></i>"
-            + "  </button>"
-            + "  </div>"
-            + "</div>";
+            + "\n<div class='btn-group btn-group-md' style='margin-left:-1px !important;'>"
+            + "\n  <div wicket:id='actions'>"
+            + "\n  <a wicket:id='button'"
+            + "\n      class='btn btn-link btn-md md-skip' style='padding:0px;'"
+            + "\n      data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
+            + "\n    <i wicket:id='icon'></i>"
+            + "\n  </a>"
+            + "\n  </div>"
+            + "\n</div>";
     }
-
-    private final ISupplier<? extends List<SInstanceAction>> actionsSupplier;
 
     public SInstanceActionsPanel(
         String id,
         IModel<? extends SInstance> instanceModel,
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider,
         ISupplier<? extends List<SInstanceAction>> actionsSupplier) {
         super(id, instanceModel, SInstanceActionsPanel::template);
-        this.actionsSupplier = actionsSupplier;
 
         add($b.classAppender("decorator-actions"));
         add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
@@ -60,7 +60,7 @@ public abstract class SInstanceActionsPanel extends TemplatePanel {
                 ActionAjaxLink<SInstanceAction> button = new ActionAjaxLink<SInstanceAction>("button", itemModel) {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
-                        final List<?> contextList = createInternalContextList(target);
+                        final List<?> contextList = internalContextListProvider.apply(target);
 
                         final SInstanceAction.Delegate delegate =
                             new AbstractSIconActionDelegate(instanceModel::getObject, contextList);
@@ -86,55 +86,10 @@ public abstract class SInstanceActionsPanel extends TemplatePanel {
             @Override
             protected Iterator<IModel<SInstanceAction>> getItemModels() {
                 return actionsSupplier.get().stream()
+                    .sorted(Comparator.comparing(it -> it.getPosition()))
                     .map(it -> (IModel<SInstanceAction>) Model.of(it))
                     .iterator();
             }
         });
     }
-
-    protected abstract List<?> createInternalContextList(AjaxRequestTarget target);
-    //
-    //    public static void buildActions(
-    //        final WicketBuildContext ctx,
-    //        final IModel<? extends SInstance> model,
-    //        final ISInstanceActionCapable actionCapable,
-    //        final BSContainer<?> actionsContainer,
-    //        final Iterator<SInstanceAction> actionsIterator) {
-    //
-    //        while (actionsIterator.hasNext()) {
-    //            SInstanceAction action = actionsIterator.next();
-    //            SIcon icon = action.getIcon();
-    //            String text = action.getText();
-    //            String desc = action.getDescription();
-    //
-    //            BSContainer<?> link = new BSContainer<>("btn");
-    //            if (icon != null)
-    //                link.appendTag("i", new WebMarkupContainer("icon").add($b.classAppender(icon.getCssClass())))
-    //                    .add($b.classAppender("btn-icon-only", $m.get(() -> isBlank(text))));
-    //
-    //            if (isNotBlank(text))
-    //                link.appendTag("span", new Label("text", text));
-    //
-    //            if (isNotBlank(desc))
-    //                link.add($b.attr("title", desc));
-    //
-    //            link.add(new AjaxEventBehavior("click") {
-    //                @Override
-    //                protected void onEvent(AjaxRequestTarget target) {
-    //                    List<?> contextList = Arrays.asList(
-    //                        actionCapable,
-    //                        target,
-    //                        model,
-    //                        model.getObject(),
-    //                        ctx,
-    //                        ctx.getContainer());
-    //
-    //                    SInstanceAction.Delegate delegate = new AbstractSIconActionDelegate(model::getObject, contextList);
-    //                    action.getActionHandler().onAction(model::getObject, delegate);
-    //                }
-    //            });
-    //
-    //            actionsContainer.appendTag("a", true, "class='btn btn-circle btn-default'", link);
-    //        }
-    //    }
 }

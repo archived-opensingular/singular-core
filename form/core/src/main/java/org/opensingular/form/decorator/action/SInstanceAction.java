@@ -24,51 +24,15 @@ public class SInstanceAction implements Serializable {
     private String        description;
     private ActionHandler actionHandler;
     private boolean       secondary = false;
+    private int           position  = 0;
 
     public SInstanceAction(ActionType type) {
         this.setType(type);
     }
 
-    public SInstanceAction(ActionType type, SIcon icon, String text, String description, ActionHandler handler) {
-        this.setType(type);
-        this.setIcon(icon);
-        this.setText(text);
-        this.setDescription(description);
-        this.setActionHandler(handler);
-    }
-
-    public SInstanceAction(ActionType type, SIcon icon, String text, ActionHandler handler) {
-        this.setType(type);
-        this.setIcon(icon);
-        this.setText(text);
-        this.setActionHandler(handler);
-    }
-    public SInstanceAction(ActionType type, SIcon icon, ActionHandler handler) {
-        this.setType(type);
-        this.setIcon(icon);
-        this.setActionHandler(handler);
-    }
-    public SInstanceAction(ActionType type, String text, ActionHandler handler) {
-        this.setType(type);
-        this.setText(text);
-        this.setActionHandler(handler);
-    }
-    public SInstanceAction(ActionType type, SIcon icon, String text) {
-        this.setType(type);
-        this.setIcon(icon);
-        this.setText(text);
-    }
-    public SInstanceAction(ActionType type, SIcon icon) {
-        this.setType(type);
-        this.setIcon(icon);
-    }
-    public SInstanceAction(ActionType type, String text) {
-        this.setType(type);
-        this.setText(text);
-    }
-
     public static SInstanceAction defaultCancelAction(String text) {
-        return new SInstanceAction(ActionType.NORMAL, text)
+        return new SInstanceAction(ActionType.NORMAL)
+            .setText(text)
             .setActionHandler((i, d) -> d.closeForm(i.get()));
     }
 
@@ -79,12 +43,14 @@ public class SInstanceAction implements Serializable {
     public String          getDescription()   { return description  ; }
     public ActionHandler   getActionHandler() { return actionHandler; }
     public boolean         isSecondary()      { return secondary    ; }
+    public int             getPosition()      { return position     ; }
     public SInstanceAction setType         (ActionType       type) { this.type          = type       ; return this; }
     public SInstanceAction setText         (String           text) { this.text          = text       ; return this; }
     public SInstanceAction setIcon         (SIcon            icon) { this.icon          = icon       ; return this; }
     public SInstanceAction setDescription  (String    description) { this.description   = description; return this; }
     public SInstanceAction setActionHandler(ActionHandler handler) { this.actionHandler = handler    ; return this; }
     public SInstanceAction setSecondary    (boolean     secondary) { this.secondary     = secondary  ; return this; }
+    public SInstanceAction setPosition     (int          position) { this.position      = position   ; return this; }
     //@formatter:on
 
     public interface Delegate {

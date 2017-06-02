@@ -44,6 +44,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
@@ -86,23 +87,23 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         if (actions.isEmpty()) {
             formGroup.appendLabel(label);
         } else {
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                AbstractControlsFieldComponentMapper.this,
+                target,
+                model,
+                model.getObject(),
+                ctx,
+                ctx.getContainer());
+
             formGroup
                 .appendDiv(new BSControls("labelBar")
                     .appendLabel(label)
-                    .appendDiv(new SInstanceActionsPanel("actions",
-                        model,
-                        () -> instanceActionsProviders.actionList(model)) {
-                        @Override
-                        protected List<?> createInternalContextList(AjaxRequestTarget target) {
-                            return Arrays.asList(
-                                AbstractControlsFieldComponentMapper.this,
-                                target,
-                                model,
-                                model.getObject(),
-                                ctx,
-                                ctx.getContainer());
-                        }
-                    }.add($b.classAppender("singular-form-controls"))));
+                    .appendDiv(new SInstanceActionsPanel("actions", model, internalContextListProvider,
+                        () -> instanceActionsProviders.actionList(model, it -> it.getPosition() < 0))
+                            .add($b.classAppender("align-left")))
+                    .appendDiv(new SInstanceActionsPanel("actions", model, internalContextListProvider,
+                        () -> instanceActionsProviders.actionList(model, it -> it.getPosition() >= 0))
+                            .add($b.classAppender("align-right"))));
         }
 
         formGroup.newHelpBlock(subtitle)
