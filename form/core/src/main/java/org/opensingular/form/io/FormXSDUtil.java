@@ -16,6 +16,15 @@
 
 package org.opensingular.form.io;
 
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SType;
@@ -28,15 +37,6 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
 import org.w3c.dom.Node;
-
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class FormXSDUtil {
 
@@ -76,7 +76,7 @@ public class FormXSDUtil {
     private static void readXsd(SType<?> typeContext, ElementReader parent) {
         for (ElementReader element : parent) {
             if (element.isTagXsdElement()) {
-                readXsdElementDefinition(typeContext, parent, element);
+                readXsdElementDefinition(typeContext, parent, element, true);
             } else if (element.isTagComplexType() || element.isTagSequence()) {
                 if (typeContext instanceof STypeComposite) {
                     readXsd(typeContext, element);
@@ -90,10 +90,11 @@ public class FormXSDUtil {
             } else {
                 element.checkUnknownNodeTreatment();
             }
+
         }
     }
 
-    private static void readXsdElementDefinition(SType<?> typeContext, ElementReader parent, ElementReader element) {
+    private static void readXsdElementDefinition(SType<?> typeContext, ElementReader parent, ElementReader element, boolean generateLabel) {
         String name = element.getAttrRequired("name");
         SType<?> typeOfNewType = detectType(element);
         SType<?> newType;
@@ -102,6 +103,9 @@ public class FormXSDUtil {
                 throw new SingularFormException(element.errorMsg("Tipo raiz não esperado como lista"));
             }
             newType = parent.getPkg().createType(name, typeOfNewType);
+            if(generateLabel){
+                newType.asAtr().label(StringUtils.capitalize(name));
+            }
             readXsd(newType, element);
         } else if (typeContext.isComposite()) {
             if (element.isList()) {
@@ -110,11 +114,18 @@ public class FormXSDUtil {
                 } else {
                     newType = ((STypeComposite) typeContext).addFieldListOf(name, typeOfNewType);
                 }
+                if(generateLabel){
+                    newType.asAtr().label(StringUtils.capitalize(name));
+                }
                 readXsd(((STypeList) newType).getElementsType(), element);
             } else {
                 newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
+                if(generateLabel){
+                    newType.asAtr().label(StringUtils.capitalize(name));
+                }
                 readXsd(newType, element);
             }
+            
         } else {
             element.checkUnexpectedNodeFor(typeContext);
             return;
