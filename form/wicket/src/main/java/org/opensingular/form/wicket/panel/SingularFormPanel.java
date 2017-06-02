@@ -288,7 +288,7 @@ public class SingularFormPanel extends Panel {
     private SingularFormContextWicket resolveFormConfigWicket() {
         SingularFormContextWicket formContextWicket = null;
         if (documentFactoryRef != null) {
-            ServiceRegistry registry = documentFactoryRef.get().getServiceRegistry();
+            ServiceRegistry registry = documentFactoryRef.get().getExternalServiceRegistry();
             if (registry != null) {
                 formContextWicket = registry.lookupService(SingularFormContextWicket.class).orElse(null);
             }

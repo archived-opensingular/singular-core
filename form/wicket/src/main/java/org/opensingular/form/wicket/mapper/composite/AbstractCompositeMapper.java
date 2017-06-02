@@ -40,6 +40,7 @@ import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.type.basic.AtrBootstrap;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -51,6 +52,7 @@ import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.annotation.AnnotationComponent;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
+import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -201,6 +203,14 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             return null;
         }
 
+        protected void addSubtitleIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
+            AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
+            if (isNotBlank(subtitle.getObject())) {
+                BSCol column = grid.newColInRow();
+                column.newTag("span", true, "class='subtitle'", column.newComponent(id -> (Label) new Label(id, subtitle).setEscapeModelStrings(true)));
+            }
+        }
+
         protected Optional<MarkupContainer> findFeedbackAwareParent() {
             return Optional.ofNullable(ctx.getContainer().visitParents(MarkupContainer.class, (c, v) -> {
                 if (SValidationFeedbackHandler.isBound(c))
@@ -212,7 +222,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             return ctx.getRootContext().getAnnotationMode().enabled() &&
                 getInstance().asAtrAnnotation().isAnnotated();
         }
-
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
 
             final BSContainer<?> parentCol = ctx.getContainer();

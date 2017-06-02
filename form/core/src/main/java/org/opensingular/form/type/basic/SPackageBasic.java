@@ -116,7 +116,6 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS_FUNCTION);
-        pb.createAttributeIntoType(STypeSimple.class, ATR_INITIAL_VALUE);
         pb.createAttributeIntoType(STypeSimple.class, ATR_FORMULA);
         pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(Boolean.TRUE);
         pb.createAttributeIntoType(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(Boolean.TRUE);

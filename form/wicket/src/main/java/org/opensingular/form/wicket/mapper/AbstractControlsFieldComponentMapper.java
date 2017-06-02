@@ -39,7 +39,6 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
-import org.opensingular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
@@ -109,8 +108,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
             .add($b.classAppender("hidden-sm"))
-            .add($b.classAppender("hidden-md"))
-            .add(InvisibleIfNullOrEmptyBehavior.getInstance());
+            .add($b.classAppender("hidden-md"));
+            //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
 

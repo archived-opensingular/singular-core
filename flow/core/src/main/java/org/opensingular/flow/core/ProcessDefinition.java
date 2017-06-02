@@ -35,6 +35,8 @@ import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
@@ -94,6 +96,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient RefProcessDefinition serializableReference;
+    private transient SingularInjector injector;
 
 
     /**
@@ -136,6 +139,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         this.key = flowKey;
         this.processInstanceClass = processInstanceClass;
         this.variableService = varService;
+        inject(this);
     }
 
     /**
@@ -523,8 +527,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @param creationPage o {@link IProcessCreationPageStrategy}.
      */
-    protected final void setCreationPageStrategy(IProcessCreationPageStrategy creationPage) {
-        this.creationPage = creationPage;
+    protected final void setCreationPageStrategy(@Nonnull IProcessCreationPageStrategy creationPage) {
+        this.creationPage = inject(creationPage);
     }
 
     /**
@@ -700,6 +704,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             serializableReference = createStaticReference(getClass());
         }
         return serializableReference;
+    }
+
+    @Nonnull
+    final <V> V inject(@Nonnull V target) {
+        if (injector == null) {
+            injector = SingularSpringInjector.get();
+        }
+        injector.inject(Objects.requireNonNull(target));
+        return target;
     }
 
     private static RefProcessDefinition createStaticReference(final Class<? extends ProcessDefinition> processDefinitionClass) {
