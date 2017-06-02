@@ -56,7 +56,7 @@ public class TestXPath {
         }
         //@formatter:off
         String xml =
-                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                         + "<pedido cliente=\"Paulo\">          \n"
                         + "    <cd cod=\"1\">                  \n"
                         + "       <grupo>Pato Fu</grupo>       \n"

@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.TypeInfo;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class TestMElementWrapper {
 
@@ -39,7 +40,7 @@ public class TestMElementWrapper {
     @Test(expected = IllegalArgumentException.class)
     public void testToBase64(){
         Assert.assertNull(MElementWrapper.toBASE64((byte[])null));
-        MElementWrapper.toBASE64((InputStream) null);
+        MElementWrapper.toBASE64((InputStream) null, StandardCharsets.UTF_8);
     }
 
     @Test(expected = IllegalArgumentException.class)

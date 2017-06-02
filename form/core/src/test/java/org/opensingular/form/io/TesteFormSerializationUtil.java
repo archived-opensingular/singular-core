@@ -1,5 +1,14 @@
 package org.opensingular.form.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Map.Entry;
+import java.util.function.Function;
+
 import org.fest.assertions.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -7,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.AtrRef;
-import org.opensingular.form.CoreAttributesWithExternalConfigTest;
 import org.opensingular.form.InstanceSerializableRef;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
@@ -32,15 +40,6 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Map.Entry;
-import java.util.function.Function;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -356,11 +355,11 @@ public class TesteFormSerializationUtil extends TestCaseForm {
     public static class PackageDinamicAttr extends SPackage {
 
         public static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(
-                CoreAttributesWithExternalConfigTest.PackageDinamicAttr.class, "text1", STypeString.class,
+                PackageDinamicAttr.class, "text1", STypeString.class,
                 SIString.class, String.class);
 
         public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(
-                CoreAttributesWithExternalConfigTest.PackageDinamicAttr.class, "int1", STypeInteger.class,
+                PackageDinamicAttr.class, "int1", STypeInteger.class,
                 SIInteger.class, Integer.class);
 
         protected void onLoadPackage(PackageBuilder pb) {
