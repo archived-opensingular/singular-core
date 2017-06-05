@@ -117,36 +117,41 @@ public class TypeProcessorAttributeReadFromFile {
         }
         
         for (int i = 0; i < attrs.getLength(); i++) {
-            
             AttibuteEntry definition = new AttibuteEntry();
-
-            if (attrs.item(i).getNodeType() == Node.ELEMENT_NODE) {
-
-                if (attrs.item(i).getAttributes() != null) {
-                    if (attrs.item(i).getAttributes().getNamedItem("field") != null) {
-                        definition.subFieldPath = attrs.item(i).getAttributes().getNamedItem("field").getTextContent();
-                    }
-                    if (attrs.item(i).getAttributes().getNamedItem("name") != null) {
-                        definition.attributeName = attrs.item(i).getAttributes().getNamedItem("name").getTextContent();
-                    }
-                    definition.attributeValue = attrs.item(i).getTextContent();
-                }
-                if (StringUtils.isEmpty(definition.attributeName)) {
-                    throw new SingularFormException("O nome do atributo é obrigatório");
-                }
-                //TODO verificar com daniel se que bloquear para atributos nao conhecidos
-//              if (!definition.attributeName.startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX)) {
-//                  throw new SingularFormException(String.format("attribute name not supported, it should be started with %s", SDictionary.SINGULAR_PACKAGES_PREFIX));
-//              }
-
-                vals.add(definition);
+            Node currentNode = attrs.item(i);
+            if (isElementNode(currentNode)) {
+                readDefinitionsForElementNode(vals, definition, currentNode);
             }
         }
         
         return vals;
     }
 
-    
+    private static void readDefinitionsForElementNode(List<AttibuteEntry> vals, AttibuteEntry definition, Node currentNode) {
+        if (currentNode.getAttributes() != null) {
+            if (currentNode.getAttributes().getNamedItem("field") != null) {
+                definition.subFieldPath = currentNode.getAttributes().getNamedItem("field").getTextContent();
+            }
+            if (currentNode.getAttributes().getNamedItem("name") != null) {
+                definition.attributeName = currentNode.getAttributes().getNamedItem("name").getTextContent();
+            }
+            definition.attributeValue = currentNode.getTextContent();
+        }
+        if (StringUtils.isEmpty(definition.attributeName)) {
+            throw new SingularFormException("O nome do atributo é obrigatório");
+        }
+        //TODO verificar com daniel se que bloquear para atributos nao conhecidos
+//              if (!definition.attributeName.startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX)) {
+//                  throw new SingularFormException(String.format("attribute name not supported, it should be started with %s", SDictionary.SINGULAR_PACKAGES_PREFIX));
+//              }
+        vals.add(definition);
+    }
+
+    private static boolean isElementNode(Node currentNode) {
+        return currentNode.getNodeType() == Node.ELEMENT_NODE;
+    }
+
+
     /** Verifica se há um arquivos com valores de atributos associados a classe informada. */
     @Nullable
     private URL lookForFile(@Nonnull Class<?> typeClass) {
