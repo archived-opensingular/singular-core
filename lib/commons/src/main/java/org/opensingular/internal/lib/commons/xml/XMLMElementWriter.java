@@ -65,7 +65,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         Charset charset = Charset.forName((String) in.readObject());
         try {
-            Field f = this.getClass().getField("charset");
+            Field f = this.getClass().getDeclaredField("charset");
             f.setAccessible(true);
             f.set(this, charset);
         } catch (NoSuchFieldException | IllegalAccessException e) {

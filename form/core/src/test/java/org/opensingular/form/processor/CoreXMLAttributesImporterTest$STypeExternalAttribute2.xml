@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<attrs>
+	<attr name="singular.form.basic.label">LL2</attr>
+	<attr name="singular.form.basic.subtitle">SS2</attr>
+	<attr name="singular.form.basic.maxLength">30</attr>
+</attrs>
