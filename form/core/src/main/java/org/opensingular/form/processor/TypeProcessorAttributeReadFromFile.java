@@ -16,14 +16,9 @@
 
 package org.opensingular.form.processor;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.InternalAccess;
 import org.opensingular.form.SType;
@@ -33,9 +28,12 @@ import org.opensingular.internal.lib.commons.xml.MParser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -51,7 +49,9 @@ public class TypeProcessorAttributeReadFromFile {
 
     private static final String SUFFIX_XML = ".xml";
 
-    /** Instância única do processador. */
+    /**
+     * Instância única do processador.
+     */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
 
     /**
@@ -65,9 +65,12 @@ public class TypeProcessorAttributeReadFromFile {
                 }
             });
 
-    TypeProcessorAttributeReadFromFile() { }
+    TypeProcessorAttributeReadFromFile() {
+    }
 
-    /** Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo. */
+    /**
+     * Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo.
+     */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
         FileDefinitions definitions = cache.getUnchecked(typeClass);
         for (AttibuteEntry entry : definitions.definitions) {
@@ -96,7 +99,7 @@ public class TypeProcessorAttributeReadFromFile {
         if (url != null) {
             try {
                 MElement xml = MParser.parse(url.openStream(), false, false);
-                if ( xml != null){
+                if (xml != null) {
                     return new FileDefinitions(url, readDefinitionsFor(xml));
                 }
             } catch (Exception e) {
@@ -109,25 +112,25 @@ public class TypeProcessorAttributeReadFromFile {
 
     @Nonnull
     public static List<AttibuteEntry> readDefinitionsFor(@Nonnull MElement xml) {
-        List<AttibuteEntry> vals = new ArrayList<AttibuteEntry>();
-        NodeList attrs = xml.getElementsByTagName("attr");
+        List<AttibuteEntry> vals  = new ArrayList<AttibuteEntry>();
+        NodeList            attrs = xml.getElementsByTagName("attr");
 
-        if(attrs.getLength() == 0){
+        if (attrs.getLength() == 0) {
             throw new SingularFormException("The tag <attr><attr/> is mandatory");
         }
-        
+
         for (int i = 0; i < attrs.getLength(); i++) {
-            AttibuteEntry definition = new AttibuteEntry();
             Node currentNode = attrs.item(i);
             if (isElementNode(currentNode)) {
-                readDefinitionsForElementNode(vals, definition, currentNode);
+                readDefinitionsForElementNode(vals, currentNode);
             }
         }
-        
+
         return vals;
     }
 
-    private static void readDefinitionsForElementNode(List<AttibuteEntry> vals, AttibuteEntry definition, Node currentNode) {
+    private static void readDefinitionsForElementNode(List<AttibuteEntry> vals, Node currentNode) {
+        AttibuteEntry definition = new AttibuteEntry();
         if (currentNode.getAttributes() != null) {
             if (currentNode.getAttributes().getNamedItem("field") != null) {
                 definition.subFieldPath = currentNode.getAttributes().getNamedItem("field").getTextContent();
@@ -152,10 +155,12 @@ public class TypeProcessorAttributeReadFromFile {
     }
 
 
-    /** Verifica se há um arquivos com valores de atributos associados a classe informada. */
+    /**
+     * Verifica se há um arquivos com valores de atributos associados a classe informada.
+     */
     @Nullable
     private URL lookForFile(@Nonnull Class<?> typeClass) {
-        String name = typeClass.getSimpleName();
+        String   name    = typeClass.getSimpleName();
         Class<?> context = typeClass;
         for (; context.isMemberClass(); context = context.getEnclosingClass()) {
             name = concatNames(context, name);
@@ -168,12 +173,14 @@ public class TypeProcessorAttributeReadFromFile {
         return context.getEnclosingClass().getSimpleName() + '$' + name;
     }
 
-    /** Representa um lsita de valores de atributos obtidos de um arquivo específico. */
+    /**
+     * Representa um lsita de valores de atributos obtidos de um arquivo específico.
+     */
     private static class FileDefinitions {
 
         public static final FileDefinitions EMPTY = new FileDefinitions(null, Collections.emptyList());
 
-        public final URL url;
+        public final URL                 url;
         public final List<AttibuteEntry> definitions;
 
         private FileDefinitions(URL url, List<AttibuteEntry> definitions) {
