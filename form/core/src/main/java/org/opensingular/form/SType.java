@@ -52,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
+public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
