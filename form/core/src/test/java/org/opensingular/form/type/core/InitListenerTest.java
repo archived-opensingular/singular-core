@@ -15,7 +15,7 @@ import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.form.io.TesteFormSerializationUtil;
+import org.opensingular.form.io.TestFormSerializationUtil;
 
 import java.io.Serializable;
 
@@ -201,7 +201,7 @@ public class InitListenerTest extends TestCaseForm {
         item.setValue("nome", "k");
         item.setValue("qtd", 2);
 
-        SInstance instance2 = TesteFormSerializationUtil.testSerializacao(instance);
+        SInstance instance2 = TestFormSerializationUtil.testSerializacao(instance);
         assertEquals(4, counterInitCalls);
 
         assertInstance(instance2)

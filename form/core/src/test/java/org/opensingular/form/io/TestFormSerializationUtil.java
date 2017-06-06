@@ -44,9 +44,9 @@ import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class TesteFormSerializationUtil extends TestCaseForm {
+public class TestFormSerializationUtil extends TestCaseForm {
 
-    public TesteFormSerializationUtil(TestFormConfig testFormConfig) {
+    public TestFormSerializationUtil(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 

@@ -25,7 +25,7 @@ import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.MockExternalServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.io.TesteFormSerializationUtil;
+import org.opensingular.form.io.TestFormSerializationUtil;
 import org.opensingular.internal.lib.commons.injection.SingularInjectionNotConfiguredException;
 
 import javax.annotation.Nonnull;
@@ -101,7 +101,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
         assertNotNull(((TypeWithInjectionTest) instance.getType()).myBean);
         assertNotNull(instance.myBean);
 
-        SInstanceWithInjection instance2 = (SInstanceWithInjection) TesteFormSerializationUtil.serializarEDeserializar(instance);
+        SInstanceWithInjection instance2 = (SInstanceWithInjection) TestFormSerializationUtil.serializarEDeserializar(instance);
         assertNotNull(((TypeWithInjectionTest) instance2.getType()).myBean);
         assertNotNull(instance2.myBean);
         assertEquals(instance.myBean.getV(), instance2.myBean.getV());
@@ -109,7 +109,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
 
     private void assertSerialization(SInstanceWithInjection2 instance) {
         assertNotNull(instance.myBean);
-        SInstanceWithInjection2 instance2 = (SInstanceWithInjection2) TesteFormSerializationUtil.serializarEDeserializar(instance);
+        SInstanceWithInjection2 instance2 = (SInstanceWithInjection2) TestFormSerializationUtil.serializarEDeserializar(instance);
         assertNotNull(instance2.myBean);
         assertEquals(instance.myBean.getV(), instance2.myBean.getV());
     }
