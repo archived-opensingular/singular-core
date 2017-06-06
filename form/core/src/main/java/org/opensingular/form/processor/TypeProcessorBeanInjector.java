@@ -17,7 +17,8 @@
 package org.opensingular.form.processor;
 
 import org.opensingular.form.SType;
-import org.opensingular.form.document.ExternalServiceRegistry;
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 
 import javax.annotation.Nonnull;
@@ -32,10 +33,14 @@ import javax.annotation.Nullable;
  */
 public class TypeProcessorBeanInjector {
 
-    /** Instância única do processador. */
+    /**
+     * Instância única do processador.
+     */
     public final static TypeProcessorBeanInjector INSTANCE = new TypeProcessorBeanInjector();
 
-    /** Método chamado logo após o registro do tipo. Nesse caso verificará se precisa injetar algum bean. */
+    /**
+     * Método chamado logo após o registro do tipo. Nesse caso verificará se precisa injetar algum bean.
+     */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
         SingularInjector injector = findInjectorFor(type);
         if (injector == null) {
@@ -45,10 +50,12 @@ public class TypeProcessorBeanInjector {
         }
     }
 
-    /** Localiza o injetor para o tipo informado. */
+    /**
+     * Localiza o injetor para o tipo informado.
+     */
     @Nullable
     private SingularInjector findInjectorFor(@Nonnull SType<?> type) {
-        ExternalServiceRegistry registry = type.getDictionary().getDictionaryConfig().getExternalRegistry();
+        ServiceRegistry registry = ServiceRegistryLocator.locate();
         if (registry != null) {
             return registry.lookupSingularInjector();
         }

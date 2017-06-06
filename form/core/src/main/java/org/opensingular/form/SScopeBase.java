@@ -139,7 +139,9 @@ public abstract class SScopeBase implements SScope {
             newType.extendSubReference();
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePreOnLoadTypeCall(newType);
             newType.setCallingOnLoadType(true);
-            TypeProcessorBeanInjector.INSTANCE.onRegisterTypeByClass(newType, typeClass);
+            if (typeClass != null) {
+                TypeProcessorBeanInjector.INSTANCE.onRegisterTypeByClass(newType, typeClass);
+            }
             callOnLoadTypeIfNecessary(newType);
             newType.setCallingOnLoadType(false);
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, true);

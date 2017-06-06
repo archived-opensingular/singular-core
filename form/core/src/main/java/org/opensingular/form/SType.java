@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
-import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -666,12 +665,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     final I newInstance(boolean executeInstanceInitListeners, @Nonnull SDocument owner) {
-        if (owner.getRegistry().getExternalRegistry() == null) {
-            ExternalServiceRegistry external = getDictionary().getDictionaryConfig().getExternalRegistry();
-            if (external != null) {
-                owner.setExternalServiceRegistry(external);
-            }
-        }
         I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {

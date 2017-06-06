@@ -16,7 +16,6 @@
 
 package org.opensingular.form.spring;
 
-import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -25,7 +24,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Representa uma factory que não faz nada com o documento e que aponta o
- * registro ({@link #getExternalServiceRegistry()}) para o Spring.
  *
  * @author Daniel C. Bordin
  */
@@ -36,15 +34,6 @@ public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
         return new SpringRefEmptySDocumentFactory(this);
-    }
-
-    @Override
-    @Nonnull
-    public ExternalServiceRegistry getExternalServiceRegistry() {
-        if (registry == null) {
-            registry = new SpringServiceRegistry();
-        }
-        return registry;
     }
 
     @Override

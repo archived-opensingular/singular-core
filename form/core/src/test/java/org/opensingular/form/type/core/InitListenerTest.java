@@ -46,7 +46,7 @@ public class InitListenerTest extends TestCaseForm {
 
         field1.withInitListener((x) -> {
             assertThat(x.getDocument()).isNotNull();
-            assertThat(x.getDocument().lookupService(P.class).orElse(null)).isNotNull();
+            assertThat(x.getDocument().lookupLocalService(P.class).orElse(null)).isNotNull();
             x.setValue("abacate");
         });
 
