@@ -94,7 +94,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     private boolean callingOnLoadType;
 
-    public SType() {
+    protected SType() {
         this(null, null);
     }
 
