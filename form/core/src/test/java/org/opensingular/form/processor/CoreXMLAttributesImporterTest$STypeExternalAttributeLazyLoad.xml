@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<attrs>
+	<attr name="dinamic.text1">correct</attr>
+	<attr name="dinamic.int1">20</attr>
+	<attr name="singular.form.basic.label">LBL</attr>
+</attrs>

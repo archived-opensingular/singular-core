@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package org.opensingular.form;
+package org.opensingular.form.processor;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.AtrRef;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -31,13 +42,11 @@ import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
-/**
- * @author Daniel C. Bordin on 28/04/2017.
- */
-@RunWith(Parameterized.class)
-public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
 
-    public CoreAttributesWithExternalConfigTest(TestFormConfig testFormConfig) {
+@RunWith(Parameterized.class)
+public class CoreXMLAttributesImporterTest extends TestCaseForm {
+
+    public CoreXMLAttributesImporterTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -85,12 +94,12 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
     @Test
     public void loadFormExternal_setNull() {
         SDictionary dictionary = createTestDictionary();
-        AssertionsSType type = assertType(dictionary.getType(STypeExternalAttributeNull.class));
+        AssertionsSType type = assertType(dictionary.getType(STypeExternalAttributeEmpty.class));
         type.isAttribute(SPackageBasic.ATR_LABEL, null);
     }
 
     @SInfoType(spackage = PackageExternalAttr.class)
-    public static class STypeExternalAttributeNull extends STypeString {
+    public static class STypeExternalAttributeEmpty extends STypeString {
 
         @Override
         protected void onLoadType(TypeBuilder tb) {
@@ -99,14 +108,20 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
     }
 
     @Test
-    public void loadFormExternalLazy_withBadPropertiesFiles() {
+    public void loadFormExternal_wrong() {
         SingularTestUtil.assertException(() -> createTestDictionary().getType(STypeExternalAttributeWrong1.class),
-                SingularFormException.class, "key='singular.form.basic.label'");
-
-        SingularTestUtil.assertException(() -> createTestDictionary().getType(STypeExternalAttributeWrong2.class),
-                SingularFormException.class, "key='bla@'");
+              SingularFormException.class, null);
+        //TODO verificar com daniel se que bloquear para atributos nao conhecidos
+//        SingularTestUtil.assertException(() -> createTestDictionary().getType(STypeExternalAttributeWrong2.class),
+//                SingularFormException.class, null);
+        
+        SingularTestUtil.assertException(() -> createTestDictionary().getType(STypeExternalAttributeWrong3.class),
+                SingularFormException.class, null);
+        
+        SingularTestUtil.assertException(() -> createTestDictionary().getType(STypeExternalAttributeWrong4.class),
+                SingularFormException.class, null);
     }
-
+    
     @SInfoType(spackage = PackageExternalAttr.class)
     public static class STypeExternalAttributeWrong1 extends STypeString {
     }
@@ -114,11 +129,21 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
     @SInfoType(spackage = PackageExternalAttr.class)
     public static class STypeExternalAttributeWrong2 extends STypeString {
     }
+    
+    @SInfoType(spackage = PackageExternalAttr.class)
+    public static class STypeExternalAttributeWrong3 extends STypeString {
+    }
+    
+    @SInfoType(spackage = PackageExternalAttr.class)
+    public static class STypeExternalAttributeWrong4 extends STypeString {
+    }
+    
+    
 
     @Test
     public void loadFromExternalFileForComposite() {
         SDictionary dictionary = createTestDictionary();
-        AssertionsSType type = assertType(dictionary.getType(STypeExternalAttributeComposite.class));
+        AssertionsSType type = assertType(dictionary.getType(STypeExternalAttributeComposite2.class));
         type.isAttribute(SPackageBasic.ATR_LABEL, "LLL1");
         type.isAttribute(SPackageBasic.ATR_SUBTITLE, "SSS1");
         type.field("field1").isAttribute(SPackageBasic.ATR_LABEL, "LLL2");
@@ -127,10 +152,58 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
         type.field("field2").isAttribute(SPackageBasic.ATR_SUBTITLE, "SSS3");
     }
 
+    @SInfoType(spackage = PackageExternalAttr.class)
+    public static class STypeExternalAttributeComposite2 extends STypeComposite {
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC11");
+            addFieldString("field1").setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC21");
+            addField("field2", STypeExternalAttribute1.class);
+        }
+    }
+
+    @Test
+    public void loadFromExternalFileForCompositeComplex() {
+        SDictionary dictionary = createTestDictionary();
+        AssertionsSType type = assertType(dictionary.getType(STypeExternalAttributeCompositeComplex.class));
+        type.isAttribute(SPackageBasic.ATR_LABEL, "LLL1");
+        type.isAttribute(SPackageBasic.ATR_SUBTITLE, "SSS1");
+        type.field("field1").isAttribute(SPackageBasic.ATR_LABEL, "LLL2");
+        type.field("field1").isAttribute(SPackageBasic.ATR_SUBTITLE, "SSS2");
+        type.field("field2").isAttribute(SPackageBasic.ATR_LABEL, "LLL3");
+        type.field("field2").isAttribute(SPackageBasic.ATR_SUBTITLE, "SSS3");
+        type.field("field3").field("field1").isAttribute(SPackageBasic.ATR_LABEL, "LLL4");
+        type.field("field3").field("field2").isAttribute(SPackageBasic.ATR_LABEL, "LLL5");
+    }
+
+    @SInfoType(spackage = PackageExternalAttr.class)
+    public static class STypeExternalAttributeCompositeComplex extends STypeComposite {
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC11");
+            addFieldString("field1").setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC21");
+            addField("field2", STypeExternalAttribute1.class);
+            addField("field3", STypeExternalAttributeComp.class);
+        }
+    }
+
+    @SInfoType(spackage = PackageExternalAttr.class)
+    public static class STypeExternalAttributeComp extends STypeComposite {
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            addFieldString("field1");
+            addFieldString("field2");
+        }
+    }
+
+    
     @Test
     @Ignore
     public void performance() {
-        createTestDictionary().getType(STypeExternalAttributeComposite.class); //Para fazer caches
+        createTestDictionary().getType(STypeExternalAttributeComposite2.class); //Para fazer caches
         performance("String    ", 10000, this::simpleCall);
         performance("Composite ", 10000, this::compositeCall);
         performance("String2   ", 20000, this::simpleCall);
@@ -152,7 +225,7 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
     }
 
     private void compositeCall() {
-        STypeExternalAttributeComposite type = createTestDictionary().getType(STypeExternalAttributeComposite.class);
+        STypeExternalAttributeComposite2 type = createTestDictionary().getType(STypeExternalAttributeComposite2.class);
         readAttributes(type);
         readAttributes(type.getField("field1"));
         readAttributes(type.getField("field2"));
@@ -167,32 +240,6 @@ public class CoreAttributesWithExternalConfigTest extends TestCaseForm {
         System.out.println("-------------------------------------------");
         System.out.println("  " + name + ": T=" + SingularIOUtils.humanReadableMiliSeconds(tempo) + " R=" + repeticoes +
                 "  qtd/seg=" + ConversorToolkit.printNumber(1000.0 * repeticoes / tempo, 0));
-    }
-
-    @SInfoType(spackage = PackageExternalAttr.class)
-    public static class STypeExternalAttributeComposite extends STypeComposite {
-
-        @Override
-        protected void onLoadType(TypeBuilder tb) {
-            setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC11");
-            addFieldString("field1").setAttributeValue(SPackageBasic.ATR_SUBTITLE, "SC21");
-            addField("field2", STypeExternalAttribute1.class);
-        }
-    }
-
-    @Test
-    public void loadFromExternalFileForCompositeWrong() {
-        SingularTestUtil.assertException(
-                () -> createTestDictionary().getType(STypeExternalAttributeCompositeWrong.class),
-                SingularFormException.class, "Não foi encontrado o tipo 'field1000'");
-    }
-
-    @SInfoType(spackage = PackageExternalAttr.class)
-    public static class STypeExternalAttributeCompositeWrong extends STypeComposite {
-        @Override
-        protected void onLoadType(TypeBuilder tb) {
-            addFieldString("field1");
-        }
     }
 
     @Test

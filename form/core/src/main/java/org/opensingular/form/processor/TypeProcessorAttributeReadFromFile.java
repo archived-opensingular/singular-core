@@ -23,7 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.InternalAccess;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.lib.commons.util.PropertiesUtils;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,23 +34,24 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 
 /**
  * Processador que faz a leitura de atributos de {@link SType} que forem definidos em classes próprias e que possuam
- * arquivo de configuração de attributos com o mesmo nome da classe.
+ * arquivo de configuração de attributos com o mesmo nome da classe (arquivos XML).
  * <p> Verifica se o atributo ainda não teve o seu tipo registrado. Nesse caso, coloca o atributo lidos como sendo do
  * tipo String temporariamente até a carga da definição do atributo.</p>
  *
  * @author Daniel C. Bordin on 29/04/2017.
+ * @author torquato.neto Refatoração para arquivos XML 31/05/2017.
  */
 public class TypeProcessorAttributeReadFromFile {
 
-    private static final String SUFFIX_PROPERTIES = ".properties";
+    private static final String SUFFIX_XML = ".xml";
 
-    /** Instância única do processador. */
+    /**
+     * Instância única do processador.
+     */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
 
     /**
@@ -61,9 +65,12 @@ public class TypeProcessorAttributeReadFromFile {
                 }
             });
 
-    TypeProcessorAttributeReadFromFile() { }
+    TypeProcessorAttributeReadFromFile() {
+    }
 
-    /** Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo. */
+    /**
+     * Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo.
+     */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
         FileDefinitions definitions = cache.getUnchecked(typeClass);
         for (AttibuteEntry entry : definitions.definitions) {
@@ -75,9 +82,8 @@ public class TypeProcessorAttributeReadFromFile {
                 InternalAccess.INTERNAL.setAttributeValueSavingForLatter(target, entry.attributeName,
                         entry.attributeValue);
             } catch (Exception e) {
-                String key = (entry.subFieldPath == null ? "" : entry.subFieldPath) + '@' + entry.attributeName;
-                throw new SingularFormException(
-                        "Erro configurando atributo da chave '" + key + "' lidos de " + definitions.url, e);
+                throw new SingularFormException(String.format("Erro configurando atributo da chave (field: %s,  attributeName: %s) lidos de %s",
+                        entry.subFieldPath, entry.attributeName, definitions.url), e);
             }
         }
     }
@@ -92,9 +98,9 @@ public class TypeProcessorAttributeReadFromFile {
         URL url = lookForFile(typeClass);
         if (url != null) {
             try {
-                Properties props = PropertiesUtils.load(url);
-                if (!props.isEmpty()) {
-                    return new FileDefinitions(url, readDefinitionsFor(props));
+                MElement xml = MParser.parse(url.openStream(), false, false);
+                if (xml != null) {
+                    return new FileDefinitions(url, readDefinitionsFor(xml));
                 }
             } catch (Exception e) {
                 throw new SingularFormException("Erro lendo propriedades para " + typeClass.getName() + " em " + url,
@@ -104,37 +110,62 @@ public class TypeProcessorAttributeReadFromFile {
         return FileDefinitions.EMPTY;
     }
 
-    /** Lê as associações de atributos a partir de um arquivo de propriedades. */
     @Nonnull
-    private List<AttibuteEntry> readDefinitionsFor(@Nonnull Properties props) {
-        List<AttibuteEntry> vals = new ArrayList<>(props.size());
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            String key = (String) entry.getKey();
-            int pos = key.indexOf('@');
-            if (pos == -1 || pos == key.length() - 1) {
-                throw new SingularFormException("Invalid attribute definition key='" + key + "'");
-            }
-            AttibuteEntry definition = new AttibuteEntry();
-            definition.subFieldPath = pos == 0 ? null : StringUtils.trimToNull(key.substring(0, pos));
-            definition.attributeName = StringUtils.trimToNull(key.substring(pos + 1));
-            definition.attributeValue = StringUtils.trimToNull((String) entry.getValue());
-            if (definition.attributeName == null) {
-                throw new SingularFormException("Invalid attribute definition key='" + key + "'");
-            }
-            vals.add(definition);
+    public static List<AttibuteEntry> readDefinitionsFor(@Nonnull MElement xml) {
+        List<AttibuteEntry> vals  = new ArrayList<AttibuteEntry>();
+        NodeList            attrs = xml.getElementsByTagName("attr");
+
+        if (attrs.getLength() == 0) {
+            throw new SingularFormException("The tag <attr><attr/> is mandatory");
         }
+
+        for (int i = 0; i < attrs.getLength(); i++) {
+            Node currentNode = attrs.item(i);
+            if (isElementNode(currentNode)) {
+                readDefinitionsForElementNode(vals, currentNode);
+            }
+        }
+
         return vals;
     }
 
-    /** Verifica se há um arquivos com valores de atributos associados a classe informada. */
+    private static void readDefinitionsForElementNode(List<AttibuteEntry> vals, Node currentNode) {
+        AttibuteEntry definition = new AttibuteEntry();
+        if (currentNode.getAttributes() != null) {
+            if (currentNode.getAttributes().getNamedItem("field") != null) {
+                definition.subFieldPath = currentNode.getAttributes().getNamedItem("field").getTextContent();
+            }
+            if (currentNode.getAttributes().getNamedItem("name") != null) {
+                definition.attributeName = currentNode.getAttributes().getNamedItem("name").getTextContent();
+            }
+            definition.attributeValue = currentNode.getTextContent();
+        }
+        if (StringUtils.isEmpty(definition.attributeName)) {
+            throw new SingularFormException("O nome do atributo é obrigatório");
+        }
+        //TODO verificar com daniel se que bloquear para atributos nao conhecidos
+//              if (!definition.attributeName.startsWith(SDictionary.SINGULAR_PACKAGES_PREFIX)) {
+//                  throw new SingularFormException(String.format("attribute name not supported, it should be started with %s", SDictionary.SINGULAR_PACKAGES_PREFIX));
+//              }
+        vals.add(definition);
+    }
+
+    private static boolean isElementNode(Node currentNode) {
+        return currentNode.getNodeType() == Node.ELEMENT_NODE;
+    }
+
+
+    /**
+     * Verifica se há um arquivos com valores de atributos associados a classe informada.
+     */
     @Nullable
     private URL lookForFile(@Nonnull Class<?> typeClass) {
-        String name = typeClass.getSimpleName();
+        String   name    = typeClass.getSimpleName();
         Class<?> context = typeClass;
         for (; context.isMemberClass(); context = context.getEnclosingClass()) {
             name = concatNames(context, name);
         }
-        return context.getResource(name + SUFFIX_PROPERTIES);
+        return context.getResource(name + SUFFIX_XML);
     }
 
     @Nonnull
@@ -142,12 +173,14 @@ public class TypeProcessorAttributeReadFromFile {
         return context.getEnclosingClass().getSimpleName() + '$' + name;
     }
 
-    /** Representa um lsita de valores de atributos obtidos de um arquivo específico. */
+    /**
+     * Representa um lsita de valores de atributos obtidos de um arquivo específico.
+     */
     private static class FileDefinitions {
 
         public static final FileDefinitions EMPTY = new FileDefinitions(null, Collections.emptyList());
 
-        public final URL url;
+        public final URL                 url;
         public final List<AttibuteEntry> definitions;
 
         private FileDefinitions(URL url, List<AttibuteEntry> definitions) {
@@ -156,7 +189,7 @@ public class TypeProcessorAttributeReadFromFile {
         }
     }
 
-    private static class AttibuteEntry {
+    static class AttibuteEntry {
 
         String subFieldPath;
         String attributeName;
