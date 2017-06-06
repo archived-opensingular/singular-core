@@ -30,10 +30,10 @@ import javax.annotation.Nullable;
  *
  * @author Daniel C. Bordin on 21/05/2017.
  */
-public class TypeProcessoBeanInjector {
+public class TypeProcessorBeanInjector {
 
     /** Instância única do processador. */
-    public final static TypeProcessoBeanInjector INSTANCE = new TypeProcessoBeanInjector();
+    public final static TypeProcessorBeanInjector INSTANCE = new TypeProcessorBeanInjector();
 
     /** Método chamado logo após o registro do tipo. Nesse caso verificará se precisa injetar algum bean. */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
