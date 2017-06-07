@@ -1,25 +1,23 @@
 package org.opensingular.lib.commons.context.singleton;
 
 
-
 import org.opensingular.lib.commons.context.MigrationEnabledSingularSingletonStrategy;
 import org.opensingular.lib.commons.context.SingularSingletonNotFoundException;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ThreadBoundedSingletonStrategy implements SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy {
 
-    private static final ThreadLocal<Map<Object, Object>> threadBounded = new ThreadLocal<Map<Object, Object>>() {
-        protected Map<Object, Object> initialValue() {
-            return new HashMap<>();
+    private static final ThreadLocal<InstanceBoundedSingletonStrategy> threadBounded = new ThreadLocal<InstanceBoundedSingletonStrategy>() {
+        protected InstanceBoundedSingletonStrategy initialValue() {
+            return new InstanceBoundedSingletonStrategy();
         }
     };
 
     @Override
     public <T> void put(T thisInstance) {
-        threadBounded.get().put(thisInstance.getClass(), thisInstance);
+        threadBounded.get().put(thisInstance);
     }
 
     @Override
@@ -34,39 +32,31 @@ public class ThreadBoundedSingletonStrategy implements SingularSingletonStrategy
 
     @Override
     public <T> boolean exists(Class<T> classKey) {
-        return threadBounded.get().containsKey(classKey);
+        return threadBounded.get().exists(classKey);
     }
 
     @Override
     public boolean exists(String nameKey) {
-        return threadBounded.get().containsKey(nameKey);
+        return threadBounded.get().exists(nameKey);
     }
 
     @Override
     public <T> T get(Class<T> singletonClass) throws SingularSingletonNotFoundException {
-        T value = (T) threadBounded.get().get(singletonClass);
-        if (value == null) {
-            throw new SingularSingletonNotFoundException(singletonClass.getName());
-        }
-        return value;
+        return threadBounded.get().get(singletonClass);
     }
 
     @Override
     public <T> T get(String name) throws SingularSingletonNotFoundException {
-        T value = (T) threadBounded.get().get(name);
-        if (value == null) {
-            throw new SingularSingletonNotFoundException(name);
-        }
-        return value;
+        return threadBounded.get().get(name);
     }
 
     @Override
     public synchronized Map<Object, Object> getEntries() {
-        return threadBounded.get();
+        return threadBounded.get().getEntries();
     }
 
     @Override
     public synchronized void putEntries(Map<Object, Object> entries) {
-        threadBounded.get().putAll(entries);
+        threadBounded.get().putEntries(entries);
     }
 }

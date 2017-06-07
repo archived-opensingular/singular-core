@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularContextSetup;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,7 +28,6 @@ public class ApplicationContextProviderTest {
 
     @Test
     public void setApplicationContextTest(){
-        new ApplicationContextProvider().setApplicationContext(null);
         ApplicationContextProvider provider = new ApplicationContextProvider();
         provider.setApplicationContext(applicationContext);
 

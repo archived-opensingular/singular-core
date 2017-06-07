@@ -22,17 +22,23 @@ public class InstanceBoundedSingletonStrategy implements SingularSingletonStrate
 
     @Override
     public synchronized <T> void put(T thisInstance) {
-        map.put(thisInstance.getClass(), thisInstance);
+        if (thisInstance != null) {
+            map.put(thisInstance.getClass(), thisInstance);
+        }
     }
 
     @Override
     public <T> void put(Class<? super T> instanceClazz, T thisInstance) {
-        map.put(instanceClazz, thisInstance);
+        if (thisInstance != null) {
+            map.put(instanceClazz, thisInstance);
+        }
     }
 
     @Override
     public synchronized <T> void put(String nameKey, T thisInstance) {
-        map.put(nameKey, thisInstance);
+        if (thisInstance != null) {
+            map.put(nameKey, thisInstance);
+        }
     }
 
     @Override

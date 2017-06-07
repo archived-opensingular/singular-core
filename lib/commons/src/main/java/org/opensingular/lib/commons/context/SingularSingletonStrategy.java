@@ -9,7 +9,7 @@ public interface SingularSingletonStrategy {
      * Keeps a single instance and use the the given instance class as key
      * The key to recover the singleton is the object class
      * Only one instance per class can be registered
-     *
+     * Null values must be ignored silently
      * @param thisInstance
      * @param <T>
      * @return
@@ -21,7 +21,7 @@ public interface SingularSingletonStrategy {
      * Keeps a single instance for the given class and use the informed class as key
      * The key to recover the singleton is the object class
      * Only one instance per class can be registered
-     *
+     * Null values must be ignored silently
      * @param thisInstance
      * @param <T>
      * @return
@@ -33,7 +33,7 @@ public interface SingularSingletonStrategy {
      * Keep a single instance for the given name identifier
      * Note that, different from Spring singleton, in this case
      * Only one instance per name can be registered
-     *
+     * Null values must be ignored silently
      * @param nameKey
      * @param thisInstance
      * @param <T>
