@@ -22,7 +22,7 @@
         window.FileUploadPanel.setup = function(params) {
             $('#' + params.progress_bar_id).hide();
 
-            var click_whitespace_to_select_filte = function () {
+            var click_whitespace_to_select_file = function () {
                 var formControl = $('#' + params.panel_id).find('.form-control');
                 var fileField = $('#'+ params.file_field_id);
                 
@@ -44,7 +44,7 @@
                 });
             }
             
-            click_whitespace_to_select_filte();
+            click_whitespace_to_select_file();
 
             var update_action_buttons = function () {
                 var choose_btn = $('#' + params.panel_id).find('.file-choose-button');
