@@ -29,8 +29,6 @@ import javax.annotation.Nonnull;
  */
 public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
 
-    private SpringServiceRegistry registry;
-
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
         return new SpringRefEmptySDocumentFactory(this);
