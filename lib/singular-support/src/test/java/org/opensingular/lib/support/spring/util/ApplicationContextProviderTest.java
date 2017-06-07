@@ -22,7 +22,7 @@ public class ApplicationContextProviderTest {
 
     @Test(expected = SingularException.class)
     public void getExceptionTest(){
-        new ApplicationContextProvider().setApplicationContext(null);
+        SingularContextSetup.reset();
         ApplicationContextProvider.get();
     }
 

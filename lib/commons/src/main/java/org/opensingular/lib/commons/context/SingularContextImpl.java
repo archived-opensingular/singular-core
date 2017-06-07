@@ -18,21 +18,28 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
         if (isConfigured()) {
             throw new SingularAlreadyConfiguredException();
         } else {
-            SingularContextImpl.strategy = strategy;
+            setSingularSingletonStrategy(strategy);
         }
         strategy.put(SingularContext.class, this);
     }
 
     synchronized static boolean isConfigured() {
-        return strategy != null;
+        return getSingularSingletonStrategy() != null;
     }
 
+    private static SingularSingletonStrategy getSingularSingletonStrategy() {
+        return strategy;
+    }
+
+    private static void setSingularSingletonStrategy(SingularSingletonStrategy strategy) {
+        SingularContextImpl.strategy = strategy;
+    }
 
     static synchronized SingularContext get() {
         if (!isConfigured()) {
             setup();
         }
-        return strategy.get(SingularContext.class);
+        return getSingularSingletonStrategy().get(SingularContext.class);
     }
 
     synchronized static void setup(SingularSingletonStrategy singularSingletonStrategy) {
@@ -44,48 +51,48 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
     }
 
     synchronized static void reset() {
-        SingularContextImpl.strategy = null;
+        SingularContextImpl.setSingularSingletonStrategy(null);
     }
 
     @Override
     public <T> void put(T thisInstance) {
-        strategy.put(thisInstance);
+        getSingularSingletonStrategy().put(thisInstance);
     }
 
     @Override
     public <T> void put(Class<? super T> instanceClazz, T thisInstance) {
-        strategy.put(instanceClazz, thisInstance);
+        getSingularSingletonStrategy().put(instanceClazz, thisInstance);
     }
 
     @Override
     public <T> void put(String nameKey, T thisInstance) {
-        strategy.put(nameKey, thisInstance);
+        getSingularSingletonStrategy().put(nameKey, thisInstance);
     }
 
     @Override
     public <T> boolean exists(Class<T> classKey) {
-        return strategy.exists(classKey);
+        return getSingularSingletonStrategy().exists(classKey);
     }
 
     @Override
     public boolean exists(String nameKey) {
-        return strategy.exists(nameKey);
+        return getSingularSingletonStrategy().exists(nameKey);
     }
 
     @Override
     public <T> T get(Class<T> singletonClass) throws SingularSingletonNotFoundException {
-        return strategy.get(singletonClass);
+        return getSingularSingletonStrategy().get(singletonClass);
     }
 
     @Override
     public <T> T get(String name) throws SingularSingletonNotFoundException {
-        return strategy.get(name);
+        return getSingularSingletonStrategy().get(name);
     }
 
     @Override
     public synchronized Map<Object, Object> getEntries() {
-        if (isConfigured() && strategy instanceof MigrationEnabledSingularSingletonStrategy) {
-            return ((MigrationEnabledSingularSingletonStrategy) strategy).getEntries();
+        if (isConfigured() && getSingularSingletonStrategy() instanceof MigrationEnabledSingularSingletonStrategy) {
+            return ((MigrationEnabledSingularSingletonStrategy) getSingularSingletonStrategy()).getEntries();
         } else {
             return Collections.emptyMap();
         }
@@ -94,8 +101,8 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
 
     @Override
     public synchronized void putEntries(Map<Object, Object> entries) {
-        if (isConfigured() && strategy instanceof MigrationEnabledSingularSingletonStrategy) {
-            ((MigrationEnabledSingularSingletonStrategy) strategy).putEntries(entries);
+        if (isConfigured() && getSingularSingletonStrategy() instanceof MigrationEnabledSingularSingletonStrategy) {
+            ((MigrationEnabledSingularSingletonStrategy) getSingularSingletonStrategy()).putEntries(entries);
         }
     }
 }
