@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.InternalServiceRegistry.ServiceEntry;
+import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -132,7 +132,7 @@ public class FormSerializationUtil {
     }
 
     private static void serializeServices(SDocument document, FormSerialized fs) {
-        Map<String, ServiceEntry> services = document.getRegistry().services();
+        Map<String, ServiceRegistry.ServiceEntry> services = document.getLocalRegistry().services();
         if (!services.isEmpty()) {
             if (!(services instanceof Serializable)) {
                 throw new SingularFormException("The Document service map is not Serializable.");
@@ -165,14 +165,14 @@ public class FormSerializationUtil {
         }
     }
 
-    private static void deserializeServices(Map<String, ServiceEntry> services, SDocument document) {
+    private static void deserializeServices(Map<String, ServiceRegistry.ServiceEntry> services, SDocument document) {
         if (services != null) {
             services.entrySet().forEach(entry -> bindService(document, entry));
         }
     }
 
-    private static void bindService(SDocument document, Map.Entry<String, ServiceEntry> entry) {
-        ServiceEntry p = entry.getValue();
+    private static void bindService(SDocument document, Map.Entry<String, ServiceRegistry.ServiceEntry> entry) {
+        ServiceRegistry.ServiceEntry p = entry.getValue();
         document.bindLocalService(entry.getKey(), (Class<Object>) p.type, p.provider);
     }
 

@@ -16,7 +16,6 @@
 
 package org.opensingular.form.spring;
 
-import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
@@ -26,12 +25,10 @@ import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nonnull;
-
 /**
  * Implementação padrão da fábrica de documento para uso junto com o Spring.
  * Essa factory já tem a capacidade de integrar com o Spring para prover
- * implementações padrões do {@link #getExternalServiceRegistry()}, retornando o próprio
+ * implementações padrões do retornando o próprio
  * Spring, e do {@link #getDocumentFactoryRef()}, que retornar uma referência
  * que usurá o Spring para recuperar a própria fábrica.
  *
@@ -40,21 +37,6 @@ import javax.annotation.Nonnull;
 public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
-
-    private SpringServiceRegistry registry;
-
-    /**
-     * Retorna como registro de serviço um proxy para o próprio
-     * ApplicationContext do Spring.
-     */
-    @Override
-    @Nonnull
-    public ExternalServiceRegistry getExternalServiceRegistry() {
-        if (registry == null) {
-            registry = new SpringServiceRegistry();
-        }
-        return registry;
-    }
 
     /**
      * Retorna um referência serializável à fábrica atual utilizando o nome do
@@ -72,12 +54,12 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
     }
 
     @Override
-    public void setBeanName(String springBeanName) {
-        this.springBeanName = springBeanName;
+    public String getBeanName() {
+        return springBeanName;
     }
 
     @Override
-    public String getBeanName() {
-        return springBeanName;
+    public void setBeanName(String springBeanName) {
+        this.springBeanName = springBeanName;
     }
 }

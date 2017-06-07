@@ -71,7 +71,7 @@ public class SCompositeListBuilder {
      */
     @Nonnull
     public <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
-        return currentInstance.getDocument().lookupServiceOrException(targetClass);
+        return currentInstance.getDocument().lookupLocalServiceOrException(targetClass);
     }
 
     public static class SCompositeValueSetter {

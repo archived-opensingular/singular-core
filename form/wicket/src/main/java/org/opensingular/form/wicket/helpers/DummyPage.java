@@ -26,8 +26,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.ExternalServiceRegistry;
-import org.opensingular.form.document.MockExternalServiceRegistry;
+import org.opensingular.form.document.MockServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
@@ -139,7 +138,7 @@ public class DummyPage extends WebPage {
 
 class MockSDocumentFactory extends SDocumentFactory {
 
-    private final MockExternalServiceRegistry defaultServiceRegistry = new MockExternalServiceRegistry();
+    private final MockServiceRegistry defaultServiceRegistry = new MockServiceRegistry();
 
     private final SingularFormContextWicket singularFormContextWicket = new Context();
 
@@ -150,11 +149,6 @@ class MockSDocumentFactory extends SDocumentFactory {
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
         return new RefMockDocumentFactory(this);
-    }
-
-    @Override
-    public ExternalServiceRegistry getExternalServiceRegistry() {
-        return defaultServiceRegistry;
     }
 
     @Override
@@ -169,7 +163,7 @@ class MockSDocumentFactory extends SDocumentFactory {
     }
 }
 
-class RefMockDocumentFactory extends  RefSDocumentFactory {
+class RefMockDocumentFactory extends RefSDocumentFactory {
 
     public RefMockDocumentFactory(MockSDocumentFactory factory) {
         super(factory);

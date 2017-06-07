@@ -18,14 +18,16 @@ package org.opensingular.form;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.document.ExternalServiceRegistry;
-import org.opensingular.form.document.MockExternalServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
+import org.opensingular.form.document.MockServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.io.TesteFormSerializationUtil;
+import org.opensingular.form.io.TestFormSerializationUtil;
+import org.opensingular.internal.lib.commons.injection.SingularBeanNotFoundException;
 import org.opensingular.internal.lib.commons.injection.SingularInjectionNotConfiguredException;
 
 import javax.annotation.Nonnull;
@@ -37,33 +39,40 @@ import javax.inject.Inject;
 @RunWith(Parameterized.class)
 public class CoreBeanInjectionTest extends TestCaseForm {
 
-    private static ExternalServiceRegistry serviceRegistry;
 
     public CoreBeanInjectionTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
+    @Before
+    public void setup() {
+        MockServiceRegistry service = new MockServiceRegistry();
+        service.registerBean(MyBean.class, new MyBean());
+        ServiceRegistryLocator.setup(service);
+    }
+
     @After
     public void clean() {
-        serviceRegistry = null;
+        ServiceRegistryLocator.setup(new ServiceRegistryLocator());
     }
 
-    @Test
+    @Test(expected = SingularBeanNotFoundException.class)
     public void injectionWithoutConfiguration1() {
-        assertException(() -> createTestDictionary().getType(TypeWithInjectionTest.class),
-                SingularInjectionNotConfiguredException.class);
+        ServiceRegistryLocator.setup(new MockServiceRegistry());
+        createTestDictionary().getType(TypeWithInjectionTest.class);
     }
 
-    @Test
+    @Test(expected = SingularBeanNotFoundException.class)
     public void injectionWithoutConfiguration2() {
+        ServiceRegistryLocator.setup(new MockServiceRegistry());
         TypeWithInjectionTest2 type = createTestDictionary().getType(TypeWithInjectionTest2.class);
-        assertException(() -> type.newInstance(), SingularInjectionNotConfiguredException.class);
+        type.newInstance();
     }
+
 
     @Test
     public void injection1() {
         SDictionary dictionary = SDictionary.create();
-        dictionary.getDictionaryConfig().setExternalRegistry(getServiceRegistry());
 
         TypeWithInjectionTest type = dictionary.getType(TypeWithInjectionTest.class);
         assertNotNull(type.myBean);
@@ -78,7 +87,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
 
         TypeWithInjectionTest2 type = (TypeWithInjectionTest2) refType.get();
 
-        SDocumentFactory factory = SDocumentFactory.of(() -> getServiceRegistry());
+        SDocumentFactory        factory  = SDocumentFactory.empty();
         SInstanceWithInjection2 instance = (SInstanceWithInjection2) factory.createInstance(refType);
         assertNotNull(instance.myBean);
 
@@ -89,10 +98,9 @@ public class CoreBeanInjectionTest extends TestCaseForm {
     public void serialization() {
         RefType refType = RefType.of(() -> {
             SDictionary dictionary = SDictionary.create();
-            dictionary.getDictionaryConfig().setExternalRegistry(getServiceRegistry());
             return dictionary.getType(TypeWithInjectionTest.class);
         });
-        SInstanceWithInjection instance = (SInstanceWithInjection)SDocumentFactory.empty().createInstance(refType);
+        SInstanceWithInjection instance = (SInstanceWithInjection) SDocumentFactory.empty().createInstance(refType);
 
         assertSerialization(instance);
     }
@@ -101,7 +109,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
         assertNotNull(((TypeWithInjectionTest) instance.getType()).myBean);
         assertNotNull(instance.myBean);
 
-        SInstanceWithInjection instance2 = (SInstanceWithInjection) TesteFormSerializationUtil.serializarEDeserializar(instance);
+        SInstanceWithInjection instance2 = (SInstanceWithInjection) TestFormSerializationUtil.serializarEDeserializar(instance);
         assertNotNull(((TypeWithInjectionTest) instance2.getType()).myBean);
         assertNotNull(instance2.myBean);
         assertEquals(instance.myBean.getV(), instance2.myBean.getV());
@@ -109,19 +117,11 @@ public class CoreBeanInjectionTest extends TestCaseForm {
 
     private void assertSerialization(SInstanceWithInjection2 instance) {
         assertNotNull(instance.myBean);
-        SInstanceWithInjection2 instance2 = (SInstanceWithInjection2) TesteFormSerializationUtil.serializarEDeserializar(instance);
+        SInstanceWithInjection2 instance2 = (SInstanceWithInjection2) TestFormSerializationUtil.serializarEDeserializar(instance);
         assertNotNull(instance2.myBean);
         assertEquals(instance.myBean.getV(), instance2.myBean.getV());
     }
 
-    private static ExternalServiceRegistry getServiceRegistry() {
-        if(serviceRegistry == null) {
-            MockExternalServiceRegistry service = new MockExternalServiceRegistry();
-            service.registerBean(MyBean.class, new MyBean());
-            serviceRegistry = service;
-        }
-        return serviceRegistry;
-    }
 
     @SInfoPackage(name = "test.inejctions")
     public static class SPackageInjections extends SPackage {

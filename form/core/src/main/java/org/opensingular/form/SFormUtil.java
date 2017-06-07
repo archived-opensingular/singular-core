@@ -20,7 +20,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.document.ExternalServiceRegistry;
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
@@ -48,11 +49,12 @@ import static java.util.stream.Collectors.joining;
 public final class SFormUtil {
 
     private static final Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+    private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
     private SFormUtil() {
     }
 
-    public static boolean isNotValidSimpleName(@Nonnull  String name) {
+    public static boolean isNotValidSimpleName(@Nonnull String name) {
         Objects.requireNonNull(name);
         return !idPattern.matcher(name).matches();
     }
@@ -80,7 +82,7 @@ public final class SFormUtil {
     }
 
     static SType<?> resolveFieldType(SType<?> type, PathReader pathReader) {
-        SType<?> currentType = type;
+        SType<?>   currentType       = type;
         PathReader currentPathReader = pathReader;
         while (!currentPathReader.isEmpty()) {
             currentType = resolveFieldTypeInternal(currentType, currentPathReader);
@@ -117,7 +119,7 @@ public final class SFormUtil {
      * a condicão de parada informada.
      */
     public static String generatePath(SInstance instance, Predicate<SInstance> stopCondition) {
-        SInstance current = instance;
+        SInstance       current   = instance;
         List<SInstance> sequencia = null;
         while (!stopCondition.test(current)) {
             if (sequencia == null) {
@@ -171,9 +173,9 @@ public final class SFormUtil {
             final String labelNode = node.asAtr().getLabel();
 
             if (node instanceof SIList<?>) {
-                SIList<?> lista      = (SIList<?>) node;
-                String    labelLista = lista.asAtr().getLabel();
-                int       index      = lista.indexOf(child) + 1;
+                SIList<?> lista = (SIList<?>) node;
+                String labelLista = lista.asAtr().getLabel();
+                int index = lista.indexOf(child) + 1;
                 labels.add(labelLista + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {
                 if (StringUtils.isNotBlank(labelNode)) {
@@ -201,7 +203,7 @@ public final class SFormUtil {
 
     public static String getTypeSimpleName(Class<? extends SType<?>> typeClass) {
         SInfoType infoType = getInfoType(typeClass);
-        String typeName = infoType.name();
+        String    typeName = infoType.name();
         if (StringUtils.isBlank(typeName)) {
             typeName = typeClass.getSimpleName();
         }
@@ -250,7 +252,7 @@ public final class SFormUtil {
     @Nonnull
     static String getScopeNameOrException(@Nonnull Class<? extends SScope> scopeClass) {
         if (SPackage.class.isAssignableFrom(scopeClass)) {
-            return getInfoPackageName( (Class<SPackage>) scopeClass);
+            return getInfoPackageName((Class<SPackage>) scopeClass);
         } else if (SType.class.isAssignableFrom(scopeClass)) {
             return getTypeName((Class<SType<?>>) scopeClass);
         } else {
@@ -268,8 +270,6 @@ public final class SFormUtil {
             throw new SingularFormException("Unsupported class: " + scopeClass.getName());
         }
     }
-
-    private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
     private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
@@ -319,14 +319,11 @@ public final class SFormUtil {
     }
 
     static void inject(@Nonnull SInstance newInstance) {
-        ExternalServiceRegistry external = newInstance.getDocument().getRegistry().getExternalRegistry();
-        if (external == null) {
-            external = newInstance.getDictionary().getDictionaryConfig().getExternalRegistry();
-        }
-        if (external == null) {
+        ServiceRegistry registry = ServiceRegistryLocator.locate();
+        if (registry == null) {
             SingularInjector.getEmptyInjector().inject(newInstance);
         } else {
-            external.lookupSingularInjector().inject(newInstance);
+            registry.lookupSingularInjector().inject(newInstance);
         }
     }
 }
