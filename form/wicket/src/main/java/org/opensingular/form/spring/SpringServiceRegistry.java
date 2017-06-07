@@ -19,15 +19,14 @@ package org.opensingular.form.spring;
 import org.opensingular.form.RefService;
 import org.opensingular.form.context.DefaultServiceRegistry;
 import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,9 +41,15 @@ public class SpringServiceRegistry implements ServiceRegistry, Loggable {
 
     private SingularInjector injector;
 
-    private DefaultServiceRegistry delegate = new DefaultServiceRegistry(){};
+    private DefaultServiceRegistry delegate = new DefaultServiceRegistry() {
+    };
 
     public SpringServiceRegistry() {
+    }
+
+    @PostConstruct
+    public void init() {
+        ServiceRegistryLocator.setup(this);
     }
 
     @Override

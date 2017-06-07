@@ -35,7 +35,7 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<KEY>, ApplicationContextAware, BeanNameAware, NamedBean {
+public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<KEY>, BeanNameAware, NamedBean {
 
     private String springBeanName;
 
@@ -65,11 +65,6 @@ public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<K
 
     public void setTypeLoader(TypeLoader<KEY> typeLoader) {
         this.typeLoader = typeLoader;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        new ApplicationContextProvider().setApplicationContext(applicationContext);
     }
 
     @Override
