@@ -16,13 +16,6 @@
 
 package org.opensingular.lib.commons.base;
 
-import org.apache.commons.io.input.NullInputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.util.PropertiesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,6 +32,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.io.input.NullInputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.lambda.IConsumerEx;
+import org.opensingular.lib.commons.util.PropertiesUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
@@ -107,9 +109,9 @@ public final class SingularPropertiesImpl implements SingularProperties {
     public String getProperty(String key) {
         //se contém a chave ainda que esta seja com valor nulo
         if (getProperties().containsKey(key)) {
-            return getProperties().getProperty(key);
+            return Optional.ofNullable(getProperties().getProperty(key)).map(String::trim).orElse(null);
         } else {
-            return System.getProperties().getProperty(key);
+            return Optional.ofNullable(System.getProperties().getProperty(key)).map(String::trim).orElse(null);
         }
     }
 
@@ -318,5 +320,9 @@ public final class SingularPropertiesImpl implements SingularProperties {
             private final Properties          propertiesBackup = new Properties();
             private final Map<String, String> systemBackup     = new HashMap<>();
         }
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("true".equals(Optional.ofNullable("true").map(String::toLowerCase).orElse(null)));
     }
 }

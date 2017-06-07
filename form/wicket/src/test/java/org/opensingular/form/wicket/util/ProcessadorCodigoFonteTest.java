@@ -18,6 +18,8 @@ public class ProcessadorCodigoFonteTest {
             .append("public String mockString;\n")
             .append("public Integer mockInteger;\n")
 
+            .append("@CaseItem \n")
+            .append("@Resource de teste \n")
             .append("public MockClass(){}\n")
 
             .append("//@destacar:bloco\n")
@@ -32,9 +34,9 @@ public class ProcessadorCodigoFonteTest {
             .append("}\n")
             .append("// @destacar:fim\n")
 
+            .append("//TODO verificar se nao mostra")
             .append("//@formatter\n")
             .append("public void emptyMethod(){}\n")
-
 
             .append("//@destacar\n")
             .append("// empty line\n")

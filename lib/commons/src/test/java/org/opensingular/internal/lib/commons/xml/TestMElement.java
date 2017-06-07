@@ -211,7 +211,7 @@ public class TestMElement {
     @Before
     public void setUp() throws Exception {
         //@formatter:off
-        String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<pedido cliente=\"Paulo\">          \n"
                 + "    <cd cod=\"1\">                  \n"
                 + "       <grupo>Pato Fu</grupo>      \n"
@@ -616,7 +616,7 @@ public class TestMElement {
      */
     @Test
     public void testParseValidatComErro() throws Exception {
-        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + "<raiz><filho/></raiz>";
+        String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<raiz><filho/></raiz>";
 
         try {
             MParser.parse(new ByteArrayInputStream(sXML.getBytes()), true, true);
@@ -634,7 +634,7 @@ public class TestMElement {
      */
     @Test
     public void testParseValidatDTDNotFound() throws Exception {
-        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+        String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE apolices SYSTEM \"testeNaoExiste.dtd\">\n" + "<raiz><filho/></raiz>";
 
         try {
@@ -655,7 +655,7 @@ public class TestMElement {
      */
     @Test
     public void testParseValidatDTDNaoSatisfeito() throws Exception {
-        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+        String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE raiz SYSTEM \"http://eee/teste-dtd-existe.dtd\">\n" + "<raiz><filho3/></raiz>";
         String sDTD =
                 "<!ELEMENT raiz (filho, filho2?)>\n" + "<!ELEMENT filho (#PCDATA)>\n" + "<!ELEMENT filho2 (#PCDATA)>\n";
@@ -679,7 +679,7 @@ public class TestMElement {
      */
     @Test
     public void testParseValidatDTDEmInputStream() throws Exception {
-        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+        String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE raiz SYSTEM \"http://eee/teste-dtd-existe.dtd\">\n" + "<raiz><filho/></raiz>";
         String sDTD =
                 "<!ELEMENT raiz (filho, filho2?)>\n" + "<!ELEMENT filho (#PCDATA)>\n" + "<!ELEMENT filho2 (#PCDATA)>\n";
@@ -715,7 +715,7 @@ public class TestMElement {
      */
     @Test
     public void testParseValidatDTDFromClasse() throws Exception {
-        String sXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+        String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE raiz SYSTEM \"http://eee/teste-dtd-existe.dtd\">\n" + "<raiz><filho/></raiz>";
 
         MParser p = new MParser();
