@@ -25,6 +25,7 @@ import org.opensingular.internal.lib.commons.injection.SingularInjectionExceptio
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.lib.commons.context.SingularContextSetup;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.context.ApplicationContext;
@@ -264,7 +265,7 @@ public class SingularInjectorBySpringTest {
 
     @Test
     public void testInjectionWithoutApplicationContextAvailable() {
-        new ApplicationContextProvider().setApplicationContext(null);
+        SingularContextSetup.reset();
         assertFalse(ApplicationContextProvider.isConfigured());
         SingularInjector injector1 =  SingularSpringInjector.get();
         assertTrue(injector1 instanceof  SingularSpringInjector.SingularSpringInjectorProxy);

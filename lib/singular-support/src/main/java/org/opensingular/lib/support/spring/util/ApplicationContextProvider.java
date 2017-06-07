@@ -67,7 +67,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * Indica se o contexto do sping já foi configurado e se pode ser chamado {@link #get()}.
      */
     public static boolean isConfigured() {
-        return getApplicationContext() != null;
+        return ((SingularSingletonStrategy) SingularContext.get()).exists(ApplicationContext.class);
     }
 
     /**
