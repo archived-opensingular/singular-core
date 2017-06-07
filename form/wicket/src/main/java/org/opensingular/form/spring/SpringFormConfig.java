@@ -69,7 +69,7 @@ public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<K
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
+        new ApplicationContextProvider().setApplicationContext(applicationContext);
     }
 
     @Override

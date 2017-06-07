@@ -20,13 +20,13 @@ public class ApplicationContextProviderTest {
 
     @Test(expected = SingularException.class)
     public void getExceptionTest(){
-        ApplicationContextProvider.setup(null);
+        new ApplicationContextProvider().setApplicationContext(null);
         ApplicationContextProvider.get();
     }
 
     @Test
     public void setApplicationContextTest(){
-        ApplicationContextProvider.setup(null);
+        new ApplicationContextProvider().setApplicationContext(null);
         ApplicationContextProvider provider = new ApplicationContextProvider();
         provider.setApplicationContext(applicationContext);
 

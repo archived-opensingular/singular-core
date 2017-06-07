@@ -17,6 +17,8 @@
 package org.opensingular.lib.support.spring.util;
 
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.slf4j.Logger;
@@ -40,29 +42,37 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static final ISupplier<ApplicationContext> SUPPLIER = () -> get();
 
-    private static ApplicationContext applicationContext;
 
-    public static synchronized void setup(ApplicationContext applicationContext) {
-        ApplicationContextProvider.applicationContext = applicationContext;
+    public static ApplicationContext getApplicationContext() {
+        return ((SingularSingletonStrategy) SingularContext.get()).get(ApplicationContext.class);
+    }
+
+    @Override
+    public synchronized void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ((SingularSingletonStrategy) SingularContext.get()).singletonize(ApplicationContext.class, () -> applicationContext);
     }
 
     /**
      * Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado.
      */
     public static ApplicationContext get() {
-        if (applicationContext == null) {
+        if (getApplicationContext() == null) {
             throw SingularException.rethrow(
-                    "O applicationContext ainda não foi configurado em " + ApplicationContextProvider.class.getName());
+                    "O getApplicationContext() ainda não foi configurado em " + ApplicationContextProvider.class.getName());
         }
-        return applicationContext;
+        return getApplicationContext();
     }
 
-    /** Indica se o contexto do sping já foi configurado e se pode ser chamado {@link #get()}. */
+    /**
+     * Indica se o contexto do sping já foi configurado e se pode ser chamado {@link #get()}.
+     */
     public static boolean isConfigured() {
-        return applicationContext != null;
+        return getApplicationContext() != null;
     }
 
-    /** Retorna um supplier do aplication context que faz chamar {@link #get()}. */
+    /**
+     * Retorna um supplier do aplication context que faz chamar {@link #get()}.
+     */
     public static ISupplier<ApplicationContext> supplier() {
         return SUPPLIER;
     }
@@ -125,10 +135,5 @@ public class ApplicationContextProvider implements ApplicationContextAware {
             LOGGER.debug(null, ex);
             return Optional.empty();
         }
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
     }
 }

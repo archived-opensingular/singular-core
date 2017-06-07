@@ -264,7 +264,7 @@ public class SingularInjectorBySpringTest {
 
     @Test
     public void testInjectionWithoutApplicationContextAvailable() {
-        ApplicationContextProvider.setup(null);
+        new ApplicationContextProvider().setApplicationContext(null);
         assertFalse(ApplicationContextProvider.isConfigured());
         SingularInjector injector1 =  SingularSpringInjector.get();
         assertTrue(injector1 instanceof  SingularSpringInjector.SingularSpringInjectorProxy);
@@ -302,7 +302,7 @@ public class SingularInjectorBySpringTest {
         ctx.getBeanFactory().registerSingleton("Multi2", new MyMultiMockService());
         ctx.getBeanFactory().registerSingleton(MyMockInterfaceImpl.class.getName(), new MyMockInterfaceImpl());
         ctx.refresh();
-        ApplicationContextProvider.setup(ctx);
+        new ApplicationContextProvider().setApplicationContext(ctx);
         return ctx;
     }
 

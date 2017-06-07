@@ -34,7 +34,7 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean {
+public abstract class SpringSDocumentFactory extends SDocumentFactory implements BeanNameAware, NamedBean {
 
     private String springBeanName;
 
@@ -46,11 +46,6 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
     @Override
     public RefSDocumentFactory createDocumentFactoryRef() {
         return new SpringRefSDocumentFactory(this);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
     }
 
     @Override

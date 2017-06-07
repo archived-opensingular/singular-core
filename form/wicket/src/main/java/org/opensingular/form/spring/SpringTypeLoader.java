@@ -41,7 +41,7 @@ import java.util.Optional;
  * @author Daniel C. Bordin
  */
 public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends TypeLoader<TYPE_KEY>
-        implements ApplicationContextAware, BeanNameAware, NamedBean {
+        implements BeanNameAware, NamedBean {
 
     private String springBeanName;
 
@@ -49,11 +49,6 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
     @Nonnull
     protected final Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId) {
         return loadType(typeId).map(t -> new SpringRefType(SpringUtils.checkBeanName(this), typeId, t));
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
     }
 
     @Override

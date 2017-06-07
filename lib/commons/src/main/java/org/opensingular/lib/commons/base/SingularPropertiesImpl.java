@@ -16,6 +16,15 @@
 
 package org.opensingular.lib.commons.base;
 
+import org.apache.commons.io.input.NullInputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
+import org.opensingular.lib.commons.lambda.IConsumerEx;
+import org.opensingular.lib.commons.util.PropertiesUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,21 +42,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
-import org.apache.commons.io.input.NullInputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.util.PropertiesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public final class SingularPropertiesImpl implements SingularProperties {
-
-    private static final SingularPropertiesImpl INSTANCE = new SingularPropertiesImpl();
-
     private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularPropertiesImpl.class);
     private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
     private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
@@ -55,7 +52,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
     private Supplier<Properties> singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
 
     public static SingularPropertiesImpl get() {
-        return INSTANCE;
+        return ((SingularSingletonStrategy)SingularContext.get()).singletonize(SingularProperties.class, SingularPropertiesImpl::new);
     }
 
     private static File findConfDir() {
@@ -298,12 +295,12 @@ public final class SingularPropertiesImpl implements SingularProperties {
             State  state      = (State) stateObject;
             String serverHome = state.systemBackup.get(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
             SingularPropertiesImpl.get().setSingularServerHome(serverHome);
-            SingularPropertiesImpl.INSTANCE.properties = state.propertiesBackup;
+            SingularPropertiesImpl.get().properties = state.propertiesBackup;
         }
 
         public static Object saveState() {
             State state = new State();
-            PropertiesUtils.copyTo(SingularPropertiesImpl.INSTANCE.properties, state.propertiesBackup);
+            PropertiesUtils.copyTo(SingularPropertiesImpl.get().properties, state.propertiesBackup);
             state.systemBackup.put(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME, System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME));
             return state;
         }

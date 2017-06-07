@@ -69,7 +69,7 @@ public abstract class TestFlowSupport implements ApplicationContextAware {
     }
 
     public static void configApplicationContext(ApplicationContext applicationContext) {
-        ApplicationContextProvider.setup(applicationContext);
+        new ApplicationContextProvider().setApplicationContext(applicationContext);
         try {
             myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);
         } catch (NoSuchBeanDefinitionException e) {

@@ -38,7 +38,7 @@ import java.util.Optional;
  * @author Fabricio Buzeto
  * @author Daniel C. Bordin
  */
-public class SpringServiceRegistry implements ServiceRegistry, ApplicationContextAware, Loggable {
+public class SpringServiceRegistry implements ServiceRegistry, Loggable {
 
     private SingularInjector injector;
 
@@ -75,11 +75,6 @@ public class SpringServiceRegistry implements ServiceRegistry, ApplicationContex
             service = ApplicationContextProvider.getBeanOpt(name);
         }
         return service;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
     }
 
     @Nonnull
