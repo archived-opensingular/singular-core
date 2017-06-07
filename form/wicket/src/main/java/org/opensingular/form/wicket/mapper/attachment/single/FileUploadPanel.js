@@ -22,6 +22,30 @@
         window.FileUploadPanel.setup = function(params) {
             $('#' + params.progress_bar_id).hide();
 
+            var click_whitespace_to_select_filte = function () {
+                var formControl = $('#' + params.panel_id).find('.form-control');
+                var fileField = $('#'+ params.file_field_id);
+                
+                var choose_btn = $('#' + params.panel_id).find('.file-choose-button');
+                var trash_btn = $('#' + params.panel_id).parent().find('.file-trash-button');
+
+                formControl.on("hover", function () {
+                    if((choose_btn.css('display') == 'block') && (trash_btn.css('display') == 'none') ){
+                        $(this).css( 'cursor', 'pointer' );
+                    }else{
+                        $(this).css( 'cursor', 'default' );
+                    }
+                });
+                
+                formControl.on("click", function (){
+                    if((choose_btn.css('display') == 'block') && (trash_btn.css('display') == 'none') ){
+                        fileField.trigger("click");
+                    }
+                });
+            }
+            
+            click_whitespace_to_select_filte();
+
             var update_action_buttons = function () {
                 var choose_btn = $('#' + params.panel_id).find('.file-choose-button');
                 var trash_btn = $('#' + params.panel_id).parent().find('.file-trash-button');
@@ -31,6 +55,7 @@
                     trash_btn.show()
                     trash_btn.css('display','block')
                     choose_btn.hide();
+                    choose_btn.css('display','none')
                 }else{
                     choose_btn.show();
                     choose_btn.css('display','block')
