@@ -16,8 +16,11 @@
 
 package org.opensingular.lib.wicket.util.template;
 
-import org.opensingular.lib.wicket.util.application.SkinnableApplication;
-import com.google.common.collect.ImmutableList;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -32,12 +35,10 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.opensingular.lib.wicket.util.application.SkinnableApplication;
 import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehaviour;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.common.collect.ImmutableList;
 
 public abstract class SingularTemplate extends WebPage {
 
@@ -77,8 +78,6 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/layout4/css/custom.css"),
                 skinnableResource("/css/custom.css"),
                 skinnableResource("/layout4/css/themes/default.css"),
-                commonResource("/plugins/syntaxHighlighter/css/shCore.css"),
-                commonResource("/plugins/syntaxHighlighter/css/shThemeDefault.css"),
                 "resources/custom/css/custom.css")
                 .map(CssHeaderItem::forUrl).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
@@ -125,10 +124,6 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/global/plugins/typeahead/typeahead.bundle.js"),
                         commonResource("/plugins/stringjs/string.min.js"),
                         commonResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
-                        commonResource("/plugins/syntaxHighlighter/js/shCore.js"),
-                        commonResource("/plugins/syntaxHighlighter/js/shBrushJava.js"),
-                        commonResource("/plugins/syntaxHighlighter/js/shBrushJScript.js"),
-                        commonResource("/plugins/syntaxHighlighter/js/shBrushXml.js"),
                         commonResource("/plugins/ckeditor/ckeditor.js")
                 ).map(JavaScriptHeaderItem::forUrl)).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
