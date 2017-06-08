@@ -24,7 +24,7 @@ import java.util.Optional;
 public class TestTypeLoaderInjectionBroken {
 
     @Before
-    public void setup(){
+    public void setUp(){
         ServiceRegistryLocator.setup(new MockServiceRegistry());
         ServiceRegistryLocator.locate().bindService(NadaBean.class, () -> new NadaBean());
     }

@@ -45,7 +45,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
     }
 
     @Before
-    public void setup() {
+    public void before() {
         MockServiceRegistry service = new MockServiceRegistry();
         service.registerBean(MyBean.class, new MyBean());
         ServiceRegistryLocator.setup(service);
