@@ -9,12 +9,13 @@ import java.util.Map;
 
 public class ThreadBoundedSingletonStrategy implements SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy {
 
-    private static final ThreadLocal<InstanceBoundedSingletonStrategy> threadBounded = new ThreadLocal<>();
+    private static final ThreadLocal<InstanceBoundedSingletonStrategy> threadBounded = new ThreadLocal<InstanceBoundedSingletonStrategy>() {
+        @Override
+        protected InstanceBoundedSingletonStrategy initialValue() {
+            return new InstanceBoundedSingletonStrategy();
+        }
+    };
 
-
-    public ThreadBoundedSingletonStrategy() {
-        threadBounded.set(new InstanceBoundedSingletonStrategy());
-    }
 
     @Override
     public <T> void put(T thisInstance) {

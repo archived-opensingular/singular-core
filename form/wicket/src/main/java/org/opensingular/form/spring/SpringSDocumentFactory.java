@@ -18,12 +18,8 @@ package org.opensingular.form.spring;
 
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * Implementação padrão da fábrica de documento para uso junto com o Spring.

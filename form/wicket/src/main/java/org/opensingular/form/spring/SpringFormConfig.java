@@ -21,12 +21,8 @@ import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.TypeLoader;
 import org.opensingular.internal.lib.support.spring.SpringUtils;
-import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.io.Serializable;
 

@@ -9,6 +9,8 @@ import org.opensingular.lib.commons.context.singleton.InstanceBoundedSingletonSt
 import org.opensingular.lib.commons.context.singleton.ThreadBoundedSingletonStrategy;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+import org.springframework.context.annotation.DependsOn;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -17,6 +19,8 @@ import java.util.Map;
  *
  */
 public class SpringBoundedSingletonStrategy implements MigrationEnabledSingularSingletonStrategy, Loggable {
+
+
 
     /**
      * Used only when this SpringBoundedSingletonStrategy is registered as a SpringBean
@@ -44,7 +48,7 @@ public class SpringBoundedSingletonStrategy implements MigrationEnabledSingularS
             //Migrate change Singular context to use this SpringBoundedSingletonStrategy
             this.putEntries(migrationStrategy.getEntries());
         }
-        this.put(this.tempSingleton.getEntries());
+        this.putEntries(this.tempSingleton.getEntries());
         SingularContextSetup.reset();
         SingularContextSetup.setup(this);
     }
