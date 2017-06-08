@@ -15,7 +15,7 @@ import java.util.Map;
  * In other cases is preferable to use the {@link ThreadBoundedSingletonStrategy}
  * which bounds singletons to the execution thread.
  */
-public class InstanceBoundedSingletonStrategy implements SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy {
+public class InstanceBoundedSingletonStrategy implements MigrationEnabledSingularSingletonStrategy {
 
     private Map<Object, Object> map = new HashMap<>(0);
 
@@ -71,12 +71,12 @@ public class InstanceBoundedSingletonStrategy implements SingularSingletonStrate
 
     @Override
     public synchronized <T> T singletonize(String nameKey, ISupplier<T> singletonFactory) {
-        return SingularSingletonStrategy.super.singletonize(nameKey, singletonFactory);
+        return MigrationEnabledSingularSingletonStrategy.super.singletonize(nameKey, singletonFactory);
     }
 
     @Override
     public synchronized <T> T singletonize(Class<? super T> classKey, ISupplier<T> singletonFactory) {
-        return SingularSingletonStrategy.super.singletonize(classKey, singletonFactory);
+        return MigrationEnabledSingularSingletonStrategy.super.singletonize(classKey, singletonFactory);
     }
 
     @Override

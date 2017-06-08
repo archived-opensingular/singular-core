@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  *
  */
-public class SpringBoundedSingletonStrategy implements SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy, Loggable {
+public class SpringBoundedSingletonStrategy implements MigrationEnabledSingularSingletonStrategy, Loggable {
 
     /**
      * Used only when this SpringBoundedSingletonStrategy is registered as a SpringBean
@@ -29,15 +29,22 @@ public class SpringBoundedSingletonStrategy implements SingularSingletonStrategy
         tempSingleton.put(SpringBoundedSingletonStrategy.class, this);
     }
 
+    /**
+     * Automatically replaces the current {@link SingularSingletonStrategy} keeping all
+     * singletons already registered if the current strategy implements {@link MigrationEnabledSingularSingletonStrategy}
+     */
     @PostConstruct
     public void init() {
         //Configure setSpringSingleton
         springSingleton = new InstanceBoundedSingletonStrategy();
-        //Migrate data from the privious singleton strategy
-        MigrationEnabledSingularSingletonStrategy strategy = (MigrationEnabledSingularSingletonStrategy) SingularContext.get();
+        SingularSingletonStrategy strategy = (SingularSingletonStrategy) SingularContext.get();
+        //Migrate data from the previous singleton strategy
+        if (strategy instanceof MigrationEnabledSingularSingletonStrategy) {
+            MigrationEnabledSingularSingletonStrategy migrationStrategy = (MigrationEnabledSingularSingletonStrategy) strategy;
+            //Migrate change Singular context to use this SpringBoundedSingletonStrategy
+            this.putEntries(migrationStrategy.getEntries());
+        }
         this.put(this.tempSingleton.getEntries());
-        this.putEntries(strategy.getEntries());
-        //Migrate change Singular context to use this SpringBoundedSingletonStrategy
         SingularContextSetup.reset();
         SingularContextSetup.setup(this);
     }
@@ -107,12 +114,12 @@ public class SpringBoundedSingletonStrategy implements SingularSingletonStrategy
 
     @Override
     public synchronized <T> T singletonize(String nameKey, ISupplier<T> singletonFactory) {
-        return SingularSingletonStrategy.super.singletonize(nameKey, singletonFactory);
+        return MigrationEnabledSingularSingletonStrategy.super.singletonize(nameKey, singletonFactory);
     }
 
     @Override
     public synchronized <T> T singletonize(Class<? super T> classKey, ISupplier<T> singletonFactory) {
-        return SingularSingletonStrategy.super.singletonize(classKey, singletonFactory);
+        return MigrationEnabledSingularSingletonStrategy.super.singletonize(classKey, singletonFactory);
     }
 
     @Override

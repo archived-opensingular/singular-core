@@ -46,7 +46,7 @@ import java.util.Objects;
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(TestFlowSupport.FactoryRunnerParameteziedWithSpring.class)
 @ActiveProfiles(resolver = TestFlowSupport.ParameterizedFlowProfileResolver.class)
-public abstract class TestFlowSupport implements ApplicationContextAware {
+public abstract class TestFlowSupport {
 
 
     @Parameterized.Parameter(0)
@@ -63,13 +63,8 @@ public abstract class TestFlowSupport implements ApplicationContextAware {
 
     protected static MyBean myBeanRef;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        configApplicationContext(applicationContext);
-    }
 
     public static void configApplicationContext(ApplicationContext applicationContext) {
-        new ApplicationContextProvider().setApplicationContext(applicationContext);
         try {
             myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);
         } catch (NoSuchBeanDefinitionException e) {

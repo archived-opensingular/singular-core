@@ -45,14 +45,14 @@ import java.util.function.Supplier;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public final class SingularPropertiesImpl implements SingularProperties {
-    private static final Logger LOGGER                      = LoggerFactory.getLogger(SingularPropertiesImpl.class);
-    private static final String DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
-    private static final String[] PROPERTIES_FILES_NAME = {"singular-form-service.properties", "singular.properties"};
+    private static final Logger   LOGGER                      = LoggerFactory.getLogger(SingularPropertiesImpl.class);
+    private static final String   DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
+    private static final String[] PROPERTIES_FILES_NAME       = {"singular-form-service.properties", "singular.properties"};
     private volatile Properties properties;
     private Supplier<Properties> singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
 
     public static SingularPropertiesImpl get() {
-        return ((SingularSingletonStrategy)SingularContext.get()).singletonize(SingularProperties.class, SingularPropertiesImpl::new);
+        return ((SingularSingletonStrategy) SingularContext.get()).singletonize(SingularProperties.class, SingularPropertiesImpl::new);
     }
 
     private static File findConfDir() {
@@ -72,6 +72,10 @@ public final class SingularPropertiesImpl implements SingularProperties {
             }
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("true".equals(Optional.ofNullable("true").map(String::toLowerCase).orElse(null)));
     }
 
     /**
@@ -213,7 +217,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
 
     private URL findProperties(String name) {
         try {
-            return  Thread.currentThread().getContextClassLoader().getResource(name);
+            return Thread.currentThread().getContextClassLoader().getResource(name);
         } catch (Exception e) {
             throw SingularException.rethrow("Erro procurando arquivo de properties '" + name + "' no class path", e);
         }
@@ -317,9 +321,5 @@ public final class SingularPropertiesImpl implements SingularProperties {
             private final Properties          propertiesBackup = new Properties();
             private final Map<String, String> systemBackup     = new HashMap<>();
         }
-    }
-    
-    public static void main(String[] args) {
-        System.out.println("true".equals(Optional.ofNullable("true").map(String::toLowerCase).orElse(null)));
     }
 }

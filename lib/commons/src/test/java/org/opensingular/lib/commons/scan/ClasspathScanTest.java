@@ -12,26 +12,26 @@ public class ClasspathScanTest {
 
     @Test
     public void scanSubclassesOfDATE() {
-        Set<Class<? extends Date>> dates = SingularClassPathScanner.INSTANCE.findSubclassesOf(Date.class);
+        Set<Class<? extends Date>> dates = SingularClassPathScanner.get().findSubclassesOf(Date.class);
         Assert.assertTrue(dates.contains(FooDate.class));
     }
 
     @Test
     public void scanClassesImplementingSerializable() {
-        Set<Class<? extends Serializable>> serializables = SingularClassPathScanner.INSTANCE.findSubclassesOf(Serializable.class);
+        Set<Class<? extends Serializable>> serializables = SingularClassPathScanner.get().findSubclassesOf(Serializable.class);
         Assert.assertTrue(serializables.contains(FooSerializable.class));
     }
 
     @Test
     public void scanClassesAnnotatedWithBar(){
-        Set<Class<?>> bars = SingularClassPathScanner.INSTANCE.findClassesAnnotatedWith(Bar.class);
+        Set<Class<?>> bars = SingularClassPathScanner.get().findClassesAnnotatedWith(Bar.class);
         Assert.assertTrue(bars.contains(FooSerializable.class));
         Assert.assertTrue(bars.contains(FooDate.class));
     }
 
     @Test(expected = SingularException.class)
     public void testPassNonAnnotationClass(){
-        SingularClassPathScanner.INSTANCE.findClassesAnnotatedWith(Object.class);
+        SingularClassPathScanner.get().findClassesAnnotatedWith(Object.class);
     }
 
 
