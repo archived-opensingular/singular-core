@@ -13,6 +13,7 @@ import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Map;
 
 /**
@@ -20,12 +21,9 @@ import java.util.Map;
  */
 public class SpringBoundedSingletonStrategy implements MigrationEnabledSingularSingletonStrategy, Loggable {
 
-
-
     /**
      * Used only when this SpringBoundedSingletonStrategy is registered as a SpringBean
      */
-
     private ThreadBoundedSingletonStrategy tempSingleton = new ThreadBoundedSingletonStrategy();
     private InstanceBoundedSingletonStrategy springSingleton;
 
@@ -51,6 +49,15 @@ public class SpringBoundedSingletonStrategy implements MigrationEnabledSingularS
         this.putEntries(this.tempSingleton.getEntries());
         SingularContextSetup.reset();
         SingularContextSetup.setup(this);
+    }
+
+    /**
+     * Spring destroy method
+     */
+    @PreDestroy
+    public void destroy(){
+        //cleaning up static reference to this bean since this context was shut down
+        SingularContextSetup.reset();
     }
 
     @Override

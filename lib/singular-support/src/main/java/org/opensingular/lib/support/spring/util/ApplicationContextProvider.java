@@ -27,21 +27,25 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.EventListener;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Priority;
+import javax.inject.Named;
 import java.util.Optional;
 
 /**
  * Métodos para localização e retorno do {@link ApplicationContext} atual.
  */
-@Component
+@Named
+@Priority(0)
 public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextProvider.class);
 
     private static final ISupplier<ApplicationContext> SUPPLIER = () -> get();
-
 
     public static ApplicationContext getApplicationContext() {
         return ((SingularSingletonStrategy) SingularContext.get()).get(ApplicationContext.class);
@@ -56,7 +60,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado.
      */
     public static ApplicationContext get() {
-        if (getApplicationContext() == null) {
+        if (!isConfigured()) {
             throw SingularException.rethrow(
                     "O getApplicationContext() ainda não foi configurado em " + ApplicationContextProvider.class.getName());
         }
@@ -127,6 +131,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Nonnull
     public static <T> Optional<T> getBeanOpt(@Nonnull String name) {
         try {
@@ -136,4 +141,10 @@ public class ApplicationContextProvider implements ApplicationContextAware {
             return Optional.empty();
         }
     }
+
+    @EventListener
+    public void handleContextRefresh(ContextStartedEvent event) {
+        setApplicationContext(event.getApplicationContext());
+    }
+
 }

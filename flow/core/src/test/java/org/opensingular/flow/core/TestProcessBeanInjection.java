@@ -56,11 +56,6 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         executedPoints.clear();
     }
 
-    @After
-    public void after(){
-        SingularContextSetup.reset();
-    }
-
     @Test
     public void injectionOnProcessDefinition() {
         ProcessDefinitionBeanInjection pd = new ProcessDefinitionBeanInjection();

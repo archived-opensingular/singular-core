@@ -51,6 +51,10 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
     }
 
     synchronized static void reset() {
+        SingularSingletonStrategy strategy = getSingularSingletonStrategy();
+        if (strategy instanceof ResetEnabledSingularSingletonStrategy) {
+            ((ResetEnabledSingularSingletonStrategy) strategy).reset();
+        }
         SingularContextImpl.setSingularSingletonStrategy(null);
     }
 

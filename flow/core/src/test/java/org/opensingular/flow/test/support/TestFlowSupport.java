@@ -60,12 +60,14 @@ public abstract class TestFlowSupport {
     @Inject
     protected SessionFactory sessionFactory;
 
+    @Inject
+    private ApplicationContextProvider applicationContextProvider;
 
     protected static MyBean myBeanRef;
 
     @PostConstruct
     public void init() {
-        configApplicationContext(ApplicationContextProvider.get());
+        configApplicationContext(applicationContextProvider.get());
     }
 
     public static void configApplicationContext(ApplicationContext applicationContext) {
@@ -131,14 +133,14 @@ public abstract class TestFlowSupport {
 
         @Override
         protected Object createTest() throws Exception {
+            SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(flowTestConfig.getBdProperties()));
             Object testInstance = runnerParam.createTest();
             getTestContextManager().prepareTestInstance(testInstance);
             return testInstance;
         }
 
+        //Esse método roda antes do contexto do spring ser reinicializado.
         public void run(RunNotifier notifier) {
-            SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
-                    flowTestConfig.getBdProperties()));
             ParameterizedFlowProfileResolver.currentProfile = flowTestConfig.getSpringProfile();
             super.run(notifier);
             ParameterizedFlowProfileResolver.currentProfile = null;

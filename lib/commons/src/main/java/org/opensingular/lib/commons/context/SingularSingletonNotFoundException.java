@@ -17,6 +17,6 @@ public class SingularSingletonNotFoundException extends SingularException {
     }
 
     public SingularSingletonNotFoundException(String key) {
-        super(String.format("We could not find the singleton you asked for (key: %s), sorry. Check if the singleton is already registered.", key));
+        super(String.format("We could not find the singleton you asked for (key: %s), sorry. Check if the singleton is registered.", key));
     }
 }

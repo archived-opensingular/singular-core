@@ -2,14 +2,16 @@ package org.opensingular.lib.commons.context.singleton;
 
 
 import org.opensingular.lib.commons.context.MigrationEnabledSingularSingletonStrategy;
+import org.opensingular.lib.commons.context.ResetEnabledSingularSingletonStrategy;
 import org.opensingular.lib.commons.context.SingularSingletonNotFoundException;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 
 import java.util.Map;
 
-public class ThreadBoundedSingletonStrategy implements SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy {
+public class ThreadBoundedSingletonStrategy implements SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy, ResetEnabledSingularSingletonStrategy {
 
     private static final ThreadLocal<InstanceBoundedSingletonStrategy> threadBounded = new ThreadLocal<InstanceBoundedSingletonStrategy>() {
+
         @Override
         protected InstanceBoundedSingletonStrategy initialValue() {
             return new InstanceBoundedSingletonStrategy();
@@ -60,5 +62,10 @@ public class ThreadBoundedSingletonStrategy implements SingularSingletonStrategy
     @Override
     public synchronized void putEntries(Map<Object, Object> entries) {
         threadBounded.get().putEntries(entries);
+    }
+
+    @Override
+    public void reset() {
+        threadBounded.remove();
     }
 }
