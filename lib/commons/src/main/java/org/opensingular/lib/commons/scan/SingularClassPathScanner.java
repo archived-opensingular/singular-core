@@ -25,7 +25,7 @@ public class SingularClassPathScanner implements Loggable {
 
     private final ScanResult scanCache;
 
-    SingularClassPathScanner() {
+    protected SingularClassPathScanner() {
         long time = new Date().getTime();
         scanCache = new FastClasspathScanner().scan();
         getLogger().info("Full classpath scan in {} ms", new Date().getTime() - time);
