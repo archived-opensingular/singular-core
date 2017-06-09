@@ -8,6 +8,7 @@ import org.opensingular.lib.commons.context.SingularContext;
 import org.opensingular.lib.commons.context.SingularContextSetup;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ConfigurationClass.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class ApplicationContextProviderTest {
 
     @Inject

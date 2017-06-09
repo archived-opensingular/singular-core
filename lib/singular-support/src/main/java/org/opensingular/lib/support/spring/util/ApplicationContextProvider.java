@@ -27,7 +27,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 
@@ -41,6 +41,7 @@ import java.util.Optional;
  */
 @Named
 @Priority(0)
+@Lazy(false)
 public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextProvider.class);
