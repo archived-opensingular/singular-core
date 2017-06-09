@@ -30,9 +30,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Priority;
 import javax.inject.Named;
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ import java.util.Optional;
  * Métodos para localização e retorno do {@link ApplicationContext} atual.
  */
 @Named
-@Priority(0)
+@Order(0)
 @Lazy(false)
 public class ApplicationContextProvider implements ApplicationContextAware {
 
