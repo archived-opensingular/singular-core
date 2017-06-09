@@ -11,6 +11,7 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -19,6 +20,7 @@ import java.util.Map;
 /**
  *
  */
+@Lazy(false)
 public class SpringBoundedSingletonStrategy implements MigrationEnabledSingularSingletonStrategy, Loggable {
 
     /**
