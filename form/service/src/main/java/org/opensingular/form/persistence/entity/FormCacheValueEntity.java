@@ -16,12 +16,15 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -61,13 +64,18 @@ public class FormCacheValueEntity  extends BaseEntity<Long> {
     @Column(name = "NUM_VALOR")
     private BigDecimal numberValue;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CO_PARENT")
+    private FormCacheValueEntity parent;
+
     public FormCacheValueEntity() {
     }
 
-    public FormCacheValueEntity(FormCacheFieldEntity formField, FormVersionEntity formVersion, SInstance field) {
+    public FormCacheValueEntity(FormCacheFieldEntity formField, FormVersionEntity formVersion, SInstance field, FormCacheValueEntity parent) {
         this.setCacheField(formField);
         this.setFormVersion(formVersion);
         this.setValue(field);
+        this.setParent(parent);
     }
 
     public Long getCod() {
@@ -137,4 +145,11 @@ public class FormCacheValueEntity  extends BaseEntity<Long> {
         return stringValue;
     }
 
+    public FormCacheValueEntity getParent() {
+        return parent;
+    }
+
+    public void setParent(FormCacheValueEntity parent) {
+        this.parent = parent;
+    }
 }
