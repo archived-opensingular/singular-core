@@ -18,7 +18,6 @@ package org.opensingular.form.spring;
 
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.RefTypeByKey;
 import org.opensingular.form.document.TypeLoader;
@@ -36,8 +35,7 @@ import java.util.Optional;
 
 /**
  * Loader de dicionário baseado no Spring. Espera que o mesmo será um bean do
- * Spring. Com isso cria referências ({@link #createDictionaryRef(Serializable)}
- * ) serializáveis mediante uso do nome do bean no Spring como forma de
+ * Spring. Com isso cria referências  serializáveis mediante uso do nome do bean no Spring como forma de
  * recuperar o loader a partir da referência ao ser deserializada.
  *
  * @author Daniel C. Bordin
@@ -46,15 +44,6 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
         implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
-    private ExternalServiceRegistry registry;
-
-    @Nonnull
-    public Optional<ExternalServiceRegistry> getExternalRegistry() {
-        if (registry == null) {
-            registry = new SpringServiceRegistry();
-        }
-        return Optional.of(registry);
-    }
 
     @Override
     @Nonnull

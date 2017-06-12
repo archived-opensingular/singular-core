@@ -16,6 +16,9 @@
 
 package org.opensingular.form.document;
 
+import org.opensingular.form.RefService;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.internal.lib.commons.injection.FieldInjectionInfo;
 import org.opensingular.internal.lib.commons.injection.SingularFieldValueFactory;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
@@ -33,7 +36,7 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin on 22/05/2017.
  */
-public class MockExternalServiceRegistry implements ExternalServiceRegistry {
+public class MockServiceRegistry implements ServiceRegistry {
 
     private final Map<Class<?>, Object> byClass = new LinkedHashMap<>();
 
@@ -57,6 +60,22 @@ public class MockExternalServiceRegistry implements ExternalServiceRegistry {
             });
         }
         return injector;
+    }
+
+    @Nonnull
+    @Override
+    public Map<String, ServiceEntry> services() {
+        return new HashMap<>(0);
+    }
+
+    @Override
+    public <T> void bindService(Class<T> registerClass, RefService<? extends T> provider) {
+        registerBean(registerClass, provider.get());
+    }
+
+    @Override
+    public <T> void bindService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
+        registerBean(serviceName, provider.get());
     }
 
     @Nonnull

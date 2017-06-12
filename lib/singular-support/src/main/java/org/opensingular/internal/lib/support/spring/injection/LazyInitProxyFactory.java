@@ -32,6 +32,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import javax.annotation.Nonnull;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,14 +43,14 @@ import java.util.Set;
 /**
  * A factory class that creates lazy init proxies given a type and a {@link IProxyTargetLocator}
  * used to retrieve the object the proxy will represent.
- * <p>
+ * <p/>
  * A lazy init proxy waits until the first method invocation before it uses the
  * {@link IProxyTargetLocator} to retrieve the object to which the method invocation will be
  * forwarded.
- * <p>
+ * <p/>
  * This factory creates two kinds of proxies: A standard dynamic proxy when the specified type is an
  * interface, and a CGLib proxy when the specified type is a concrete class.
- * <p>
+ * <p/>
  * The general use case for such a proxy is to represent a dependency that should not be serialized. The solution is to
  * serialize the proxy and the
  * {@link IProxyTargetLocator} instead of the dependency, and be able to look up the target object
@@ -60,7 +61,7 @@ import java.util.Set;
  * @author Igor Vaynberg (ivaynberg)
  * @author Daniel C. Bordin on 16/05/2017.
  */
-class LazyInitProxyFactory implements Loggable{
+class LazyInitProxyFactory implements Loggable {
 
     /**
      * Primitive java types and their object wrappers
@@ -70,8 +71,9 @@ class LazyInitProxyFactory implements Loggable{
             int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class,
             char.class, Character.class, boolean.class, Boolean.class);
 
-    private static final int CGLIB_CALLBACK_NO_OVERRIDE = 0;
-    private static final int CGLIB_CALLBACK_HANDLER = 1;
+    private static final int     CGLIB_CALLBACK_NO_OVERRIDE = 0;
+    private static final int     CGLIB_CALLBACK_HANDLER     = 1;
+    private static final boolean IS_OBJENESIS_AVAILABLE     = isObjenesisAvailable();
 
     /**
      * Create a lazy init proxy for the specified type. The target object will be located using the
@@ -105,6 +107,9 @@ class LazyInitProxyFactory implements Loggable{
                 }
 
             } else {
+                if (IS_OBJENESIS_AVAILABLE && !hasNoArgConstructor(type)) {
+                    return ObjenesisProxyFactory.createProxy(type, locator, SingularProxyNamingPolicy.INSTANCE);
+                }
                 CGLibInterceptor handler = new CGLibInterceptor(type, locator);
 
                 Callback[] callbacks = new Callback[2];
@@ -129,6 +134,79 @@ class LazyInitProxyFactory implements Loggable{
 
     private static ClassLoader resolveClassLoader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    /**
+     * Checks if the method is derived from Object.equals()
+     *
+     * @param method method being tested
+     * @return true if the method is derived from Object.equals(), false otherwise
+     */
+    public static boolean isEqualsMethod(final Method method) {
+        return (method.getReturnType() == boolean.class) && (method.getParameterTypes().length == 1) &&
+                (method.getParameterTypes()[0] == Object.class) && "equals".equals(method.getName());
+    }
+
+    /**
+     * Checks if the method is derived from Object.hashCode()
+     *
+     * @param method method being tested
+     * @return true if the method is defined from Object.hashCode(), false otherwise
+     */
+    public static boolean isHashCodeMethod(final Method method) {
+        return (method.getReturnType() == int.class) && (method.getParameterTypes().length == 0) && "hashCode".equals(
+                method.getName());
+    }
+
+    /**
+     * Checks if the method is derived from Object.toString()
+     *
+     * @param method method being tested
+     * @return true if the method is defined from Object.toString(), false otherwise
+     */
+    public static boolean isToStringMethod(final Method method) {
+        return (method.getReturnType() == String.class) && (method.getParameterTypes().length == 0) &&
+                "toString".equals(method.getName());
+    }
+
+    /**
+     * Checks if the method is derived from Object.finalize()
+     *
+     * @param method method being tested
+     * @return true if the method is defined from Object.finalize(), false otherwise
+     */
+    public static boolean isFinalizeMethod(final Method method) {
+        return (method.getReturnType() == void.class) && (method.getParameterTypes().length == 0) && "finalize".equals(
+                method.getName());
+    }
+
+    /**
+     * Checks if the method is the writeReplace method
+     *
+     * @param method method being tested
+     * @return true if the method is the writeReplace method, false otherwise
+     */
+    public static boolean isWriteReplaceMethod(final Method method) {
+        return (method.getReturnType() == Object.class) && (method.getParameterTypes().length == 0) &&
+                "writeReplace".equals(method.getName());
+    }
+
+    private static boolean hasNoArgConstructor(Class<?> type) {
+        for (Constructor<?> constructor : type.getDeclaredConstructors()) {
+            if (constructor.getParameterTypes().length == 0)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean isObjenesisAvailable() {
+        try {
+            Class.forName("org.objenesis.ObjenesisStd");
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
@@ -272,7 +350,7 @@ class LazyInitProxyFactory implements Loggable{
 
     /**
      * CGLib callback filter which does not intercept protected methods.
-     * <p>
+     * <p/>
      * Protected methods need to be called with invokeSuper() instead of invoke().
      * When invoke() is called on a protected method, it throws an "IllegalArgumentException:
      * Protected method" exception.
@@ -370,61 +448,6 @@ class LazyInitProxyFactory implements Loggable{
         public Object writeReplace() throws ObjectStreamException {
             return new ProxyReplacement(typeName, locator);
         }
-    }
-
-    /**
-     * Checks if the method is derived from Object.equals()
-     *
-     * @param method method being tested
-     * @return true if the method is derived from Object.equals(), false otherwise
-     */
-    public static boolean isEqualsMethod(final Method method) {
-        return (method.getReturnType() == boolean.class) && (method.getParameterTypes().length == 1) &&
-                (method.getParameterTypes()[0] == Object.class) && "equals".equals(method.getName());
-    }
-
-    /**
-     * Checks if the method is derived from Object.hashCode()
-     *
-     * @param method method being tested
-     * @return true if the method is defined from Object.hashCode(), false otherwise
-     */
-    public static boolean isHashCodeMethod(final Method method) {
-        return (method.getReturnType() == int.class) && (method.getParameterTypes().length == 0) && "hashCode".equals(
-                method.getName());
-    }
-
-    /**
-     * Checks if the method is derived from Object.toString()
-     *
-     * @param method method being tested
-     * @return true if the method is defined from Object.toString(), false otherwise
-     */
-    public static boolean isToStringMethod(final Method method) {
-        return (method.getReturnType() == String.class) && (method.getParameterTypes().length == 0) &&
-                "toString".equals(method.getName());
-    }
-
-    /**
-     * Checks if the method is derived from Object.finalize()
-     *
-     * @param method method being tested
-     * @return true if the method is defined from Object.finalize(), false otherwise
-     */
-    public static boolean isFinalizeMethod(final Method method) {
-        return (method.getReturnType() == void.class) && (method.getParameterTypes().length == 0) && "finalize".equals(
-                method.getName());
-    }
-
-    /**
-     * Checks if the method is the writeReplace method
-     *
-     * @param method method being tested
-     * @return true if the method is the writeReplace method, false otherwise
-     */
-    public static boolean isWriteReplaceMethod(final Method method) {
-        return (method.getReturnType() == Object.class) && (method.getParameterTypes().length == 0) &&
-                "writeReplace".equals(method.getName());
     }
 
     public static final class SingularProxyNamingPolicy extends DefaultNamingPolicy {
