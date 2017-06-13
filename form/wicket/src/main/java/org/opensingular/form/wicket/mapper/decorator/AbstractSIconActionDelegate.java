@@ -95,7 +95,7 @@ public class AbstractSIconActionDelegate implements Delegate {
                     comp.send(comp, Broadcast.BUBBLE, new IOpenModalEvent() {
                         //@formatter:off
                         @Override public String            getModalTitle() { return title; }
-                        @Override public AjaxRequestTarget getTarget()     { return getInternalContext(AjaxRequestTarget.class).get(); }
+                        @Override public AjaxRequestTarget getTarget()     { return getInternalContext(AjaxRequestTarget.class).orElse(null); }
                         //@formatter:on
                         @Override
                         public Component getBodyContent(String id) {
