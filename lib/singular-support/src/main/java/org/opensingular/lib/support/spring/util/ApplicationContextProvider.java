@@ -118,9 +118,9 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     @Nonnull
-    public static Optional<Object> getBeanOpt(@Nonnull String name) {
+    public static <T> Optional<T> getBeanOpt(@Nonnull String name) {
         try {
-            return Optional.ofNullable(get().getBean(name));
+            return Optional.ofNullable((T) get().getBean(name));
         } catch (NoSuchBeanDefinitionException ex) {
             LOGGER.debug(null, ex);
             return Optional.empty();

@@ -20,7 +20,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.opensingular.form.SType;
 import org.opensingular.form.helpers.AssertionsSInstance;
@@ -28,14 +27,10 @@ import org.opensingular.internal.form.wicket.util.WicketSerializationDebugUtil;
 
 import javax.servlet.ServletContext;
 
-import java.io.BufferedReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-import com.google.common.io.LineReader;
 
 /**
  * Um WicketTester com configuração básicas do Singular para facilitar a criação de testes.
@@ -45,57 +40,57 @@ import com.google.common.io.LineReader;
 public class SingularWicketTester extends WicketTester {
 
     public SingularWicketTester() {
-        setup();
+        setUp();
     }
 
 
 
     @Deprecated
     public SingularWicketTester(boolean turnOnSerializationCheck) {
-        setup(turnOnSerializationCheck);
+        setUp(turnOnSerializationCheck);
     }
 
     public SingularWicketTester(Class<? extends Page> homePage) {
         super(homePage);
-        setup();
+        setUp();
     }
 
     public SingularWicketTester(WebApplication application) {
         super(application);
-        setup();
+        setUp();
     }
 
     @Deprecated
     public SingularWicketTester(boolean turnOnSerializationCheck, WebApplication application) {
         super(application);
-        setup(turnOnSerializationCheck);
+        setUp(turnOnSerializationCheck);
     }
 
     public SingularWicketTester(WebApplication application, String path) {
         super(application, path);
-        setup();
+        setUp();
     }
 
     public SingularWicketTester(WebApplication application, ServletContext servletCtx) {
         super(application, servletCtx);
-        setup();
+        setUp();
     }
 
     public SingularWicketTester(WebApplication application, boolean init) {
         super(application, init);
-        setup();
+        setUp();
     }
 
     public SingularWicketTester(WebApplication application, ServletContext servletCtx, boolean init) {
         super(application, servletCtx, init);
-        setup();
+        setUp();
     }
 
-    private void setup() {
-        setup(true);
+    private void setUp() {
+        setUp(true);
     }
 
-    private void setup(boolean turnOnSerializationCheck) {
+    private void setUp(boolean turnOnSerializationCheck) {
         getApplication().getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
         if (turnOnSerializationCheck) {
             WicketSerializationDebugUtil.configurePageSerializationDebug(getApplication(), getClass());

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.6.7-RC3</version>
+        <version>1.6.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-form-wicket</artifactId>
@@ -47,19 +47,19 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-core</artifactId>
-            <version>1.6.7-RC3</version>
+            <version>1.6.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-wicket-utils</artifactId>
-            <version>1.6.7-RC3</version>
+            <version>1.6.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>1.6.7-RC3</version>
+            <version>1.6.7-SNAPSHOT</version>
         </dependency>
 
         <!--  WICKET DEPENDENCIES -->

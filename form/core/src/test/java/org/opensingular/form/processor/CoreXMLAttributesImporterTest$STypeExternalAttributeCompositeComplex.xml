@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<attrs>
+	<attr name="singular.form.basic.label">LLL1</attr>
+	<attr name="singular.form.basic.subtitle">SSS1</attr>
+	<attr field="field1" name="singular.form.basic.label">LLL2</attr>
+	<attr field="field1" name="singular.form.basic.subtitle">SSS2</attr>
+	<attr field="field2" name="singular.form.basic.label">LLL3</attr>
+	<attr field="field2" name="singular.form.basic.subtitle">SSS3</attr>
+	<attr field="field3.field1" name="singular.form.basic.label">LLL4</attr>
+	<attr field="field3.field2" name="singular.form.basic.label">LLL5</attr>
+</attrs>

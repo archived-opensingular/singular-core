@@ -17,6 +17,7 @@
 package org.opensingular.form.provider;
 
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.lib.commons.base.SingularException;
 
@@ -49,20 +50,27 @@ public class LookupOptionsProvider implements Provider {
         return whichProvider(context.getInstance().getDocument()).load(context);
     }
 
+    @SuppressWarnings("unchecked")
     @Nonnull
     private Provider whichProvider(@Nonnull SDocument document) {
         Optional<Provider> p;
         if (providerName != null) {
-            p = document.lookupService(providerName, Provider.class);
-            if (! p.isPresent()) {
-                throw new SingularFormException("Não foi localizado o " + Provider.class.getSimpleName() + " de nome '"
-                        + providerName + "' nos serviços registrado para o documento");
+            p = document.lookupLocalService(providerName, Provider.class);
+            if (!p.isPresent()) {
+                p = ServiceRegistryLocator.locate().lookupService(providerName);
+                if (!p.isPresent()) {
+                    throw new SingularFormException("Não foi localizado o " + Provider.class.getSimpleName() + " de nome '"
+                            + providerName + "' nos serviços registrado para o documento");
+                }
             }
         } else if (providerClass != null) {
-            p = (Optional<Provider>) document.lookupService(providerClass);
-            if (! p.isPresent()) {
-                throw new SingularFormException("Não foi localizado o " + Provider.class.getSimpleName() + " da classe '"
-                        + providerClass + "' nos serviços registrado para o documento");
+            p = (Optional<Provider>) document.lookupLocalService(providerClass);
+            if (!p.isPresent()) {
+                p = ServiceRegistryLocator.locate().lookupService((Class) providerClass);
+                if (!p.isPresent()) {
+                    throw new SingularFormException("Não foi localizado o " + Provider.class.getSimpleName() + " da classe '"
+                            + providerClass + "' nos serviços registrado para o documento");
+                }
             }
         } else {
             throw SingularException.rethrow("Não foi configurador a origem do " + Provider.class.getSimpleName());

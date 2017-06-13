@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<attrs>
+	<attr name="singular.form.basic.label">Nome</attr>
+	<attr name="singular.form.basic.subtitle">Nome Subtitle</attr>
+	<attr field="field1" name="singular.form.basic.label">SubNome1</attr>
+</attrs>
