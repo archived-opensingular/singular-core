@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.slf4j.Logger;
@@ -16,50 +17,36 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Implementa a lógica de carga de implementações de SIconProvider. Provê três implementações padrão:
+ * Simple Line, Font Awesome, e Glyphicons.
+ */
 public final class SIconProviders {
 
-    private static final Logger        log              = LoggerFactory.getLogger(SIconProviders.class);
-
-    private static List<SIconProvider> CACHED_PROVIDERS = loadProviders();
-
-    private SIconProviders() {}
-
-    static SIcon resolve(String s) {
-        for (SIconProvider provider : getProviders()) {
-            SIcon icon = provider.resolve(s);
-            if (icon != null)
-                return icon;
-        }
-        return new SIconImpl(s, s);
-    }
-
-    private static List<SIconProvider> getProviders() {
-        if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE)) {
-            CACHED_PROVIDERS = loadProviders();
-        }
-        return CACHED_PROVIDERS;
-    }
-
-    private static List<SIconProvider> loadProviders() {
-        ServiceLoader<SIconProvider> serviceLoader = ServiceLoader.load(SIconProvider.class, SIconProviders.class.getClassLoader());
-        List<SIconProvider> providers = Lists.newArrayList(serviceLoader.iterator());
-        Collections.sort(providers, Comparator.comparingInt(SIconProvider::order));
-        log.debug("{}", providers);
-        return providers;
-    }
-
+    /**
+     * Implementação de SIconProvider que provê os ícones do conjunto Simple Line (http://simplelineicons.com).
+     */
     public static class SimpleLineIconProvider extends AbstractSIconProvider {
         private static Properties VALID = loadValidClasses(SimpleLineIconProvider.class);
         public SimpleLineIconProvider() {
             super(100, VALID, s -> "icon-" + s);
         }
     }
+    
+    /**
+     * Implementação de SIconProvider que provê os ícones do conjunto Font Awesome (http://fontawesome.io).
+     */
     public static class FontAwesomeIconProvider extends AbstractSIconProvider {
         private static Properties VALID = loadValidClasses(FontAwesomeIconProvider.class);
         public FontAwesomeIconProvider() {
             super(200, VALID, s -> "fa fa-" + s);
         }
     }
+
+    /**
+     * Implementação de SIconProvider que provê os ícones do conjunto Glyphicons fornecido em conjunto
+     * com o Bootstrap (http://getbootstrap.com/components/).
+     */
     public static class GlyphiconsIconProvider extends AbstractSIconProvider {
         private static Properties VALID = loadValidClasses(GlyphiconsIconProvider.class);
         public GlyphiconsIconProvider() {
@@ -67,16 +54,34 @@ public final class SIconProviders {
         }
     }
 
-    private static Properties loadValidClasses(Class<? extends SIconProvider> clazz) {
-        Properties props = new Properties();
-        try (
-            InputStream input = clazz.getResourceAsStream("SIconProviders_" + clazz.getSimpleName() + ".properties");
-            InputStreamReader reader = new InputStreamReader(input)) {
-            props.load(reader);
-        } catch (IOException ex) {
-            log.warn("Couldn't load valid classes for " + clazz.getName(), ex);
+    private static final Logger              log              = LoggerFactory.getLogger(SIconProviders.class);
+
+    private static final List<SIconProvider> CACHED_PROVIDERS = loadProviders();
+
+    private SIconProviders() {}
+
+    static SIcon resolve(String s) {
+        // recarrega toda vez se em dev mode
+        List<SIconProvider> providers = (SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE))
+            ? loadProviders()
+            : CACHED_PROVIDERS;
+
+        for (SIconProvider provider : providers) {
+            SIcon icon = provider.resolve(s);
+            if (icon != null)
+                return icon;
         }
-        return props;
+        return new SIconImpl(s, s);
+    }
+
+    private static List<SIconProvider> loadProviders() {
+        ServiceLoader<SIconProvider> serviceLoader = ServiceLoader.load(SIconProvider.class, SIconProvider.class.getClassLoader());
+        List<SIconProvider> providers = Lists.newArrayList(serviceLoader.iterator());
+        Collections.sort(providers,
+            Comparator.comparingInt(SIconProvider::order)
+                .thenComparing(Comparator.comparing(it -> it.getClass().getName())));
+        log.debug("{}", providers);
+        return providers;
     }
 
     private static class SIconImpl implements SIcon {
@@ -95,6 +100,7 @@ public final class SIconProviders {
             return cssClass;
         }
     }
+
     private static abstract class AbstractSIconProvider implements SIconProvider {
         private final int                       order;
         private final Properties                validClasses;
@@ -113,7 +119,21 @@ public final class SIconProviders {
             final String baseCssClass = s.toLowerCase().replaceAll("[^a-z0-9 _]", "-");
             if (!validClasses.containsKey(baseCssClass))
                 return null;
-            return new SIconImpl(s, function.apply(baseCssClass));
+            
+            // Usa o valor, ou a chave se não houver valor
+            final String iconId = StringUtils.defaultIfBlank(validClasses.getProperty(s), s);
+            return new SIconImpl(iconId, function.apply(baseCssClass));
+        }
+        protected static Properties loadValidClasses(Class<? extends SIconProvider> clazz) {
+            Properties props = new Properties();
+            try (
+                InputStream input = clazz.getResourceAsStream("SIconProviders_" + clazz.getSimpleName() + ".properties");
+                InputStreamReader reader = new InputStreamReader(input)) {
+                props.load(reader);
+            } catch (IOException ex) {
+                log.warn("Couldn't load valid classes for " + clazz.getName(), ex);
+            }
+            return props;
         }
     }
 }

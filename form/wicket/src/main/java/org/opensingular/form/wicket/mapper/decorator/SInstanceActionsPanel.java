@@ -22,6 +22,9 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
+/**
+ * Componente que encapsula o layout de ícones para ações sobre campos.
+ */
 public class SInstanceActionsPanel extends TemplatePanel {
 
     private static String template(TemplatePanel c) {

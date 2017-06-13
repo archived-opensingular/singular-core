@@ -7,6 +7,9 @@ import java.util.Collections;
 
 import org.opensingular.form.SInstance;
 
+/**
+ * Provider para a ação de exibição do Help do campo.
+ */
 public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
 
     @Override
