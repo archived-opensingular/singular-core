@@ -1,6 +1,8 @@
 package org.opensingular.form.decorator.action;
 
-public interface ISInstanceActionCapable {
+import java.io.Serializable;
+
+public interface ISInstanceActionCapable extends Serializable {
 
     default void addSInstanceActionsProvider(ISInstanceActionsProvider provider) {
         this.addSInstanceActionsProvider(Integer.MIN_VALUE, provider);

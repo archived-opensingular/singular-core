@@ -1,6 +1,5 @@
 package org.opensingular.form.wicket.panel;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 import org.apache.wicket.Component;
@@ -10,7 +9,7 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
 
-public interface IOpenModalEvent extends Serializable {
+public interface IOpenModalEvent {
 
     String getModalTitle();
 
