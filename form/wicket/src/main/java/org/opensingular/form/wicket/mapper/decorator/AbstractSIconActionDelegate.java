@@ -53,13 +53,14 @@ public class AbstractSIconActionDelegate implements Delegate {
     @Override
     public void openForm(String title, ISupplier<SInstance> formInstance, List<SInstanceAction> actions) {
         IModel<SInstance> formInstanceModel = new SuppliedInstanceModel(formInstance);
-        Component comp = getInternalContext(Component.class).get();
-        comp.send(comp, Broadcast.BUBBLE, new OpenModelEventImpl(
-            title,
-            getInternalContext(AjaxRequestTarget.class).get(),
-            instanceRef,
-            formInstanceModel,
-            actions));
+        getInternalContext(Component.class).ifPresent(comp -> {
+            comp.send(comp, Broadcast.BUBBLE, new OpenModelEventImpl(
+                title,
+                getInternalContext(AjaxRequestTarget.class).get(),
+                instanceRef,
+                formInstanceModel,
+                actions));
+        });
     }
 
     @Override
@@ -89,24 +90,25 @@ public class AbstractSIconActionDelegate implements Delegate {
                 return;
 
             case "html":
-                Component comp = getInternalContext(Component.class).get();
-                comp.send(comp, Broadcast.BUBBLE, new IOpenModalEvent() {
-                    //@formatter:off
-                    @Override public String            getModalTitle() { return title; }
-                    @Override public AjaxRequestTarget getTarget()     { return getInternalContext(AjaxRequestTarget.class).get(); }
-                    //@formatter:on
-                    @Override
-                    public Component getBodyContent(String id) {
-                        return new TemplatePanel(id, serializableMessage.toString());
-                    }
-                    @Override
-                    public Iterator<ButtonDef> getFooterButtons(IConsumer<AjaxRequestTarget> closeCallback) {
-                        return Arrays.asList(new ButtonDef(
-                            ButtonStyle.LINK,
-                            Model.of("Fechar"),
-                            new FecharButton("fechar", closeCallback)))
-                            .iterator();
-                    }
+                getInternalContext(Component.class).ifPresent(comp -> {
+                    comp.send(comp, Broadcast.BUBBLE, new IOpenModalEvent() {
+                        //@formatter:off
+                        @Override public String            getModalTitle() { return title; }
+                        @Override public AjaxRequestTarget getTarget()     { return getInternalContext(AjaxRequestTarget.class).get(); }
+                        //@formatter:on
+                        @Override
+                        public Component getBodyContent(String id) {
+                            return new TemplatePanel(id, serializableMessage.toString());
+                        }
+                        @Override
+                        public Iterator<ButtonDef> getFooterButtons(IConsumer<AjaxRequestTarget> closeCallback) {
+                            return Arrays.asList(new ButtonDef(
+                                ButtonStyle.LINK,
+                                Model.of("Fechar"),
+                                new FecharButton("fechar", closeCallback)))
+                                .iterator();
+                        }
+                    });
                 });
                 return;
 
@@ -141,7 +143,7 @@ public class AbstractSIconActionDelegate implements Delegate {
     }
 
     protected AjaxRequestTarget getAjaxRequestTarget() {
-        return getInternalContext(AjaxRequestTarget.class).get();
+        return getInternalContext(AjaxRequestTarget.class).orElse(null);
     }
 
     @Override

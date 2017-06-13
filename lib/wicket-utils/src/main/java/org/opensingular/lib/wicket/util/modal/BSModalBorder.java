@@ -171,7 +171,6 @@ public class BSModalBorder extends Border {
                 .add(buttonsFragment
                     .add(buttonsContainer)))
             .add(new AttributeAppender("class", modalSizeModel, " ")));
-        ;
 
         dialog.add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('keypress', function (e) {"
             + "  var buttons = $(this).find('.btn-primary:visible');"
@@ -361,13 +360,7 @@ public class BSModalBorder extends Border {
             clearInputs();
 
             this.setVisible(false);
-
-            if (target != null) {
-                final String blockingFunction = "hide_hidden_wicket_modal";
-                target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
-                target.add(this);
-            }
-
+            
             final AbstractDefaultAjaxBehavior onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
                 private boolean executed = false;
                 @Override
@@ -380,7 +373,13 @@ public class BSModalBorder extends Border {
                 }
             };
             getPage().add(onHideCallBackBehavior);
-            target.appendJavaScript(onHideCallBackBehavior.getCallbackScript());
+
+            if (target != null) {
+                final String blockingFunction = "hide_hidden_wicket_modal";
+                target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
+                target.add(this);
+                target.appendJavaScript(onHideCallBackBehavior.getCallbackScript());
+            }
         }
     }
 
