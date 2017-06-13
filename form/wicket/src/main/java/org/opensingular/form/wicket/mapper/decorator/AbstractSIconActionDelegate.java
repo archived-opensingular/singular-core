@@ -65,10 +65,11 @@ public class AbstractSIconActionDelegate implements Delegate {
 
     @Override
     public void closeForm(SInstance formInstance) {
-        Component comp = getInternalContext(Component.class).get();
-        comp.send(comp, Broadcast.BUBBLE, ICloseModalEvent.of(
-            getInternalContext(AjaxRequestTarget.class).orElse(null),
-            it -> Objects.equals(it.getDefaultModelObject(), formInstance)));
+        getInternalContext(Component.class).ifPresent(comp -> {
+            comp.send(comp, Broadcast.BUBBLE, ICloseModalEvent.of(
+                getInternalContext(AjaxRequestTarget.class).orElse(null),
+                it -> Objects.equals(it.getDefaultModelObject(), formInstance)));
+        });
     }
 
     @Override
