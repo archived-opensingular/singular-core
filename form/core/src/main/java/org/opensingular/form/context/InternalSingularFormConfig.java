@@ -16,8 +16,6 @@
 
 package org.opensingular.form.context;
 
-import org.opensingular.form.document.ServiceRegistry;
-
 /**
  * Interface de uso interno para acessar os valores configurados no SingularFormConfig
  */
