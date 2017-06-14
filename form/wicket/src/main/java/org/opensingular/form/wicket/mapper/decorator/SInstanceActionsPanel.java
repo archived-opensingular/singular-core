@@ -65,8 +65,7 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     protected void onAction(AjaxRequestTarget target) {
                         final List<?> contextList = internalContextListProvider.apply(target);
 
-                        final SInstanceAction.Delegate delegate =
-                            new AbstractSIconActionDelegate(instanceModel::getObject, contextList);
+                        final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel::getObject, contextList);
 
                         SInstanceAction instanceAction = this.getModelObject();
                         instanceAction.getActionHandler()

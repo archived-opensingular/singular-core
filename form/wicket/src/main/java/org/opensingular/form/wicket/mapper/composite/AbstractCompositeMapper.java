@@ -23,7 +23,6 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -165,11 +164,11 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
-            final Iterator<SInstanceAction> actionsIterator = mapper.instanceActionsProviders.actionIterator(model);
+            final List<SInstanceAction> actionsIterator = mapper.instanceActionsProviders.actionList(model);
             final IModel<String> label = $m.ofValue(trimToEmpty(getInstance().asAtr().getLabel()));
 
             final boolean hasLabel = isNotBlank(label.getObject());
-            final boolean hasActions = actionsIterator.hasNext();
+            final boolean hasActions = !actionsIterator.isEmpty();
 
             if (hasLabel || hasActions) {
                 BSCol column = grid.newColInRow();

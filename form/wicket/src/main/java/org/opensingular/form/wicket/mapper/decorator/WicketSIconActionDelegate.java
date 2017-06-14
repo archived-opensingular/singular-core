@@ -23,7 +23,6 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
-import org.opensingular.form.decorator.action.SInstanceAction.Delegate;
 import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.panel.IOpenModalEvent;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
@@ -35,16 +34,22 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
 
 import com.google.common.collect.ImmutableList;
 
-public class AbstractSIconActionDelegate implements Delegate {
+/**
+ * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
+ */
+public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
 
     private ISupplier<SInstance> instanceRef;
     private List<?>              contextList;
 
-    public AbstractSIconActionDelegate(ISupplier<SInstance> instanceRef, List<?> contextList) {
+    public WicketSIconActionDelegate(ISupplier<SInstance> instanceRef, List<?> contextList) {
         this.instanceRef = instanceRef;
         this.contextList = contextList;
     }
 
+    /*
+     * 
+     */
     @Override
     public ISupplier<SInstance> getInstanceRef() {
         return instanceRef;
@@ -87,16 +92,21 @@ public class AbstractSIconActionDelegate implements Delegate {
 
             case "text":
             case "plaintext":
+            case "plain text":
                 showMessage(title, "<p>" + serializableMessage.toString() + "</p>", "html");
                 return;
 
             case "html":
                 getInternalContext(Component.class).ifPresent(comp -> {
                     comp.send(comp, Broadcast.BUBBLE, new IOpenModalEvent() {
-                        //@formatter:off
-                        @Override public String            getModalTitle() { return title; }
-                        @Override public AjaxRequestTarget getTarget()     { return getInternalContext(AjaxRequestTarget.class).orElse(null); }
-                        //@formatter:on
+                        @Override
+                        public String getModalTitle() {
+                            return title;
+                        }
+                        @Override
+                        public AjaxRequestTarget getTarget() {
+                            return getInternalContext(AjaxRequestTarget.class).orElse(null);
+                        }
                         @Override
                         public Component getBodyContent(String id) {
                             return new TemplatePanel(id, serializableMessage.toString());
@@ -252,7 +262,7 @@ public class AbstractSIconActionDelegate implements Delegate {
                 this);
             actionHandler.onAction(
                 new ModelGetterSupplier<SInstance>(formInstanceModel),
-                new AbstractSIconActionDelegate(
+                new WicketSIconActionDelegate(
                     instanceSupplier,
                     childContextList));
         }
