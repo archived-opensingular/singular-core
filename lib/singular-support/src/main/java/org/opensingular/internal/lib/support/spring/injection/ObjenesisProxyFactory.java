@@ -22,6 +22,6 @@ public class ObjenesisProxyFactory {
         Class<?> proxyClass    = e.createClass();
         Factory  proxyInstance = (Factory) OBJENESIS.newInstance(proxyClass);
         proxyInstance.setCallbacks(new Callback[]{handler});
-        return proxyClass;
+        return proxyInstance;
     }
 }
