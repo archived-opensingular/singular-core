@@ -83,7 +83,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         configureLabel(ctx, labelModel, hintNoDecoration, label);
 
         List<SInstanceAction> actions = this.instanceActionsProviders.actionList(model);
-        if (actions.isEmpty()) {
+        if (hintNoDecoration || actions.isEmpty()) {
             formGroup.appendLabel(label);
         } else {
             IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
