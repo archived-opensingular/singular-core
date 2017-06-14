@@ -100,7 +100,8 @@ public enum Icone implements SingularIcon {
     NEWSPAPER("fa fa-newspaper-o"),
     WARNING("fa fa-warning"),
     TASKS("fa fa-tasks"),
-    SEARCH("fa fa-search")
+    SEARCH("fa fa-search"),
+    SITEMAP("fa fa-sitemap")
     ;
 
     private final String cssClass;
