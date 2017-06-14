@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.junit.runners.Parameterized;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
@@ -24,6 +25,7 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     @Parameterized.Parameters(name = "{index}: ({0})")
     public static Collection<TestFormConfig> data() {
+        ServiceRegistryLocator.setup(new ServiceRegistryLocator());
         List<TestFormConfig> executionParams = new ArrayList<>();
         addScenario(executionParams, "default option", () -> SDictionary.create());
         return executionParams;
@@ -35,8 +37,6 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
 
     private static interface SerializableSupplier<T> extends Supplier<T>, Serializable {
     }
-
-    ;
 
     protected static class TestFormConfig {
         private final String scenarioName;
