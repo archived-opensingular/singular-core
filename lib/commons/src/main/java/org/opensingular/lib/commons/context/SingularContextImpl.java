@@ -16,7 +16,7 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
 
     private SingularContextImpl(SingularSingletonStrategy strategy) {
         if (isConfigured()) {
-            throw new SingularAlreadyConfiguredException();
+            throw new SingularContextAlreadyConfiguredException();
         } else {
             setSingularSingletonStrategy(strategy);
         }
