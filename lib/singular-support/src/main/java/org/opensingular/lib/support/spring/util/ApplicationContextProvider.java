@@ -48,7 +48,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static final ISupplier<ApplicationContext> SUPPLIER = () -> get();
 
-    public static ApplicationContext getApplicationContext() {
+    public synchronized static ApplicationContext getApplicationContext() {
         return ((SingularSingletonStrategy) SingularContext.get()).get(ApplicationContext.class);
     }
 
