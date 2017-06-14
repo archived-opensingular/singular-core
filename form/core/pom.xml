@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.6.7-CONTEXT-SNAPSHOT</version>
+        <version>1.6.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-form-core</artifactId>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.6.7-CONTEXT-SNAPSHOT</version>
+            <version>1.6.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
