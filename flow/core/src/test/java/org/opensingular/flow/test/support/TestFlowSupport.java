@@ -18,10 +18,8 @@ import org.opensingular.flow.core.TestProcessBeanInjection;
 import org.opensingular.flow.test.TestDAO;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
@@ -31,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +45,7 @@ import java.util.Objects;
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(TestFlowSupport.FactoryRunnerParameteziedWithSpring.class)
 @ActiveProfiles(resolver = TestFlowSupport.ParameterizedFlowProfileResolver.class)
-public abstract class TestFlowSupport implements ApplicationContextAware {
+public abstract class TestFlowSupport {
 
 
     @Parameterized.Parameter(0)
@@ -61,15 +60,17 @@ public abstract class TestFlowSupport implements ApplicationContextAware {
     @Inject
     protected SessionFactory sessionFactory;
 
+    @Inject
+    private ApplicationContextProvider applicationContextProvider;
+
     protected static MyBean myBeanRef;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        configApplicationContext(applicationContext);
+    @PostConstruct
+    public void init() {
+        configApplicationContext(applicationContextProvider.get());
     }
 
     public static void configApplicationContext(ApplicationContext applicationContext) {
-        ApplicationContextProvider.setup(applicationContext);
         try {
             myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);
         } catch (NoSuchBeanDefinitionException e) {
@@ -132,14 +133,14 @@ public abstract class TestFlowSupport implements ApplicationContextAware {
 
         @Override
         protected Object createTest() throws Exception {
+            SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(flowTestConfig.getBdProperties()));
             Object testInstance = runnerParam.createTest();
             getTestContextManager().prepareTestInstance(testInstance);
             return testInstance;
         }
 
+        //Esse método roda antes do contexto do spring ser reinicializado.
         public void run(RunNotifier notifier) {
-            SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource(
-                    flowTestConfig.getBdProperties()));
             ParameterizedFlowProfileResolver.currentProfile = flowTestConfig.getSpringProfile();
             super.run(notifier);
             ParameterizedFlowProfileResolver.currentProfile = null;

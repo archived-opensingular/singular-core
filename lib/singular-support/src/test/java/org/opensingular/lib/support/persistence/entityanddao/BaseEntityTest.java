@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.entity.EntityInterceptor;
 import org.opensingular.lib.support.persistence.util.Constants;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = DatabaseConfigurationMock.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class BaseEntityTest {
 
     @Inject
