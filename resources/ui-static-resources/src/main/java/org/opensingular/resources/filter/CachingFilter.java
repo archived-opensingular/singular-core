@@ -9,17 +9,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Random;
+import java.security.SecureRandom;
 
 @WebFilter(urlPatterns = "*")
 public class CachingFilter implements Filter {
 
-    public static final String CACHE_CONTROL   = "Cache-Control";
-    public static final String MAX_AGE_PATTERN = "max-age=%d";
-    public static final long   THIRTY_DAYS     = 86400L * 30; // 30 days in seconds
-    public static final long   TWELVE_HOURS    = 86400L / 2; // 12 hours in seconds
-    public static final Random RANDOM          = new Random(new Date().getTime());
+    public static final String       CACHE_CONTROL   = "Cache-Control";
+    public static final String       MAX_AGE_PATTERN = "max-age=%d";
+    public static final long         THIRTY_DAYS     = 86400L * 30; // 30 days in seconds
+    public static final long         TWELVE_HOURS    = 86400L / 2; // 12 hours in seconds
+    public static final SecureRandom RANDOM          = new SecureRandom(SecureRandom.getSeed(4));
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
