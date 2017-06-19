@@ -11,14 +11,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
-import java.util.stream.LongStream;
 
 @WebFilter(urlPatterns = "*")
 public class CachingFilter implements Filter {
 
-    private static long       THIRTY_DAYS  = 86400 * 30; // 30 days in seconds
-    private static long       TWELVE_HOURS = 86400 / 2; // 12 hours in seconds
-    private static LongStream random       = new Random(new Date().getTime()).longs(0, TWELVE_HOURS);
+    public static final String CACHE_CONTROL = "Cache-Control";
+    public static final String MAX_AGE_PATTERN = "max-age=%d";
+    public static       long   THIRTY_DAYS     = 86400 * 30; // 30 days in seconds
+    public static       long   TWELVE_HOURS    = 86400 / 2; // 12 hours in seconds
+    public static       Random random          = new Random(new Date().getTime());
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -27,7 +28,7 @@ public class CachingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Cache-Control", String.format("max-age=%d", THIRTY_DAYS + random.findFirst().getAsLong()));
+        httpServletResponse.setHeader(CACHE_CONTROL, String.format(MAX_AGE_PATTERN, THIRTY_DAYS + random.longs(0, TWELVE_HOURS).findFirst().getAsLong()));
         chain.doFilter(request, httpServletResponse);
     }
 
