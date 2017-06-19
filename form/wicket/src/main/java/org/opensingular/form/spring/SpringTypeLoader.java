@@ -23,11 +23,8 @@ import org.opensingular.form.document.RefTypeByKey;
 import org.opensingular.form.document.TypeLoader;
 import org.opensingular.internal.lib.support.spring.SpringUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -41,7 +38,7 @@ import java.util.Optional;
  * @author Daniel C. Bordin
  */
 public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends TypeLoader<TYPE_KEY>
-        implements ApplicationContextAware, BeanNameAware, NamedBean {
+        implements BeanNameAware, NamedBean {
 
     private String springBeanName;
 
@@ -49,11 +46,6 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
     @Nonnull
     protected final Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId) {
         return loadType(typeId).map(t -> new SpringRefType(SpringUtils.checkBeanName(this), typeId, t));
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
     }
 
     @Override

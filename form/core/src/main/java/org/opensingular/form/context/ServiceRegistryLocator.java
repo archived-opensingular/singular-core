@@ -1,8 +1,9 @@
 package org.opensingular.form.context;
 
-public class ServiceRegistryLocator {
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 
-    private static ServiceRegistryLocator locator = new ServiceRegistryLocator();
+public class ServiceRegistryLocator {
 
     private ServiceRegistryLocator delegate;
 
@@ -21,15 +22,15 @@ public class ServiceRegistryLocator {
     }
 
     private static ServiceRegistryLocator get() {
-        return locator;
+        return ((SingularSingletonStrategy) SingularContext.get()).singletonize(ServiceRegistryLocator.class, ServiceRegistryLocator::new);
     }
 
     public static synchronized void setup(ServiceRegistryLocator locator) {
-        ServiceRegistryLocator.locator = new ServiceRegistryLocator(locator);
+        ((SingularSingletonStrategy) SingularContext.get()).put(ServiceRegistryLocator.class, new ServiceRegistryLocator(locator));
     }
 
     public static synchronized void setup(ServiceRegistry serviceRegistry) {
-        ServiceRegistryLocator.locator = new ServiceRegistryLocator(serviceRegistry);
+        ((SingularSingletonStrategy) SingularContext.get()).put(ServiceRegistryLocator.class, new ServiceRegistryLocator(serviceRegistry));
     }
 
     public static ServiceRegistry locate() {

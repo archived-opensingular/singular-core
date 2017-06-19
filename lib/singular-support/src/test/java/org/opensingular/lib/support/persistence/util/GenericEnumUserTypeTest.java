@@ -9,6 +9,7 @@ import org.opensingular.lib.support.persistence.entityanddao.DatabaseConfigurati
 import org.opensingular.lib.support.persistence.entityanddao.TestDAO;
 import org.opensingular.lib.support.persistence.entityanddao.TestEntity;
 import org.opensingular.lib.support.persistence.enums.SimNao;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,6 +20,7 @@ import java.util.Properties;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DatabaseConfigurationMock.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class GenericEnumUserTypeTest {
 
     @Inject
