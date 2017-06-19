@@ -15,11 +15,11 @@ import java.util.Random;
 @WebFilter(urlPatterns = "*")
 public class CachingFilter implements Filter {
 
-    public static final String CACHE_CONTROL = "Cache-Control";
+    public static final String CACHE_CONTROL   = "Cache-Control";
     public static final String MAX_AGE_PATTERN = "max-age=%d";
-    public static       long   THIRTY_DAYS     = 86400 * 30; // 30 days in seconds
-    public static       long   TWELVE_HOURS    = 86400 / 2; // 12 hours in seconds
-    public static       Random random          = new Random(new Date().getTime());
+    public static final long   THIRTY_DAYS     = 86400l * 30l; // 30 days in seconds
+    public static final long   TWELVE_HOURS    = 86400l / 2l; // 12 hours in seconds
+    public static final Random random          = new Random(new Date().getTime()); //NOSONAR
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
