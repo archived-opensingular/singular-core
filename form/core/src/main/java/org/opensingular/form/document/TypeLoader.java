@@ -36,11 +36,6 @@ import java.util.Optional;
  */
 public abstract class TypeLoader<TYPE_KEY extends Serializable> {
 
-    @Nonnull
-    public Optional<ExternalServiceRegistry> getExternalRegistry() {
-        return Optional.empty();
-    }
-
     /**
      * Retorna a referência ao tipo solicitado se possível.
      *
@@ -62,12 +57,6 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
     /** Recupera o tipo solicitado se possível. */
     public final Optional<SType<?>> loadType(@Nonnull TYPE_KEY typeId) {
         Optional<SType<?>> result = loadTypeImpl(typeId);
-        if (result.isPresent()) {
-            Optional<ExternalServiceRegistry> external = getExternalRegistry();
-            if (external.isPresent()) {
-                result.get().getDictionary().getDictionaryConfig().setExternalRegistry(external.get());
-            }
-        }
         return result;
     }
 

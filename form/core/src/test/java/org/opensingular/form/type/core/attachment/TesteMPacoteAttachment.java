@@ -14,7 +14,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.io.HashUtil;
-import org.opensingular.form.io.TesteFormSerializationUtil;
+import org.opensingular.form.io.TestFormSerializationUtil;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
@@ -266,7 +266,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo1 = new byte[]{1, 2, 3};
         arq.setContent("arq1", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
         assertConteudo(conteudo1, arq, 1);
-        SIAttachment arq2 = (SIAttachment) TesteFormSerializationUtil.testSerializacao(arq);
+        SIAttachment arq2 = (SIAttachment) TestFormSerializationUtil.testSerializacao(arq);
         assertConteudo(conteudo1, arq2, 1);
     }
 
@@ -292,7 +292,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo1, arquivo1, 2);
         assertConteudo(conteudo2, arquivo2, 2);
 
-        SIComposite bloco2 = (SIComposite) TesteFormSerializationUtil.testSerializacao(bloco);
+        SIComposite bloco2 = (SIComposite) TestFormSerializationUtil.testSerializacao(bloco);
 
         assertConteudo(conteudo1, bloco2.getField("arquivo1", SIAttachment.class), 2);
         assertConteudo(conteudo2, bloco2.getField("arquivo2", SIAttachment.class), 2);

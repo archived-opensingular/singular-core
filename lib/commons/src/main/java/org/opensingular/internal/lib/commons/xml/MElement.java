@@ -17,23 +17,19 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.internal.lib.commons.json.JSONToolkit;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.io.StringPrintWriter;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -216,6 +212,21 @@ import java.util.List;
  */
 public abstract class MElement implements Element, Serializable {
 
+    private final PrintWriterFactory writerFactory;
+    private final MElementWriter xmlWriter;
+    private final MElementWriter jsonWriter;
+
+
+    protected MElement() {
+        this(new UTF8PrintWriterFactory());
+    }
+
+    protected MElement(PrintWriterFactory writerFactory) {
+        this.writerFactory = writerFactory;
+        this.xmlWriter = new XMLMElementWriter(StandardCharsets.UTF_8);
+        this.jsonWriter = new JSONToolkit();
+    }
+
     /**
      * Pega em tempo de compilação situações onde tenta-se converte MElement
      * para MElement. Como tal passo é totalmente desnecessário, retorna void.
@@ -320,6 +331,10 @@ public abstract class MElement implements Element, Serializable {
                         + XPathToolkit.getNomeTipo(no));
         }
         return null;
+    }
+
+    private PrintWriterFactory getWriterFactory() {
+        return writerFactory;
     }
 
     public final MDocument getMDocument() {
@@ -518,10 +533,9 @@ public abstract class MElement implements Element, Serializable {
      * @param nome o nome do elemento que será inserido
      * @param in   Stream com os dados a serem convertidos p/ BASE64.
      * @return o elemento que foi adicionado
-     * @throws IOException se erro na leitura dos bytes
      */
     public final MElement addElement(String nome, InputStream in) {
-        return addElement(nome, MElementWrapper.toBASE64(in));
+        return addElement(nome, MElementWrapper.toBASE64(in, getWriterFactory().getCharset()));
     }
 
     /**
@@ -747,8 +761,8 @@ public abstract class MElement implements Element, Serializable {
         Node filho = n.getFirstChild();
         if (filho == null) {
             if (!StringUtils.isEmpty(value)) {
-                Document d   = n.getOwnerDocument();
-                Text     txt = d.createTextNode(value);
+                Document d = n.getOwnerDocument();
+                Text txt = d.createTextNode(value);
                 n.appendChild(txt);
             }
         } else if (XmlUtil.isNodeTypeText(filho)) {
@@ -1124,8 +1138,6 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param xPath endereço do valor (atributo, tag, etc.) a ser convertido
      * @param out   Destino do bytes convertidos
-     * @throws IOException Se houver problemas de conversão ou de escrita para a
-     *                     saida.
      */
     public final void getByteBASE64(String xPath, OutputStream out) {
         MElementWrapper.fromBASE64(getValorNotNull(xPath), out);
@@ -1359,10 +1371,10 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param out saída destino.
      */
-    public final void printTabulado(PrintStream out) {
-        PrintWriter out2 = new PrintWriter(out);
-        XMLToolkitWriter.printDocumentIndentado(out2, this, true);
-        out2.flush();
+    public final void printTabulado(OutputStream out) {
+        PrintWriter pw = getWriterFactory().newPrintWriter(out);
+        xmlWriter.printDocumentIndentado(pw, this, true);
+        pw.flush();
     }
 
     /**
@@ -1373,7 +1385,7 @@ public abstract class MElement implements Element, Serializable {
      * @param out saída destino.
      */
     public final void printTabulado(PrintWriter out) {
-        XMLToolkitWriter.printDocumentIndentado(out, this, true);
+        xmlWriter.printDocumentIndentado(out, this, true);
     }
 
     /**
@@ -1390,10 +1402,10 @@ public abstract class MElement implements Element, Serializable {
      *
      * @param out saída destino
      */
-    public final void print(PrintStream out) {
-        PrintWriter out2 = new PrintWriter(out);
-        XMLToolkitWriter.printDocument(out2, this, true);
-        out2.flush();
+    public final void print(OutputStream out) {
+        PrintWriter pw = getWriterFactory().newPrintWriter(out);
+        xmlWriter.printDocument(pw, this, true);
+        pw.flush();
     }
 
     /**
@@ -1403,7 +1415,7 @@ public abstract class MElement implements Element, Serializable {
      * @param out saída destino
      */
     public final void print(PrintWriter out) {
-        XMLToolkitWriter.printDocument(out, this, true);
+        xmlWriter.printDocument(out, this, true);
     }
 
     /**
@@ -1416,7 +1428,7 @@ public abstract class MElement implements Element, Serializable {
      *                    sem informaçoes complementares (header).
      */
     public final void print(PrintWriter out, boolean printHeader) {
-        XMLToolkitWriter.printDocument(out, this, printHeader);
+        xmlWriter.printDocument(out, this, printHeader);
     }
 
     /**
@@ -1431,7 +1443,7 @@ public abstract class MElement implements Element, Serializable {
      *                          seus respectivos escapes.
      */
     public final void print(PrintWriter out, boolean printHeader, boolean converteEspeciais) {
-        XMLToolkitWriter.printDocument(out, this, printHeader, converteEspeciais);
+        xmlWriter.printDocument(out, this, printHeader, converteEspeciais);
     }
 
     /**
@@ -1506,7 +1518,7 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Procura pelo node do tipo Element anterior (incluindo o nó informado).
      *
-     * @param no   Ponto de partida da pesquisa
+     * @param no2  Ponto de partida da pesquisa
      * @param nome Nome do Element a ser retornado. Se for null retorna o
      *             primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
@@ -1541,11 +1553,10 @@ public abstract class MElement implements Element, Serializable {
      */
     @Override
     public String toString() {
-        CharArrayWriter writer = new CharArrayWriter();
-        PrintWriter     out    = new PrintWriter(writer);
-        printTabulado(out);
-        out.flush();
-        return writer.toString();
+        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        printTabulado(spw);
+        spw.flush();
+        return spw.toString();
     }
 
     /**
@@ -1556,11 +1567,10 @@ public abstract class MElement implements Element, Serializable {
      * @return a String que feito parse, retorna o mesmo conteudo
      */
     public final String toStringExato() {
-        CharArrayWriter writer = new CharArrayWriter();
-        PrintWriter     out    = new PrintWriter(writer);
-        print(out, true, true);
-        out.flush();
-        return writer.toString();
+        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        print(spw, true, true);
+        spw.flush();
+        return spw.toString();
     }
 
     /**
@@ -1574,11 +1584,10 @@ public abstract class MElement implements Element, Serializable {
      * @return a String que feito parse, retorna o mesmo conteudo
      */
     public final String toStringExato(boolean printHeader) {
-        CharArrayWriter writer = new CharArrayWriter();
-        PrintWriter     out    = new PrintWriter(writer);
-        print(out, printHeader, true);
-        out.flush();
-        return writer.toString();
+        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        print(spw, printHeader, true);
+        spw.flush();
+        return spw.toString();
     }
 
     /**
@@ -1587,16 +1596,18 @@ public abstract class MElement implements Element, Serializable {
      * @return a byte array que feito parse, retorna o mesmo conteudo
      */
     public final byte[] toByteArray() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintWriter           pw  = new PrintWriter(out);
-        print(pw);
-        pw.flush();
-        return out.toByteArray();
+        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        print(spw);
+        spw.flush();
+        return spw.toByteArray();
     }
 
     public String toJSONString() {
-        final StringWriter sw = new StringWriter();
-        JSONToolkit.printJSON(new PrintWriter(sw), this);
-        return sw.toString();
+        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        jsonWriter.printDocument(spw, this, true);
+        spw.flush();
+        return spw.toString();
     }
+
+
 }

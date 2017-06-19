@@ -146,7 +146,7 @@ Page Header
       transform: translateY(-50%);
       font-size: 18px; }
     .page-header.navbar .page-logo .logo-default {
-      background-image: url("/singular-static/resources/singular/img/logo_singular.png"); 
+      background-image: url("/singular-static/resources/singular/img/logo_singular.png");
       height: 49px;
       width: 200px;
       background-repeat: no-repeat;
@@ -2136,12 +2136,14 @@ Theme Panel
   background-color: #F4FFFD;
   color: #acb1c2;
   vertical-align: middle;
-  border: 1px dashed currentColor; }
+  border: 1px dashed currentColor;
+  height: 40px; }
   .list-table-empty .list-table-empty-message {
     text-align: center;
     line-height: 8px;
     height: 8px;
-    font-size: 14px; }
+    font-size: 14px;
+    padding-top: 15px; }
   .list-table-empty .list-table-empty-link {
     text-decoration: underline;
     color: #65697C; }
@@ -2805,17 +2807,15 @@ Login page
 
 .has-error > div > .richtext-panel {
   border: 1px solid #e82724; }
-  
-.subtitle {
-	color: #bababa !important;
-	font-size: 13px !important;
-	margin-top: -10px !important;
-	margin-bottom: 10px !important;
-}
 
-.subtitle_comp { 
-	color: #bababa !important;
-	font-size: 13px !important;
-	margin-top: -6px !important;
-	margin-bottom: 10px !important;
-}
+.subtitle {
+  color: #bababa !important;
+  font-size: 13px !important;
+  margin-top: -10px !important;
+  margin-bottom: 10px !important; }
+
+.subtitle_comp {
+  color: #bababa !important;
+  font-size: 13px !important;
+  margin-top: -6px !important;
+  margin-bottom: 10px !important; }

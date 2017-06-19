@@ -109,16 +109,6 @@ public abstract class SDocumentFactory {
     @Nonnull
     protected abstract RefSDocumentFactory createDocumentFactoryRef();
 
-    /**
-     * Retorna o registro de serviços para busca de serviços pelo documento que
-     * por acaso não estejam configurados no próprio documento durante o seu
-     * setup inicial. Por exemplo, pode ser procurado um bean provedor para o
-     * conteúdo (lista) de uma seleção (combo ou outro tipo).
-     *
-     * @return Pode ser null
-     */
-    @Nullable
-    public abstract ExternalServiceRegistry getExternalServiceRegistry();
 
     /**
      * Método a ser sobreescrito com o objetivo de configurar um novo documento
@@ -142,12 +132,6 @@ public abstract class SDocumentFactory {
     @Nonnull
     public static SDocumentFactory of(@Nonnull IConsumer<SDocument> setupStep) {
         return new SDocumentFactoryExtended(Objects.requireNonNull(setupStep));
-    }
-
-    /** Cria um nova fábrica com o provedor de bean externos informado. */
-    @Nonnull
-    public static SDocumentFactory of(@Nonnull ISupplier<ExternalServiceRegistry> registryProvider) {
-        return new SDocumentFactoryExtended(Objects.requireNonNull(registryProvider));
     }
 
     /**

@@ -16,8 +16,6 @@
 
 package org.opensingular.form.context;
 
-import org.opensingular.form.document.ServiceRegistry;
-
 public abstract class SingularFormConfigImpl implements InternalSingularFormConfig {
 
     private ServiceRegistry serviceRegistry;
