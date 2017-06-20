@@ -55,8 +55,8 @@ import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppend
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.resource.Icone;
-import org.opensingular.lib.wicket.util.resource.SingularIcon;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.resource.Icon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,7 +116,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         fileField = new WebMarkupContainer("fileUpload");
         add(new WebMarkupContainer("button-container")
                 .add(fileField)
-                .add(new LabelWithIcon("fileUploadLabel", Model.of(""), Icone.PLUS, Model.of(fileField.getMarkupId())))
+                .add(new LabelWithIcon("fileUploadLabel", Model.of(""), DefaultIcons.PLUS, Model.of(fileField.getMarkupId())))
                 .add($b.visibleIf(() -> isEdition(viewMode))));
 
         add(ctx.createFeedbackCompactPanel("feedback"));
@@ -240,10 +240,10 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     public static class LabelWithIcon extends Label {
 
-        private final SingularIcon   icon;
+        private final Icon           icon;
         private final IModel<String> forAttrValue;
 
-        public LabelWithIcon(String id, IModel<?> model, SingularIcon icon, IModel<String> forAttrValue) {
+        public LabelWithIcon(String id, IModel<?> model, Icon icon, IModel<String> forAttrValue) {
             super(id, model);
             this.icon = icon;
             this.forAttrValue = forAttrValue;

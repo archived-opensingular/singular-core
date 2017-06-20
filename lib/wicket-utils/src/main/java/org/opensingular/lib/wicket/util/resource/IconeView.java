@@ -28,7 +28,7 @@ public class IconeView extends WebMarkupContainer {
         this(id, $m.ofValue(), null, null);
     }
 
-    public IconeView(String id, IModel<SingularIcon> model, IModel<String> style, IModel<String> styleClass) {
+    public IconeView(String id, IModel<Icon> model, IModel<String> style, IModel<String> styleClass) {
         super(id, model);
 
         add($b.classAppender($m.get(() -> {
@@ -47,21 +47,21 @@ public class IconeView extends WebMarkupContainer {
         }
     }
 
-    public IconeView setIcone(SingularIcon singularIcon) {
-        return setModelObject(singularIcon);
+    public IconeView setIcone(Icon icon) {
+        return setModelObject(icon);
     }
-    public IconeView setModelObject(SingularIcon singularIcon) {
-        setDefaultModelObject(singularIcon);
+    public IconeView setModelObject(Icon icon) {
+        setDefaultModelObject(icon);
         return this;
     }
-    public SingularIcon getIcone() {
+    public Icon getIcone() {
         return getModelObject();
     }
-    public SingularIcon getModelObject() {
-        return (SingularIcon) getDefaultModelObject();
+    public Icon getModelObject() {
+        return (Icon) getDefaultModelObject();
     }
     @SuppressWarnings("unchecked")
-    public IModel<SingularIcon> getModel() {
-        return (IModel<SingularIcon>) getDefaultModel();
+    public IModel<Icon> getModel() {
+        return (IModel<Icon>) getDefaultModel();
     }
 }
