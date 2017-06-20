@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -42,7 +43,7 @@ public class WkHtmlToPdfRestController implements Loggable {
 
     @ResponseBody
     @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH, method = RequestMethod.POST, produces = "application/pdf")
-    public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody HtmlToPdfDTO dto) {
+    public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody HtmlToPdfDTO dto, HttpServletRequest request, HttpServletResponse response ) {
         try {
             File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter());
             return ResponseEntity.ok()
@@ -62,6 +63,7 @@ public class WkHtmlToPdfRestController implements Loggable {
         try (InputStream in = new FileInputStream(
                 PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter()))) {
             IOUtils.copy(in, response.getOutputStream());
+            response.setContentType("application/pdf");
             response.flushBuffer();
         } catch (Exception ex) {
             getLogger().error(ex.getMessage(), ex);
