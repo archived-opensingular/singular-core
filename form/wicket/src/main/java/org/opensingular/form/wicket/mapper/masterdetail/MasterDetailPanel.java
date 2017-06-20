@@ -62,6 +62,7 @@ import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
@@ -266,7 +267,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
-        final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
+        final SingularIcon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(Model.of(openModalIcon))
                 .styleClasses(Model.of("list-detail-edit"))

@@ -54,6 +54,7 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -366,7 +367,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                                 target.add(ctx.getContainer());
                             });
                 }
-                final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
+                final SingularIcon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
                 actionColumn.appendAction(
                         new BSActionPanel.ActionConfig()
                                 .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))

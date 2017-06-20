@@ -25,7 +25,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.SingularIcon;
 
 import java.util.regex.Pattern;
 
@@ -42,12 +42,12 @@ public class MetronicMenuItem extends AbstractMenuItem {
     private String                            target;
     private WebMarkupContainer helper = new WebMarkupContainer("helper");
 
-    public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass,
+    public MetronicMenuItem(SingularIcon icon, String title, Class<? extends IRequestablePage> responsePageClass,
                             PageParameters parameters) {
         this(icon, title, responsePageClass, null, parameters);
     }
 
-    public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass,
+    public MetronicMenuItem(SingularIcon icon, String title, Class<? extends IRequestablePage> responsePageClass,
                             IRequestablePage page, PageParameters parameters) {
         this(icon, title);
         this.responsePageClass = responsePageClass;
@@ -56,24 +56,24 @@ public class MetronicMenuItem extends AbstractMenuItem {
         add(buildMenuItem());
     }
 
-    public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass) {
+    public MetronicMenuItem(SingularIcon icon, String title, Class<? extends IRequestablePage> responsePageClass) {
         this(icon, title, responsePageClass, null, null);
     }
 
-    public MetronicMenuItem(Icone icon, String title, String href) {
+    public MetronicMenuItem(SingularIcon icon, String title, String href) {
         this(icon, title);
         this.href = href;
         add(buildMenuItem());
     }
 
-    public MetronicMenuItem(Icone icon, String title, String href, String target) {
+    public MetronicMenuItem(SingularIcon icon, String title, String href, String target) {
         this(icon, title);
         this.href = href;
         this.target = target;
         add(buildMenuItem());
     }
 
-    public MetronicMenuItem(Icone icon, String title) {
+    public MetronicMenuItem(SingularIcon icon, String title) {
         super("menu-item");
         this.icon = icon;
         this.title = title;
