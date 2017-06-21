@@ -18,11 +18,7 @@ package org.opensingular.ws.wkhtmltopdf.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import org.opensingular.lib.commons.pdf.PDFUtil;
 import org.opensingular.lib.commons.util.Loggable;
@@ -54,19 +50,6 @@ public class WkHtmlToPdfRestController implements Loggable {
         }
         return null;
     }
-    
-    @ResponseBody
-    @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH + "stream", method = RequestMethod.POST, produces = "application/pdf")
-    public void convertHtmlToPdfStream(@RequestBody HtmlToPdfDTO dto, HttpServletResponse response) {
-       
-        try (InputStream in = new FileInputStream(
-                PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter()))) {
-            IOUtils.copy(in, response.getOutputStream());
-            response.setContentType("application/pdf");
-            response.flushBuffer();
-        } catch (Exception ex) {
-            getLogger().error(ex.getMessage(), ex);
-        }
-    }
+
 
 }
