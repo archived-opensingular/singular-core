@@ -16,7 +16,7 @@
 
 package org.opensingular.lib.wicket.util.menu;
 
-import org.opensingular.lib.wicket.util.resource.SingularIcon;
+import org.opensingular.lib.wicket.util.resource.Icon;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -39,7 +39,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         this(null, title);
     }
 
-    public MetronicMenuGroup(SingularIcon icon, String title) {
+    public MetronicMenuGroup(Icon icon, String title) {
         super("menu-item");
         this.icon = icon;
         this.title = title;

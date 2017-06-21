@@ -61,7 +61,8 @@ import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
@@ -252,7 +253,7 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig() {
         return new BSActionPanel.ActionConfig<SInstance>()
                 .styleClasses(Model.of("list-detail-remove"))
-                .iconeModel(Model.of(Icone.REMOVE))
+                .iconeModel(Model.of(DefaultIcons.REMOVE))
                 .titleFunction(rowModel -> "Remover");
     }
 
@@ -266,7 +267,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
-        final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
+        final Icon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(Model.of(openModalIcon))
                 .styleClasses(Model.of("list-detail-edit"))
@@ -280,7 +281,7 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
+                .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
                 .styleClasses(Model.of("red"))
                 .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
                 .style($m.ofValue(MapperCommons.BUTTON_STYLE));
