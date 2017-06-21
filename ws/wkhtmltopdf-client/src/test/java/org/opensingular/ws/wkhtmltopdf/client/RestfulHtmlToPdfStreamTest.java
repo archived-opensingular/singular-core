@@ -71,7 +71,7 @@ public class RestfulHtmlToPdfStreamTest {
         System.out.println(baos.size() + "Kb");
     }
     
-    
+    @Ignore
     @Test
     public void fileTest() throws IOException {
         RestfulHtmlToPdfConverter converter = RestfulHtmlToPdfConverter.createUsingDefaultConfig();
