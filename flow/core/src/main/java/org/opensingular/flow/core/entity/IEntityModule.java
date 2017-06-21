@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.entity;
 
-public interface IEntityProcessGroup extends IEntityByCod<String> {
+public interface IEntityModule extends IEntityByCod<String> {
 
     String getName();
 

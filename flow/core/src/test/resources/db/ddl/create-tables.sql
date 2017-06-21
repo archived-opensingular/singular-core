@@ -76,7 +76,7 @@ CREATE TABLE DBSINGULAR.TB_DEFINICAO_PROCESSO (
   NO_PROCESSO           VARCHAR(200) NOT NULL,
   NO_CLASSE_JAVA        VARCHAR(500) NOT NULL,
   CO_CATEGORIA           BIGINT       NULL,
-  CO_GRUPO_PROCESSO    VARCHAR(30)	NOT NULL,
+  CO_MODULO    VARCHAR(30)	NOT NULL,
   CONSTRAINT PK_DEFINICAO_PROCESSO PRIMARY KEY (CO_DEFINICAO_PROCESSO),
   CONSTRAINT AK_AK_DEFINICAO_PROCE_TB_DEFIN UNIQUE (SG_PROCESSO)
 );
@@ -267,13 +267,13 @@ CREATE TABLE DBSINGULAR.TB_VARIAVEL_EXECUCAO_TRANSICAO (
 );
 
 /*==============================================================*/
-/* Table: TB_GRUPO_PROCESSO                                     */
+/* Table: TB_MODULO                                     */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_GRUPO_PROCESSO (
-   CO_GRUPO_PROCESSO    VARCHAR(30) NOT NULL,
-   NO_GRUPO             VARCHAR(100)         NOT NULL,
+CREATE TABLE DBSINGULAR.TB_MODULO (
+   CO_MODULO    VARCHAR(30) NOT NULL,
+   NO_MODULO             VARCHAR(100)         NOT NULL,
    URL_CONEXAO          VARCHAR(300)         NOT NULL,
-   CONSTRAINT PK_GRUPO PRIMARY KEY (CO_GRUPO_PROCESSO)
+   CONSTRAINT PK_GRUPO PRIMARY KEY (CO_MODULO)
 );
 
 /*==============================================================*/
@@ -284,4 +284,32 @@ CREATE TABLE DBSINGULAR.RL_PAPEL_TAREFA (
    CO_DEFINICAO_PAPEL   BIGINT               NOT NULL,
    CO_DEFINICAO_TAREFA  BIGINT               NOT NULL,
    CONSTRAINT PK_RL_PAPEL_TAREFA PRIMARY KEY (CO_PAPEL_TAREFA)
+);
+
+/*==============================================================*/
+/* Table: TB_CAIXA                                              */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_CAIXA
+(
+   CO_CAIXA             NUMBER               NOT NULL,
+   CO_MODULO            VARCHAR2(30)         NOT NULL,
+   NO_CAIXA             VARCHAR(100)         NOT NULL,
+   DS_CAIXA             VARCHAR(500)         NOT NULL,
+   ST_BOTAO_NOVO        CHAR(1)              NOT NULL,
+   ST_FILTRO_RAPIDO     CHAR(1)              NOT NULL,
+   ST_MOSTRAR_RASCUNHO  CHAR(1)              NOT NULL,
+   NO_ICONE             VARCHAR(100)         NOT NULL,
+   CONSTRAINT PK_CAIXA PRIMARY KEY (CO_CAIXA)
+);
+
+/*==============================================================*/
+/* Table: TB_DEFINICAO_REQUISICAO                               */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_DEFINICAO_REQUISICAO
+(
+   CO_DEFINICAO_REQUISICAO NUMBER               NOT NULL,
+   CO_FORMULARIO        NUMBER               NOT NULL,
+   CO_MODULO            VARCHAR2(30)         NOT NULL,
+   NO_REQUISICAO        VARCHAR2(255)        NOT NULL,
+   CONSTRAINT PK_DEFINICAO_REQUISICAO PRIMARY KEY (CO_DEFINICAO_REQUISICAO)
 );

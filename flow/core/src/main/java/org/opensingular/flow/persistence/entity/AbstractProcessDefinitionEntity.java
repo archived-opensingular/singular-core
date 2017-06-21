@@ -30,12 +30,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import org.opensingular.flow.core.entity.IEntityModule;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessGroup;
 import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -49,7 +49,7 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_PROCESSO")
-public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProcessGroup, CATEGORY extends IEntityCategory, TASK_DEF extends IEntityTaskDefinition, ROLE_DEF extends IEntityRoleDefinition, PROCESS_VERSION extends IEntityProcessVersion> extends BaseEntity<Integer> implements IEntityProcessDefinition {
+public abstract class AbstractProcessDefinitionEntity<MODULE extends IEntityModule, CATEGORY extends IEntityCategory, TASK_DEF extends IEntityTaskDefinition, ROLE_DEF extends IEntityRoleDefinition, PROCESS_VERSION extends IEntityProcessVersion> extends BaseEntity<Integer> implements IEntityProcessDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_PROCESSO";
 
@@ -63,8 +63,8 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
     private CATEGORY category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_GRUPO_PROCESSO", nullable = false)
-    private GROUP processGroup;
+    @JoinColumn(name = "CO_MODULO", nullable = false)
+    private MODULE module;
 
     @Column(name = "SG_PROCESSO", length = 200, nullable = false, unique = true)
     private String key;
@@ -162,13 +162,13 @@ public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProce
     }
 
     @Override
-    public GROUP getProcessGroup() {
-        return processGroup;
+    public MODULE getModule() {
+        return module;
     }
 
     @Override
-    public void setProcessGroup(IEntityProcessGroup processGroup) {
-        this.processGroup = (GROUP) processGroup;
+    public void setModule(IEntityModule module) {
+        this.module = (MODULE) module;
     }
 
 }

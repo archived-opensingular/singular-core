@@ -28,8 +28,8 @@ import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityModule;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessGroup;
 import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
@@ -38,7 +38,7 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
-import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ModuleEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 
@@ -113,13 +113,13 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
                 pd -> pd.getDefinitionClassName().equals(definicao.getClass().getName()));
         }
-        IEntityProcessGroup processGroup = retrieveProcessGroup();
-        String name = definicao.getName();
-        String category = definicao.getCategory();
+        IEntityModule module = retrieveModule();
+        String        name         = definicao.getName();
+        String        category     = definicao.getCategory();
         if (def == null) {
             def = newInstanceOf(getClassProcessDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(category));
-            def.setProcessGroup(processGroup);
+            def.setModule(module);
             def.setName(name);
             def.setKey(key);
             def.setDefinitionClassName(definicao.getClass().getName());
@@ -127,8 +127,8 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             sw.save(def);
             sw.refresh(def);
         } else {
-            if(!def.getProcessGroup().equals(processGroup)){
-                throw new SingularFlowException("O processo "+ name +" esta associado a outro grupo/sistema: "+def.getProcessGroup().getCod()+" - "+def.getProcessGroup().getName());
+            if(!def.getModule().equals(module)){
+                throw new SingularFlowException("O processo "+ name +" esta associado a outro grupo/sistema: "+def.getModule().getCod()+" - "+def.getModule().getName());
             }
             boolean mudou = false;
             if (!key.equals(def.getKey())) {
@@ -157,12 +157,12 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
     }
 
     @Nonnull
-    protected final IEntityProcessGroup retrieveProcessGroup() {
-        return getSession().retrieveOrException(getClassProcessGroup(), Flow.getConfigBean().getProcessGroupCod());
+    protected final IEntityModule retrieveModule() {
+        return getSession().retrieveOrException(getClassModule(), Flow.getConfigBean().getModuleCod());
     }
 
-    protected Class<? extends IEntityProcessGroup> getClassProcessGroup() {
-        return ProcessGroupEntity.class;
+    protected Class<? extends IEntityModule> getClassModule() {
+        return ModuleEntity.class;
     }
 
     protected abstract Class<? extends PROCESS_ROLE_DEF> getClassProcessRoleDef();

@@ -38,9 +38,9 @@ public interface IEntityProcessDefinition extends IEntityByCod<Integer> {
 
     void setCategory(IEntityCategory category);
 
-    IEntityProcessGroup getProcessGroup();
+    IEntityModule getModule();
 
-    void setProcessGroup(IEntityProcessGroup processGroup);
+    void setModule(IEntityModule module);
 
     List<? extends IEntityTaskDefinition> getTaskDefinitions();
 
