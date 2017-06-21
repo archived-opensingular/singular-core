@@ -1,6 +1,8 @@
 package org.opensingular.lib.commons.pdf;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import org.opensingular.lib.commons.util.Loggable;
@@ -10,12 +12,21 @@ import org.opensingular.lib.commons.util.Loggable;
  */
 public interface HtmlToPdfConverter extends Loggable {
 
+   
     /**
      * Converte o {@link HtmlToPdfDTO} em pdf e retorna um stream para recuperar o arquivo pdf.
      * 
      * @param htmlToPdfDTO
      * @return
      */
-    InputStream convert(HtmlToPdfDTO htmlToPdfDTO);
+    Optional<File> convert(HtmlToPdfDTO htmlToPdfDTO);
+
+    /**
+     * Converte o {@link HtmlToPdfDTO} em pdf e retorna um stream para recuperar o arquivo pdf.
+     * 
+     * @param htmlToPdfDTO
+     * @return
+     */
+    InputStream convertStream(HtmlToPdfDTO htmlToPdfDTO);
 
 }
