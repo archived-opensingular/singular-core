@@ -17,12 +17,12 @@
 package org.opensingular.lib.wicket.util.menu;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.opensingular.lib.wicket.util.resource.SingularIcon;
+import org.opensingular.lib.wicket.util.resource.Icon;
 
 public abstract class AbstractMenuItem extends Panel {
 
     protected String title;
-    protected SingularIcon icon;
+    protected Icon   icon;
 
     public AbstractMenuItem(String id) {
         super(id);
