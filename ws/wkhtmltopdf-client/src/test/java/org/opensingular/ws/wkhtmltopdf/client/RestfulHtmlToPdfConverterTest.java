@@ -1,6 +1,8 @@
 package org.opensingular.ws.wkhtmltopdf.client;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +24,16 @@ public class RestfulHtmlToPdfConverterTest {
         RestfulHtmlToPdfConverter usingDefaultConfig =
                 RestfulHtmlToPdfConverter.createUsingDefaultConfig();
 
-        InputStream in = usingDefaultConfig.convert(null);
+        Optional<File> convert = usingDefaultConfig.convert(null);
+        Assert.assertFalse(convert.isPresent());
+    }
+    
+    @Test
+    public void testConvertStreamWithNullValue(){
+        RestfulHtmlToPdfConverter usingDefaultConfig =
+                RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+
+        InputStream in = usingDefaultConfig.convertStream(null);
         Assert.assertNull(in);
     }
 }

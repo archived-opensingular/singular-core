@@ -17,11 +17,17 @@
 package org.opensingular.ws.wkhtmltopdf.client;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import org.opensingular.lib.commons.pdf.HtmlToPdfConverter;
@@ -55,7 +61,36 @@ public class RestfulHtmlToPdfConverter implements HtmlToPdfConverter {
         this.endpoint = endpoint;
     }
 
-    public InputStream convert(HtmlToPdfDTO htmlToPdfDTO) {
+    @Override
+    public Optional<File> convert(HtmlToPdfDTO htmlToPdfDTO) {
+        InputStream in = convertStream(htmlToPdfDTO);
+        if (in != null) {
+            return Optional.ofNullable(createTempFile(in));
+        }
+        return Optional.empty();
+    }
+    
+    private File createTempFile(InputStream in) {
+        
+        Path path = null;
+        try {
+            path = Files.createTempFile(generateFileName(), ".pdf");
+
+            try (OutputStream out = Files.newOutputStream(path)) {
+                IOUtils.copy(in, out);
+                return path.toFile();
+            } catch (IOException ex) {
+                getLogger().error("Não foi possivel escrever o arquivo temporario", ex);
+            }
+        } catch (IOException e) {
+            getLogger().error("Não foi possivel criar o arquivo temporario", e);
+        }
+
+        return null;
+    }
+    
+    @Override    
+    public InputStream convertStream(HtmlToPdfDTO htmlToPdfDTO) {
         if (htmlToPdfDTO != null) {
             ClientHttpResponse response = null;
             try {

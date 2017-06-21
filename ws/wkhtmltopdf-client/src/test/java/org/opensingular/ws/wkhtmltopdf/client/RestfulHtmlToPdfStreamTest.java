@@ -1,9 +1,11 @@
 package org.opensingular.ws.wkhtmltopdf.client;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Server;
@@ -20,7 +22,7 @@ public class RestfulHtmlToPdfStreamTest {
     private static Server server;
     private static URI serverUri;
 
-    // public String baseURL = "http://10.0.0.142/wkhtmltopdf-ws";
+//     public String baseURL = "http://10.0.0.142/wkhtmltopdf-ws";
     public static String baseURL = "http://localhost:8080/wkhtmltopdf-ws";
     public static String context = "/converthtmltopdf";
 
@@ -31,7 +33,9 @@ public class RestfulHtmlToPdfStreamTest {
         System.setProperty("singular.wkhtml2pdf.home",
                 "C:\\Desenv\\singular-platform-1.0.0\\native\\windows\\wkhtmltopdf");
     
-          //TODO ver uma forma de levantar um server para rodar os rest's.  
+          //TODO ver uma forma de levantar um server para rodar os rest's.
+         //XXX atualmente nao funcionou os rest
+        
 //        server = new Server(8080);
 //        WebAppContext webapp = new WebAppContext();
 //        webapp.setContextPath("/wkhtmltopdf-ws");
@@ -56,7 +60,7 @@ public class RestfulHtmlToPdfStreamTest {
 
         HtmlToPdfDTO htmlToPdfDTO = new HtmlToPdfDTO();
         htmlToPdfDTO.setBody("<html><body>Teste para geracao de pdf via stream</body></html>");
-        InputStream in = converter.convert(htmlToPdfDTO);
+        InputStream in = converter.convertStream(htmlToPdfDTO);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         IOUtils.copy(in, baos);
@@ -66,4 +70,19 @@ public class RestfulHtmlToPdfStreamTest {
         Assert.assertTrue(baos.size() > 0);
         System.out.println(baos.size() + "Kb");
     }
+    
+    
+    @Test
+    public void fileTest() throws IOException {
+        RestfulHtmlToPdfConverter converter = RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+
+        HtmlToPdfDTO htmlToPdfDTO = new HtmlToPdfDTO();
+        htmlToPdfDTO.setBody("<html><body>Teste para geracao de pdf via stream</body></html>");
+        Optional<File> fileOpt = converter.convert(htmlToPdfDTO);
+
+        Assert.assertTrue(fileOpt.isPresent());
+        Assert.assertTrue(fileOpt.get().length() > 0);
+        System.out.println(fileOpt.get().length() + "Kb");
+    }
+
 }
