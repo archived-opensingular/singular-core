@@ -40,19 +40,19 @@ import org.apache.wicket.resource.JQueryPluginResourceReference;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.decorator.action.ISInstanceActionCapable;
-import org.opensingular.form.decorator.action.SInstanceHelpActionsProvider;
 import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.context.ServiceRegistryLocator;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.SInstanceHelpActionsProvider;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.wicket.IWicketBuildListener;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.WicketBuildListeners;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
@@ -69,28 +69,28 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
  */
 public class SingularFormPanel extends Panel {
 
-    private final SInstanceRootModel<SInstance> instanceModel = new SInstanceRootModel<>();
-    private final boolean nested;
+    private final SInstanceRootModel<SInstance> instanceModel  = new SInstanceRootModel<>();
+    private final boolean                       nested;
     // Container onde os componentes serão adicionados
-    private BSGrid container = new BSGrid("generated");
+    private BSGrid                              container      = new BSGrid("generated");
     //Pode ser transient pois é usado apenas uma vez na inicialização do painel
-    private transient Supplier<SInstance> instanceCreator;
+    private transient Supplier<SInstance>       instanceCreator;
     //Pode ser transient pois é usado apenas uma vez na inicialização do painel
-    private transient Consumer<SInstance>  instanceInitializer;
+    private transient Consumer<SInstance>       instanceInitializer;
 
-    private ViewMode                       viewMode       = ViewMode.EDIT;
+    private ViewMode                            viewMode       = ViewMode.EDIT;
 
-    private AnnotationMode                 annotationMode = AnnotationMode.NONE;
+    private AnnotationMode                      annotationMode = AnnotationMode.NONE;
 
-    private boolean                        firstRender    = true;
+    private boolean                             firstRender    = true;
 
-    private IBSComponentFactory<Component> preFormPanelFactory;
+    private IBSComponentFactory<Component>      preFormPanelFactory;
 
-    private RefSDocumentFactory            documentFactoryRef;
+    private RefSDocumentFactory                 documentFactoryRef;
 
-    private List<IWicketBuildListener>     buildListeners = new ArrayList<>(getDefaultBuildListeners());
+    private List<IWicketBuildListener>          buildListeners;
 
-    final BSContainer<?>                   modalItems     = new BSContainer<>("modalItems");
+    final BSContainer<?>                        modalItems     = new BSContainer<>("modalItems");
 
     /**
      * Construtor do painel.
@@ -270,7 +270,7 @@ public class SingularFormPanel extends Panel {
 
     private SingularFormContextWicket resolveFormConfigWicket() {
         SingularFormContextWicket formContextWicket = null;
-        ServiceRegistry           registry          = ServiceRegistryLocator.locate();
+        ServiceRegistry registry = ServiceRegistryLocator.locate();
         if (registry != null) {
             formContextWicket = registry.lookupService(SingularFormContextWicket.class).orElse(null);
         }
@@ -425,22 +425,18 @@ public class SingularFormPanel extends Panel {
     }
 
     protected List<IWicketBuildListener> getDefaultBuildListeners() {
-        return Arrays.asList(new IWicketBuildListener() {
-            @Override
-            public void onBeforeBuild(WicketBuildContext ctx, IWicketComponentMapper mapper, ViewMode viewMode) {
-                if (mapper instanceof ISInstanceActionCapable) {
-                    ISInstanceActionCapable iac = (ISInstanceActionCapable) mapper;
-                    iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider());
-                }
-            }
-        });
+        return Arrays.asList(
+            WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
+                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider())));
     }
 
     public SingularFormPanel addBuildListener(IWicketBuildListener listener) {
-        this.buildListeners.add(listener);
+        getBuildListeners().add(listener);
         return this;
     }
     protected List<IWicketBuildListener> getBuildListeners() {
+        if (buildListeners == null)
+            buildListeners = new ArrayList<>(getDefaultBuildListeners());
         return buildListeners;
     }
 

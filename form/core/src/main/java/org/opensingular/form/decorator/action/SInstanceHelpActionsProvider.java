@@ -20,6 +20,6 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
                 .setIcon(SIcon.resolve("question"))
                 .setText("Ajuda")
                 .setPosition(Integer.MIN_VALUE)
-                .setActionHandler((i, d) -> d.showMessage("Ajuda", i.get().asAtr().getHelp())));
+                .setActionHandler((a, i, d) -> d.showMessage("Ajuda", i.get().asAtr().getHelp())));
     }
 }

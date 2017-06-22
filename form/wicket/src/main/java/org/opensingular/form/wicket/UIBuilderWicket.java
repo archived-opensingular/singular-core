@@ -120,7 +120,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         ctx.init(this, viewMode);
 
         // onBuildContextInitialized
-        listeners.stream().forEach(it -> it.onBuildContextInitialized(ctx, viewMode));
+        listeners.stream().forEach(it -> it.onBuildContextInitialized(ctx));
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
@@ -128,12 +128,12 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             listeners.addFirst((IWicketBuildListener) mapper);
 
         // onMapperResolved
-        listeners.stream().forEach(it -> it.onMapperResolved(ctx, mapper, viewMode));
+        listeners.stream().forEach(it -> it.onMapperResolved(ctx, mapper));
 
         // decorateContext
         WicketBuildContext childCtx = ctx;
         for (IWicketBuildListener listener : listeners) {
-            WicketBuildContext newContext = listener.decorateContext(ctx, mapper, viewMode);
+            WicketBuildContext newContext = listener.decorateContext(ctx, mapper);
             if (newContext != null && newContext != childCtx) {
                 childCtx = newContext;
                 childCtx.init(this, viewMode);
@@ -155,12 +155,13 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         }
 
         // onBeforeBuild
-        listeners.stream().forEach(it -> it.onBeforeBuild(ctx, mapper, viewMode));
+        final WicketBuildContext finalCtx = childCtx;
+        listeners.stream().forEach(it -> it.onBeforeBuild(finalCtx, mapper));
 
-        mapper.buildView(childCtx);
+        mapper.buildView(finalCtx);
 
         // onAfterBuild
-        listeners.stream().forEach(it -> it.onAfterBuild(ctx, mapper, viewMode));
+        listeners.stream().forEach(it -> it.onAfterBuild(finalCtx, mapper));
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {

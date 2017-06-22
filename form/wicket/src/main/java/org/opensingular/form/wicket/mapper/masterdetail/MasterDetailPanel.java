@@ -77,7 +77,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
-
 public class MasterDetailPanel extends Panel {
 
     private final WicketBuildContext        ctx;
@@ -113,11 +112,15 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void addComponents() {
-        add(form);
-        form.add(head.add(headLabel));
-        form.add(body.add(table));
-        form.add(footer.add(addButton.add(addButtonLabel)));
-        form.add(feedback);
+        add(form
+            .add(head
+                .add(headLabel))
+            .add(body
+                .add(table))
+            .add(footer
+                .add(addButton
+                    .add(addButtonLabel)))
+            .add(feedback));
     }
 
     private void createComponents() {
@@ -135,15 +138,15 @@ public class MasterDetailPanel extends Panel {
     private BSDataTable<SInstance, ?> newTable(String id) {
 
         final BSDataTableBuilder<SInstance, ?, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
-        final BSDataTable<SInstance, ?>           dataTable;
+        final BSDataTable<SInstance, ?> dataTable;
 
         configureColumns(view.getColumns(), builder, lista, modal, ctx, ctx.getViewMode(), view);
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
             SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(rowItem))
-                    .addInstanceModel(rowItem.getModel())
-                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
+                .addInstanceModel(rowItem.getModel())
+                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
             rowItem.add($b.classAppender("singular-form-table-row can-have-error"));
             rowItem.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
         });
@@ -157,7 +160,7 @@ public class MasterDetailPanel extends Panel {
 
     private Label newHeadLabel() {
 
-        final AtrBasic       attr       = lista.getObject().asAtr();
+        final AtrBasic attr = lista.getObject().asAtr();
         final IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
 
         ctx.configureContainer(labelModel);
@@ -189,15 +192,14 @@ public class MasterDetailPanel extends Panel {
         };
     }
 
-
     private void configureColumns(
-            List<SViewListByMasterDetail.Column> mapColumns,
-            BSDataTableBuilder<SInstance, ?, ?> builder,
-            IModel<? extends SInstance> model,
-            MasterDetailModal modal,
-            WicketBuildContext ctx,
-            ViewMode viewMode,
-            SViewListByMasterDetail view) {
+        List<SViewListByMasterDetail.Column> mapColumns,
+        BSDataTableBuilder<SInstance, ?, ?> builder,
+        IModel<? extends SInstance> model,
+        MasterDetailModal modal,
+        WicketBuildContext ctx,
+        ViewMode viewMode,
+        SViewListByMasterDetail view) {
 
         final List<ColumnType> columnTypes = new ArrayList<>();
 
@@ -207,22 +209,22 @@ public class MasterDetailPanel extends Panel {
                 columnTypes.add(new ColumnType(tipo.getName(), null));
             } else if (tipo.isComposite()) {
                 ((STypeComposite<?>) tipo)
-                        .getFields()
-                        .stream()
-                        .filter(mtipo -> mtipo instanceof STypeSimple)
-                        .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo.getName(), null)));
+                    .getFields()
+                    .stream()
+                    .filter(mtipo -> mtipo instanceof STypeSimple)
+                    .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo.getName(), null)));
             }
         } else {
             mapColumns.forEach((col) -> columnTypes.add(
-                    new ColumnType(
-                            Optional.ofNullable(col.getTypeName())
-                                    .orElse(null),
-                            col.getCustomLabel(), col.getDisplayValueFunction())));
+                new ColumnType(
+                    Optional.ofNullable(col.getTypeName())
+                        .orElse(null),
+                    col.getCustomLabel(), col.getDisplayValueFunction())));
         }
 
         for (ColumnType columnType : columnTypes) {
-            final String         label      = columnType.getCustomLabel(model.getObject());
-            final String         typeName   = columnType.getTypeName();
+            final String label = columnType.getCustomLabel(model.getObject());
+            final String typeName = columnType.getTypeName();
             final IModel<String> labelModel = $m.ofValue(label);
             propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnType.getDisplayFunction());
         }
@@ -230,16 +232,15 @@ public class MasterDetailPanel extends Panel {
         actionColumnAppender(builder, model, modal, ctx, viewMode, view);
     }
 
-
     /**
      * Adiciona as ações a coluna de ações de mestre detalhe.
      */
     private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                      IModel<? extends SInstance> model,
-                                      MasterDetailModal modal,
-                                      WicketBuildContext ctx,
-                                      ViewMode vm,
-                                      SViewListByMasterDetail view) {
+        IModel<? extends SInstance> model,
+        MasterDetailModal modal,
+        WicketBuildContext ctx,
+        ViewMode vm,
+        SViewListByMasterDetail view) {
         builder.appendActionColumn($m.ofValue("Ações"), ac -> {
             if (vm.isEdition() && view.isDeleteEnabled()) {
                 ac.appendAction(buildRemoveActionConfig(), buildRemoveAction(model, ctx));
@@ -251,9 +252,9 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig() {
         return new BSActionPanel.ActionConfig<SInstance>()
-                .styleClasses(Model.of("list-detail-remove"))
-                .iconeModel(Model.of(Icone.REMOVE))
-                .titleFunction(rowModel -> "Remover");
+            .styleClasses(Model.of("list-detail-remove"))
+            .iconeModel(Model.of(Icone.REMOVE))
+            .titleFunction(rowModel -> "Remover");
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -268,9 +269,9 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
         final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(Model.of(openModalIcon))
-                .styleClasses(Model.of("list-detail-edit"))
-                .titleFunction(rowModel -> viewMode.isEdition() && view.isEditEnabled() ? "Editar" : "Visualizar");
+            .iconeModel(Model.of(openModalIcon))
+            .styleClasses(Model.of("list-detail-edit"))
+            .titleFunction(rowModel -> viewMode.isEdition() && view.isEditEnabled() ? "Editar" : "Visualizar");
     }
 
     private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {
@@ -280,33 +281,33 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
-                .styleClasses(Model.of("red"))
-                .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
-                .style($m.ofValue(MapperCommons.BUTTON_STYLE));
+            .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
+            .styleClasses(Model.of("red"))
+            .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+            .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 
     private IBSAction<SInstance> buildShowErrorsAction() {
         return new IBSAction<SInstance>() {
             @Override
             public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
-                SInstance                    baseInstance = model.getObject();
-                SDocument                    doc          = baseInstance.getDocument();
-                Collection<IValidationError> errors       = baseInstance.getNestedValidationErrors();
+                SInstance baseInstance = model.getObject();
+                SDocument doc = baseInstance.getDocument();
+                Collection<IValidationError> errors = baseInstance.getNestedValidationErrors();
                 if ((errors != null) && !errors.isEmpty()) {
                     String alertLevel = errors.stream()
-                            .map(IValidationError::getErrorLevel).max(Comparator.naturalOrder())
-                            .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
-                            .orElse(null);
+                        .map(IValidationError::getErrorLevel).max(Comparator.naturalOrder())
+                        .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
+                        .orElse(null);
 
                     final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
                     for (IValidationError error : errors) {
                         Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
                         inst.ifPresent(sInstance -> sb.append("<li>")
-                                .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
-                                .append(": ")
-                                .append(error.getMessage())
-                                .append("</li>"));
+                            .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
+                            .append(": ")
+                            .append(error.getMessage())
+                            .append("</li>"));
                     }
                     sb.append("</ul></div>");
 
@@ -326,10 +327,10 @@ public class MasterDetailPanel extends Panel {
      * property column isolado em outro método para isolar o escopo de
      * serialização do lambda do appendPropertyColumn
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                        IModel<String> labelModel, IModel<String> sTypeNameModel,
-                                        IFunction<SInstance, String> displayValueFunction) {
+        IModel<String> labelModel, IModel<String> sTypeNameModel,
+        IFunction<SInstance, String> displayValueFunction) {
         IFunction<SIComposite, SInstance> toInstance = composto -> {
             String sTypeName = sTypeNameModel.getObject();
             if (sTypeName == null || composto == null) {
@@ -366,7 +367,6 @@ public class MasterDetailPanel extends Panel {
             }
         });
     }
-
 
     private BaseDataProvider<SInstance, ?> newDataProvider() {
         return new SIListDataProvider(lista);

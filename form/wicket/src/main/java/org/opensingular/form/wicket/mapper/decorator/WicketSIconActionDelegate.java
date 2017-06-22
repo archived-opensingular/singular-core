@@ -242,13 +242,13 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
 
     private static final class FooterButton extends ActionAjaxButton {
 
-        private final SInstanceAction.ActionHandler actionHandler;
-        private final ISupplier<SInstance>          instanceSupplier;
-        private final IModel<? extends SInstance>   formInstanceModel;
+        private final ISupplier<SInstance>        instanceSupplier;
+        private final IModel<? extends SInstance> formInstanceModel;
+        private final SInstanceAction             action;
 
         private FooterButton(String id, SInstanceAction action, ISupplier<SInstance> instanceSupplier, IModel<? extends SInstance> formInstanceModel) {
             super(id);
-            this.actionHandler = action.getActionHandler();
+            this.action = action;
             this.instanceSupplier = instanceSupplier;
             this.formInstanceModel = formInstanceModel;
         }
@@ -260,7 +260,8 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
                 formInstanceModel,
                 formInstanceModel.getObject(),
                 this);
-            actionHandler.onAction(
+            action.getActionHandler().onAction(
+                action,
                 new ModelGetterSupplier<SInstance>(formInstanceModel),
                 new WicketSIconActionDelegate(
                     instanceSupplier,

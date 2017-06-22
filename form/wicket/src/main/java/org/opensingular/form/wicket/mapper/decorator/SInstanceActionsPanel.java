@@ -31,6 +31,10 @@ public class SInstanceActionsPanel extends TemplatePanel {
     public enum Mode {
         BAR,
         MENU,
+        ;
+        boolean isMenu() {
+            return this == MENU;
+        }
     }
 
     private static String template(SInstanceActionsPanel c) {
@@ -79,53 +83,10 @@ public class SInstanceActionsPanel extends TemplatePanel {
 
         add($b.classAppender("decorator-actions"));
 
-        if (!isMenuMode())
+        if (!mode.isMenu())
             add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
 
-        add(new RefreshingView<SInstanceAction>("actions") {
-            @Override
-            protected void populateItem(Item<SInstanceAction> item) {
-                IModel<SInstanceAction> itemModel = item.getModel();
-                item.setRenderBodyOnly(!isMenuMode());
-
-                SInstanceAction action = itemModel.getObject();
-                ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
-                    @Override
-                    protected void onAction(AjaxRequestTarget target) {
-                        final List<?> contextList = internalContextListProvider.apply(target);
-
-                        final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel::getObject, contextList);
-
-                        SInstanceAction instanceAction = this.getModelObject();
-                        instanceAction.getActionHandler()
-                            .onAction(instanceModel::getObject, delegate);
-                    }
-                };
-
-                Label label = new Label("label", $m.get(() -> action.getText()));
-                link.add(label
-                    .add($b.visibleIf(() -> isMenuMode())));
-
-                Label iconContainer = new Label("icon");
-                link.add(iconContainer
-                    .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getCssClass())))
-                    .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null))));
-
-                link
-                    .add($b.attr("title", action.getText()))
-                    .add($b.attr("data-toggle", "tooltip"))
-                    .add($b.attr("title", action.getDescription(), $m.map(itemModel, it -> isNotBlank(it.getText()))));
-
-                item.add(link);
-            }
-            @Override
-            protected Iterator<IModel<SInstanceAction>> getItemModels() {
-                return actionsSupplier.get().stream()
-                    .sorted(Comparator.comparing(it -> it.getPosition()))
-                    .map(it -> (IModel<SInstanceAction>) Model.of(it))
-                    .iterator();
-            }
-        });
+        add(new ActionsView("actions", mode, instanceModel, internalContextListProvider, actionsSupplier));
     }
 
     @Override
@@ -153,7 +114,63 @@ public class SInstanceActionsPanel extends TemplatePanel {
         return container;
     }
 
-    private boolean isMenuMode() {
-        return mode == Mode.MENU;
+    private static final class ActionsView extends RefreshingView<SInstanceAction> {
+        private final Mode                                       mode;
+        private final IFunction<AjaxRequestTarget, List<?>>      internalContextListProvider;
+        private final IModel<? extends SInstance>                instanceModel;
+        private final ISupplier<? extends List<SInstanceAction>> actionsSupplier;
+        private ActionsView(String id,
+            Mode mode,
+            IModel<? extends SInstance> instanceModel,
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider,
+            ISupplier<? extends List<SInstanceAction>> actionsSupplier) {
+            super(id);
+            this.mode = mode;
+            this.instanceModel = instanceModel;
+            this.internalContextListProvider = internalContextListProvider;
+            this.actionsSupplier = actionsSupplier;
+        }
+        @Override
+        protected void populateItem(Item<SInstanceAction> item) {
+            IModel<SInstanceAction> itemModel = item.getModel();
+            item.setRenderBodyOnly(!mode.isMenu());
+
+            SInstanceAction action = itemModel.getObject();
+            ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
+                @Override
+                protected void onAction(AjaxRequestTarget target) {
+                    final List<?> contextList = internalContextListProvider.apply(target);
+
+                    final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel::getObject, contextList);
+
+                    SInstanceAction instanceAction = this.getModelObject();
+                    instanceAction.getActionHandler()
+                        .onAction(instanceAction, instanceModel::getObject, delegate);
+                }
+            };
+
+            Label label = new Label("label", $m.get(() -> action.getText()));
+            link.add(label
+                .add($b.visibleIf(() -> mode.isMenu())));
+
+            Label iconContainer = new Label("icon");
+            link.add(iconContainer
+                .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getCssClass())))
+                .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null))));
+
+            link
+                .add($b.attr("title", action.getText()))
+                .add($b.attr("data-toggle", "tooltip"))
+                .add($b.attr("title", action.getDescription(), $m.map(itemModel, it -> isNotBlank(it.getText()))));
+
+            item.add(link);
+        }
+        @Override
+        protected Iterator<IModel<SInstanceAction>> getItemModels() {
+            return actionsSupplier.get().stream()
+                .sorted(Comparator.comparing(it -> it.getPosition()))
+                .map(it -> (IModel<SInstanceAction>) Model.of(it))
+                .iterator();
+        }
     }
 }

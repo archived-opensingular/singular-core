@@ -24,7 +24,7 @@ public class SInstanceAction implements Serializable {
      * Interface callback para o tratamento de uma ação solicitada pelo usuário.
      */
     public interface ActionHandler extends Serializable {
-        void onAction(ISupplier<SInstance> instance, SInstanceAction.Delegate delegate);
+        void onAction(SInstanceAction action, ISupplier<SInstance> instance, SInstanceAction.Delegate delegate);
     }
 
     /**
