@@ -38,8 +38,6 @@ public class SInstanceActionsPanel extends TemplatePanel {
     }
 
     private static String template(SInstanceActionsPanel c) {
-        //SInstanceActionsPanel p = (SInstanceActionsPanel) c;
-        //List<SInstanceAction> actions = p.actionsSupplier.get();
 
         switch (c.mode) {
             case MENU:

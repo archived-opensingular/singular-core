@@ -2,7 +2,7 @@ package org.opensingular.form.wicket;
 
 import org.opensingular.lib.commons.lambda.ITriConsumer;
 
-public abstract class WicketBuildListeners {
+public class WicketBuildListeners {
 
     private WicketBuildListeners() {}
 
