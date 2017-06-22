@@ -1,11 +1,11 @@
 package org.opensingular.ws.wkhtmltopdf.client;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.util.Optional;
 
 public class RestfulHtmlToPdfConverterTest {
 
@@ -16,7 +16,7 @@ public class RestfulHtmlToPdfConverterTest {
 
     @Test
     public void testInstantiateByConstructor(){
-        Assert.assertNotNull(new RestfulHtmlToPdfConverter("endpoint", ()-> new RestTemplate()));
+        Assert.assertNotNull(new RestfulHtmlToPdfConverter("endpoint"));
     }
 
     @Test
@@ -24,7 +24,16 @@ public class RestfulHtmlToPdfConverterTest {
         RestfulHtmlToPdfConverter usingDefaultConfig =
                 RestfulHtmlToPdfConverter.createUsingDefaultConfig();
 
-        Optional<File> optionalValue = usingDefaultConfig.convert(null);
-        Assert.assertFalse(optionalValue.isPresent());
+        Optional<File> convert = usingDefaultConfig.convert(null);
+        Assert.assertFalse(convert.isPresent());
+    }
+    
+    @Test
+    public void testConvertStreamWithNullValue(){
+        RestfulHtmlToPdfConverter usingDefaultConfig =
+                RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+
+        InputStream in = usingDefaultConfig.convertStream(null);
+        Assert.assertNull(in);
     }
 }
