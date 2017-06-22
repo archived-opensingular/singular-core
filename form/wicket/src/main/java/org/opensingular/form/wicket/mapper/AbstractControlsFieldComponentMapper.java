@@ -94,22 +94,21 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 ctx,
                 ctx.getContainer());
 
-            formGroup
-                .appendDiv(new BSControls("labelBar")
-                    .appendLabel(label)
-                    .appendDiv(new SInstanceActionsPanel("actions", model, internalContextListProvider,
-                        () -> instanceActionsProviders.actionList(model, it -> it.getPosition() < 0))
-                            .add($b.classAppender("align-left")))
-                    .appendDiv(new SInstanceActionsPanel("actions", model, internalContextListProvider,
-                        () -> instanceActionsProviders.actionList(model, it -> it.getPosition() >= 0))
-                            .add($b.classAppender("align-right"))));
+            BSControls labelBar = new BSControls("labelBar")
+                .appendLabel(label);
+            SInstanceActionsPanel.addFilteredPanelsTo(
+                labelBar,
+                instanceActionsProviders,
+                model,
+                internalContextListProvider);
+            formGroup.appendDiv(labelBar);
         }
 
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
             .add($b.classAppender("hidden-sm"))
             .add($b.classAppender("hidden-md"));
-            //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
+        //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
 

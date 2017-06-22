@@ -19,6 +19,7 @@ import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
@@ -27,40 +28,68 @@ import org.opensingular.lib.wicket.util.jquery.JQuery;
  */
 public class SInstanceActionsPanel extends TemplatePanel {
 
-    private static String template(TemplatePanel c) {
+    public enum Mode {
+        BAR,
+        MENU,
+    }
+
+    private static String template(SInstanceActionsPanel c) {
         //SInstanceActionsPanel p = (SInstanceActionsPanel) c;
         //List<SInstanceAction> actions = p.actionsSupplier.get();
 
-        return ""
-            + "\n<div class='btn-group btn-group-md' style='margin-left:-1px !important;'>"
-            + "\n  <div wicket:id='actions'>"
-            + "\n  <a wicket:id='button'"
-            + "\n      class='btn btn-link btn-md md-skip' style='padding:0px;'"
-            + "\n      data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
-            + "\n    <i wicket:id='icon'></i>"
-            + "\n  </a>"
-            + "\n  </div>"
-            + "\n</div>";
+        switch (c.mode) {
+            case MENU:
+                return ""
+                    + "\n<div class='btn-group'>"
+                    + "\n  <button type='button' class='btn btn-link dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"
+//                    + "\n    <span class='caret'></span>"
+                    + "\n    <i class='fa fa-ellipsis-h'></i>"
+                    + "\n  </button>"
+                    + "\n  <ul class='dropdown-menu dropdown-menu-right pull-right'>"
+                    + "\n    <li class='text-right' wicket:id='actions'>"
+                    + "\n      <a wicket:id='link'><span wicket:id='label'></span> <i wicket:id='icon'></i></a></li>"
+                    + "\n  </ul>"
+                    + "\n</div>";
+            case BAR:
+            default:
+                return ""
+                    + "\n<div class='btn-group btn-group-md' style='margin-left:-1px !important;'>"
+                    + "\n  <div wicket:id='actions'>"
+                    + "\n    <a wicket:id='link'"
+                    + "\n        class='btn btn-link btn-md md-skip' style='padding:0px;'"
+                    + "\n        data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
+                    + "\n      <span wicket:id='label'></span> <i wicket:id='icon'></i>"
+                    + "\n    </a>"
+                    + "\n  </div>"
+                    + "\n</div>";
+        }
     }
+
+    private final Mode                                       mode;
+    private final ISupplier<? extends List<SInstanceAction>> actionsSupplier;
 
     public SInstanceActionsPanel(
         String id,
         IModel<? extends SInstance> instanceModel,
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider,
+        Mode mode,
         ISupplier<? extends List<SInstanceAction>> actionsSupplier) {
-        super(id, instanceModel, SInstanceActionsPanel::template);
+        super(id, instanceModel, c -> template((SInstanceActionsPanel) c));
+        this.mode = mode;
+        this.actionsSupplier = actionsSupplier;
 
         add($b.classAppender("decorator-actions"));
+        
         add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
 
         add(new RefreshingView<SInstanceAction>("actions") {
             @Override
             protected void populateItem(Item<SInstanceAction> item) {
                 IModel<SInstanceAction> itemModel = item.getModel();
-                item.setRenderBodyOnly(true);
+                item.setRenderBodyOnly(!isMenuMode());
 
                 SInstanceAction action = itemModel.getObject();
-                ActionAjaxLink<SInstanceAction> button = new ActionAjaxLink<SInstanceAction>("button", itemModel) {
+                ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
                         final List<?> contextList = internalContextListProvider.apply(target);
@@ -73,17 +102,21 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     }
                 };
 
+                Label label = new Label("label", $m.get(() -> action.getText()));
+                link.add(label
+                    .add($b.visibleIf(() -> isMenuMode())));
+
                 Label iconContainer = new Label("icon");
-                button.add(iconContainer
+                link.add(iconContainer
                     .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getCssClass())))
                     .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null))));
 
-                button
+                link
                     .add($b.attr("title", action.getText()))
                     .add($b.attr("data-toggle", "tooltip"))
                     .add($b.attr("title", action.getDescription(), $m.map(itemModel, it -> isNotBlank(it.getText()))));
 
-                item.add(button);
+                item.add(link);
             }
             @Override
             protected Iterator<IModel<SInstanceAction>> getItemModels() {
@@ -93,5 +126,34 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     .iterator();
             }
         });
+    }
+
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        setVisible(!actionsSupplier.get().isEmpty());
+    }
+
+    public static <C extends BSContainer<C>> C addFilteredPanelsTo(
+        C container,
+        SInstanceActionsProviders instanceActionsProviders,
+        IModel<? extends SInstance> model,
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
+
+        ISupplier<? extends List<SInstanceAction>> filterLeft = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() < 0);
+        ISupplier<? extends List<SInstanceAction>> filterRight = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() >= 0);
+        ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary());
+        container
+            .appendTag("div", new SInstanceActionsPanel("actionsLeft", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterLeft)
+                .add($b.classAppender("align-left")))
+            .appendTag("div", new SInstanceActionsPanel("actionsSecondary", model, internalContextListProvider, SInstanceActionsPanel.Mode.MENU, filterSecondary)
+                .add($b.classAppender("align-right")))
+            .appendTag("div", new SInstanceActionsPanel("actionsRight", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterRight)
+                .add($b.classAppender("align-right")));
+        return container;
+    }
+
+    private boolean isMenuMode() {
+        return mode == Mode.MENU;
     }
 }

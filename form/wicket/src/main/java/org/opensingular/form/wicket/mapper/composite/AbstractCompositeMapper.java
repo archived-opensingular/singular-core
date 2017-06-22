@@ -188,15 +188,11 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                     ctx,
                     ctx.getContainer());
 
-                column
-                    .appendTag("div", new SInstanceActionsPanel("actions", model, internalContextListProvider,
-                        () -> mapper.instanceActionsProviders.actionList(model, it -> it.getPosition() < 0))
-                            .add($b.classAppender("align-left")))
-                    .appendTag("div", new SInstanceActionsPanel("actions", model, internalContextListProvider,
-                        () -> mapper.instanceActionsProviders.actionList(model, it -> it.getPosition() >= 0))
-                            .add($b.classAppender("align-right")));
-
-                return column;
+                return SInstanceActionsPanel.addFilteredPanelsTo(
+                    column,
+                    mapper.instanceActionsProviders,
+                    model,
+                    internalContextListProvider);
             }
 
             return null;
