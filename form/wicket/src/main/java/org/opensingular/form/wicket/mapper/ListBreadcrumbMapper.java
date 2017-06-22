@@ -53,7 +53,8 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -195,7 +196,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                             + "<button"
                             + " wicket:id='_add'"
                             + " class='btn btn-sm pull-right'"
-                            + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
+                            + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
                             + "</button>")
                     .add(new AjaxLink<Void>("_add") {
                         @Override
@@ -357,7 +358,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
                 if (viewMode.isEdition() && view.isDeleteEnabled()) {
                     actionColumn.appendAction(new BSActionPanel.ActionConfig()
-                                    .iconeModel(Model.of(Icone.MINUS), Model.of(MapperCommons.ICON_STYLE))
+                                    .iconeModel(Model.of(DefaultIcons.MINUS), Model.of(MapperCommons.ICON_STYLE))
                                     .styleClasses(Model.of("red"))
                                     .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                             (target, rowModel) -> {
@@ -366,7 +367,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                                 target.add(ctx.getContainer());
                             });
                 }
-                final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
+                final Icon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? DefaultIcons.PENCIL_SQUARE : DefaultIcons.EYE;
                 actionColumn.appendAction(
                         new BSActionPanel.ActionConfig()
                                 .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))

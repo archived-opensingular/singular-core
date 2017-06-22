@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.opensingular.lib.wicket.util.SingleFormDummyPage;
 import org.opensingular.lib.wicket.util.WicketUtilsDummyApplication;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 public class MetronicMenuTest {
 
@@ -20,7 +20,7 @@ public class MetronicMenuTest {
                 return new TemplatePanel(contentId, "<div wicket:id='menu'></div>")
                     .add(new MetronicMenu("menu")
                         .addItem(new MetronicMenuGroup("group")
-                            .addItem(new MetronicMenuItem(Icone.BAN, "item", "http://localhost:8080"))));
+                            .addItem(new MetronicMenuItem(DefaultIcons.BAN, "item", "http://localhost:8080"))));
             }
         });
         

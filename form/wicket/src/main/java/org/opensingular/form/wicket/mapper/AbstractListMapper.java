@@ -38,7 +38,7 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 + " wicket:id='_add'"
                 + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
                 + " style='" + MapperCommons.BUTTON_STYLE + ";"
-                + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
+                + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
                 + "</button>"
         ).add(btn);
 
@@ -73,7 +73,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_inserir_'"
                         + " class='btn btn-success btn-sm'"
-                        + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
+                        + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
                         + "</button>")
                 .add(btn);
         return btn;
@@ -85,7 +85,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 .newTemplateTag(tp -> ""
                         + "<button wicket:id='_remover_' class='singular-remove-btn'>"
                         + "     <i "
-                        + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + Icone.REMOVE + "' />"
+                        + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
                         + "</button>")
                 .add(btn);
         return btn;

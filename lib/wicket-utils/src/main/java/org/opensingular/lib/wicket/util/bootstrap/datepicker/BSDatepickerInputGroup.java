@@ -22,7 +22,7 @@ import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import java.util.Date;
 
@@ -77,7 +77,7 @@ public class BSDatepickerInputGroup extends BSInputGroup {
             add($b.attr("data-date-max-view-mode", $m.get(this::getMaxView)));
 
             appendInputText(textfield);
-            button = newButtonAddon(Icone.CALENDAR);
+            button = newButtonAddon(DefaultIcons.CALENDAR);
             add(new DatePickerInitBehaviour());
             add($b.classAppender("date"));
         }
