@@ -42,7 +42,6 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 return ""
                     + "\n<div class='btn-group'>"
                     + "\n  <button type='button' class='btn btn-link dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"
-//                    + "\n    <span class='caret'></span>"
                     + "\n    <i class='fa fa-ellipsis-h'></i>"
                     + "\n  </button>"
                     + "\n  <ul class='dropdown-menu dropdown-menu-right pull-right'>"
@@ -79,8 +78,9 @@ public class SInstanceActionsPanel extends TemplatePanel {
         this.actionsSupplier = actionsSupplier;
 
         add($b.classAppender("decorator-actions"));
-        
-        add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
+
+        if (!isMenuMode())
+            add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
 
         add(new RefreshingView<SInstanceAction>("actions") {
             @Override
