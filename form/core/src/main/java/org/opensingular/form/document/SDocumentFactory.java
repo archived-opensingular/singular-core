@@ -16,11 +16,13 @@
 
 package org.opensingular.form.document;
 
+import org.opensingular.form.InternalAccess;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,9 +70,12 @@ public abstract class SDocumentFactory {
     @Nonnull
     public final SInstance createInstance(@Nonnull RefType rootType, boolean executeInitTypeSetup) {
         SType type = Objects.requireNonNull(rootType).get();
-        SInstance instance = type.newInstance(false);
-        instance.getDocument().setRootRefType(rootType);
-        instance.getDocument().setDocumentFactory(this);
+
+        SDocument owner = new SDocument();
+        owner.setRootRefType(rootType);
+        owner.setDocumentFactory(this);
+
+        SInstance instance = InternalAccess.INTERNAL.newInstance(type, false, owner);
         setupDocument(instance.getDocument());
         if (executeInitTypeSetup) {
             instance.init();
@@ -104,16 +109,6 @@ public abstract class SDocumentFactory {
     @Nonnull
     protected abstract RefSDocumentFactory createDocumentFactoryRef();
 
-    /**
-     * Retorna o registro de serviços para busca de serviços pelo documento que
-     * por acaso não estejam configurados no próprio documento durante o seu
-     * setup inicial. Por exemplo, pode ser procurado um bean provedor para o
-     * conteúdo (lista) de uma seleção (combo ou outro tipo).
-     *
-     * @return Pode ser null
-     */
-    @Nullable
-    public abstract ServiceRegistry getServiceRegistry();
 
     /**
      * Método a ser sobreescrito com o objetivo de configurar um novo documento

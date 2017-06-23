@@ -39,10 +39,6 @@ final class SDocumentFactoryEmpty extends SDocumentFactory {
         return new RefEmptySDocumentFactory(this);
     }
 
-    @Override
-    public ServiceRegistry getServiceRegistry() {
-        return null;
-    }
 
     @Override
     protected void setupDocument(SDocument document) {

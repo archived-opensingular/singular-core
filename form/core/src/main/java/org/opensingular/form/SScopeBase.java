@@ -18,6 +18,7 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.TypeProcessorBeanInjector;
 import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
@@ -124,8 +125,8 @@ public abstract class SScopeBase implements SScope {
     }
 
     @Nonnull
-    final <T extends SType<?>> T registerType(@Nonnull T newType, @Nullable Class<T> classeDeRegistro) {
-        getDictionary().registeType(this, newType, classeDeRegistro);
+    final <T extends SType<?>> T registerType(@Nonnull T newType, @Nullable Class<T> typeClass) {
+        getDictionary().registeType(this, newType, typeClass);
         /*
         (by Daniel Bordin) O If abaixo impede que o onLoadType seja chamado mais de uma vezes caso o novo tipo seja
         apenas uma extensão da classe já carregada anteriormente, ou seja, impede que o mesmo onLoadType seja
@@ -138,6 +139,9 @@ public abstract class SScopeBase implements SScope {
             newType.extendSubReference();
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePreOnLoadTypeCall(newType);
             newType.setCallingOnLoadType(true);
+            if (typeClass != null) {
+                TypeProcessorBeanInjector.INSTANCE.onRegisterTypeByClass(newType, typeClass);
+            }
             callOnLoadTypeIfNecessary(newType);
             newType.setCallingOnLoadType(false);
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, true);

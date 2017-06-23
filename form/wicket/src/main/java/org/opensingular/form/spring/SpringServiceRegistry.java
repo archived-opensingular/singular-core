@@ -16,14 +16,20 @@
 
 package org.opensingular.form.spring;
 
-import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.form.RefService;
+import org.opensingular.form.context.DefaultServiceRegistry;
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.util.Loggable;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 
-import java.util.Collections;
+import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,58 +38,77 @@ import java.util.Optional;
  * to the spring context.
  *
  * @author Fabricio Buzeto
+ * @author Daniel C. Bordin
  */
-public class SpringServiceRegistry implements ServiceRegistry,
-        ApplicationContextAware, Loggable {
+@Lazy(false)
+public class SpringServiceRegistry implements ServiceRegistry, Loggable {
 
-    private ApplicationContext applicationContext;
+    private SingularInjector injector;
+
+    private DefaultServiceRegistry delegate = new DefaultServiceRegistry() {
+    };
 
     public SpringServiceRegistry() {
     }
 
-    public SpringServiceRegistry(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+
+    @PostConstruct
+    public void init() {
+        ServiceRegistryLocator.setup(this);
     }
 
     @Override
-    public Map<String, Pair> services() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
-        try {
-            return Optional.ofNullable(applicationContext.getBean(name, targetClass));
-        } catch (NoSuchBeanDefinitionException ex) {
-            getLogger().debug(null, ex);
-            return Optional.empty();
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull String name, @Nonnull Class<T> targetClass) {
+        Optional<T> service = delegate.lookupService(name, targetClass);
+        if (!service.isPresent()) {
+            service = ApplicationContextProvider.getBeanOpt(name, targetClass);
         }
+        return service;
     }
 
     @Override
-    public <T> Optional<T> lookupService(Class<T> targetClass) {
-        try {
-            return Optional.ofNullable(applicationContext.getBean(targetClass));
-        } catch (NoSuchBeanDefinitionException ex) {
-            getLogger().debug(null, ex);
-            return Optional.empty();
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
+        Optional<T> service = delegate.lookupService(targetClass);
+        if (!service.isPresent()) {
+            service = ApplicationContextProvider.getBeanOpt(targetClass);
         }
+        return service;
     }
 
     @Override
-    public Optional<Object> lookupService(String name) {
-        try {
-            return Optional.ofNullable(applicationContext.getBean(name));
-        } catch (NoSuchBeanDefinitionException ex) {
-            getLogger().debug(null, ex);
-            return Optional.empty();
+    @Nonnull
+    public <T> Optional<T> lookupService(@Nonnull String name) {
+        Optional<T> service = delegate.lookupService(name);
+        if (!service.isPresent()) {
+            service = ApplicationContextProvider.getBeanOpt(name);
         }
+        return service;
+    }
+
+    @Nonnull
+    @Override
+    public SingularInjector lookupSingularInjector() {
+        if (injector == null) {
+            injector = SingularSpringInjector.get();
+        }
+        return injector;
+    }
+
+    @Nonnull
+    @Override
+    public Map<String, ServiceEntry> services() {
+        return delegate.services();
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-        SpringFormUtil.setApplicationContext(applicationContext);
+    public <T> void bindService(Class<T> registerClass, RefService<? extends T> provider) {
+        delegate.bindService(registerClass, provider);
     }
 
+    @Override
+    public <T> void bindService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
+        delegate.bindService(serviceName, registerClass, provider);
+    }
 }

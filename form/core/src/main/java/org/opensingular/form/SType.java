@@ -51,7 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
+public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
@@ -93,7 +93,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      */
     private boolean callingOnLoadType;
 
-    public SType() {
+    protected SType() {
         this(null, null);
     }
 
@@ -431,7 +431,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-
     public SType<I> withDefaultValueIfNull(Object value) {
         return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
     }
@@ -655,7 +654,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * se existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     public final I newInstance() {
-        return newInstance(true);
+        return newInstance(true, new SDocument());
     }
 
     /**
@@ -665,9 +664,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param executeInstanceInitListeners Indica se deve executar executa os códigos de inicialização dos tipos se
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
-    public final I newInstance(boolean executeInstanceInitListeners) {
-        SDocument owner    = new SDocument();
-        I         instance = newInstance(this, owner);
+    final I newInstance(boolean executeInstanceInitListeners, @Nonnull SDocument owner) {
+        I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {
             instance.init();
@@ -700,6 +698,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             I newInstance = instanceClass.newInstance();
             newInstance.setDocument(owner);
             newInstance.setType(this);
+            SFormUtil.inject(newInstance);
             instanceCount++;
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {

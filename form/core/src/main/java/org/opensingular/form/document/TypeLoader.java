@@ -56,7 +56,8 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
 
     /** Recupera o tipo solicitado se possível. */
     public final Optional<SType<?>> loadType(@Nonnull TYPE_KEY typeId) {
-        return loadTypeImpl(typeId);
+        Optional<SType<?>> result = loadTypeImpl(typeId);
+        return result;
     }
 
     /**

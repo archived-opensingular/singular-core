@@ -39,8 +39,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final TransitionType type;
     private final String         abbreviation;
 
-    private TransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<SProcessRole>                     rolesToDefineUser;
+    private UITransitionAccessStrategy<TaskInstance> accessStrategy;
+    private List<SProcessRole>                       rolesToDefineUser;
 
     private MetaData metaData;
 
@@ -58,17 +58,18 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @SuppressWarnings("unchecked")
-    public STransition withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    @Nonnull
+    public STransition withAccessControl(UITransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         if (this.accessStrategy != null) {
             throw new SingularFlowException("Access strategy already defined");
         }
-        this.accessStrategy = (TransitionAccessStrategy<TaskInstance>) accessStrategy;
+        this.accessStrategy = (UITransitionAccessStrategy<TaskInstance>) inject(accessStrategy);
         return this;
     }
 
     public TransitionAccess getAccessFor(TaskInstance taskInstance) {
         if (accessStrategy == null) {
-            return new TransitionAccess(TransitionAccess.TransitionAccessLevel.ENABLED, null);
+            return new TransitionAccess(TransitionAccess.TransitionVisibilityLevel.ENABLED_AND_VISIBLE, null);
         }
         return accessStrategy.getAccess(taskInstance);
     }
@@ -158,29 +159,37 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return this.destination.addTransition(acao, destination);
     }
 
-    public STransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
+    @Nonnull
+    public STransition setParametersInitializer(@Nonnull ITransitionParametersInitializer parametersInitializer) {
         if(this.parametersInitializer != null){
             throw new SingularFlowException("Parameters Initializer already set");
         }
-        this.parametersInitializer = parametersInitializer;
+        this.parametersInitializer = inject(parametersInitializer);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends ProcessInstance> STransition setParametersInitializer(ITransitionParametersInitializerProcess<K> initializerByProcess) {
+    @Nonnull
+    public <K extends ProcessInstance> STransition setParametersInitializer(
+            @Nonnull ITransitionParametersInitializerProcess<K> initializerByProcess) {
+        inject(initializerByProcess);
         return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializerByProcess.init(params, (K) ctx.getProcessInstance()));
     }
 
-    public STransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
+    @Nonnull
+    public STransition setParametersValidator(@Nonnull ITransitionParametersValidator parametersValidator) {
         if(this.parametersValidator != null){
             throw new SingularFlowException("Parameters Validator already set");
         }
-        this.parametersValidator = parametersValidator;
+        this.parametersValidator = inject(parametersValidator);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends ProcessInstance> STransition setParametersValidator(ITransitionParametersValidatorProcess<K> validatorByProcess) {
+    @Nonnull
+    public <K extends ProcessInstance> STransition setParametersValidator(
+            @Nonnull ITransitionParametersValidatorProcess<K> validatorByProcess) {
+        inject(validatorByProcess);
         return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validatorByProcess
             .validate(params, result, (K) ctx.getProcessInstance()));
     }

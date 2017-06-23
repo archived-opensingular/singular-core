@@ -16,11 +16,12 @@
 
 package org.opensingular.form.io;
 
-import org.opensingular.internal.lib.commons.xml.MElement;
+
+import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.ServiceRegistry;
 import org.opensingular.form.validation.IValidationError;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public final class FormSerialized implements Serializable {
     private final String   rootTypeName;
     private final MElement xml, annotations;
     private String                            focusFieldPath;
-    private Map<String, ServiceRegistry.Pair> services;
-    private List<IValidationError>            validationErrors;
+    private Map<String, ServiceRegistry.ServiceEntry> services;
+    private List<IValidationError>                    validationErrors;
 
     public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
                           RefSDocumentFactory sDocumentFactoryRef) {
@@ -77,11 +78,11 @@ public final class FormSerialized implements Serializable {
         this.focusFieldPath = focusFieldPath;
     }
 
-    public Map<String, ServiceRegistry.Pair> getServices() {
+    public Map<String, ServiceRegistry.ServiceEntry> getServices() {
         return services;
     }
 
-    public void setServices(Map<String, ServiceRegistry.Pair> services) {
+    public void setServices(Map<String, ServiceRegistry.ServiceEntry> services) {
         this.services = services;
     }
 
