@@ -49,7 +49,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 public class PanelListMapper extends AbstractListMapper {
 
@@ -187,7 +187,7 @@ public class PanelListMapper extends AbstractListMapper {
     protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
         final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
         cell
-                .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + Icone.REMOVE + "' />")
+                .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
                 .add(btn);
         return btn;
     }

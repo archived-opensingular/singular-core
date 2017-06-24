@@ -21,7 +21,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.datatable.column.BSTreeColumn;
 import org.opensingular.lib.wicket.util.datatable.column.MetronicStatusColumn;
 import org.opensingular.lib.wicket.util.datatable.column.MetronicStatusColumn.BadgeTypeMapper;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class BSDataTableTest {
@@ -57,8 +57,8 @@ public class BSDataTableTest {
                             .appendPropertyColumn("ID", 0, it -> it.id)
                             .appendPropertyColumn("Name1", 1, it -> it.name).configurePreviousColumn(col -> {})
                             .appendActionColumn("Actions", col -> col
-                                .appendAction($m.ofValue("remove"), Icone.REMOVE, IBSAction.noop())
-                                .appendAction($m.ofValue("edit"), $m.ofValue(Icone.PENCIL), IBSAction.noopIfNull(null)))
+                                .appendAction($m.ofValue("remove"), DefaultIcons.REMOVE, IBSAction.noop())
+                                .appendAction($m.ofValue("edit"), $m.ofValue(DefaultIcons.PENCIL), IBSAction.noopIfNull(null)))
                             .build("table"));
             }
         });

@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,9 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularContextSetup;
+import org.opensingular.lib.commons.context.singleton.InstanceBoundedSingletonStrategy;
 import org.opensingular.lib.commons.net.WebRef;
 
 import javax.inject.Inject;

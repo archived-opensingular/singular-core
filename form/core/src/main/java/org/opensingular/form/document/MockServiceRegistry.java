@@ -17,7 +17,6 @@
 package org.opensingular.form.document;
 
 import org.opensingular.form.RefService;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.internal.lib.commons.injection.FieldInjectionInfo;
 import org.opensingular.internal.lib.commons.injection.SingularFieldValueFactory;

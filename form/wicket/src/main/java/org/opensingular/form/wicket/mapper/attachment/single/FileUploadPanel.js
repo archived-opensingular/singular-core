@@ -16,36 +16,61 @@
 
 (function () {
     "use strict";
-    if(window.FileUploadPanel == undefined){
+    if(window.FileUploadPanel === undefined){
         window.FileUploadPanel = function(){};
 
         window.FileUploadPanel.setup = function(params) {
             $('#' + params.progress_bar_id).hide();
 
-            var update_action_buttons = function () {
-                var choose_btn = $('#' + params.panel_id).find('.file-choose-button');
-                var trash_btn = $('#' + params.panel_id).parent().find('.file-trash-button');
+            var panelId = $('#' + params.panel_id);
+            var choose_btn = panelId.find('.file-choose-button');
+            var trash_btn = panelId.parent().find('.file-trash-button');
 
+            var clickWhitespaceToSelectFile = function () {
+                var formControl = panelId.find('.form-control');
+
+                function verifyIfButtonUploadIsDisplayed() {
+                    return (choose_btn.css('display') == 'block') && (trash_btn.css('display') == 'none');
+                }
+
+                formControl.on("hover", function () {
+                    if(verifyIfButtonUploadIsDisplayed() ){
+                        $(this).css( 'cursor', 'pointer' );
+                    }else{
+                        $(this).css( 'cursor', 'default' );
+                    }
+                });
+                formControl.on("click", function (){
+                    if(verifyIfButtonUploadIsDisplayed()){
+                        $('#'+ params.file_field_id).trigger("click");
+                    }
+                });
+            };
+
+            clickWhitespaceToSelectFile();
+
+            var updateActionButtons = function () {
                 if($('#' + params.panel_id + ' a ').text()){
                     // trash_btn.css('display','block').css('width','35px'); // Somewhat, we need this in order to not destroy the layout
-                    trash_btn.show()
-                    trash_btn.css('display','block')
+                    trash_btn.show();
+                    trash_btn.css('display','block');
                     choose_btn.hide();
+                    choose_btn.css('display','none');
                 }else{
                     choose_btn.show();
-                    choose_btn.css('display','block')
+                    choose_btn.css('display','block');
                     trash_btn.hide();
-                    trash_btn.css('display','none')
+                    trash_btn.css('display','none');
                 }
-            }
+            };
 
-            update_action_buttons();
+            updateActionButtons();
 
             $('#' + params.file_field_id).fileupload({
                 url: params.upload_url,
                 paramName: params.param_name,
                 singleFileUploads: true,
-                dropZone: $('#' + params.panel_id ),
+                dropZone: panelId,
                 dataType: 'json',
                 sequentialUploads: true,
                 limitConcurrentUploads: 1,
@@ -79,7 +104,7 @@
                         var resp = JSON.parse(fileString);
                         console.log('f',resp, $('#' + params.files_id ));
                         if (resp.errorMessage) {
-                        	update_action_buttons();
+                        	updateActionButtons();
                         	toastr.error(resp.name + ': ' + resp.errorMessage);
                         	$('#' + params.progress_bar_id).hide();
 
@@ -105,7 +130,7 @@
 	                                $('#' + params.files_id).empty().append($link);
 	                                $('#' + params.progress_bar_id).hide();
 	
-	                                update_action_buttons();
+	                                updateActionButtons();
 	                            }
                             );
                         }
@@ -122,12 +147,12 @@
             .on('blur' , function() { $(this).closest('.fileinput').removeClass('focus'); })
             .prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
-        }
+        };
 
         // Legacy for multple files
 
         window.FileUploadPanel.validateInputFile = function (e, data, maxSize, allowed_file_types) {
-            if (data.files[0].size == 0) {
+            if (data.files[0].size === 0) {
             	toastr.error("Arquivo não pode ser de tamanho 0 (zero)");
                 FileUploadPanel.resetFormElement(e);
                 return false;
@@ -161,7 +186,7 @@
             // Prevent form submission
             e.stopPropagation();
             e.preventDefault();
-        }
+        };
 
         window.FileUploadPanel.humaneSize = function(size){
             var remainder = size;
@@ -171,7 +196,7 @@
                 remainder /= 1024; index ++;
             }
             return Math.round(remainder) +" "+ names[index];
-        }
+        };
 
     }
 })();

@@ -46,7 +46,7 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -161,7 +161,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)).titleFunction(m -> "Filtrar"),
+                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.HAND_UP)).titleFunction(m -> "Filtrar"),
                         (IBSAction<Object>) (target, model) ->
                         {
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();

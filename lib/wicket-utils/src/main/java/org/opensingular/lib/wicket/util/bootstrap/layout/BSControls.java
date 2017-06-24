@@ -41,7 +41,7 @@ import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -123,7 +123,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                 .appendExtraClasses(" date ")
                 .appendExtraAttributes(attrs)
                 .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
-                .appendButtonAddon(Icone.CALENDAR)
+                .appendButtonAddon(DefaultIcons.CALENDAR)
                 .add(new DatePickerInitBehaviour());
         });
         return this;
