@@ -295,9 +295,6 @@ CREATE TABLE DBSINGULAR.TB_CAIXA
    CO_MODULO            VARCHAR2(30)         NOT NULL,
    NO_CAIXA             VARCHAR(100)         NOT NULL,
    DS_CAIXA             VARCHAR(500)         NOT NULL,
-   ST_BOTAO_NOVO        CHAR(1)              NOT NULL,
-   ST_FILTRO_RAPIDO     CHAR(1)              NOT NULL,
-   ST_MOSTRAR_RASCUNHO  CHAR(1)              NOT NULL,
    NO_ICONE             VARCHAR(100)         NOT NULL,
    CONSTRAINT PK_CAIXA PRIMARY KEY (CO_CAIXA)
 );
