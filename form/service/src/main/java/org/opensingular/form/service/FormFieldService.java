@@ -3,6 +3,7 @@ package org.opensingular.form.service;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.persistence.dao.FormCacheFieldDAO;
 import org.opensingular.form.persistence.dao.FormCacheValueDAO;
 import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
@@ -53,15 +54,14 @@ public class FormFieldService implements IFormFieldService {
      * @param formVersion
      */
     private void loadMapFromInstance(Map<FormCacheFieldEntity, FormCacheValueEntity> mapFields, SInstance instance, FormVersionEntity formVersion, FormCacheValueEntity parent) {
-        FormTypeEntity formType = formVersion.getFormEntity().getFormType();
         List<SInstance> fieldsInInstance = ((SIComposite) instance).getFields();
-
-        List<String> fieldsToIndex = new ArrayList<>();
 
         for (SInstance field : fieldsInInstance) {
             if (field instanceof SIAttachment) continue;
 
-            if (field instanceof SIList) LoadMapWithItensFromList(mapFields, (SIList)field, formVersion, parent);
+            if (field instanceof SIList && !(field.getType() instanceof STypeAttachmentList)) {
+                LoadMapWithItensFromList(mapFields, (SIList) field, formVersion, parent);
+            }
 
             if (field instanceof SIComposite) {
                 SIComposite compositeField = (SIComposite) field;

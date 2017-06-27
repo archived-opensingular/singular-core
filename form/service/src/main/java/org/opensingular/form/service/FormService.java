@@ -80,9 +80,6 @@ public class FormService implements IFormService {
     @Inject
     private FormTypeDAO formTypeDAO;
 
-    @Inject
-    private FormFieldService formFieldService;
-
     public FormService() {
         this.formKeyManager = new FormKeyManager<>(FormKeyLong.class, e -> addInfo(e));
     }
@@ -115,10 +112,6 @@ public class FormService implements IFormService {
         } else {
             updatedKey = insertImpl(instance, inclusionActor);
         }
-
-        FormEntity formEntity = loadFormEntity(updatedKey);
-        formFieldService.saveFields(instance, formEntity.getFormType(), formEntity.getCurrentFormVersionEntity());
-
         return updatedKey;
     }
 
@@ -128,11 +121,7 @@ public class FormService implements IFormService {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
         }
-
         FormKey formKey = insertImpl(instance, inclusionActor);
-        FormEntity formEntity = loadFormEntity(formKey);
-
-        formFieldService.saveFields(instance, formEntity.getFormType(), formEntity.getCurrentFormVersionEntity());
         return formKey;
     }
 
@@ -368,7 +357,8 @@ public class FormService implements IFormService {
     public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
         FormKey    formKey    = getFormKeyManager().readFormKeyOrException(instance);
         FormEntity formEntity = loadFormEntity(formKey);
-        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), inclusionActor, keepAnnotations);
+        FormVersionEntity newFormVersion = new FormVersionEntity();
+        saveOrUpdateFormVersion(instance, formEntity, newFormVersion, inclusionActor, keepAnnotations);
         return formKey;
     }
 

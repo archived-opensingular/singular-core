@@ -16,5 +16,6 @@ public class FormCacheValueDAO extends BaseDAO<FormCacheValueEntity, Long> {
         query.setParameter("formVersion", formVersion);
 
         int result = query.executeUpdate();
+        getLogger().info(result + " itens excluidos na atualização dos dados indexados");
     }
 }
