@@ -15,7 +15,9 @@ public interface SIcon extends Serializable {
     /**
      * Classe CSS do ícone.
      */
-    String getCssClass();
+    default String getCssClass() {
+        return getId();
+    }
 
     static SIcon resolve(String s) {
         return SIconProviders.resolve(s);

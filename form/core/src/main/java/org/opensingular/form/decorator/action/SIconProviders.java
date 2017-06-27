@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
  * Implementa a lógica de carga de implementações de SIconProvider. Provê três implementações padrão:
  * Simple Line, Font Awesome, e Glyphicons.
  */
-public final class SIconProviders {
+final class SIconProviders {
 
     /**
      * Implementação de SIconProvider que provê os ícones do conjunto Simple Line (http://simplelineicons.com).
@@ -32,7 +32,7 @@ public final class SIconProviders {
             super(100, VALID, s -> "icon-" + s);
         }
     }
-    
+
     /**
      * Implementação de SIconProvider que provê os ícones do conjunto Font Awesome (http://fontawesome.io).
      */
@@ -119,7 +119,7 @@ public final class SIconProviders {
             final String baseCssClass = s.toLowerCase().replaceAll("[^a-z0-9 _]", "-");
             if (!validClasses.containsKey(baseCssClass))
                 return null;
-            
+
             // Usa o valor, ou a chave se não houver valor
             final String iconId = StringUtils.defaultIfBlank(validClasses.getProperty(s), s);
             return new SIconImpl(iconId, function.apply(baseCssClass));
