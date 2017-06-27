@@ -15,7 +15,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="definitionsPackages" value="org.opensingular.flow"/>
         <property name="userService" ref="testUserService"/>
-        <property name="processGroupCod" value="SINGULARTEST"/>
+        <property name="moduleCod" value="SINGULARTEST"/>
     </bean>
 
     <import resource="conf/database-mssql.xml" />
