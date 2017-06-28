@@ -2,9 +2,9 @@ package org.opensingular.form.persistence.dao;
 
 public class IndexedDataQueryBuilder {
 
-    private StringBuffer select   = new StringBuffer("select distinct tipoformulario.co_tipo_formulario as co_tipo_formulario \n");
-    private StringBuffer from     = new StringBuffer("from dbsingular.tb_tipo_formulario tipoformulario\n  inner join dbsingular.tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
-    private StringBuffer join     = new StringBuffer();
+    private StringBuilder select   = new StringBuilder("select distinct tipoformulario.co_tipo_formulario as co_tipo_formulario \n");
+    private StringBuilder from     = new StringBuilder("from dbsingular.tb_tipo_formulario tipoformulario\n  inner join dbsingular.tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
+    private StringBuilder join     = new StringBuilder();
     private int          colCount = 0;
 
     public IndexedDataQueryBuilder addColumn(String columnAlias, String fieldName) {

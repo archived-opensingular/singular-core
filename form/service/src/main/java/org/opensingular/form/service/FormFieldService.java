@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,11 +68,11 @@ public class FormFieldService implements IFormFieldService {
                 loadMapFromInstance(mapFields, compositeField, formVersion, parentFormValue);
             }
 
-//            if (field.asAtrPersistence().isPersistent()) {
+//NOSONAR            if (field.asAtrPersistence().isPersistent()) {
             if(!(field instanceof SIComposite) && !(field instanceof SIList) && field.getValue() != null) {
                 addItemToMap(mapFields, field, formVersion, parent);
             }
-//            }
+//NOSONAR            }
 
         }
     }
