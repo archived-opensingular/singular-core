@@ -228,7 +228,7 @@ public class FormService implements IFormService {
         return entity;
     }
 
-    private FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
+    public FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
         String name = type.getName();
         FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(name);
         if (formTypeEntity == null) {

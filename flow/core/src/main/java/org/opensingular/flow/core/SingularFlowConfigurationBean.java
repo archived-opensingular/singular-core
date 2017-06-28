@@ -46,16 +46,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     public static final String PREFIXO = "SGL";
 
-    private String processGroupCod;
+    private String moduleCod;
     
     private List<ProcessNotifier> notifiers = new ArrayList<>();
 
     /**
-     * @param processGroupCod - chave do sistema cadastrado no em <code>TB_GRUPO_PROCESSO</code>
+     * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
      */
-    protected SingularFlowConfigurationBean(String processGroupCod) {
+    protected SingularFlowConfigurationBean(String moduleCod) {
         super();
-        this.processGroupCod = processGroupCod;
+        this.moduleCod = moduleCod;
     }
 
     protected SingularFlowConfigurationBean() {
@@ -86,16 +86,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     }
 
-    public final void setProcessGroupCod(String processGroupCod) {
-        this.processGroupCod = processGroupCod;
+    public final void setModuleCod(String moduleCod) {
+        this.moduleCod = moduleCod;
     }
 
     @Nonnull
-    public final String getProcessGroupCod() {
-        if (processGroupCod == null) {
-            throw new SingularFlowException("Não foi definido o ProcessGroupCod");
+    public final String getModuleCod() {
+        if (moduleCod == null) {
+            throw new SingularFlowException("Não foi definido o moduleCod");
         }
-        return processGroupCod;
+        return moduleCod;
     }
     
     // ------- Método de recuperação de definições --------------------

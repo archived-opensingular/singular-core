@@ -80,7 +80,7 @@ public interface IFlowMetadataREST {
     }
     
     static void checkGroupToken(String groupToken) {
-        String localGroupToken = generateGroupToken(Flow.getConfigBean().getProcessGroupCod());
+        String localGroupToken = generateGroupToken(Flow.getConfigBean().getModuleCod());
         if (!localGroupToken.equals(groupToken)) {
             throw new SingularFlowException("Group token inválido");
         }
