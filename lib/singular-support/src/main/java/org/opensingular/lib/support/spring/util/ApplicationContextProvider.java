@@ -17,6 +17,8 @@
 package org.opensingular.lib.support.spring.util;
 
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.slf4j.Logger;
@@ -25,44 +27,57 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nonnull;
+import javax.inject.Named;
 import java.util.Optional;
 
 /**
  * Métodos para localização e retorno do {@link ApplicationContext} atual.
  */
-@Component
+@Named
+@Order(0)
+@Lazy(false)
 public class ApplicationContextProvider implements ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextProvider.class);
 
     private static final ISupplier<ApplicationContext> SUPPLIER = () -> get();
 
-    private static ApplicationContext applicationContext;
+    public synchronized static ApplicationContext getApplicationContext() {
+        return ((SingularSingletonStrategy) SingularContext.get()).get(ApplicationContext.class);
+    }
 
-    public static synchronized void setup(ApplicationContext applicationContext) {
-        ApplicationContextProvider.applicationContext = applicationContext;
+    @Override
+    public synchronized void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ((SingularSingletonStrategy) SingularContext.get()).singletonize(ApplicationContext.class, () -> applicationContext);
     }
 
     /**
      * Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado.
      */
     public static ApplicationContext get() {
-        if (applicationContext == null) {
+        if (!isConfigured()) {
             throw SingularException.rethrow(
-                    "O applicationContext ainda não foi configurado em " + ApplicationContextProvider.class.getName());
+                    "O getApplicationContext() ainda não foi configurado em " + ApplicationContextProvider.class.getName());
         }
-        return applicationContext;
+        return getApplicationContext();
     }
 
-    /** Indica se o contexto do sping já foi configurado e se pode ser chamado {@link #get()}. */
+    /**
+     * Indica se o contexto do sping já foi configurado e se pode ser chamado {@link #get()}.
+     */
     public static boolean isConfigured() {
-        return applicationContext != null;
+        return ((SingularSingletonStrategy) SingularContext.get()).exists(ApplicationContext.class);
     }
 
-    /** Retorna um supplier do aplication context que faz chamar {@link #get()}. */
+    /**
+     * Retorna um supplier do aplication context que faz chamar {@link #get()}.
+     */
     public static ISupplier<ApplicationContext> supplier() {
         return SUPPLIER;
     }
@@ -117,18 +132,20 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Nonnull
-    public static Optional<Object> getBeanOpt(@Nonnull String name) {
+    public static <T> Optional<T> getBeanOpt(@Nonnull String name) {
         try {
-            return Optional.ofNullable(get().getBean(name));
+            return Optional.ofNullable((T) get().getBean(name));
         } catch (NoSuchBeanDefinitionException ex) {
             LOGGER.debug(null, ex);
             return Optional.empty();
         }
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
+    @EventListener
+    public void handleContextRefresh(ContextStartedEvent event) {
+        setApplicationContext(event.getApplicationContext());
     }
+
 }

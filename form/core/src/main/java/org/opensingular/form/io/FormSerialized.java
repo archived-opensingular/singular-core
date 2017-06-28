@@ -16,7 +16,8 @@
 
 package org.opensingular.form.io;
 
-import org.opensingular.form.document.InternalServiceRegistry.ServiceEntry;
+
+import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.validation.IValidationError;
@@ -41,8 +42,8 @@ public final class FormSerialized implements Serializable {
     private final String   rootTypeName;
     private final MElement xml, annotations;
     private String                            focusFieldPath;
-    private Map<String, ServiceEntry> services;
-    private List<IValidationError>            validationErrors;
+    private Map<String, ServiceRegistry.ServiceEntry> services;
+    private List<IValidationError>                    validationErrors;
 
     public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
                           RefSDocumentFactory sDocumentFactoryRef) {
@@ -77,11 +78,11 @@ public final class FormSerialized implements Serializable {
         this.focusFieldPath = focusFieldPath;
     }
 
-    public Map<String, ServiceEntry> getServices() {
+    public Map<String, ServiceRegistry.ServiceEntry> getServices() {
         return services;
     }
 
-    public void setServices(Map<String, ServiceEntry> services) {
+    public void setServices(Map<String, ServiceRegistry.ServiceEntry> services) {
         this.services = services;
     }
 

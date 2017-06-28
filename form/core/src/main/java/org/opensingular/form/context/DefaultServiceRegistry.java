@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.document;
+package org.opensingular.form.context;
 
 import com.google.common.collect.ImmutableMap;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,23 +32,17 @@ import java.util.UUID;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-public final class DefaultServiceRegistry implements InternalServiceRegistry {
+public class DefaultServiceRegistry implements ServiceRegistry {
 
-    private final Map<String, ServiceEntry>                  servicesByName  = newHashMap();
+    private final Map<String, ServiceEntry>          servicesByName  = newHashMap();
     private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
-    private ExternalServiceRegistry externalRegistry;
 
-    void setExternalRegistry(@Nonnull ExternalServiceRegistry r) {
-        externalRegistry = r;
+    protected DefaultServiceRegistry() {
     }
 
-    /**  {@inheritDoc} */
-    @Nullable
-    public ExternalServiceRegistry getExternalRegistry() {
-        return externalRegistry;
-    }
-
-    /** USO INTERNO APENAS. Retorna os serviços registrados diretamente no documento. */
+    /**
+     * USO INTERNO APENAS. Retorna os serviços registrados diretamente no documento.
+     */
     @Override
     public Map<String, ServiceEntry> services() {
         return ImmutableMap.copyOf(servicesByName);
@@ -57,24 +52,14 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
     @Nonnull
     public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
         Optional<T> provider = lookupLocalService(targetClass);
-        if (provider.isPresent()) {
-            return provider;
-        }
-        return lookupChainedService(targetClass);
+        return provider;
     }
 
-    @Nonnull
-    private <T> Optional<T> lookupChainedService(@Nonnull Class<T> targetClass) {
-        if (externalRegistry != null) {
-            return externalRegistry.lookupService(targetClass);
-        }
-        return Optional.empty();
-    }
 
     @Nonnull
     public <T> Optional<T> lookupLocalService(@Nonnull Class<T> targetClass) {
         List<RefService<?>> result = findAllMatchingProviders(targetClass);
-        if(result != null && !result.isEmpty()){
+        if (result != null && !result.isEmpty()) {
             return verifyResultAndReturn(targetClass, result);
         }
         return Optional.empty();
@@ -82,8 +67,8 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
 
     private <T> List<RefService<?>> findAllMatchingProviders(Class<T> targetClass) {
         List<RefService<?>> result = newArrayList();
-        for(Map.Entry<Class<?>, List<RefService<?>>> entry : servicesByClass.entrySet()){
-            if(targetClass.isAssignableFrom(entry.getKey())){
+        for (Map.Entry<Class<?>, List<RefService<?>>> entry : servicesByClass.entrySet()) {
+            if (targetClass.isAssignableFrom(entry.getKey())) {
                 result.addAll(entry.getValue());
             }
         }
@@ -91,7 +76,7 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
     }
 
     private <T> Optional<T> verifyResultAndReturn(Class<T> targetClass, List<RefService<?>> list) {
-        if(list.size() == 1){
+        if (list.size() == 1) {
             RefService<?> provider = list.get(0);
             return Optional.of(targetClass.cast(provider.get()));
         }
@@ -101,17 +86,21 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
 
     @Override
     @Nonnull
-    public Optional<Object> lookupService(@Nonnull String name) {
-        return lookupService(name, Object.class);
+    public <T> Optional<T> lookupService(@Nonnull String name) {
+        return (Optional<T>) lookupService(name, Object.class);
+    }
+
+    @Nonnull
+    @Override
+    public SingularInjector lookupSingularInjector() {
+        return SingularInjector.getEmptyInjector();
     }
 
     @Override
     public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
         Optional<T> provider = lookupLocalService(name, targetClass);
-        if(provider.isPresent()) {
-            return provider;
-        }
-        return lookupChainedService(name, targetClass);
+        return provider;
+
     }
 
     public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
@@ -123,8 +112,8 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
             if (value == null) {
                 servicesByName.remove(name);
             } else if (!targetClass.isInstance(value)) {
-                String message = "For service '" + name + "' was found a clas of value "
-                    + value.getClass().getName() + " instead of the expected " + targetClass.getName();
+                String message = "For service '" + name + "' was found a class of value "
+                        + value.getClass().getName() + " instead of the expected " + targetClass.getName();
                 throw new SingularFormException(message);
             }
             return Optional.ofNullable(targetClass.cast(value));
@@ -132,32 +121,17 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
         return Optional.empty();
     }
 
-    public <T> T lookupLocalServiceOrException(@Nonnull String name, @Nonnull Class<T> targetClass) {
-        return lookupLocalService(name, targetClass).orElseThrow(
-                () -> new SingularFormException(createMsgForNotFoundBean(name, targetClass, true)));
-    }
-
-    private String createMsgForNotFoundBean(@Nonnull String name, @Nonnull Class<?> targetClass, boolean localScope) {
-        return "Bean with '" + name + "' of class " + targetClass + " not found" +
-                (localScope ? " in local registry" : " in any of the available registries");
-    }
-
-    @Nonnull
-    private <T> Optional<T> lookupChainedService(@Nonnull String name, @Nonnull Class<T> targetClass) {
-        if (externalRegistry != null) {
-            return externalRegistry.lookupService(name, targetClass);
-        }
-        return Optional.empty();
-    }
 
     /**
      * Registers a {@link RefService}
-     *  for the specified class
+     * for the specified class
+     *
      * @param registerClass Class of the service the factory provides
-     * @param provider provider of the service
+     * @param provider      provider of the service
      */
-    public <T> void bindLocalService(Class<T> registerClass, RefService<? extends T> provider) {
-        bindLocalService(UUID.randomUUID().toString(), registerClass, provider);
+    @Override
+    public <T> void bindService(Class<T> registerClass, RefService<? extends T> provider) {
+        bindService(UUID.randomUUID().toString(), registerClass, provider);
     }
 
     private <T> void bindByClass(Class<T> registerClass, RefService<? extends T> provider) {
@@ -171,11 +145,13 @@ public final class DefaultServiceRegistry implements InternalServiceRegistry {
 
     /**
      * Registers a {@link RefService} for the specified class with a unique name.
-     * @param serviceName name of the service
+     *
+     * @param serviceName   name of the service
      * @param registerClass Class of the service the factory provides
-     * @param provider provider of the service
+     * @param provider      provider of the service
      */
-    public <T> void bindLocalService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
+    @Override
+    public <T> void bindService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
         bindByName(serviceName, registerClass, provider);
         bindByClass(registerClass, provider);
     }

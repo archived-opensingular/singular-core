@@ -26,6 +26,9 @@ import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypes;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.context.DelegatingLocalServiceRegistry;
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
@@ -69,7 +72,7 @@ public class SDocument {
 
     private SInstanceListeners instanceListeners;
 
-    private final DefaultServiceRegistry registry = new DefaultServiceRegistry();
+    private final DelegatingLocalServiceRegistry registry;
 
     private RefType rootRefType;
 
@@ -80,6 +83,7 @@ public class SDocument {
     private SetMultimap<Integer, IValidationError> validationErrors;
 
     public SDocument() {
+        registry = new DelegatingLocalServiceRegistry(ServiceRegistryLocator.locate());
     }
 
     /**
@@ -165,7 +169,7 @@ public class SDocument {
     @SuppressWarnings("unchecked")
     private IAttachmentPersistenceHandler<? extends IAttachmentRef>
     getAttachmentPersistencePermanentHandlerOrException() {
-        return registry.lookupLocalServiceOrException(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        return getLocalRegistry().lookupServiceOrException(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     /**
@@ -208,29 +212,16 @@ public class SDocument {
             throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
         }
         documentFactory = context;
-        ExternalServiceRegistry sr = documentFactory.getExternalServiceRegistry();
-        if (sr != null) {
-            setExternalServiceRegistry(sr);
-        }
     }
+
 
     /**
-     * Stablishes a new registry where to look for services, which is chained
-     * to the default one.
+     * Retorna uma registry local para uso interno do Singular apenas.
+     * @return
      */
-    public void setExternalServiceRegistry(ExternalServiceRegistry registry) {
-        this.registry.setExternalRegistry(registry);
-    }
-
     @Nonnull
-    public InternalServiceRegistry getRegistry() {
+    public ServiceRegistry getLocalRegistry() {
         return registry;
-    }
-
-    /** Tenta encontrar um serviço da classe solicitada supondo que o nome no registro é o nome da própria classe. */
-    @Nonnull
-    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
-        return registry.lookupService(targetClass);
     }
 
     /**
@@ -238,30 +229,20 @@ public class SDocument {
      * encontrar, então dispara exception.
      */
     @Nonnull
-    public <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
-        return lookupService(targetClass).orElseThrow(() -> new SingularFormException(
+    public <T> T lookupLocalServiceOrException(@Nonnull Class<T> targetClass) {
+        return lookupLocalService(targetClass).orElseThrow(() -> new SingularFormException(
                 "O serviço " + targetClass.getName() +
                         " não está configurado na instância (no Document). Provavelmente o DocumentFactory não foi " +
                         "configurado corretamente", getRoot()));
     }
 
-    /**
-     * Tenta encontrar um serviço registrado com o nome informado. Se o
-     * resultado não for null e não implementar a classe solicitada, dispara
-     * exception.
-     *
-     * @return Null se não encontrado ou se o conteúdo do registro for null.
-     */
-    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
-        return registry.lookupService(name, targetClass);
-    }
 
     /**
      * Tenta encontrar um serviço da classe solicitada registrado <u>diretamente no documento</u> supondo que o nome no
      * registro é o nome da própria classe.
      */
     public <T> Optional<T> lookupLocalService(Class<T> targetClass) {
-        return registry.lookupLocalService(targetClass);
+        return getLocalRegistry().lookupService(targetClass);
     }
 
     /**
@@ -271,7 +252,7 @@ public class SDocument {
      */
     @Nonnull
     public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
-        return registry.lookupLocalService(name, targetClass);
+        return getLocalRegistry().lookupService(name, targetClass);
     }
 
     /**
@@ -279,14 +260,14 @@ public class SDocument {
      * uma classe derivada da registerClass.
      */
     public <T> void bindLocalService(Class<T> registerClass, RefService<? extends T> provider) {
-        registry.bindLocalService(registerClass, provider);
+        getLocalRegistry().bindService(registerClass, provider);
     }
 
     /**
      * Registar um serviço com o nome informado.
      */
     public <T> void bindLocalService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
-        registry.bindLocalService(serviceName, registerClass, provider);
+        getLocalRegistry().bindService(serviceName, registerClass, provider);
     }
 
     public SInstanceListeners getInstanceListeners() {

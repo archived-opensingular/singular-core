@@ -28,14 +28,13 @@ import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean;
 import org.opensingular.flow.test.support.TestFlowSupport;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Date;
 
@@ -45,18 +44,17 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-public class RelocationTest implements ApplicationContextAware {
+public class RelocationTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Inject
     protected HibernateSingularFlowConfigurationBean mbpmBean;
-
     @Inject
     protected TestDAO testDAO;
-
     @Inject
     protected SessionFactory sessionFactory;
-
-    @Rule public ExpectedException thrown = ExpectedException.none();
+    Session session;
     private ProcessInstance id;
 
     @BeforeClass
@@ -64,9 +62,9 @@ public class RelocationTest implements ApplicationContextAware {
         SingularPropertiesImpl.get().reloadAndOverrideWith(ClassLoader.getSystemClassLoader().getResource("singular-mssql.properties"));
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        TestFlowSupport.configApplicationContext(applicationContext);
+    @PostConstruct
+    public void init() {
+        TestFlowSupport.configApplicationContext(ApplicationContextProvider.get());
     }
 
     @Before
@@ -87,8 +85,9 @@ public class RelocationTest implements ApplicationContextAware {
         session.close();
     }
 
-    @Test public void relocatesTaskUser(){
-        P p = new P();
+    @Test
+    public void relocatesTaskUser() {
+        P               p  = new P();
         ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
@@ -100,8 +99,9 @@ public class RelocationTest implements ApplicationContextAware {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
     }
 
-    @Test public void rejectssRelocationTaskUserWithWrongVersionLock(){
-        P p = new P();
+    @Test
+    public void rejectssRelocationTaskUserWithWrongVersionLock() {
+        P               p  = new P();
         ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
@@ -114,15 +114,15 @@ public class RelocationTest implements ApplicationContextAware {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
     }
 
-
-    @Test public void rejectsRelocationWithInvalidVersionNumber(){
-        P p = new P();
+    @Test
+    public void rejectsRelocationWithInvalidVersionNumber() {
+        P               p  = new P();
         ProcessInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
-        Actor u1 = testDAO.getSomeUser(1);
-        TaskInstance t = id.getCurrentTaskOrException();
+        Actor        u1 = testDAO.getSomeUser(1);
+        TaskInstance t  = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
 
@@ -134,18 +134,19 @@ public class RelocationTest implements ApplicationContextAware {
         thrown.expectMessage("Your Task Version Number is Outdated.");
 
         t.relocateTask(u2, u2, false, "Just want to watch the world burn",
-                t.getEntityTaskInstance().getVersionStamp()-1);
+                t.getEntityTaskInstance().getVersionStamp() - 1);
 
         session.flush();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
     }
 
-    @Test public void acceptsRelocationWithValidVersionNumber(){
+    @Test
+    public void acceptsRelocationWithValidVersionNumber() {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
-        Actor u1 = testDAO.getSomeUser(1);
-        TaskInstance t = id.getCurrentTaskOrException();
+        Actor        u1 = testDAO.getSomeUser(1);
+        TaskInstance t  = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
 
@@ -155,9 +156,8 @@ public class RelocationTest implements ApplicationContextAware {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u2);
     }
 
-    Session session;
-
-    @Test(expected = StaleObjectStateException.class) public void lowLevelLockTest() {
+    @Test(expected = StaleObjectStateException.class)
+    public void lowLevelLockTest() {
         TaskInstanceEntity o = nTE(id);
         save(o);
         o.setBeginDate(new Date());
@@ -167,16 +167,17 @@ public class RelocationTest implements ApplicationContextAware {
 
         TaskInstanceEntity o1 = nTE(id);
         o1.setCod(o.getCod());
-        o1.setVersionStamp(o.getVersionStamp()-1);
+        o1.setVersionStamp(o.getVersionStamp() - 1);
 
         save(o1);
     }
 
-    @Test public void endAllocation(){
+    @Test
+    public void endAllocation() {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
-        Actor u1 = testDAO.getSomeUser(1);
-        TaskInstance t = id.getCurrentTaskOrException();
+        Actor        u1 = testDAO.getSomeUser(1);
+        TaskInstance t  = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
 

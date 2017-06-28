@@ -3,6 +3,8 @@ package org.opensingular.lib.commons.scan;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.lang.reflect.Modifier;
@@ -18,17 +20,19 @@ import java.util.Set;
  * It allows reuse of previous scanning data
  */
 @SuppressWarnings("unchecked")
-public enum SingularClassPathScanner implements Loggable {
+public class SingularClassPathScanner implements Loggable {
 
-    INSTANCE;
 
     private final ScanResult scanCache;
 
-
-    SingularClassPathScanner() {
+    protected SingularClassPathScanner() {
         long time = new Date().getTime();
         scanCache = new FastClasspathScanner().scan();
         getLogger().info("Full classpath scan in {} ms", new Date().getTime() - time);
+    }
+
+    public static SingularClassPathScanner get() {
+        return ((SingularSingletonStrategy) SingularContext.get()).singletonize(SingularClassPathScanner.class, SingularClassPathScanner::new);
     }
 
     /**

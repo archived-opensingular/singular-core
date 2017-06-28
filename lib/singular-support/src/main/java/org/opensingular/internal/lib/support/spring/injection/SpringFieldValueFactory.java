@@ -21,6 +21,7 @@ import org.opensingular.internal.lib.commons.injection.FieldInjectionInfo;
 import org.opensingular.internal.lib.commons.injection.SingularFieldValueFactory;
 import org.opensingular.internal.lib.commons.injection.SingularInjectionException;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -76,7 +77,7 @@ import java.util.stream.Collectors;
  * @see SpringBeanLocator
  * @see javax.inject.Inject
  */
-class SpringFieldValueFactory implements SingularFieldValueFactory {
+class SpringFieldValueFactory implements SingularFieldValueFactory, Loggable {
 
     /** Indica que o bean referenciado não existe no contexto do Spring. */
     private static final Object NO_BEAN = new Object();
@@ -137,6 +138,7 @@ class SpringFieldValueFactory implements SingularFieldValueFactory {
             // check whether there is a bean with the provided properties
             target = locator.locateProxyTarget();
         } catch (IllegalStateException isx) {
+            getLogger().trace(isx.getMessage(), isx);
         }
         if (target == null) {
             cache.put(locator, NO_BEAN); //Marca como não existe no Spring

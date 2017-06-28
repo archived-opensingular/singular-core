@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
-import org.opensingular.form.document.ExternalServiceRegistry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -52,7 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
+public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
@@ -94,7 +93,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      */
     private boolean callingOnLoadType;
 
-    public SType() {
+    protected SType() {
         this(null, null);
     }
 
@@ -666,12 +665,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     final I newInstance(boolean executeInstanceInitListeners, @Nonnull SDocument owner) {
-        if (owner.getRegistry().getExternalRegistry() == null) {
-            ExternalServiceRegistry external = getDictionary().getDictionaryConfig().getExternalRegistry();
-            if (external != null) {
-                owner.setExternalServiceRegistry(external);
-            }
-        }
         I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {

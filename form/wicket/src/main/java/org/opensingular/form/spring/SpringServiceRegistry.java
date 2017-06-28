@@ -16,17 +16,21 @@
 
 package org.opensingular.form.spring;
 
-import org.opensingular.form.document.ExternalServiceRegistry;
-import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.form.RefService;
+import org.opensingular.form.context.DefaultServiceRegistry;
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -36,33 +40,51 @@ import java.util.Optional;
  * @author Fabricio Buzeto
  * @author Daniel C. Bordin
  */
-public class SpringServiceRegistry implements ExternalServiceRegistry, ApplicationContextAware, Loggable {
+@Lazy(false)
+public class SpringServiceRegistry implements ServiceRegistry, Loggable {
 
     private SingularInjector injector;
 
-    public SpringServiceRegistry() { }
+    private DefaultServiceRegistry delegate = new DefaultServiceRegistry() {
+    };
+
+    public SpringServiceRegistry() {
+    }
+
+
+    @PostConstruct
+    public void init() {
+        ServiceRegistryLocator.setup(this);
+    }
 
     @Override
     @Nonnull
     public <T> Optional<T> lookupService(@Nonnull String name, @Nonnull Class<T> targetClass) {
-        return ApplicationContextProvider.getBeanOpt(name, targetClass);
+        Optional<T> service = delegate.lookupService(name, targetClass);
+        if (!service.isPresent()) {
+            service = ApplicationContextProvider.getBeanOpt(name, targetClass);
+        }
+        return service;
     }
 
     @Override
     @Nonnull
     public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
-        return ApplicationContextProvider.getBeanOpt(targetClass);
+        Optional<T> service = delegate.lookupService(targetClass);
+        if (!service.isPresent()) {
+            service = ApplicationContextProvider.getBeanOpt(targetClass);
+        }
+        return service;
     }
 
     @Override
     @Nonnull
-    public Optional<Object> lookupService(@Nonnull String name) {
-        return ApplicationContextProvider.getBeanOpt(name);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
+    public <T> Optional<T> lookupService(@Nonnull String name) {
+        Optional<T> service = delegate.lookupService(name);
+        if (!service.isPresent()) {
+            service = ApplicationContextProvider.getBeanOpt(name);
+        }
+        return service;
     }
 
     @Nonnull
@@ -72,5 +94,21 @@ public class SpringServiceRegistry implements ExternalServiceRegistry, Applicati
             injector = SingularSpringInjector.get();
         }
         return injector;
+    }
+
+    @Nonnull
+    @Override
+    public Map<String, ServiceEntry> services() {
+        return delegate.services();
+    }
+
+    @Override
+    public <T> void bindService(Class<T> registerClass, RefService<? extends T> provider) {
+        delegate.bindService(registerClass, provider);
+    }
+
+    @Override
+    public <T> void bindService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
+        delegate.bindService(serviceName, registerClass, provider);
     }
 }
