@@ -10,7 +10,6 @@ import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeMonetary;
-import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
@@ -23,8 +22,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,14 +34,14 @@ import java.util.Date;
 @Entity
 @GenericGenerator(name = FormCacheValueEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_CACHE_VALOR", schema = Constants.SCHEMA)
-public class FormCacheValueEntity  extends BaseEntity<Long> {
+public class FormCacheValueEntity extends BaseEntity<Long> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_CACHE_VALOR";
 
     @Id
     @Column(name = "CO_CACHE_VALOR")
     @GeneratedValue(generator = PK_GENERATOR_NAME)
-    private long                 cod;
+    private long cod;
 
     @ManyToOne
     @JoinColumn(name = "CO_CACHE_CAMPO")
@@ -52,14 +49,14 @@ public class FormCacheValueEntity  extends BaseEntity<Long> {
 
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_FORMULARIO")
-    private FormVersionEntity    formVersion;
+    private FormVersionEntity formVersion;
 
     @Column(name = "TXT_VALOR", length = 1024)
-    private String     stringValue;
+    private String stringValue;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VALOR")
-    private Date       dateValue;
+    private Date dateValue;
 
     @Column(name = "NUM_VALOR")
     private BigDecimal numberValue;
@@ -111,23 +108,33 @@ public class FormCacheValueEntity  extends BaseEntity<Long> {
         if (type instanceof STypeSimple) {
             STypeSimple typeSimple = ((STypeSimple) type);
 
-            if (typeSimple  instanceof STypeDate
+            if (typeSimple instanceof STypeDate
                     || type instanceof STypeDateTime
                     || type instanceof STypeTime) {
-                dateValue = (Date)typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            } else if (type instanceof STypeInteger) {
+                dateValue = (Date) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+                return;
+            }
+
+            if (type instanceof STypeInteger) {
                 Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
                 numberValue = new BigDecimal(valor);
-            } else if (type instanceof STypeLong) {
+                return;
+            }
+
+            if (type instanceof STypeLong) {
                 Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
                 numberValue = new BigDecimal(valor);
-            } else if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
+                return;
+            }
+
+            if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
                 numberValue = (BigDecimal) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            } else {
-                String valor = instance.getValue().toString();
-                if (valor.length() >= 2048) {
-                    valor = instance.getValue().toString().substring(0, 2047);
-                }
+                return;
+            }
+
+            String valor = instance.getValue().toString();
+            if (valor.length() >= 2048) {
+                valor = instance.getValue().toString().substring(0, 2047);
                 stringValue = valor;
             }
         }
