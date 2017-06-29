@@ -24,7 +24,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.commons.util.Loggable;
 
 @SInfoType(name = "Conta", spackage = SPackageCountryBrazil.class)
-public class STypeAccount extends STypeComposite<SIComposite> implements Loggable {
+public class STypeBankAccount extends STypeComposite<SIComposite> implements Loggable {
 
 	public STypeString agencia;
 	public STypeString conta;
