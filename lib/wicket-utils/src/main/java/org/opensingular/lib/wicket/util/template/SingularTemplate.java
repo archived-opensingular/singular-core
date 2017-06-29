@@ -91,7 +91,7 @@ public abstract class SingularTemplate extends WebPage {
                 Stream.of(
                         skinnableResource("/global/plugins/jquery-migrate.min.js"),
                         skinnableResource("/global/plugins/jquery-ui/jquery-ui.min.js"),
-                        skinnableResource("/global/plugins/bootstrap/js/bootstrap.js"),
+                        skinnableResource("/global/plugins/bootstrap/js/bootstrap.min.js"),
                         skinnableResource("/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"),
                         skinnableResource("/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"),
                         skinnableResource("/global/plugins/jquery.blockui.min.js"),
@@ -118,10 +118,10 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/global/plugins/bootbox/bootbox.min.js"),
                         skinnableResource("/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js"),
                         skinnableResource("/global/plugins/jquery-file-upload/js/jquery.fileupload.js"),
-                        skinnableResource("/global/scripts/app.js"),
-                        skinnableResource("/layout4/scripts/layout.js"),
+                        skinnableResource("/global/scripts/app.min.js"),
+                        skinnableResource("/layout4/scripts/layout.min.js"),
                         skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.js"),
-                        skinnableResource("/global/plugins/typeahead/typeahead.bundle.js"),
+                        skinnableResource("/global/plugins/typeahead/typeahead.bundle.min.js"),
                         commonResource("/plugins/stringjs/string.min.js"),
                         commonResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
                         commonResource("/plugins/ckeditor/ckeditor.js")
