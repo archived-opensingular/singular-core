@@ -21,24 +21,22 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.flow.core.entity.IEntityProcessGroup;
+import org.opensingular.flow.core.entity.IEntityModule;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
- * The base persistent class for the TB_GRUPO_PROCESSO database table.
+ * The base persistent class for the TB_MODULO database table.
  * <p>
- *
- * @param <PROCESS_DEF>
  */
 @MappedSuperclass
-@Table(name = "TB_GRUPO_PROCESSO")
-public abstract class AbstractProcessGroupEntity extends BaseEntity<String> implements IEntityProcessGroup {
+@Table(name = "TB_MODULO")
+public abstract class AbstractModuleEntity extends BaseEntity<String> implements IEntityModule {
 
     @Id
-    @Column(name = "CO_GRUPO_PROCESSO")
+    @Column(name = "CO_MODULO")
     private String cod;
 
-    @Column(name = "NO_GRUPO", length = 100, nullable = false)
+    @Column(name = "NO_MODULO", length = 100, nullable = false)
     private String name;
 
     @Column(name = "URL_CONEXAO", length = 300, nullable = false)

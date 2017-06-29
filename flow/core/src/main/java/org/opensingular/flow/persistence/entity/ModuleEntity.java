@@ -25,12 +25,12 @@ import org.opensingular.lib.support.persistence.util.Constants;
 
 
 /**
- * The persistent class for the TB_GRUPO_PROCESSO database table.
+ * The persistent class for the TB_MODULO database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@Table(name = "TB_GRUPO_PROCESSO", schema = Constants.SCHEMA)
-public class ProcessGroupEntity extends AbstractProcessGroupEntity {
+@Table(name = "TB_MODULO", schema = Constants.SCHEMA)
+public class ModuleEntity extends AbstractModuleEntity {
 
     private static final long serialVersionUID = 1L;
 
