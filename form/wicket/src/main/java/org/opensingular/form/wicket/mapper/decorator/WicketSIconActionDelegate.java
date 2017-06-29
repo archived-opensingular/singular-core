@@ -57,7 +57,7 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
         getInternalContext(Component.class).ifPresent(comp -> {
             comp.send(comp, Broadcast.BUBBLE, new SInstanceActionOpenModalEvent(
                 title,
-                getInternalContext(AjaxRequestTarget.class).get(),
+                getInternalContext(AjaxRequestTarget.class).orElse(null),
                 instanceRef,
                 formInstanceModel,
                 actions));
