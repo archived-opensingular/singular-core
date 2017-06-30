@@ -17,10 +17,8 @@ package org.opensingular.form.service;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
@@ -33,13 +31,11 @@ import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.persistence.dao.FormAnnotationDAO;
 import org.opensingular.form.persistence.dao.FormAnnotationVersionDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
-import org.opensingular.form.persistence.dao.FormTypeDAO;
 import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.persistence.entity.FormAnnotationEntity;
 import org.opensingular.form.persistence.entity.FormAnnotationPK;
 import org.opensingular.form.persistence.entity.FormAnnotationVersionEntity;
 import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
@@ -78,13 +74,15 @@ public class FormService implements IFormService {
     private FormAnnotationVersionDAO formAnnotationVersionDAO;
 
     @Inject
-    private FormTypeDAO formTypeDAO;
+    private FormTypeService formTypeService;
 
     public FormService() {
         this.formKeyManager = new FormKeyManager<>(FormKeyLong.class, e -> addInfo(e));
     }
 
-    /** Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey. */
+    /**
+     * Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey.
+     */
     @Nonnull
     private final FormKeyManager<FormKey> getFormKeyManager() {
         return (FormKeyManager<FormKey>) formKeyManager;
@@ -223,27 +221,14 @@ public class FormService implements IFormService {
     @Nonnull
     private FormEntity saveNewFormEntity(@Nonnull SInstance instance) {
         final FormEntity entity = new FormEntity();
-        entity.setFormType(getOrCreateNewFormTypeEntity(instance.getType()));
+        entity.setFormType(formTypeService.findFormTypeEntity(instance.getType()));
         formDAO.saveOrUpdate(entity);
         return entity;
     }
 
-    public FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
-        String name = type.getName();
-        FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(name);
-        if (formTypeEntity == null) {
-            formTypeEntity = new FormTypeEntity();
-            formTypeEntity.setAbbreviation(name);
-            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
-                    .orElse(SFormUtil.getTypeSimpleName((Class<? extends SType<?>>) type.getClass())));
-            formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
-            formTypeDAO.saveOrUpdate(formTypeEntity);
-        }
-        return formTypeEntity;
-    }
 
     private void saveOrUpdateFormVersion(@Nonnull SInstance instance, @Nonnull FormEntity entity,
-            @Nonnull FormVersionEntity formVersionEntity, Integer inclusionActor, boolean keepAnnotations) {
+                                         @Nonnull FormVersionEntity formVersionEntity, Integer inclusionActor, boolean keepAnnotations) {
         formVersionEntity.setFormEntity(entity);
         formVersionEntity.setXml(extractContent(instance));
         formVersionEntity.setInclusionActor(inclusionActor);
@@ -332,7 +317,7 @@ public class FormService implements IFormService {
     @Nonnull
     private Map<String, String> extractAnnotations(@Nonnull SInstance instance) {
         DocumentAnnotations documentAnnotations = instance.getDocument().getDocumentAnnotations();
-        Map<String, String> mapClassifierXml  = new HashMap<>();
+        Map<String, String> mapClassifierXml    = new HashMap<>();
         for (Map.Entry<String, SIList<SIAnnotation>> entry : documentAnnotations.persistentAnnotationsClassified().entrySet()) {
             mapClassifierXml.put(entry.getKey(), extractContent(entry.getValue()));
         }
@@ -344,8 +329,8 @@ public class FormService implements IFormService {
         return SFormXMLUtil.toStringXMLOrEmptyXML(instance);
     }
 
-    public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor){
-        return newVersion(instance,inclusionActor, true);
+    public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor) {
+        return newVersion(instance, inclusionActor, true);
     }
 
     @Override
