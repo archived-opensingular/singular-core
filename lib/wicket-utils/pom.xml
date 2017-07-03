@@ -73,7 +73,7 @@
     <dependency>
       <groupId>de.alpharogroup</groupId>
       <artifactId>wicket-toastr</artifactId>
-      <version>7.1.0</version>
+      <version>${wicket.version}</version>
     </dependency>
 
   </dependencies>

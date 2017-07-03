@@ -24,26 +24,26 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.commons.util.Loggable;
 
 @SInfoType(name = "Conta", spackage = SPackageCountryBrazil.class)
-public class STypeAccount extends STypeComposite<SIComposite> implements Loggable {
+public class STypeBankAccount extends STypeComposite<SIComposite> implements Loggable {
 
-	public STypeString agencia;
-	public STypeString conta;
-	public STypeString banco;
-	
-	@Override
-	protected void onLoadType(TypeBuilder tb) {
+    public STypeString agencia;
+    public STypeString conta;
+    public STypeString banco;
 
-	    banco = this.addFieldString("banco");
+    @Override
+    protected void onLoadType(TypeBuilder tb) {
+
+        banco = this.addFieldString("banco");
         banco.asAtr().maxLength(12).label("Banco").asAtrBootstrap().colPreference(2);
-        
-	    agencia = this.addFieldString("agencia");
-		agencia.asAtr().label("Agência").maxLength(12);
-		agencia.asAtrBootstrap().colPreference(2);
 
-		conta = this.addFieldString("conta");
-		conta.asAtr().label("Conta").maxLength(12);
-		conta.asAtrBootstrap().colPreference(2);
+        agencia = this.addFieldString("agencia");
+        agencia.asAtr().label("Agência").maxLength(12);
+        agencia.asAtrBootstrap().colPreference(2);
 
-	}
-	
+        conta = this.addFieldString("conta");
+        conta.asAtr().label("Conta").maxLength(12);
+        conta.asAtrBootstrap().colPreference(2);
+
+    }
+
 }
