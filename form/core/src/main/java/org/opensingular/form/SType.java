@@ -153,7 +153,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     @SuppressWarnings("unchecked")
-    final void resolvSuperType(SDictionary dictionary) {
+    final void resolveSuperType(SDictionary dictionary) {
         if (superType == null && getClass() != SType.class) {
             Class<SType> c = (Class<SType>) Objects.requireNonNull(getClass().getSuperclass());
             superType = dictionary.getType(c);
