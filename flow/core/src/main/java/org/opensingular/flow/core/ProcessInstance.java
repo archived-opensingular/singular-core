@@ -260,7 +260,7 @@ public class ProcessInstance implements Serializable {
      * @return os códigos de usuários com direitos de execução.
      */
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getPeopleTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
+        return getProcessDefinition().getFlowMap().getHumanTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
             .getFirstLevelUsersCodWithAccess(this);
     }
 

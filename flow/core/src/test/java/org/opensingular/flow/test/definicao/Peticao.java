@@ -23,7 +23,6 @@ import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.ProcessDefinition;
 import org.opensingular.flow.core.ProcessInstance;
-import org.opensingular.flow.core.SProcessRole;
 import org.opensingular.flow.core.TaskPredicates;
 import org.opensingular.flow.core.builder.BuilderProcessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
@@ -86,11 +85,11 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         BuilderProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
 
         flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
-        flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
-        flow.addPeopleTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
-        flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente)
+        flow.addHumanTask(AGUARDANDO_ANALISE, papelAnalista);
+        flow.addHumanTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
+        flow.addHumanTask(AGUARDANDO_GERENTE, papelGerente)
                 .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
-        flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
+        flow.addHumanTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
         flow.addEnd(INDEFERIDO);
         flow.addEnd(DEFERIDO);
         flow.addEnd(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));

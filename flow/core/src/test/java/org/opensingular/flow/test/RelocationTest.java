@@ -224,7 +224,7 @@ public class RelocationTest {
 
             FlowBuilderImpl flow = new FlowBuilderImpl(this);
             flow.addJavaTask(PTask.START).call(this::doSomething);
-            flow.addPeopleTask(PTask.DO1, new NullTaskAccessStrategy());
+            flow.addHumanTask(PTask.DO1, new NullTaskAccessStrategy());
 
             flow.addEnd(PTask.END);
             flow.setStart(PTask.START);
