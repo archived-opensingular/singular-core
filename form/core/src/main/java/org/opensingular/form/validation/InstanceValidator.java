@@ -19,14 +19,38 @@ package org.opensingular.form.validation;
 import org.opensingular.form.SInstance;
 
 /**
- * Validator para {@link SInstance}
+ * <h1>Validação</h1>
+ *
+ * <p>
+ * Validações são essenciais em uma aplicação, pôs garantem que o dado informado pelo usuário
+ * é uma informação que contempla os requisitos esperados. O Singular Form possibilita a validação de dados através
+ * da interface InstanceValidator.
+ * </p>
+ * <p>
+ * O Exemplo abaixo, apresenta uma possível implementação desta interface, no qual irá verificar se a string
+ * informada inicia com letra minúscula e possui somente letras e números.
+ * <pre>
+ *  InstanceValidator<SIString> identificadorValidator = (instanceValidatable) -> {
+ *      if (!instanceValidatable.getInstance().getValue().matches("^[a-z][\\dA-Za-z]+$")) {
+ *          instanceValidatable.error("Não é um identificador valido");
+ *      }
+ *  };
+ * </pre>
+ * </p>
+ *
+ * @param <I> o tipo da instancia a ser validada
  */
 public interface InstanceValidator<I extends SInstance> {
-    
-    void validate(InstanceValidatable<I> validatable);
+
+    /**
+     *  Executa a validação do dado, adicionando os erros encontrados.
+     *
+     * @param instanceValidatable Os dados de validação da instancia
+     */
+    void validate(InstanceValidatable<I> instanceValidatable);
     
     /**
-     * Caso este método retorne <code>true</code>, este validador só será executado caso a instância correspondente não
+     * Caso retorne <code>true</code>, este validador só será executado caso a instância correspondente não
      * possua nenhum erro em seus descendentes. Caso retorne <code>false</code>, será executado independentemente da
      * validade de seus descendentes (campos obrigatórios poderão estar nulos neste caso).
      * @return se este validador deve ou não ser executado caso seus descendentes contenham erros. Por padrão, returna <code>true</code>. 
@@ -34,4 +58,5 @@ public interface InstanceValidator<I extends SInstance> {
     default boolean executeOnlyIfChildrenValid() {
         return true;
     }
+
 }
