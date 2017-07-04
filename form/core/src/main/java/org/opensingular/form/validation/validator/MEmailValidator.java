@@ -18,11 +18,11 @@ package org.opensingular.form.validation.validator;
 
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.validation.IInstanceValidatable;
+import org.opensingular.form.validation.InstanceValidatable;
 import org.opensingular.form.validation.SingularEmailValidator;
 import org.opensingular.lib.commons.util.Loggable;
 
-public enum MEmailValidator implements IInstanceValueValidator<SIString, String>, Loggable {
+public enum MEmailValidator implements InstanceValueValidator<SIString, String>, Loggable {
 
     /**
      * Local address is considered invalid
@@ -44,7 +44,7 @@ public enum MEmailValidator implements IInstanceValueValidator<SIString, String>
     }
 
     @Override
-    public void validate(IInstanceValidatable<SIString> validatable, String value) {
+    public void validate(InstanceValidatable<SIString> validatable, String value) {
         try {
             boolean isValid = SingularEmailValidator.getInstance(allowLocal).isValid(value);
             if(!isValid){

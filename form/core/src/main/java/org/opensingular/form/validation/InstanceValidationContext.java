@@ -32,17 +32,17 @@ import com.google.common.collect.ListMultimap;
 
 public class InstanceValidationContext {
 
-    private final ListMultimap<Integer, IValidationError> contextErrors = ArrayListMultimap.create();
+    private final ListMultimap<Integer, ValidationError> contextErrors = ArrayListMultimap.create();
 
     public InstanceValidationContext() {
     }
 
-    private ListMultimap<Integer, IValidationError> getContextErrors() {
+    private ListMultimap<Integer, ValidationError> getContextErrors() {
         return contextErrors;
     }
 
-    public Map<Integer, Collection<IValidationError>> getErrorsByInstanceId() {
-        final ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
+    public Map<Integer, Collection<ValidationError>> getErrorsByInstanceId() {
+        final ArrayListMultimap<Integer, ValidationError> copy = ArrayListMultimap.create();
         copy.putAll(getContextErrors());
         return copy.asMap();
     }
@@ -50,8 +50,8 @@ public class InstanceValidationContext {
     public void validateAll(SInstance rootInstance) {
         final List<String> pathsWithError = new ArrayList<>();
         SInstances.visitPostOrder(rootInstance, (inst, v) -> {
-            final InstanceValidatable<SInstance> validatable          = new InstanceValidatable<>(inst, this::onError);
-            final boolean                        containsInvalidChild = pathsWithError.stream().anyMatch(s -> s.contains(inst.getPathFull()));
+            final InstanceValidatable<?> validatable = new InstanceValidatable<>(inst, this::onError);
+            final boolean containsInvalidChild = pathsWithError.stream().anyMatch(s -> s.contains(inst.getPathFull()));
             validateInstance(validatable, containsInvalidChild);
             if (validatable.errorFound) {
                 pathsWithError.add(inst.getPathFull());
@@ -65,7 +65,7 @@ public class InstanceValidationContext {
         updateDocumentErrors(rootInstance);
     }
 
-    private void onError(IValidationError error) {
+    private void onError(ValidationError error) {
         getContextErrors().put(error.getInstanceId(), error);
     }
 
@@ -78,24 +78,24 @@ public class InstanceValidationContext {
                 });
     }
 
-    public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
+    public <I extends SInstance> void validateInstance(org.opensingular.form.validation.InstanceValidatable<I> validatable) {
         validateInstance(validatable, false);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable, boolean containsInvalidChild) {
+    protected <I extends SInstance> void validateInstance(org.opensingular.form.validation.InstanceValidatable<I> validatable, boolean containsInvalidChild) {
         final I instance = validatable.getInstance();
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance)) {
             if (!isFilledIfRequired(instance)) {
-                validatable.error(new ValidationError(instance.getId(), ValidationErrorLevel.ERROR, "Campo obrigatório"));
+                validatable.error(new ValidationErrorImpl(instance.getId(), ValidationErrorLevel.ERROR, "Campo obrigatório"));
                 return;
             }
             final SType<I> tipo = (SType<I>) instance.getType();
-            for (IInstanceValidator<I> validator : tipo.getValidators()) {
+            for (InstanceValidator<I> validator : tipo.getValidators()) {
                 if (containsInvalidChild && validator.executeOnlyIfChildrenValid())
                     continue;
                 validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
-                validator.validate((IInstanceValidatable) validatable);
+                validator.validate(validatable);
             }
         }
     }
@@ -118,38 +118,36 @@ public class InstanceValidationContext {
     }
 
     protected boolean isEnabledInHierarchy(SInstance instance) {
-        return !SInstances.listAscendants(instance, true).stream()
+        return SInstances.listAscendants(instance, true).stream()
                 .map(it -> SInstanceViewState.get(it).isEnabled())
-                .anyMatch(Boolean.FALSE::equals);
+                .noneMatch(Boolean.FALSE::equals);
     }
 
     protected boolean isVisibleInHierarchy(SInstance instance) {
-        return !SInstances.listAscendants(instance, true).stream()
+        return SInstances.listAscendants(instance, true).stream()
                 .map(it -> SInstanceViewState.get(it).isVisible())
-                .anyMatch(Boolean.FALSE::equals);
+                .noneMatch(Boolean.FALSE::equals);
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
         return getContextErrors().values().stream()
-                .filter(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0)
-                .findAny()
-                .isPresent();
+                .anyMatch(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0);
     }
 
-    private static class InstanceValidatable<I extends SInstance> implements IInstanceValidatable<I> {
+    private static class InstanceValidatable<I extends SInstance> implements org.opensingular.form.validation.InstanceValidatable<I> {
 
         private ValidationErrorLevel defaultLevel = ValidationErrorLevel.ERROR;
-        private final I                          instance;
-        private final Consumer<IValidationError> onError;
-        public        boolean                    errorFound;
+        private final I instance;
+        private final Consumer<ValidationError> onError;
+        public boolean errorFound;
 
-        public InstanceValidatable(I instance, Consumer<IValidationError> onError) {
+        public InstanceValidatable(I instance, Consumer<ValidationError> onError) {
             this.instance = instance;
             this.onError = onError;
         }
 
-        private IValidationError errorInternal(ValidationErrorLevel level, String msg) {
-            ValidationError error = new ValidationError(instance.getId(), level, msg);
+        private ValidationError errorInternal(ValidationErrorLevel level, String msg) {
+            ValidationError error = new ValidationErrorImpl(instance.getId(), level, msg);
             onError.accept(error);
             errorFound = true;
             return error;
@@ -166,28 +164,28 @@ public class InstanceValidationContext {
         }
 
         @Override
-        public IInstanceValidatable<I> setDefaultLevel(ValidationErrorLevel defaultLevel) {
+        public org.opensingular.form.validation.InstanceValidatable<I> setDefaultLevel(ValidationErrorLevel defaultLevel) {
             this.defaultLevel = defaultLevel;
             return this;
         }
 
         @Override
-        public IValidationError error(String msg) {
+        public ValidationError error(String msg) {
             return errorInternal(defaultLevel, msg);
         }
 
         @Override
-        public IValidationError error(IValidationError error) {
+        public ValidationError error(ValidationError error) {
             return errorInternal(defaultLevel, error.getMessage());
         }
 
         @Override
-        public IValidationError error(ValidationErrorLevel level, String msg) {
+        public ValidationError error(ValidationErrorLevel level, String msg) {
             return errorInternal(level, msg);
         }
 
         @Override
-        public IValidationError error(ValidationErrorLevel level, IValidationError error) {
+        public ValidationError error(ValidationErrorLevel level, ValidationError error) {
             return errorInternal(level, error.getMessage());
         }
     }

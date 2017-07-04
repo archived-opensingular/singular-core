@@ -21,9 +21,9 @@ import org.opensingular.form.SInstance;
 /**
  * Validator para {@link SInstance}
  */
-public interface IInstanceValidator<I extends SInstance> {
+public interface InstanceValidator<I extends SInstance> {
     
-    void validate(IInstanceValidatable<I> validatable);
+    void validate(InstanceValidatable<I> validatable);
     
     /**
      * Caso este método retorne <code>true</code>, este validador só será executado caso a instância correspondente não

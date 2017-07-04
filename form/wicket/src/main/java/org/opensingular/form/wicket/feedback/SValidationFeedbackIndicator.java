@@ -26,7 +26,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
@@ -100,7 +100,7 @@ public class SValidationFeedbackIndicator extends WebMarkupContainer implements 
      * @return the css class; by default, this returns feedbackPanel + the message level, eg
      *         'feedbackPanelERROR', but you can override this method to provide your own
      */
-    protected String getCSSClass(final IValidationError message) {
+    protected String getCSSClass(final ValidationError message) {
         String cssClass;
         switch (message.getErrorLevel()) {
             case WARNING:
