@@ -27,8 +27,8 @@ import org.opensingular.form.SInstance;
  * da interface InstanceValidator.
  * </p>
  * <p>
- * O Exemplo abaixo, apresenta uma possível implementação desta interface, no qual irá verificar se a string
- * informada inicia com letra minúscula e possui somente letras e números.
+ * O Exemplo abaixo apresenta uma possível implementação da interface InstanceValidator, no qual será verificado se a
+ * string  informada inicia com letra minúscula e se o restante é composto somente por letras e números.
  * <pre>
  *  InstanceValidator<SIString> identificadorValidator = (instanceValidatable) -> {
  *      if (!instanceValidatable.getInstance().getValue().matches("^[a-z][\\dA-Za-z]+$")) {

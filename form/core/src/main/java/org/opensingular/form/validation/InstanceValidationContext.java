@@ -50,7 +50,7 @@ public class InstanceValidationContext {
     public void validateAll(SInstance rootInstance) {
         final List<String> pathsWithError = new ArrayList<>();
         SInstances.visitPostOrder(rootInstance, (inst, v) -> {
-            final InstanceValidatable<?> validatable = new InstanceValidatable<>(inst, this::onError);
+            final InstanceValidatableImpl<?> validatable = new InstanceValidatableImpl<>(inst, this::onError);
             final boolean containsInvalidChild = pathsWithError.stream().anyMatch(s -> s.contains(inst.getPathFull()));
             validateInstance(validatable, containsInvalidChild);
             if (validatable.errorFound) {
@@ -61,7 +61,7 @@ public class InstanceValidationContext {
     }
 
     public void validateSingle(SInstance rootInstance) {
-        validateInstance(new InstanceValidatable<>(rootInstance, this::onError));
+        validateInstance(new InstanceValidatableImpl<>(rootInstance, this::onError));
         updateDocumentErrors(rootInstance);
     }
 
@@ -78,12 +78,12 @@ public class InstanceValidationContext {
                 });
     }
 
-    public <I extends SInstance> void validateInstance(org.opensingular.form.validation.InstanceValidatable<I> validatable) {
+    public <I extends SInstance> void validateInstance(InstanceValidatable<I> validatable) {
         validateInstance(validatable, false);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected <I extends SInstance> void validateInstance(org.opensingular.form.validation.InstanceValidatable<I> validatable, boolean containsInvalidChild) {
+    protected <I extends SInstance> void validateInstance(InstanceValidatable<I> validatable, boolean containsInvalidChild) {
         final I instance = validatable.getInstance();
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance)) {
             if (!isFilledIfRequired(instance)) {
@@ -134,14 +134,14 @@ public class InstanceValidationContext {
                 .anyMatch(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0);
     }
 
-    private static class InstanceValidatable<I extends SInstance> implements org.opensingular.form.validation.InstanceValidatable<I> {
+    private static class InstanceValidatableImpl<I extends SInstance> implements InstanceValidatable<I> {
 
         private ValidationErrorLevel defaultLevel = ValidationErrorLevel.ERROR;
         private final I instance;
         private final Consumer<ValidationError> onError;
         public boolean errorFound;
 
-        public InstanceValidatable(I instance, Consumer<ValidationError> onError) {
+        public InstanceValidatableImpl(I instance, Consumer<ValidationError> onError) {
             this.instance = instance;
             this.onError = onError;
         }
@@ -164,7 +164,7 @@ public class InstanceValidationContext {
         }
 
         @Override
-        public org.opensingular.form.validation.InstanceValidatable<I> setDefaultLevel(ValidationErrorLevel defaultLevel) {
+        public InstanceValidatable<I> setDefaultLevel(ValidationErrorLevel defaultLevel) {
             this.defaultLevel = defaultLevel;
             return this;
         }
