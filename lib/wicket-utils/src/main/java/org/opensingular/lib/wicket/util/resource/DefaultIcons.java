@@ -96,7 +96,10 @@ public enum DefaultIcons implements Icon {
     CALENDAR_PLUS_O     ("fa fa-calendar-plus-o"),
     RECYCLE             ("fa fa-recycle"),
     SEND_O              ("fa fa-send-o"),
-    COUNTRY             ("icon-globe");   
+    COUNTRY             ("icon-globe"),
+    HELP                ("fa fa-question-circle"),
+    
+    ;   
 
     private final String cssClass;
 
