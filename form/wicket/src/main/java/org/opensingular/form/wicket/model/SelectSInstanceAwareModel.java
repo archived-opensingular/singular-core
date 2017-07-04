@@ -52,7 +52,7 @@ public class SelectSInstanceAwareModel extends AbstractSInstanceAwareModel<Seria
     @Override
     public Serializable getObject() {
         SInstance instance = getSInstance();
-        if (instance.isEmptyOfData()) {
+        if (instance == null || instance.isEmptyOfData()) {
             return null;
         }
         Optional<SInstanceConverter> converter = resolver.apply(instance);
