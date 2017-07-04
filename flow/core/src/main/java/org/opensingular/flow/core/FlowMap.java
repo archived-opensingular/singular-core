@@ -113,8 +113,8 @@ public class FlowMap {
      * @return as tarefas definidas do tipo {@link TaskType#PEOPLE} ou uma lista vazia.
      */
     @Nonnull
-    public Collection<STaskPeople> getPeopleTasks() {
-        return (Collection<STaskPeople>) getTasks(TaskType.PEOPLE);
+    public Collection<STaskHuman> getHumanTasks() {
+        return (Collection<STaskHuman>) getTasks(TaskType.PEOPLE);
     }
 
     /**
@@ -269,8 +269,8 @@ public class FlowMap {
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
      */
-    public STaskPeople addPeopleTask(ITaskDefinition definition) {
-        return addTask(new STaskPeople(this, definition.getName(), definition.getKey()));
+    public STaskHuman addHumanTask(ITaskDefinition definition) {
+        return addTask(new STaskHuman(this, definition.getName(), definition.getKey()));
     }
 
     /**
@@ -403,8 +403,8 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
      */
-    public Optional<STaskPeople> getPeopleTaskByAbbreviation(String abbreviation) {
-        return getTaskByAbbreviation(abbreviation).map(task -> castCheck(task, STaskPeople.class, abbreviation));
+    public Optional<STaskHuman> getHumanTaskByAbbreviation(String abbreviation) {
+        return getTaskByAbbreviation(abbreviation).map(task -> castCheck(task, STaskHuman.class, abbreviation));
     }
 
     /**
@@ -414,8 +414,8 @@ public class FlowMap {
      * @return a tarefa deste mapa com a sigla especificada.
      * @throws SingularFlowException caso não encontre tarefa com a sigla especificada.
      */
-    public STaskPeople getPeopleTaskByAbbreviationOrException(String abbreviation) {
-        return castCheck(getTaskByAbbreviationOrException(abbreviation), STaskPeople.class, abbreviation);
+    public STaskHuman getHumanTaskByAbbreviationOrException(String abbreviation) {
+        return castCheck(getTaskByAbbreviationOrException(abbreviation), STaskHuman.class, abbreviation);
     }
 
     private <T extends STask> T castCheck(STask<?> target, Class<T> expectedClass, String abbreviation) {

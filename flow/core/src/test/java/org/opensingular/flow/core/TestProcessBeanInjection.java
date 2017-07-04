@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +26,6 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-import org.opensingular.lib.commons.context.SingularContext;
-import org.opensingular.lib.commons.context.SingularContextSetup;
-import org.opensingular.lib.commons.context.singleton.InstanceBoundedSingletonStrategy;
 import org.opensingular.lib.commons.net.WebRef;
 
 import javax.inject.Inject;
@@ -61,7 +57,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         ProcessDefinitionBeanInjection pd = new ProcessDefinitionBeanInjection();
         assertBean(pd.myBean);
 
-        STaskPeople taskPeople = (STaskPeople) pd.getFlowMap().getTask(StepsBI.Third);
+        STaskHuman taskPeople = (STaskHuman) pd.getFlowMap().getTask(StepsBI.Third);
         assertBean(((MyPageStrategy) taskPeople.getExecutionPage()).myBean);
         assertBean(((MyAccessStrategy) taskPeople.getAccessStrategy()).myBean);
     }
@@ -132,7 +128,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
             f.addJavaTask(StepsBI.First).call(new MyJavaTask()).addStartedTaskListener(new MyStartListener());
             f.addWaitTask(StepsBI.Second);
-            f.addPeopleTask(StepsBI.Third).withExecutionPage(new MyPageStrategy()).addAccessStrategy(
+            f.addHumanTask(StepsBI.Third).withExecutionPage(new MyPageStrategy()).addAccessStrategy(
                     new MyAccessStrategy());
             f.addJavaTask(StepsBI.Call1).call(new MyJavaTask1());
             f.addJavaTask(StepsBI.Call2).call(new MyJavaTask2());

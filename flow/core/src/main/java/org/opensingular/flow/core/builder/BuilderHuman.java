@@ -17,9 +17,9 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.STaskPeople;
+import org.opensingular.flow.core.STaskHuman;
 
-public interface BuilderPeople<SELF extends BuilderPeople<SELF>> extends BuilderUserExecutable<SELF, STaskPeople> {
+public interface BuilderHuman<SELF extends BuilderHuman<SELF>> extends BuilderUserExecutable<SELF, STaskHuman> {
 
     public default SELF notifyStartToResponsibleUser() {
         return addStartedTaskListener((instanciaTarefa, execucaoTask) -> Flow.notifyListeners(n -> n.notifyStartToResponsibleUser(instanciaTarefa, execucaoTask)));
