@@ -17,6 +17,7 @@
 package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ProcessDefinition;
@@ -61,9 +62,13 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start";
-                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(start).call(p -> {
+
+                });
                 ITaskDefinition task = () -> "Task";
-                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(task).call(p -> {
+
+                });
                 ITaskDefinition people = () -> "People";
                 flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End";
@@ -88,10 +93,11 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BuilderProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
                 ITaskDefinition start = () -> "Start";
-                flow.addJavaTask(start).call((ProcessVersoes p) -> {
+                flow.addJavaTask(start).call(p -> {
+
                 });
                 ITaskDefinition task = () -> "Task";
-                flow.addJavaTask(task).call((ProcessVersoes p) -> {
+                flow.addJavaTask(task).call(p -> {
                 });
                 ITaskDefinition people = () -> "People";
                 flow.addHumanTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
@@ -117,10 +123,12 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start 2";
-                flow.addJavaTask(start).call((ProcessVersoes p) -> {
+                flow.addJavaTask(start).call(p -> {
+
                 });
                 ITaskDefinition task = () -> "Task 2";
-                flow.addJavaTask(task).call((ProcessVersoes p) -> {
+                flow.addJavaTask(task).call(p -> {
+
                 });
                 ITaskDefinition people = () -> "People 2";
                 flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());

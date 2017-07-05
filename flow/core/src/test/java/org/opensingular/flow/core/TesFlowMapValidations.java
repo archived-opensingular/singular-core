@@ -22,7 +22,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TesFlowMapValidations.ProcessWithFlowValidation.StepsDI;
-import org.opensingular.flow.core.builder.BuilderJava;
 import org.opensingular.flow.core.builder.BuilderHuman;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
@@ -164,10 +163,10 @@ public class TesFlowMapValidations {
             assertException(() -> f.addWaitTask(StepsDI.StepWait2), "Task with name");
 
             if (condicions.javaTaskSetCodeByBlock) {
-                f.addJavaTask(StepsDI.StepJava).callByBlock( (STaskJava.ImplTaskBlock) (task) -> null,
+                f.addJavaTask(StepsDI.StepJava).callByBlock( (TaskJavaBatchCall) (task) -> null,
                         ScheduleDataBuilder.buildMinutely(60));
             } else if (condicions.javaTaskSetCode) {
-                f.addJavaTask(StepsDI.StepJava).call( (BuilderJava.ImplTaskJavaReturnInstanciaTarefa) (task) -> null);
+                f.addJavaTask(StepsDI.StepJava).call( (task) -> {});
             } else {
                 f.addJavaTask(StepsDI.StepJava);
             }
