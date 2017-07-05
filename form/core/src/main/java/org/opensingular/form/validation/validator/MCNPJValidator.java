@@ -17,7 +17,7 @@
 package org.opensingular.form.validation.validator;
 
 import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.validation.IInstanceValidatable;
+import org.opensingular.form.validation.InstanceValidatable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-enum MCNPJValidator implements IInstanceValueValidator<SIString, String> {
+enum MCNPJValidator implements InstanceValueValidator<SIString, String> {
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");
@@ -37,7 +37,7 @@ enum MCNPJValidator implements IInstanceValueValidator<SIString, String> {
     ));
 
     @Override
-    public void validate(IInstanceValidatable<SIString> validatable, String value) {
+    public void validate(InstanceValidatable<SIString> validatable, String value) {
         if (!isValid(value)) {
             validatable.error("CNPJ inválido");
         }

@@ -34,7 +34,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -293,15 +293,15 @@ public class MasterDetailPanel extends Panel {
             public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
                 SInstance                    baseInstance = model.getObject();
                 SDocument                    doc          = baseInstance.getDocument();
-                Collection<IValidationError> errors       = baseInstance.getNestedValidationErrors();
+                Collection<ValidationError> errors       = baseInstance.getNestedValidationErrors();
                 if ((errors != null) && !errors.isEmpty()) {
                     String alertLevel = errors.stream()
-                            .map(IValidationError::getErrorLevel).max(Comparator.naturalOrder())
+                            .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
                             .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
                             .orElse(null);
 
                     final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
-                    for (IValidationError error : errors) {
+                    for (ValidationError error : errors) {
                         Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
                         inst.ifPresent(sInstance -> sb.append("<li>")
                                 .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))

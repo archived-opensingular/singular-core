@@ -33,7 +33,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.util.WicketFormUtils;
@@ -68,9 +68,9 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
             }
         };
         add(feedbackul
-                .add(new ListView<IValidationError>("messages", newValidationErrorsModel()) {
+                .add(new ListView<ValidationError>("messages", newValidationErrorsModel()) {
                     @Override
-                    protected void populateItem(ListItem<IValidationError> item) {
+                    protected void populateItem(ListItem<ValidationError> item) {
                         item.add(newMessageDisplayComponent("message", item.getModel()));
                     }
                 }));
@@ -103,16 +103,16 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
         return getValidationFeedbackHandler().containsNestedErrors(level);
     }
 
-    protected IModel<? extends List<IValidationError>> newValidationErrorsModel() {
-        return (IReadOnlyModel<List<IValidationError>>) () -> getValidationFeedbackHandler().collectNestedErrors();
+    protected IModel<? extends List<ValidationError>> newValidationErrorsModel() {
+        return (IReadOnlyModel<List<ValidationError>>) () -> getValidationFeedbackHandler().collectNestedErrors();
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {
         return SValidationFeedbackHandler.get(getFence().getMainContainer());
     }
 
-    protected Component newMessageDisplayComponent(String id, IModel<IValidationError> error) {
-        final Component component = new Label(id, $m.map(error, IValidationError::getMessage));
+    protected Component newMessageDisplayComponent(String id, IModel<ValidationError> error) {
+        final Component component = new Label(id, $m.map(error, ValidationError::getMessage));
         component.setEscapeModelStrings(SValidationFeedbackPanel.this.getEscapeModelStrings());
         component.add($b.classAppender($m.map(error, this::getCSSClass)));
 
@@ -161,7 +161,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
      * @return the css class; by default, this returns feedbackPanel + the message level, eg
      * 'feedbackPanelERROR', but you can override this method to provide your own
      */
-    protected String getCSSClass(final IValidationError message) {
+    protected String getCSSClass(final ValidationError message) {
         String cssClass;
         switch (message.getErrorLevel()) {
             case WARNING:

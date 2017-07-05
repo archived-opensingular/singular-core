@@ -20,7 +20,7 @@ package org.opensingular.form.io;
 import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
 
 import java.io.Serializable;
@@ -43,7 +43,7 @@ public final class FormSerialized implements Serializable {
     private final MElement xml, annotations;
     private String                            focusFieldPath;
     private Map<String, ServiceRegistry.ServiceEntry> services;
-    private List<IValidationError>                    validationErrors;
+    private List<ValidationError>                    validationErrors;
 
     public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
                           RefSDocumentFactory sDocumentFactoryRef) {
@@ -90,11 +90,11 @@ public final class FormSerialized implements Serializable {
         return sDocumentFactoryRef;
     }
 
-    public List<IValidationError> getValidationErrors() {
+    public List<ValidationError> getValidationErrors() {
         return validationErrors;
     }
 
-    public void setValidationErrors(Collection<IValidationError> validationErrors) {
+    public void setValidationErrors(Collection<ValidationError> validationErrors) {
         this.validationErrors = (validationErrors == null) ? null : new ArrayList<>(validationErrors);
     }
 }

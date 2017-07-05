@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 @Ignore
@@ -38,7 +38,7 @@ public class SimpleVisibilityValidationTest {
         assertThatFieldValidationErros(FIELD_TWO).isEmpty();
     }
 
-    private IterableAssert<IValidationError> assertThatFieldValidationErros(String field) {
+    private IterableAssert<ValidationError> assertThatFieldValidationErros(String field) {
         return tester.getAssertionsForm()
                 .getSubCompomentWithType(
                         tester.findTypeBySimpleName(field).is(STypeString.class).getTarget()
