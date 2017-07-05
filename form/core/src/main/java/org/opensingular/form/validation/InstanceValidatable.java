@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.validation.validator;
+package org.opensingular.form.validation;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.validation.IInstanceValidatable;
-import org.opensingular.form.validation.IInstanceValidator;
 
-public interface IInstanceValueValidator<I extends SInstance, V> extends IInstanceValidator<I> {
+public interface InstanceValidatable<I extends SInstance> {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    default void validate(IInstanceValidatable<I> validatable) {
-        V value = (V) validatable.getInstance().getValue();
-        if (value == null)
-            return;
-        validate(validatable, value);
-    }
+    I getInstance();
 
-    void validate(IInstanceValidatable<I> validatable, V value);
+    InstanceValidatable<I> setDefaultLevel(ValidationErrorLevel level);
+
+    ValidationErrorLevel getDefaultLevel();
+
+    ValidationError error(ValidationError error);
+
+    ValidationError error(String msg);
+
+    ValidationError error(ValidationErrorLevel level, ValidationError error);
+
+    ValidationError error(ValidationErrorLevel level, String msg);
 }

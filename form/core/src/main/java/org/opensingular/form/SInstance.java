@@ -25,7 +25,7 @@ import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -762,12 +762,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return SInstances.hasAny(this, SInstance::hasValidationErrors);
     }
 
-    public Collection<IValidationError> getValidationErrors() {
+    public Collection<ValidationError> getValidationErrors() {
         return getDocument().getValidationErrors(getId());
     }
 
-    public Collection<IValidationError> getNestedValidationErrors() {
-        List<IValidationError> errors = new ArrayList<>();
+    public Collection<ValidationError> getNestedValidationErrors() {
+        List<ValidationError> errors = new ArrayList<>();
         SInstances.visit(this, (i, v) -> errors.addAll(i.getValidationErrors()));
         return errors;
     }

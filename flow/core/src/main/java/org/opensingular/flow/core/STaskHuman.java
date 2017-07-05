@@ -16,11 +16,11 @@
 
 package org.opensingular.flow.core;
 
-public class STaskPeople extends STaskUserExecutable<STaskPeople> {
+public class STaskHuman extends STaskUserExecutable<STaskHuman> {
 
     private boolean canReallocate = true;
 
-    public STaskPeople(FlowMap flowMap, String name, String abbreviation) {
+    public STaskHuman(FlowMap flowMap, String name, String abbreviation) {
         super(flowMap, name, abbreviation);
     }
 
@@ -34,7 +34,7 @@ public class STaskPeople extends STaskUserExecutable<STaskPeople> {
         return canReallocate;
     }
 
-    public STaskPeople setCanReallocate(boolean canReallocate) {
+    public STaskHuman setCanReallocate(boolean canReallocate) {
         this.canReallocate = canReallocate;
         return this;
     }

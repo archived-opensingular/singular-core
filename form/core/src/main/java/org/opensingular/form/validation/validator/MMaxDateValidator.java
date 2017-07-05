@@ -2,17 +2,17 @@ package org.opensingular.form.validation.validator;
 
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIDate;
-import org.opensingular.form.validation.IInstanceValidatable;
+import org.opensingular.form.validation.InstanceValidatable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public enum MMaxDateValidator implements IInstanceValueValidator<SIDate, Date> {
+public enum MMaxDateValidator implements InstanceValueValidator<SIDate, Date> {
 
     INSTANCE;
 
     @Override
-    public void validate(IInstanceValidatable<SIDate> validatable, Date val) {
+    public void validate(InstanceValidatable<SIDate> validatable, Date val) {
         final SIDate ins = validatable.getInstance();
         final Date   max = ins.getAttributeValue(SPackageBasic.ATR_MAX_DATE);
         if (max != null && val != null && val.compareTo(max) > 0) {
