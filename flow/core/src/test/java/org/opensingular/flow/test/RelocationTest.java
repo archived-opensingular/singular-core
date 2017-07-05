@@ -237,8 +237,8 @@ public class RelocationTest {
             return flow.build();
         }
 
-        public void doSomething(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-
+        public Object doSomething(ExecutionContext ctxExecucao) {
+            return null;
         }
 
     }

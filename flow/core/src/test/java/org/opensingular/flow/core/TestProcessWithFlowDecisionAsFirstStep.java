@@ -91,10 +91,11 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
             return f.build();
         }
 
-        void decideNextTask(ProcessInstance processInstance, ExecutionContext execucaoTask) {
+        Object decideNextTask(ExecutionContext execucaoTask) {
             if (action != null) {
                 execucaoTask.setTransition(action.getKey());
             }
+            return null;
         }
     }
 }
