@@ -36,8 +36,8 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
     }
 
 
-    default <T extends ProcessInstance> SELF callByBlock(TaskJavaBatchCall<T> implBloco, IScheduleData scheduleData) {
-        getTask().callBlock(implBloco, scheduleData);
+    default <T extends ProcessInstance> SELF batchCall(TaskJavaBatchCall<T> implBloco, IScheduleData scheduleData) {
+        getTask().batchCall(implBloco, scheduleData);
         return self();
     }
 }

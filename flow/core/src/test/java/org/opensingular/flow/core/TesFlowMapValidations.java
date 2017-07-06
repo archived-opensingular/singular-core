@@ -113,7 +113,7 @@ public class TesFlowMapValidations {
     }
 
     @Test
-    public void taskJavaWithCallByBlock() {
+    public void taskJavaWithBatchCall() {
         condicions = new ValidationCondicions();
         condicions.javaTaskSetCode = false;
         condicions.javaTaskSetCodeByBlock = true;
@@ -163,7 +163,7 @@ public class TesFlowMapValidations {
             assertException(() -> f.addWaitTask(StepsDI.StepWait2), "Task with name");
 
             if (condicions.javaTaskSetCodeByBlock) {
-                f.addJavaTask(StepsDI.StepJava).callByBlock( (TaskJavaBatchCall) (task) -> null,
+                f.addJavaTask(StepsDI.StepJava).batchCall((TaskJavaBatchCall) (task) -> null,
                         ScheduleDataBuilder.buildMinutely(60));
             } else if (condicions.javaTaskSetCode) {
                 f.addJavaTask(StepsDI.StepJava).call( (task) -> {});

@@ -54,7 +54,7 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Nonnull
-    public <T extends ProcessInstance> STaskJava callBlock(@Nonnull TaskJavaBatchCall<T> batchCall,
+    public <T extends ProcessInstance> STaskJava batchCall(@Nonnull TaskJavaBatchCall<T> batchCall,
                                                            @Nonnull IScheduleData scheduleData) {
         if (taskImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando call(), chamada simples"), this);
