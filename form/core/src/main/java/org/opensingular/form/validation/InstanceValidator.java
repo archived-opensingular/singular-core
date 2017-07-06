@@ -31,7 +31,7 @@ import org.opensingular.form.SInstance;
  * string  informada inicia com letra minúscula e se o restante é composto somente por letras e números.
  * <pre>
  *  InstanceValidator<SIString> identificadorValidator = (instanceValidatable) -> {
- *      if (!instanceValidatable.getInstance().getValue().matches("^[a-z][\\dA-Za-z]+$")) {
+ *      if (!instanceValidatable.getInstance().matches("^[a-z][\\dA-Za-z]+$")) {
  *          instanceValidatable.error("Não é um identificador valido");
  *      }
  *  };
