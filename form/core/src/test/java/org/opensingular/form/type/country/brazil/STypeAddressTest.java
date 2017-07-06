@@ -8,7 +8,7 @@ import org.opensingular.form.SIComposite;
 public class STypeAddressTest {
 
     @Test
-    public void testName() throws Exception {
+    public void testCopyValues() throws Exception {
         STypeAddress address = SDictionary.create().getType(STypeAddress.class);
         SIComposite siAddress1 = address.newInstance();
         SIComposite siAddress2 = address.newInstance();
