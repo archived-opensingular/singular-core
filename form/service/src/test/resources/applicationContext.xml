@@ -12,6 +12,7 @@
 
     <bean id="formService" class="org.opensingular.form.service.FormService" />
     <bean id="formFieldService" class="org.opensingular.form.service.FormFieldService" />
+    <bean id="formTypeService" class="org.opensingular.form.service.FormTypeService" />
     <bean id="formDAO" class="org.opensingular.form.persistence.dao.FormDAO" />
     <bean id="formVersionDAO" class="org.opensingular.form.persistence.dao.FormVersionDAO" />
     <bean id="formCacheFieldDAO" class="org.opensingular.form.persistence.dao.FormCacheFieldDAO" />

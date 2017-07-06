@@ -24,7 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
-import org.opensingular.lib.wicket.util.resource.SingularIcon;
+import org.opensingular.lib.wicket.util.resource.Icon;
 
 public class BSInputGroupButton extends BSContainer<BSInputGroupButton> {
 
@@ -42,11 +42,11 @@ public class BSInputGroupButton extends BSContainer<BSInputGroupButton> {
                 .add(button));
     }
 
-    public BSInputGroupButton appendButtonAddon(SingularIcon singularIcon, Component button) {
+    public BSInputGroupButton appendButtonAddon(Icon icon, Component button) {
         return this
             .appendTag("wicket:container", new TemplatePanel("_", () -> ""
                 + "<button wicket:id='" + button.getId() + "' class='btn btn-default'>"
-                + "<i class='" + singularIcon.getCssClass() + "'></i>"
+                + "<i class='" + icon.getCssClass() + "'></i>"
                 + "</button>")
                 .add(button));
     }

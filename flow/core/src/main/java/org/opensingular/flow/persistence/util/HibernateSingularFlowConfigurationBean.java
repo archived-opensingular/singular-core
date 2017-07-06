@@ -46,10 +46,10 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     }
 
     /**
-     * @param processGroupCod - chave do sistema cadastrado no em <code>TB_GRUPO_PROCESSO</code>
+     * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
      */
-    protected HibernateSingularFlowConfigurationBean(String processGroupCod) {
-        super(processGroupCod);
+    protected HibernateSingularFlowConfigurationBean(String moduleCod) {
+        super(moduleCod);
     }
 
     @Override

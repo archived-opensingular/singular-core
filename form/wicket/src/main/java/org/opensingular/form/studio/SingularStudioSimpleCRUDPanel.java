@@ -26,8 +26,8 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
-import org.opensingular.lib.wicket.util.resource.Icone;
-import org.opensingular.lib.wicket.util.resource.SingularIcon;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 
 import java.util.HashSet;
@@ -50,7 +50,7 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
     private final WebMarkupContainer container = new WebMarkupContainer("container");
 
     private IModel<String> crudTitle = new Model<>();
-    private IModel<SingularIcon> crudIcon = new Model<>();
+    private IModel<Icon>   crudIcon  = new Model<>();
 
     public SingularStudioSimpleCRUDPanel(String id, FormRespository<TYPE, INSTANCE> formPersistence) {
         this(id, () -> formPersistence);
@@ -215,8 +215,8 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
 
         private BSActionColumn<INSTANCE, String> appendActions(BSActionColumn<INSTANCE, String> col) {
             return col
-                    .appendAction($m.ofValue("edit"), Icone.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit)
-                    .appendAction($m.ofValue("delete"), Icone.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
+                    .appendAction($m.ofValue("edit"), DefaultIcons.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit)
+                    .appendAction($m.ofValue("delete"), DefaultIcons.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
         }
     }
 
@@ -225,7 +225,7 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
         return this;
     }
 
-    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudIcon(SingularIcon crudIcon) {
+    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudIcon(Icon crudIcon) {
         this.crudIcon.setObject(crudIcon);
         return this;
     }

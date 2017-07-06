@@ -36,7 +36,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.resource.IconeView;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
-import org.opensingular.lib.wicket.util.resource.SingularIcon;
+import org.opensingular.lib.wicket.util.resource.Icon;
 
 public class BSActionPanel<T> extends Panel {
 
@@ -52,7 +52,7 @@ public class BSActionPanel<T> extends Panel {
         add(actions, otherActions);
     }
 
-    public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<SingularIcon> iconeModel, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
+    public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<Icon> iconeModel, IBiFunction<String, IModel<T>, MarkupContainer> linkFactory) {
         return appendAction(new ActionConfig<T>().labelModel(labelModel).iconeModel(iconeModel)
                 .stripeModel(null)
                 .linkFactory(linkFactory)
@@ -154,10 +154,10 @@ public class BSActionPanel<T> extends Panel {
     public static class ActionConfig<T> implements Serializable {
 
         protected IModel<?> labelModel = $m.ofValue("");
-        protected IModel<SingularIcon> iconeModel;
-        protected IModel<String>       iconeStyle;
-        protected IModel<String>       iconeClass;
-        protected IModel<String>       stripeModel;
+        protected IModel<Icon>   iconeModel;
+        protected IModel<String> iconeStyle;
+        protected IModel<String> iconeClass;
+        protected IModel<String> stripeModel;
         protected IModel<String> styleClasses = $m.ofValue("btn default btn-xs black");
         protected IModel<String>               style;
         protected IFunction<IModel<T>, String> titleFunction;
@@ -170,15 +170,15 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
 
-        public ActionConfig<T> iconeModel(IModel<SingularIcon> iconeModel) {
+        public ActionConfig<T> iconeModel(IModel<Icon> iconeModel) {
             return iconeModel(iconeModel, null, null);
         }
 
-        public ActionConfig<T> iconeModel(IModel<SingularIcon> iconeModel, IModel<String> iconeStyle) {
+        public ActionConfig<T> iconeModel(IModel<Icon> iconeModel, IModel<String> iconeStyle) {
             return iconeModel(iconeModel, iconeStyle, null);
         }
 
-        public ActionConfig<T> iconeModel(IModel<SingularIcon> iconeModel, IModel<String> iconeStyle, IModel<String> iconeClass) {
+        public ActionConfig<T> iconeModel(IModel<Icon> iconeModel, IModel<String> iconeStyle, IModel<String> iconeClass) {
             this.iconeModel = iconeModel;
             this.iconeStyle = iconeStyle;
             this.iconeClass = iconeClass;
