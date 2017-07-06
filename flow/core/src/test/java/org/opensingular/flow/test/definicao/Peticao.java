@@ -120,8 +120,9 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         return calendar;
     }
 
-    public void notificar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
+    public Object notificar(ExecutionContext ctxExecucao) {
         System.out.println("Notificado");
+        return null;
     }
 
 }

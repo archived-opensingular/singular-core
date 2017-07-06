@@ -66,19 +66,21 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         return f.build();
     }
 
-    public void print(ProcessInstance instancia, ExecutionContext ctxExecucao) {
+    public Object print(ExecutionContext ctxExecucao) {
         System.out.println("legal");
+        return null;
     }
 
-    public void setVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-        instancia.setVariable("nome", STRING_USADA_NO_TESTE);
-        instancia.setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
-
-        instancia.saveEntity();
+    public Object setVar(ExecutionContext ctxExecucao) {
+        ctxExecucao.getProcessInstance().setVariable("nome", STRING_USADA_NO_TESTE);
+        ctxExecucao.getProcessInstance().setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
+        ctxExecucao.getProcessInstance().saveEntity();
+        return null;
     }
 
-    public void printVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-        System.out.println("########### nome          #####>" + instancia.getVariableValue("nome"));
-        System.out.println("########### qualquerCoisa #####>" + instancia.getVariableValue("qualquerCoisa"));
+    public Object printVar(ExecutionContext ctxExecucao) {
+        System.out.println("########### nome          #####>" + ctxExecucao.getProcessInstance().getVariableValue("nome"));
+        System.out.println("########### qualquerCoisa #####>" + ctxExecucao.getProcessInstance().getVariableValue("qualquerCoisa"));
+        return null;
     }
 }
