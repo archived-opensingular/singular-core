@@ -48,16 +48,16 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     + "\n  </button>"
                     + "\n  <ul class='dropdown-menu dropdown-menu-right pull-right'>"
                     + "\n    <li class='text-right' wicket:id='actions'>"
-                    + "\n      <a wicket:id='link'><span wicket:id='label'></span> <i wicket:id='icon'></i></a></li>"
+                    + "\n      <a wicket:id='link' style='text-align:right'><span wicket:id='label'></span> <i wicket:id='icon'></i></a></li>"
                     + "\n  </ul>"
                     + "\n</div>";
             case BAR:
             default:
                 return ""
-                    + "\n<div class='btn-group btn-group-md' style='margin-left:-1px !important;'>"
+                    + "\n<div class='btn-group' style='margin-left:-1px !important;'>"
                     + "\n  <div wicket:id='actions'>"
                     + "\n    <a wicket:id='link'"
-                    + "\n        class='btn btn-link btn-md md-skip' style='padding:0px;'"
+                    + "\n        class='btn btn-link' style='padding:0px;'"
                     + "\n        data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
                     + "\n      <span wicket:id='label'></span> <i wicket:id='icon'></i>"
                     + "\n    </a>"
@@ -132,6 +132,7 @@ public class SInstanceActionsPanel extends TemplatePanel {
         protected void populateItem(Item<SInstanceAction> item) {
             IModel<SInstanceAction> itemModel = item.getModel();
             item.setRenderBodyOnly(!mode.isMenu());
+            final ISupplier<SInstance> instanceSupplier = instanceModel::getObject;
 
             SInstanceAction action = itemModel.getObject();
             ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
@@ -139,11 +140,11 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 protected void onAction(AjaxRequestTarget target) {
                     final List<?> contextList = internalContextListProvider.apply(target);
 
-                    final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel::getObject, contextList);
+                    final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceSupplier, contextList);
 
                     SInstanceAction instanceAction = this.getModelObject();
                     instanceAction.getActionHandler()
-                        .onAction(instanceAction, instanceModel::getObject, delegate);
+                        .onAction(instanceAction, instanceSupplier, delegate);
                 }
             };
 
@@ -151,10 +152,14 @@ public class SInstanceActionsPanel extends TemplatePanel {
             link.add(label
                 .add($b.visibleIf(() -> mode.isMenu())));
 
-            Label iconContainer = new Label("icon");
-            link.add(iconContainer
-                .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getCssClass())))
-                .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null))));
+            Label iconTag = new Label("icon");
+            link
+                .add(iconTag
+                    .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getIconCssClassesString())))
+                    .add($b.styleAppender($m.map(itemModel, it -> it.getIcon().getIconCssStyles()))))
+                .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getContainerCssClassesString())))
+                .add($b.styleAppender($m.map(itemModel, it -> it.getIcon().getContainerCssStyles())))
+                .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null)));
 
             link
                 .add($b.attr("title", action.getText()))

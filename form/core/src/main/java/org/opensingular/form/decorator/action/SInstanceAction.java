@@ -39,6 +39,8 @@ public class SInstanceAction implements Serializable {
         void openForm(String title, ISupplier<SInstance> instanceSupplier, List<SInstanceAction> actions);
         /** Fecha um form aberto por openForm(), correspondente à instância fornecida. */
         void closeForm(SInstance instance);
+        /** Atualiza o campo correspondente à instância */
+        void refreshFieldForInstance(SInstance instanceSupplier);
         /** Exibe uma mensagem, no formato especificado (html, markdown, text). */
         void showMessage(String title, Serializable msg, String forcedFormat);
         /** Exibe uma mensagem. O formato usado é resolvido automaticamente (best effort). */

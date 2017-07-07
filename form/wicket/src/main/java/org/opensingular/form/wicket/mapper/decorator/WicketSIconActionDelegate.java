@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.form.Form;
@@ -24,6 +25,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.panel.IOpenModalEvent;
+import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
@@ -53,24 +55,34 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
 
     @Override
     public void openForm(String title, ISupplier<SInstance> formInstance, List<SInstanceAction> actions) {
-        IModel<SInstance> formInstanceModel = new SuppliedInstanceModel(formInstance);
-        getInternalContext(Component.class).ifPresent(comp -> {
-            comp.send(comp, Broadcast.BUBBLE, new SInstanceActionOpenModalEvent(
-                title,
-                getInternalContext(AjaxRequestTarget.class).orElse(null),
-                instanceRef,
-                formInstanceModel,
-                actions));
-        });
+        SInstanceActionOpenModalEvent evt = new SInstanceActionOpenModalEvent(
+            title,
+            getInternalContext(AjaxRequestTarget.class).orElse(null),
+            instanceRef,
+            new SuppliedInstanceModel(formInstance),
+            actions);
+        getInternalContext(Component.class)
+            .ifPresent(comp -> comp.send(comp, Broadcast.BUBBLE, evt));
     }
 
     @Override
     public void closeForm(SInstance formInstance) {
-        getInternalContext(Component.class).ifPresent(comp -> {
-            comp.send(comp, Broadcast.BUBBLE, ICloseModalEvent.of(
-                getInternalContext(AjaxRequestTarget.class).orElse(null),
-                it -> Objects.equals(it.getDefaultModelObject(), formInstance)));
-        });
+        ICloseModalEvent evt = ICloseModalEvent.of(
+            getInternalContext(AjaxRequestTarget.class).orElse(null),
+            it -> Objects.equals(it.getDefaultModelObject(), formInstance));
+        getInternalContext(Component.class)
+            .ifPresent(comp -> comp.send(comp, Broadcast.BUBBLE, evt));
+    }
+
+    @Override
+    public void refreshFieldForInstance(SInstance instance) {
+        Optional<AjaxRequestTarget> target = getInternalContext(AjaxRequestTarget.class);
+        Optional<Component> comp = getInternalContext(Component.class);
+        if (target.isPresent() && comp.isPresent()) {
+            Optional<MarkupContainer> fieldContainer = WicketFormUtils.findChildByInstance(comp.get().getPage(), instance)
+                .flatMap(WicketFormUtils::findCellContainer);
+            target.get().add(fieldContainer.get());
+        }
     }
 
     @Override

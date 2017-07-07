@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.slf4j.Logger;
@@ -60,18 +59,18 @@ final class SIconProviders {
 
     private SIconProviders() {}
 
-    static SIcon resolve(String s) {
+    static SIcon resolve(String code) {
         // recarrega toda vez se em dev mode
         List<SIconProvider> providers = (SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE))
             ? loadProviders()
             : CACHED_PROVIDERS;
 
         for (SIconProvider provider : providers) {
-            SIcon icon = provider.resolve(s);
+            SIcon icon = provider.resolve(code);
             if (icon != null)
                 return icon;
         }
-        return new SIconImpl(s, s);
+        return new SIcon(code);
     }
 
     private static List<SIconProvider> loadProviders() {
@@ -82,23 +81,6 @@ final class SIconProviders {
                 .thenComparing(Comparator.comparing(it -> it.getClass().getName())));
         log.debug("{}", providers);
         return providers;
-    }
-
-    private static class SIconImpl implements SIcon {
-        private final String id;
-        private final String cssClass;
-        public SIconImpl(String id, String cssClass) {
-            this.id = id;
-            this.cssClass = cssClass;
-        }
-        @Override
-        public String getId() {
-            return id;
-        }
-        @Override
-        public String getCssClass() {
-            return cssClass;
-        }
     }
 
     private static abstract class AbstractSIconProvider implements SIconProvider {
@@ -120,9 +102,7 @@ final class SIconProviders {
             if (!validClasses.containsKey(baseCssClass))
                 return null;
 
-            // Usa o valor, ou a chave se não houver valor
-            final String iconId = StringUtils.defaultIfBlank(validClasses.getProperty(s), s);
-            return new SIconImpl(iconId, function.apply(baseCssClass));
+            return new SIcon(function.apply(baseCssClass));
         }
         protected static Properties loadValidClasses(Class<? extends SIconProvider> clazz) {
             Properties props = new Properties();

@@ -28,7 +28,6 @@ public class SInstanceActionTest {
 
         assertEquals(ActionType.WARNING, action.getType());
         assertEquals("text", action.getText());
-        assertEquals("star", action.getIcon().getId());
         assertEquals("description", action.getDescription());
         assertEquals(0, action.getPosition());
         assertTrue(action.isSecondary());

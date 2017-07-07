@@ -1,6 +1,11 @@
 package org.opensingular.form.decorator.action;
 
+import static java.util.stream.Collectors.*;
 import static org.junit.Assert.*;
+
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -8,37 +13,38 @@ public class SIconTest {
 
     @Test
     public void testLineIcons() {
-        assertEquals("icon-action-redo", SIcon.resolve("action-redo").getCssClass());
+        assertEquals(setOf("icon-action-redo"), SIcon.resolve("action-redo").getIconCssClasses());
     }
 
     @Test
     public void testFontAwesome() {
-        assertEquals("fa fa-trash-o", SIcon.resolve("trash-o").getCssClass());
+        assertEquals(setOf("fa fa-trash-o"), SIcon.resolve("trash-o").getIconCssClasses());
     }
 
     @Test
     public void testGlyphIcons() {
-        assertEquals("glyphicon glyphicon-piggy-bank", SIcon.resolve("piggy-bank").getCssClass());
+        assertEquals(setOf("glyphicon glyphicon-piggy-bank"), SIcon.resolve("piggy-bank").getIconCssClasses());
     }
 
     @Test
     public void testUnresolved() {
-        assertEquals("unresolvedicon", SIcon.resolve("unresolvedicon").getCssClass());
+        assertEquals(setOf("unresolvedicon"), SIcon.resolve("unresolvedicon").getIconCssClasses());
     }
 
     @Test
     public void testForced() {
-        assertEquals("fa fa-check", SIcon.resolve("fa fa-check").getCssClass());
+        assertEquals(setOf("fa fa-check"), SIcon.resolve("fa fa-check").getIconCssClasses());
     }
 
     @Test
     public void defaultMethods() {
-        assertEquals("bla", new SIcon() {
-            @Override
-            public String getId() {
-                return "bla";
-            }
-        }.getCssClass());
+        assertEquals(setOf("bla"), SIcon.resolve("bla").getIconCssClasses());
     }
 
+    private static Set<String> setOf(String... s) {
+        final Pattern regex = Pattern.compile("\\s");
+        return Stream.of(s)
+            .flatMap(it -> regex.splitAsStream(it))
+            .collect(toSet());
+    }
 }

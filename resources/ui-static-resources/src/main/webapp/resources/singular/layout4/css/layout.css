@@ -2826,8 +2826,7 @@ Login page
 .decorator-actions {
   padding: 0 0 2px; }
   .decorator-actions > .btn-group > .btn {
-    padding: 1px 2px 1px 2px;
-    margin: 1px 1px 1px 1px !important; }
+    padding: 1px 2px 1px 2px; }
   .decorator-actions > .btn-group > .btn:hover, .decorator-actions > .btn-group .btn:focus {
     color: #40BAA7;
     background-color: #F4FFFD; }

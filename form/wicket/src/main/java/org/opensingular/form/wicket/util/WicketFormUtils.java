@@ -97,7 +97,11 @@ public abstract class WicketFormUtils {
 
     public static Optional<Component> findChildByInstance(Component root, SInstance instance) {
         return streamDescendants(root)
-            .filter(c -> instanciaIfAware(c.getDefaultModel()).orElse(null) == instance)
+            .filter(c -> instanciaIfAware(c.getDefaultModel())
+                //.filter(it -> it == instance)
+                .filter(it -> Objects.equal(it.getName(), instance.getName()))
+                .filter(it -> Objects.equal(it.getId(), instance.getId()))
+                .isPresent())
             .findAny();
     }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
@@ -129,9 +133,9 @@ public abstract class WicketFormUtils {
     }
 
     public static String generateTitlePath(Component parentContainer,
-                                           SInstance parentContext,
-                                           Component childComponent,
-                                           SInstance childInstance) {
+        SInstance parentContext,
+        Component childComponent,
+        SInstance childInstance) {
 
         List<Component> components = Lists.newArrayList(childComponent);
         WicketUtils.appendListOfParents(components, childComponent, parentContainer);
@@ -144,7 +148,7 @@ public abstract class WicketFormUtils {
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
             String title = findTitle(comp);
-            if (title != null && ! Objects.equal(title, lastTitle)) {
+            if (title != null && !Objects.equal(title, lastTitle)) {
                 lastTitle = title;
                 addTitle(titles, title, instance, lastInstance);
             }
@@ -171,7 +175,7 @@ public abstract class WicketFormUtils {
 
     private static int findPos(@Nonnull SIList<SInstance> instance, @Nonnull SInstance lastInstance) {
         int pos = 1;
-        for(SInstance itemInstance : instance) {
+        for (SInstance itemInstance : instance) {
             if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
                 return pos;
             }
