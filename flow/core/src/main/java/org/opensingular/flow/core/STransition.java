@@ -170,7 +170,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public <K extends ProcessInstance> STransition setParametersInitializer(
+    public <K extends FlowInstance> STransition setParametersInitializer(
             @Nonnull ITransitionParametersInitializerProcess<K> initializerByProcess) {
         inject(initializerByProcess);
         return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializerByProcess.init(params, (K) ctx.getProcessInstance()));
@@ -187,7 +187,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public <K extends ProcessInstance> STransition setParametersValidator(
+    public <K extends FlowInstance> STransition setParametersValidator(
             @Nonnull ITransitionParametersValidatorProcess<K> validatorByProcess) {
         inject(validatorByProcess);
         return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validatorByProcess
@@ -253,7 +253,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersInitializerProcess<K extends ProcessInstance> extends Serializable {
+    public interface ITransitionParametersInitializerProcess<K extends FlowInstance> extends Serializable {
         void init(VarInstanceMap<?,?> params, K processInstance);
     }
 
@@ -263,7 +263,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersValidatorProcess<K extends ProcessInstance> extends Serializable {
+    public interface ITransitionParametersValidatorProcess<K extends FlowInstance> extends Serializable {
         void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, K processInstance);
     }
 

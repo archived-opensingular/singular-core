@@ -58,7 +58,7 @@ public final class Flow {
     }
 
     @Nonnull
-    public static <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull Class<K> classe) {
+    public static <K extends FlowDefinition<?>> K getProcessDefinition(@Nonnull Class<K> classe) {
         return getConfigBean().getProcessDefinition(classe);
     }
 
@@ -66,7 +66,7 @@ public final class Flow {
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
      */
     @Nonnull
-    public static Optional<ProcessDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {
+    public static Optional<FlowDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {
         return getConfigBean().getProcessDefinitionOpt(key);
     }
 
@@ -74,11 +74,11 @@ public final class Flow {
      * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
      */
     @Nonnull
-    public static <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull String key) {
+    public static <K extends FlowDefinition<?>> K getProcessDefinition(@Nonnull String key) {
         return (K) getConfigBean().getProcessDefinition(key);
     }
 
-    public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
+    public static <K extends FlowDefinition<?>> List<K> getDefinitions() {
         return (List<K>) getConfigBean().getDefinitions();
     }
 
@@ -91,42 +91,42 @@ public final class Flow {
 
     /** Retorna a ProcessInstance referente a entidade infomado ou dispara exception senão encontrar. */
     @Nonnull
-    public static ProcessInstance getProcessInstance(@Nonnull IEntityProcessInstance dadosInstanciaProcesso) {
+    public static FlowInstance getProcessInstance(@Nonnull IEntityProcessInstance dadosInstanciaProcesso) {
         Objects.requireNonNull(dadosInstanciaProcesso);
         return Objects.requireNonNull(getConfigBean().getProcessInstance(dadosInstanciaProcesso));
     }
 
     @Nonnull
-    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<K> expectedType, @Nonnull IEntityProcessInstance dadosInstanciaProcesso) {
+    public static <X extends FlowInstance, K extends FlowDefinition<X>> X getProcessInstance(@Nonnull Class<K> expectedType, @Nonnull IEntityProcessInstance dadosInstanciaProcesso) {
         return getConfigBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
     }
 
     @Nonnull
-    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(@Nonnull K processDefinition, @Nonnull Integer cod) {
+    public static <X extends FlowInstance, K extends FlowDefinition<X>> X getProcessInstance(@Nonnull K processDefinition, @Nonnull Integer cod) {
         return getConfigBean().getProcessInstance(processDefinition, cod);
     }
 
     @Nonnull
-    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
+    public static final <X extends FlowInstance, T extends FlowDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
         return getConfigBean().getProcessInstance(processClass, cod);
     }
 
     @Nonnull
-    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull String id) {
+    public static final <X extends FlowInstance, T extends FlowDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull String id) {
         return getConfigBean().getProcessInstance(processClass, id);
     }
 
-    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(Class<T> processClass, String id) {
+    public static final <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getProcessInstanceOpt(Class<T> processClass, String id) {
         return getConfigBean().getProcessInstanceOpt(processClass, id);
     }
 
     @Nonnull
-    public static <X extends ProcessInstance> Optional<X> getProcessInstanceOpt(@Nonnull String processInstanceID) {
+    public static <X extends FlowInstance> Optional<X> getProcessInstanceOpt(@Nonnull String processInstanceID) {
         return getConfigBean().getProcessInstanceOpt(processInstanceID);
     }
 
     @Nonnull
-    public static final <T extends ProcessInstance> T getProcessInstance(@Nonnull String processInstanceID) {
+    public static final <T extends FlowInstance> T getProcessInstance(@Nonnull String processInstanceID) {
         return getConfigBean().getProcessInstance(processInstanceID);
     }
 
@@ -135,11 +135,11 @@ public final class Flow {
      * @return Uma lista que pode ser alterada
      */
     @Nonnull
-    public static List<ProcessInstance> getProcessInstances(@Nonnull Collection<? extends IEntityProcessInstance> entities) {
+    public static List<FlowInstance> getProcessInstances(@Nonnull Collection<? extends IEntityProcessInstance> entities) {
         return entities.stream().map(e -> getProcessInstance(e)).collect(Collectors.toList());
     }
 
-    public static String generateID(ProcessInstance instancia) {
+    public static String generateID(FlowInstance instancia) {
         return getConfigBean().generateID(instancia);
     }
 
@@ -159,7 +159,7 @@ public final class Flow {
         return getConfigBean().getUserService().canBeAllocated(pessoa);
     }
 
-    public static Lnk getDefaultHrefFor(ProcessInstance instanciaProcesso) {
+    public static Lnk getDefaultHrefFor(FlowInstance instanciaProcesso) {
         return getConfigBean().getViewLocator().getDefaultHrefFor(instanciaProcesso);
     }
 
@@ -167,7 +167,7 @@ public final class Flow {
         return getConfigBean().getViewLocator().getDefaultHrefFor(instanciaTarefa);
     }
 
-    public static String getKeyFromDefinition(Class<? extends ProcessDefinition> clazz) {
+    public static String getKeyFromDefinition(Class<? extends FlowDefinition> clazz) {
         if (clazz == null) {
             throw new SingularFlowException(" A classe de definição do fluxo não pode ser nula ");
         }

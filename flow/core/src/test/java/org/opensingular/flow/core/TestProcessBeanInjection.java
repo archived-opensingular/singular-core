@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessBeanInjection.ProcessDefinitionBeanInjection.StepsBI;
+import org.opensingular.flow.core.TestProcessBeanInjection.FlowDefinitionBeanInjection.StepsBI;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -63,7 +63,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
     @Test
     public void injectionOnProcessDefinition() {
-        ProcessDefinitionBeanInjection pd = new ProcessDefinitionBeanInjection();
+        FlowDefinitionBeanInjection pd = new FlowDefinitionBeanInjection();
         assertBean(pd.myBean);
 
         STaskHuman taskPeople = (STaskHuman) pd.getFlowMap().getTask(StepsBI.Third);
@@ -79,20 +79,20 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
     @Test
     public void injectionIntoProcessInstance() {
-        ProcessDefinitionBeanInjection p = new ProcessDefinitionBeanInjection();
-        ProcessInstanceBeanInjection   i = p.prepareStartCall().createAndStart();
+        FlowDefinitionBeanInjection p = new FlowDefinitionBeanInjection();
+        FlowInstanceBeanInjection i = p.prepareStartCall().createAndStart();
         assertBean(i.myBean);
 
-        ProcessInstanceBeanInjection i2 = (ProcessInstanceBeanInjection) reload(i);
+        FlowInstanceBeanInjection i2 = (FlowInstanceBeanInjection) reload(i);
         assertBean(i2.myBean);
 
-        ProcessInstanceBeanInjection i3 = SingularIOUtils.serializeAndDeserialize(i, true);
+        FlowInstanceBeanInjection i3 = SingularIOUtils.serializeAndDeserialize(i, true);
         assertBean(i3.myBean);
     }
 
     private void runAndAssert(IPoint... expectedPoints) {
-        ProcessDefinitionBeanInjection p = new ProcessDefinitionBeanInjection();
-        ProcessInstance                i = p.prepareStartCall().createAndStart();
+        FlowDefinitionBeanInjection p = new FlowDefinitionBeanInjection();
+        FlowInstance i = p.prepareStartCall().createAndStart();
         for (IPoint point : expectedPoints) {
             if (!executedPoints.contains(point)) {
                 throw new AssertionError("Não foi executado o ponto de verifição de injeção: " + point);
@@ -101,7 +101,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
     }
 
     @DefinitionInfo("ProcessoBeanInjection")
-    public static class ProcessDefinitionBeanInjection extends ProcessDefinition<ProcessInstanceBeanInjection> {
+    public static class FlowDefinitionBeanInjection extends FlowDefinition<FlowInstanceBeanInjection> {
 
         public enum StepsBI implements ITaskDefinition {
             First, Second, Third, Call1, Call2, Call3, Call4, Call5, Call6, Call7, Call8, End;
@@ -115,8 +115,8 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         @Inject
         private MyBean myBean;
 
-        public ProcessDefinitionBeanInjection() {
-            super(ProcessInstanceBeanInjection.class);
+        public FlowDefinitionBeanInjection() {
+            super(FlowInstanceBeanInjection.class);
         }
 
         @Override
@@ -148,7 +148,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
             return f.build();
         }
 
-        private <K extends ProcessInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
+        private <K extends FlowInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
                                                                           ValidationResult result, K process) {
         }
 
@@ -156,7 +156,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    public static class ProcessInstanceBeanInjection extends ProcessInstance {
+    public static class FlowInstanceBeanInjection extends FlowInstance {
 
         @Inject
         private MyBean myBean;
@@ -281,22 +281,22 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public boolean canExecute(ProcessInstance instance, SUser user) {
+        public boolean canExecute(FlowInstance instance, SUser user) {
             return false;
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(ProcessInstance instancia) {
+        public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition definicao, STask task) {
+        public List<String> getExecuteRoleNames(FlowDefinition definicao, STask task) {
             return Collections.emptyList();
         }
     }

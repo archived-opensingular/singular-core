@@ -17,7 +17,7 @@
 package org.opensingular.flow.core.defaults;
 
 import org.opensingular.flow.core.ExecutionContext;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.ProcessNotifier;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.TaskHistoricLog;
@@ -53,7 +53,7 @@ public class NullNotifier implements ProcessNotifier {
     }
 
     @Override
-    public void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM) {
+    public void notifyStateUpdate(FlowInstance instanciaProcessoMBPM) {
 
     }
 

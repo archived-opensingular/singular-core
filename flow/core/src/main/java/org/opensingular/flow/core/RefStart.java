@@ -34,7 +34,7 @@ final class RefStart implements Serializable, Supplier<SStart> {
     RefStart(@Nonnull SStart start) {
         this.start = Objects.requireNonNull(start);
         this.refProcessDefinition = Objects.requireNonNull(
-                start.getFlowMap().getProcessDefinition().getSerializableReference());
+                start.getFlowMap().getFlowDefinition().getSerializableReference());
     }
 
     @Override

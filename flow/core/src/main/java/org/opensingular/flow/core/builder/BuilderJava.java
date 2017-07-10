@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.TaskJavaBatchCall;
 import org.opensingular.flow.core.TaskJavaCall;
@@ -25,7 +25,7 @@ import org.opensingular.flow.schedule.IScheduleData;
 
 public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTaskSelf<SELF, STaskJava> {
 
-    default  <T extends ProcessInstance>  SELF call(TaskJavaCall<T> impl) {
+    default  <T extends FlowInstance>  SELF call(TaskJavaCall<T> impl) {
         getTask().call(impl);
         return self();
     }
@@ -36,7 +36,7 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
     }
 
 
-    default <T extends ProcessInstance> SELF batchCall(TaskJavaBatchCall<T> implBloco, IScheduleData scheduleData) {
+    default <T extends FlowInstance> SELF batchCall(TaskJavaBatchCall<T> implBloco, IScheduleData scheduleData) {
         getTask().batchCall(implBloco, scheduleData);
         return self();
     }

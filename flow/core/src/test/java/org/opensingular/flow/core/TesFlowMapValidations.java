@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TesFlowMapValidations.ProcessWithFlowValidation.StepsDI;
+import org.opensingular.flow.core.TesFlowMapValidations.FlowWithFlowValidation.StepsDI;
 import org.opensingular.flow.core.builder.BuilderHuman;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
@@ -54,7 +54,7 @@ public class TesFlowMapValidations {
     @Test
     public void basic() {
         condicions = new ValidationCondicions();
-        ProcessWithFlowValidation definition = new ProcessWithFlowValidation();
+        FlowWithFlowValidation definition = new FlowWithFlowValidation();
 
         assertException(() -> definition.getFlowMap().getTaskByAbbreviationOrException("wrong"), "not found");
         definition.getFlowMap().getTaskByAbbreviationOrException(StepsDI.StepPeople.getKey());
@@ -74,31 +74,31 @@ public class TesFlowMapValidations {
     public void dontSetStart() {
         condicions = new ValidationCondicions();
         condicions.configStart = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "There is no initial task set");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "There is no initial task set");
     }
 
     @Test
     public void dontConfigHumanTask() {
         condicions = new ValidationCondicions();
         condicions.configPeopleAccessStrategy = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi definida a estrategia de verificação de acesso da tarefa");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estrategia de verificação de acesso da tarefa");
 
         condicions = new ValidationCondicions();
         condicions.configPeopleExecutionPage = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi definida a estratégia da página para execução da tarefa");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estratégia da página para execução da tarefa");
     }
 
     @Test
     public void taskWithoutPathToEnd() {
         condicions = new ValidationCondicions();
         condicions.createTaskWithoutPathToEnd = true;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "no way to reach the end");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "no way to reach the end");
     }
 
     @Test
     public void flowMetaData() {
         condicions = new ValidationCondicions();
-        ProcessWithFlowValidation p = new ProcessWithFlowValidation();
+        FlowWithFlowValidation p = new FlowWithFlowValidation();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
         assertTrue(p.getMetaDataValue(TAG));
         p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
@@ -109,7 +109,7 @@ public class TesFlowMapValidations {
     public void taskJavaWithoutCall() {
         condicions = new ValidationCondicions();
         condicions.javaTaskSetCode = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
     }
 
     @Test
@@ -117,11 +117,11 @@ public class TesFlowMapValidations {
         condicions = new ValidationCondicions();
         condicions.javaTaskSetCode = false;
         condicions.javaTaskSetCodeByBlock = true;
-        new ProcessWithFlowValidation().getFlowMap();
+        new FlowWithFlowValidation().getFlowMap();
     }
 
     @DefinitionInfo("WithFlowValidation")
-    public static class ProcessWithFlowValidation extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithFlowValidation extends FlowDefinition<FlowInstance> {
 
         public enum StepsDI implements ITaskDefinition {
             StepWait("F1"), StepWait2("F1"), StepPeople("S1"), StepJava("J1"), End("E1"), NoAndded("X");
@@ -141,8 +141,8 @@ public class TesFlowMapValidations {
             }
         }
 
-        public ProcessWithFlowValidation() {
-            super(ProcessInstance.class);
+        public FlowWithFlowValidation() {
+            super(FlowInstance.class);
         }
 
         @Override
@@ -206,25 +206,25 @@ public class TesFlowMapValidations {
     }
 
 
-    public static class DummyAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
+    public static class DummyAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
         @Override
-        public boolean canExecute(ProcessInstance instance, SUser user) {
+        public boolean canExecute(FlowInstance instance, SUser user) {
             return false;
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(ProcessInstance instancia) {
+        public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
             return null;
         }
     }

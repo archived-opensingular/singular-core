@@ -66,13 +66,13 @@ import java.util.stream.Stream;
  * @author Daniel Bordin
  */
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class ProcessDefinition<I extends ProcessInstance>
-        implements Comparable<ProcessDefinition<?>>, MetaDataEnabled {
+public abstract class FlowDefinition<I extends FlowInstance>
+        implements Comparable<FlowDefinition<?>>, MetaDataEnabled {
 
-    static final Logger logger = LoggerFactory.getLogger(ProcessDefinition.class);
+    static final Logger logger = LoggerFactory.getLogger(FlowDefinition.class);
 
     private final Class<I> processInstanceClass;
-    
+
     private final String key;
 
     private String category;
@@ -96,7 +96,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient RefProcessDefinition serializableReference;
-    private transient SingularInjector injector;
+    private transient SingularInjector     injector;
 
 
     /**
@@ -109,7 +109,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
      */
-    protected ProcessDefinition(Class<I> instanceClass) {
+    protected FlowDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
 
@@ -123,7 +123,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @param varService
      *            o serviço de consulta das definições de variáveis.
      */
-    protected ProcessDefinition(Class<I> processInstanceClass, VarService varService) {
+    protected FlowDefinition(Class<I> processInstanceClass, VarService varService) {
         if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
             throw new SingularFlowException(
                     "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
@@ -168,7 +168,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if (flowMap == null) {
             FlowMap novo = createFlowMap();
             Objects.requireNonNull(novo);
-            if (novo.getProcessDefinition() != this) {
+            if (novo.getFlowDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
             novo.verifyConsistency();
@@ -629,7 +629,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /** Verifica se a entidade da instancia de processo pertence a definição de processo. Senão dispara Exception. */
-    private static void checkIfKeysAreCompatible(ProcessDefinition<?> definition, IEntityProcessInstance instance) {
+    private static void checkIfKeysAreCompatible(FlowDefinition<?> definition, IEntityProcessInstance instance) {
         if(! instance.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(definition.getKey())){
             throw new SingularFlowException(
                     "A instancia de processo com id " + instance.getCod() + " não pertence a definição de processo " +
@@ -638,7 +638,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /** Verifica se a instancia de processo pertence a definição de processo. Senão dispara Exception. */
-    final void checkIfCompatible(ProcessInstance instance) {
+    final void checkIfCompatible(FlowInstance instance) {
         checkIfKeysAreCompatible(this, instance.getEntity());
         if (!processInstanceClass.isInstance(instance)) {
             throw new SingularFlowException(
@@ -715,20 +715,20 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return target;
     }
 
-    private static RefProcessDefinition createStaticReference(final Class<? extends ProcessDefinition> processDefinitionClass) {
+    private static RefProcessDefinition createStaticReference(final Class<? extends FlowDefinition> processDefinitionClass) {
         // A criação da classe tem que ficar em um método estático de modo que
         // classe anômina não tenha uma referência implicita a
         // ProcessDefinition, o que atrapalharia a serialização
         return new RefProcessDefinition() {
             @Override
-            protected ProcessDefinition<?> reload() {
+            protected FlowDefinition<?> reload() {
                 return ProcessDefinitionCache.getDefinition(processDefinitionClass);
             }
         };
     }
 
     @Override
-    public int compareTo(ProcessDefinition<?> dp2) {
+    public int compareTo(FlowDefinition<?> dp2) {
         int v = getCategory().compareTo(dp2.getCategory());
         if (v == 0) {
             v = getName().compareTo(dp2.getName());
@@ -743,7 +743,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if (o == null || getClass() != o.getClass())
             return false;
 
-        ProcessDefinition<?> that = (ProcessDefinition<?>) o;
+        FlowDefinition<?> that = (FlowDefinition<?>) o;
 
         return category.equals(that.category) && name.equals(that.name);
     }

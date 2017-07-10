@@ -55,7 +55,7 @@ import java.util.stream.Stream;
  * @author Daniel Bordin
  */
 @SuppressWarnings({ "serial", "unchecked" })
-public class ProcessInstance implements Serializable {
+public class FlowInstance implements Serializable {
 
     private RefProcessDefinition processDefinitionRef;
 
@@ -69,11 +69,11 @@ public class ProcessInstance implements Serializable {
 
     private transient VarInstanceMap<?,?> variables;
 
-    final void setProcessDefinition(ProcessDefinition<?> processDefinition) {
+    final void setProcessDefinition(FlowDefinition<?> flowDefinition) {
         if (processDefinitionRef != null) {
             throw SingularException.rethrow("Erro Interno");
         }
-        processDefinitionRef = RefProcessDefinition.of(processDefinition);
+        processDefinitionRef = RefProcessDefinition.of(flowDefinition);
         processDefinitionRef.get().inject(this);
     }
 
@@ -86,7 +86,7 @@ public class ProcessInstance implements Serializable {
      * @return a definição de processo desta instância.
      */
     @Nonnull
-    public <K extends ProcessDefinition<?>> K getProcessDefinition() {
+    public <K extends FlowDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
             throw SingularException.rethrow(
                     "A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newPreStartInstance() a partir da definição do processo.");
@@ -161,7 +161,7 @@ public class ProcessInstance implements Serializable {
      *
      * @param pai a instância "pai".
      */
-    public void setParent(ProcessInstance pai) {
+    public void setParent(FlowInstance pai) {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
 
@@ -284,7 +284,7 @@ public class ProcessInstance implements Serializable {
             if (isAllocated(user.getCod())) {
                 return  true;
             }
-            Optional<TaskAccessStrategy<ProcessInstance>> strategy = getAccessStrategy();
+            Optional<TaskAccessStrategy<FlowInstance>> strategy = getAccessStrategy();
             return strategy.isPresent() && strategy.get().canExecute(this, user);
         }
         return false;
@@ -306,7 +306,7 @@ public class ProcessInstance implements Serializable {
                 return true;
             }
         }
-        Optional<TaskAccessStrategy<ProcessInstance>> strategey = getAccessStrategy();
+        Optional<TaskAccessStrategy<FlowInstance>> strategey = getAccessStrategy();
         return strategey.isPresent() && strategey.get().canVisualize(this, user);
     }
 
@@ -355,7 +355,7 @@ public class ProcessInstance implements Serializable {
     }
 
     @SuppressWarnings("rawtypes")
-    private Optional<TaskAccessStrategy<ProcessInstance>> getAccessStrategy() {
+    private Optional<TaskAccessStrategy<FlowInstance>> getAccessStrategy() {
         return getState().map( task -> task.getAccessStrategy());
     }
 
@@ -507,7 +507,7 @@ public class ProcessInstance implements Serializable {
             TaskInstance tarefaNova = getTaskInstance(tarefa);
             estadoAtual = task;
 
-            Flow.notifyListeners(n -> n.notifyStateUpdate(ProcessInstance.this));
+            Flow.notifyListeners(n -> n.notifyStateUpdate(FlowInstance.this));
             return tarefaNova;
         }
     }

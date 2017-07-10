@@ -21,8 +21,8 @@ import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ITaskPredicate;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskPredicates;
 import org.opensingular.flow.core.builder.BuilderProcessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
@@ -33,7 +33,7 @@ import java.util.Calendar;
 import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.*;
 
 @DefinitionInfo("Peticoes")
-public class Peticao extends ProcessDefinition<ProcessInstance> {
+public class Peticao extends FlowDefinition<FlowInstance> {
 
     public enum PeticaoTask implements ITaskDefinition {
         NOTIFICAR_NOVA_INSTANCIA("Notificar nova instância"),
@@ -72,7 +72,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
     public static final String PAPEL_GERENTE = "GERENTE";
 
     public Peticao() {
-        super(ProcessInstance.class);
+        super(FlowInstance.class);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
 
     private Calendar addDias(Object taskInstance, int dias) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(((ProcessInstance) taskInstance).getBeginDate());
+        calendar.setTime(((FlowInstance) taskInstance).getBeginDate());
         calendar.add(Calendar.DATE, dias);
         return calendar;
     }

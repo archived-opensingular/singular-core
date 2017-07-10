@@ -54,7 +54,7 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Nonnull
-    public <T extends ProcessInstance> STaskJava batchCall(@Nonnull TaskJavaBatchCall<T> batchCall,
+    public <T extends FlowInstance> STaskJava batchCall(@Nonnull TaskJavaBatchCall<T> batchCall,
                                                            @Nonnull IScheduleData scheduleData) {
         if (taskImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando call(), chamada simples"), this);
@@ -65,7 +65,7 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Nonnull
-    public STaskJava call(@Nonnull TaskJavaCall<? extends ProcessInstance> javaCall) {
+    public STaskJava call(@Nonnull TaskJavaCall<? extends FlowInstance> javaCall) {
         if (blockImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando callBlock(), chamada em bloco"), this);
         }
@@ -86,7 +86,7 @@ public class STaskJava extends STask<STaskJava> {
         taskImpl.call(execucaoTask);
     }
 
-    public Object executarByBloco(Collection<? extends ProcessInstance> instancias) {
+    public Object executarByBloco(Collection<? extends FlowInstance> instancias) {
         if (blockImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."), this);
         }

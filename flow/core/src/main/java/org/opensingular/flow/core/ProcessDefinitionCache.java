@@ -29,17 +29,17 @@ import java.util.*;
 
 public final class ProcessDefinitionCache {
 
-    private final ImmutableList<ProcessDefinition<?>> definitions;
-    private final ImmutableMap<String, ProcessDefinition<?>> definitionsByKey;
+    private final ImmutableList<FlowDefinition<?>>        definitions;
+    private final ImmutableMap<String, FlowDefinition<?>> definitionsByKey;
 
-    private static LoadingCache<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>> definitionsByClass = CacheBuilder
-        .newBuilder().weakValues()
-        .build(new CacheLoader<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>>() {
-            @Override
-            public ProcessDefinition<?> load(Class<? extends ProcessDefinition<?>> classeDefinicao) throws Exception {
-                return classeDefinicao.newInstance();
-            }
-        });
+    private static LoadingCache<Class<? extends FlowDefinition<?>>, FlowDefinition<?>> definitionsByClass = CacheBuilder
+            .newBuilder().weakValues()
+            .build(new CacheLoader<Class<? extends FlowDefinition<?>>, FlowDefinition<?>>() {
+                @Override
+                public FlowDefinition<?> load(Class<? extends FlowDefinition<?>> classeDefinicao) throws Exception {
+                    return classeDefinicao.newInstance();
+                }
+            });
 
     private static ProcessDefinitionCache cache;
 
@@ -48,20 +48,20 @@ public final class ProcessDefinitionCache {
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String[] packagesNames) {
         this.packagesNames = packagesNames;
-        ImmutableList.Builder<ProcessDefinition<?>> newCache = ImmutableList.builder();
-        Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
+        ImmutableList.Builder<FlowDefinition<?>> newCache   = ImmutableList.builder();
+        Map<String, FlowDefinition<?>>           cacheByKey = new HashMap<>();
 
         String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 1);
-        packagesToScan[packagesToScan.length -1] = "org.opensingular";
+        packagesToScan[packagesToScan.length - 1] = "org.opensingular";
         Reflections reflections = new Reflections(packagesToScan);
 
-        Set<Class<? extends ProcessDefinition>> subTypes = reflections.getSubTypesOf(ProcessDefinition.class);
+        Set<Class<? extends FlowDefinition>> subTypes = reflections.getSubTypesOf(FlowDefinition.class);
 
-        for (Class<? extends ProcessDefinition> classeDefinicao : subTypes) {
+        for (Class<? extends FlowDefinition> classeDefinicao : subTypes) {
             if (Modifier.isAbstract(classeDefinicao.getModifiers())) {
                 continue;
             }
-            ProcessDefinition<?> def = getDefinition(classeDefinicao);
+            FlowDefinition<?> def = getDefinition(classeDefinicao);
             newCache.add(def);
             String key = def.getKey();
             if (cacheByKey.containsKey(key)) {
@@ -93,9 +93,9 @@ public final class ProcessDefinitionCache {
     }
 
     @Nonnull
-    public static <T extends ProcessDefinition<?>> T getDefinition(@Nonnull Class<T> definitionClass) {
+    public static <T extends FlowDefinition<?>> T getDefinition(@Nonnull Class<T> definitionClass) {
         Objects.requireNonNull(definitionClass);
-        ProcessDefinition<?> def = definitionsByClass.getUnchecked(definitionClass);
+        FlowDefinition<?> def = definitionsByClass.getUnchecked(definitionClass);
         if (def == null) {
             throw new SingularFlowException(
                     "Não foi encontrada a definiçao de processo referente a classe " + definitionClass.getName());
@@ -107,27 +107,27 @@ public final class ProcessDefinitionCache {
      * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
      */
     @Nonnull
-    public ProcessDefinition<?> getDefinition(@Nonnull String key) {
+    public FlowDefinition<?> getDefinition(@Nonnull String key) {
         Objects.requireNonNull(key);
-        ProcessDefinition<?> processDefinition = definitionsByKey.get(key);
-        if(processDefinition == null){
+        FlowDefinition<?> flowDefinition = definitionsByKey.get(key);
+        if(flowDefinition == null){
             throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " +
                     Arrays.toString(packagesNames));
         }
-        return processDefinition;
+        return flowDefinition;
     }
 
     /**
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
      */
     @Nonnull
-    public Optional<ProcessDefinition<?>> getDefinitionOpt(@Nonnull String key) {
+    public Optional<FlowDefinition<?>> getDefinitionOpt(@Nonnull String key) {
         Objects.requireNonNull(key);
         return Optional.ofNullable(definitionsByKey.get(key));
     }
 
     @Nonnull
-    public List<ProcessDefinition<?>> getDefinitions() {
+    public List<FlowDefinition<?>> getDefinitions() {
         return definitions;
     }
 }

@@ -49,7 +49,7 @@ public class SStart extends SParametersEnabled {
      * antes do processo ser executado.
      */
     @Nullable
-    public <I extends ProcessInstance> IStartInitializer<I> getStartInitializer() {
+    public <I extends FlowInstance> IStartInitializer<I> getStartInitializer() {
         return startInitializer;
     }
 
@@ -57,7 +57,7 @@ public class SStart extends SParametersEnabled {
      * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
      * antes do processo ser executado.
      */
-    public <I extends ProcessInstance> void setStartInitializer(@Nonnull IStartInitializer<I> startInitializer) {
+    public <I extends FlowInstance> void setStartInitializer(@Nonnull IStartInitializer<I> startInitializer) {
         this.startInitializer = inject(startInitializer);
     }
 
@@ -66,7 +66,7 @@ public class SStart extends SParametersEnabled {
      * executado antes do inicializador definido em {@link #setStartInitializer(IStartInitializer)} .
      */
     @Nullable
-    public <I extends ProcessInstance> IStartValidator<I> getStartValidator() {
+    public <I extends FlowInstance> IStartValidator<I> getStartValidator() {
         return startValidator;
     }
 
@@ -74,7 +74,7 @@ public class SStart extends SParametersEnabled {
      * Define o validador deste start point a ser executado antes que a instância seja criada. O validador é
      * executado antes do inicializador definido em {@link #setStartInitializer(IStartInitializer)} .
      */
-    public <I extends ProcessInstance> void setStartValidator(@Nonnull IStartValidator<I> startValidator) {
+    public <I extends FlowInstance> void setStartValidator(@Nonnull IStartValidator<I> startValidator) {
         this.startValidator = inject(startValidator);
     }
 
@@ -88,13 +88,13 @@ public class SStart extends SParametersEnabled {
      * configuração.
      */
     @FunctionalInterface
-    public static interface IStartInitializer<I extends ProcessInstance> {
+    public static interface IStartInitializer<I extends FlowInstance> {
         public void startInstance(I instance, StartCall<I> startCall);
     }
 
     /** Validador da chamada de start antes que a instancia do processo seja criada. */
     @FunctionalInterface
-    public interface IStartValidator<I extends ProcessInstance> extends Serializable {
+    public interface IStartValidator<I extends FlowInstance> extends Serializable {
         public void validate(StartCall<I> startCall, ValidationResult validationResult);
     }
 }

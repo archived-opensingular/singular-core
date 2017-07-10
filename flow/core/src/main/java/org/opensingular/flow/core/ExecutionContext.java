@@ -21,7 +21,7 @@ import org.opensingular.flow.core.variable.VarInstanceMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ExecutionContext<K extends ProcessInstance> {
+public class ExecutionContext<K extends FlowInstance> {
 
     private final K processInstance;
 
@@ -43,7 +43,7 @@ public class ExecutionContext<K extends ProcessInstance> {
     }
 
     public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?,?> input) {
-        this((K)taskInstance.getProcessInstance(), taskInstance, input);
+        this((K)taskInstance.getFlowInstance(), taskInstance, input);
     }
 
     public K getProcessInstance() {
