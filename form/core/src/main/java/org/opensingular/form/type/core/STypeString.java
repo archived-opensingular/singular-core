@@ -35,11 +35,11 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     public boolean getValorAtributoTrim() {
-        return getAttributeValue(SPackageBasic.ATR_TRIM);
+        return Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_TRIM));
     }
 
     public boolean getValorAtributoEmptyToNull() {
-        return getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL);
+        return Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL));
     }
 
     public STypeString withValorAtributoTrim(boolean valor) {

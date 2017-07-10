@@ -1,5 +1,5 @@
 (function () {
-    
+
 	//pollyfill para startsWith
 	if (!String.prototype.startsWith) {
 	    String.prototype.startsWith = function(searchString, position){
@@ -9,7 +9,7 @@
 	}
 	
 	window.SingularResourceHandler = (function () {
-        if (typeof $ == "undefined") {
+        if (typeof $ === "undefined") {
             window.alert("jQuery não foi importado corretamente.");
             return;
         }
@@ -22,7 +22,8 @@
             onloaded;
 
         (function _resolveNameFromCookie() {
-            for (i = 0; i < cookies.length; i += 1) {
+            var i = 0;
+            for (; i < cookies.length; i += 1) {
                 if (cookies[i].trim().startsWith('skin')) {
                     name = JSON.parse(cookies[i].replace('skin=', '')).name;
                 }
@@ -43,10 +44,11 @@
             });
 
             if (favicon) {
-                __head.append($("<link rel='shortcut icon' href='" + favicon + "'/>"))
+                __head.append($("<link rel='shortcut icon' href='" + favicon + "'/>"));
             }
 
-            for (i = 0; i < cookies.length; i += 1) {
+            var i = 0;
+            for (; i < cookies.length; i += 1) {
                 if (cookies[i].trim().startsWith('skin')) {
                     name = JSON.parse(cookies[i].replace('skin=', '')).name;
                 }
@@ -82,6 +84,6 @@
             apply: function () {
                 _apply();
             }
-        }
+        };
     }());
 }());

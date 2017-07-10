@@ -6,7 +6,7 @@ import org.fest.assertions.api.IterableAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
@@ -73,7 +73,7 @@ public class DinamicVisiblityValidationTest {
         tester.newFormTester().submit(tester.getDummyPage().getSingularValidationButton());
     }
 
-    private IterableAssert<IValidationError> asserThatValidationErrorsOfFieldTwo() {
+    private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldTwo() {
         return tester.getAssertionsForm()
                 .getSubCompomentWithType(
                         tester.findTypeBySimpleName(FIELD_TWO).is(STypeString.class).getTarget()
@@ -82,7 +82,7 @@ public class DinamicVisiblityValidationTest {
                 .assertThatValidationErrors();
     }
 
-    private IterableAssert<IValidationError> asserThatValidationErrorsOfFieldOne() {
+    private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldOne() {
         return tester.getAssertionsForm()
                 .getSubCompomentWithType(
                         tester.findTypeBySimpleName(FIELD_ONE).is(STypeString.class).getTarget()

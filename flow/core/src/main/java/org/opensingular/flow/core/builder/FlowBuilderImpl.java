@@ -24,14 +24,14 @@ import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STaskEnd;
 import org.opensingular.flow.core.STaskJava;
-import org.opensingular.flow.core.STaskPeople;
+import org.opensingular.flow.core.STaskHuman;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
 
 import java.util.Objects;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderPeople<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderProcessRole<?>, ITaskDefinition> {
+        FlowBuilder<ProcessDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderHuman<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderProcessRole<?>, ITaskDefinition> {
 
     public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
         super(processDefinition);
@@ -53,8 +53,8 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderPeople<?> newPeopleTask(STaskPeople task) {
-        return new ImplBuilderPeople<>(this, task);
+    protected BuilderHuman<?> newHumanTask(STaskHuman task) {
+        return new ImplBuilderHuman<>(this, task);
     }
 
     @Override
@@ -119,9 +119,9 @@ public class FlowBuilderImpl extends
         }
     }
 
-    protected static class ImplBuilderPeople<SELF extends ImplBuilderPeople<SELF>> extends ImplBuilderTask<SELF, STaskPeople>
-            implements BuilderPeople<SELF> {
-        public ImplBuilderPeople(FlowBuilderImpl flowBuilder, STaskPeople task) {
+    protected static class ImplBuilderHuman<SELF extends ImplBuilderHuman<SELF>> extends ImplBuilderTask<SELF, STaskHuman>
+            implements BuilderHuman<SELF> {
+        public ImplBuilderHuman(FlowBuilderImpl flowBuilder, STaskHuman task) {
             super(flowBuilder, task);
         }
     }

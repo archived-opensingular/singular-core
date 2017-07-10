@@ -224,7 +224,7 @@ public class RelocationTest {
 
             FlowBuilderImpl flow = new FlowBuilderImpl(this);
             flow.addJavaTask(PTask.START).call(this::doSomething);
-            flow.addPeopleTask(PTask.DO1, new NullTaskAccessStrategy());
+            flow.addHumanTask(PTask.DO1, new NullTaskAccessStrategy());
 
             flow.addEnd(PTask.END);
             flow.setStart(PTask.START);
@@ -237,8 +237,8 @@ public class RelocationTest {
             return flow.build();
         }
 
-        public void doSomething(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-
+        public Object doSomething(ExecutionContext ctxExecucao) {
+            return null;
         }
 
     }

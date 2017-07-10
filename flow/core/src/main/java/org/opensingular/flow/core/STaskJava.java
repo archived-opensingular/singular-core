@@ -19,7 +19,6 @@ package org.opensingular.flow.core;
 import org.opensingular.flow.schedule.IScheduleData;
 
 import javax.annotation.Nonnull;
-import java.io.Serializable;
 import java.util.Collection;
 
 @SuppressWarnings("unchecked")
@@ -27,10 +26,10 @@ public class STaskJava extends STask<STaskJava> {
 
     private IScheduleData scheduleData;
 
-    private ImplTaskJava taskImpl;
+    private TaskJavaCall<?> taskImpl;
 
     @SuppressWarnings("rawtypes")
-    private ImplTaskBlock blockImpl;
+    private TaskJavaBatchCall blockImpl;
 
     public STaskJava(FlowMap mapa, String nome, String abbreviation) {
         super(mapa, nome, abbreviation);
@@ -55,22 +54,22 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Nonnull
-    public <T extends ProcessInstance> STaskJava callBlock(@Nonnull ImplTaskBlock<T> implBloco,
-            @Nonnull IScheduleData scheduleData) {
+    public <T extends ProcessInstance> STaskJava batchCall(@Nonnull TaskJavaBatchCall<T> batchCall,
+                                                           @Nonnull IScheduleData scheduleData) {
         if (taskImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando call(), chamada simples"), this);
         }
-        this.blockImpl = inject(implBloco);
+        this.blockImpl = inject(batchCall);
         this.scheduleData = inject(scheduleData);
         return this;
     }
 
     @Nonnull
-    public STaskJava call(@Nonnull ImplTaskJava impl) {
+    public STaskJava call(@Nonnull TaskJavaCall<? extends ProcessInstance> javaCall) {
         if (blockImpl != null) {
             throw new SingularFlowException(createErrorMsg("A task já está configurada usando callBlock(), chamada em bloco"), this);
         }
-        taskImpl = inject(impl);
+        taskImpl = inject(javaCall);
         return this;
     }
 
@@ -84,10 +83,7 @@ public class STaskJava extends STask<STaskJava> {
         if (taskImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Se aplica apenas execução em bloco nesta tarefa."), this);
         }
-        Object result = taskImpl.call(execucaoTask);
-        if (result instanceof String) {
-            execucaoTask.setTransition((String) result);
-        }
+        taskImpl.call(execucaoTask);
     }
 
     public Object executarByBloco(Collection<? extends ProcessInstance> instancias) {
@@ -111,13 +107,4 @@ public class STaskJava extends STask<STaskJava> {
         }
     }
 
-    @FunctionalInterface
-    public interface ImplTaskJava extends Serializable {
-        Object call(ExecutionContext execucaoTask);
-    }
-
-    @FunctionalInterface
-    public interface ImplTaskBlock<K extends ProcessInstance> {
-        Object call(Collection<K> instanciasProcesso);
-    }
 }

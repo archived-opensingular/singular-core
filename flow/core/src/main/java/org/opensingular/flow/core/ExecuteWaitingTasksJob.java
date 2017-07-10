@@ -56,7 +56,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         }
 
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
-            definicaoProcessoMBPM.getFlowMap().getPeopleTasks().stream()
+            definicaoProcessoMBPM.getFlowMap().getHumanTasks().stream()
                     .filter(task -> task.getTargetDateExecutionStrategy() != null)
                     .forEach(fillTargetEndDate(mbpmBean, log, definicaoProcessoMBPM));
         }
@@ -93,7 +93,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         }
     }
 
-    private Consumer<STaskPeople> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM) {
+    private Consumer<STaskHuman> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM) {
         return task -> {
             // Preenche Data Alvo para os casos que estiverem null
             for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
