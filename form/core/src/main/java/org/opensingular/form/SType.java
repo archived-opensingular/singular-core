@@ -449,20 +449,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
     }
 
-    public SType<I> withRequired(boolean value) {
-        return with(SPackageBasic.ATR_REQUIRED, value);
-    }
-
     public final Boolean isRequired() {
         return getAttributeValue(SPackageBasic.ATR_REQUIRED);
-    }
-
-    public SType<I> withExists(Boolean value) {
-        return with(SPackageBasic.ATR_EXISTS, value);
-    }
-
-    public SType<I> withExists(Predicate<I> predicate) {
-        return with(SPackageBasic.ATR_EXISTS_FUNCTION, predicate);
     }
 
     public final boolean exists() {

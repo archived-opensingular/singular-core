@@ -331,7 +331,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         public static final class TestTipoListaComCargaInterna extends STypeList<STypeString, SIString> {
             @Override
             protected void onLoadType(TypeBuilder tb) {
-                withRequired(true);
+                asAtr().required(true);
                 asAtr().label("xxx");
             }
         }
