@@ -171,14 +171,14 @@ public class TesFlowMapValidations {
                 f.addJavaTask(StepsDI.StepJava);
             }
 
-            f.addEnd(StepsDI.End);
-            assertException(() -> f.addEnd(StepsDI.End), "already defined");
+            f.addEndTask(StepsDI.End);
+            assertException(() -> f.addEndTask(StepsDI.End), "already defined");
 
             assertException(() -> f.build().getStart(), "Task inicial não definida no processo");
 
             if (condicions.configStart) {
-                f.setStart(StepsDI.StepWait);
-                assertException(() -> f.setStart(StepsDI.StepWait), "The start point is already setted");
+                f.setStartTask(StepsDI.StepWait);
+                assertException(() -> f.setStartTask(StepsDI.StepWait), "The start point is already setted");
             }
 
             f.from(StepsDI.StepWait).go(StepsDI.StepPeople).thenGo(StepsDI.StepJava);

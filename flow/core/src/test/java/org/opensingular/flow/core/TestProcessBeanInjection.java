@@ -135,9 +135,9 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
             f.addJavaTask(StepsBI.Call6).call(new MyJavaTask6());
             f.addJavaTask(StepsBI.Call7).call(new MyJavaTask7());
             f.addJavaTask(StepsBI.Call8).call(new MyJavaTask8());
-            f.addEnd(StepsBI.End);
+            f.addEndTask(StepsBI.End);
 
-            f.setStart(StepsBI.First).with(this::setupStartParameters);
+            f.setStartTask(StepsBI.First).with(this::setupStartParameters);
 
             f.from(StepsBI.First).go(StepsBI.Call1).thenGo(StepsBI.Call2).thenGo(StepsBI.Call3).thenGo(StepsBI.Call4)
                     .thenGo(StepsBI.Call5).thenGo(StepsBI.Call6).thenGo(StepsBI.Call7).thenGo(StepsBI.Call8);

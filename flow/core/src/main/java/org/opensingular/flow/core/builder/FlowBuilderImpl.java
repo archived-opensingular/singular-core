@@ -68,7 +68,7 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderStart<?> newStart(SStart start) {
+    protected BuilderStart<?> newStartTask(SStart start) {
         return new ImplBuilderStart<>(start);
     }
 

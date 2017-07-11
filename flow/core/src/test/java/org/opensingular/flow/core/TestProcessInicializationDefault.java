@@ -59,9 +59,9 @@ public class TestProcessInicializationDefault extends TestFlowExecutionSupport {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
 
             f.addWaitTask(StepsDI.First);
-            f.addEnd(StepsDI.End);
+            f.addEndTask(StepsDI.End);
 
-            f.setStart(StepsDI.First);
+            f.setStartTask(StepsDI.First);
             f.from(StepsDI.First).go(StepsDI.End);
 
             return f.build();

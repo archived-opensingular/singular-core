@@ -223,9 +223,9 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
             f.addWaitTask(StepsTP.First);
             f.addWaitTask(StepsTP.Second);
             f.addWaitTask(StepsTP.Third);
-            f.addEnd(StepsTP.End);
+            f.addEndTask(StepsTP.End);
 
-            f.setStart(StepsTP.First).with(this::setupStartParameters);
+            f.setStartTask(StepsTP.First).with(this::setupStartParameters);
 
             f.from(StepsTP.First).go(StepsTP.Second)
                     .setAsDefaultTransiton()
