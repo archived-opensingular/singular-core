@@ -163,7 +163,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
     }
 
-    private static class MyJavaTask implements TaskJavaCall {
+    private static class MyJavaTask implements TaskJavaCall<FlowInstance> {
 
         @Inject
         public MyBean myBean;
@@ -175,7 +175,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask1 implements TaskJavaCall {
+    private static class MyJavaTask1 implements TaskJavaCall<FlowInstance> {
 
         @Inject
         public MyBean myBean;
@@ -187,7 +187,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask2 implements TaskJavaCall {
+    private static class MyJavaTask2 implements TaskJavaCall<FlowInstance> {
 
         @Inject
         public MyBean myBean;
@@ -199,7 +199,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask3 implements TaskJavaCall {
+    private static class MyJavaTask3 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
@@ -210,7 +210,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask4 implements TaskJavaCall {
+    private static class MyJavaTask4 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
@@ -221,7 +221,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask5 implements TaskJavaCall {
+    private static class MyJavaTask5 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
@@ -232,7 +232,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask6 implements TaskJavaCall {
+    private static class MyJavaTask6 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
@@ -242,7 +242,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask7 implements TaskJavaCall {
+    private static class MyJavaTask7 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
@@ -252,7 +252,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    private static class MyJavaTask8 implements TaskJavaCall {
+    private static class MyJavaTask8 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
