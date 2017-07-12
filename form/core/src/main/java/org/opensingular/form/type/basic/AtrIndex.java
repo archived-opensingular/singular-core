@@ -6,25 +6,25 @@ import org.opensingular.form.type.core.SPackagePersistence;
 
 import java.util.function.Function;
 
-public class AtrPersistence  extends STranslatorForAttribute {
+public class AtrIndex extends STranslatorForAttribute {
 
-    public AtrPersistence() {
+    public AtrIndex() {
     }
 
-    public AtrPersistence(SAttributeEnabled alvo) {
-        super(alvo);
+    public AtrIndex(SAttributeEnabled target) {
+        super(target);
     }
 
-    public static <A extends SAttributeEnabled> Function<A, AtrPersistence> factory() {
-        return AtrPersistence::new;
+    public static <A extends SAttributeEnabled> Function<A, AtrIndex> factory() {
+        return AtrIndex::new;
     }
 
-    public AtrPersistence persistent(Boolean persistent) {
+    public AtrIndex persistent(Boolean persistent) {
         setAttributeValue(SPackagePersistence.ATR_PERSISTENT, persistent);
         return this;
     }
 
-    public AtrPersistence alias(String alias) {
+    public AtrIndex alias(String alias) {
         setAttributeValue(SPackagePersistence.ATR_ALIAS, alias);
         return this;
     }
