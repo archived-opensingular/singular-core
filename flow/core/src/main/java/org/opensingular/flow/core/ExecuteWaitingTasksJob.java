@@ -117,7 +117,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
             for (IConditionalTaskAction acao : acoesAutomaticas) {
                 if (acao.getPredicate().test(instanciaTarefa)) {
                     log.append(instancia.getFullId()).append(": Condicao Atingida '")
-                            .append(acao.getPredicate().getDescription(instanciaTarefa)).append("' execudando '")
+                            .append(acao.getPredicate().getDescription(instanciaTarefa)).append("' executando '")
                             .append(acao.getCompleteDescription()).append("'\n");
                     acao.execute(instanciaTarefa);
                     mbpmBean.getPersistenceService().commitTransaction();
