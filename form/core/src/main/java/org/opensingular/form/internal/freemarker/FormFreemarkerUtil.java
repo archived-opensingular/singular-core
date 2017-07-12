@@ -16,20 +16,51 @@
 
 package org.opensingular.form.internal.freemarker;
 
-import freemarker.template.*;
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.*;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.type.core.*;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Function;
+
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.type.core.SIDate;
+import org.opensingular.form.type.core.SIDateTime;
+import org.opensingular.form.type.core.SINumber;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.SITime;
+
+import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateBooleanModel;
+import freemarker.template.TemplateCollectionModel;
+import freemarker.template.TemplateDateModel;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateMethodModelEx;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateModelIterator;
+import freemarker.template.TemplateNumberModel;
+import freemarker.template.TemplateScalarModel;
+import freemarker.template.TemplateSequenceModel;
 
 /**
  * Integra o Singular Form com o Freemarker
@@ -64,7 +95,19 @@ public final class FormFreemarkerUtil {
      * instancia informada.
      */
     public static String merge(SInstance dados, String templateString) {
-        Template template = parseTemplate(templateString);
+        return internalMerge(dados, templateString, false);
+    }
+
+    /**
+     * Gera uma string resultante do merge do template com os dados contídos na
+     * instancia informada podendo ignorar os erros.
+     */
+    public static String merge(SInstance dados, String templateString, boolean ignoreError) {
+        return internalMerge(dados, templateString, ignoreError);
+    }
+
+    private static String internalMerge(SInstance dados, String templateString, boolean ignoreError) {
+        Template template = parseTemplate(templateString, ignoreError);
         StringWriter out = new StringWriter();
         try {
             template.process(dados, out, new FormObjectWrapper());
@@ -74,20 +117,24 @@ public final class FormFreemarkerUtil {
         return out.toString();
     }
 
-    private static Template parseTemplate(String template) {
+    private static Template parseTemplate(String template, boolean ignoreError) {
         try {
-            return new Template("templateStringParameter", template, getConfiguration());
+            if(ignoreError){
+                return new Template("templateStringParameter", template, getConfiguration(TemplateExceptionHandler.IGNORE_HANDLER));
+            }else{
+                return new Template("templateStringParameter", template, getConfiguration(TemplateExceptionHandler.RETHROW_HANDLER));
+            }
         } catch (IOException e) {
             throw new SingularFormException("Erro fazendo parse do template: " + template, e);
         }
     }
 
-    private static synchronized Configuration getConfiguration() {
+    private static synchronized Configuration getConfiguration(TemplateExceptionHandler exceptionHandler) {
         if (cfg == null) {
             Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
             novo.setDefaultEncoding(StandardCharsets.UTF_8.name());
             novo.setLocale(new Locale("pt", "BR"));
-            novo.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            novo.setTemplateExceptionHandler(exceptionHandler);
             cfg = novo;
         }
         return cfg;
