@@ -18,7 +18,7 @@ package org.opensingular.flow.test.support;
 
 import com.mchange.util.AssertException;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
@@ -30,13 +30,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Classe de apoio a construção de asertivas de teste para {@link ProcessInstance}.
+ * Classe de apoio a construção de asertivas de teste para {@link FlowInstance}.
  *
  * @author Daniel C. Bordin on 18/03/2017.
  */
-public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, AssertionsProcessInstance> {
+public class AssertionsProcessInstance extends AssertionsBase<FlowInstance, AssertionsProcessInstance> {
 
-    public AssertionsProcessInstance(ProcessInstance target) {
+    public AssertionsProcessInstance(FlowInstance target) {
         super(target);
     }
 

@@ -46,16 +46,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     public static final String PREFIXO = "SGL";
 
-    private String processGroupCod;
+    private String moduleCod;
     
     private List<ProcessNotifier> notifiers = new ArrayList<>();
 
     /**
-     * @param processGroupCod - chave do sistema cadastrado no em <code>TB_GRUPO_PROCESSO</code>
+     * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
      */
-    protected SingularFlowConfigurationBean(String processGroupCod) {
+    protected SingularFlowConfigurationBean(String moduleCod) {
         super();
-        this.processGroupCod = processGroupCod;
+        this.moduleCod = moduleCod;
     }
 
     protected SingularFlowConfigurationBean() {
@@ -63,13 +63,13 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     final void start() {
-        for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
-            for (STaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
+        for (final FlowDefinition<?> flowDefinition : getDefinitions()) {
+            for (STaskJava task : flowDefinition.getFlowMap().getJavaTasks()) {
                 if (!task.isImmediateExecution()) {
                     getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }
             }
-            for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
+            for (ProcessScheduledJob scheduledJob : flowDefinition.getScheduledJobs()) {
                 getScheduleService().schedule(scheduledJob);
             }
         }
@@ -86,16 +86,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     }
 
-    public final void setProcessGroupCod(String processGroupCod) {
-        this.processGroupCod = processGroupCod;
+    public final void setModuleCod(String moduleCod) {
+        this.moduleCod = moduleCod;
     }
 
     @Nonnull
-    public final String getProcessGroupCod() {
-        if (processGroupCod == null) {
-            throw new SingularFlowException("Não foi definido o ProcessGroupCod");
+    public final String getModuleCod() {
+        if (moduleCod == null) {
+            throw new SingularFlowException("Não foi definido o moduleCod");
         }
-        return processGroupCod;
+        return moduleCod;
     }
     
     // ------- Método de recuperação de definições --------------------
@@ -107,7 +107,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     protected abstract String[] getDefinitionsPackages();
 
     @Nonnull
-    public <K extends ProcessDefinition<?>> K getProcessDefinition(@Nonnull Class<K> processClass) {
+    public <K extends FlowDefinition<?>> K getProcessDefinition(@Nonnull Class<K> processClass) {
         return ProcessDefinitionCache.getDefinition(processClass);
     }
 
@@ -115,7 +115,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
      * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
      */
     @Nonnull
-    protected ProcessDefinition<?> getProcessDefinition(@Nonnull String key) {
+    protected FlowDefinition<?> getProcessDefinition(@Nonnull String key) {
         return getDefinitionCache().getDefinition(key);
     }
 
@@ -123,11 +123,11 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
      * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
      */
     @Nonnull
-    protected Optional<ProcessDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {
+    protected Optional<FlowDefinition<?>> getProcessDefinitionOpt(@Nonnull String key) {
         return getDefinitionCache().getDefinitionOpt(key);
     }
 
-    public List<ProcessDefinition<?>> getDefinitions() {
+    public List<FlowDefinition<?>> getDefinitions() {
         return getDefinitionCache().getDefinitions();
     }
 
@@ -135,54 +135,54 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     /** Retorna a ProcessInstance referente a código infomado ou dispara exception senão encontrar. */
     @Nonnull
-    private ProcessInstance getProcessInstance(@Nonnull Integer entityCod) {
+    private FlowInstance getProcessInstance(@Nonnull Integer entityCod) {
         return getProcessInstanceOpt(entityCod).orElseThrow(() -> new SingularFlowException(msgNotFound(entityCod)));
     }
 
     /** Retorna a ProcessInstance referente a entidade infomado ou dispara exception senão encontrar. */
     @Nonnull
-    protected ProcessInstance getProcessInstance(@Nonnull IEntityProcessInstance entityProcessInstance) {
+    protected FlowInstance getProcessInstance(@Nonnull IEntityProcessInstance entityProcessInstance) {
         Objects.requireNonNull(entityProcessInstance);
         return getProcessInstance(entityProcessInstance.getCod());
     }
 
     @Nonnull
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(
+    protected final <X extends FlowInstance, T extends FlowDefinition<X>> X getProcessInstance(
             @Nonnull Class<T> processClass, @Nonnull IEntityProcessInstance entityProcessInstance) {
         Objects.requireNonNull(entityProcessInstance);
         return (X) getProcessInstance(getProcessDefinition(processClass), entityProcessInstance.getCod());
     }
 
-    public <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(
+    public <X extends FlowInstance, K extends FlowDefinition<X>> X getProcessInstance(
             @Nonnull K processDefinition, @Nonnull Integer cod) {
         return getProcessInstanceOpt(processDefinition, cod).orElseThrow(
                 () -> new SingularFlowException(msgNotFound(cod)));
     }
 
     @Nonnull
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
+    protected final <X extends FlowInstance, T extends FlowDefinition<X>> X getProcessInstance(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
         return getProcessInstanceOpt(processClass, cod).orElseThrow(() -> new SingularFlowException(msgNotFound(cod)));
     }
 
     @Nonnull
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(
+    protected final <X extends FlowInstance, T extends FlowDefinition<X>> X getProcessInstance(
             @Nonnull Class<T> processClass, @Nonnull String id) {
         return getProcessInstanceOpt(processClass, id).orElseThrow(() -> new SingularFlowException(msgNotFound(id)));
     }
 
     @Nonnull
-    protected <X extends ProcessInstance> X getProcessInstance(@Nonnull String id) {
+    protected <X extends FlowInstance> X getProcessInstance(@Nonnull String id) {
         return (X) getProcessInstanceOpt(id).orElseThrow(() -> new SingularFlowException(msgNotFound(id)));
     }
 
     @Nonnull
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
+    protected final <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getProcessInstanceOpt(@Nonnull Class<T> processClass, @Nonnull Integer cod) {
         Objects.requireNonNull(processClass);
         return getProcessInstanceOpt(getProcessDefinition(processClass), cod);
     }
 
     @Nonnull
-    public <X extends ProcessInstance, K extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(
+    public <X extends FlowInstance, K extends FlowDefinition<X>> Optional<X> getProcessInstanceOpt(
             @Nonnull K processDefinition, @Nonnull Integer cod) {
         Objects.requireNonNull(processDefinition);
         Objects.requireNonNull(cod);
@@ -191,11 +191,11 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
 
     @Nonnull
-    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> Optional<X> getProcessInstanceOpt(@Nonnull Class<T> processClass, @Nonnull String id) {
+    protected final <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getProcessInstanceOpt(@Nonnull Class<T> processClass, @Nonnull String id) {
         if (StringUtils.isNumeric(id)) {
             return getProcessInstanceOpt(processClass, Integer.valueOf(id));
         }
-        Optional<ProcessInstance> instance = getProcessInstanceOpt(id);
+        Optional<FlowInstance> instance = getProcessInstanceOpt(id);
         if (instance.isPresent()) {
             getProcessDefinition(processClass).checkIfCompatible(instance.get());
         }
@@ -203,10 +203,10 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     @Nonnull
-    protected <X extends ProcessInstance> Optional<X> getProcessInstanceOpt(@Nonnull String processInstanceID) {
+    protected <X extends FlowInstance> Optional<X> getProcessInstanceOpt(@Nonnull String processInstanceID) {
         Objects.requireNonNull(processInstanceID);
         MappingId mapeamento = parseId(processInstanceID);
-        Optional<ProcessInstance> instance = getProcessInstanceOpt(mapeamento.cod);
+        Optional<FlowInstance> instance = getProcessInstanceOpt(mapeamento.cod);
         if (instance.isPresent() && mapeamento.abbreviation != null) {
             getProcessDefinition(mapeamento.abbreviation).checkIfCompatible(instance.get());
         }
@@ -215,10 +215,10 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     /** Retorna a ProcessInstance referente a código infomado. */
     @Nonnull
-    private Optional<ProcessInstance> getProcessInstanceOpt(@Nonnull Integer entityCod) {
+    private Optional<FlowInstance> getProcessInstanceOpt(@Nonnull Integer entityCod) {
         return getPersistenceService().retrieveProcessInstanceByCod(entityCod)
                 .map(entity -> {
-                    ProcessDefinition<?> def = getProcessDefinition(entity.getProcessVersion().getAbbreviation());
+                    FlowDefinition<?> def = getProcessDefinition(entity.getProcessVersion().getAbbreviation());
                     return def.convertToProcessInstance(entity);
                 });
     }
@@ -231,7 +231,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
     // estar nesse lugar
-    protected String generateID(ProcessInstance instancia) {
+    protected String generateID(FlowInstance instancia) {
         return new StringBuilder(50)
             .append(PREFIXO)
             .append('.')
@@ -244,7 +244,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     // estar nesse lugar
 
     protected String generateID(TaskInstance instanciaTarefa) {
-        ProcessInstance instanciaProcesso = instanciaTarefa.getProcessInstance();
+        FlowInstance instanciaProcesso = instanciaTarefa.getFlowInstance();
         return new StringBuilder(generateID(instanciaProcesso))
             .append('.')
             .append(instanciaTarefa.getId())
@@ -305,7 +305,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // ------- Consultas ----------------------------------------------
 
-    public final List<? extends ProcessDefinition<?>> getEnabledProcessForCreationBy(SUser user) {
+    public final List<? extends FlowDefinition<?>> getEnabledProcessForCreationBy(SUser user) {
         return getDefinitions().stream().filter(d -> d.canBeCreatedBy(user)).sorted().collect(Collectors.toList());
     }
 
@@ -330,12 +330,12 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     public final Object executeTask(STaskJava task) {
-        final IProcessDataService<?> dataService = task.getFlowMap().getProcessDefinition().getDataService();
-        final Collection<? extends ProcessInstance> instancias = dataService.retrieveAllInstancesIn(task);
+        final IProcessDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
+        final Collection<? extends FlowInstance> instancias = dataService.retrieveAllInstancesIn(task);
         if (task.isCalledInBlock()) {
             return task.executarByBloco(instancias);
         } else {
-            for (final ProcessInstance instanciaProcessoMBPM : instancias) {
+            for (final FlowInstance instanciaProcessoMBPM : instancias) {
                 FlowEngine.executeScheduledTransition(task, instanciaProcessoMBPM);
             }
             return null;

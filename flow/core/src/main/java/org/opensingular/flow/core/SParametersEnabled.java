@@ -50,7 +50,7 @@ public abstract class SParametersEnabled {
      * definições da variável.
      */
     public SParametersEnabled addParamBindedToProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
+        VarDefinition defVar = getFlowMap().getFlowDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
             throw new SingularFlowException("Variable '" + ref + "' is not defined in process definition.", getFlowMap());
         }
@@ -72,6 +72,6 @@ public abstract class SParametersEnabled {
 
     @Nonnull
     final <V> V inject(@Nonnull V target) {
-        return getFlowMap().getProcessDefinition().inject(target);
+        return getFlowMap().getFlowDefinition().inject(target);
     }
 }

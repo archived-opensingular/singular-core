@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.validation;
+package org.opensingular.flow.test.definicao;
 
-import org.opensingular.form.SInstance;
+import org.opensingular.flow.core.FlowInstance;
 
-public interface IInstanceValidatable<I extends SInstance> {
+public class FlowVersoes extends FlowInstance {
 
-    I getInstance();
+    /**
+     * chamar new DefinicaoProcessVersoes().newInstance();
+     */
+    protected FlowVersoes(){
 
-    IInstanceValidatable<I> setDefaultLevel(ValidationErrorLevel level);
-
-    ValidationErrorLevel getDefaultLevel();
-
-    IValidationError error(IValidationError error);
-
-    IValidationError error(String msg);
-
-    IValidationError error(ValidationErrorLevel level, IValidationError error);
-
-    IValidationError error(ValidationErrorLevel level, String msg);
+    }
 }

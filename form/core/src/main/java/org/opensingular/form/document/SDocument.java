@@ -37,7 +37,7 @@ import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,7 +80,7 @@ public class SDocument {
 
     private final DocumentAnnotations documentAnnotations = new DocumentAnnotations(this);
 
-    private SetMultimap<Integer, IValidationError> validationErrors;
+    private SetMultimap<Integer, ValidationError> validationErrors;
 
     public SDocument() {
         registry = new DelegatingLocalServiceRegistry(ServiceRegistryLocator.locate());
@@ -333,20 +333,20 @@ public class SDocument {
                 .findAny();
     }
 
-    public Collection<IValidationError> getValidationErrors() {
+    public Collection<ValidationError> getValidationErrors() {
         return validationErrors == null ? Collections.emptyList() : validationErrors.values();
     }
 
-    public Map<Integer, Collection<IValidationError>> getValidationErrorsByInstanceId() {
+    public Map<Integer, Collection<ValidationError>> getValidationErrorsByInstanceId() {
         if (validationErrors == null) {
             return Collections.emptyMap();
         }
-        ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
+        ArrayListMultimap<Integer, ValidationError> copy = ArrayListMultimap.create();
         copy.putAll(validationErrors());
         return copy.asMap();
     }
 
-    public Set<IValidationError> getValidationErrors(Integer instanceId) {
+    public Set<ValidationError> getValidationErrors(Integer instanceId) {
         return validationErrors == null ? Collections.emptySet() : validationErrors().get(instanceId);
     }
 
@@ -356,18 +356,18 @@ public class SDocument {
         }
     }
 
-    public Set<IValidationError> setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
+    public Set<ValidationError> setValidationErrors(Integer instanceId, Iterable<ValidationError> errors) {
         return validationErrors().replaceValues(instanceId, errors);
     }
 
-    public void setValidationErrors(Iterable<IValidationError> errors) {
+    public void setValidationErrors(Iterable<ValidationError> errors) {
         validationErrors = null;
-        for (IValidationError error : errors) {
+        for (ValidationError error : errors) {
             validationErrors().put(error.getInstanceId(), error);
         }
     }
 
-    private SetMultimap<Integer, IValidationError> validationErrors() {
+    private SetMultimap<Integer, ValidationError> validationErrors() {
         if (validationErrors == null) {
             validationErrors = LinkedHashMultimap.create();
         }

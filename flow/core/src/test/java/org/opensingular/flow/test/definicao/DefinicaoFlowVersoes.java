@@ -19,16 +19,16 @@ package org.opensingular.flow.test.definicao;
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.builder.BuilderProcessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
 
 @DefinitionInfo("DefVersoes")
-public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
+public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
-    public DefinicaoProcessVersoes() {
-        super(ProcessVersoes.class);
+    public DefinicaoFlowVersoes() {
+        super(FlowVersoes.class);
     }
 
     private static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;
@@ -53,7 +53,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
     private enum InstanceProcessVersao {
         VERSAO_1() {
             @Override
-            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
                 definicaoProcessVersoes.setName("Versão", "Usando versões");
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
@@ -61,15 +61,19 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start";
-                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
-                ITaskDefinition task = () -> "Task";
-                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
-                ITaskDefinition people = () -> "People";
-                flow.addPeopleTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
-                ITaskDefinition end = () -> "End";
-                flow.addEnd(end);
+                flow.addJavaTask(start).call(p -> {
 
-                flow.setStart(start);
+                });
+                ITaskDefinition task = () -> "Task";
+                flow.addJavaTask(task).call(p -> {
+
+                });
+                ITaskDefinition people = () -> "People";
+                flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
+                ITaskDefinition end = () -> "End";
+                flow.addEndTask(end);
+
+                flow.setStartTask(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -80,7 +84,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
         VERSAO_1_COM_PAPEIS() {
             @Override
-            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
                 definicaoProcessVersoes.setName("Versão", "Usando versões");
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
@@ -88,15 +92,18 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BuilderProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
                 ITaskDefinition start = () -> "Start";
-                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
-                ITaskDefinition task = () -> "Task";
-                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
-                ITaskDefinition people = () -> "People";
-                flow.addPeopleTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
-                ITaskDefinition end = () -> "End";
-                flow.addEnd(end);
+                flow.addJavaTask(start).call(p -> {
 
-                flow.setStart(start);
+                });
+                ITaskDefinition task = () -> "Task";
+                flow.addJavaTask(task).call(p -> {
+                });
+                ITaskDefinition people = () -> "People";
+                flow.addHumanTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
+                ITaskDefinition end = () -> "End";
+                flow.addEndTask(end);
+
+                flow.setStartTask(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -107,7 +114,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
         VERSAO_2() {
             @Override
-            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
                 definicaoProcessVersoes.setName("Versão", "Usando versões");
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
@@ -115,15 +122,19 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start 2";
-                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
-                ITaskDefinition task = () -> "Task 2";
-                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
-                ITaskDefinition people = () -> "People 2";
-                flow.addPeopleTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
-                ITaskDefinition end = () -> "End 2";
-                flow.addEnd(end);
+                flow.addJavaTask(start).call(p -> {
 
-                flow.setStart(start);
+                });
+                ITaskDefinition task = () -> "Task 2";
+                flow.addJavaTask(task).call(p -> {
+
+                });
+                ITaskDefinition people = () -> "People 2";
+                flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
+                ITaskDefinition end = () -> "End 2";
+                flow.addEndTask(end);
+
+                flow.setStartTask(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -132,7 +143,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
             }
         };
 
-        public abstract FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes);
+        public abstract FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes);
     }
 
 }

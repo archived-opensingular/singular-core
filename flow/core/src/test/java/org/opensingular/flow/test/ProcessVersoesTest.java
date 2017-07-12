@@ -6,12 +6,12 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.ProcessDefinitionCache;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.entity.IEntityProcessVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.test.definicao.DefinicaoProcessVersoes;
-import org.opensingular.flow.test.definicao.ProcessVersoes;
+import org.opensingular.flow.test.definicao.DefinicaoFlowVersoes;
+import org.opensingular.flow.test.definicao.FlowVersoes;
 import org.opensingular.flow.test.support.TestFlowSupport;
 
 import java.util.ArrayList;
@@ -31,18 +31,18 @@ public class ProcessVersoesTest extends TestFlowSupport {
     @Test
     public void testarMudancaVersao() {
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().prepareStartCall().createAndStart();
+        FlowVersoes processVersao1 = new DefinicaoFlowVersoes().prepareStartCall().createAndStart();
         TaskInstance start1 = processVersao1.getCurrentTaskOrException();
 
-        DefinicaoProcessVersoes.changeFlowToVersao2();
+        DefinicaoFlowVersoes.changeFlowToVersao2();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().prepareStartCall().createAndStart();
+        FlowVersoes processVersao2 = new DefinicaoFlowVersoes().prepareStartCall().createAndStart();
         TaskInstance start2 = processVersao2.getCurrentTaskOrException();
 
-        ProcessInstance pi1 = start1.getProcessInstance();
+        FlowInstance pi1 = start1.getFlowInstance();
         IEntityProcessVersion pd1 = pi1.getProcessDefinition().getEntityProcessVersion();
-        ProcessInstance pi2 = start2.getProcessInstance();
+        FlowInstance pi2 = start2.getFlowInstance();
         IEntityProcessVersion pd2 = pi2.getProcessDefinition().getEntityProcessVersion();
         assertNotEquals("As instancias de processo devem ser diferentes", pi1, pi2);
         assertNotEquals("As definições de processo devem ser diferentes", pd1, pd2);
@@ -51,21 +51,21 @@ public class ProcessVersoesTest extends TestFlowSupport {
     @Test
     public void testarMudancaVersaoApenasPapeis() {
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().prepareStartCall().createAndStart();
+        FlowVersoes processVersao1 = new DefinicaoFlowVersoes().prepareStartCall().createAndStart();
         TaskInstance start1 = processVersao1.getCurrentTaskOrException();
 
         List<? extends IEntityRoleDefinition> rolesBefore = new ArrayList<>(
-                start1.getProcessInstance().getProcessDefinition().getEntityProcessDefinition().getRoles());
+                start1.getFlowInstance().getProcessDefinition().getEntityProcessDefinition().getRoles());
 
-        DefinicaoProcessVersoes.changeFlowToVersao1ComPapeis();
+        DefinicaoFlowVersoes.changeFlowToVersao1ComPapeis();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().prepareStartCall().createAndStart();
+        FlowVersoes processVersao2 = new DefinicaoFlowVersoes().prepareStartCall().createAndStart();
         TaskInstance start2 = processVersao2.getCurrentTaskOrException();
 
-        ProcessInstance pi1 = start1.getProcessInstance();
-        ProcessInstance pi2 = start2.getProcessInstance();
-        List<? extends IEntityRoleDefinition> rolesAfter = start2.getProcessInstance().getProcessDefinition().getEntityProcessDefinition()
+        FlowInstance pi1 = start1.getFlowInstance();
+        FlowInstance pi2 = start2.getFlowInstance();
+        List<? extends IEntityRoleDefinition> rolesAfter = start2.getFlowInstance().getProcessDefinition().getEntityProcessDefinition()
                 .getRoles();
 
         assertNotEquals("As instancias de processo devem ser diferentes", pi1, pi2);
@@ -76,16 +76,16 @@ public class ProcessVersoesTest extends TestFlowSupport {
     public void nadaMudou() {
 
 
-        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().prepareStartCall().createAndStart();
+        FlowVersoes processVersao1 = new DefinicaoFlowVersoes().prepareStartCall().createAndStart();
         TaskInstance start1 = processVersao1.getCurrentTaskOrException();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().prepareStartCall().createAndStart();
+        FlowVersoes processVersao2 = new DefinicaoFlowVersoes().prepareStartCall().createAndStart();
         TaskInstance start2 = processVersao2.getCurrentTaskOrException();
 
-        ProcessInstance pi1 = start1.getProcessInstance();
+        FlowInstance pi1 = start1.getFlowInstance();
         IEntityProcessVersion pd1 = pi1.getProcessDefinition().getEntityProcessVersion();
-        ProcessInstance pi2 = start2.getProcessInstance();
+        FlowInstance pi2 = start2.getFlowInstance();
         IEntityProcessVersion pd2 = pi2.getProcessDefinition().getEntityProcessVersion();
 
         assertNotEquals("As instancias de processo devem ser diferentes", pi1, pi2);

@@ -6,7 +6,7 @@ import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.CategoryEntity;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
 import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
-import org.opensingular.flow.persistence.entity.ProcessGroupEntity;
+import org.opensingular.flow.persistence.entity.ModuleEntity;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.ProcessRight;
 import org.opensingular.flow.persistence.entity.ProcessRightPK;
@@ -43,7 +43,7 @@ public class SetupTest extends TestFlowSupport {
         listaAllFor(ExecutionVariableEntity.class);
         listaAllFor(ProcessVersionEntity.class);
         listaAllFor(ProcessDefinitionEntity.class);
-        listaAllFor(ProcessGroupEntity.class);
+        listaAllFor(ModuleEntity.class);
         listaAllFor(ProcessInstanceEntity.class);
         listaAllFor(ProcessRight.class);
         listaAllFor(ProcessRightPK.class);

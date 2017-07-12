@@ -17,19 +17,19 @@
 package org.opensingular.form.validation.validator;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.validation.IInstanceValidatable;
-import org.opensingular.form.validation.IInstanceValidator;
+import org.opensingular.form.validation.InstanceValidatable;
+import org.opensingular.form.validation.InstanceValidator;
 
-public interface IInstanceValueValidator<I extends SInstance, V> extends IInstanceValidator<I> {
+public interface InstanceValueValidator<I extends SInstance, V> extends InstanceValidator<I> {
 
     @Override
     @SuppressWarnings("unchecked")
-    default void validate(IInstanceValidatable<I> validatable) {
+    default void validate(InstanceValidatable<I> validatable) {
         V value = (V) validatable.getInstance().getValue();
         if (value == null)
             return;
         validate(validatable, value);
     }
 
-    void validate(IInstanceValidatable<I> validatable, V value);
+    void validate(InstanceValidatable<I> validatable, V value);
 }

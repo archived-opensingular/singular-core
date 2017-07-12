@@ -1788,7 +1788,7 @@ Theme Panel
       border-radius: 50%;
       float: left;
       right: 15px;
-      background-color: #F4FFFD;
+      background-color: #FDFDFD;
       font-size: 30px; }
       .upload-list-item .list-item-action .list-action-uploading::after {
         position: absolute;
@@ -1912,7 +1912,7 @@ Theme Panel
   float: left;
   width: 51px;
   height: 51px;
-  background-color: #F4FFFD;
+  background-color: #FDFDFD;
   color: #acb1c2; }
   .upload-list-add label {
     font-size: 20px;
@@ -2000,12 +2000,12 @@ Theme Panel
     background-color: #fdf0f2; }
 
 .list-detail-input .table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #F4FFFD; }
+  background-color: #FDFDFD; }
 
 .list-detail-input .headers {
   color: #acb1c2;
   text-transform: uppercase;
-  background-color: #F4FFFD; }
+  background-color: #FDFDFD; }
 
 .list-detail-body {
   margin-bottom: 15px; }
@@ -2133,7 +2133,7 @@ Theme Panel
 
 .list-table-empty {
   display: block;
-  background-color: #F4FFFD;
+  background-color: #FDFDFD;
   color: #acb1c2;
   vertical-align: middle;
   border: 1px dashed currentColor;
@@ -2169,7 +2169,7 @@ Theme Panel
     .list-by-form .list-group-item .list-item-header:after {
       clear: both; }
   .list-by-form .list-group-item .list-item-body {
-    background-color: #F4FFFD;
+    background-color: #FDFDFD;
     padding-top: 20px; }
 
 .list-by-form .has-error input {
@@ -2819,3 +2819,22 @@ Login page
   font-size: 13px !important;
   margin-top: -6px !important;
   margin-bottom: 10px !important; }
+
+.singular-composite-title {
+  display: inline-block; }
+
+.decorator-actions {
+  padding: 0 0 2px; }
+  .decorator-actions > .btn-group > .btn {
+    padding: 1px 2px 1px 2px;
+    margin: 1px 1px 1px 1px !important; }
+  .decorator-actions > .btn-group > .btn:hover, .decorator-actions > .btn-group .btn:focus {
+    color: #40BAA7;
+    background-color: #FDFDFD; }
+
+.decorator-actions.align-left {
+  display: inline;
+  margin-left: 1em; }
+
+.decorator-actions.align-right {
+  float: right; }

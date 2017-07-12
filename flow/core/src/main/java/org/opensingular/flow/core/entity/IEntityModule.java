@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.test.definicao;
+package org.opensingular.flow.core.entity;
 
-import org.opensingular.flow.core.ProcessInstance;
+public interface IEntityModule extends IEntityByCod<String> {
 
-public class ProcessVersoes extends ProcessInstance {
+    String getName();
 
-    /**
-     * chamar new DefinicaoProcessVersoes().newInstance();
-     */
-    protected ProcessVersoes(){
+    String getConnectionURL();
 
-    }
 }

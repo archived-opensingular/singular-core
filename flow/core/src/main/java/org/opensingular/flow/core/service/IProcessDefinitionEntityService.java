@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.service;
 
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityProcessDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
@@ -31,10 +31,10 @@ public interface IProcessDefinitionEntityService<CATEGORY extends IEntityCategor
  TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_TASK extends IEntityRoleTask> {
 
     /**
-     * Generates a new {@link IEntityProcessVersion} if {@link ProcessDefinition} is
+     * Generates a new {@link IEntityProcessVersion} if {@link FlowDefinition} is
      * new or has changed
      */
-    PROCESS_VERSION generateEntityFor(ProcessDefinition<?> processDefinition);
+    PROCESS_VERSION generateEntityFor(FlowDefinition<?> flowDefinition);
 
     boolean isDifferentVersion(IEntityProcessVersion oldEntity, IEntityProcessVersion newEntity);
 }

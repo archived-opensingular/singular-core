@@ -48,27 +48,27 @@ public class SPackageTest extends TestCaseForm {
         Assert.assertFalse(tipoB.getAttributeValue(SPackageBasic.ATR_REQUIRED));
         Assert.assertFalse(tipoI.getAttributeValue(SPackageBasic.ATR_REQUIRED));
 
-        tipoB.withRequired(true);
+        tipoB.asAtr().required(true);
 
         Assert.assertEquals(false, tipoS.isRequired());
         Assert.assertEquals(true, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
 
-        tipoB.withRequired(true);
-        tipoS.withRequired(false);
+        tipoB.asAtr().required(true);
+        tipoS.asAtr().required(false);
 
         Assert.assertEquals(false, tipoS.isRequired());
         Assert.assertEquals(true, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
 
-        tipoB.withRequired(false);
+        tipoB.asAtr().required(false);
 
         Assert.assertEquals(false, tipoS.isRequired());
         Assert.assertEquals(false, tipoB.isRequired());
         Assert.assertEquals(false, tipoI.isRequired());
 
-        tipoS.withRequired(true);
-        tipoB.withRequired(false);
+        tipoS.asAtr().required(true);
+        tipoB.asAtr().required(false);
 
         Assert.assertEquals(true, tipoS.isRequired());
         Assert.assertEquals(false, tipoB.isRequired());
@@ -255,7 +255,7 @@ public class SPackageTest extends TestCaseForm {
         public static final class TestTipoComCargaInterna extends STypeInteger {
             @Override
             protected void onLoadType(TypeBuilder tb) {
-                withRequired(true);
+                asAtr().required(true);
                 setInitialValue(10);
                 withDefaultValueIfNull(11);
                 with(TestPacoteA.ATR_XX, 12);

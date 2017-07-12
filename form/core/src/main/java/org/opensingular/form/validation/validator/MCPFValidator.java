@@ -17,7 +17,7 @@
 package org.opensingular.form.validation.validator;
 
 import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.validation.IInstanceValidatable;
+import org.opensingular.form.validation.InstanceValidatable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
+public enum MCPFValidator implements InstanceValueValidator<SIString, String> {
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCPFValidator");
@@ -36,7 +36,7 @@ public enum MCPFValidator implements IInstanceValueValidator<SIString, String> {
     ));
 
     @Override
-    public void validate(IInstanceValidatable<SIString> validatable, String value) {
+    public void validate(InstanceValidatable<SIString> validatable, String value) {
         if (!isValid(value)) {
             validatable.error("CPF inválido");
         }

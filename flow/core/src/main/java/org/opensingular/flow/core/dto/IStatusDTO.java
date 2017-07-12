@@ -19,11 +19,9 @@ package org.opensingular.flow.core.dto;
 import java.io.Serializable;
 
 public interface IStatusDTO extends Serializable {
-    String getProcessCode();
-
-    void setProcessCode(String processCode);
 
     Integer getAmount();
+
 
     void setAmount(Integer amount);
 

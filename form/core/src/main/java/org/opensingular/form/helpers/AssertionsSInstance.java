@@ -2,7 +2,6 @@ package org.opensingular.form.helpers;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +17,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.io.FormSerializationUtil;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 
 import static org.junit.Assert.*;
 
@@ -164,7 +163,7 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         return this;
     }
 
-    public IterableAssert<IValidationError> assertThatValidationErrors(){
+    public IterableAssert<ValidationError> assertThatValidationErrors(){
         return Assertions.assertThat(getTarget().getValidationErrors());
     }
 

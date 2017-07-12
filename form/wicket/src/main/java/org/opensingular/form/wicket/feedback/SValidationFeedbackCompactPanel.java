@@ -23,7 +23,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
@@ -87,10 +87,10 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                         //                    + "  .on('mouseout',  function(){ $this.removeClass('singular-active'); });"
                         + ""));
 
-                List<IValidationError> messages = getMessages();
+                List<ValidationError> messages = getMessages();
                 if (!messages.isEmpty()) {
                     String errors = messages.stream()
-                            .map(IValidationError::getMessage)
+                            .map(ValidationError::getMessage)
                             .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
                     if (messages.size() > 1) {
                         response.render(OnDomReadyHeaderItem.forScript(""
@@ -118,7 +118,7 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
     }
 
     private String firstMessageOrQuantity() {
-        List<IValidationError> list = getMessages();
+        List<ValidationError> list = getMessages();
         if (list.isEmpty()) {
             return null;
         } else if (list.size() == 1) {
@@ -132,7 +132,7 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
         return getValidationFeedbackHandler().containsNestedErrors();
     }
 
-    public List<IValidationError> getMessages() {
+    public List<ValidationError> getMessages() {
         return getValidationFeedbackHandler().collectNestedErrors();
     }
 
@@ -140,8 +140,8 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
         return getValidationFeedbackHandler().containsNestedErrors(level);
     }
 
-    protected IModel<? extends List<IValidationError>> newValidationErrorsModel() {
-        return (IReadOnlyModel<List<IValidationError>>) this::getMessages;
+    protected IModel<? extends List<ValidationError>> newValidationErrorsModel() {
+        return (IReadOnlyModel<List<ValidationError>>) this::getMessages;
     }
 
     protected SValidationFeedbackHandler getValidationFeedbackHandler() {

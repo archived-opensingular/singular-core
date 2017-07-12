@@ -95,10 +95,10 @@ public class TestViewResolver {
         assertView(SViewSelectionBySelect.class, tipoString);
         assertView(SViewSelectionBySelect.class, tipoStringLarge);
 
-        tipoInteger.withRequired(true);
-        tipoDate.withRequired(true);
-        tipoString.withRequired(true);
-        tipoStringLarge.withRequired(true);
+        tipoInteger.asAtr().required(true);
+        tipoDate.asAtr().required(true);
+        tipoString.asAtr().required(true);
+        tipoStringLarge.asAtr().required(true);
 
         assertView(SViewSelectionByRadio.class, tipoInteger);
         assertView(SViewSelectionByRadio.class, tipoDate);

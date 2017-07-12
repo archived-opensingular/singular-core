@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.validation;
+package org.opensingular.flow.persistence.entity;
 
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-public interface IValidationError extends Serializable {
-    String getMessage();
-    ValidationErrorLevel getErrorLevel();
-    Integer getInstanceId();
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.opensingular.lib.support.persistence.util.Constants;
+
+
+/**
+ * The persistent class for the TB_MODULO database table.
+ */
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Entity
+@Table(name = "TB_MODULO", schema = Constants.SCHEMA)
+public class ModuleEntity extends AbstractModuleEntity {
+
+    private static final long serialVersionUID = 1L;
+
 }
