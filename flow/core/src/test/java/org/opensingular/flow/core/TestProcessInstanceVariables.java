@@ -113,9 +113,9 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
 
             f.addWaitTask(StepsPV.First);
-            f.addEnd(StepsPV.End);
+            f.addEndTask(StepsPV.End);
 
-            f.setStart(StepsPV.First).setInitializer(this::processInitializer);
+            f.setStartTask(StepsPV.First).setInitializer(this::processInitializer);
             f.from(StepsPV.First).go(StepsPV.End);
 
             return f.build();

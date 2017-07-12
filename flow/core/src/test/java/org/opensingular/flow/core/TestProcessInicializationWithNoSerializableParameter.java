@@ -135,9 +135,9 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
 
             f.addWaitTask(StepsNS.First);
             f.addWaitTask(StepsNS.Second);
-            f.addEnd(StepsNS.End);
+            f.addEndTask(StepsNS.End);
 
-            f.setStart(StepsNS.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
+            f.setStartTask(StepsNS.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
             f.from(StepsNS.First).go(StepsNS.Second).thenGo(StepsNS.End);
 
             return f.build();

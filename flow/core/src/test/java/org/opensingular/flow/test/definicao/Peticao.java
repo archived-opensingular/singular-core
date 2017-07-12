@@ -90,10 +90,10 @@ public class Peticao extends FlowDefinition<FlowInstance> {
         flow.addHumanTask(AGUARDANDO_GERENTE, papelGerente)
                 .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
         flow.addHumanTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
-        flow.addEnd(INDEFERIDO);
-        flow.addEnd(DEFERIDO);
-        flow.addEnd(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
-        flow.setStart(NOTIFICAR_NOVA_INSTANCIA);
+        flow.addEndTask(INDEFERIDO);
+        flow.addEndTask(DEFERIDO);
+        flow.addEndTask(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
+        flow.setStartTask(NOTIFICAR_NOVA_INSTANCIA);
 
         flow.from(NOTIFICAR_NOVA_INSTANCIA).go(ENVIAR_PARA_ANALISE, AGUARDANDO_ANALISE);
         flow.from(AGUARDANDO_ANALISE).go(COLOCAR_EM_EXIGENCIA, EM_EXIGENCIA);

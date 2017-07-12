@@ -71,9 +71,9 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
                 ITaskDefinition people = () -> "People";
                 flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End";
-                flow.addEnd(end);
+                flow.addEndTask(end);
 
-                flow.setStart(start);
+                flow.setStartTask(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -101,9 +101,9 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
                 ITaskDefinition people = () -> "People";
                 flow.addHumanTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End";
-                flow.addEnd(end);
+                flow.addEndTask(end);
 
-                flow.setStart(start);
+                flow.setStartTask(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);
@@ -132,9 +132,9 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
                 ITaskDefinition people = () -> "People 2";
                 flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End 2";
-                flow.addEnd(end);
+                flow.addEndTask(end);
 
-                flow.setStart(start);
+                flow.setStartTask(start);
                 flow.from(start).go(task);
                 flow.from(task).go(people);
                 flow.from(people).go(end);

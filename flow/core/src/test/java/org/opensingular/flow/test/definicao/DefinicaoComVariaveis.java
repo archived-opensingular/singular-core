@@ -56,9 +56,9 @@ public class DefinicaoComVariaveis extends FlowDefinition<FlowInstance> {
         f.addJavaTask(APROVAR).call(this::print);
 
         ITaskDefinition END = () -> "Aprovado";
-        f.addEnd(END);
+        f.addEndTask(END);
 
-        f.setStart(SET_VARIAVEL);
+        f.setStartTask(SET_VARIAVEL);
         f.from(SET_VARIAVEL).go(APROVAR);
         f.from(APROVAR).go(PRINT);
         f.from(PRINT).go(END);
