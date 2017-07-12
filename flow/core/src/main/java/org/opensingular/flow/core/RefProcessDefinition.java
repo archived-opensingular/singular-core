@@ -28,30 +28,30 @@ import java.util.function.Supplier;
  *
  * @author Daniel C. Bordin
  */
-public abstract class RefProcessDefinition implements Serializable, Supplier<ProcessDefinition<?>> {
+public abstract class RefProcessDefinition implements Serializable, Supplier<FlowDefinition<?>> {
 
-    private transient ProcessDefinition<?> processDefinition;
+    private transient FlowDefinition<?> flowDefinition;
 
     @Nonnull
-    protected abstract ProcessDefinition<?> reload();
+    protected abstract FlowDefinition<?> reload();
 
     @Override
-    public final ProcessDefinition<?> get() {
-        if (processDefinition == null) {
-            processDefinition = Objects.requireNonNull(reload(),
+    public final FlowDefinition<?> get() {
+        if (flowDefinition == null) {
+            flowDefinition = Objects.requireNonNull(reload(),
                     () -> getClass().getName() + ".reload() retornou null");
         }
-        return processDefinition;
+        return flowDefinition;
     }
 
     @Nonnull
-    public static RefProcessDefinition of(@Nonnull Class<? extends ProcessDefinition<?>> processDefinitionClass) {
+    public static RefProcessDefinition of(@Nonnull Class<? extends FlowDefinition<?>> processDefinitionClass) {
         Objects.requireNonNull(processDefinitionClass);
         return ProcessDefinitionCache.getDefinition(processDefinitionClass).getSerializableReference();
     }
 
     @Nonnull
-    public static RefProcessDefinition of(@Nonnull ProcessDefinition<?> definition) {
+    public static RefProcessDefinition of(@Nonnull FlowDefinition<?> definition) {
         return Objects.requireNonNull(definition).getSerializableReference();
     }
 }

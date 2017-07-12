@@ -8,6 +8,6 @@ import java.io.Serializable;
  * @param <K>
  */
 @FunctionalInterface
-public interface TaskJavaCall<K extends ProcessInstance> extends Serializable {
+public interface TaskJavaCall<K extends FlowInstance> extends Serializable {
     void call(ExecutionContext<K> execucaoTask);
 }

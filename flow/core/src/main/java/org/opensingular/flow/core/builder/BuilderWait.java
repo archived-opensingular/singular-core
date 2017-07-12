@@ -17,13 +17,13 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.IExecutionDateStrategy;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STaskWait;
 
 public interface BuilderWait<SELF extends BuilderWait<SELF>> extends BuilderUserExecutable<SELF, STaskWait> {
 
     @Override
-    public default <T extends ProcessInstance> SELF withTargetDate(IExecutionDateStrategy<T> estrategiaDataAlvo) {
+    public default <T extends FlowInstance> SELF withTargetDate(IExecutionDateStrategy<T> estrategiaDataAlvo) {
         getTask().withTargetDate(estrategiaDataAlvo);
         return self();
     }

@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.test.definicao;
 
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 
-public class ProcessVersoes extends ProcessInstance {
+public class FlowVersoes extends FlowInstance {
 
     /**
      * chamar new DefinicaoProcessVersoes().newInstance();
      */
-    protected ProcessVersoes(){
+    protected FlowVersoes(){
 
     }
 }

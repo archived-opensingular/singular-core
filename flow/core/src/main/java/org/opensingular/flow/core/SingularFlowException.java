@@ -72,17 +72,17 @@ public class SingularFlowException extends SingularException{
 
     /** Cria uma nova Exception com complementos de dados da taskInstance informada. */
     public SingularFlowException(@Nullable String cause, @Nullable FlowMap target) {
-        this(cause, target != null ? target.getProcessDefinition() : null);
+        this(cause, target != null ? target.getFlowDefinition() : null);
     }
 
     /** Cria uma nova Exception com complementos de dados da taskInstance informada. */
-    public SingularFlowException(@Nullable String cause, @Nullable ProcessDefinition<?> target) {
+    public SingularFlowException(@Nullable String cause, @Nullable FlowDefinition<?> target) {
         super(cause);
         add(target);
     }
 
     /** Cria uma nova Exception com complementos de dados da instancia de processo informada. */
-    public SingularFlowException(@Nullable String cause, @Nullable ProcessInstance target) {
+    public SingularFlowException(@Nullable String cause, @Nullable FlowInstance target) {
         super(cause);
         add(target);
     }
@@ -108,16 +108,16 @@ public class SingularFlowException extends SingularException{
     /** Adiciona informações sobre a definição da task relacionada a exception. */
     public SingularFlowException add(@Nullable STask<?> task) {
         if (task != null) {
-            add(task.getFlowMap().getProcessDefinition());
+            add(task.getFlowMap().getFlowDefinition());
             add("taskDefinition", task.getName() + " (class " + task.getClass().getSimpleName() + ")");
         }
         return this;
     }
 
     /** Adiciona informações sobre a definição de processo relacionada a exception. */
-    public SingularFlowException add(@Nullable ProcessDefinition<?> processDefinition) {
-        if (processDefinition != null) {
-            add("processDefinition", processDefinition.getName() + " (" + processDefinition.getClass() + ")");
+    public SingularFlowException add(@Nullable FlowDefinition<?> flowDefinition) {
+        if (flowDefinition != null) {
+            add("processDefinition", flowDefinition.getName() + " (" + flowDefinition.getClass() + ")");
         }
         return this;
     }
@@ -129,15 +129,15 @@ public class SingularFlowException extends SingularException{
             add("task.fullId", () -> task.getFullId());
             add("task.name", task.getName());
             add("task.abbreviation", task.getAbbreviation());
-            add(task.getProcessInstance());
+            add(task.getFlowInstance());
         }
         return this;
     }
 
     /** Adiciona as informações sobre a task na exception. */
-    public SingularFlowException add(@Nullable ProcessInstance processInstance) {
-        if (processInstance != null) {
-            add("processInstance", () -> processInstance.getFullId());
+    public SingularFlowException add(@Nullable FlowInstance flowInstance) {
+        if (flowInstance != null) {
+            add("processInstance", () -> flowInstance.getFullId());
         }
         return this;
     }

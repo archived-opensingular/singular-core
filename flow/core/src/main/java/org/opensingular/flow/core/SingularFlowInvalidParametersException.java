@@ -32,20 +32,20 @@ public class SingularFlowInvalidParametersException extends SingularFlowExceptio
                 startCall.getProcessDefinition().getName() + "'");
     }
 
-    SingularFlowInvalidParametersException(ProcessDefinition<?> processDefinition, ValidationResult result) {
-        this(processDefinition, result, "Erro ao iniciar processo '" + processDefinition.getName());
+    SingularFlowInvalidParametersException(FlowDefinition<?> flowDefinition, ValidationResult result) {
+        this(flowDefinition, result, "Erro ao iniciar processo '" + flowDefinition.getName());
     }
 
     SingularFlowInvalidParametersException(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, ValidationResult result) {
-        this(taskInstance.getProcessInstance().getProcessDefinition(), result,
+        this(taskInstance.getFlowInstance().getProcessDefinition(), result,
                 "Erro ao validar os parametros da transição '" + transition.getName() + "' a partir da tarefa '" +
                         taskInstance.getName() + "'");
         add(taskInstance);
     }
 
-    private SingularFlowInvalidParametersException(ProcessDefinition<?> processDefinition, ValidationResult result, String msg) {
+    private SingularFlowInvalidParametersException(FlowDefinition<?> flowDefinition, ValidationResult result, String msg) {
         super(msg + ": variáveis inválidas" + appendIfOneErro(result));
-        add(processDefinition);
+        add(flowDefinition);
         if (result.errors().size() > 1) {
             add(result);
         }

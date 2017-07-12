@@ -17,8 +17,7 @@
 package org.opensingular.flow.core;
 
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessInicializationWithNoSerializableParameter
-        .ProcessWithNoSerializableStartParameter.StepsNS;
+import org.opensingular.flow.core.TestProcessInicializationWithNoSerializableParameter.FlowWithNoSerializableStartParameter.StepsNS;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.SingularFlowConvertingValueException;
@@ -48,11 +47,11 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
     @Test
     public void corretCall() {
         startInitializerCalled = false;
-        StartCall<ProcessInstance> startCall = new ProcessWithNoSerializableStartParameter().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithNoSerializableStartParameter().prepareStartCall()
                 .setValue(PARAM_FLAG, "y")
                 .setValue(PARAM_NO_SERIALIZABLE, new MyNoSerializable("x"));
 
-        ProcessInstance pi = startCall.createAndStart();
+        FlowInstance pi = startCall.createAndStart();
         assertTrue(startInitializerCalled);
 
         assertions(pi).isAtTask(StepsNS.First)
@@ -64,12 +63,12 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
     @Test
     public void serializationOk() {
         startInitializerCalled = false;
-        StartCall<ProcessInstance> startCall = new ProcessWithNoSerializableStartParameter().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithNoSerializableStartParameter().prepareStartCall()
                 .setValue(PARAM_FLAG, "y");
 
         startCall = SingularIOUtils.serializeAndDeserialize(startCall, true);
 
-        ProcessInstance pi = startCall.createAndStart();
+        FlowInstance pi = startCall.createAndStart();
         assertTrue(startInitializerCalled);
 
         assertions(pi).isAtTask(StepsNS.First)
@@ -81,13 +80,13 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
     @Test
     public void serializationOkWithCustomParam() {
         startInitializerCalled = false;
-        StartCall<ProcessInstance> startCall = new ProcessWithNoSerializableStartParameter().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithNoSerializableStartParameter().prepareStartCall()
                 .setValue(PARAM_FLAG, "y")
                 .setValue(PARAM_SERIALIZABLE, new MySerializable("z"));
 
         startCall = SingularIOUtils.serializeAndDeserialize(startCall, true);
 
-        ProcessInstance pi = startCall.createAndStart();
+        FlowInstance pi = startCall.createAndStart();
         assertTrue(startInitializerCalled);
 
         assertions(pi).isAtTask(StepsNS.First)
@@ -98,7 +97,7 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
 
     @Test
     public void serializationErro() {
-        StartCall<ProcessInstance> startCall = new ProcessWithNoSerializableStartParameter().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithNoSerializableStartParameter().prepareStartCall()
                 .setValue(PARAM_FLAG, "y")
                 .setValue(PARAM_NO_SERIALIZABLE, new MyNoSerializable("x"));
 
@@ -108,13 +107,13 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
 
     @Test
     public void setingAParamWithDiferenteClassTypeOfTheExpected() {
-        StartCall<ProcessInstance> startCall = new ProcessWithNoSerializableStartParameter().prepareStartCall();
+        StartCall<FlowInstance> startCall = new FlowWithNoSerializableStartParameter().prepareStartCall();
         SingularTestUtil.assertException(() -> startCall.setValue(PARAM_SERIALIZABLE, new MyNoSerializable("z")),
                 SingularFlowConvertingValueException.class, "Não foi possível converter ");
     }
 
     @DefinitionInfo("WithNoSerializableParameter")
-    public static class ProcessWithNoSerializableStartParameter extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithNoSerializableStartParameter extends FlowDefinition<FlowInstance> {
 
         public enum StepsNS implements ITaskDefinition {
             First, Second, End;
@@ -125,8 +124,8 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
             }
         }
 
-        public ProcessWithNoSerializableStartParameter() {
-            super(ProcessInstance.class);
+        public FlowWithNoSerializableStartParameter() {
+            super(FlowInstance.class);
             getVariables().addVariableString(VAR_FLAG);
         }
 
@@ -150,7 +149,7 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
             start.addParamCustom(PARAM_SERIALIZABLE, MySerializable.class, false);
         }
 
-        private void processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
+        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             startInitializerCalled = true;
             String flag = startCall.getValueString(PARAM_FLAG);
             MyNoSerializable v = startCall.getValue(PARAM_NO_SERIALIZABLE);

@@ -26,15 +26,15 @@ import javax.annotation.Nonnull;
  *
  * @author Daniel C. Bordin on 20/03/2017.
  */
-public final class StartCall<I extends ProcessInstance> extends CallWithParameters<StartCall<I>> {
+public final class StartCall<I extends FlowInstance> extends CallWithParameters<StartCall<I>> {
 
     private final RefStart start;
 
-    StartCall(ProcessDefinition<I> processDefinition, RefStart start) {
+    StartCall(FlowDefinition<I> flowDefinition, RefStart start) {
         this.start = start;
-        if (getProcessDefinition() != processDefinition) {
+        if (getProcessDefinition() != flowDefinition) {
             throw new SingularFlowException("Erro interno: processDefinition diferentes").add(getProcessDefinition())
-                    .add(processDefinition);
+                    .add(flowDefinition);
         }
     }
 
@@ -56,7 +56,7 @@ public final class StartCall<I extends ProcessInstance> extends CallWithParamete
         ValidationResult result = super.validate();
         if (! result.hasErros() && getStart().getStartValidator() != null) {
             result = new ValidationResult();
-            getStart().getStartValidator().validate((StartCall<ProcessInstance>) this, result);
+            getStart().getStartValidator().validate((StartCall<FlowInstance>) this, result);
         }
         return result;
     }
@@ -72,7 +72,7 @@ public final class StartCall<I extends ProcessInstance> extends CallWithParamete
     }
 
     /** Retorna a definição do processo que será inicializado. */
-    public ProcessDefinition<I> getProcessDefinition() {
-        return (ProcessDefinition<I>) getStart().getFlowMap().getProcessDefinition();
+    public FlowDefinition<I> getProcessDefinition() {
+        return (FlowDefinition<I>) getStart().getFlowMap().getFlowDefinition();
     }
 }

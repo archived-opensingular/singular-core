@@ -42,13 +42,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProcessDataService<I> {
+public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessDataService<I> {
 
-    private final ProcessDefinition<I> processDefinition;
+    private final FlowDefinition<I> flowDefinition;
 
-    protected ProcessDataServiceImpl(ProcessDefinition<I> processDefinition) {
+    protected ProcessDataServiceImpl(FlowDefinition<I> flowDefinition) {
         super();
-        this.processDefinition = processDefinition;
+        this.flowDefinition = flowDefinition;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     @Nonnull
     public final Optional<I> retrieveInstanceOpt(@Nonnull Integer entityCod) {
         return getPersistenceService().retrieveProcessInstanceByCod(entityCod)
-                .map(i -> processDefinition.convertToProcessInstance(i));
+                .map(i -> flowDefinition.convertToProcessInstance(i));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
 
     @Override
     public final List<I> retrieveAllInstancesIn(Date dataInicio, Date maxDataInicio, boolean exibirEncerradas,
-            ITaskDefinition... situacoesAlvo) {
+                                                ITaskDefinition... situacoesAlvo) {
         return retrieveAllInstancesIn(dataInicio, maxDataInicio, exibirEncerradas, convertToEntityTask(situacoesAlvo));
     }
 
@@ -155,16 +155,16 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     protected final IEntityProcessDefinition getEntityProcessDefinition() {
-        return processDefinition.getEntityProcessDefinition();
+        return flowDefinition.getEntityProcessDefinition();
 
     }
 
     protected final IEntityTaskDefinition getEntityTask(STask<?> task) {
-        return processDefinition.getEntityTaskDefinition(task);
+        return flowDefinition.getEntityTaskDefinition(task);
     }
 
     protected final FlowMap getFlowMap() {
-        return processDefinition.getFlowMap();
+        return flowDefinition.getFlowMap();
     }
 
     protected final List<IEntityTaskDefinition> convertToEntityTask(Collection<? extends STask<?>> collection) {
@@ -172,24 +172,24 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     protected final List<IEntityTaskDefinition> convertToEntityTask(Stream<? extends STask<?>> stream) {
-        return stream.map(t -> processDefinition.getEntityTaskDefinition(t)).collect(Collectors.toList());
+        return stream.map(t -> flowDefinition.getEntityTaskDefinition(t)).collect(Collectors.toList());
     }
 
     protected final List<IEntityTaskDefinition> convertToEntityTask(ITaskDefinition... tasks) {
-        return processDefinition.getEntityTaskDefinition(tasks);
+        return flowDefinition.getEntityTaskDefinition(tasks);
     }
 
     protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> entities) {
-        return (List<I>) processDefinition.convertToProcessInstance(entities);
+        return (List<I>) flowDefinition.convertToProcessInstance(entities);
     }
 
     private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance,
             IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition,
             IEntityRoleInstance> getPersistenceService() {
-        return processDefinition.getPersistenceService();
+        return flowDefinition.getPersistenceService();
     }
     
-    protected ProcessDefinition<I> getProcessDefinition() {
-        return processDefinition;
+    protected FlowDefinition<I> getFlowDefinition() {
+        return flowDefinition;
     }
 }

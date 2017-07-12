@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class FlowMap {
 
-    private final ProcessDefinition<?> processDefinition;
+    private final FlowDefinition<?> flowDefinition;
 
     private final Map<String, STask<?>> tasksByName = new HashMap<>();
 
@@ -66,10 +66,10 @@ public class FlowMap {
     /**
      * <p>Instancia um novo mapa para a definição de processo especificado.</p>
      *
-     * @param processDefinition a definição de processo especificado.
+     * @param flowDefinition a definição de processo especificado.
      */
-    public FlowMap(ProcessDefinition<?> processDefinition) {
-        this.processDefinition = processDefinition;
+    public FlowMap(FlowDefinition<?> flowDefinition) {
+        this.flowDefinition = flowDefinition;
     }
 
     /**
@@ -203,7 +203,7 @@ public class FlowMap {
      * @return o papel adicionado ao mapa.
      */
     public SProcessRole addRoleDefinition(String name, String abbreviation,
-            UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
+            UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
         final SProcessRole processRole = new SProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
@@ -220,7 +220,7 @@ public class FlowMap {
      * @param roleChangeListener o <i>listener</i> do tipo {@link IRoleChangeListener}.
      * @return este mapa com o <i>listener</i> registrado.
      */
-    public <T extends ProcessInstance> FlowMap setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
+    public <T extends FlowInstance> FlowMap setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
         this.roleChangeListener = roleChangeListener;
         return this;
     }
@@ -233,7 +233,7 @@ public class FlowMap {
      * @param previousUser o usuário anteriormente atribuído ao papel.
      * @param newUser o novo usuário atribuído ao papel.
      */
-    public void notifyRoleChange(final ProcessInstance instance, final SProcessRole role, SUser previousUser, SUser newUser) {
+    public void notifyRoleChange(final FlowInstance instance, final SProcessRole role, SUser previousUser, SUser newUser) {
         if (roleChangeListener != null) {
             roleChangeListener.execute(instance, role, previousUser, newUser);
         }
@@ -304,7 +304,7 @@ public class FlowMap {
      * @param dateExecutionStrategy a estratégia de execução.
      * @return a nova tarefa criada e adicionada.
      */
-    public <T extends ProcessInstance> STaskWait addWaitTask(ITaskDefinition definition,
+    public <T extends FlowInstance> STaskWait addWaitTask(ITaskDefinition definition,
             IExecutionDateStrategy<T> dateExecutionStrategy) {
         return addTask(new STaskWait(this, definition.getName(), definition.getKey(), dateExecutionStrategy));
     }
@@ -353,8 +353,8 @@ public class FlowMap {
      *
      * @return a definição de processo.
      */
-    public ProcessDefinition<?> getProcessDefinition() {
-        return processDefinition;
+    public FlowDefinition<?> getFlowDefinition() {
+        return flowDefinition;
     }
 
     /**
@@ -439,7 +439,7 @@ public class FlowMap {
         STask<?> task = getTaskWithName(taskDefinition.getName());
         if (task == null) {
             throw new SingularFlowException(
-                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey(), this);
+                    "Task " + taskDefinition.getKey() + " não encontrada em " + getFlowDefinition().getKey(), this);
         }
         return task;
     }
@@ -513,12 +513,12 @@ public class FlowMap {
      * @return o serviço de consulta.
      */
     protected VarService getVarService() {
-        return processDefinition.getVarService();
+        return flowDefinition.getVarService();
     }
 
     @Override
     public String toString() {
-        return "FlowMap [processDefinition=" + processDefinition.getName() + "]";
+        return "FlowMap [processDefinition=" + flowDefinition.getName() + "]";
     }
 
     public void addDashboardView(DashboardView dashboardView) {
@@ -535,7 +535,7 @@ public class FlowMap {
 
     @Nonnull
     public <T extends Serializable> FlowMap setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
-        getProcessDefinition().setMetaDataValue(propRef, value);
+        getFlowDefinition().setMetaDataValue(propRef, value);
         return this;
     }
 }

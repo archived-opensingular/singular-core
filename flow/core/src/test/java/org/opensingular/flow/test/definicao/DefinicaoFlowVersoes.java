@@ -17,19 +17,18 @@
 package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.DefinitionInfo;
-import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.builder.BuilderProcessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
 
 @DefinitionInfo("DefVersoes")
-public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
+public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
-    public DefinicaoProcessVersoes() {
-        super(ProcessVersoes.class);
+    public DefinicaoFlowVersoes() {
+        super(FlowVersoes.class);
     }
 
     private static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;
@@ -54,7 +53,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
     private enum InstanceProcessVersao {
         VERSAO_1() {
             @Override
-            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
                 definicaoProcessVersoes.setName("Versão", "Usando versões");
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
@@ -85,7 +84,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
         VERSAO_1_COM_PAPEIS() {
             @Override
-            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
                 definicaoProcessVersoes.setName("Versão", "Usando versões");
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
@@ -115,7 +114,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
         VERSAO_2() {
             @Override
-            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
                 definicaoProcessVersoes.setName("Versão", "Usando versões");
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
@@ -144,7 +143,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
             }
         };
 
-        public abstract FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes);
+        public abstract FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes);
     }
 
 }

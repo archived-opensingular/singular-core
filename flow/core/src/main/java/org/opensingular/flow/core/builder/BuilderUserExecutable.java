@@ -18,7 +18,7 @@ package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.ITaskPageStrategy;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STaskUserExecutable;
 import org.opensingular.flow.core.TaskAccessStrategy;
 
@@ -59,7 +59,7 @@ public interface BuilderUserExecutable<SELF extends BuilderUserExecutable<SELF, 
     }
 
     @Nonnull
-    public default <T extends ProcessInstance> SELF withTargetDate(@Nonnull IExecutionDateStrategy<T> targetDateExecutionStrategy) {
+    public default <T extends FlowInstance> SELF withTargetDate(@Nonnull IExecutionDateStrategy<T> targetDateExecutionStrategy) {
         getTask().withTargetDate(targetDateExecutionStrategy);
         return self();
     }
