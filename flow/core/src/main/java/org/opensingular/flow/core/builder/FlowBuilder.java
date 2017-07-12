@@ -64,7 +64,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
 
     protected abstract BUILDER_END newEndTask(STaskEnd task);
 
-    protected abstract BUILDER_START newStart(SStart start);
+    protected abstract BUILDER_START newStartTask(SStart start);
 
     protected abstract BUILDER_TRANSITION newTransition(STransition transition);
 
@@ -78,9 +78,9 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
         return flowMap;
     }
 
-    public BUILDER_START setStart(TASK_DEF taskDefinition) {
+    public BUILDER_START setStartTask(TASK_DEF taskDefinition) {
         MAPA flowMap = getFlowMap();
-        return newStart(flowMap.setStart(taskDefinition));
+        return newStartTask(flowMap.setStart(taskDefinition));
     }
 
     public <T extends FlowInstance> void setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
@@ -161,7 +161,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
         return wait;
     }
 
-    public BUILDER_END addEnd(TASK_DEF taskDefinition) {
+    public BUILDER_END addEndTask(TASK_DEF taskDefinition) {
         return newEndTask(getFlowMap().addEnd(taskDefinition));
     }
 

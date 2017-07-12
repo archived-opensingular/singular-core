@@ -165,7 +165,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     public <T extends SType<?>> T addField(String fieldSimpleName, Class<T> type, boolean required) {
         T field = addField(fieldSimpleName, type);
-        field.withRequired(required);
+        field.asAtr().required(required);
         return field;
     }
 

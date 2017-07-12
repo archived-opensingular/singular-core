@@ -64,13 +64,13 @@ public class TestSType extends TestCaseForm {
         assertTrue(type.newInstance().exists());
 
         type = createSimpleComposite();
-        type.withExists(Boolean.FALSE);
+        type.asAtr().exists(Boolean.FALSE);
         assertFalse(type.exists());
         assertFalse(type.newInstance().exists());
 
         //Teste o caso dinâmico
         type = createSimpleComposite();
-        type.getField("a").withExists(fieldA -> fieldA.getParent().getValue("b", Boolean.class));
+        type.getField("a").asAtr().exists(fieldA -> fieldA.getParent().getValue("b", Boolean.class));
         SIComposite block = type.newInstance();
         assertTrue(block.getField("a").exists());
         block.setValue("b", Boolean.FALSE);

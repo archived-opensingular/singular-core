@@ -107,7 +107,7 @@ public class STypeSelectItemSelectionFieldTest {
     public void alsoWorksWhenFieldIsMandatory() {
         tester.getDummyPage().setTypeBuilder( tb->{
             buildBaseTypeBase(tb);
-            selectType.withRequired(true);
+            selectType.asAtr().required(true);
         });
         tester.startDummyPage();
 

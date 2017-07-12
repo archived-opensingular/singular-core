@@ -66,9 +66,9 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
 
             f.addJavaTask(Steps.First).call(this::doFirst);
             f.addWaitTask(Steps.Second);
-            f.addEnd(Steps.End);
+            f.addEndTask(Steps.End);
 
-            f.setStart(Steps.First).setInitializer(this::processInitializer);
+            f.setStartTask(Steps.First).setInitializer(this::processInitializer);
             f.from(Steps.First).go(Steps.Second).thenGo(Steps.End);
 
             return f.build();

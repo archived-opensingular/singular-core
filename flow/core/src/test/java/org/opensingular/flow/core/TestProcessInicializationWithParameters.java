@@ -139,9 +139,9 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
             f.addJavaTask(StepsIP.First).call(this::doFirst);
             f.addWaitTask(StepsIP.Second);
-            f.addEnd(StepsIP.End);
+            f.addEndTask(StepsIP.End);
 
-            f.setStart(StepsIP.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
+            f.setStartTask(StepsIP.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
             f.from(StepsIP.First).go(StepsIP.Second).thenGo(StepsIP.End);
 
             return f.build();

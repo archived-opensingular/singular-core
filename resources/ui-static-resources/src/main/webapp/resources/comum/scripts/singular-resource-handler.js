@@ -1,15 +1,15 @@
 (function () {
-
-	//pollyfill para startsWith
+    
+    	//pollyfill para startsWith
 	if (!String.prototype.startsWith) {
 	    String.prototype.startsWith = function(searchString, position){
 	      position = position || 0;
 	      return this.substr(position, searchString.length) === searchString;
 	  };
 	}
-	
-	window.SingularResourceHandler = (function () {
-        if (typeof $ === "undefined") {
+    
+    window.SingularResourceHandler = (function () {
+        if (typeof $ == "undefined") {
             window.alert("jQuery não foi importado corretamente.");
             return;
         }
@@ -22,8 +22,7 @@
             onloaded;
 
         (function _resolveNameFromCookie() {
-            var i = 0;
-            for (; i < cookies.length; i += 1) {
+            for (i = 0; i < cookies.length; i += 1) {
                 if (cookies[i].trim().startsWith('skin')) {
                     name = JSON.parse(cookies[i].replace('skin=', '')).name;
                 }
@@ -44,11 +43,10 @@
             });
 
             if (favicon) {
-                __head.append($("<link rel='shortcut icon' href='" + favicon + "'/>"));
+                __head.append($("<link rel='shortcut icon' href='" + favicon + "'/>"))
             }
 
-            var i = 0;
-            for (; i < cookies.length; i += 1) {
+            for (i = 0; i < cookies.length; i += 1) {
                 if (cookies[i].trim().startsWith('skin')) {
                     name = JSON.parse(cookies[i].replace('skin=', '')).name;
                 }
@@ -84,6 +82,6 @@
             apply: function () {
                 _apply();
             }
-        };
+        }
     }());
 }());

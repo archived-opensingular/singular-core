@@ -226,8 +226,8 @@ public class RelocationTest {
             flow.addJavaTask(PTask.START).call(this::doSomething);
             flow.addHumanTask(PTask.DO1, new NullTaskAccessStrategy());
 
-            flow.addEnd(PTask.END);
-            flow.setStart(PTask.START);
+            flow.addEndTask(PTask.END);
+            flow.setStartTask(PTask.START);
 
             flow.from(PTask.START).go(PTask.DO1);
 //        flow.from(PTask.START).go(PTask.DO2);

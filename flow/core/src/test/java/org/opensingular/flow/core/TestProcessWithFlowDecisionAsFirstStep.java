@@ -82,9 +82,9 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
             f.addJavaTask(StepsDE.First).call(this::decideNextTask);
             f.addWaitTask(StepsDE.ResultA);
             f.addWaitTask(StepsDE.ResultB);
-            f.addEnd(StepsDE.End);
+            f.addEndTask(StepsDE.End);
 
-            f.setStart(StepsDE.First);
+            f.setStartTask(StepsDE.First);
             f.from(StepsDE.First).go(StepsDE.ResultA).thenGo(StepsDE.End);
             f.from(StepsDE.First).go(StepsDE.ResultB).thenGo(StepsDE.End);
 
