@@ -54,6 +54,7 @@ public interface SingularProperties {
 
     String DEFAULT_CAS_ENABLED   = "singular.cas.default.enabled";
     String DISABLE_AUTHORIZATION = "singular.auth.disable";
+    String ANALYTICS_ENABLED = "singular.analytics.enabled";
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
 
