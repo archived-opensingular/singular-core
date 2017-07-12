@@ -27,4 +27,19 @@ public class SIString extends SISimple<String> implements SIComparable<String> {
     public STypeString getType() {
         return (STypeString) super.getType();
     }
+
+    /**
+     * Verifica se o valor atual da instancia é compativel com a regex informada.
+     *
+     * Ex:
+     * numero.matches("\\d+");
+     *
+     * @param regex a expressao regular
+     * @return valor booleano informado a compatibilidade.
+     */
+    public boolean matches(String regex){
+        return getValue().matches(regex);
+    }
+
+
 }

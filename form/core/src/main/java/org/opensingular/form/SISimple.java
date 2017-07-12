@@ -23,16 +23,17 @@ import org.opensingular.form.internal.PathReader;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
+public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
 
-    private TIPO_NATIVO value;
+    private NATIVE_TYPE value;
 
-    private SimpleValueCalculation<? extends TIPO_NATIVO> valueCalculation;
+    private SimpleValueCalculation<? extends NATIVE_TYPE> valueCalculation;
 
-    protected SISimple() {}
+    protected SISimple() {
+    }
 
     @Override
-    public TIPO_NATIVO getValue() {
+    public NATIVE_TYPE getValue() {
         if (valueCalculation != null && value != null) {
             return valueCalculation.calculate(new CalculationContext(this));
         }
@@ -47,11 +48,11 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
         return convert(value, resultClass);
     }
 
-    public SimpleValueCalculation<? extends TIPO_NATIVO> getValueCalculation() {
+    public SimpleValueCalculation<? extends NATIVE_TYPE> getValueCalculation() {
         return valueCalculation;
     }
 
-    public void setValueCalculation(SimpleValueCalculation<? extends TIPO_NATIVO> valueCalculation) {
+    public void setValueCalculation(SimpleValueCalculation<? extends NATIVE_TYPE> valueCalculation) {
         this.valueCalculation = valueCalculation;
     }
 
@@ -61,8 +62,8 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
     }
 
     @Override
-    public TIPO_NATIVO getValueWithDefault() {
-        TIPO_NATIVO v = getValue();
+    public NATIVE_TYPE getValueWithDefault() {
+        NATIVE_TYPE v = getValue();
         if (v == null) {
             return getType().convert(getType().getAttributeValueOrDefaultValueIfNull());
         }
@@ -88,11 +89,17 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public final void setValue(Object valor) {
-        TIPO_NATIVO oldValue = this.getValue();
-        TIPO_NATIVO newValue = getType().convert(valor);
-        this.value = onSetValor(oldValue, newValue);
+        NATIVE_TYPE       oldValue = this.getValue();
+        final NATIVE_TYPE newValue;
+        if (valor instanceof SISimple<?>){
+            newValue = ((SISimple<NATIVE_TYPE>)valor).getValue();
+        } else {
+            newValue = getType().convert(valor);
+        }
+        this.value = onSetValue(oldValue, newValue);
         if (!Objects.equals(oldValue, newValue)) {
             if (isAttribute()) {
                 getDocument().getInstanceListeners().fireInstanceAttributeChanged(getAttributeOwner(), this, oldValue, newValue);
@@ -102,14 +109,14 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
         }
     }
 
-    protected TIPO_NATIVO onSetValor(TIPO_NATIVO oldValue, TIPO_NATIVO newValue) {
+    protected NATIVE_TYPE onSetValue(NATIVE_TYPE oldValue, NATIVE_TYPE newValue) {
         return newValue;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public STypeSimple<?, TIPO_NATIVO> getType() {
-        return (STypeSimple<?, TIPO_NATIVO>) super.getType();
+    public STypeSimple<?, NATIVE_TYPE> getType() {
+        return (STypeSimple<?, NATIVE_TYPE>) super.getType();
     }
 
     @Override
@@ -142,13 +149,13 @@ public class SISimple<TIPO_NATIVO extends Serializable> extends SInstance {
         if (getClass() != obj.getClass())
             return false;
         SISimple<?> other = (SISimple<?>) obj;
-        STypeSimple<?, TIPO_NATIVO> type = getType();
+        STypeSimple<?, NATIVE_TYPE> type = getType();
         STypeSimple<?, ?> otherType = other.getType();
         if (!type.equals(otherType)
                 && !type.getName().equals(otherType.getName())) {
             return false;
         }
-        TIPO_NATIVO v1 = getValue();
+        NATIVE_TYPE v1 = getValue();
         Object v2 = other.getValue();
         return Objects.equals(v1, v2);
     }

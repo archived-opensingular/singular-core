@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.validation;
+package org.opensingular.form.validation.validator;
 
-import java.io.Serializable;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.validation.InstanceValidatable;
+import org.opensingular.form.validation.InstanceValidator;
 
-public interface IValidationError extends Serializable {
-    String getMessage();
-    ValidationErrorLevel getErrorLevel();
-    Integer getInstanceId();
+public interface InstanceValueValidator<I extends SInstance, V> extends InstanceValidator<I> {
+
+    @Override
+    @SuppressWarnings("unchecked")
+    default void validate(InstanceValidatable<I> validatable) {
+        V value = (V) validatable.getInstance().getValue();
+        if (value == null)
+            return;
+        validate(validatable, value);
+    }
+
+    void validate(InstanceValidatable<I> validatable, V value);
 }

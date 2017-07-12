@@ -15,9 +15,9 @@ import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.ProcessDefinitionCache;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
@@ -55,7 +55,7 @@ public class RelocationTest {
     @Inject
     protected SessionFactory sessionFactory;
     Session session;
-    private ProcessInstance id;
+    private FlowInstance id;
 
     @BeforeClass
     public static void configProperties() {
@@ -87,8 +87,8 @@ public class RelocationTest {
 
     @Test
     public void relocatesTaskUser() {
-        P               p  = new P();
-        ProcessInstance id = p.prepareStartCall().createAndStart();
+        P            p  = new P();
+        FlowInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -101,8 +101,8 @@ public class RelocationTest {
 
     @Test
     public void rejectssRelocationTaskUserWithWrongVersionLock() {
-        P               p  = new P();
-        ProcessInstance id = p.prepareStartCall().createAndStart();
+        P            p  = new P();
+        FlowInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -116,8 +116,8 @@ public class RelocationTest {
 
     @Test
     public void rejectsRelocationWithInvalidVersionNumber() {
-        P               p  = new P();
-        ProcessInstance id = p.prepareStartCall().createAndStart();
+        P            p  = new P();
+        FlowInstance id = p.prepareStartCall().createAndStart();
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
@@ -192,7 +192,7 @@ public class RelocationTest {
         session.evict(o);
     }
 
-    private TaskInstanceEntity nTE(ProcessInstance id) {
+    private TaskInstanceEntity nTE(FlowInstance id) {
         TaskInstanceEntity t = id.getCurrentTaskOrException().getEntityTaskInstance();
         TaskInstanceEntity o = new TaskInstanceEntity();
         o.setTask((TaskVersionEntity) t.getTaskVersion());
@@ -203,7 +203,7 @@ public class RelocationTest {
 
 
     @DefinitionInfo("P-P")
-    public static class P extends ProcessDefinition<ProcessInstance> {
+    public static class P extends FlowDefinition<FlowInstance> {
 
         public enum PTask implements ITaskDefinition {
             START, DO1, DO2, END;
@@ -215,7 +215,7 @@ public class RelocationTest {
         }
 
         public P() {
-            super(ProcessInstance.class);
+            super(FlowInstance.class);
         }
 
         @Override
@@ -224,7 +224,7 @@ public class RelocationTest {
 
             FlowBuilderImpl flow = new FlowBuilderImpl(this);
             flow.addJavaTask(PTask.START).call(this::doSomething);
-            flow.addPeopleTask(PTask.DO1, new NullTaskAccessStrategy());
+            flow.addHumanTask(PTask.DO1, new NullTaskAccessStrategy());
 
             flow.addEnd(PTask.END);
             flow.setStart(PTask.START);
@@ -237,8 +237,8 @@ public class RelocationTest {
             return flow.build();
         }
 
-        public void doSomething(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-
+        public Object doSomething(ExecutionContext ctxExecucao) {
+            return null;
         }
 
     }

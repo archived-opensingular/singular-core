@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core.renderer;
 
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 public interface IFlowRenderer {
     
     public static final MetaDataRef<Boolean> SEND_EMAIL = new MetaDataRef<>("SEND_EMAIL", Boolean.class);
 
-    byte[] generateImage(ProcessDefinition<?> definicao);
+    byte[] generateImage(FlowDefinition<?> definicao);
 }

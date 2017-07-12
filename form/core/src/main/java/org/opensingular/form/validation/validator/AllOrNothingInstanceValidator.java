@@ -17,18 +17,18 @@
 package org.opensingular.form.validation.validator;
 
 import org.opensingular.form.STypeSimple;
-import org.opensingular.form.validation.IInstanceValidatable;
+import org.opensingular.form.validation.InstanceValidatable;
 import org.opensingular.form.SIComposite;
-import org.opensingular.form.validation.IInstanceValidator;
+import org.opensingular.form.validation.InstanceValidator;
 
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-public enum AllOrNothingInstanceValidator implements IInstanceValidator<SIComposite> {
+public enum AllOrNothingInstanceValidator implements InstanceValidator<SIComposite> {
     INSTANCE;
     @Override
-    public void validate(IInstanceValidatable<SIComposite> v) {
+    public void validate(InstanceValidatable<SIComposite> v) {
         Set<Boolean> nullValues = v.getInstance().streamDescendants(false)
             .filter(it -> it.getType() instanceof STypeSimple<?, ?>)
             .map(it -> it.getValue() == null)

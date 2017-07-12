@@ -16,10 +16,10 @@
 
 package org.opensingular.form.validation.validator;
 
-import org.opensingular.form.validation.IInstanceValidator;
+import org.opensingular.form.validation.InstanceValidator;
 
 /**
- * Coleção de {@link IInstanceValidator}
+ * Coleção de {@link InstanceValidator}
  */
 public final class InstanceValidators {
 

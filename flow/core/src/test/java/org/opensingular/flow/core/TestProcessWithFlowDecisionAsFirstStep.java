@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessWithFlowDecisionAsFirstStep.ProcessWithFlowDecisionAsFirstStep.StepsDE;
+import org.opensingular.flow.core.TestProcessWithFlowDecisionAsFirstStep.FlowWithFlowDecisionAsFirstStep.StepsDE;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
@@ -55,12 +55,12 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
 
     private void goToResult(StepsDE target) {
         action = target;
-        ProcessInstance pi = new ProcessWithFlowDecisionAsFirstStep().prepareStartCall().createAndStart();
+        FlowInstance pi = new FlowWithFlowDecisionAsFirstStep().prepareStartCall().createAndStart();
         assertReloadAssert(pi, p -> assertions(p).isAtTask(target));
     }
 
     @DefinitionInfo("FlowDecisionAsFirstStep")
-    public static class ProcessWithFlowDecisionAsFirstStep extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithFlowDecisionAsFirstStep extends FlowDefinition<FlowInstance> {
 
         public enum StepsDE implements ITaskDefinition {
             First, ResultA, ResultB, End;
@@ -71,8 +71,8 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
             }
         }
 
-        public ProcessWithFlowDecisionAsFirstStep() {
-            super(ProcessInstance.class);
+        public FlowWithFlowDecisionAsFirstStep() {
+            super(FlowInstance.class);
         }
 
         @Override
@@ -91,10 +91,11 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
             return f.build();
         }
 
-        void decideNextTask(ProcessInstance processInstance, ExecutionContext execucaoTask) {
+        Object decideNextTask(ExecutionContext execucaoTask) {
             if (action != null) {
                 execucaoTask.setTransition(action.getKey());
             }
+            return null;
         }
     }
 }

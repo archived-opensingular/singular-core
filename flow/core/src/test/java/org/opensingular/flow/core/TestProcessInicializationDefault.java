@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessInicializationDefault.ProcessWithDefaultInitialization.StepsDI;
+import org.opensingular.flow.core.TestProcessInicializationDefault.FlowWithDefaultInitialization.StepsDI;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 
 /**
@@ -32,13 +32,13 @@ public class TestProcessInicializationDefault extends TestFlowExecutionSupport {
 
     @Test
     public void simpleStart() {
-        ProcessInstance pi = new ProcessWithDefaultInitialization().prepareStartCall().createAndStart();
+        FlowInstance pi = new FlowWithDefaultInitialization().prepareStartCall().createAndStart();
 
         assertReloadAssert(pi, p-> assertions(p).isAtTask(StepsDI.First).isVariableValue(FLAG, null));
     }
 
     @DefinitionInfo("InicializationDefault")
-    public static class ProcessWithDefaultInitialization extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithDefaultInitialization extends FlowDefinition<FlowInstance> {
 
         public enum StepsDI implements ITaskDefinition {
             First, End;
@@ -49,8 +49,8 @@ public class TestProcessInicializationDefault extends TestFlowExecutionSupport {
             }
         }
 
-        public ProcessWithDefaultInitialization() {
-            super(ProcessInstance.class);
+        public FlowWithDefaultInitialization() {
+            super(FlowInstance.class);
             getVariables().addVariableBoolean(FLAG);
         }
 

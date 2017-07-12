@@ -50,8 +50,8 @@ public final class RefTransition implements Serializable {
 
     /** Retorna a instância de processo a que pertence essa potencia transição. */
     @Nonnull
-    public ProcessInstance getProcessInstance() {
-        return originTaskInstance.getProcessInstance();
+    public FlowInstance getProcessInstance() {
+        return originTaskInstance.getFlowInstance();
     }
 
     /** Retorna a instância de tarefa que será o ponto de partida da execução da transição. */

@@ -17,7 +17,7 @@
 package org.opensingular.flow.core;
 
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessTransitionWithParameters.ProcessTranisitonWithParameters.StepsTP;
+import org.opensingular.flow.core.TestProcessTransitionWithParameters.FlowTranisitonWithParameters.StepsTP;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -46,9 +46,9 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
 
     @Nonnull
-    private ProcessInstance createTestProcess() {
+    private FlowInstance createTestProcess() {
 
-        StartCall<ProcessInstance> startCall = new ProcessTranisitonWithParameters().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowTranisitonWithParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, "A")
                 .setValue(PARAM_BIG, VALUE_BIG1);
         return startCall.createAndStart();
@@ -154,15 +154,15 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
                 });
     }
 
-    private void runTransition(Supplier<ProcessInstance> processInstanceSupplier, String transitionName,
-            Consumer<TransitionCall> callConfiguration, Consumer<ProcessInstance> assertionsCode) {
+    private void runTransition(Supplier<FlowInstance> processInstanceSupplier, String transitionName,
+            Consumer<TransitionCall> callConfiguration, Consumer<FlowInstance> assertionsCode) {
         runTransition(processInstanceSupplier, transitionName, callConfiguration, null, null, assertionsCode);
     }
 
-    private void runTransition(Supplier<ProcessInstance> processInstanceSupplier, String transitionName,
+    private void runTransition(Supplier<FlowInstance> processInstanceSupplier, String transitionName,
             Consumer<TransitionCall> callConfiguration, Class<? extends Exception> expectedException,
-            String expectedExceptionMsgPart, Consumer<ProcessInstance> assertionsCode) {
-        ProcessInstance pi = processInstanceSupplier.get();
+            String expectedExceptionMsgPart, Consumer<FlowInstance> assertionsCode) {
+        FlowInstance pi = processInstanceSupplier.get();
         TransitionCall transitionCall = createTrasaction(transitionName, pi);
         callConfiguration.accept(transitionCall);
         callTransition(transitionCall, expectedException, expectedExceptionMsgPart);
@@ -190,7 +190,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
         }
     }
 
-    private TransitionCall createTrasaction(String transitionName, ProcessInstance pi) {
+    private TransitionCall createTrasaction(String transitionName, FlowInstance pi) {
         TaskInstance task = pi.getCurrentTask().orElseThrow(() -> new NullPointerException("task?"));
         if (transitionName == null) {
             return task.prepareTransition();
@@ -199,7 +199,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
     }
 
     @DefinitionInfo("TransitionWithParameters")
-    public static class ProcessTranisitonWithParameters extends ProcessDefinition<ProcessInstance> {
+    public static class FlowTranisitonWithParameters extends FlowDefinition<FlowInstance> {
 
         public enum StepsTP implements ITaskDefinition {
             First, Second, Third, End;
@@ -210,8 +210,8 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
             }
         }
 
-        public ProcessTranisitonWithParameters() {
-            super(ProcessInstance.class);
+        public FlowTranisitonWithParameters() {
+            super(FlowInstance.class);
             getVariables().addVariableString(PARAM_FLAG);
             getVariables().addVariableBigDecimal(PARAM_BIG);
         }
@@ -249,7 +249,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
             return f.build();
         }
 
-        private <K extends ProcessInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
+        private <K extends FlowInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
                 ValidationResult result, K process) {
             Integer v = vars.getValueInteger(PARAM_NOCOPY);
             if (v != null && v > 100) {

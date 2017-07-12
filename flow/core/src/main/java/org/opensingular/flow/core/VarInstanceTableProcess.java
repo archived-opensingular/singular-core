@@ -31,14 +31,14 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
     // TODO transformar o valor abaixo em RefProcessInstance (igual a
     // RefProcessDefinition)
-    private ProcessInstance instancia;
+    private FlowInstance instancia;
 
-    public VarInstanceTableProcess(ProcessDefinition<?> definition) {
+    public VarInstanceTableProcess(FlowDefinition<?> definition) {
         super(definition.getVariables());
     }
 
-    VarInstanceTableProcess(ProcessInstance instancia) {
-        this(instancia.<ProcessDefinition<?>>getProcessDefinition());
+    VarInstanceTableProcess(FlowInstance instancia) {
+        this(instancia.<FlowDefinition<?>>getProcessDefinition());
         bind(instancia.getEntity());
         this.instancia = instancia;
     }

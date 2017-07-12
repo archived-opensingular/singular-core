@@ -21,7 +21,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,11 +31,11 @@ public class FlowRendererFactory {
     private FlowRendererFactory() {}
 
     @SuppressWarnings("rawtypes")
-    private static final LoadingCache<Class<? extends ProcessDefinition>, byte[]> cache =
+    private static final LoadingCache<Class<? extends FlowDefinition>, byte[]> cache =
             CacheBuilder.newBuilder().expireAfterWrite(4, TimeUnit.HOURS)
-                    .build(new CacheLoader<Class<? extends ProcessDefinition>, byte[]>() {
+                    .build(new CacheLoader<Class<? extends FlowDefinition>, byte[]>() {
                         @Override
-                        public byte[] load(Class<? extends ProcessDefinition> classe) {
+                        public byte[] load(Class<? extends FlowDefinition> classe) {
                             return flowRenderer().generateImage(Flow.getProcessDefinition(classe));
                         }
 
@@ -44,9 +44,9 @@ public class FlowRendererFactory {
                         }
                     });
 
-    public static byte[] generateImageFor(ProcessDefinition<?> processDefinition) {
+    public static byte[] generateImageFor(FlowDefinition<?> flowDefinition) {
         try {
-            return cache.get(processDefinition.getClass());
+            return cache.get(flowDefinition.getClass());
         } catch (ExecutionException e) {
             throw Throwables.propagate(e);
         }
