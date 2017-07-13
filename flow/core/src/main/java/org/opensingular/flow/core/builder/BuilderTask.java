@@ -39,7 +39,7 @@ public interface BuilderTask {
 
     public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
 
-    public BuilderTask addAccessStrategy(TaskAccessStrategy<?> estrategiaAcesso);
+    public BuilderTask addAccessStrategy(TaskAccessStrategy<?> accessStrategy);
 
     public BuilderTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
 
@@ -47,10 +47,5 @@ public interface BuilderTask {
 
     @Nonnull
     public <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value);
-
-    /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
-    public default void inject(@Nonnull Object v) {
-        SFlowUtil.inject(getTask(), v);
-    }
 
 }
