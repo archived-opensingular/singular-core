@@ -73,7 +73,7 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
             SInstance dummy = elementsType.newInstance();
             Value.hydrate(dummy, content);
             hydrate(dummy, content);
-            return FormFreemarkerUtil.merge(dummy, freemakerTemplate, true);
+            return FormFreemarkerUtil.merge(dummy, freemakerTemplate, false, true);
         });
         addConverter();
         return new SProviderBuilder(super.type);
