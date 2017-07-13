@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface STypeIndexed {
 
-    boolean ignore() default false;
+    boolean indexedColumn() default false;
+    boolean returnColumn() default true;
     String path() default "";
-
 }

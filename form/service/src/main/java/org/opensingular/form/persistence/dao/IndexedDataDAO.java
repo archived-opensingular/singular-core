@@ -21,20 +21,18 @@ public class IndexedDataDAO {
     protected String createSqlFromDTO (Class<? extends BaseDTO> dto) {
         IndexedDataQueryBuilder builder = new IndexedDataQueryBuilder();
         for (Field field : dto.getDeclaredFields()) {
-            if (field.getAnnotation(STypeIndexed.class).ignore()) continue;
-
-            builder.addColumn(field.getName(), field.getAnnotation(STypeIndexed.class).path());
+            if (field.getAnnotation(STypeIndexed.class).indexedColumn()) {
+                builder.addColumn(field.getName(), field.getAnnotation(STypeIndexed.class).path());
+            }
         }
         return builder.createQueryForIndexedData();
     }
 
     protected void addScalarsFromDTO(SQLQuery query, Class<? extends BaseDTO> dto) {
-        query.addScalar("co_tipo_formulario", new LongType())
-             .addScalar("co_versao_formulario", new LongType());
-
         for (Field field : dto.getDeclaredFields()) {
-//            if (field.getAnnotation(STypeIndexed.class).ignore()) continue;
-            query.addScalar(field.getName());
+            if (field.getAnnotation(STypeIndexed.class).returnColumn()) {
+                query.addScalar(field.getName());
+            }
         }
     }
 

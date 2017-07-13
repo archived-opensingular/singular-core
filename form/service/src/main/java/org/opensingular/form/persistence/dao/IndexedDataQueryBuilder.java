@@ -17,8 +17,7 @@ public class IndexedDataQueryBuilder {
      * Cria um código SQL que sempre terá as colunas CO_TIPO_FORMULARIO e CO_VERSAO_FORMULARIO.
      * A partir dessas colunas é possível fazer outros joins com as tabelas do singular.
      *
-     * @return
-     */
+     * @return*/
     public String createQueryForIndexedData() {
         return select.toString() + from.toString() + join.toString();
     }
