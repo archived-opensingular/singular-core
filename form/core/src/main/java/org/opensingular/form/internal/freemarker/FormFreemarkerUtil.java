@@ -44,6 +44,7 @@ import org.opensingular.form.type.core.SIDateTime;
 import org.opensingular.form.type.core.SINumber;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.SITime;
+import org.opensingular.lib.commons.base.SingularProperties;
 
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
@@ -119,7 +120,7 @@ public final class FormFreemarkerUtil {
 
     private static Template parseTemplate(String template, boolean ignoreError) {
         try {
-            if(ignoreError){
+            if(SingularProperties.get().isTrue(SingularProperties.FREEMARKER_IGNORE_ERROR) || ignoreError){
                 return new Template("templateStringParameter", template, getConfiguration(TemplateExceptionHandler.IGNORE_HANDLER));
             }else{
                 return new Template("templateStringParameter", template, getConfiguration(TemplateExceptionHandler.RETHROW_HANDLER));

@@ -25,7 +25,6 @@ import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.util.transformer.Value.Content;
-import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.lambda.IFunction;
 
 import static org.opensingular.form.util.transformer.Value.hydrate;
@@ -74,13 +73,7 @@ public class SSelectionDisplayBuilder extends AbstractBuilder {
             SInstance dummy = elementsType.newInstance();
             Value.hydrate(dummy, content);
             hydrate(dummy, content);
-            String result = ""; 
-            if(SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE)){
-                 result = FormFreemarkerUtil.merge(dummy, freemakerTemplate);
-            }else{
-                result = FormFreemarkerUtil.merge(dummy, freemakerTemplate, true);
-            }
-            return result;
+            return FormFreemarkerUtil.merge(dummy, freemakerTemplate, true);
         });
         addConverter();
         return new SProviderBuilder(super.type);

@@ -16,14 +16,14 @@
 
 package org.opensingular.form.view;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IFunction;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Representa listagens que possuem uma tabela de apenas leitura cujas as
@@ -69,7 +69,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @see FormFreemarkerUtil
      */
     public final SELF col(SType<?> type, String customLabel, String freeMarkerTemplateString) {
-        return col(type, customLabel, instance -> FormFreemarkerUtil.merge(instance, freeMarkerTemplateString));
+        return col(type, customLabel, instance -> FormFreemarkerUtil.merge(instance, freeMarkerTemplateString, true));
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @see FormFreemarkerUtil
      */
     public final SELF col(String customLabel, String freeMarkerTemplateString) {
-        return col(customLabel, instance -> FormFreemarkerUtil.merge(instance, freeMarkerTemplateString));
+        return col(customLabel, instance -> FormFreemarkerUtil.merge(instance, freeMarkerTemplateString, true));
     }
 
     /**
