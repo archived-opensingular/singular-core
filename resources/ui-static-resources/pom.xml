@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-resources</artifactId>
-        <version>1.6.8-RC2-SNAPSHOT</version>
+        <version>1.6.8-RC2</version>
     </parent>
 
     <artifactId>singular-ui-resources</artifactId>
