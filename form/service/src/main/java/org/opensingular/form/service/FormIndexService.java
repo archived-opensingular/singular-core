@@ -1,5 +1,6 @@
 package org.opensingular.form.service;
 
+import org.opensingular.form.SInfoType;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -9,16 +10,19 @@ import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.persistence.FormKeyLong;
 import org.opensingular.form.persistence.dao.FormDAO;
 import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.lib.commons.scan.SingularClassPathScanner;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional
+@Named
 public class FormIndexService {
-
-    @Inject
-    FormService formService;
 
     @Inject
     private FormFieldService formFieldService;
@@ -26,19 +30,39 @@ public class FormIndexService {
     @Inject
     private FormDAO formDAO;
 
-    public void indexAllForms() throws ClassNotFoundException {
+    /**
+     * Recupera todos os formularios e a partir do seu tipo encontra a classe de seu SType no classpath.
+     * Com a classe do SType carrega uma SInstance que é passada para o serviço FormFieldService para indexação
+     */
+    public void indexAllForms() {
         List<FormEntity> forms = formDAO.listAll();
+
+        SingularClassPathScanner scanner = SingularClassPathScanner.get();
+        Set<Class<?>>            classes = scanner.findClassesAnnotatedWith(SInfoType.class);
+        classes.removeAll(classes.stream()
+                .filter(c -> c.getName().contains("org.opensingular"))
+                .collect(Collectors.toList()));
+
         for (FormEntity form : forms) {
-            FormKeyLong key = new FormKeyLong(form.getCod());
-            RefType refType = RefType.of(STypeComposite.class);
-            SDocumentFactory sDocumentFactory = SDocumentFactory.empty();
+            String formType = form.getFormType().getAbbreviation();
+            String typeName = formType.substring(formType.lastIndexOf(".")+1, formType.length());
+            Optional<Class<?>> clazz = classes.stream()
+                            .filter(item -> item.getName().contains(typeName))
+                            .findFirst();
 
-            SInstance instance = SFormXMLUtil.fromXML(refType, form.getCurrentFormVersionEntity().getXml(), sDocumentFactory);
-//            SInstance instance = formService.loadSInstance(key, refType, sDocumentFactory);
+            if (clazz.isPresent()) {
+                Class formClass = clazz.get();
+                RefType refType = RefType.of(formClass);
+                SDocumentFactory sDocumentFactory = SDocumentFactory.empty();
+                SInstance instance = SFormXMLUtil.fromXML(refType, form.getCurrentFormVersionEntity().getXml(), sDocumentFactory);
 
-            System.out.print("form type: " + form.getFormType().getAbbreviation());
-            System.out.println(" - versão: " + form.getCurrentFormVersionEntity().getCod());
+                formFieldService.saveFields(instance, form.getFormType(), form.getCurrentFormVersionEntity());
+            } else {
+                System.out.println("Não foi possível indexar o form " + formType);
+            }
         }
+
+        System.out.println("Indexação completa");
     }
 
 }

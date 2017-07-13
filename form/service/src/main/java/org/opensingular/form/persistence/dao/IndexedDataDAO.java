@@ -33,7 +33,7 @@ public class IndexedDataDAO {
              .addScalar("co_versao_formulario", new LongType());
 
         for (Field field : dto.getDeclaredFields()) {
-            if (field.getAnnotation(STypeIndexed.class).ignore()) continue;
+//            if (field.getAnnotation(STypeIndexed.class).ignore()) continue;
             query.addScalar(field.getName());
         }
     }

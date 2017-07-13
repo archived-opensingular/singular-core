@@ -20,10 +20,6 @@ public class FormIndexServiceTest {
 
     @Test
     public void listarTodosFormsTest() {
-        try {
-            formIndexService.indexAllForms();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        formIndexService.indexAllForms();
     }
 }
