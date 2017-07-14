@@ -131,10 +131,7 @@ public final class FormFreemarkerUtil {
                 }else{
                     result = TemplateExceptionHandler.RETHROW_HANDLER;
                 }
-//                result = "true".equalsIgnoreCase(ignoreProperty) ? TemplateExceptionHandler.IGNORE_HANDLER
-//                        : TemplateExceptionHandler.RETHROW_HANDLER;
             }else{
-//                result = ignoreError ? TemplateExceptionHandler.IGNORE_HANDLER : TemplateExceptionHandler.RETHROW_HANDLER;
                 if(ignoreError){
                     result = TemplateExceptionHandler.IGNORE_HANDLER;
                 }else{
