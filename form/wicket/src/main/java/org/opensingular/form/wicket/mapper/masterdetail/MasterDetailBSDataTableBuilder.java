@@ -71,21 +71,24 @@ class MasterDetailBSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> extend
 
                                 SValidationFeedbackHandler.bindTo(new FeedbackFence(item))
                                         .addListener((handler, target, container, baseInstances, oldErrors, newErrors) -> {
-                                            if (target != null)
+                                            if (target != null) {
                                                 target.add(item);
+                                            }
                                         })
                                         .setInstanceModels($m.get(() -> {
 
-                                            final IDataProvider<SInstance> dataProvider = (IDataProvider<SInstance>) table.getDataProvider();
 
                                             final long pageIndex = item.getModelObject();
                                             final long first = pageIndex * table.getItemsPerPage();
                                             final long count = Math.min(table.getItemsPerPage(), dataProvider.size() - first);
 
+                                            final IDataProvider<SInstance> dataProvider = (IDataProvider<SInstance>) table.getDataProvider();
                                             final Iterator<? extends SInstance> it = dataProvider.iterator(first, count);
                                             final List<IModel<? extends SInstance>> list = Lists.newArrayList();
-                                            while (it.hasNext())
+                                            while (it.hasNext()) {
                                                 list.add(dataProvider.model(it.next()));
+                                            }
+
                                             return list;
                                         }));
                                 return link;
