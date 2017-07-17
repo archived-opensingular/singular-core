@@ -35,8 +35,8 @@ public interface BuilderUserExecutable<SELF extends BuilderUserExecutable<SELF, 
 
 
     @Nonnull
-    public default SELF withExecutionPage(@Nonnull ITaskPageStrategy executionPage) {
-        getTask().setExecutionPage(executionPage);
+    public default SELF withExecutionPage(@Nonnull ITaskPageStrategy pageStrategy) {
+        getTask().setExecutionPage(pageStrategy);
         return self();
     }
 
