@@ -20,34 +20,34 @@ import java.io.Serializable;
 
 public interface WebRef extends Serializable {
 
-    public String getNome();
+    public String getName();
 
-    public String getNomeCurto();
+    public String getShortName();
 
     public Lnk getPath();
 
-    public String getPathIcone();
+    public String getIconPath();
 
-    public String getPathIconePequeno();
+    public String getSmallIconPath();
 
-    public String getConfirmacao();
+    public String getConfirmationMessage();
 
-    public boolean isPossuiDireitoAcesso();
+    public boolean hasPermission();
 
     public boolean isJs();
 
     public String getJs();
 
-    public boolean isAbrirEmNovaJanela();
+    public boolean isPopup();
 
     /**
      * Informa se o link é válido para o conjunto de dados informado no momento da geração do link.
      */
-    public boolean isSeAplicaAoContexto();
+    public boolean appliesToContext();
 
     public ModalViewDef getModalViewDef();
 
-    public WebRef addParam(String nome, Object valor);
+    public WebRef addParam(String name, Object value);
 
-    public String gerarHtml(String urlApp);
+    public String generateHtml(String urlApp);
 }
