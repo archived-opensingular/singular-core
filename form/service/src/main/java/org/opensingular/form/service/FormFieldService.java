@@ -56,6 +56,7 @@ public class FormFieldService implements IFormFieldService {
         List<SInstance> fieldsInInstance = ((SIComposite) instance).getFields();
 
         for (SInstance field : fieldsInInstance) {
+            if (! field.asAtrIndex().isPersistent()) continue;
             if (field instanceof SIAttachment) continue;
 
             if (field instanceof SIList && !(field.getType() instanceof STypeAttachmentList)) {
@@ -68,10 +69,9 @@ public class FormFieldService implements IFormFieldService {
                 loadMapFromInstance(mapFields, compositeField, formVersion, parentFormValue);
             }
 
-            if (field.asAtrIndex().isPersistent()) {
-                if (!(field instanceof SIComposite) && !(field instanceof SIList) && field.getValue() != null) {
-                    addItemToMap(mapFields, field, formVersion, parent);
-                }
+
+            if (!(field instanceof SIComposite) && !(field instanceof SIList) && field.getValue() != null) {
+                addItemToMap(mapFields, field, formVersion, parent);
             }
 
         }

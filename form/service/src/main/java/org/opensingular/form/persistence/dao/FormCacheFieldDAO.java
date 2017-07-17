@@ -3,8 +3,8 @@ package org.opensingular.form.persistence.dao;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
 import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
+import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 import java.util.List;
@@ -15,9 +15,10 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
         super(FormCacheFieldEntity.class);
     }
 
-    public FormCacheFieldEntity findFieldByPath(String path) {
+    public FormCacheFieldEntity findField(String path, FormTypeEntity formType) {
         Criteria criteria = getSession().createCriteria(FormCacheFieldEntity.class);
         criteria.add(Restrictions.eq("path", path));
+        criteria.add(Restrictions.eq("formTypeEntity.cod", formType.getCod()));
         return (FormCacheFieldEntity) criteria.uniqueResult();
     }
 
@@ -29,7 +30,8 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
     }
 
     public FormCacheFieldEntity saveOrFind(FormCacheFieldEntity field) {
-        FormCacheFieldEntity fieldFromDB = findFieldByPath(field.getPath());
+        FormCacheFieldEntity fieldFromDB = findField(field.getPath(), field.getFormTypeEntity());
+
         if (fieldFromDB != null) {
             return fieldFromDB;
         } else {

@@ -9,8 +9,11 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.persistence.FormKeyLong;
 import org.opensingular.form.persistence.dao.FormDAO;
+import org.opensingular.form.persistence.dao.FormVersionDAO;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.lib.commons.scan.SingularClassPathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,11 +21,14 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Transactional
 @Named
 public class FormIndexService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FormIndexService.class);
 
     @Inject
     private FormFieldService formFieldService;
@@ -30,11 +36,17 @@ public class FormIndexService {
     @Inject
     private FormDAO formDAO;
 
+    @Inject
+    private FormVersionDAO formVersionDAO;
+
     /**
      * Recupera todos os formularios e a partir do seu tipo encontra a classe de seu SType no classpath.
      * Com a classe do SType carrega uma SInstance que é passada para o serviço FormFieldService para indexação
      */
     public void indexAllForms() {
+        LOGGER.info("Iniciando a indexação total da base");
+        long startNanos = System.nanoTime();
+
         List<FormEntity> forms = formDAO.listAll();
 
         SingularClassPathScanner scanner = SingularClassPathScanner.get();
@@ -62,7 +74,10 @@ public class FormIndexService {
             }
         }
 
-        System.out.println("Indexação completa");
+        long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        LOGGER.info("Indexação completa. Duração: " + duration + " millis");
     }
-
 }
+
+
+

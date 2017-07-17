@@ -11,5 +11,5 @@ public @interface STypeIndexed {
 
     boolean indexedColumn() default false;
     boolean returnColumn() default true;
-    String path() default "";
+    String[] path() default "";
 }

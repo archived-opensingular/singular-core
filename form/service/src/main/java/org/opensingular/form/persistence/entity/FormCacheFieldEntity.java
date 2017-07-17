@@ -32,7 +32,7 @@ public class FormCacheFieldEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_TIPO_FORMULARIO")
     private FormTypeEntity formTypeEntity;
 
-    @Column(name = "TXT_CAMINHO_CAMPO", length = 255)
+    @Column(name = "DS_CAMINHO_CAMPO", length = 255)
     private String path;
 
     public FormCacheFieldEntity() {

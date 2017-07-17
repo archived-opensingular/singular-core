@@ -51,14 +51,14 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_VERSAO_FORMULARIO")
     private FormVersionEntity formVersion;
 
-    @Column(name = "TXT_VALOR", length = 1024)
+    @Column(name = "DS_VALOR", length = 1024)
     private String stringValue;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VALOR")
     private Date dateValue;
 
-    @Column(name = "NUM_VALOR")
+    @Column(name = "NU_VALOR")
     private BigDecimal numberValue;
 
     @ManyToOne(cascade = CascadeType.ALL)
