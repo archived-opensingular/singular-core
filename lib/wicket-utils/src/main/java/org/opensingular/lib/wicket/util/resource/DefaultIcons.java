@@ -97,6 +97,7 @@ public enum DefaultIcons implements Icon {
     RECYCLE("fa fa-recycle"),
     SEND_O("fa fa-send-o"),
     COUNTRY("icon-globe"),
+    HELP("fa fa-question-circle"),
     INBOX("fa fa-inbox"),
     NEWSPAPER("fa fa-newspaper-o"),
     WARNING("fa fa-warning"),
