@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.SProcessRole;
+import org.opensingular.flow.core.SBusinessRole;
 
-public interface BuilderProcessRole<SELF extends BuilderProcessRole<SELF>> {
+public interface BuilderBusinessRole<SELF extends BuilderBusinessRole<SELF>> {
 
-    public SProcessRole getProcessRole();
+    public SBusinessRole getBusinessRole();
 }

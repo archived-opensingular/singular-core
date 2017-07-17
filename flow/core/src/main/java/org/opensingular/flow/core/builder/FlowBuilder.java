@@ -25,7 +25,7 @@ import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.RoleAccessStrategy;
-import org.opensingular.flow.core.SProcessRole;
+import org.opensingular.flow.core.SBusinessRole;
 import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STaskEnd;
@@ -42,9 +42,8 @@ import org.opensingular.flow.core.defaults.NullPageStrategy;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
-public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_PAPEL extends BuilderProcessRole<?>, TASK_DEF extends ITaskDefinition> {
+public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_PAPEL extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
 
     private final MAPA flowMap;
 
@@ -68,7 +67,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
 
     protected abstract BUILDER_TRANSITION newTransition(STransition transition);
 
-    protected abstract BUILDER_PAPEL newProcessRole(SProcessRole transicao);
+    protected abstract BUILDER_PAPEL newProcessRole(SBusinessRole transicao);
 
     protected final MAPA getFlowMap() {
         return flowMap;
@@ -138,12 +137,12 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
         return task;
     }
 
-    public BUILDER_PEOPLE addHumanTask(TASK_DEF taskDefinition, BuilderProcessRole<?> requiredRole) {
-        return addHumanTask(taskDefinition, RoleAccessStrategy.of(requiredRole.getProcessRole()));
+    public BUILDER_PEOPLE addHumanTask(TASK_DEF taskDefinition, BuilderBusinessRole<?> requiredRole) {
+        return addHumanTask(taskDefinition, RoleAccessStrategy.of(requiredRole.getBusinessRole()));
     }
 
-    public BUILDER_PEOPLE addPeople(TASK_DEF taskDefinition, BuilderProcessRole<?> requiredExecutionRole, BuilderProcessRole<?> requiredVisualizeRole) {
-        return addHumanTask(taskDefinition, RoleAccessStrategy.of(requiredExecutionRole.getProcessRole(), requiredVisualizeRole.getProcessRole()));
+    public BUILDER_PEOPLE addPeople(TASK_DEF taskDefinition, BuilderBusinessRole<?> requiredExecutionRole, BuilderBusinessRole<?> requiredVisualizeRole) {
+        return addHumanTask(taskDefinition, RoleAccessStrategy.of(requiredExecutionRole.getBusinessRole(), requiredVisualizeRole.getBusinessRole()));
     }
 
     public BUILDER_WAIT addWaitTask(TASK_DEF taskDefinition) {

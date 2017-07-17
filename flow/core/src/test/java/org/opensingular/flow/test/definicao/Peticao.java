@@ -24,7 +24,7 @@ import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskPredicates;
-import org.opensingular.flow.core.builder.BuilderProcessRole;
+import org.opensingular.flow.core.builder.BuilderBusinessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
 
@@ -81,8 +81,8 @@ public class Peticao extends FlowDefinition<FlowInstance> {
 
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
-        BuilderProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
-        BuilderProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
+        BuilderBusinessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
+        BuilderBusinessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
 
         flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         flow.addHumanTask(AGUARDANDO_ANALISE, papelAnalista);
