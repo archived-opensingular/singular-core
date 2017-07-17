@@ -74,7 +74,13 @@ public class FreemarkerErrorHandlerTest extends TestCaseForm {
         assertMergeLikeDisplay(dataSI, "dados", "${str4Value}").isEqualTo("");
     }
     
-    
+    @Test
+    public void testWithNullValues(){
+        dadosType.asAtr().displayString("${dados.str1Value}");
+        SIComposite siDados = dadosType.newInstance();
+        assertNotNull(siDados.toStringDisplay());
+    }
+
     @Test(expected = SingularFormException.class)
     public void compositeSimpleWithoutPropertyTest() {
 

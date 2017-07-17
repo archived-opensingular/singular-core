@@ -84,6 +84,10 @@ public final class FormFreemarkerUtil {
         return context -> merge(context.instance(), stringTemplate);
     }
 
+    public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate,  boolean escapeContentHtml, boolean ignoreError ) {
+        return context -> merge(context.instance(), stringTemplate, escapeContentHtml, ignoreError);
+    }
+    
     /**
      * Gera uma string resultante do merge do template com os dados contídos no
      * documento informado. É o mesmo que merge(document.getRoot(),
