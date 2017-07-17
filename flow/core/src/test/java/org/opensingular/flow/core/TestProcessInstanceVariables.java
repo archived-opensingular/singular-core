@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessInstanceVariables.ProcessWithVariables.StepsPV;
+import org.opensingular.flow.core.TestProcessInstanceVariables.FlowWithVariables.StepsPV;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
@@ -61,7 +61,7 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
 
     @Test
     public void simpleVriables() {
-        ProcessInstance pi = new ProcessWithVariables().prepareStartCall().createAndStart();
+        FlowInstance pi = new FlowWithVariables().prepareStartCall().createAndStart();
 
         assertReloadAssert(pi, p-> {
             assertions(p).isAtTask(StepsPV.First)
@@ -78,7 +78,7 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
 
     @Test
     public void tryToReadInvalidVariable() {
-        ProcessInstance pi = new ProcessWithVariables().prepareStartCall().createAndStart();
+        FlowInstance pi = new FlowWithVariables().prepareStartCall().createAndStart();
 
         assertTrue(pi.getVariables().contains(PARAM_STRING));
         assertFalse(pi.getVariables().contains("asd"));
@@ -88,7 +88,7 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
     }
 
     @DefinitionInfo("WithVariables")
-    public static class ProcessWithVariables extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithVariables extends FlowDefinition<FlowInstance> {
 
         public enum StepsPV implements ITaskDefinition {
             First, End;
@@ -99,8 +99,8 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
             }
         }
 
-        public ProcessWithVariables() {
-            super(ProcessInstance.class);
+        public FlowWithVariables() {
+            super(FlowInstance.class);
             getVariables().addVariableString(PARAM_STRING);
             getVariables().addVariableString(PARAM_NULL);
             getVariables().addVariableInteger(PARAM_INTEGER);
@@ -113,15 +113,15 @@ public class TestProcessInstanceVariables extends TestFlowExecutionSupport {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
 
             f.addWaitTask(StepsPV.First);
-            f.addEnd(StepsPV.End);
+            f.addEndTask(StepsPV.End);
 
-            f.setStart(StepsPV.First).setInitializer(this::processInitializer);
+            f.setStartTask(StepsPV.First).setInitializer(this::processInitializer);
             f.from(StepsPV.First).go(StepsPV.End);
 
             return f.build();
         }
 
-        private void processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
+        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             instance.getVariables().setValue(PARAM_STRING, PARAM_STRING_VALUE);
             instance.setVariable(PARAM_DATE, PARAM_DATE_VALUE);
             instance.setVariable(PARAM_BOOLEAN, PARAM_BOOLEAN_VALUE);

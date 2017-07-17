@@ -30,7 +30,7 @@
                 var formControl = panelId.find('.form-control');
 
                 function verifyIfButtonUploadIsDisplayed() {
-                    return (choose_btn.css('display') == 'block') && (trash_btn.css('display') == 'none');
+                    return (choose_btn.css('display') === 'block') && (trash_btn.css('display') === 'none');
                 }
 
                 formControl.on("hover", function () {
@@ -46,6 +46,10 @@
                     }
                 });
             };
+
+            trash_btn.on("click", function (){
+                $('#'+ params.file_field_id).trigger("singular:process");
+            });
 
             clickWhitespaceToSelectFile();
 
@@ -75,7 +79,7 @@
                 sequentialUploads: true,
                 limitConcurrentUploads: 1,
                 formData:{
-                    'upload_id' : params.upload_id,
+                    'upload_id' : params.upload_id
                 },
                 add: function(e,data) {
                     if (!FileUploadPanel.validateInputFile(
@@ -102,7 +106,7 @@
                     //console.log('done',e,data);
                     $.each(data.result, function (index, fileString) {
                         var resp = JSON.parse(fileString);
-                        console.log('f',resp, $('#' + params.files_id ));
+                        // console.log('f',resp, $('#' + params.files_id ));
                         if (resp.errorMessage) {
                         	updateActionButtons();
                         	toastr.error(resp.name + ': ' + resp.errorMessage);
@@ -131,6 +135,7 @@
 	                                $('#' + params.progress_bar_id).hide();
 	
 	                                updateActionButtons();
+                                    $('#'+ params.file_field_id).trigger("singular:process");
 	                            }
                             );
                         }

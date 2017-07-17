@@ -1,5 +1,7 @@
 package org.opensingular.form.internal.freemarker;
 
+import java.util.Date;
+
 import org.fest.assertions.api.AbstractAssert;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.StringAssert;
@@ -14,8 +16,6 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.type.core.STypeString;
-
-import java.util.Date;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -66,8 +66,8 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
         assertMerge(curriculo, null, "Nome: ${dados.nome}").isEqualTo("Nome: Paulo Silva");
         assertMerge(curriculo, null, "Idade: ${dados.idade}").isEqualTo("Idade: 20");
         assertMerge(curriculo, null, "Idade: ${dados.idade.value()}").isEqualTo("Idade: 20");
-        assertMerge(curriculo, null, "Time: ${dados.time!\"não informado\"}").isEqualTo("Time: ");
-        assertMerge(curriculo, null, "Time: ${dados.time._inst.value()!\"não informado\"}").isEqualTo("Time: não informado");
+        assertMerge(curriculo, null, "Time: ${dados.time!\"não informado\"}").isEqualTo("Time: não informado");
+        assertMerge(curriculo, null, "Time: <#if dados.time??>${dados.time._inst.value()!\"não informado\"}<#else>não informado</#if>").isEqualTo("Time: não informado");
 
         assertMerge(curriculo, "dados.idade", "Idade: ${_inst}").isEqualTo("Idade: 20");
         assertMerge(curriculo, "dados.idade", "Idade: ${toStringDisplayDefault()}").isEqualTo("Idade: 20");

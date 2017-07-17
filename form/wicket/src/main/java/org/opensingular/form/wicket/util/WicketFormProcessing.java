@@ -326,7 +326,7 @@ public class WicketFormProcessing implements Loggable {
 
         if (container != null) {
             Visits.visitPostOrder(container, (Component comp, IVisit<Void> visit) -> {
-                if (SValidationFeedbackHandler.isBound(comp)) {
+                if (SValidationFeedbackHandler.isBound(comp) && comp.isVisibleInHierarchy()) {
                     SValidationFeedbackHandler.get(comp).updateValidationMessages(target);
                 }
             });

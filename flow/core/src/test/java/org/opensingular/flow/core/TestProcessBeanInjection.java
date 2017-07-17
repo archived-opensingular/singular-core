@@ -19,8 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessBeanInjection.ProcessDefinitionBeanInjection.StepsBI;
-import org.opensingular.flow.core.builder.BuilderJava;
+import org.opensingular.flow.core.TestProcessBeanInjection.FlowDefinitionBeanInjection.StepsBI;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -41,11 +40,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
+    private static final Set<IPoint> executedPoints = EnumSet.noneOf(IPoint.class);
+
     enum IPoint {
         processDefinition, callStartListener, call1, call2, call3, call4, call5, call6, call7, call8, callBasic
     }
 
-    private static final Set<IPoint> executedPoints = EnumSet.noneOf(IPoint.class);
+    static void assertBean(MyBean current, IPoint point) {
+        assertBean(current);
+        executedPoints.add(point);
+    }
+
+    static void assertBean(MyBean current) {
+        Assert.assertNotNull(current);
+        assertEquals(myBeanRef.getV(), current.getV());
+    }
 
     @Before
     public void clean() {
@@ -54,7 +63,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
     @Test
     public void injectionOnProcessDefinition() {
-        ProcessDefinitionBeanInjection pd = new ProcessDefinitionBeanInjection();
+        FlowDefinitionBeanInjection pd = new FlowDefinitionBeanInjection();
         assertBean(pd.myBean);
 
         STaskHuman taskPeople = (STaskHuman) pd.getFlowMap().getTask(StepsBI.Third);
@@ -68,24 +77,22 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
                 IPoint.call5, IPoint.call6, IPoint.call7, IPoint.call8);
     }
 
-
     @Test
     public void injectionIntoProcessInstance() {
-        ProcessDefinitionBeanInjection p = new ProcessDefinitionBeanInjection();
-        ProcessInstanceBeanInjection i = p.prepareStartCall().createAndStart();
+        FlowDefinitionBeanInjection p = new FlowDefinitionBeanInjection();
+        FlowInstanceBeanInjection i = p.prepareStartCall().createAndStart();
         assertBean(i.myBean);
 
-        ProcessInstanceBeanInjection i2 = (ProcessInstanceBeanInjection) reload(i);
+        FlowInstanceBeanInjection i2 = (FlowInstanceBeanInjection) reload(i);
         assertBean(i2.myBean);
 
-        ProcessInstanceBeanInjection i3 = SingularIOUtils.serializeAndDeserialize(i, true);
+        FlowInstanceBeanInjection i3 = SingularIOUtils.serializeAndDeserialize(i, true);
         assertBean(i3.myBean);
     }
 
-
     private void runAndAssert(IPoint... expectedPoints) {
-        ProcessDefinitionBeanInjection p = new ProcessDefinitionBeanInjection();
-        ProcessInstance i = p.prepareStartCall().createAndStart();
+        FlowDefinitionBeanInjection p = new FlowDefinitionBeanInjection();
+        FlowInstance i = p.prepareStartCall().createAndStart();
         for (IPoint point : expectedPoints) {
             if (!executedPoints.contains(point)) {
                 throw new AssertionError("Não foi executado o ponto de verifição de injeção: " + point);
@@ -93,18 +100,8 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    static void assertBean(MyBean current, IPoint point) {
-        assertBean(current);
-        executedPoints.add(point);
-    }
-
-    static void assertBean(MyBean current) {
-        Assert.assertNotNull(current);
-        assertEquals(myBeanRef.getV(), current.getV());
-    }
-
     @DefinitionInfo("ProcessoBeanInjection")
-    public static class ProcessDefinitionBeanInjection extends ProcessDefinition<ProcessInstanceBeanInjection> {
+    public static class FlowDefinitionBeanInjection extends FlowDefinition<FlowInstanceBeanInjection> {
 
         public enum StepsBI implements ITaskDefinition {
             First, Second, Third, Call1, Call2, Call3, Call4, Call5, Call6, Call7, Call8, End;
@@ -115,12 +112,12 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
             }
         }
 
-        public ProcessDefinitionBeanInjection() {
-            super(ProcessInstanceBeanInjection.class);
-        }
-
         @Inject
         private MyBean myBean;
+
+        public FlowDefinitionBeanInjection() {
+            super(FlowInstanceBeanInjection.class);
+        }
 
         @Override
         protected FlowMap createFlowMap() {
@@ -138,9 +135,9 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
             f.addJavaTask(StepsBI.Call6).call(new MyJavaTask6());
             f.addJavaTask(StepsBI.Call7).call(new MyJavaTask7());
             f.addJavaTask(StepsBI.Call8).call(new MyJavaTask8());
-            f.addEnd(StepsBI.End);
+            f.addEndTask(StepsBI.End);
 
-            f.setStart(StepsBI.First).with(this::setupStartParameters);
+            f.setStartTask(StepsBI.First).with(this::setupStartParameters);
 
             f.from(StepsBI.First).go(StepsBI.Call1).thenGo(StepsBI.Call2).thenGo(StepsBI.Call3).thenGo(StepsBI.Call4)
                     .thenGo(StepsBI.Call5).thenGo(StepsBI.Call6).thenGo(StepsBI.Call7).thenGo(StepsBI.Call8);
@@ -151,116 +148,118 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
             return f.build();
         }
 
-        private <K extends ProcessInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
-                ValidationResult result, K process) {
+        private <K extends FlowInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
+                                                                          ValidationResult result, K process) {
         }
 
         private void setupStartParameters(BuilderStart<?> start) {
         }
     }
 
-    public static class ProcessInstanceBeanInjection extends ProcessInstance {
+    public static class FlowInstanceBeanInjection extends FlowInstance {
 
         @Inject
         private MyBean myBean;
 
     }
 
-    private static class MyJavaTask implements STaskJava.ImplTaskJava {
+    private static class MyJavaTask implements TaskJavaCall<FlowInstance> {
 
         @Inject
         public MyBean myBean;
 
         @Override
-        public Object call(ExecutionContext execucaoTask) {
+        public void call(ExecutionContext execucaoTask) {
             assertBean(myBean, IPoint.callBasic);
-            return null;
+
         }
     }
 
-    private static class MyJavaTask1 implements BuilderJava.ImplTaskJavaReturnInstanciaExecucao<ProcessInstance> {
+    private static class MyJavaTask1 implements TaskJavaCall<FlowInstance> {
 
         @Inject
         public MyBean myBean;
 
         @Override
-        public Object executar(ProcessInstance processInstance, ExecutionContext execucaoTask) {
+        public void call(ExecutionContext execucaoTask) {
             assertBean(myBean, IPoint.call1);
-            return null;
+
         }
     }
 
-    private static class MyJavaTask2 implements BuilderJava.ImplTaskJavaVoidInstanciaExecucao<ProcessInstance> {
+    private static class MyJavaTask2 implements TaskJavaCall<FlowInstance> {
 
         @Inject
         public MyBean myBean;
 
         @Override
-        public void executar(ProcessInstance processInstance, ExecutionContext execucaoTask) {
+        public void call(ExecutionContext execucaoTask) {
             assertBean(myBean, IPoint.call2);
+
         }
     }
 
-    private static class MyJavaTask3 implements BuilderJava.ImplTaskJavaVoidInstanciaTarefaExecucao {
+    private static class MyJavaTask3 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
         @Override
-        public void executar(TaskInstance taskInstance, ExecutionContext execucaoTask) {
+        public void call(ExecutionContext execucaoTask) {
             assertBean(myBean, IPoint.call3);
+
         }
     }
 
-    private static class MyJavaTask4 implements BuilderJava.ImplTaskJavaReturnInstanciaTarefaExecucao {
+    private static class MyJavaTask4 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
         @Override
-        public Object executar(TaskInstance taskInstance, ExecutionContext execucaoTask) {
+        public void call(ExecutionContext execucaoTask) {
             assertBean(myBean, IPoint.call4);
-            return null;
+
         }
     }
 
-    private static class MyJavaTask5 implements BuilderJava.ImplTaskJavaVoidInstancia<ProcessInstance> {
+    private static class MyJavaTask5 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
         @Override
-        public void executar(ProcessInstance processInstance) {
+        public void call(ExecutionContext context) {
             assertBean(myBean, IPoint.call5);
+
         }
     }
 
-    private static class MyJavaTask6 implements BuilderJava.ImplTaskJavaReturnInstancia<ProcessInstance> {
+    private static class MyJavaTask6 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
         @Override
-        public Object executar(ProcessInstance processInstance) {
+        public void call(ExecutionContext context) {
             assertBean(myBean, IPoint.call6);
-            return null;
         }
     }
 
-    private static class MyJavaTask7 implements BuilderJava.ImplTaskJavaVoidInstanciaTarefa {
+    private static class MyJavaTask7 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
         @Override
-        public void executar(TaskInstance taskInstance) {
+        public void call(ExecutionContext context) {
             assertBean(myBean, IPoint.call7);
         }
     }
 
-    private static class MyJavaTask8 implements BuilderJava.ImplTaskJavaReturnInstanciaTarefa {
+    private static class MyJavaTask8 implements TaskJavaCall<FlowInstance> {
         @Inject
         public MyBean myBean;
 
         @Override
-        public Object executar(TaskInstance taskInstance) {
+        public void call(ExecutionContext context) {
             assertBean(myBean, IPoint.call8);
-            return null;
+
         }
     }
 
@@ -282,22 +281,22 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public boolean canExecute(ProcessInstance instance, SUser user) {
+        public boolean canExecute(FlowInstance instance, SUser user) {
             return false;
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(ProcessInstance instancia) {
+        public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition definicao, STask task) {
+        public List<String> getExecuteRoleNames(FlowDefinition definicao, STask task) {
             return Collections.emptyList();
         }
     }

@@ -33,4 +33,9 @@ public interface InstanceValidatable<I extends SInstance> {
     ValidationError error(ValidationErrorLevel level, ValidationError error);
 
     ValidationError error(ValidationErrorLevel level, String msg);
+
+    default <T> T getInstanceValue(Class<T> expectedType){
+        return getInstance().getValue(expectedType);
+    }
+
 }

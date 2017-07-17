@@ -17,8 +17,8 @@
 package org.opensingular.flow.core.ws;
 
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SUser;
 
 public class BaseSingularRest {
@@ -38,39 +38,39 @@ public class BaseSingularRest {
     }
 
     public Long startInstance(String processAbbreviation) {
-        ProcessDefinition processo = Flow.getProcessDefinition(processAbbreviation);
-        ProcessInstance processInstance = processo.prepareStartCall().createAndStart();
-        return processInstance.getEntityCod().longValue();
+        FlowDefinition processo = Flow.getProcessDefinition(processAbbreviation);
+        FlowInstance flowInstance = processo.prepareStartCall().createAndStart();
+        return flowInstance.getEntityCod().longValue();
     }
 
     public void executeDefaultTransition(String processAbbreviation,
                                          Long codProcessInstance,
                                           String username) {
-        ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        processInstance.prepareTransition().go();
+        FlowInstance flowInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        flowInstance.prepareTransition().go();
     }
 
     public void executeTransition(String processAbbreviation,
                                   Long codProcessInstance,
                                   String transitionName,
                                   String username) {
-        ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        processInstance.prepareTransition(transitionName).go();
+        FlowInstance flowInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        flowInstance.prepareTransition(transitionName).go();
     }
 
     public void relocateTask(String processAbbreviation,
                              Long codProcessInstance,
                              String username,
                              Integer lastVersion) {
-        ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        FlowInstance flowInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         SUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
         Integer lastVersion2 = (lastVersion == null) ? Integer.valueOf(0) : lastVersion;
-        processInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion2);
+        flowInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion2);
     }
 
-    private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
-        ProcessDefinition<ProcessInstance> processDefinition = Flow.getProcessDefinition(processAbbreviation);
-        return Flow.getProcessInstance(processDefinition, (Integer) codProcessInstance.intValue());
+    private FlowInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
+        FlowDefinition<FlowInstance> flowDefinition = Flow.getProcessDefinition(processAbbreviation);
+        return Flow.getProcessInstance(flowDefinition, (Integer) codProcessInstance.intValue());
     }
     
 }

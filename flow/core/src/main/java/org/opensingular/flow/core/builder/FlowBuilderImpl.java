@@ -18,7 +18,7 @@ package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessDefinition;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.SProcessRole;
 import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
@@ -31,15 +31,15 @@ import org.opensingular.flow.core.STransition;
 import java.util.Objects;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderHuman<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderProcessRole<?>, ITaskDefinition> {
+        FlowBuilder<FlowDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderHuman<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderProcessRole<?>, ITaskDefinition> {
 
-    public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
-        super(processDefinition);
+    public FlowBuilderImpl(FlowDefinition<?> flowDefinition) {
+        super(flowDefinition);
     }
 
     @Override
-    protected FlowMap newFlowMap(ProcessDefinition<?> processDefinition) {
-        return new FlowMap(processDefinition);
+    protected FlowMap newFlowMap(FlowDefinition<?> flowDefinition) {
+        return new FlowMap(flowDefinition);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderStart<?> newStart(SStart start) {
+    protected BuilderStart<?> newStartTask(SStart start) {
         return new ImplBuilderStart<>(start);
     }
 

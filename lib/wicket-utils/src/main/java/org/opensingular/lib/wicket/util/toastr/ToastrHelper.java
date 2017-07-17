@@ -18,6 +18,7 @@ package org.opensingular.lib.wicket.util.toastr;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 
 import org.apache.wicket.Component;
@@ -32,7 +33,7 @@ import de.alpharogroup.wicket.js.addon.toastr.ToastJsGenerator;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrSettings;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
-public class ToastrHelper {
+public class ToastrHelper implements Serializable {
 
     private Component component;
 

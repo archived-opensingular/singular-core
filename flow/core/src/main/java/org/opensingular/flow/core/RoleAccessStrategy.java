@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
+public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
     public static RoleAccessStrategy of(SProcessRole processRole) {
         return new RoleAccessStrategy(processRole);
@@ -54,7 +54,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public boolean canExecute(ProcessInstance instance, SUser user) {
+    public boolean canExecute(FlowInstance instance, SUser user) {
         for (IEntityRoleInstance entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole) && user.is(entityRole.getUser())) {
                 return true;
@@ -64,7 +64,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public boolean canVisualize(ProcessInstance instance, SUser user) {
+    public boolean canVisualize(FlowInstance instance, SUser user) {
         if (visualizeRole != null) {
             for (IEntityRoleInstance entityRole : instance.getUserRoles()) {
                 if (isSameRole(visualizeRole, entityRole) && user.is(entityRole.getUser())) {
@@ -80,7 +80,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instance) {
+    public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instance) {
         final Set<Integer> cods = new HashSet<>();
         for (IEntityRoleInstance entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
@@ -91,7 +91,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public List<SUser> listAllocableUsers(ProcessInstance instance) {
+    public List<SUser> listAllocableUsers(FlowInstance instance) {
         return instance.getUserRoles()
                 .stream()
                 .filter(entityRole -> isSameRole(executionRole, entityRole))
@@ -102,12 +102,12 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+    public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
         return Lists.newArrayList("Papel " + executionRole.getName());
     }
 
     @Override
-    public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+    public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
         if (visualizeRole == null) {
             return getExecuteRoleNames(definicao, task);
         }
@@ -120,7 +120,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public SUser getAutomaticAllocatedUser(ProcessInstance instancia, TaskInstance tarefa) {
+    public SUser getAutomaticAllocatedUser(FlowInstance instancia, TaskInstance tarefa) {
         IEntityRoleInstance role = instancia.getRoleUserByAbbreviation(executionRole.getName());
         return role != null ? role.getUser() : null;
     }

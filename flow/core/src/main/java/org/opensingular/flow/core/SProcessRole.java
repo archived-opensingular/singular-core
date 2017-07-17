@@ -27,16 +27,16 @@ public final class SProcessRole implements Serializable {
 
     private final boolean automaticUserAllocation;
 
-    private final UserRoleSettingStrategy<ProcessInstance> userRoleSettingStrategy;
+    private final UserRoleSettingStrategy<FlowInstance> userRoleSettingStrategy;
 
     @SuppressWarnings("unchecked")
-    SProcessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
+    SProcessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(abbreviation);
         Objects.requireNonNull(userRoleSettingStrategy);
         this.abbreviation = abbreviation;
         this.name = name;
-        this.userRoleSettingStrategy = (UserRoleSettingStrategy<ProcessInstance>) userRoleSettingStrategy;
+        this.userRoleSettingStrategy = (UserRoleSettingStrategy<FlowInstance>) userRoleSettingStrategy;
         this.automaticUserAllocation = automaticUserAllocation;
     }
 
@@ -48,7 +48,7 @@ public final class SProcessRole implements Serializable {
         return name;
     }
 
-    public UserRoleSettingStrategy<ProcessInstance> getUserRoleSettingStrategy() {
+    public UserRoleSettingStrategy<FlowInstance> getUserRoleSettingStrategy() {
         return userRoleSettingStrategy;
     }
 
