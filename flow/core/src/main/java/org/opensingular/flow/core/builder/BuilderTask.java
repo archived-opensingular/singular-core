@@ -41,8 +41,6 @@ public interface BuilderTask {
 
     public BuilderTask addAccessStrategy(TaskAccessStrategy<?> accessStrategy);
 
-    public BuilderTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
-
     public BuilderTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
 
     @Nonnull

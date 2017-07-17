@@ -47,11 +47,6 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
         return self();
     }
 
-    @Override
-    default SELF addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso) {
-        getTask().addVisualizeStrategy(estrategiaAcesso);
-        return self();
-    }
 
     @Override
     default SELF addStartedTaskListener(StartedTaskListener listenerInicioTarefa) {

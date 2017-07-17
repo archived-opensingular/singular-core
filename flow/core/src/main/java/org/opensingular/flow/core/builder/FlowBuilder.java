@@ -196,14 +196,6 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
         return newTransition(flowMap.getTask(origin).addAutomaticTransition(condition, flowMap.getTask(destination)));
     }
 
-    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy) {
-        getFlowMap().getAllTasks().forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
-    }
-
-    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy, Predicate<STask<?>> applyToPredicate) {
-        getFlowMap().getAllTasks().stream().filter(applyToPredicate).forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
-    }
-
     public FlowBuilder<DEF, MAPA, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
         getFlowMap().addDashboardView(dashboardView);
         return this;

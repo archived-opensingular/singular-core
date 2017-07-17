@@ -60,15 +60,8 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         return true;
     }
 
-    public boolean isOnlyForVisualize() {
+    public boolean isReadOnly() {
         return false;
-    }
-
-    public TaskAccessStrategy<K> getOnlyVisualize() {
-        if (isOnlyForVisualize()) {
-            return this;
-        }
-        return new VisualizeOnlyTaskAccessStrategy<>(this);
     }
 
     public TaskAccessStrategy<K> or(TaskAccessStrategy<K> e2) {
@@ -199,7 +192,7 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         }
 
         @Override
-        public boolean isOnlyForVisualize() {
+        public boolean isReadOnly() {
             return true;
         }
     }

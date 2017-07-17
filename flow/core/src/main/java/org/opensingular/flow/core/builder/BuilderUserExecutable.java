@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.ITaskPageStrategy;
-import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STaskUserExecutable;
 import org.opensingular.flow.core.TaskAccessStrategy;
 
@@ -33,12 +33,6 @@ public interface BuilderUserExecutable<SELF extends BuilderUserExecutable<SELF, 
         return self();
     }
 
-    @Override
-    @Nonnull
-    public default SELF addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
-        getTask().addVisualizeStrategy(accessStrategy);
-        return self();
-    }
 
     @Nonnull
     public default SELF withExecutionPage(@Nonnull ITaskPageStrategy executionPage) {
