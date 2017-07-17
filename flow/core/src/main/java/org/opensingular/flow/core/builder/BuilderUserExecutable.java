@@ -28,7 +28,7 @@ public interface BuilderUserExecutable<SELF extends BuilderUserExecutable<SELF, 
 
     @Override
     @Nonnull
-    public default SELF addAccessStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
+    public default SELF uiAccess(@Nonnull TaskAccessStrategy<?> accessStrategy) {
         getTask().addAccessStrategy(accessStrategy);
         return self();
     }

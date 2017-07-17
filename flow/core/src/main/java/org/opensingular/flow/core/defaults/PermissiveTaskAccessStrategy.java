@@ -26,7 +26,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class NullTaskAccessStrategy extends TaskAccessStrategy<FlowInstance> {
+/**
+ * Permissive task access strategy that do not restrict any functionality
+ * Not that this access strategy do not interfere with the {@link org.opensingular.flow.core.UITransitionAccessStrategy}
+ * regarding the transitions permissions.
+ */
+public class PermissiveTaskAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
     @Override
     public boolean canExecute(FlowInstance instance, SUser user) {

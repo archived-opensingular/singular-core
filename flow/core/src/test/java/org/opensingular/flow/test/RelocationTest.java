@@ -20,7 +20,7 @@ import org.opensingular.flow.core.ProcessDefinitionCache;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
+import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
 import org.opensingular.flow.core.ws.BaseSingularRest;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
@@ -224,7 +224,7 @@ public class RelocationTest {
 
             FlowBuilderImpl flow = new FlowBuilderImpl(this);
             flow.addJavaTask(PTask.START).call(this::doSomething);
-            flow.addHumanTask(PTask.DO1, new NullTaskAccessStrategy());
+            flow.addHumanTask(PTask.DO1, new PermissiveTaskAccessStrategy());
 
             flow.addEndTask(PTask.END);
             flow.setStartTask(PTask.START);

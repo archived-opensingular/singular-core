@@ -42,7 +42,7 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
     }
 
     @Override
-    default SELF addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
+    default SELF uiAccess(TaskAccessStrategy<?> accessStrategy) {
         getTask().addAccessStrategy(accessStrategy);
         return self();
     }

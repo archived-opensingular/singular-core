@@ -131,7 +131,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
     public BUILDER_PEOPLE addHumanTask(TASK_DEF taskDefinition, TaskAccessStrategy<?> accessStrategy) {
         BUILDER_PEOPLE task = newHumanTask(getFlowMap().addHumanTask(taskDefinition));
         if (accessStrategy != null) {
-            task.addAccessStrategy(accessStrategy);
+            task.uiAccess(accessStrategy);
         }
         task.withExecutionPage(new NullPageStrategy());
         return task;
@@ -156,7 +156,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
     public <T extends FlowInstance> BUILDER_WAIT addWaitTask(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
             TaskAccessStrategy<?> accessStrategy) {
         BUILDER_WAIT wait = addWaitTask(taskDefinition, executionDateStrategy);
-        wait.addAccessStrategy(accessStrategy);
+        wait.uiAccess(accessStrategy);
         return wait;
     }
 

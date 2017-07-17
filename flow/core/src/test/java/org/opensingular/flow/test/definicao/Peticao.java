@@ -26,7 +26,7 @@ import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskPredicates;
 import org.opensingular.flow.core.builder.BuilderBusinessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.defaults.NullTaskAccessStrategy;
+import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
 
 import java.util.Calendar;
 
@@ -86,10 +86,10 @@ public class Peticao extends FlowDefinition<FlowInstance> {
 
         flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         flow.addHumanTask(AGUARDANDO_ANALISE, papelAnalista);
-        flow.addHumanTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
+        flow.addHumanTask(EM_EXIGENCIA, new PermissiveTaskAccessStrategy());
         flow.addHumanTask(AGUARDANDO_GERENTE, papelGerente)
                 .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
-        flow.addHumanTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
+        flow.addHumanTask(AGUARDANDO_PUBLICACAO, new PermissiveTaskAccessStrategy());
         flow.addEndTask(INDEFERIDO);
         flow.addEndTask(DEFERIDO);
         flow.addEndTask(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
