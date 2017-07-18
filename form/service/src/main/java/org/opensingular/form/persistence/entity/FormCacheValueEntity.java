@@ -110,14 +110,16 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
             return;
         }
 
-        if (setDateValue(instance)) return;
-        if (setNumberValue(instance)) return;
+        if (setDateValue(instance)){
+            return;
+        }
+        if (setNumberValue(instance)){
+            return;
+        }
         setStringValue(instance);
     }
 
     private boolean setStringValue(SInstance instance) {
-        SType type = instance.getType();
-
         String valor = instance.getValue().toString();
         if (valor.length() >= 2048) {
             valor = instance.getValue().toString().substring(0, 2047);
