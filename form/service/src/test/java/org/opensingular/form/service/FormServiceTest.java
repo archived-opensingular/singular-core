@@ -58,7 +58,10 @@ public abstract class FormServiceTest {
         tipoPessoa = pb.createType("pessoa", STypeComposite.class);
         idade = tipoPessoa.addFieldInteger("idade");
         nome = tipoPessoa.addFieldString("nome");
+
         tipoPessoa.asAtrAnnotation().setAnnotated();
+        idade.asAtrIndex().persistent(true);
+        nome.asAtrIndex().persistent(true);
 
         documentFactory = SDocumentFactory.of(doc -> {
             IAttachmentPersistenceHandler<?> tempHandler = mock(IAttachmentPersistenceHandler.class);

@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.persistence.FormKey;
@@ -64,6 +65,7 @@ public class FormVersionTest extends FormServiceTest {
     }
 
     @Test
+    @Ignore
     public void indexFieldAlreadyRegisteredDoesNotDuplicate() {
         Session  session  = sessionFactory.getCurrentSession();
         Criteria criteria = session.createCriteria(FormCacheFieldEntity.class);
@@ -80,6 +82,7 @@ public class FormVersionTest extends FormServiceTest {
     }
 
     @Test
+    @Ignore
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void indexFieldValues() {
         Session  session  = sessionFactory.getCurrentSession();

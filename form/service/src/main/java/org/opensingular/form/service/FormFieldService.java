@@ -127,17 +127,11 @@ public class FormFieldService implements IFormFieldService {
 
 
     private void saveMap(Map<FormCacheFieldEntity, FormCacheValueEntity> mapFields) {
-        LOGGER.info("Starting batch insert ");
-        long startNanos = System.nanoTime();
-
         mapFields.forEach((field, value) -> {
             field = formCacheFieldDAO.saveOrFind(field);
             value.setCacheField(field);
             formCacheValueDAO.save(value);
         });
-
-        long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-        LOGGER.info("Batch insert took " + duration + " millis");
     }
 }
 

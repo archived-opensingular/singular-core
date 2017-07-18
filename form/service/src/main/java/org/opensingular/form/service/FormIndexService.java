@@ -57,45 +57,6 @@ public class FormIndexService {
     public void indexAllForms() {
         LOGGER.info("Iniciando a indexação total da base");
 
-        formVersionDAO.resetIndexedFlag();
-
-        long startNanos = System.nanoTime();
-
-        List<FormEntity> forms = formDAO.listAll();
-
-        SingularClassPathScanner scanner = SingularClassPathScanner.get();
-        Set<Class<?>>            classes = scanner.findClassesAnnotatedWith(SInfoType.class);
-        classes.removeAll(classes.stream()
-                .filter(c -> c.getName().contains("org.opensingular"))
-                .collect(Collectors.toList()));
-
-        for (FormEntity form : forms) {
-            String formType = form.getFormType().getAbbreviation();
-            String typeName = formType.substring(formType.lastIndexOf(".")+1, formType.length());
-            Optional<Class<?>> clazz = classes.stream()
-                            .filter(item -> item.getName().contains(typeName))
-                            .findFirst();
-
-            if (clazz.isPresent()) {
-                Class formClass = clazz.get();
-                RefType refType = RefType.of(formClass);
-                SDocumentFactory sDocumentFactory = SDocumentFactory.empty();
-                SInstance instance = SFormXMLUtil.fromXML(refType, form.getCurrentFormVersionEntity().getXml(), sDocumentFactory);
-
-                formFieldService.saveFields(instance, form.getFormType(), form.getCurrentFormVersionEntity());
-            } else {
-                System.out.println("Não foi possível indexar o form " + formType);
-            }
-        }
-
-        long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-        LOGGER.info("Indexação completa. Duração: " + duration + " millis");
-    }
-
-
-    public void indexForms() {
-        LOGGER.info("Iniciando a indexação total da base");
-
         long                  startNanos       = System.nanoTime();
         boolean               hasMoreItens     = true;
         List<InstanceFormDTO> instancesToIndex = new ArrayList<>();
