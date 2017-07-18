@@ -17,6 +17,8 @@ package org.opensingular.form.persistence.dao;
 
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
@@ -51,6 +53,14 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
                 .setFirstResult((int) first)
                 .setMaxResults((int) max)
                 .list();
+    }
+
+    public List<FormEntity> listUnIndexedForms() {
+        Criteria criteria = getSession().createCriteria(FormEntity.class);
+        criteria.setMaxResults(50);
+        criteria.createAlias("currentFormVersionEntity", "formVersion");
+        criteria.add(Restrictions.eq("formVersion.indexed", 'N'));
+        return criteria.list();
     }
 
     private Criteria getfindByFormAbbreviation(String formAbbreviation) {

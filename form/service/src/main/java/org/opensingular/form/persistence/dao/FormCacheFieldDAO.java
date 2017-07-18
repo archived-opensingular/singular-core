@@ -1,6 +1,7 @@
 package org.opensingular.form.persistence.dao;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
@@ -40,4 +41,10 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
         }
     }
 
+    public void deleteAllIndexedFields() {
+        Query query = getSession().createQuery("delete FormCacheFieldEntity");
+
+        int result = query.executeUpdate();
+        getLogger().info(result + " itens excluidos na atualização dos campos indexados");
+    }
 }

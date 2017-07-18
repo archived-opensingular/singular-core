@@ -6,8 +6,11 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.persistence.dao.FormCacheFieldDAO;
 import org.opensingular.form.persistence.dao.FormCacheValueDAO;
+import org.opensingular.form.persistence.dao.FormVersionDAO;
+import org.opensingular.form.persistence.dto.InstanceFormDTO;
 import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
 import org.opensingular.form.persistence.entity.FormCacheValueEntity;
+import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.type.core.attachment.SIAttachment;
@@ -19,6 +22,7 @@ import javax.transaction.Transactional;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Transactional
@@ -32,12 +36,32 @@ public class FormFieldService implements IFormFieldService {
     @Inject
     private FormCacheValueDAO formCacheValueDAO;
 
+    @Inject
+    private FormVersionDAO formVersionDAO;
+
     @Override
     public void saveFields(SInstance instance, FormTypeEntity formType, FormVersionEntity formVersion) {
         Map<FormCacheFieldEntity, FormCacheValueEntity> mapFields = new LinkedHashMap<>();
         loadMapFromInstance(mapFields, instance, formVersion, null);
         deleteOldValues(formVersion);
         saveMap(mapFields);
+        setFormVersionAsIndexed(formVersion.getCod());
+    }
+
+    private void setFormVersionAsIndexed(Long cod) {
+        Optional<FormVersionEntity> formVersion = formVersionDAO.get(cod);
+        formVersion.ifPresent(f -> {
+            f.setIndexed('S');
+            formVersionDAO.save(f);
+        });
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void saveFields(List<InstanceFormDTO> instances) {
+        for (InstanceFormDTO dto : instances) {
+            FormEntity form = dto.getForm();
+            saveFields(dto.getInstance(), form.getFormType(), form.getCurrentFormVersionEntity());
+        }
     }
 
     private void deleteOldValues(FormVersionEntity formVersion) {
