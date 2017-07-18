@@ -75,6 +75,7 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
         this.setParent(parent);
     }
 
+    @Override
     public Long getCod() {
         return cod;
     }
@@ -105,40 +106,42 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
         }
 
         SType type = instance.getType();
-        if (type instanceof STypeSimple) {
-            STypeSimple typeSimple = ((STypeSimple) type);
+        if (! (type instanceof STypeSimple)) {
+            return;
+        }
 
-            if (typeSimple instanceof STypeDate
-                    || type instanceof STypeDateTime
-                    || type instanceof STypeTime) {
-                dateValue = (Date) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-                return;
-            }
+        STypeSimple typeSimple = ((STypeSimple) type);
 
-            if (type instanceof STypeInteger) {
-                Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-                numberValue = new BigDecimal(valor);
-                return;
-            }
+        if (typeSimple instanceof STypeDate
+                || type instanceof STypeDateTime
+                || type instanceof STypeTime) {
+            dateValue = (Date) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            return;
+        }
 
-            if (type instanceof STypeLong) {
-                Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-                numberValue = new BigDecimal(valor);
-                return;
-            }
+        if (type instanceof STypeInteger) {
+            Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(valor);
+            return;
+        }
 
-            if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
-                numberValue = (BigDecimal) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-                return;
-            }
+        if (type instanceof STypeLong) {
+            Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(valor);
+            return;
+        }
 
-            String valor = instance.getValue().toString();
-            if (valor.length() >= 2048) {
-                valor = instance.getValue().toString().substring(0, 2047);
-                stringValue = valor;
-            } else {
-                stringValue = valor;
-            }
+        if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
+            numberValue = (BigDecimal) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            return;
+        }
+
+        String valor = instance.getValue().toString();
+        if (valor.length() >= 2048) {
+            valor = instance.getValue().toString().substring(0, 2047);
+            stringValue = valor;
+        } else {
+            stringValue = valor;
         }
     }
 
