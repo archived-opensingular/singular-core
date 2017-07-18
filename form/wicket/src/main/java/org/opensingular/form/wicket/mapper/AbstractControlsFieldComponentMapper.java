@@ -100,6 +100,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 labelBar,
                 instanceActionsProviders,
                 model,
+                false,
                 internalContextListProvider);
             formGroup.appendDiv(labelBar);
         }

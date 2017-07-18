@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ref.Out;
 
 /**
  * Objeto que encapsula uma ação que pode ser tomada sobre um campo do form, na interface.
@@ -26,6 +27,11 @@ public class SInstanceAction implements Serializable {
     public interface ActionHandler extends Serializable {
         void onAction(SInstanceAction action, ISupplier<SInstance> instance, SInstanceAction.Delegate delegate);
     }
+    
+    public interface FormDelegate extends Serializable {
+        void close();
+        SInstance getFormInstance();
+    }
 
     /**
      * Objeto que encapsula a interação com a interface, de forma independente da tecnologia da implementação.
@@ -36,9 +42,7 @@ public class SInstanceAction implements Serializable {
         /** Retorna uma referência à instância do campo correspondente à ação que está sendo executada. */
         Supplier<SInstance> getInstanceRef();
         /** Abre um form gerado a partir da instância fornecida, com as ações possíveis. */
-        void openForm(String title, ISupplier<SInstance> instanceSupplier, List<SInstanceAction> actions);
-        /** Fecha um form aberto por openForm(), correspondente à instância fornecida. */
-        void closeForm(SInstance instance);
+        void openForm(Out<FormDelegate> formDelegate, String title, ISupplier<SInstance> instanceSupplier, List<SInstanceAction> actions);
         /** Atualiza o campo correspondente à instância */
         void refreshFieldForInstance(SInstance instanceSupplier);
         /** Exibe uma mensagem, no formato especificado (html, markdown, text). */

@@ -116,6 +116,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
         final Deque<IWicketBuildListener> listeners = new LinkedList<>(ctx.getListeners());
+        listeners.removeIf(it -> !it.isActive(ctx, null));
 
         ctx.init(this, viewMode);
 
@@ -124,8 +125,11 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if (mapper instanceof IWicketBuildListener)
-            listeners.addFirst((IWicketBuildListener) mapper);
+        if (mapper instanceof IWicketBuildListener) {
+            IWicketBuildListener listenerMapper = (IWicketBuildListener) mapper;
+            if (listenerMapper.isActive(ctx, mapper))
+                listeners.addFirst(listenerMapper);
+        }
 
         // onMapperResolved
         listeners.stream().forEach(it -> it.onMapperResolved(ctx, mapper));
@@ -173,12 +177,12 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 return (IWicketComponentMapper) customMapper;
             } else {
                 throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessário " + customMapper.getClass().getName()
-                        + " implementar IWicketComponentMapper", instancia);
+                    + " implementar IWicketComponentMapper", instancia);
             }
         } else {
             final SView view = ViewResolver.resolve(instancia);
             return getViewMapperRegistry().getMapper(instancia, view).orElseThrow(
-                    () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
+                () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
         }
     }
 

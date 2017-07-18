@@ -5,8 +5,11 @@ import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -17,22 +20,31 @@ import java.util.regex.Pattern;
  */
 public class SIcon implements Serializable {
 
-    private static final Pattern SPACE = Pattern.compile("[\\s]+");
-    private final Set<String>    baseIconCssClasses;
+    private static final Pattern SPACE               = Pattern.compile("[\\s]+");
+    private final Set<String>    iconCssClasses      = new LinkedHashSet<>();
+    private final Set<String>    containerCssClasses = new LinkedHashSet<>();
     private String               fgColor;
     private String               bgColor;
 
-    SIcon(String iconCssClass) {
-        this.baseIconCssClasses = SPACE.splitAsStream(iconCssClass).collect(toSet());
-    }
+    public SIcon() {}
 
+    public SIcon setIconCssClasses(String... cssClases) {
+        return setIconCssClasses(Arrays.asList(cssClases));
+    }
+    public SIcon setIconCssClasses(Collection<String> cssClases) {
+        this.iconCssClasses.clear();
+        this.iconCssClasses.addAll(cssClases.stream()
+            .flatMap(it -> SPACE.splitAsStream(it))
+            .collect(toSet()));
+        return this;
+    }
+    
     /**
      * Classes CSS do ícone.
      */
     public Set<String> getIconCssClasses() {
-        return unmodifiableSet(baseIconCssClasses);
+        return unmodifiableSet(iconCssClasses);
     }
-
     /**
      * Classes CSS do ícone.
      */
@@ -57,11 +69,23 @@ public class SIcon implements Serializable {
             .collect(joining(";"));
     }
 
+    public SIcon setContainerCssClasses(String... cssClases) {
+        return setContainerCssClasses(Arrays.asList(cssClases));
+    }
+    public SIcon setContainerCssClasses(Collection<String> cssClases) {
+        this.containerCssClasses.clear();
+        this.containerCssClasses.addAll(cssClases.stream()
+            .flatMap(it -> SPACE.splitAsStream(it))
+            .collect(toSet()));
+        return this;
+    }
+    
     /**
      * Classes CSS do elemento que contém o ícone.
      */
     public Set<String> getContainerCssClasses() {
         Set<String> classes = new HashSet<>();
+        classes.addAll(containerCssClasses);
         toCssClass(fgColor).ifPresent(classes::add);
         toCssClass(bgColor).ifPresent(classes::add);
         return unmodifiableSet(classes);

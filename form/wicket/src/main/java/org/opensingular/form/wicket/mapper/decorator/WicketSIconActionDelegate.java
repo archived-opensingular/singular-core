@@ -1,5 +1,7 @@
 package org.opensingular.form.wicket.mapper.decorator;
 
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.io.Serializable;
@@ -8,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
@@ -16,18 +19,21 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
+import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
+import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.panel.IOpenModalEvent;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
@@ -37,12 +43,16 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
  */
 public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
 
-    private ISupplier<SInstance> instanceRef;
-    private List<?>              contextList;
+    private IModel<? extends SInstance> instanceModel;
+    private transient List<?>           contextList;
+    private List<?>                     serializableContextList;
 
-    public WicketSIconActionDelegate(ISupplier<SInstance> instanceRef, List<?> contextList) {
-        this.instanceRef = instanceRef;
+    public WicketSIconActionDelegate(IModel<? extends SInstance> instanceModel, List<?> contextList) {
+        this.instanceModel = instanceModel;
         this.contextList = contextList;
+        this.serializableContextList = contextList.stream()
+            .filter(it -> it instanceof Serializable)
+            .collect(toList());
     }
 
     /*
@@ -50,28 +60,28 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
      */
     @Override
     public ISupplier<SInstance> getInstanceRef() {
-        return instanceRef;
+        return instanceModel::getObject;
     }
 
     @Override
-    public void openForm(String title, ISupplier<SInstance> formInstance, List<SInstanceAction> actions) {
+    public void openForm(
+        Out<FormDelegate> formDelegate,
+        String title,
+        ISupplier<SInstance> formInstance,
+        List<SInstanceAction> actions) {
+
+        IModel<? extends SInstance> formInstanceModel = new SInstanceRootModel<>(formInstance.get());
         SInstanceActionOpenModalEvent evt = new SInstanceActionOpenModalEvent(
             title,
             getInternalContext(AjaxRequestTarget.class).orElse(null),
-            instanceRef,
-            new SuppliedInstanceModel(formInstance),
+            instanceModel,
+            formInstanceModel,
             actions);
         getInternalContext(Component.class)
             .ifPresent(comp -> comp.send(comp, Broadcast.BUBBLE, evt));
-    }
-
-    @Override
-    public void closeForm(SInstance formInstance) {
-        ICloseModalEvent evt = ICloseModalEvent.of(
-            getInternalContext(AjaxRequestTarget.class).orElse(null),
-            it -> Objects.equals(it.getDefaultModelObject(), formInstance));
-        getInternalContext(Component.class)
-            .ifPresent(comp -> comp.send(comp, Broadcast.BUBBLE, evt));
+        formDelegate.set(new FormDelegateImpl(
+            getInternalContext(Component.class).orElse(null),
+            formInstanceModel));
     }
 
     @Override
@@ -168,7 +178,8 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<T> getInternalContext(Class<T> clazz) {
-        return contextList.stream()
+        List<? extends Object> list = firstNonNull(contextList, serializableContextList);
+        return list.stream()
             .filter(it -> clazz.isAssignableFrom(it.getClass()))
             .map(it -> (T) it)
             .findFirst();
@@ -179,6 +190,30 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
      * POIS O DELEGATE NÃO É SERIALIZÁVEL!!!
      */
 
+    private static final class FormDelegateImpl implements FormDelegate {
+        private final Component                   component;
+        private final IModel<? extends SInstance> formInstanceModel;
+        public FormDelegateImpl(Component component, IModel<? extends SInstance> formInstanceModel) {
+            this.component = component;
+            this.formInstanceModel = formInstanceModel;
+        }
+        @Override
+        public void close() {
+            Predicate<Component> predicate = it -> Objects.equals(it.getDefaultModelObject(), formInstanceModel.getObject());
+
+            ICloseModalEvent evt = ICloseModalEvent.of(findAjaxRequestTarget(), predicate);
+            if (component != null)
+                component.send(component, Broadcast.BUBBLE, evt);
+        }
+        @Override
+        public SInstance getFormInstance() {
+            return formInstanceModel.getObject();
+        }
+        private AjaxRequestTarget findAjaxRequestTarget() {
+            return (RequestCycle.get() != null) ? RequestCycle.get().find(AjaxRequestTarget.class) : null;
+        }
+    }
+
     private static final class FecharButton extends ActionAjaxButton {
         IConsumer<AjaxRequestTarget> closeCallback;
         private FecharButton(String id, IConsumer<AjaxRequestTarget> closeCallback) {
@@ -188,17 +223,6 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             closeCallback.accept(target);
-        }
-    }
-
-    private static final class SuppliedInstanceModel extends LoadableDetachableModel<SInstance> {
-        private ISupplier<SInstance> instanceSupplier;
-        public SuppliedInstanceModel(ISupplier<SInstance> instanceSupplier) {
-            this.instanceSupplier = instanceSupplier;
-        }
-        @Override
-        protected SInstance load() {
-            return instanceSupplier.get();
         }
     }
 

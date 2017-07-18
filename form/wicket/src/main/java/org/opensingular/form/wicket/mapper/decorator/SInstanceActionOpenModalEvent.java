@@ -15,7 +15,6 @@ import org.opensingular.form.wicket.mapper.decorator.WicketSIconActionDelegate.M
 import org.opensingular.form.wicket.panel.IOpenModalEvent;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
@@ -29,14 +28,18 @@ import com.google.common.collect.ImmutableList;
 final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
     private String                      title;
     private AjaxRequestTarget           target;
-    private ISupplier<SInstance>        instanceSupplier;
+    private IModel<? extends SInstance> instanceModel;
     private IModel<? extends SInstance> formInstance;
     private List<SInstanceAction>       actions;
 
-    public SInstanceActionOpenModalEvent(String title, AjaxRequestTarget target, ISupplier<SInstance> instanceSupplier, IModel<? extends SInstance> formInstanceModel, List<SInstanceAction> actions) {
+    public SInstanceActionOpenModalEvent(String title,
+        AjaxRequestTarget target,
+        IModel<? extends SInstance> instanceSupplier,
+        IModel<? extends SInstance> formInstanceModel,
+        List<SInstanceAction> actions) {
         this.title = title;
         this.target = target;
-        this.instanceSupplier = instanceSupplier;
+        this.instanceModel = instanceSupplier;
         this.formInstance = formInstanceModel;
         this.actions = actions;
     }
@@ -65,7 +68,7 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
 
             final ButtonStyle style = WicketSIconActionDelegate.resolveButtonStyle(action.getType());
             final Model<String> label = Model.of(action.getText());
-            final FooterButton button = new FooterButton("action" + i, action, instanceSupplier, formInstance);
+            final FooterButton button = new FooterButton("action" + i, action, instanceModel, formInstance);
             buttons.add(new ButtonDef(style, label, button));
         }
         return buttons
@@ -74,11 +77,14 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
 
     static final class FooterButton extends ActionAjaxButton {
 
-        private final ISupplier<SInstance>        instanceSupplier;
+        private final IModel<? extends SInstance> instanceSupplier;
         private final IModel<? extends SInstance> formInstanceModel;
         private final SInstanceAction             action;
 
-        private FooterButton(String id, SInstanceAction action, ISupplier<SInstance> instanceSupplier, IModel<? extends SInstance> formInstanceModel) {
+        private FooterButton(String id,
+            SInstanceAction action,
+            IModel<? extends SInstance> instanceSupplier,
+            IModel<? extends SInstance> formInstanceModel) {
             super(id);
             this.action = action;
             this.instanceSupplier = instanceSupplier;

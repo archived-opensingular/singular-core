@@ -360,12 +360,13 @@ public class BSModalBorder extends Border {
             clearInputs();
 
             this.setVisible(false);
-            
+
             final AbstractDefaultAjaxBehavior onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
                 private boolean executed = false;
                 @Override
                 protected void respond(AjaxRequestTarget target) {
-                    onHideCallBack.accept(target);
+                    if (onHideCallBack != null)
+                        onHideCallBack.accept(target);
                 }
                 @Override
                 public boolean isTemporary(Component component) {

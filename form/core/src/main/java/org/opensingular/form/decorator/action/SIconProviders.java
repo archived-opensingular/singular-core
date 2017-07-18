@@ -70,7 +70,7 @@ final class SIconProviders {
             if (icon != null)
                 return icon;
         }
-        return new SIcon(code);
+        return new SIcon().setIconCssClasses(code);
     }
 
     private static List<SIconProvider> loadProviders() {
@@ -102,7 +102,7 @@ final class SIconProviders {
             if (!validClasses.containsKey(baseCssClass))
                 return null;
 
-            return new SIcon(function.apply(baseCssClass));
+            return new SIcon().setIconCssClasses(function.apply(baseCssClass));
         }
         protected static Properties loadValidClasses(Class<? extends SIconProvider> clazz) {
             Properties props = new Properties();

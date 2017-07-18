@@ -42,8 +42,8 @@ public class SInstanceActionsPanel extends TemplatePanel {
         switch (c.mode) {
             case MENU:
                 return ""
-                    + "\n<div class='btn-group'>"
-                    + "\n  <button type='button' class='btn btn-link dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"
+                    + "\n<div class='md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "'>"
+                    + "\n  <button type='button' class='md-skip btn btn-link dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"
                     + "\n    <i class='fa fa-ellipsis-h'></i>"
                     + "\n  </button>"
                     + "\n  <ul class='dropdown-menu dropdown-menu-right pull-right'>"
@@ -54,10 +54,10 @@ public class SInstanceActionsPanel extends TemplatePanel {
             case BAR:
             default:
                 return ""
-                    + "\n<div class='btn-group' style='margin-left:-1px !important;'>"
+                    + "\n<div class='md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "' style='margin-left:-1px !important;'>"
                     + "\n  <div wicket:id='actions'>"
                     + "\n    <a wicket:id='link'"
-                    + "\n        class='btn btn-link' style='padding:0px;'"
+                    + "\n        class='md-skip btn btn-link' style='padding:0px;'"
                     + "\n        data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
                     + "\n      <span wicket:id='label'></span> <i wicket:id='icon'></i>"
                     + "\n    </a>"
@@ -68,6 +68,7 @@ public class SInstanceActionsPanel extends TemplatePanel {
 
     private final Mode                                       mode;
     private final ISupplier<? extends List<SInstanceAction>> actionsSupplier;
+    private boolean                                          large = false;
 
     public SInstanceActionsPanel(
         String id,
@@ -87,6 +88,11 @@ public class SInstanceActionsPanel extends TemplatePanel {
         add(new ActionsView("actions", mode, instanceModel, internalContextListProvider, actionsSupplier));
     }
 
+    public SInstanceActionsPanel setLarge(boolean large) {
+        this.large = large;
+        return this;
+    }
+
     @Override
     protected void onConfigure() {
         super.onConfigure();
@@ -97,6 +103,7 @@ public class SInstanceActionsPanel extends TemplatePanel {
         C container,
         SInstanceActionsProviders instanceActionsProviders,
         IModel<? extends SInstance> model,
+        boolean large,
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
 
         ISupplier<? extends List<SInstanceAction>> filterLeft = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() < 0);
@@ -104,10 +111,13 @@ public class SInstanceActionsPanel extends TemplatePanel {
         ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary());
         container
             .appendTag("div", new SInstanceActionsPanel("actionsLeft", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterLeft)
+                .setLarge(large)
                 .add($b.classAppender("align-left")))
             .appendTag("div", new SInstanceActionsPanel("actionsSecondary", model, internalContextListProvider, SInstanceActionsPanel.Mode.MENU, filterSecondary)
+                .setLarge(large)
                 .add($b.classAppender("align-right")))
             .appendTag("div", new SInstanceActionsPanel("actionsRight", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterRight)
+                .setLarge(large)
                 .add($b.classAppender("align-right")));
         return container;
     }
@@ -132,19 +142,17 @@ public class SInstanceActionsPanel extends TemplatePanel {
         protected void populateItem(Item<SInstanceAction> item) {
             IModel<SInstanceAction> itemModel = item.getModel();
             item.setRenderBodyOnly(!mode.isMenu());
-            final ISupplier<SInstance> instanceSupplier = instanceModel::getObject;
-
             SInstanceAction action = itemModel.getObject();
             ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     final List<?> contextList = internalContextListProvider.apply(target);
 
-                    final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceSupplier, contextList);
+                    final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel, contextList);
 
                     SInstanceAction instanceAction = this.getModelObject();
                     instanceAction.getActionHandler()
-                        .onAction(instanceAction, instanceSupplier, delegate);
+                        .onAction(instanceAction, instanceModel::getObject, delegate);
                 }
             };
 

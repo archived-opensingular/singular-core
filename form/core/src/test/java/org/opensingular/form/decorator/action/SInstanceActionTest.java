@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionType;
+import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
+import org.opensingular.lib.commons.ref.Out;
 
 public class SInstanceActionTest {
 
@@ -20,8 +22,9 @@ public class SInstanceActionTest {
             .setSecondary(true)
             .setActionHandler((a, i, d) -> {
                 d.showMessage("title", "msg");
-                d.openForm("", null, null);
-                d.closeForm(null);
+                Out<FormDelegate> fd = new Out<>();
+                d.openForm(fd, "", null, null);
+                fd.get().close();
                 d.getInstanceRef();
                 d.getInternalContext(null);
             });

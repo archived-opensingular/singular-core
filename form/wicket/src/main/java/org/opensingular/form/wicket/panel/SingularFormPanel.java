@@ -43,6 +43,7 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.SInstanceAnnotationActionsProvider;
 import org.opensingular.form.decorator.action.SInstanceHelpActionsProvider;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
@@ -427,7 +428,10 @@ public class SingularFormPanel extends Panel {
     protected List<IWicketBuildListener> getDefaultBuildListeners() {
         return Arrays.asList(
             WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
-                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider())));
+                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider())),
+            WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
+                (instance) -> SingularFormPanel.this.getAnnotationMode().enabled(),
+                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceAnnotationActionsProvider())));
     }
 
     public SingularFormPanel addBuildListener(IWicketBuildListener listener) {

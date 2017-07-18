@@ -18,5 +18,7 @@ public interface IWicketBuildListener extends Serializable {
 
     default void onAfterBuild(WicketBuildContext ctx, IWicketComponentMapper mapper) {}
     
+    default boolean isActive(WicketBuildContext ctx, IWicketComponentMapper mapper) { return true; }
+    
     //@formatter:on
 }
