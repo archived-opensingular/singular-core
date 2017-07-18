@@ -17,8 +17,6 @@ package org.opensingular.form.persistence.dao;
 
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;

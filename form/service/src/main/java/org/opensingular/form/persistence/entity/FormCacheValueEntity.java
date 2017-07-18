@@ -130,7 +130,7 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
 
     private boolean setDateValue(SInstance instance) {
         SType type = instance.getType();
-        STypeSimple typeSimple = ((STypeSimple) type);
+        STypeSimple typeSimple = (STypeSimple) type;
 
         if (typeSimple instanceof STypeDate
                 || type instanceof STypeDateTime
@@ -143,7 +143,7 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
 
     private boolean setNumberValue(SInstance instance) {
         SType type = instance.getType();
-        STypeSimple typeSimple = ((STypeSimple) type);
+        STypeSimple typeSimple = (STypeSimple) type;
 
         if (type instanceof STypeInteger) {
             Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());

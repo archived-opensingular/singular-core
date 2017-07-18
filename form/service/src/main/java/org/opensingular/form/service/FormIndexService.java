@@ -65,14 +65,14 @@ public class FormIndexService {
 
         while (hasMoreItens) {
             List<FormEntity> forms = formDAO.listUnIndexedForms();
-            if (forms.size() == 0) {
+            if (forms.isEmpty()) {
                 hasMoreItens = false;
                 continue;
             }
 
             for (FormEntity form : forms) {
                 String formType = form.getFormType().getAbbreviation();
-                String typeName = formType.substring(formType.lastIndexOf(".")+1, formType.length());
+                String typeName = formType.substring(formType.lastIndexOf('.')+1, formType.length());
                 Optional<Class<?>> clazz = classesFromClassloader.stream()
                         .filter(c -> c.getName().contains(typeName))
                         .findFirst();

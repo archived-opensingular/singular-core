@@ -2,7 +2,6 @@ package org.opensingular.form.persistence.dao;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.type.LongType;
 import org.opensingular.form.persistence.dto.BaseDTO;
 import org.opensingular.form.persistence.dto.STypeIndexed;
 import org.springframework.stereotype.Repository;

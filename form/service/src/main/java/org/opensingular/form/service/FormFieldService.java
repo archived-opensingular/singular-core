@@ -27,8 +27,6 @@ import java.util.Optional;
 @Transactional
 public class FormFieldService implements IFormFieldService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FormFieldService.class);
-
     @Inject
     private FormCacheFieldDAO formCacheFieldDAO;
 
@@ -79,8 +77,9 @@ public class FormFieldService implements IFormFieldService {
         List<SInstance> fieldsInInstance = ((SIComposite) instance).getFields();
 
         for (SInstance field : fieldsInInstance) {
-            if (! field.asAtrIndex().isPersistent()) continue;
-            if (field instanceof SIAttachment) continue;
+            if (! field.asAtrIndex().isPersistent() || field instanceof SIAttachment){
+                continue;
+            }
 
             if (field instanceof SIList && !(field.getType() instanceof STypeAttachmentList)) {
                 LoadMapWithItensFromList(mapFields, (SIList) field, formVersion, parent);
