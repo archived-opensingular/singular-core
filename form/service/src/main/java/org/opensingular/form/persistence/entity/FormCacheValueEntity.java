@@ -111,41 +111,61 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
         }
 
         STypeSimple typeSimple = ((STypeSimple) type);
+        if (setDateValue(instance)) return;
+        if (setNumberValue(instance)) return;
+        setStringValue(instance);
+    }
 
-        if (typeSimple instanceof STypeDate
-                || type instanceof STypeDateTime
-                || type instanceof STypeTime) {
-            dateValue = (Date) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            return;
-        }
-
-        if (type instanceof STypeInteger) {
-            Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            numberValue = new BigDecimal(valor);
-            return;
-        }
-
-        if (type instanceof STypeLong) {
-            Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            numberValue = new BigDecimal(valor);
-            return;
-        }
-
-        if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
-            numberValue = (BigDecimal) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            return;
-        }
+    private boolean setStringValue(SInstance instance) {
+        SType type = instance.getType();
+        STypeSimple typeSimple = ((STypeSimple) type);
 
         String valor = instance.getValue().toString();
         if (valor.length() >= 2048) {
             valor = instance.getValue().toString().substring(0, 2047);
         }
-
         stringValue = valor;
+        return true;
+    }
+
+    private boolean setDateValue(SInstance instance) {
+        SType type = instance.getType();
+        STypeSimple typeSimple = ((STypeSimple) type);
+
+        if (typeSimple instanceof STypeDate
+                || type instanceof STypeDateTime
+                || type instanceof STypeTime) {
+            dateValue = (Date) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean setNumberValue(SInstance instance) {
+        SType type = instance.getType();
+        STypeSimple typeSimple = ((STypeSimple) type);
+
+        if (type instanceof STypeInteger) {
+            Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(valor);
+            return true;
+        }
+
+        if (type instanceof STypeLong) {
+            Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(valor);
+            return true;
+        }
+
+        if (type instanceof STypeDecimal || type instanceof STypeMonetary) {
+            numberValue = (BigDecimal) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            return true;
+        }
+        return false;
     }
 
     public Date getDateValue() {
-        return dateValue;
+        return new Date(dateValue.getTime());
     }
 
     public BigDecimal getNumberValue() {
