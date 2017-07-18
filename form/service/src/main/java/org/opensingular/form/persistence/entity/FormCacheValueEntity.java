@@ -139,10 +139,9 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
         String valor = instance.getValue().toString();
         if (valor.length() >= 2048) {
             valor = instance.getValue().toString().substring(0, 2047);
-            stringValue = valor;
-        } else {
-            stringValue = valor;
         }
+
+        stringValue = valor;
     }
 
     public Date getDateValue() {

@@ -2,12 +2,9 @@ package org.opensingular.form.service;
 
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.form.persistence.FormKeyLong;
 import org.opensingular.form.persistence.dao.FormCacheFieldDAO;
 import org.opensingular.form.persistence.dao.FormCacheValueDAO;
 import org.opensingular.form.persistence.dao.FormDAO;
@@ -17,7 +14,6 @@ import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.lib.commons.scan.SingularClassPathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.jca.GetInstance;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -91,7 +87,7 @@ public class FormIndexService {
                     dto.setForm(form);
                     instancesToIndex.add(dto);
                 } else {
-                    System.out.println("Não foi possível indexar o form " + formType);
+                    LOGGER.info("Não foi possível indexar o form " + formType);
                 }
             }
             formFieldService.saveFields(instancesToIndex);
