@@ -91,8 +91,8 @@ public interface IModelsMixin extends Serializable {
         };
     }
 
-    default public <T> IModel<T> get(ISupplier<T> supplier) {
-        return (IReadOnlyModel<T>) () -> supplier.get();
+    default <T> IModel<T> get(ISupplier<T> supplier) {
+        return (IReadOnlyModel<T>) supplier::get;
     }
 
     default public <T> IModel<T> getSet(ISupplier<T> getter, IConsumer<T> setter) {

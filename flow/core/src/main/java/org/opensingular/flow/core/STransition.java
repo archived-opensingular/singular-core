@@ -40,7 +40,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final String         abbreviation;
 
     private UITransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<SProcessRole>                       rolesToDefineUser;
+    private List<SBusinessRole> rolesToDefineUser;
 
     private MetaData metaData;
 
@@ -76,7 +76,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            for (SProcessRole processRole : rolesToDefineUser) {
+            for (SBusinessRole processRole : rolesToDefineUser) {
                 if (!processRole.isAutomaticUserAllocation()) {
                     return true;
                 }
@@ -87,12 +87,12 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasAutomaticRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            return rolesToDefineUser.stream().anyMatch(SProcessRole::isAutomaticUserAllocation);
+            return rolesToDefineUser.stream().anyMatch(SBusinessRole::isAutomaticUserAllocation);
         }
         return false;
     }
 
-    public STransition defineUserRoleInTransition(SProcessRole papel) {
+    public STransition defineUserRoleInTransition(SBusinessRole papel) {
         if (origin.isPeople() || papel.isAutomaticUserAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
@@ -105,7 +105,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         }
     }
 
-    public List<SProcessRole> getRolesToDefine() {
+    public List<SBusinessRole> getRolesToDefine() {
         if (rolesToDefineUser == null) {
             return Collections.emptyList();
         }

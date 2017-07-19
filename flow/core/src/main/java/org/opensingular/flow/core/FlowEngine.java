@@ -181,7 +181,7 @@ class FlowEngine {
 
     private static <P extends FlowInstance> void automaticallySetUsersRole(P instancia, TaskInstance instanciaTarefa,
             STransition transicaoOrigem) {
-        for (SProcessRole papel : transicaoOrigem.getRolesToDefine()) {
+        for (SBusinessRole papel : transicaoOrigem.getRolesToDefine()) {
             if (papel.isAutomaticUserAllocation()) {
                 SUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
                     instanciaTarefa);

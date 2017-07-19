@@ -1,4 +1,4 @@
-﻿// Ion.RangeSlider
+// Ion.RangeSlider
 // version 2.0.13 Build: 335
 // © Denis Ineshin, 2015
 // https://github.com/IonDen

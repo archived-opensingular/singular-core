@@ -154,7 +154,7 @@ public class TesFlowMapValidations {
                 humanTask.withExecutionPage((t, u) -> null);
             }
             if (condicions.configPeopleAccessStrategy) {
-                humanTask.addAccessStrategy(new DummyAccessStrategy());
+                humanTask.uiAccess(new DummyAccessStrategy());
             }
 
             f.addWaitTask(StepsDI.StepWait).setMetaDataValue(TAG, Boolean.TRUE);
