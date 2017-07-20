@@ -17,12 +17,12 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
-import org.opensingular.flow.core.TransitionAccessStrategy;
-import org.opensingular.flow.core.TransitionAccessStrategyImpl;
+import org.opensingular.flow.core.UITransitionAccessStrategy;
+import org.opensingular.flow.core.UITransitionAccessStrategyImplUI;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 import javax.annotation.Nonnull;
@@ -54,27 +54,22 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
-    public default SELF hideInExecution() {
-        getTransition().withAccessControl(TransitionAccessStrategyImpl.enabled(false));
-        return self();
-    }
-    
-    public default SELF setAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
+    public default SELF uiAccess(UITransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
         getTransition().withAccessControl(accessStrategy);
         return self();
     }
 
-    public default SELF defineUserRoleInTransition(BuilderProcessRole<?> processRole) {
-        getTransition().defineUserRoleInTransition(processRole.getProcessRole());
+    public default SELF defineUserRoleInTransition(BuilderBusinessRole<?> processRole) {
+        getTransition().defineUserRoleInTransition(processRole.getBusinessRole());
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
+    public default <K extends FlowInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
         getTransition().setParametersInitializer(parametrosInicializer);
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
+    public default <K extends FlowInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
         getTransition().setParametersValidator(parametrosValidator);
         return self();
     }
@@ -83,5 +78,17 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     public default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
         getTransition().setMetaDataValue(propRef, value);
         return self();
+    }
+
+    public default SELF uiHidden(){
+        return uiAccess(UITransitionAccessStrategyImplUI.visible(false));
+    }
+
+    public default SELF uiDisabled(){
+        return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, null));
+
+    }
+    public default SELF uiDisabled(String message){
+        return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, message));
     }
 }

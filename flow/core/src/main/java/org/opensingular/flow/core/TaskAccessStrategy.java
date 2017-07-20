@@ -18,6 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.AccessStrategyType;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,12 +28,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class TaskAccessStrategy<K extends ProcessInstance> {
+public abstract class TaskAccessStrategy<K extends FlowInstance> {
 
     public abstract boolean canExecute(K instance, SUser user);
 
     public <T extends TaskInstance> boolean canExecute(T instance, SUser user) {
-        return canExecute((K) instance.getProcessInstance(), user);
+        return canExecute((K) instance.getFlowInstance(), user);
     }
 
     public boolean canVisualize(K instancia, SUser user) {
@@ -43,9 +44,11 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
 
     public abstract List<? extends SUser> listAllocableUsers(K instancia);
 
-    public abstract List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task);
+    @Nonnull
+    public abstract List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task);
 
-    public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+    @Nonnull
+    public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
         return getExecuteRoleNames(definicao, task);
     }
 
@@ -57,18 +60,11 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         return true;
     }
 
-    public boolean isOnlyForVisualize() {
+    public boolean isReadOnly() {
         return false;
     }
 
-    public TaskAccessStrategy<K> getOnlyVisualize() {
-        if (isOnlyForVisualize()) {
-            return this;
-        }
-        return new VisualizeOnlyTaskAccessStrategy<>(this);
-    }
-
-    public TaskAccessStrategy<K> or(TaskAccessStrategy<?> e2) {
+    public TaskAccessStrategy<K> or(TaskAccessStrategy<K> e2) {
         return or(this, e2);
     }
 
@@ -76,14 +72,16 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         return AccessStrategyType.E;
     }
 
-    public static <T extends ProcessInstance> TaskAccessStrategy<T> or(TaskAccessStrategy<T> e1, TaskAccessStrategy<?> e2) {
-        if (e1 == null && e2 == null) {
-            return null;
+    public static <T extends FlowInstance> TaskAccessStrategy<T> or(TaskAccessStrategy<T> e1, TaskAccessStrategy<T> e2) {
+        if (e1 == null) {
+            return e2;
+        } else if (e2 == null) {
+            return e1;
         }
         return new DisjunctionTaskAccessStrategy<>(e1, e2);
     }
 
-    private static class DisjunctionTaskAccessStrategy<K extends ProcessInstance> extends TaskAccessStrategy<K> {
+    private static class DisjunctionTaskAccessStrategy<K extends FlowInstance> extends TaskAccessStrategy<K> {
 
         private final List<TaskAccessStrategy<K>> disjunction = new ArrayList<>();
 
@@ -145,17 +143,17 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
             return disjunction.stream().flatMap(p -> p.getExecuteRoleNames(definicao, task).stream()).collect(Collectors.toList());
         }
 
         @Override
-        public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+        public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
             return disjunction.stream().flatMap(p -> p.getVisualizeRoleNames(definicao, task).stream()).collect(Collectors.toList());
         }
     }
 
-    private static class VisualizeOnlyTaskAccessStrategy<K extends ProcessInstance> extends TaskAccessStrategy<K> {
+    private static class VisualizeOnlyTaskAccessStrategy<K extends FlowInstance> extends TaskAccessStrategy<K> {
 
         private final TaskAccessStrategy<K> original;
 
@@ -184,17 +182,17 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
             return Collections.emptyList();
         }
 
         @Override
-        public List<String> getVisualizeRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+        public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
             return original.getVisualizeRoleNames(definicao, task);
         }
 
         @Override
-        public boolean isOnlyForVisualize() {
+        public boolean isReadOnly() {
             return true;
         }
     }

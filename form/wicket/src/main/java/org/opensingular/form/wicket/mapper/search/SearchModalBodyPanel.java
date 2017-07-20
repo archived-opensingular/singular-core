@@ -46,7 +46,7 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -157,25 +157,11 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         builder.setRowsPerPage(view.getPageSize());
 
         for (Object o : config.result().getColumns()) {
-            final Column column = (Column) o;
-            builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
-                try {
-                    if (column.getProperty() != null) {
-                        final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
-                        getter.setAccessible(true);
-                        return getter.invoke(object);
-                    } else {
-                        return object;
-                    }
-                } catch (Exception ex) {
-                    getLogger().debug(null, ex);
-                    throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
-                }
-            });
+            configureColumns(builder, (Column) o);
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(Icone.HAND_UP)).titleFunction(m -> "Filtrar"),
+                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.HAND_UP)).titleFunction(m -> "Filtrar"),
                         (IBSAction<Object>) (target, model) ->
                         {
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
@@ -190,6 +176,24 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         );
 
         return builder.build(RESULT_TABLE_ID);
+    }
+
+    private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column o) {
+        final Column column = o;
+        builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
+            try {
+                if (column.getProperty() != null) {
+                    final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
+                    getter.setAccessible(true);
+                    return getter.invoke(object);
+                } else {
+                    return object;
+                }
+            } catch (Exception ex) {
+                getLogger().debug(null, ex);
+                throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
+            }
+        });
     }
 
     private SingularFormPanel buildInnerSingularFormPanel() {

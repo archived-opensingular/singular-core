@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>1.6.4-SNAPSHOT</version>
+        <version>1.6.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-flow-core</artifactId>
@@ -17,18 +17,18 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>1.6.4-SNAPSHOT</version>
+            <version>1.6.8-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-flow-schedule</artifactId>
-            <version>1.6.4-SNAPSHOT</version>
+            <version>1.6.8-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.6.4-SNAPSHOT</version>
+            <version>1.6.8-SNAPSHOT</version>
         </dependency>
 
         <!-- HIBERNATE -->
@@ -156,6 +156,40 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>4.1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>4.1.4</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>1.1.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/generated-sources/apt</outputDirectory>
+                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

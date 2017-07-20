@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core.variable;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -57,6 +58,22 @@ public interface VarDefinitionMap<K extends VarDefinition> extends VarServiceEna
 
     public default K addVariable(String ref, VarType tipo) {
         return addVariable(ref, ref, tipo);
+    }
+
+    /**
+     * Cria uma variavel de uma classe específica. Use preferencialmente os métodos addVariableXXXX com um tipo ja
+     * previsto.
+     */
+    @Nonnull
+    public K addVariableCustom(@Nonnull String ref, @Nonnull String name, @Nonnull Class<?> variableClass);
+
+    /**
+     * Cria uma variavel de uma classe específica. Use preferencialmente os métodos addVariableXXXX com um tipo ja
+     * previsto.
+     */
+    @Nonnull
+    public default K addVariableCustom(@Nonnull String ref, @Nonnull Class<?> variableClass) {
+        return addVariableCustom(ref, ref, variableClass);
     }
 
     public default K addVariableBoolean(String ref) {

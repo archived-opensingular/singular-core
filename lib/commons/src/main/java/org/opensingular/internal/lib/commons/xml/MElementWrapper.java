@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
 import java.nio.charset.Charset;
 import java.util.Objects;
 
@@ -70,7 +71,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param original -
      */
-    public MElementWrapper(Element original) {
+    MElementWrapper(Element original) {
         if (original == null) {
             throw new IllegalArgumentException("Elemento original não pode ser " + "null");
         } else if (original instanceof MElementWrapper) {
@@ -85,7 +86,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param nomeRaiz -
      */
-    public MElementWrapper(String nomeRaiz) {
+    MElementWrapper(String nomeRaiz) {
         original = SupplierUtil.serializable(newRootElement(nomeRaiz));
     }
 
@@ -97,7 +98,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param qualifiedName o nome do elemento que será criado. Pode conter
      * prefixo (ex.: "fin:ContaPagamento").
      */
-    public MElementWrapper(String namespaceURI, String qualifiedName) {
+    MElementWrapper(String namespaceURI, String qualifiedName) {
         original = SupplierUtil.serializable(newRootElement(namespaceURI, qualifiedName));
     }
 
@@ -333,17 +334,16 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @param in Stream com os dados a serem convertidos p/ BASE64.
      * @return -
      *
-     * @throws IOException Se houver erro na leitura do dados
      */
-    public static String toBASE64(InputStream in) {
+    public static String toBASE64(InputStream in, Charset charset) {
         if (in == null) {
             throw new IllegalArgumentException("inputstream está null");
         }
-        return encodeFromInputStream(in);
+        return encodeFromInputStream(in, charset);
     }
 
-    private static String encodeFromInputStream(InputStream in){
-        BufferedReader buff = new BufferedReader(new InputStreamReader(in, Charset.defaultCharset()));
+    private static String encodeFromInputStream(InputStream in, Charset charset){
+        BufferedReader buff = new BufferedReader(new InputStreamReader(in, charset));
 
         StringBuilder builder = new StringBuilder();
         String line;
@@ -358,7 +358,7 @@ public class MElementWrapper extends MElement implements EWrapper {
             throw SingularException.rethrow("Error encoding from the input stream", e);
         }
 
-        return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(Charset.defaultCharset()));
+        return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(charset));
     }
 
     /**
@@ -380,7 +380,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param stringValue String a ser convertida.
      * @param out Destino do bytes decodificados.
-     * @throws IOException Se problema com a stream de output.
+
      */
     static void fromBASE64(String stringValue, OutputStream out) {
         if (stringValue == null || out == null) {
@@ -420,27 +420,40 @@ public class MElementWrapper extends MElement implements EWrapper {
         }
         Element novo;
         if (isVazio(resolvedNamespaceURI)) {
-            if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
-                resolvedNamespaceURI = resolvedParent.getNamespaceURI();
-            } else {
-                resolvedNamespaceURI = null; //Podia ser String vazia
-            }
-            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+            novo = addElementNSVazio(resolvedParent, d, resolvedQualifiedName);
         } else {
-            novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
-
-            if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
-                int posPrefixo = resolvedQualifiedName.indexOf(':');
-                if ((posPrefixo == -1)) {
-                    novo.setAttribute("xmlns", resolvedNamespaceURI);
-                } else {
-                    String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
-                    novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
-                }
-                //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
-            }
+            novo = addElementNSNaoVazio(resolvedParent, d, resolvedNamespaceURI, resolvedQualifiedName);
         }
         resolvedParent.appendChild(novo);
+        return novo;
+    }
+
+    private static Element addElementNSNaoVazio(Node resolvedParent, Document d, String resolvedNamespaceURI, String resolvedQualifiedName) {
+        Element novo;
+        novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+
+        if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
+            int posPrefixo = resolvedQualifiedName.indexOf(':');
+            if ((posPrefixo == -1)) {
+                novo.setAttribute("xmlns", resolvedNamespaceURI);
+            } else {
+                String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
+                novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
+            }
+            //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
+        }
+        return novo;
+    }
+
+    private static Element addElementNSVazio(Node resolvedParent, Document d, String resolvedQualifiedName) {
+        String  resolvedNamespaceURI;
+        Element novo;
+        if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
+            resolvedNamespaceURI = resolvedParent.getNamespaceURI();
+        } else {
+            resolvedNamespaceURI = null; //Podia ser String vazia
+        }
+        novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
         return novo;
     }
 
@@ -448,7 +461,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * Adiciona um elemento com valor a um elemento pai. <br>
      *
      * @param pai o elemento dentro do qual um elemento será inserido
-     * @param nome o nome do elemento que será inserido
+     * @param name o nome do elemento que será inserido
      * @param value o valor <code>String</code> do elemento adicionado
      * @return o elemento que foi adicionado
      */

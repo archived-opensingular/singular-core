@@ -85,7 +85,7 @@ public abstract class VarTypeBase<TYPE> implements VarType<TYPE> {
     protected abstract TYPE fromPersistenceStringImpl(String persistenceValue) throws
             SingularFlowConvertingValueException;
 
-    /** Chamado para converte um objeto não nativo do tipo. Se retornar null, significa que não conseguiu converte.*/
+    /** Chamado para converte um objeto não nativo do tipo. Se retornar null, significa que não conseguiu converter.*/
     @Nullable
     protected abstract TYPE convertNotDirectCompatible(@Nonnull Object original);
 

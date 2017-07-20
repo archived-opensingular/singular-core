@@ -24,7 +24,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.validation.IInstanceValidator;
+import org.opensingular.form.validation.InstanceValidator;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
@@ -51,7 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SInfoType(name = "SType", spackage = SPackageCore.class)
-public class SType<I extends SInstance> extends SScopeBase implements SScope, SAttributeEnabled, Loggable {
+public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled, Loggable {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
@@ -78,7 +78,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      */
     private int typeId;
     private SScope scope;
-    private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators;
+    private Map<InstanceValidator<I>, ValidationErrorLevel> instanceValidators;
     private Set<SType<?>> dependentTypes;
     private AttrInternalRef attrInternalRef;
     /**
@@ -93,7 +93,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      */
     private boolean callingOnLoadType;
 
-    public SType() {
+    protected SType() {
         this(null, null);
     }
 
@@ -153,7 +153,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
     }
 
     @SuppressWarnings("unchecked")
-    final void resolvSuperType(SDictionary dictionary) {
+    final void resolveSuperType(SDictionary dictionary) {
         if (superType == null && getClass() != SType.class) {
             Class<SType> c = (Class<SType>) Objects.requireNonNull(getClass().getSuperclass());
             superType = dictionary.getType(c);
@@ -431,11 +431,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public SType<I> withInitialValue(Object value) {
-        return with(SPackageBasic.ATR_INITIAL_VALUE, value);
-
-    }
-
     public SType<I> withDefaultValueIfNull(Object value) {
         return with(SPackageBasic.ATR_DEFAULT_IF_NULL, value);
     }
@@ -454,24 +449,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return getAttributeValue(SPackageBasic.ATR_DEFAULT_IF_NULL, resultClass);
     }
 
-    public Object getAttributeValueInitialValue() {
-        return getAttributeValue(SPackageBasic.ATR_INITIAL_VALUE);
-    }
-
-    public SType<I> withRequired(boolean value) {
-        return with(SPackageBasic.ATR_REQUIRED, value);
-    }
-
     public final Boolean isRequired() {
         return getAttributeValue(SPackageBasic.ATR_REQUIRED);
-    }
-
-    public SType<I> withExists(Boolean value) {
-        return with(SPackageBasic.ATR_EXISTS, value);
-    }
-
-    public SType<I> withExists(Predicate<I> predicate) {
-        return with(SPackageBasic.ATR_EXISTS_FUNCTION, predicate);
     }
 
     public final boolean exists() {
@@ -611,11 +590,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return STypes.listAscendants(this, true).stream().anyMatch(SType::dependsOnAnyType);
     }
 
-    public SType<I> addInstanceValidator(IInstanceValidator<I> validador) {
+    public SType<I> addInstanceValidator(InstanceValidator<I> validador) {
         return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
     }
 
-    public SType<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<I> validator) {
+    public SType<I> addInstanceValidator(ValidationErrorLevel level, InstanceValidator<I> validator) {
         if (instanceValidators == null) {
             instanceValidators = new LinkedHashMap<>();
         }
@@ -623,15 +602,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return this;
     }
 
-    public Collection<IInstanceValidator<I>> getValidators() {
-        Collection<IInstanceValidator<I>> list =
+    public Collection<InstanceValidator<I>> getValidators() {
+        Collection<InstanceValidator<I>> list =
                 superType == null ? Collections.emptyList() : superType.getValidators();
         if (instanceValidators != null && !instanceValidators.isEmpty()) {
             if (list.isEmpty()) {
                 list = instanceValidators.keySet();
             } else {
                 if (!(list instanceof ArrayList)) {
-                    ArrayList<IInstanceValidator<I>> list2 = new ArrayList<>(list.size() + instanceValidators.size());
+                    ArrayList<InstanceValidator<I>> list2 = new ArrayList<>(list.size() + instanceValidators.size());
                     list2.addAll(list);
                     list = list2;
                 }
@@ -641,7 +620,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return list;
     }
 
-    public ValidationErrorLevel getValidatorErrorLevel(IInstanceValidator<I> validator) {
+    public ValidationErrorLevel getValidatorErrorLevel(InstanceValidator<I> validator) {
         ValidationErrorLevel level = instanceValidators == null ? null : instanceValidators.get(validator);
         if (level == null && superType != null) {
             level = superType.getValidatorErrorLevel(validator);
@@ -663,7 +642,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * se existirem (ver {@link #withInitListener(IConsumer)}}).
      */
     public final I newInstance() {
-        return newInstance(true);
+        return newInstance(true, new SDocument());
     }
 
     /**
@@ -673,9 +652,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
      * @param executeInstanceInitListeners Indica se deve executar executa os códigos de inicialização dos tipos se
      *                                     existirem (ver {@link #withInitListener(IConsumer)}}).
      */
-    public final I newInstance(boolean executeInstanceInitListeners) {
-        SDocument owner    = new SDocument();
-        I         instance = newInstance(this, owner);
+    final I newInstance(boolean executeInstanceInitListeners, @Nonnull SDocument owner) {
+        I instance = newInstance(this, owner);
         owner.setRoot(instance);
         if (executeInstanceInitListeners) {
             instance.init();
@@ -708,12 +686,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
             I newInstance = instanceClass.newInstance();
             newInstance.setDocument(owner);
             newInstance.setType(this);
-            if (newInstance instanceof SISimple) {
-                Object valorInicial = original.getAttributeValueInitialValue();
-                if (valorInicial != null) {
-                    newInstance.setValue(valorInicial);
-                }
-            }
+            SFormUtil.inject(newInstance);
             instanceCount++;
             return newInstance;
         } catch (InstantiationException | IllegalAccessException e) {
@@ -911,6 +884,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SScope, SA
         return asAtr().getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
     }
 
+    /**
+     * Lambda para inicialização da {@link SInstance} desse {@link SType}
+     * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.
+     * Quando a {@link SInstance} persistence é carregada o listener não é executado novamente.
+     * @param initListener
+     * @return
+     */
     public SType<I> withInitListener(IConsumer<I> initListener) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
         return this;

@@ -25,7 +25,7 @@ import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -36,10 +36,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public abstract class SInstance implements SAttributeEnabled {
 
@@ -200,7 +203,8 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    final void setType(SType<?> type) {
+    final void setType(@Nonnull SType<?> type) {
+        //This method must not be visible outside the package
         this.type = type;
     }
 
@@ -477,6 +481,22 @@ public abstract class SInstance implements SAttributeEnabled {
         throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
+    public List<? extends SInstance> getChildren() {
+        return Collections.emptyList();
+    }
+
+    public Stream<? extends SInstance> stream() {
+        return Stream.empty();
+    }
+
+    public Iterator<? extends SInstance> iterator() {
+        return getChildren().iterator();
+    }
+
+    public void forEachChild(@Nonnull Consumer<? super SInstance> action) {
+        getChildren().forEach(action);
+    }
+
     public String toStringDisplayDefault() {
         return null;
     }
@@ -685,7 +705,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     public void debug() {
-        MElement xml = new PersistenceBuilderXML().withPersistId(false).toXML(this);
+        MElement xml = new PersistenceBuilderXML().withPersistId(true).toXML(this);
         if (xml == null) {
             System.out.println("null");
         } else {
@@ -762,12 +782,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return SInstances.hasAny(this, SInstance::hasValidationErrors);
     }
 
-    public Collection<IValidationError> getValidationErrors() {
+    public Collection<ValidationError> getValidationErrors() {
         return getDocument().getValidationErrors(getId());
     }
 
-    public Collection<IValidationError> getNestedValidationErrors() {
-        List<IValidationError> errors = new ArrayList<>();
+    public Collection<ValidationError> getNestedValidationErrors() {
+        List<ValidationError> errors = new ArrayList<>();
         SInstances.visit(this, (i, v) -> errors.addAll(i.getValidationErrors()));
         return errors;
     }

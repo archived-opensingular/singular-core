@@ -34,7 +34,7 @@ public class SCompositeListBuilder {
 
     private final List<SIComposite>           list;
     private final STypeComposite<SIComposite> type;
-    private final SInstance currentInstance;
+    private final SInstance                   currentInstance;
 
     /**
      * Instancia do tipo dos elementos da lista
@@ -65,13 +65,13 @@ public class SCompositeListBuilder {
     public SInstance getRoot() {
         return currentInstance.getRoot();
     }
+
     /**
-     * Tenta encontrar um serviço da classe solicitada. Senão encontrar, então dispara exception. Veja {@link
-     * SDocument#lookupServiceOrException(Class)}.
+     * Tenta encontrar um serviço da classe solicitada. Senão encontrar, então dispara exception. Veja
      */
     @Nonnull
     public <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
-        return currentInstance.getDocument().lookupServiceOrException(targetClass);
+        return currentInstance.getDocument().lookupLocalServiceOrException(targetClass);
     }
 
     public static class SCompositeValueSetter {
@@ -104,6 +104,10 @@ public class SCompositeListBuilder {
 
         public SCompositeValueSetter add() {
             return _lb.add();
+        }
+
+        public SIComposite get() {
+            return instancia;
         }
 
         public List<SIComposite> getList() {

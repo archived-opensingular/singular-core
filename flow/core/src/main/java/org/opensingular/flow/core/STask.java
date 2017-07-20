@@ -46,7 +46,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     private STransition defaultTransition;
 
-    private TaskAccessStrategy<ProcessInstance> accessStrategy;
+    private TaskAccessStrategy<FlowInstance> accessStrategy;
 
     private transient int order;
 
@@ -86,7 +86,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public String getCompleteName() {
-        return getFlowMap().getProcessDefinition().getKey() + '.' + name;
+        return getFlowMap().getFlowDefinition().getKey() + '.' + name;
     }
 
     public final boolean isEnd() {
@@ -137,7 +137,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public STransition addTransition(String actionName, STask<?> destination, boolean showTransitionInExecution) {
-        return addTransition(actionName, destination).withAccessControl(TransitionAccessStrategyImpl.enabled(showTransitionInExecution));
+        return addTransition(actionName, destination).withAccessControl(UITransitionAccessStrategyImplUI.enabled(showTransitionInExecution, null));
     }
 
     public STransition addTransition(String actionName, STask<?> destination) {
@@ -148,7 +148,8 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return addTransition(flowMap.newTransition(this, destination.getName(), destination, TransitionType.H));
     }
 
-    public STransition addAutomaticTransition(ITaskPredicate predicate, STask<?> destination) {
+    public STransition addAutomaticTransition(@Nonnull ITaskPredicate predicate, @Nonnull STask<?> destination) {
+        inject(predicate);
         STransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
         transition.setPredicate(predicate);
         addAutomaticAction(TaskActions.executeTransition(predicate, transition));
@@ -178,7 +179,8 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return transition;
     }
 
-    public void addAutomaticAction(ITaskPredicate predicate, ITaskAction action) {
+    public void addAutomaticAction(@Nonnull ITaskPredicate predicate, @Nonnull ITaskAction action) {
+        inject(predicate);
         addAutomaticAction(TaskActions.conditionalAction(predicate, action));
     }
 
@@ -246,7 +248,9 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         }
     }
 
-    public K addStartedTaskListener(StartedTaskListener startedTaskListener) {
+    @Nonnull
+    public K addStartedTaskListener(@Nonnull StartedTaskListener startedTaskListener) {
+        inject(startedTaskListener);
         if (this.startedTaskListeners == null) {
             this.startedTaskListeners = new LinkedList<>();
         }
@@ -266,21 +270,19 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         this.order = order;
     }
 
-    public K addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
-        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, accessStrategy);
+    @Nonnull
+    public K addAccessStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
+        inject(accessStrategy);
+        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, (TaskAccessStrategy<FlowInstance>) accessStrategy);
         return (K) this;
     }
 
-    public K addVisualizeStrategy(TaskAccessStrategy<?> accessStrategy) {
-        return addAccessStrategy(accessStrategy.getOnlyVisualize());
-    }
-
-    public final <T extends ProcessInstance> TaskAccessStrategy<T> getAccessStrategy() {
+    public final <T extends FlowInstance> TaskAccessStrategy<T> getAccessStrategy() {
         return (TaskAccessStrategy<T>) accessStrategy;
     }
 
     final String createErrorMsg(String message) {
-        return "Processo '" + getFlowMap().getProcessDefinition().getName() + "' : Task '" +name + "' -> " + message;
+        return "Processo '" + getFlowMap().getFlowDefinition().getName() + "' : Task '" +name + "' -> " + message;
     }
 
     void verifyConsistency() {
@@ -307,5 +309,11 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
             return false;
         STask<?> other = (STask<?>) obj;
         return Objects.equals(flowMap, other.flowMap) && Objects.equals(name, other.name);
+    }
+
+    /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
+    @Nonnull
+    final <V> V inject(@Nonnull V target) {
+        return getFlowMap().getFlowDefinition().inject(target);
     }
 }

@@ -50,7 +50,7 @@ public abstract class SParametersEnabled {
      * definições da variável.
      */
     public SParametersEnabled addParamBindedToProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
+        VarDefinition defVar = getFlowMap().getFlowDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
             throw new SingularFlowException("Variable '" + ref + "' is not defined in process definition.", getFlowMap());
         }
@@ -68,5 +68,10 @@ public abstract class SParametersEnabled {
     /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
     final static boolean isAutoBindedToProcessVariable(@Nonnull VarInstance var) {
         return isAutoBindedToProcessVariable(var.getDefinition());
+    }
+
+    @Nonnull
+    final <V> V inject(@Nonnull V target) {
+        return getFlowMap().getFlowDefinition().inject(target);
     }
 }

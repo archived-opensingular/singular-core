@@ -44,9 +44,6 @@ public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
-    public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {}
-
-    @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         throw new SingularFormException("Este metodo não deve ser acessado, para download utilizar appendReadOnlyInput");
     }

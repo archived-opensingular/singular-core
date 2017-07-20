@@ -34,7 +34,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -61,7 +61,8 @@ import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
-import org.opensingular.lib.wicket.util.resource.Icone;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
@@ -252,7 +253,7 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig() {
         return new BSActionPanel.ActionConfig<SInstance>()
                 .styleClasses(Model.of("list-detail-remove"))
-                .iconeModel(Model.of(Icone.REMOVE))
+                .iconeModel(Model.of(DefaultIcons.REMOVE))
                 .titleFunction(rowModel -> "Remover");
     }
 
@@ -266,7 +267,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
-        final Icone openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? Icone.PENCIL : Icone.EYE;
+        final Icon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(Model.of(openModalIcon))
                 .styleClasses(Model.of("list-detail-edit"))
@@ -280,7 +281,7 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         IMappingModel.of(model).map(it -> it.getNestedValidationErrors().size()).getObject();
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(IReadOnlyModel.of(() -> Icone.EXCLAMATION_TRIANGLE))
+                .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
                 .styleClasses(Model.of("red"))
                 .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
                 .style($m.ofValue(MapperCommons.BUTTON_STYLE));
@@ -292,15 +293,15 @@ public class MasterDetailPanel extends Panel {
             public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
                 SInstance                    baseInstance = model.getObject();
                 SDocument                    doc          = baseInstance.getDocument();
-                Collection<IValidationError> errors       = baseInstance.getNestedValidationErrors();
+                Collection<ValidationError> errors       = baseInstance.getNestedValidationErrors();
                 if ((errors != null) && !errors.isEmpty()) {
                     String alertLevel = errors.stream()
-                            .map(IValidationError::getErrorLevel).max(Comparator.naturalOrder())
+                            .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
                             .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
                             .orElse(null);
 
                     final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
-                    for (IValidationError error : errors) {
+                    for (ValidationError error : errors) {
                         Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
                         inst.ifPresent(sInstance -> sb.append("<li>")
                                 .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))

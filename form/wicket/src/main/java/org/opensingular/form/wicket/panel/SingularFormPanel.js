@@ -16,62 +16,147 @@
 
 jQuery(document).ready(function () {
     "use strict";
-    if (window.SingularFormPanel == undefined) {
-        window.SingularFormPanel = function() {};
-        
-        window.SingularFormPanel.initFocus = function(containerId) {
-        	if (document.activeElement === window.document.body) {
-        		// only if no other component is focused
-        		$('#'+containerId)
-        			.find('input:not([type=hidden]),select,textarea,button,object,a')
-        			.filter(':visible')
-        			.first()
-        			.each(function(){ this.focus(); });
-        	}
-        };
-        
-        Wicket.Event.subscribe('/ajax/call/complete', function (evt, attrs, jqXHR, textStatus) {
-	
-	        var fieldsByTopPosition = {};
-	
-	        jQuery('div > div.can-have-error').each(function () {
-	            var $this       = $(this);
-	            if(!$this.hasClass('upload-panel-body')) {//deve ignorar o painel de anexo
-                    var topPosition = $this.offset().top;
-                    var fieldsList = fieldsByTopPosition[topPosition];
 
-                    if (fieldsList == undefined) {
-                        fieldsList = [];
-                        fieldsByTopPosition[topPosition] = fieldsList;
-                    }
-                    fieldsList.push($this);
+    function align(selector) {
+        var fieldsByTopPosition = {};
+
+        jQuery(selector).each(function () {
+            var $this = $(this);
+            if (!$this.hasClass("upload-panel-body")) {//deve ignorar o painel de anexo e o ckeditor
+                var topPosition = $this.offset().top;
+                var fieldsList = fieldsByTopPosition[topPosition];
+
+                if (fieldsList === undefined) {
+                    fieldsList = [];
+                    fieldsByTopPosition[topPosition] = fieldsList;
                 }
-	        });
-	
-	        for (var topPosition in fieldsByTopPosition) {
-	            if (fieldsByTopPosition.hasOwnProperty(topPosition)) {
-	                var maxFieldHeight = 0;
-	                var fieldsList     = fieldsByTopPosition[topPosition];
-	                var i;
-	
-	                //cleanup
-	                for (i = 0; i < fieldsList.length; i++) {
-	                    $(fieldsList[i]).css('min-height', "");
-	                }
-	
-	                for (i = 0; i < fieldsList.length; i++) {
-	                    var field       = fieldsList[i];
-	                    var fieldHeight = field.height();
-	                    if (maxFieldHeight < fieldHeight) {
-	                        maxFieldHeight = fieldHeight;
-	                    }
-	                }
-	
-	                for (i = 0; i < fieldsList.length && maxFieldHeight > 0; i++) {
-	                    $(fieldsList[i]).css('min-height', maxFieldHeight);
-	                }
-	            }
-	        }
+                fieldsList.push($this);
+            }
         });
+
+        for (var topPosition in fieldsByTopPosition) {
+            if (fieldsByTopPosition.hasOwnProperty(topPosition)) {
+                var maxFieldHeight = 0;
+                var maxLabelHeight = 0;
+                var fieldsList = fieldsByTopPosition[topPosition];
+                var i;
+
+                //cleanup
+                for (i = 0; i < fieldsList.length; i++) {
+                    removeStyle($(fieldsList[i]));
+                }
+
+                //redimensionar div
+                for (i = 0; i < fieldsList.length; i++) {
+                    var field = fieldsList[i];
+                    var fieldHeight = field.height();
+                    if (maxFieldHeight < fieldHeight) {
+                        maxFieldHeight = fieldHeight;
+                    }
+                    
+                    //redimensionar labels
+                    field.children().each(function(){  
+                    	let label = $(this).closest( $("label"));
+                    	if(label.height() != null && label.height() != 0){
+                    		removeStyle(label);
+                    	}
+                    })
+
+                    field.children().each(function(){  
+                    	let label = $(this).closest( $("label"));
+ 
+                    	if(label.height() != null && label.height() != 0){
+                            if (maxLabelHeight < label.height()) {
+                            	maxLabelHeight = label.height();
+                            }
+                        }
+                    })
+                   
+                    field.children().each(function(){  
+                    	let label = $(this).closest( $("label"));
+                    	if(label.height() != null && label.height() != 0){
+                    		applyStyle(label, maxLabelHeight ); 
+                    	}
+                    	if(i == (fieldsList.length-1)){
+                    		maxLabelHeight = 0;                    		
+                    	}
+                    })
+                    //redimensionar labels - fim
+                }
+
+                for (i = 0; i < fieldsList.length && maxFieldHeight > 0; i++) {
+                    applyStyle($(fieldsList[i]), maxFieldHeight );
+                }
+            }
+        }
     }
+
+    function applyStyle(field, maxFieldHeight){
+        field.css("min-height", maxFieldHeight);
+        //field.css("max-height", maxFieldHeight);// max height gera efeito colateral negativo no STypeHTML do showcase
+    }
+
+    function removeStyle(field){
+        field.css("min-height", "");
+        //field.css("max-height", ""); // max height gera efeito colateral negativo no STypeHTML do showcase
+    }
+
+    if (window.SingularFormPanel === undefined) {
+        window.SingularFormPanel = function () {
+        };
+
+        window.SingularFormPanel.initFocus = function (containerId) {
+            if (document.activeElement === window.document.body) {
+                // only if no other component is focused
+                $("#" + containerId)
+                    .find("input:not([type=hidden]),select,textarea,button,object,a")
+                    .filter(":visible")
+                    .first()
+                    .each(function () {
+                        this.focus();
+                    });
+            }
+        };
+    } 
+
+    var delay = (function(){
+    	  var timer = 0;
+    	  return function(callback, ms){
+    	    clearTimeout (timer);
+    	    timer = setTimeout(callback, ms);
+    	  };
+      })();
+    
+    function alignHelpBlockAndErros() {
+        align("div > div.can-have-error");
+        align("div > span.subtitle_comp");
+    }
+
+    //Registrando função em vários momentos 
+    
+    //Não remover
+    alignHelpBlockAndErros();
+
+    //Não remover
+    $(document).ready(function(){
+    	alignHelpBlockAndErros(); 
+    });
+
+    //registra na abertura da modal
+    $('body').on('shown.bs.modal', '.modal', function() {
+    	alignHelpBlockAndErros();
+    });
+
+    //registra a cada chamda ajax
+    Wicket.Event.subscribe("/ajax/call/complete", alignHelpBlockAndErros);
+  
+    //registra no resize do browser
+    $(window).resize(function() {
+    	delay(function(){
+	   	  	align('div > div.can-have-error');
+	   	  	align('div > span.help-block');
+	   	  	console.log("executou");
+    	}, 10);
+    });
+    
 });

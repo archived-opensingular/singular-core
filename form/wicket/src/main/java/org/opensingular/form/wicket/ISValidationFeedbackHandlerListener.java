@@ -19,7 +19,7 @@ package org.opensingular.form.wicket;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
 import java.io.Serializable;
@@ -32,7 +32,7 @@ public interface ISValidationFeedbackHandlerListener extends Serializable {
                            AjaxRequestTarget target,
                            Component container,
                            Collection<SInstance> baseInstances,
-                           Collection<IValidationError> oldErrors, Collection<IValidationError> newErrors);
+                           Collection<ValidationError> oldErrors, Collection<ValidationError> newErrors);
 
     static ISValidationFeedbackHandlerListener refresh(Component... components) {
         return withTarget(t -> Stream.of(components).filter(Component::isVisibleInHierarchy).forEach(t::add));

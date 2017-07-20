@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.ProcessWithInitialization.Steps;
+import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.FlowWithInitialization.Steps;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 
 import static org.junit.Assert.assertTrue;
@@ -37,14 +37,14 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
     @Test
     public void simpleStart() {
         startInitializerCalled = false;
-        ProcessInstance pi = new ProcessWithInitialization().prepareStartCall().createAndStart();
+        FlowInstance pi = new FlowWithInitialization().prepareStartCall().createAndStart();
 
         assertTrue(startInitializerCalled);
         assertReloadAssert(pi, p-> assertions(p).isAtTask(Steps.Second).isVariableValue(FLAG, 11));
     }
 
     @DefinitionInfo("WithoutParameters")
-    public static class ProcessWithInitialization extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithInitialization extends FlowDefinition<FlowInstance> {
 
         public enum Steps implements ITaskDefinition {
             First, Second, End;
@@ -55,8 +55,8 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
             }
         }
 
-        public ProcessWithInitialization() {
-            super(ProcessInstance.class);
+        public FlowWithInitialization() {
+            super(FlowInstance.class);
             getVariables().addVariableInteger(FLAG);
         }
 
@@ -66,24 +66,24 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
 
             f.addJavaTask(Steps.First).call(this::doFirst);
             f.addWaitTask(Steps.Second);
-            f.addEnd(Steps.End);
+            f.addEndTask(Steps.End);
 
-            f.setStart(Steps.First).setInitializer(this::processInitializer);
+            f.setStartTask(Steps.First).setInitializer(this::processInitializer);
             f.from(Steps.First).go(Steps.Second).thenGo(Steps.End);
 
             return f.build();
         }
 
-        private void processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
+        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             startInitializerCalled = true;
             instance.getVariables().setValue(FLAG, 1);
             instance.start();
         }
 
 
-        public void doFirst(TaskInstance task) {
-            Integer v = task.getProcessInstance().getVariables().getValueInteger(FLAG, 0);
-            task.getProcessInstance().getVariables().setValue(FLAG, v + 10);
+        public void doFirst(ExecutionContext<FlowInstance> processInstanceExecutionContext) {
+            Integer v = processInstanceExecutionContext.getProcessInstance().getVariables().getValueInteger(FLAG, 0);
+            processInstanceExecutionContext.getProcessInstance().getVariables().setValue(FLAG, v + 10);
         }
     }
 }

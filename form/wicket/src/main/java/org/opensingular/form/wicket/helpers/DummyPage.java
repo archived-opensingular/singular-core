@@ -26,12 +26,11 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.DefaultServiceRegistry;
+import org.opensingular.form.document.MockServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
 import org.opensingular.form.document.TypeLoader;
 import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.UIBuilderWicket;
@@ -139,22 +138,17 @@ public class DummyPage extends WebPage {
 
 class MockSDocumentFactory extends SDocumentFactory {
 
-    private final DefaultServiceRegistry defaultServiceRegistry = new DefaultServiceRegistry();
+    private final MockServiceRegistry defaultServiceRegistry = new MockServiceRegistry();
 
     private final SingularFormContextWicket singularFormContextWicket = new Context();
 
     {
-        defaultServiceRegistry.bindLocalService(SingularFormContextWicket.class, () -> singularFormContextWicket);
+        defaultServiceRegistry.registerBean(SingularFormContextWicket.class, singularFormContextWicket);
     }
 
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
         return new RefMockDocumentFactory(this);
-    }
-
-    @Override
-    public ServiceRegistry getServiceRegistry() {
-        return defaultServiceRegistry;
     }
 
     @Override
@@ -169,7 +163,7 @@ class MockSDocumentFactory extends SDocumentFactory {
     }
 }
 
-class RefMockDocumentFactory extends  RefSDocumentFactory {
+class RefMockDocumentFactory extends RefSDocumentFactory {
 
     public RefMockDocumentFactory(MockSDocumentFactory factory) {
         super(factory);

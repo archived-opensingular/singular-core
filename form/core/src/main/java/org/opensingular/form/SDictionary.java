@@ -44,9 +44,6 @@ public class SDictionary {
 
     public static final String SINGULAR_PACKAGES_PREFIX = "singular.form.";
 
-    /** Configurações globais do dicionário. */
-    private final SDictionaryConfig dictionaryConfig = new SDictionaryConfig(this);
-
     /** Identficador único e sequencial do tipo dentro do dicionário. */
     private int idCount;
 
@@ -54,10 +51,6 @@ public class SDictionary {
     Multimap<SType<?>, Runnable> pendingTypeProcessorExecution;
 
     private SDictionary() {
-    }
-
-    final SDictionaryConfig getDictionaryConfig() {
-        return dictionaryConfig;
     }
 
     /**
@@ -206,7 +199,7 @@ public class SDictionary {
             }
         }
         newType.setScope(scope);
-        newType.resolvSuperType(this);
+        newType.resolveSuperType(this);
         newType.setTypeId(++idCount);
         types.verifyMustNotBePresent(newType, this);
         ((SScopeBase) scope).register(newType);

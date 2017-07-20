@@ -19,7 +19,18 @@ package org.opensingular.flow.core;
 import java.util.Date;
 import java.util.function.BiFunction;
 
+/**
+ * Functional interface responsible for calculating how long the wait task should wait.
+ * It takes as parameters the current {@link FlowInstance} and the {@link TaskInstance} and should return the target
+ * expiration date.
+ * This Strategy IS CALLED ONLY ONCE and the expiration date is persisted.
+ * From time to time (not fixed) the {@link FlowEngine} will check the current server time against the expiration date
+ * and if it is before the expiration date the {@link FlowEngine} will try to move forward through
+ * the default transition (throw exception and possibly stuck the workflow if there is no default transaction)
+ * @param <K>
+ *      generic parameter bounded to FlowInstance
+ */
 @FunctionalInterface
-public interface IExecutionDateStrategy<K extends ProcessInstance> extends BiFunction<K, TaskInstance, Date> {
+public interface IExecutionDateStrategy<K extends FlowInstance> extends BiFunction<K, TaskInstance, Date> {
 
 }

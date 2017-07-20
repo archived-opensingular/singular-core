@@ -44,7 +44,7 @@ public interface ProcessNotifier {
 
     }
 
-    public default void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM) {
+    public default void notifyStateUpdate(FlowInstance instanciaProcessoMBPM) {
 
     }
 }

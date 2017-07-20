@@ -25,7 +25,7 @@ import org.opensingular.flow.schedule.ScheduleDataBuilder;
 
 public class ProcessScheduledJob implements IScheduledJob {
 
-    private final Class<? extends ProcessDefinition<?>> processDefinition;
+    private final Class<? extends FlowDefinition<?>> processDefinition;
 
     private final String name;
 
@@ -34,9 +34,9 @@ public class ProcessScheduledJob implements IScheduledJob {
     private IScheduleData scheduleData;
 
     @SuppressWarnings("unchecked")
-    ProcessScheduledJob(ProcessDefinition<?> processDefinition, String name) {
+    ProcessScheduledJob(FlowDefinition<?> flowDefinition, String name) {
         Objects.requireNonNull(name);
-        this.processDefinition = (Class<? extends ProcessDefinition<?>>) processDefinition.getClass();
+        this.processDefinition = (Class<? extends FlowDefinition<?>>) flowDefinition.getClass();
         this.name = name;
     }
 

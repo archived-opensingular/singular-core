@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.defaults;
 
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.view.IViewLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.flow.core.TaskInstance;
@@ -24,7 +24,7 @@ import org.opensingular.flow.core.TaskInstance;
 public class NullViewLocator implements IViewLocator {
 
     @Override
-    public Lnk getDefaultHrefFor(ProcessInstance processInstance) {
+    public Lnk getDefaultHrefFor(FlowInstance flowInstance) {
         return null;
     }
 

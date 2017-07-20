@@ -16,9 +16,8 @@
 
 package org.opensingular.form.context;
 
-import org.opensingular.form.document.TypeLoader;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.document.ServiceRegistry;
+import org.opensingular.form.document.TypeLoader;
 
 import java.io.Serializable;
 
@@ -38,6 +37,6 @@ public interface SFormConfig<TYPE_KEY extends Serializable> {
 
     /** Devolve o registro de recursos adicionais. */
     public default ServiceRegistry getServiceRegistry() {
-        return getDocumentFactory().getServiceRegistry();
+        return ServiceRegistryLocator.locate();
     }
 }

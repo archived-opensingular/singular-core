@@ -22,7 +22,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -71,13 +70,13 @@ public class TaskPredicates {
         return t -> keys.contains(t.getAbbreviation());
     }
 
-    /** Cria um predicado que retorna as tarefas que são do tipo fim. */
-    public static Predicate<TaskInstance> simpleFinished() {
+    /** Cria um predicado que retorna as tarefas encerradas*/
+    public static Predicate<TaskInstance> finished() {
         return t -> t.isFinished();
     }
 
     public static ITaskPredicate disabledCreator() {
-        return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !Flow.canBeAllocated(taskInstance.getProcessInstance().getUserCreator()));
+        return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !Flow.canBeAllocated(taskInstance.getFlowInstance().getUserCreator()));
     }
 
     public static ITaskPredicate timeLimitInDays(final int numberOfDays) {

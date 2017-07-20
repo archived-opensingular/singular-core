@@ -26,6 +26,9 @@ import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypes;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.context.DelegatingLocalServiceRegistry;
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
@@ -34,7 +37,7 @@ import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
-import org.opensingular.form.validation.IValidationError;
+import org.opensingular.form.validation.ValidationError;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -69,7 +72,7 @@ public class SDocument {
 
     private SInstanceListeners instanceListeners;
 
-    private final DefaultServiceRegistry registry = new DefaultServiceRegistry();
+    private final DelegatingLocalServiceRegistry registry;
 
     private RefType rootRefType;
 
@@ -77,9 +80,10 @@ public class SDocument {
 
     private final DocumentAnnotations documentAnnotations = new DocumentAnnotations(this);
 
-    private SetMultimap<Integer, IValidationError> validationErrors;
+    private SetMultimap<Integer, ValidationError> validationErrors;
 
     public SDocument() {
+        registry = new DelegatingLocalServiceRegistry(ServiceRegistryLocator.locate());
     }
 
     /**
@@ -165,7 +169,7 @@ public class SDocument {
     @SuppressWarnings("unchecked")
     private IAttachmentPersistenceHandler<? extends IAttachmentRef>
     getAttachmentPersistencePermanentHandlerOrException() {
-        return registry.lookupLocalServiceOrException(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        return getLocalRegistry().lookupServiceOrException(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     /**
@@ -203,42 +207,21 @@ public class SDocument {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
 
-    /**
-     * USO INTERNO.
-     */
-    public final void setDocumentFactory(SDocumentFactory context) {
+    final void setDocumentFactory(@Nonnull SDocumentFactory context) {
         if (documentFactory != null) {
             throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
         }
         documentFactory = context;
-        ServiceRegistry sr = documentFactory.getServiceRegistry();
-        if (sr != null) {
-            addServiceRegistry(sr);
-        }
     }
+
 
     /**
-     * Stablishes a new registry where to look for services, which is chained
-     * to the default one.
+     * Retorna uma registry local para uso interno do Singular apenas.
+     * @return
      */
-    public void addServiceRegistry(ServiceRegistry registry) {
-        this.registry.addRegistry(registry);
-    }
-
-    /**
-     * USO INTERNO APENAS. Retorna os serviços registrados diretamente no
-     * documento.
-     *
-     * @see ServiceRegistry#services()
-     */
-    public Map<String, ServiceRegistry.Pair> getLocalServices() {
-        return registry.services();
-    }
-
-    /** Tenta encontrar um serviço da classe solicitada supondo que o nome no registro é o nome da própria classe. */
     @Nonnull
-    public <T> Optional<T> lookupService(@Nonnull Class<T> targetClass) {
-        return registry.lookupService(targetClass);
+    public ServiceRegistry getLocalRegistry() {
+        return registry;
     }
 
     /**
@@ -246,30 +229,20 @@ public class SDocument {
      * encontrar, então dispara exception.
      */
     @Nonnull
-    public <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
-        return lookupService(targetClass).orElseThrow(() -> new SingularFormException(
+    public <T> T lookupLocalServiceOrException(@Nonnull Class<T> targetClass) {
+        return lookupLocalService(targetClass).orElseThrow(() -> new SingularFormException(
                 "O serviço " + targetClass.getName() +
                         " não está configurado na instância (no Document). Provavelmente o DocumentFactory não foi " +
                         "configurado corretamente", getRoot()));
     }
 
-    /**
-     * Tenta encontrar um serviço registrado com o nome informado. Se o
-     * resultado não for null e não implementar a classe solicitada, dispara
-     * exception.
-     *
-     * @return Null se não encontrado ou se o conteúdo do registro for null.
-     */
-    public <T> Optional<T> lookupService(String name, Class<T> targetClass) {
-        return registry.lookupService(name, targetClass);
-    }
 
     /**
      * Tenta encontrar um serviço da classe solicitada registrado <u>diretamente no documento</u> supondo que o nome no
      * registro é o nome da própria classe.
      */
     public <T> Optional<T> lookupLocalService(Class<T> targetClass) {
-        return registry.lookupLocalService(targetClass);
+        return getLocalRegistry().lookupService(targetClass);
     }
 
     /**
@@ -279,7 +252,7 @@ public class SDocument {
      */
     @Nonnull
     public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
-        return registry.lookupLocalService(name, targetClass);
+        return getLocalRegistry().lookupService(name, targetClass);
     }
 
     /**
@@ -287,14 +260,14 @@ public class SDocument {
      * uma classe derivada da registerClass.
      */
     public <T> void bindLocalService(Class<T> registerClass, RefService<? extends T> provider) {
-        registry.bindLocalService(registerClass, provider);
+        getLocalRegistry().bindService(registerClass, provider);
     }
 
     /**
      * Registar um serviço com o nome informado.
      */
     public <T> void bindLocalService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
-        registry.bindLocalService(serviceName, registerClass, provider);
+        getLocalRegistry().bindService(serviceName, registerClass, provider);
     }
 
     public SInstanceListeners getInstanceListeners() {
@@ -360,20 +333,20 @@ public class SDocument {
                 .findAny();
     }
 
-    public Collection<IValidationError> getValidationErrors() {
+    public Collection<ValidationError> getValidationErrors() {
         return validationErrors == null ? Collections.emptyList() : validationErrors.values();
     }
 
-    public Map<Integer, Collection<IValidationError>> getValidationErrorsByInstanceId() {
+    public Map<Integer, Collection<ValidationError>> getValidationErrorsByInstanceId() {
         if (validationErrors == null) {
             return Collections.emptyMap();
         }
-        ArrayListMultimap<Integer, IValidationError> copy = ArrayListMultimap.create();
+        ArrayListMultimap<Integer, ValidationError> copy = ArrayListMultimap.create();
         copy.putAll(validationErrors());
         return copy.asMap();
     }
 
-    public Set<IValidationError> getValidationErrors(Integer instanceId) {
+    public Set<ValidationError> getValidationErrors(Integer instanceId) {
         return validationErrors == null ? Collections.emptySet() : validationErrors().get(instanceId);
     }
 
@@ -383,18 +356,18 @@ public class SDocument {
         }
     }
 
-    public Set<IValidationError> setValidationErrors(Integer instanceId, Iterable<IValidationError> errors) {
+    public Set<ValidationError> setValidationErrors(Integer instanceId, Iterable<ValidationError> errors) {
         return validationErrors().replaceValues(instanceId, errors);
     }
 
-    public void setValidationErrors(Iterable<IValidationError> errors) {
+    public void setValidationErrors(Iterable<ValidationError> errors) {
         validationErrors = null;
-        for (IValidationError error : errors) {
+        for (ValidationError error : errors) {
             validationErrors().put(error.getInstanceId(), error);
         }
     }
 
-    private SetMultimap<Integer, IValidationError> validationErrors() {
+    private SetMultimap<Integer, ValidationError> validationErrors() {
         if (validationErrors == null) {
             validationErrors = LinkedHashMultimap.create();
         }

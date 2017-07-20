@@ -18,7 +18,7 @@ package org.opensingular.flow.test.support;
 
 import com.mchange.util.AssertException;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
@@ -30,13 +30,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Classe de apoio a construção de asertivas de teste para {@link ProcessInstance}.
+ * Classe de apoio a construção de asertivas de teste para {@link FlowInstance}.
  *
  * @author Daniel C. Bordin on 18/03/2017.
  */
-public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, AssertionsProcessInstance> {
+public class AssertionsProcessInstance extends AssertionsBase<FlowInstance, AssertionsProcessInstance> {
 
-    public AssertionsProcessInstance(ProcessInstance target) {
+    public AssertionsProcessInstance(FlowInstance target) {
         super(target);
     }
 
@@ -86,6 +86,15 @@ public class AssertionsProcessInstance extends AssertionsBase<ProcessInstance, A
             throw new AssertionError(
                     errorMsg("Quantidade de variáveis diferentes de null não esperadas", expectedNotNullSize,
                             countNotNull));
+        }
+        return this;
+    }
+
+    /** Verifica se a descrição do processo corresponde a descrição esperada, caso contrário dispara exception. */
+    public AssertionsProcessInstance isDescription(String expectedDescription) {
+        if (!Objects.equals(expectedDescription, getTarget().getDescription())) {
+            throw new AssertionError(errorMsg("Process description diferent of the expected", expectedDescription,
+                    getTarget().getDescription()));
         }
         return this;
     }

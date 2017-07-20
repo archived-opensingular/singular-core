@@ -18,6 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,12 +38,12 @@ public class SFlowUtil {
 
     private SFlowUtil() {}
 
-    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(),
-                s2.getLatestTaskOrException().getEntityTaskInstance().getTaskVersion(), definicao));
+    public static void sortInstancesByDistanceFromBeginning(List<? extends FlowInstance> instancias, FlowDefinition<?> definicao) {
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(),
+                s2.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(), definicao));
     }
 
-    private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, ProcessDefinition<?> definicao) {
+    private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, FlowDefinition<?> definicao) {
         int ordem1 = calculateTaskOrder(s1, definicao);
         int ordem2 = calculateTaskOrder(s2, definicao);
         if (ordem1 != ordem2) {
@@ -52,23 +53,23 @@ public class SFlowUtil {
     }
 
     public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTaskVersion> conversor,
-                                                       ProcessDefinition<?> definicao) {
+                                                       FlowDefinition<?> definicao) {
         lista.sort(getDistanceFromBeginningComparator(conversor, definicao));
     }
 
     private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTaskVersion> conversor,
-                                                                        ProcessDefinition<?> definicao) {
+                                                                        FlowDefinition<?> definicao) {
         return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
     }
 
     public static <X extends IEntityTaskVersion> List<X> getSortedByDistanceFromBeginning(List<X> situacoes,
-            ProcessDefinition<?> definicao) {
+            FlowDefinition<?> definicao) {
         List<X> novo = new ArrayList<>(situacoes);
         novo.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definicao));
         return novo;
     }
 
-    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(ProcessDefinition<?> definicao) {
+    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(FlowDefinition<?> definicao) {
         FlowMap flowMap = definicao.getFlowMap();
         calculateTaskOrder(flowMap);
         List<STask<?>> novo = new ArrayList<>(flowMap.getTasks());
@@ -110,12 +111,12 @@ public class SFlowUtil {
         }
     }
 
-    private static int calculateTaskOrder(IEntityTaskVersion entityTaskDefinition, ProcessDefinition<?> processDefinition) {
-        if (!processDefinition.getEntityProcessDefinition()
+    private static int calculateTaskOrder(IEntityTaskVersion entityTaskDefinition, FlowDefinition<?> flowDefinition) {
+        if (!flowDefinition.getEntityProcessDefinition()
                 .equals(entityTaskDefinition.getProcessVersion().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
-        Optional<STask<?>> task = processDefinition.getFlowMap().getTaskByAbbreviation(entityTaskDefinition.getAbbreviation());
+        Optional<STask<?>> task = flowDefinition.getFlowMap().getTaskByAbbreviation(entityTaskDefinition.getAbbreviation());
         if (task.isPresent()) {
             return task.get().getOrder();
         }
@@ -144,5 +145,10 @@ public class SFlowUtil {
         throw new SingularFlowException(task.getTaskType() + " não tratado", task);
     }
 
+    /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
+    @Nonnull
+    public static <V> V inject(@Nonnull STask<?> task, @Nonnull V target) {
+        return task.inject(target);
+    }
 
 }

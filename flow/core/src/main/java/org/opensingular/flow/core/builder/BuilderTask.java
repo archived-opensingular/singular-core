@@ -17,6 +17,7 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.SFlowUtil;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
@@ -38,9 +39,7 @@ public interface BuilderTask {
 
     public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
 
-    public BuilderTask addAccessStrategy(TaskAccessStrategy<?> estrategiaAcesso);
-
-    public BuilderTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
+    public BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
 
     public BuilderTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
 

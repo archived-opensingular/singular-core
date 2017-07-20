@@ -21,11 +21,10 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.RefTypeByKey;
 import org.opensingular.form.document.TypeLoader;
-import org.springframework.beans.BeansException;
+import org.opensingular.internal.lib.support.spring.SpringUtils;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -33,26 +32,20 @@ import java.util.Optional;
 
 /**
  * Loader de dicionário baseado no Spring. Espera que o mesmo será um bean do
- * Spring. Com isso cria referências ({@link #createDictionaryRef(Serializable)}
- * ) serializáveis mediante uso do nome do bean no Spring como forma de
+ * Spring. Com isso cria referências  serializáveis mediante uso do nome do bean no Spring como forma de
  * recuperar o loader a partir da referência ao ser deserializada.
  *
  * @author Daniel C. Bordin
  */
 public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends TypeLoader<TYPE_KEY>
-        implements ApplicationContextAware, BeanNameAware, NamedBean {
+        implements BeanNameAware, NamedBean {
 
     private String springBeanName;
 
     @Override
     @Nonnull
     protected final Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId) {
-        return loadType(typeId).map(t -> new SpringRefType(SpringFormUtil.checkBeanName(this), typeId, t));
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringFormUtil.setApplicationContext(applicationContext);
+        return loadType(typeId).map(t -> new SpringRefType(SpringUtils.checkBeanName(this), typeId, t));
     }
 
     @Override
@@ -78,13 +71,13 @@ public abstract class SpringTypeLoader<TYPE_KEY extends Serializable> extends Ty
         @Override
         @Nonnull
         public SType<?> retrieveByKey(@Nonnull KEY typeId) {
-            SpringTypeLoader<KEY> loader = SpringFormUtil.getApplicationContext().getBean(springBeanName, SpringTypeLoader.class);
+            SpringTypeLoader<KEY> loader = ApplicationContextProvider.get().getBean(springBeanName, SpringTypeLoader.class);
             if (loader == null) {
                 throw new SingularFormException(
                         "Não foi encontrado o bean de nome '" + springBeanName + "' do tipo " + SpringTypeLoader.class.getName());
             }
             return loader.loadType(typeId).orElseThrow(() -> new SingularFormException(
-                    SpringFormUtil.erroMsg(loader, " não encontrou o " + SType.class.getSimpleName() + " para o id=" + typeId)));
+                    SpringUtils.erroMsg(loader, " não encontrou o " + SType.class.getSimpleName() + " para o id=" + typeId)));
         }
 
     }

@@ -19,6 +19,7 @@ package org.opensingular.form.type.util;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeString;
 
 /**
  * Created by danilo.mesquita on 04/01/2016.
@@ -29,13 +30,16 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
     public static final String FIELD_LATITUDE  = "latitude";
     public static final String FIELD_LONGITUDE = "longitude";
 
+    public STypeString latitude;
+    public STypeString longitude;
+    
     public STypeLatitudeLongitude() {
         super(SILatitudeLongitude.class);
     }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        addFieldString(FIELD_LATITUDE);
-        addFieldString(FIELD_LONGITUDE);
+        latitude = addFieldString(FIELD_LATITUDE);
+        longitude = addFieldString(FIELD_LONGITUDE);
     }
 }

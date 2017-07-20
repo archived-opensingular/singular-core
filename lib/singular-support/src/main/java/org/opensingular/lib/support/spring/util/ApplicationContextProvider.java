@@ -16,35 +16,70 @@
 
 package org.opensingular.lib.support.spring.util;
 
-import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 
+import javax.annotation.Nonnull;
+import javax.inject.Named;
 import java.util.Optional;
 
-@Component
+/**
+ * Métodos para localização e retorno do {@link ApplicationContext} atual.
+ */
+@Named
+@Order(0)
+@Lazy(false)
 public class ApplicationContextProvider implements ApplicationContextAware {
 
-    private static ApplicationContext applicationContext;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextProvider.class);
 
-    private static synchronized void setup(ApplicationContext applicationContext) {
-        ApplicationContextProvider.applicationContext = applicationContext;
+    private static final ISupplier<ApplicationContext> SUPPLIER = () -> get();
+
+    public synchronized static ApplicationContext getApplicationContext() {
+        return ((SingularSingletonStrategy) SingularContext.get()).get(ApplicationContext.class);
+    }
+
+    @Override
+    public synchronized void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ((SingularSingletonStrategy) SingularContext.get()).singletonize(ApplicationContext.class, () -> applicationContext);
     }
 
     /**
      * Retorna o contexto de aplicação atual ou dispara exception se ainda não estiver configurado.
      */
     public static ApplicationContext get() {
-        if (applicationContext == null) {
+        if (!isConfigured()) {
             throw SingularException.rethrow(
-                    "O applicationContext ainda não foi configurado em " + ApplicationContextProvider.class.getName());
+                    "O getApplicationContext() ainda não foi configurado em " + ApplicationContextProvider.class.getName());
         }
-        return applicationContext;
+        return getApplicationContext();
+    }
+
+    /**
+     * Indica se o contexto do sping já foi configurado e se pode ser chamado {@link #get()}.
+     */
+    public static boolean isConfigured() {
+        return ((SingularSingletonStrategy) SingularContext.get()).exists(ApplicationContext.class);
+    }
+
+    /**
+     * Retorna um supplier do aplication context que faz chamar {@link #get()}.
+     */
+    public static ISupplier<ApplicationContext> supplier() {
+        return SUPPLIER;
     }
 
     /**
@@ -70,16 +105,47 @@ public class ApplicationContextProvider implements ApplicationContextAware {
             try {
                 Optional.of(ApplicationContextProvider.get().getBean(beanClass));
             } catch (Exception e) {
-                LoggerFactory.logger(ApplicationContextProvider.class).error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             return Optional.empty();
         };
 
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextProvider.setup(applicationContext);
+    @Nonnull
+    public static <T> Optional<T> getBeanOpt(@Nonnull String name, @Nonnull Class<T> targetClass) {
+        try {
+            return Optional.ofNullable(get().getBean(name, targetClass));
+        } catch (NoSuchBeanDefinitionException ex) {
+            LOGGER.debug(null, ex);
+            return Optional.empty();
+        }
+    }
+
+    @Nonnull
+    public static <T> Optional<T> getBeanOpt(@Nonnull Class<T> targetClass) {
+        try {
+            return Optional.ofNullable(get().getBean(targetClass));
+        } catch (NoSuchBeanDefinitionException ex) {
+            LOGGER.debug(null, ex);
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    public static <T> Optional<T> getBeanOpt(@Nonnull String name) {
+        try {
+            return Optional.ofNullable((T) get().getBean(name));
+        } catch (NoSuchBeanDefinitionException ex) {
+            LOGGER.debug(null, ex);
+            return Optional.empty();
+        }
+    }
+
+    @EventListener
+    public void handleContextRefresh(ContextStartedEvent event) {
+        setApplicationContext(event.getApplicationContext());
     }
 
 }

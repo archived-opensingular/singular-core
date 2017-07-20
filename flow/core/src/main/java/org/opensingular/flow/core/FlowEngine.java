@@ -44,10 +44,10 @@ class FlowEngine {
 
     /**
      * Cria uma nova instância mediante chamada a {@link SStart#setStartInitializer(SStart.IStartInitializer)}. Senão
-     * existir o inicializador, criar uma nova instância e chama {@link ProcessInstance#start()}.
+     * existir o inicializador, criar uma nova instância e chama {@link FlowInstance#start()}.
      */
     @Nonnull
-    final static <I extends ProcessInstance> I createAndStart(@Nonnull StartCall<I> startCall) {
+    final static <I extends FlowInstance> I createAndStart(@Nonnull StartCall<I> startCall) {
         SStart start = startCall.getStart();
         ValidationResult result = startCall.validate();
         if (result.hasErros()) {
@@ -56,20 +56,20 @@ class FlowEngine {
         I instance = startCall.getProcessDefinition().newPreStartInstance();
         copyMarkedParametersToInstanceVariables(instance, startCall);
         if (start.getStartInitializer() != null) {
-             start.getStartInitializer().startInstance(instance, (StartCall<ProcessInstance>) startCall);
+             start.getStartInitializer().startInstance(instance, (StartCall<FlowInstance>) startCall);
         } else {
             instance.start();
         }
         return instance;
     }
 
-    public static TaskInstance start(ProcessInstance instance, VarInstanceMap<?,?> paramIn) {
+    public static TaskInstance start(FlowInstance instance, VarInstanceMap<?,?> paramIn) {
         validateVariables(instance);
         SStart start = instance.getProcessDefinition().getFlowMap().getStart();
         return updateState(instance, null, null, start.getTask(), paramIn);
     }
 
-    private static void validateVariables(ProcessInstance instance) {
+    private static void validateVariables(FlowInstance instance) {
         ValidationResult result = instance.getVariables().validate();
         if (result.hasErros()) {
             throw new SingularFlowInvalidParametersException(instance.getProcessDefinition(), result);
@@ -77,7 +77,7 @@ class FlowEngine {
     }
 
     @Nonnull
-    private static <P extends ProcessInstance> TaskInstance updateState(final @Nonnull P processInstance,
+    private static <P extends FlowInstance> TaskInstance updateState(final @Nonnull P processInstance,
             @Nullable TaskInstance originTaskInstance, @Nullable STransition transition, @Nonnull STask<?> destinyTask,
             @Nullable VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(processInstance);
@@ -86,37 +86,23 @@ class FlowEngine {
         STask<?> currentDestiny = Objects.requireNonNull(destinyTask);
         VarInstanceMap<?, ?> currentParam = paramIn;
         while (true) {
-            if (currentTransition != null && currentOrigin == null) {
-                throw new SingularFlowException(
-                        "Não pode ser solicitada execução de uma transição específica (transition=" +
-                                currentTransition.getName() +
-                                ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
-            } else if (currentOrigin != null && !currentOrigin.isActive()) {
-                throw new SingularFlowException(
-                        "Não pode ser executada uma transição a partir da task '" + currentOrigin.getName() +
-                                "', pois a mesma já está concluida.", currentOrigin);
-            }
-            Date agora = new Date();
-            final TaskInstance newTaskInstance = processInstance.updateState(currentOrigin, currentTransition,
-                    currentDestiny, agora);
+
+            checkUpdateState(processInstance, currentOrigin, currentTransition);
+
+            final Date         agora           = new Date();
+            final TaskInstance newTaskInstance = processInstance.updateState(currentOrigin, currentTransition, currentDestiny, agora);
 
             if (currentParam != null) {
-                copyMarkedParametersToInstanceVariables(processInstance, currentParam);
-
-                if (currentOrigin != null) {
-                    //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
-                    // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
-                    // impede). O problema é uqe originTaskInstance é obrigatório
-                    getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), currentOrigin,
-                            newTaskInstance, currentParam);
-                }
+                saveParam(processInstance, currentOrigin, currentParam, agora, newTaskInstance);
             }
 
             getPersistenceService().flushSession();
+
             if (!currentDestiny.isImmediateExecution()) {
                 return executeImediate(processInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
                         newTaskInstance);
             }
+
             final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, currentParam,
                     currentTransition);
             newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
@@ -145,7 +131,38 @@ class FlowEngine {
         }
     }
 
-    private static <P extends ProcessInstance> TaskInstance executeImediate(P processInstance, TaskInstance originTaskInstance,
+    private static <P extends FlowInstance> void saveParam(@Nonnull P processInstance, TaskInstance currentOrigin, VarInstanceMap<?, ?> currentParam, Date agora, TaskInstance newTaskInstance) {
+        copyMarkedParametersToInstanceVariables(processInstance, currentParam);
+        if (currentOrigin != null) {
+            //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
+            // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
+            // impede). O problema é uqe originTaskInstance é obrigatório
+            getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), currentOrigin, newTaskInstance, currentParam);
+        }
+    }
+
+    private static <P extends FlowInstance> void checkUpdateState(@Nonnull P processInstance, TaskInstance currentOrigin, STransition currentTransition) {
+        if (isCurrentTransitionNotNullAndCurrentOriginNull(currentOrigin, currentTransition)) {
+            throw new SingularFlowException(
+                    "Não pode ser solicitada execução de uma transição específica (transition=" +
+                            currentTransition.getName() +
+                            ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
+        } else if (isCurrentOriginNotNullAndIsntActive(currentOrigin)) {
+            throw new SingularFlowException(
+                    "Não pode ser executada uma transição a partir da task '" + currentOrigin.getName() +
+                            "', pois a mesma já está concluida.", currentOrigin);
+        }
+    }
+
+    private static boolean isCurrentOriginNotNullAndIsntActive(TaskInstance currentOrigin) {
+        return currentOrigin != null && !currentOrigin.isActive();
+    }
+
+    private static boolean isCurrentTransitionNotNullAndCurrentOriginNull(TaskInstance currentOrigin, STransition currentTransition) {
+        return currentTransition != null && currentOrigin == null;
+    }
+
+    private static <P extends FlowInstance> TaskInstance executeImediate(P processInstance, TaskInstance originTaskInstance,
                                                                             STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
                                                                             TaskInstance newTaskInstance) {
         initTask(processInstance, destinyTask, newTaskInstance);
@@ -162,9 +179,9 @@ class FlowEngine {
         return newTaskInstance;
     }
 
-    private static <P extends ProcessInstance> void automaticallySetUsersRole(P instancia, TaskInstance instanciaTarefa,
+    private static <P extends FlowInstance> void automaticallySetUsersRole(P instancia, TaskInstance instanciaTarefa,
             STransition transicaoOrigem) {
-        for (SProcessRole papel : transicaoOrigem.getRolesToDefine()) {
+        for (SBusinessRole papel : transicaoOrigem.getRolesToDefine()) {
             if (papel.isAutomaticUserAllocation()) {
                 SUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
                     instanciaTarefa);
@@ -176,17 +193,17 @@ class FlowEngine {
         }
     }
 
-    public static <P extends ProcessInstance> void initTask(P instance, STask<?> taskDestiny, TaskInstance taskInstance) {
+    public static <P extends FlowInstance> void initTask(P instance, STask<?> taskDestiny, TaskInstance taskInstance) {
         if (taskDestiny.isWait()) {
             initTaskWait(instance, (STaskWait) taskDestiny, taskInstance);
         } else if (taskDestiny.isPeople()) {
-            initTaskPeople(instance, (STaskPeople) taskDestiny, taskInstance);
+            initTaskHuman(instance, (STaskHuman) taskDestiny, taskInstance);
         }
     }
 
-    private static <P extends ProcessInstance> void initTaskPeople(P instance, STaskPeople taskDestiny,
-            TaskInstance taskInstance) {
-        TaskAccessStrategy<ProcessInstance> strategy = taskDestiny.getAccessStrategy();
+    private static <P extends FlowInstance> void initTaskHuman(P instance, STaskHuman taskDestiny,
+                                                               TaskInstance taskInstance) {
+        TaskAccessStrategy<FlowInstance> strategy = taskDestiny.getAccessStrategy();
         if (strategy != null) {
             SUser person = strategy.getAutomaticAllocatedUser(instance, taskInstance);
             if (person != null && Flow.canBeAllocated(person)) {
@@ -194,7 +211,7 @@ class FlowEngine {
                         strategy.isNotifyAutomaticAllocation(instance, taskInstance), null);
             }
         }
-        BiFunction<ProcessInstance, TaskInstance, Date> strategyDate = taskDestiny.getTargetDateExecutionStrategy();
+        BiFunction<FlowInstance, TaskInstance, Date> strategyDate = taskDestiny.getTargetDateExecutionStrategy();
         if (strategyDate != null) {
             Date targetDate = strategyDate.apply(instance, taskInstance);
             if (targetDate != null) {
@@ -203,7 +220,7 @@ class FlowEngine {
         }
     }
 
-    private static <P extends ProcessInstance> void initTaskWait(P instance, STaskWait taskDestiny,
+    private static <P extends FlowInstance> void initTaskWait(P instance, STaskWait taskDestiny,
             TaskInstance taskInstance) {
         if (taskDestiny.hasExecutionDateStrategy()) {
             Date targetDate = taskDestiny.getExecutionDate(instance, taskInstance);
@@ -219,7 +236,7 @@ class FlowEngine {
         }
     }
 
-    public static void executeScheduledTransition(@Nonnull STaskJava taskJava, @Nonnull ProcessInstance instance) {
+    public static void executeScheduledTransition(@Nonnull STaskJava taskJava, @Nonnull FlowInstance instance) {
         Objects.requireNonNull(instance);
         Objects.requireNonNull(taskJava);
         ExecutionContext execucaoTask = new ExecutionContext(instance, instance.getCurrentTaskOrException(), null);
@@ -238,7 +255,7 @@ class FlowEngine {
             @Nullable VarInstanceMap<?, ?> param) {
         STransition trans = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
         tarefaAtual.endLastAllocation();
-        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, trans, trans.getDestination(), param);
+        return updateState(tarefaAtual.getFlowInstance(), tarefaAtual, trans, trans.getDestination(), param);
     }
 
 
@@ -263,7 +280,7 @@ class FlowEngine {
      * Copia para a instancia os paramentros que estiverem marcados com bind automáticos (copia automática) para as
      * variaveis da instância. Além de marcados, devem ter o mesmo nome.
      */
-    private static void copyMarkedParametersToInstanceVariables(@Nonnull ProcessInstance instance,
+    private static void copyMarkedParametersToInstanceVariables(@Nonnull FlowInstance instance,
             @Nonnull VarInstanceMap<?, ?> paramIn) {
         for (VarInstance variavel : paramIn) {
             if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToProcessVariable(variavel)) {
@@ -281,7 +298,7 @@ class FlowEngine {
                 .getConfigBean().getPersistenceService();
     }
 
-    private static void validarParametrosInput(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
+    private static void validarParametrosInput(TaskInstance taskInstance, @Nonnull STransition transition, VarInstanceMap<?,?> paramIn) {
         Objects.requireNonNull(taskInstance);
         if (transition.getParameters().isEmpty()) {
             return;

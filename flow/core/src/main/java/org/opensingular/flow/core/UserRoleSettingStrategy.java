@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public abstract class UserRoleSettingStrategy<K extends ProcessInstance> implements Serializable {
+public abstract class UserRoleSettingStrategy<K extends FlowInstance> implements Serializable {
 
     public abstract List<? extends SUser> listAllocableUsers(K instancia);
 

@@ -20,11 +20,9 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.context.SFormConfig;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.TypeLoader;
-import org.springframework.beans.BeansException;
+import org.opensingular.internal.lib.support.spring.SpringUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.NamedBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.io.Serializable;
 
@@ -33,7 +31,7 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<KEY>, ApplicationContextAware, BeanNameAware, NamedBean {
+public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<KEY>, BeanNameAware, NamedBean {
 
     private String springBeanName;
 
@@ -56,18 +54,13 @@ public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<K
     @Override
     public TypeLoader<KEY> getTypeLoader() {
         if (typeLoader == null) {
-            throw new SingularFormException(SpringFormUtil.erroMsg(this, "O atributo typeLoader não foi configurado"));
+            throw new SingularFormException(SpringUtils.erroMsg(this, "O atributo typeLoader não foi configurado"));
         }
         return typeLoader;
     }
 
     public void setTypeLoader(TypeLoader<KEY> typeLoader) {
         this.typeLoader = typeLoader;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringFormUtil.setApplicationContext(applicationContext);
     }
 
     @Override

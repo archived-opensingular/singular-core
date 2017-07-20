@@ -146,7 +146,7 @@ Page Header
       transform: translateY(-50%);
       font-size: 18px; }
     .page-header.navbar .page-logo .logo-default {
-      background-image: url("/singular-static/resources/singular/img/logo_singular.png"); 
+      background-image: url("/singular-static/resources/singular/img/logo_singular.png");
       height: 49px;
       width: 200px;
       background-repeat: no-repeat;
@@ -1635,7 +1635,7 @@ Theme Panel
     height: 15px;
     display: block;
     float: left;
-    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill: rgba(101, 105, 124, 0.99) ;fill-rule:nonzero;" enable-background="new 0 0 512 512">\a   <g>\a     <g>\a       <g>\a         <path d="m493.6,159.7l-64.1-52.3c-8.7-7.1-21.4-5.9-28.6,2.7l-34.1,40.9v-119.8c0-11.3-9.1-20.4-20.4-20.4h-314.9c-11.3,0-20.4,9.1-20.4,20.4v449.2c0,11.3 9.1,20.4 20.4,20.4h314.8c11.3,0 20.4-9.1 20.4-20.4v-136.5l129.6-155.3c3.6-4.2 10-17.5-2.7-28.9zm-167.7,300.3h-274v-408.3h274v148.3l-100.3,120.2c-1.9,2.3-3.3,4.9-4.1,7.8l-25.4,95c-2.1,7.7 0.5,16 6.7,21 9.5,7.7 19,4.1 21.8,2.7l89.6-42.8c2.6-1.3 5-3.1 6.9-5.3l4.8-5.8v67.2zm-58.5-79l-20.4,9.8 5.8-21.6 14.6,11.8zm33.1-21.4l-32.6-26.3 151.4-181.4 32.5,26.5-151.3,181.2z"/>\a         <path d="m110.7,151.1h156.5c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4h-156.5c-11.3,0-20.4,9.1-20.4,20.4-1.42109e-14,11.2 9.1,20.4 20.4,20.4z"/>\a         <path d="m261.7,233.7c0-11.3-9.1-20.4-20.4-20.4h-130.6c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4h130.6c11.2,0.1 20.4-9.1 20.4-20.4z"/>\a       </g>\a     </g>\a   </g>\a</svg>'); }
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' xmlns:xlink='http://www.w3.org/1999/xlink' style='fill: rgba(101, 105, 124, 0.99) ;fill-rule:nonzero;' enable-background='new 0 0 512 512'%3E\a   %3Cg%3E\a     %3Cg%3E\a       %3Cg%3E\a         %3Cpath d='m493.6,159.7l-64.1-52.3c-8.7-7.1-21.4-5.9-28.6,2.7l-34.1,40.9v-119.8c0-11.3-9.1-20.4-20.4-20.4h-314.9c-11.3,0-20.4,9.1-20.4,20.4v449.2c0,11.3 9.1,20.4 20.4,20.4h314.8c11.3,0 20.4-9.1 20.4-20.4v-136.5l129.6-155.3c3.6-4.2 10-17.5-2.7-28.9zm-167.7,300.3h-274v-408.3h274v148.3l-100.3,120.2c-1.9,2.3-3.3,4.9-4.1,7.8l-25.4,95c-2.1,7.7 0.5,16 6.7,21 9.5,7.7 19,4.1 21.8,2.7l89.6-42.8c2.6-1.3 5-3.1 6.9-5.3l4.8-5.8v67.2zm-58.5-79l-20.4,9.8 5.8-21.6 14.6,11.8zm33.1-21.4l-32.6-26.3 151.4-181.4 32.5,26.5-151.3,181.2z'/%3E\a         %3Cpath d='m110.7,151.1h156.5c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4h-156.5c-11.3,0-20.4,9.1-20.4,20.4-1.42109e-14,11.2 9.1,20.4 20.4,20.4z'/%3E\a         %3Cpath d='m261.7,233.7c0-11.3-9.1-20.4-20.4-20.4h-130.6c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4h130.6c11.2,0.1 20.4-9.1 20.4-20.4z'/%3E\a       %3C/g%3E\a     %3C/g%3E\a   %3C/g%3E\a%3C/svg%3E"); }
   .page-content .form-actions .save-btn::before {
     position: relative;
     content: "";
@@ -1646,7 +1646,7 @@ Theme Panel
     height: 15px;
     display: block;
     float: left;
-    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\a 	 viewBox="0 0 370.571 370.571" style="fill: rgba(101, 105, 124, 0.99) ;fill-rule:nonzero;" xml:space="preserve">\a<path d="M291.785,0H0v370.571h370.571V78.787L291.785,0z M100,30h170.571v50H100V30z M270.571,340.571H100V200.286h170.571V340.571z\a 	 M340.571,340.571h-40V170.286H70v170.286H30V30h40v80h230.571V51.213l40,40V340.571z"/>\a<g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>'); }
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'\a 	 viewBox='0 0 370.571 370.571' style='fill: rgba(101, 105, 124, 0.99) ;fill-rule:nonzero;' xml:space='preserve'%3E\a%3Cpath d='M291.785,0H0v370.571h370.571V78.787L291.785,0z M100,30h170.571v50H100V30z M270.571,340.571H100V200.286h170.571V340.571z\a 	 M340.571,340.571h-40V170.286H70v170.286H30V30h40v80h230.571V51.213l40,40V340.571z'/%3E\a%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3C/svg%3E"); }
   .page-content .form-actions .send-btn {
     background-color: #40BAA7;
     border-color: #40BAA7;
@@ -1661,7 +1661,7 @@ Theme Panel
       height: 15px;
       display: block;
       float: left;
-      background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" viewBox="0 0 96 83" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">\a     <g transform="matrix(1,0,0,1,-745,-1751)">\a         <g transform="matrix(4.16667,0,0,4.16667,0,0)">\a             <path d="M178.828,439.926L201.651,430.14L178.828,420.354L178.817,427.965L195.128,430.14L178.817,432.315L178.828,439.926Z" style="fill: white ;fill-rule:nonzero;"/>\a         </g>\a     </g>\a</svg>'); }
+      background-image: url("../img/send.svg"); }
 
 .modal-footer {
   color: #65697C; }
@@ -1788,7 +1788,7 @@ Theme Panel
       border-radius: 50%;
       float: left;
       right: 15px;
-      background-color: #F4FFFD;
+      background-color: #FDFDFD;
       font-size: 30px; }
       .upload-list-item .list-item-action .list-action-uploading::after {
         position: absolute;
@@ -1912,7 +1912,7 @@ Theme Panel
   float: left;
   width: 51px;
   height: 51px;
-  background-color: #F4FFFD;
+  background-color: #FDFDFD;
   color: #acb1c2; }
   .upload-list-add label {
     font-size: 20px;
@@ -2000,12 +2000,12 @@ Theme Panel
     background-color: #fdf0f2; }
 
 .list-detail-input .table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #F4FFFD; }
+  background-color: #FDFDFD; }
 
 .list-detail-input .headers {
   color: #acb1c2;
   text-transform: uppercase;
-  background-color: #F4FFFD; }
+  background-color: #FDFDFD; }
 
 .list-detail-body {
   margin-bottom: 15px; }
@@ -2133,15 +2133,17 @@ Theme Panel
 
 .list-table-empty {
   display: block;
-  background-color: #F4FFFD;
+  background-color: #FDFDFD;
   color: #acb1c2;
   vertical-align: middle;
-  border: 1px dashed currentColor; }
+  border: 1px dashed currentColor;
+  height: 40px; }
   .list-table-empty .list-table-empty-message {
     text-align: center;
     line-height: 8px;
     height: 8px;
-    font-size: 14px; }
+    font-size: 14px;
+    padding-top: 15px; }
   .list-table-empty .list-table-empty-link {
     text-decoration: underline;
     color: #65697C; }
@@ -2167,7 +2169,7 @@ Theme Panel
     .list-by-form .list-group-item .list-item-header:after {
       clear: both; }
   .list-by-form .list-group-item .list-item-body {
-    background-color: #F4FFFD;
+    background-color: #FDFDFD;
     padding-top: 20px; }
 
 .list-by-form .has-error input {
@@ -2805,3 +2807,34 @@ Login page
 
 .has-error > div > .richtext-panel {
   border: 1px solid #e82724; }
+
+.subtitle {
+  color: #bababa !important;
+  font-size: 13px !important;
+  margin-top: -10px !important;
+  margin-bottom: 10px !important; }
+
+.subtitle_comp {
+  color: #bababa !important;
+  font-size: 13px !important;
+  margin-top: -6px !important;
+  margin-bottom: 10px !important; }
+
+.singular-composite-title {
+  display: inline-block; }
+
+.decorator-actions {
+  padding: 0 0 2px; }
+  .decorator-actions > .btn-group > .btn {
+    padding: 1px 2px 1px 2px;
+    margin: 1px 1px 1px 1px !important; }
+  .decorator-actions > .btn-group > .btn:hover, .decorator-actions > .btn-group .btn:focus {
+    color: #40BAA7;
+    background-color: #FDFDFD; }
+
+.decorator-actions.align-left {
+  display: inline;
+  margin-left: 1em; }
+
+.decorator-actions.align-right {
+  float: right; }
