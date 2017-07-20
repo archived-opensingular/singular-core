@@ -277,12 +277,6 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return (K) this;
     }
 
-    @Nonnull
-    public K addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
-        inject(accessStrategy);
-        return addAccessStrategy(accessStrategy.getOnlyVisualize());
-    }
-
     public final <T extends FlowInstance> TaskAccessStrategy<T> getAccessStrategy() {
         return (TaskAccessStrategy<T>) accessStrategy;
     }

@@ -20,7 +20,7 @@ import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.FlowDefinition;
-import org.opensingular.flow.core.builder.BuilderProcessRole;
+import org.opensingular.flow.core.builder.BuilderBusinessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
 
@@ -58,7 +58,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
+                BuilderBusinessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start";
                 flow.addJavaTask(start).call(p -> {
@@ -89,7 +89,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BuilderProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
+                BuilderBusinessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
                 ITaskDefinition start = () -> "Start";
                 flow.addJavaTask(start).call(p -> {
@@ -119,7 +119,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BuilderProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
+                BuilderBusinessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start 2";
                 flow.addJavaTask(start).call(p -> {

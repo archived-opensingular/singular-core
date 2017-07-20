@@ -22,7 +22,7 @@ import org.hibernate.criterion.Restrictions;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
-import org.opensingular.flow.core.SProcessRole;
+import org.opensingular.flow.core.SBusinessRole;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
@@ -174,7 +174,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
         Set<String> abbreviations = new HashSet<>();
         for (IEntityRoleDefinition role : new ArrayList<>(entityProcessDefinition.getRoles())) {
-            SProcessRole roleAbbreviation = flowDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
+            SBusinessRole roleAbbreviation = flowDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
             if (roleAbbreviation == null) {
                 if (!hasRoleInstances(sw, role)) {
                     entityProcessDefinition.getRoles().remove(role);
@@ -191,7 +191,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             }
         }
 
-        for (SProcessRole mPapel : flowDefinition.getFlowMap().getRoles()) {
+        for (SBusinessRole mPapel : flowDefinition.getFlowMap().getRoles()) {
             if (!abbreviations.contains(mPapel.getAbbreviation())) {
                 PROCESS_ROLE_DEF role = newInstanceOf(getClassProcessRoleDef());
                 role.setProcessDefinition(entityProcessDefinition);

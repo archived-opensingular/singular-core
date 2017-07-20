@@ -16,17 +16,6 @@
 
 package org.opensingular.form.type.basic;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.opensingular.form.SAttributeEnabled;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.SType;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +26,17 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STranslatorForAttribute;
+import org.opensingular.form.SType;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.enums.PhraseBreak;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -267,7 +267,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic displayString(String displayStringTemplate) {
-        return displayString(FormFreemarkerUtil.createInstanceCalculation(displayStringTemplate));
+        return displayString(FormFreemarkerUtil.createInstanceCalculation(displayStringTemplate, false, true));
     }
 
     public AtrBasic displayString(SimpleValueCalculation<String> valueCalculation) {

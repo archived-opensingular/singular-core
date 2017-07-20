@@ -38,12 +38,6 @@ public abstract class STaskUserExecutable<K extends STaskUserExecutable<?>> exte
     }
 
     @Override
-    @Nonnull
-    public K addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
-        return (K) super.addVisualizeStrategy(accessStrategy);
-    }
-
-    @Override
     public boolean isExecutable() {
         return true;
     }

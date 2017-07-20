@@ -39,9 +39,7 @@ public interface BuilderTask {
 
     public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
 
-    public BuilderTask addAccessStrategy(TaskAccessStrategy<?> accessStrategy);
-
-    public BuilderTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);
+    public BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
 
     public BuilderTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
 

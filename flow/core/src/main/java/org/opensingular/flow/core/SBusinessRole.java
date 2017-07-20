@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import java.io.Serializable;
 import java.util.Objects;
 
-public final class SProcessRole implements Serializable {
+public final class SBusinessRole implements Serializable {
 
     private final String abbreviation;
 
@@ -30,7 +30,7 @@ public final class SProcessRole implements Serializable {
     private final UserRoleSettingStrategy<FlowInstance> userRoleSettingStrategy;
 
     @SuppressWarnings("unchecked")
-    SProcessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
+    SBusinessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(abbreviation);
         Objects.requireNonNull(userRoleSettingStrategy);

@@ -19,5 +19,5 @@ package org.opensingular.flow.core;
 @FunctionalInterface
 public interface IRoleChangeListener<K extends FlowInstance> {
 
-    void execute(K instance, SProcessRole role, SUser lastUser, SUser newUser);
+    void execute(K instance, SBusinessRole role, SUser lastUser, SUser newUser);
 }

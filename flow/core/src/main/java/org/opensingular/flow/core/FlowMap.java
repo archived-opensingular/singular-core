@@ -55,7 +55,7 @@ public class FlowMap {
 
     private final Map<String, STaskEnd> endTasks = new HashMap<>();
 
-    private final Map<String, SProcessRole> rolesByAbbreviation = new HashMap<>();
+    private final Map<String, SBusinessRole> rolesByAbbreviation = new HashMap<>();
 
     private SStart start;
 
@@ -180,7 +180,7 @@ public class FlowMap {
      * @param abbreviation a sigla especificada.
      * @return o papel definido; {@code null} caso não haja papel com a sigla especificada.
      */
-    public SProcessRole getRoleWithAbbreviation(String abbreviation) {
+    public SBusinessRole getRoleWithAbbreviation(String abbreviation) {
         return rolesByAbbreviation.get(abbreviation.toLowerCase());
     }
 
@@ -189,7 +189,7 @@ public class FlowMap {
      *
      * @return todos os papeis definidos.
      */
-    public Collection<SProcessRole> getRoles() {
+    public Collection<SBusinessRole> getRoles() {
         return ImmutableSet.copyOf(rolesByAbbreviation.values());
     }
 
@@ -202,10 +202,10 @@ public class FlowMap {
      * @param automaticUserAllocation indicador de alocação automática.
      * @return o papel adicionado ao mapa.
      */
-    public SProcessRole addRoleDefinition(String name, String abbreviation,
+    public SBusinessRole addRoleDefinition(String name, String abbreviation,
             UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
-        final SProcessRole processRole = new SProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
+        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
             throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
         }
@@ -233,7 +233,7 @@ public class FlowMap {
      * @param previousUser o usuário anteriormente atribuído ao papel.
      * @param newUser o novo usuário atribuído ao papel.
      */
-    public void notifyRoleChange(final FlowInstance instance, final SProcessRole role, SUser previousUser, SUser newUser) {
+    public void notifyRoleChange(final FlowInstance instance, final SBusinessRole role, SUser previousUser, SUser newUser) {
         if (roleChangeListener != null) {
             roleChangeListener.execute(instance, role, previousUser, newUser);
         }
