@@ -197,12 +197,12 @@ class FlowEngine {
         if (taskDestiny.isWait()) {
             initTaskWait(instance, (STaskWait) taskDestiny, taskInstance);
         } else if (taskDestiny.isPeople()) {
-            initTaskPeople(instance, (STaskHuman) taskDestiny, taskInstance);
+            initTaskHuman(instance, (STaskHuman) taskDestiny, taskInstance);
         }
     }
 
-    private static <P extends FlowInstance> void initTaskPeople(P instance, STaskHuman taskDestiny,
-            TaskInstance taskInstance) {
+    private static <P extends FlowInstance> void initTaskHuman(P instance, STaskHuman taskDestiny,
+                                                               TaskInstance taskInstance) {
         TaskAccessStrategy<FlowInstance> strategy = taskDestiny.getAccessStrategy();
         if (strategy != null) {
             SUser person = strategy.getAutomaticAllocatedUser(instance, taskInstance);

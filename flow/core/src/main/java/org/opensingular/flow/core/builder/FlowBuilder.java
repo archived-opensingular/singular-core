@@ -120,6 +120,10 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
         return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
     }
 
+    public BUILDER_PAPEL addRoleDefinition(String description, boolean automaticUserAllocation) {
+        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true), new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
+    }
+
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
         return newJavaTask(getFlowMap().addJavaTask(taskDefinition));
     }
