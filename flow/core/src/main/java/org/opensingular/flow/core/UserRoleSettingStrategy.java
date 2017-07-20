@@ -25,6 +25,6 @@ public abstract class UserRoleSettingStrategy<K extends FlowInstance> implements
     public abstract List<? extends SUser> listAllocableUsers(K instancia);
 
     public SUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
-        return null;
+        return tarefa.getAllocatedUser();
     }
 }
