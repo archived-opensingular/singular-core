@@ -8,7 +8,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -48,7 +50,19 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     + "\n  </button>"
                     + "\n  <ul class='dropdown-menu dropdown-menu-right pull-right'>"
                     + "\n    <li class='text-right' wicket:id='actions'>"
-                    + "\n      <a wicket:id='link' style='text-align:right'><span wicket:id='label'></span> <i wicket:id='icon'></i></a></li>"
+                    + "\n      <a wicket:id='link' style='text-align:right'><span wicket:id='label'></span> <i wicket:id='icon'></i></a>"
+                    + "\n      <div wicket:id1='preview' class='dropdown-menu theme-panel pull-right dropdown-custom hold-on-click singular-form-action-preview'>"
+                    + "\n        <div class='row'>"
+                    + "\n          <div class='container-fluid'>"
+                    + "\n            <h5 class='preview-title' wicket:id1='previewTitle'></h5>"
+                    + "\n            <div class='singular-form-action-preview-actions'>"
+                    + "\n              <a class='singular-form-action-preview-action' wicket:id1='previewAction' href='javascript:;'><i wicket:id1='previewActionIcon'></i></a>"
+                    + "\n            </div>"
+                    + "\n            <div class='singular-form-action-preview-text' wicket:id1='previewText'></div>"
+                    + "\n          </div>"
+                    + "\n        </div>"
+                    + "\n      </div>"
+                    + "\n    </li>"
                     + "\n  </ul>"
                     + "\n</div>";
             case BAR:
@@ -61,6 +75,17 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     + "\n        data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
                     + "\n      <span wicket:id='label'></span> <i wicket:id='icon'></i>"
                     + "\n    </a>"
+                    + "\n    <div wicket:id1='preview' class='dropdown-menu theme-panel pull-right dropdown-custom hold-on-click singular-form-action-preview'>"
+                    + "\n      <div class='row'>"
+                    + "\n        <div class='container-fluid'>"
+                    + "\n          <h5 class='preview-title' wicket:id1='previewTitle'></h5>"
+                    + "\n          <div class='singular-form-action-preview-actions'>"
+                    + "\n            <a class='singular-form-action-preview-action' wicket:id1='previewAction' href='javascript:;'><i wicket:id1='previewActionIcon'></i></a>"
+                    + "\n          </div>"
+                    + "\n          <div class='singular-form-action-preview-text' wicket:id1='previewText'></div>"
+                    + "\n        </div>"
+                    + "\n      </div>"
+                    + "\n    </div>"
                     + "\n  </div>"
                     + "\n</div>";
         }
@@ -143,7 +168,8 @@ public class SInstanceActionsPanel extends TemplatePanel {
             IModel<SInstanceAction> itemModel = item.getModel();
             item.setRenderBodyOnly(!mode.isMenu());
             SInstanceAction action = itemModel.getObject();
-            ActionAjaxLink<SInstanceAction> link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
+
+            MarkupContainer link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     final List<?> contextList = internalContextListProvider.apply(target);
@@ -160,21 +186,21 @@ public class SInstanceActionsPanel extends TemplatePanel {
             link.add(label
                 .add($b.visibleIf(() -> mode.isMenu())));
 
-            Label iconTag = new Label("icon");
-            link
-                .add(iconTag
+            addIcon(link, itemModel);
+
+            item.add(link);
+        }
+        private void addIcon(MarkupContainer container, IModel<SInstanceAction> itemModel) {
+            final IModel<String> titleModel = $m.map(itemModel, action -> defaultString(action.getText(), action.getDescription()));
+            container
+                .add(new WebMarkupContainer("icon")
                     .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getIconCssClassesString())))
                     .add($b.styleAppender($m.map(itemModel, it -> it.getIcon().getIconCssStyles()))))
                 .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getContainerCssClassesString())))
                 .add($b.styleAppender($m.map(itemModel, it -> it.getIcon().getContainerCssStyles())))
-                .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null)));
-
-            link
-                .add($b.attr("title", action.getText()))
-                .add($b.attr("data-toggle", "tooltip"))
-                .add($b.attr("title", action.getDescription(), $m.map(itemModel, it -> isNotBlank(it.getText()))));
-
-            item.add(link);
+                .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null)))
+                .add($b.attr("title", titleModel))
+                .add($b.attr("data-toggle", "tooltip"));
         }
         @Override
         protected Iterator<IModel<SInstanceAction>> getItemModels() {

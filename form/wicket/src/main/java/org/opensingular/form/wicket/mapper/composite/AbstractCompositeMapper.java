@@ -48,6 +48,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.annotation.AnnotationComponent;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
@@ -96,7 +97,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
 
             BSContainer<?> container = ctx.getContainer();
             if (renderAnnotations()) {
-//                container.appendTag("div", new AnnotationComponent("annotation", ctx, model));
+                container.appendTag("div", new AnnotationComponent("annotation", ctx, model));
             }
 
             final BSGrid grid = createCompositeGrid(ctx);

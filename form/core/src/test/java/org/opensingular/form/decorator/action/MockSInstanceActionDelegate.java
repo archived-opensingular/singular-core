@@ -1,11 +1,11 @@
 package org.opensingular.form.decorator.action;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.SInstanceAction.ActionsFactory;
 import org.opensingular.form.decorator.action.SInstanceAction.Delegate;
 import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -20,11 +20,11 @@ public final class MockSInstanceActionDelegate implements Delegate {
     public int _getInstanceRefCount          = 0;
 
     @Override
-    public void showMessage(String title, Serializable msg, String forcedFormat) {
+    public void showMessage(String title, Serializable msg, String forcedFormat, ActionsFactory actionsFactory) {
         _showMessageCount++;
     }
     @Override
-    public void openForm(Out<FormDelegate> formDelegate, String title, ISupplier<SInstance> instanceSupplier, List<SInstanceAction> actions) {
+    public void openForm(Out<FormDelegate> formDelegate, String title, Serializable text, ISupplier<SInstance> instanceSupplier, ActionsFactory actionsFactory) {
         _openFormCount++;
         formDelegate.set(new FormDelegate() {
             @Override

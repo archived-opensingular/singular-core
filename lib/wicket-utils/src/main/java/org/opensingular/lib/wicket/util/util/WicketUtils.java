@@ -16,13 +16,6 @@
 
 package org.opensingular.lib.wicket.util.util;
 
-import org.opensingular.lib.wicket.util.lambda.ILambdasMixin;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.feedback.FeedbackCollector;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.visit.IVisit;
-
 import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
@@ -34,7 +27,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.FeedbackCollector;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.lambda.ILambdasMixin;
 
 public final class WicketUtils {
 
@@ -159,6 +161,10 @@ public final class WicketUtils {
     public static boolean nullOrEmpty(Object obj) {
         if (obj == null)
             return true;
+        if (obj instanceof ISupplier<?>)
+            return nullOrEmpty(((ISupplier<?>) obj).get());
+        if (obj instanceof Supplier<?>)
+            return nullOrEmpty(((Supplier<?>) obj).get());
         if (obj instanceof IModel<?>)
             return nullOrEmpty(((IModel<?>) obj).getObject());
         if (obj instanceof String)

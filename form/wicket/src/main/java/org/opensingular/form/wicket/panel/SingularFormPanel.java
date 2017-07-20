@@ -427,11 +427,16 @@ public class SingularFormPanel extends Panel {
 
     protected List<IWicketBuildListener> getDefaultBuildListeners() {
         return Arrays.asList(
+
             WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
                 (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider())),
+
             WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
-                (instance) -> SingularFormPanel.this.getAnnotationMode().enabled(),
-                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceAnnotationActionsProvider())));
+                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceAnnotationActionsProvider(
+                    (instance) -> SingularFormPanel.this.getAnnotationMode().enabled(),
+                    (instance) -> SingularFormPanel.this.getAnnotationMode().editable()) //
+                )) //
+        );
     }
 
     public SingularFormPanel addBuildListener(IWicketBuildListener listener) {

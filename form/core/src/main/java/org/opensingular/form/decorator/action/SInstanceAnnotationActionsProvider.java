@@ -12,14 +12,17 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
+import org.opensingular.form.decorator.action.SInstanceAction.ActionType;
 import org.opensingular.form.decorator.action.SInstanceAction.Delegate;
 import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
+import org.opensingular.form.decorator.action.SInstanceAction.Preview;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.form.view.SViewTextArea;
+import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 
@@ -28,33 +31,81 @@ import org.opensingular.lib.commons.ref.Out;
  */
 public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProvider {
 
+    private final IPredicate<SInstance> annotationsVisible;
+    private final IPredicate<SInstance> annotationsEditable;
+    public SInstanceAnnotationActionsProvider(IPredicate<SInstance> annotationsVisible, IPredicate<SInstance> annotationsEditable) {
+        this.annotationsVisible = annotationsVisible;
+        this.annotationsEditable = annotationsEditable;
+    }
+
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
+        if (!annotationsVisible.test(instance))
+            return Collections.emptyList();
+
         final boolean annotatable = instance.asAtrAnnotation().isAnnotated();
-        final boolean approved = isTrue(instance.asAtrAnnotation().approved());
-        final boolean rejected = isFalse(instance.asAtrAnnotation().approved());
+        final boolean editable = !isEmpty(instance) && annotationsEditable.test(instance);
 
         if (!annotatable)
             return Collections.emptyList();
 
-        final String title = "Comentários sobre " + instance.asAtr().getLabel();
-        final SIcon icon;
+        final SIcon icon = resolveIcon(instance);
+        final Preview preview = resolvePreview(instance);
 
-        if (approved) {
-            icon = SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_APPROVED).setColors("#7f7", "#fff");
-
-        } else if (rejected) {
-            icon = SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REJECTED).setColors("#f77", "#fff");
-
-        } else {
-            icon = SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EMPTY).setColors("#aaa", "#fff");
-
-        }
-        return Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
+        SInstanceAction editAction = new SInstanceAction(SInstanceAction.ActionType.NORMAL)
             .setIcon(icon)
-            .setText(title)
+            .setText(getEditActionTitle(instance))
             .setPosition(Integer.MAX_VALUE)
-            .setActionHandler(new AnnotationHandler(title)));
+            .setPreview(preview)
+            .setActionHandler(new EditAnnotationHandler());
+
+        return Arrays.asList(editAction);
+    }
+
+    private static String getEditActionTitle(SInstance instance) {
+        return "Comentários sobre " + instance.asAtr().getLabel();
+    }
+
+    private static Preview resolvePreview(SInstance instance) {
+        if (isEmpty(instance))
+            return null;
+
+        return new Preview()
+            .setTitle("Comentário")
+            .setMessage("")
+            .setFormat("")
+            .setActions(Arrays.asList(
+                new SInstanceAction(ActionType.LINK)
+                    .setText("Editar")
+                    .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EDIT))
+                    .setActionHandler(new EditAnnotationHandler()), //
+
+                new SInstanceAction(ActionType.LINK)
+                    .setText("Remover")
+                    .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REMOVE))
+                    .setActionHandler(new RemoveAnnotationHandler()) //
+        ));
+    }
+
+    private static SIcon resolveIcon(SInstance instance) {
+        if (isApproved(instance))
+            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_APPROVED).setColors("#7f7", "#fff");
+        else if (isRejected(instance))
+            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REJECTED).setColors("#f77", "#fff");
+        else
+            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EMPTY).setColors("#aaa", "#fff");
+    }
+
+    private static boolean isEmpty(SInstance instance) {
+        return !isApproved(instance) || !isRejected(instance);
+    }
+
+    private static boolean isRejected(SInstance instance) {
+        return isFalse(instance.asAtrAnnotation().approved());
+    }
+
+    private static boolean isApproved(SInstance instance) {
+        return isTrue(instance.asAtrAnnotation().approved());
     }
 
     private static final class FormAnotacaoRefType extends RefType {
@@ -78,11 +129,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private static final class AnnotationHandler implements ActionHandler {
-        private final String title;
-        private AnnotationHandler(String title) {
-            this.title = title;
-        }
+    private static final class EditAnnotationHandler implements ActionHandler {
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> fieldInstance, Delegate delegate) {
             ISupplier<SInstance> formSupplier = () -> {
@@ -95,30 +142,51 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
             };
             Out<SInstanceAction.FormDelegate> formDelegate = new Out<>();
             delegate.openForm(formDelegate,
-                title,
+                getEditActionTitle(fieldInstance.get()),
+                null,
                 formSupplier,
-                Arrays.asList(
-
+                fd -> Arrays.asList(
                     new SInstanceAction(SInstanceAction.ActionType.NORMAL)
                         .setText("Cancelar")
-                        .setActionHandler(new CloseFormHandler(formDelegate)),
-
+                        .setActionHandler(new CloseFormHandler(fd)),
                     new SInstanceAction(SInstanceAction.ActionType.PRIMARY)
                         .setText("Confirmar")
-                        .setActionHandler(new ConfirmarHandler(formDelegate))
-                //
+                        .setActionHandler(new ConfirmarEdicaoHandler(fd)) //
                 ));
         }
     }
 
-    private static final class ConfirmarHandler implements ActionHandler {
-        private final Out<FormDelegate> formDelegate;
-        public ConfirmarHandler(Out<FormDelegate> formDelegate) {
+    private static final class RemoveAnnotationHandler implements ActionHandler {
+        @Override
+        public void onAction(SInstanceAction action, ISupplier<SInstance> fieldInstance, Delegate delegate) {
+            Out<FormDelegate> formDelegate = new Out<>();
+            delegate.openForm(formDelegate,
+                "Você está prestes a remover este comentário",
+                "Deseja realmente prosseguir e apagá-lo?",
+                () -> null,
+                fd -> Arrays.asList(
+                    new SInstanceAction(ActionType.PRIMARY)
+                        .setText("Apagar")
+                        .setActionHandler((a, i, d) -> {
+                            i.get().asAtrAnnotation().clear();
+                            d.refreshFieldForInstance(i.get());
+                            fd.close();
+                        }),
+                    new SInstanceAction(ActionType.PRIMARY)
+                        .setText("Cancelar")
+                        .setActionHandler((a, i, d) -> fd.close())//
+                ));
+        }
+    }
+
+    private static final class ConfirmarEdicaoHandler implements ActionHandler {
+        private final FormDelegate formDelegate;
+        public ConfirmarEdicaoHandler(FormDelegate formDelegate) {
             this.formDelegate = formDelegate;
         }
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> actionInstanceSupplier, Delegate delegate) {
-            final SInstance formInstance = formDelegate.get().getFormInstance();
+            final SInstance formInstance = formDelegate.getFormInstance();
             final SInstance fieldInstance = delegate.getInstanceRef().get();
             final SIAnnotation annotationInstance = fieldInstance.asAtrAnnotation().annotation();
 
@@ -126,18 +194,18 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
             annotationInstance.setText(formInstance.getValue(FormAnotacaoRefType.JUSTIFICATIVA));
 
             delegate.refreshFieldForInstance(fieldInstance);
-            formDelegate.get().close();
+            formDelegate.close();
         }
     }
 
     private static final class CloseFormHandler implements ActionHandler {
-        private final Out<FormDelegate> formDelegate;
-        public CloseFormHandler(Out<FormDelegate> formDelegate) {
+        private final FormDelegate formDelegate;
+        public CloseFormHandler(FormDelegate formDelegate) {
             this.formDelegate = formDelegate;
         }
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> actionInstanceSupplier, Delegate delegate) {
-            formDelegate.get().close();
+            formDelegate.close();
         }
     }
 }

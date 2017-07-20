@@ -23,7 +23,7 @@ public class SInstanceActionTest {
             .setActionHandler((a, i, d) -> {
                 d.showMessage("title", "msg");
                 Out<FormDelegate> fd = new Out<>();
-                d.openForm(fd, "", null, null);
+                d.openForm(fd, "", null, null, null);
                 fd.get().close();
                 d.getInstanceRef();
                 d.getInternalContext(null);
