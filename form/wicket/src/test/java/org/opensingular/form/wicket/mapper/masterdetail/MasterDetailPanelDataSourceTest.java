@@ -10,11 +10,11 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MasterDetailPanelDataSourceTest {
@@ -50,8 +50,11 @@ public class MasterDetailPanelDataSourceTest {
         List<SInstance> page1 = Lists.newArrayList(dataProvider.iterator(0, 2, "", true));
         List<SInstance> page2 = Lists.newArrayList(dataProvider.iterator(2, 2, "", true));
 
-        Assert.assertNotEquals(page1, page2);
-        Assert.assertEquals(page1, Arrays.asList(sistring("01"), sistring("02")));
-        Assert.assertEquals(page2, Arrays.asList(sistring("03"), sistring("04")));
+        Assert.assertEquals(2, page1.size());
+        new AssertionsSInstance(page1.get(0)).is(SIString.class).isValueEquals("01");
+        new AssertionsSInstance(page1.get(1)).is(SIString.class).isValueEquals("02");
+        Assert.assertEquals(2, page2.size());
+        new AssertionsSInstance(page2.get(0)).is(SIString.class).isValueEquals("03");
+        new AssertionsSInstance(page2.get(1)).is(SIString.class).isValueEquals("04");
     }
 }
