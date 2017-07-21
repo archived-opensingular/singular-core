@@ -14,16 +14,17 @@ import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.transaction.Transactional;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Named
 @Transactional
 public class FormFieldService implements IFormFieldService {
 
