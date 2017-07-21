@@ -1,7 +1,9 @@
 package org.opensingular.form.view;
 
+import org.junit.Test;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SISimple;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -13,20 +15,11 @@ import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.junit.Test;
-import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.view.SMultiSelectionByPicklistView;
-import org.opensingular.form.view.SMultiSelectionBySelectView;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.view.SViewSelectionByRadio;
-import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.view.ViewResolver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -71,6 +64,12 @@ public class TestViewResolver {
         assertEquals(expectedView, view.getClass());
     }
 
+    private static void assertViewForListOf(Class<?> expectedView, Class<?> type) {
+        SDictionary dicionario = SDictionary.create();
+        SIList<?> list = dicionario.getType((Class<SType<?>>) type).newList();
+        assertView(expectedView, list);
+    }
+
     @Test
     public void testBasicView() {
         assertView(null, STypeBoolean.class);
@@ -78,7 +77,8 @@ public class TestViewResolver {
         assertView(null, STypeInteger.class);
         assertView(null, STypeString.class);
         assertView(null, STypeComposite.class);
-        assertView(SViewListByForm.class, STypeList.class);
+        assertViewForListOf(SViewListByForm.class, STypeComposite.class);
+        assertViewForListOf(SViewListByForm.class, STypeString.class);
     }
 
     @Test

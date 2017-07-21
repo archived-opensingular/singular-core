@@ -5,10 +5,6 @@ import org.junit.Test;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 
@@ -21,7 +17,7 @@ public class ValueTest {
         SIString siString = sDictionary.newInstance(STypeString.class);
         siString.setValue("value");
 
-        SIList<SIString> siList = sDictionary.newInstance(STypeList.class);
+        SIList<SIString> siList = (SIList<SIString>) sDictionary.getType(STypeString.class).newList();
         siList.addElement(siString);
         Assert.assertEquals(1, Value.ofList(siList).size());
         Assert.assertNull(Value.ofList(null));
@@ -40,7 +36,7 @@ public class ValueTest {
         siString.setValue("value");
         Assert.assertTrue(Value.notNull(siString));
 
-        SIList<SIString> siList = sDictionary.newInstance(STypeList.class);
+        SIList<SIString> siList = (SIList<SIString>) sDictionary.getType(STypeString.class).newList();
         siList.addElement(siString);
         Assert.assertTrue(Value.notNull(siList));
     }

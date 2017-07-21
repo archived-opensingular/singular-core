@@ -34,7 +34,7 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
 
         this.asAtr()
                 .label("Estado")
-                .displayString("${nome} - ${sigla}")
+                .displayString("${nome!} - ${sigla!}")
                 .asAtrBootstrap()
                 .colPreference(2);
 

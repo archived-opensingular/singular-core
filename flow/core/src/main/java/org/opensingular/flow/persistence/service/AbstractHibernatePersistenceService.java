@@ -217,7 +217,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         SUser resolvedUser = saveUserIfNeeded(responsibleUser);
         IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, resolvedUser);
 
-        history.setBeginDateAllocation(dateHour == null ? new Date() : dateHour);
+        history.setAllocationStartDate(dateHour == null ? new Date() : dateHour);
         history.setDescription(detail);
 
         SessionWrapper sw = getSession();
@@ -463,7 +463,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         for (ListIterator<? extends IEntityTaskInstanceHistory> it = histories.listIterator(histories.size()); it.hasPrevious(); ) {
             IEntityTaskInstanceHistory history = it.previous();
             if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALOCACAO.toLowerCase())) {
-                history.setEndDateAllocation(new Date());
+                history.setAllocationEndDate(new Date());
                 getSession().saveOrUpdate(history);
             }
         }

@@ -50,16 +50,17 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         final Date today = new Date();
 
         for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+            definicaoProcessoMBPM.getFlowMap().getHumanTasks().stream()
+                    .filter(task -> task.getTargetDateExecutionStrategy() != null)
+                    .forEach(fillTargetEndDate(mbpmBean, log, definicaoProcessoMBPM));
+        }
+
+        for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (final STaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
                 executeTaskIfNecessary(mbpmBean, log, today, definicaoProcessoMBPM, task);
             }
         }
 
-        for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
-            definicaoProcessoMBPM.getFlowMap().getHumanTasks().stream()
-                    .filter(task -> task.getTargetDateExecutionStrategy() != null)
-                    .forEach(fillTargetEndDate(mbpmBean, log, definicaoProcessoMBPM));
-        }
 
         for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (STask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
@@ -79,7 +80,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         if (task.hasExecutionDateStrategy()) {
             for (FlowInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                 TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
-                Date         dataExecucao    = task.getExecutionDate(instancia, instanciaTarefa);
+                Date         dataExecucao    = instanciaTarefa.getTargetEndDate();
                 if (!dataExecucao.equals(instanciaTarefa.getTargetEndDate())) {
                     instanciaTarefa.setTargetEndDate(dataExecucao);
                 }
