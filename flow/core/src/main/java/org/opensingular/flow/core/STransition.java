@@ -92,7 +92,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return false;
     }
 
-    public STransition defineUserRoleInTransition(SBusinessRole papel) {
+    public STransition defineBusinessRoleInTransition(SBusinessRole papel) {
         if (origin.isPeople() || papel.isAutomaticBusinessRoleAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
