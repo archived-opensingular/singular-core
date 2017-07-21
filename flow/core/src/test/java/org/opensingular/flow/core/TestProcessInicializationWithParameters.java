@@ -178,10 +178,10 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
         }
 
         public void doFirst(ExecutionContext<FlowInstance> processInstanceExecutionContext) {
-            Double v = processInstanceExecutionContext.getProcessInstance().getVariables().getValueDouble(PARAM_FLAG, 0.0);
+            Double v = processInstanceExecutionContext.getFlowInstance().getVariables().getValueDouble(PARAM_FLAG, 0.0);
             Assert.assertEquals((Double) 3.0, v);
-            Assert.assertEquals(VALUE_BIG, processInstanceExecutionContext.getProcessInstance().getVariables().getValueBigDecimal(PARAM_BIG));
-            processInstanceExecutionContext.getProcessInstance().getVariables().setValue(PARAM_FLAG, v * 2.5);
+            Assert.assertEquals(VALUE_BIG, processInstanceExecutionContext.getFlowInstance().getVariables().getValueBigDecimal(PARAM_BIG));
+            processInstanceExecutionContext.getFlowInstance().getVariables().setValue(PARAM_FLAG, v * 2.5);
         }
     }
 }
