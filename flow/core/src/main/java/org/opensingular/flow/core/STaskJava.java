@@ -90,7 +90,7 @@ public class STaskJava extends STask<STaskJava> {
         if (blockImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."), this);
         }
-        Object result = blockImpl.call(instancias);
+        String result = blockImpl.call(instancias);
 
         if (result == null) {
             long qtdAlterado = instancias.stream().filter(i -> !equals(i.getState().orElse(null))).count();
