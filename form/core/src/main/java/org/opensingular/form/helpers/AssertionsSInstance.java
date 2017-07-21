@@ -1,11 +1,5 @@
 package org.opensingular.form.helpers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.DateAssert;
 import org.fest.assertions.api.IterableAssert;
@@ -16,10 +10,24 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.ValidationError;
 
-import static org.junit.Assert.*;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Classe de apoio a a escrita de assertivas referentes a um {@link SInstance}. Dispara {@link AssertionError} se uma
@@ -283,6 +291,107 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         } catch (AssertionError e) {
             throw new AssertionError(
                     "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
+        }
+    }
+
+
+    /**
+     * Verifica todos os filhos da instância em questão possuem o mesmo
+     * {@link org.opensingular.form.document.SDocument}.
+     */
+    public void assertCorrectDocumentReference() {
+        assertCorrectDocumentReference(getTarget().getDocumentRoot(), getTarget());
+    }
+
+    private void assertCorrectDocumentReference(@Nonnull SInstance reference, @Nonnull SInstance target) {
+        if (reference.getDocument() != target.getDocument()) {
+            throw new AssertionError("Inconsitência Interna: O document da instancia '" + target.getPathFull() +
+                    "' não é o mesmo da instância '" + reference.getPathFull() + "'");
+        }
+        target.forEachChild(child -> assertCorrectDocumentReference(reference, child));
+    }
+
+    /** Verifica se não possui nenhuma repetição de IDs entre instancia filhas e depois em todo o documento. */
+    public void assertUniqueIDs() {
+        assertUniqueIDs(getTarget(), new HashMap<Integer, SInstance>());
+    }
+
+    private void assertUniqueIDs(SInstance target, HashMap<Integer, SInstance> usedIds) {
+        Integer id = target.getId();
+        SInstance old = usedIds.putIfAbsent(id, target);
+        if (old != null) {
+            throw new AssertionError(
+                    "Incossitência Interna: Duas instância do mesmo documento estão usando o mesmo ID '" + id + "': '" +
+                            target.getPathFull() + "' e '" + old.getPathFull() + "'");
+        }
+        target.forEachChild(child -> assertUniqueIDs(child, usedIds));
+    }
+
+    /**
+     * Verifica se os filhos apontam corretaente para o pai. Ou seja, se os filhos da instância apontam para a instância
+     * como sendo o pai.
+     */
+    public void assertCorrectParentRelation() {
+        assertCorrectParentRelation(getTarget());
+    }
+
+    private void assertCorrectParentRelation(SInstance target) {
+        for (SInstance child : target.getChildren()) {
+            if (target != child.getParent()) {
+                throw new AssertionError(
+                        "Incossitência Interna: A instância '" + child.getPathFull() + "', filho de '" +
+                                target.getPathFull() + "', aponta para um outro pai: '" + child.getParent() + "'");
+            }
+            assertCorrectParentRelation(child);
+        }
+    }
+
+    /** Verifica se a estrutura a partir do ponto autal está consistente internamente. */
+    public void assertCorrectHierachyStructure() {
+        assertCorrectDocumentReference();
+        assertUniqueIDs();
+        assertCorrectParentRelation();
+        assertCorrectTypeReferences();
+
+    }
+
+    /** Verifica se as instância filhas apontas para os tipos corretos de acordo com o esperado. */
+    public void assertCorrectTypeReferences() {
+        assertCorrectTypeReferences(getTarget());
+    }
+
+    public void assertCorrectTypeReferences(SInstance target) {
+        if (target instanceof SIList) {
+            assertCorrectTypeReferences((SIList<?>) target);
+        } else if (target instanceof SIComposite) {
+            assertCorrectTypeReferences((SIComposite) target);
+        }
+    }
+
+    private void assertCorrectTypeReferences(SIComposite target) {
+        STypeComposite<?> compositeType = target.getType();
+        for (SInstance child : target) {
+            SType<?> expectedType = compositeType.getField(child.getName());
+            assertExpectedType(expectedType, child);
+            assertCorrectTypeReferences(child);
+        }
+    }
+
+    private void assertCorrectTypeReferences(SIList<?> target) {
+        STypeList listType = target.getType();
+        SType expectedType = listType.getElementsType();
+        for (SInstance child : target) {
+            assertExpectedType(expectedType, child);
+            assertCorrectTypeReferences(child);
+        }
+    }
+
+    private void assertExpectedType(SType expectedType, SInstance child) {
+        if (expectedType != child.getType()) {
+            throw new AssertionError(
+                    "Incossitência Interna: A instância '" + child.getPathFull() + "' aponta para o tipo '" +
+                            child.getType() + "' mas era esperado que apontasse para o tipo '" + expectedType +
+                            "'. Não são a mesma instância de tipo, mesmo se apresentarem o mesmo nome.");
         }
     }
 }
