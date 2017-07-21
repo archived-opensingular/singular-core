@@ -198,14 +198,14 @@ public class FlowMap {
      *
      * @param name o nome do papel.
      * @param abbreviation a sigla do papel.
-     * @param userRoleSettingStrategy o {@link UserRoleSettingStrategy} do papel.
+     * @param businessRoleStrategy o {@link BusinessRoleStrategy} do papel.
      * @param automaticUserAllocation indicador de alocação automática.
      * @return o papel adicionado ao mapa.
      */
     public SBusinessRole addRoleDefinition(String name, String abbreviation,
-            UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy,
+            BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
+        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, businessRoleStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
             throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
         }

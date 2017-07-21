@@ -77,7 +77,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     public boolean hasRoleUsersToSet() {
         if (rolesToDefineUser != null) {
             for (SBusinessRole processRole : rolesToDefineUser) {
-                if (!processRole.isAutomaticUserAllocation()) {
+                if (!processRole.isAutomaticBusinessRoleAllocation()) {
                     return true;
                 }
             }
@@ -87,13 +87,13 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasAutomaticRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            return rolesToDefineUser.stream().anyMatch(SBusinessRole::isAutomaticUserAllocation);
+            return rolesToDefineUser.stream().anyMatch(SBusinessRole::isAutomaticBusinessRoleAllocation);
         }
         return false;
     }
 
     public STransition defineUserRoleInTransition(SBusinessRole papel) {
-        if (origin.isPeople() || papel.isAutomaticUserAllocation()) {
+        if (origin.isPeople() || papel.isAutomaticBusinessRoleAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
             }

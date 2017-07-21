@@ -36,8 +36,8 @@ import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
-import org.opensingular.flow.core.UserRoleSettingStrategy;
-import org.opensingular.flow.core.defaults.EmptyUserRoleSettingStrategy;
+import org.opensingular.flow.core.BusinessRoleStrategy;
+import org.opensingular.flow.core.defaults.EmptyBusinessRoleStrategy;
 import org.opensingular.flow.core.defaults.NullPageStrategy;
 import org.opensingular.lib.commons.base.SingularUtil;
 
@@ -104,24 +104,24 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description,
-        UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy,
+        BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
         boolean automaticUserAllocation) {
-        return addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true), userRoleSettingStrategy, automaticUserAllocation);
+        return addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true), businessRoleStrategy, automaticUserAllocation);
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
-            UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy,
+            BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, userRoleSettingStrategy, automaticUserAllocation));
+        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, businessRoleStrategy, automaticUserAllocation));
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
                                            boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
+        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description, boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true), new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
+        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true), new EmptyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
