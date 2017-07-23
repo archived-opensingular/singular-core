@@ -1,0 +1,136 @@
+
+
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+table {
+    font-size: inherit;
+}
+
+.table {
+    background-color: #DCD9C8;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #A4D370;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+.table, .table td, .table th {
+    padding: 3px;
+    border-spacing: 1px !important;
+    border-collapse: collapse;
+    border: 1px solid #DCD9C8;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.T_t {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+
+.T_thead {
+    background-color: #FFCC00;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+    text-align: left;
+}
+
+.T_tit_super {
+    text-align: center;
+}
+
+.T_tit_cen {
+    text-align: center;
+}
+
+.T_tit_dir {
+    text-align: right;
+}
+
+.T_subtit, .T_subtit_cen, .T_subtit_dir {
+    background-color: #FFEFAE !important;
+}
+
+.T_subtit_cen {
+    text-align: center;
+}
+
+.T_subtit_dir {
+    text-align: right;
+}
+
+.T_content_simple {
+    color: #333333;
+    background-color: #FFFFFF;
+}
+
+.T_striped tr:nth-child(even) {
+    background-color: #F7F3F7;
+}
+
+.T_sep {
+    border-left: 3px solid #DCD9C8 !important;;
+}
+
+.T_ls0 { }
+
+.T_ls1 { }
+
+.T_content_simple tr:hover, .T_R_0:hover, .T_R_1:hover, .T_R_2:hover, .T_R_3:hover, .T_R_4:hover, .T_R_N:hover {
+    background-color: #FFE991;
+}
+
+.T_DL0, .T_DL1, .T_DL2. .T_DL3, .T_DL4, .T_DLN {
+    background-color: #99CC99;
+    color: #000000;
+}
+
+.T_DL1 {
+    background-color: #D0FFD0;
+}
+
+.T_DL2 {
+    background-color: #F0FFF0;
+}
+
+.T_DLN .T_DL3 .T_DL4 {
+    background-color: #FFFFFF;
+}
+
+.RA_TD00 {
+    font-weight: bold;
+}
+
+.RA_TD10 {
+    font-weight: normal;
+}
+
+.RA_TD20 {
+    font-weight: normal;
+}
+
+.RA_TDN0 {
+    font-weight: normal;
+}
+
+.T_dir {
+    text-align: right;
+}
+
+.T_cen {
+    text-align: center;
+}
+
+.T_l_tot {
+    background-color: #FFEFAE;
+    font-weight: bold;
+}
+
+. T_tot_label {
+    background-color: green;
+}

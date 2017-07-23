@@ -138,12 +138,16 @@ public class TableSimulator {
 
     /** Imprime o conteúdo da tablema para o consile de forma tabulada. */
     public void debug() {
+        debug(System.out);
+    }
+
+    public void debug(PrintStream out) {
         int[] widths = new int[columnsSize];
         for(List<TableCellRef> line : table) {
             TableCellRef last = null;
             for(int i = 0; i < line.size(); i++) {
                 TableCellRef cell = line.get(i);
-                if (cell == last) {
+                if (cell == last || cell == null) {
                     continue;
                 }
                 if (cell.getColSpan() == 1) {
@@ -154,7 +158,6 @@ public class TableSimulator {
                 last = cell;
             }
         }
-        PrintStream out = System.out;
         debugBeginEndTable(out, widths);
         for(List<TableCellRef> line : table) {
             out.print('|');
@@ -165,8 +168,10 @@ public class TableSimulator {
                     continue;
                 }
                 int size = widths[i];
-                for(int j = 1; j < cell.getColSpan(); j++) {
-                    size += widths[i+j] + 1;
+                if (cell != null) {
+                    for (int j = 1; j < cell.getColSpan(); j++) {
+                        size += widths[i + j] + 1;
+                    }
                 }
                 String value = cell == null ? null : cell.getValueAsString();
                 value = value == null ? "" : value;

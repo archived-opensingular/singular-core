@@ -30,13 +30,19 @@ public abstract class TableOutput {
      * Indica que o conteúdo sendo gerado será estático, ou seja, sera consultado fora do contexto do servidor. Por
      * exemplo, HTML enviado por e-mail, Excel, PDF, etc.
      */
-    public abstract boolean isStaticConent();
+    public abstract boolean isStaticContent();
 
     /** Inicializa a geração da tabela de resultado. Chamado antes do pedido de criação dos títulos. */
     public abstract void generateTableStart(@Nonnull OutputTableContext ctx, @Nonnull TableTool tableTool);
 
     /** Finaliza a geração da tabela de resultado. Chamado após todas as chamdas de geração de conteúdo. */
     public abstract void generateTableEnd(@Nonnull OutputTableContext ctx, @Nonnull TableTool tableTool);
+
+    /** Gera o início de um conjunto de linhas que representa as linhas de dados. */
+    public abstract void generateBodyBlockStart(@Nonnull OutputTableContext ctx);
+
+    /** Gera o fim de um conjunto de linhas que representa as linhas de dados. */
+    public abstract void generateBodyBlockEnd(@Nonnull OutputTableContext ctx);
 
     /**
      * Gera o início de uma nova linha.
@@ -49,9 +55,6 @@ public abstract class TableOutput {
 
     /** Fecha a geração da linha simples. */
     public abstract void generateLineSimpleEnd(@Nonnull OutputTableContext ctx);
-
-    /** Gera um separador entre a coluna atual e a próxima para marcar a mudança entre grupos. */
-    public abstract void generateColumnSeparator(@Nonnull OutputTableContext ctx, int rowSpan);
 
     /**
      * Gera o início de uma nova linha para uma tabela de dados em árvore.
@@ -98,7 +101,7 @@ public abstract class TableOutput {
      * @param asSubTitle Indica se está sendo gerado título de baixo de um super título
      */
     public abstract void generateTiltleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan,
-            boolean asSubTitle);
+            boolean asSubTitle, boolean columnWithSeparator);
 
     /**
      * Gera um celula que representa o super título de um conjunto de colunas.
@@ -106,7 +109,8 @@ public abstract class TableOutput {
      * @param column  Primeira coluna do conjunto de coluna abarcados pelo super título
      * @param colSpan Quantas colunas são ocupadas pelo super título.
      */
-    public abstract void generateTitleCellSuper(@Nonnull OutputTableContext ctx, @Nonnull Column column, int colSpan);
+    public abstract void generateTitleCellSuper(@Nonnull OutputTableContext ctx, @Nonnull Column column, int colSpan,
+            boolean columnWithSeparator);
 
     /**
      * Gera o início de uma nova linha de totalização da tabela.
@@ -120,13 +124,14 @@ public abstract class TableOutput {
      *                        linha não têm relação com nível.
      */
     public abstract void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
-            @Nonnull Decorator tempDecorator, int lineAlternation, int level);
+            @Nonnull Decorator tempDecorator, int level);
 
     /** Fecha a geração de uma linha de totalização da tabela. */
     public abstract void generateTotalLineEnd(@Nonnull OutputTableContext ctx);
 
     /** Gera uma celula que não tera totalização, pois não foi marcada para tanto. */
-    public abstract void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column);
+    public abstract void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column,
+            boolean columnWithSeparator);
 
     /**
      * Gera uma celula que é apenas o label da linha de totalização.

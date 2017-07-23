@@ -118,7 +118,7 @@ public class TableToolTreeTest {
             }
         });
         TableOutputSimulated output = new TableOutputSimulated();
-        table.gerar(output);
+        table.generate(output);
         return output;
     }
 

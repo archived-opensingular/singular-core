@@ -121,7 +121,7 @@ public final class OutputTableContext {
      * exemplo, HTML enviado por e-mail, Excel, PDF, etc.
      */
     public boolean isStaticContent() {
-        return tableOutput.isStaticConent();
+        return tableOutput.isStaticContent();
     }
 
     /** Retorna a lista de coluna a serem exibidas (efetivamente geradas). */

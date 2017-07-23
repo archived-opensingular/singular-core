@@ -16,27 +16,18 @@
 
 package org.opensingular.lib.commons.table;
 
-import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.opensingular.lib.commons.table.Column.TipoColuna;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Daniel C. Bordin on 18/04/2017.
  */
-public class TableToolSimpleTest {
+public class TableToolSimpleTestSimulated extends TableToolSimpleTestBase {
+
 
     @Test
+    @Override
     public void testSimpleTable() {
-        TableTool table = new TableTool();
-        table.addColumn(TipoColuna.tpString);
-        table.addColumn(TipoColuna.tpInteger);
-        table.addColumn(TipoColuna.tpInteger);
-        TableOutputSimulated output = generateWithSimpleData(table);
-
+        TableOutputSimulated output = generate(testSimpleTable_build());
         output.getResult().assertLinesSize(3);
         output.getResult().assertLine(0, null, null, null);
         output.getResult().assertLine(1, "P3", 3, 30);
@@ -44,10 +35,9 @@ public class TableToolSimpleTest {
     }
 
     @Test
+    @Override
     public void testSimpleTable_withInvisibleColumn() {
-        TableTool table = createTableToolWith3Columns();
-        table.getColumn(1).setVisible(false);
-        TableOutputSimulated output = generateWithSimpleData(table);
+        TableOutputSimulated output = generate(testSimpleTable_withInvisibleColumn_build());
 
         output.getResult().assertLinesSize(3);
         output.getResult().assertLine(0, "A", "C");
@@ -56,35 +46,33 @@ public class TableToolSimpleTest {
     }
 
     @Test
+    @Override
     public void testSimpleTable_dontShowTitle() {
-        TableTool table = createTableToolWith3Columns();
-        table.setShowTitles(false);
-        TableOutputSimulated output = generateWithSimpleData(table);
-
+        TableOutputSimulated output = generate(testSimpleTable_dontShowTitle_build());
         output.getResult().assertLinesSize(2);
         output.getResult().assertLine(0, "P3", 3, 30);
         output.getResult().assertLine(1, "P10", 10, 100);
     }
 
     @Test
-    public void testSimpleTable_empty() {
-        TableTool table = createTableToolWith3Columns();
-        TableOutputSimulated output = generateWithSimpleData(table, Collections.emptyList());
-        output.getResult().debug();
+    @Override
+    public void testSimpleTable_empty1() {
+        TableOutputSimulated output = generate(testSimpleTable_empty1_build());
         output.getResult().assertLinesSize(1);
         output.getResult().assertLine(0, "A", "B", "C");
+    }
 
-        table.setShowTitles(false);
-        output = generateWithSimpleData(table, Collections.emptyList());
+    @Test
+    @Override
+    public void testSimpleTable_empty2() {
+        TableOutputSimulated output = generate(testSimpleTable_empty2_build());
         output.getResult().assertLinesSize(0);
     }
 
     @Test
+    @Override
     public void testSimpleTable_withSuperTitle() {
-        TableTool table = createTableToolWith3Columns();
-        table.addSuperTitulo(1,2,"Super");
-        TableOutputSimulated output = generateWithSimpleData(table);
-
+        TableOutputSimulated output = generate(testSimpleTable_withSuperTitle_build());
         output.getResult().assertLinesSize(4);
         output.getResult().assertLine(0, "A", "#", "Super", "Super");
         output.getResult().assertLine(1, "A", "#", "B", "C");
@@ -93,11 +81,9 @@ public class TableToolSimpleTest {
     }
 
     @Test
+    @Override
     public void testSimpleTable_withTotalizationLine1() {
-        TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
-        TableOutputSimulated output = generateWithSimpleData(table);
-
+        TableOutputSimulated output = generate(testSimpleTable_withTotalizationLine1_build());
         output.getResult().assertLinesSize(4);
         output.getResult().assertLine(0, "A", "B", "C");
         output.getResult().assertLine(1, "P3", 3, 30);
@@ -106,12 +92,9 @@ public class TableToolSimpleTest {
     }
 
     @Test
+    @Override
     public void testSimpleTable_withTotalizationLine2() {
-        TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
-        table.getColumn(1).setTotalizar(false);
-        TableOutputSimulated output = generateWithSimpleData(table);
-
+        TableOutputSimulated output = generate(testSimpleTable_withTotalizationLine2_build());
         output.getResult().assertLinesSize(4);
         output.getResult().assertLine(0, "A", "B", "C");
         output.getResult().assertLine(1, "P3", 3, 30);
@@ -119,28 +102,24 @@ public class TableToolSimpleTest {
         output.getResult().assertLine(3, "Total", null, 130);
     }
 
-    private TableOutputSimulated generateWithSimpleData(TableTool table) {
-        List<Integer> values = Lists.newArrayList(3, 10);
-        return generateWithSimpleData(table, values);
+    @Test
+    @Override
+    public void testSimpleTable_withSuperTitleAndTotalization() {
+        TableOutputSimulated output = generate(testSimpleTable_withSuperTitleAndTotalization_build());
+        //output.getResult().debug();
+        output.getResult().assertLinesSize(7);
+        output.getResult().assertLine(0, "A", "#", "Super", "Super", "#", "D");
+        output.getResult().assertLine(1, "A", "#", "B", "C", null, "D");
+        output.getResult().assertLine(2, "L0", "#", 3, "10,20", "#", "Flavio Almeida");
+        output.getResult().assertLine(3, "L1", "#", 10, "20,20", "#", "Paulo");
+        output.getResult().assertLine(4, "L2", "#", 5, "1.000,21", "#", null);
+        output.getResult().assertLine(5, "L3", "#", 100, null, "#", "Andrades");
+        output.getResult().assertLine(6, "Total", "#", null, "1.030,61", "#", null);
     }
 
-    private <T> TableOutputSimulated generateWithSimpleData(TableTool table, Iterable<? extends T> values) {
-        table.setLeitorTabelaSimples(values, (ctx, current, line) -> {
-            line.get(0).setValor("P"+current);
-            line.get(1).setValor(current);
-            line.get(2).setValor(((Number) current).intValue() * 10);
-        });
+    private TableOutputSimulated generate(TableTool table) {
         TableOutputSimulated output = new TableOutputSimulated();
-        table.gerar(output);
+        table.generate(output);
         return output;
-    }
-
-    @NotNull
-    private TableTool createTableToolWith3Columns() {
-        TableTool table = new TableTool();
-        table.addColumn(TipoColuna.tpString,"A");
-        table.addColumn(TipoColuna.tpInteger, "B");
-        table.addColumn(TipoColuna.tpInteger, "C");
-        return table;
     }
 }

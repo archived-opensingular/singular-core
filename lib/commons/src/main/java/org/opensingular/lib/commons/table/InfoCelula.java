@@ -101,9 +101,9 @@ public final class InfoCelula implements Serializable {
     }
 
     public InfoCelula setLink(WebRef actionRef) {
-        if (actionRef != null && actionRef.isPossuiDireitoAcesso() && actionRef.isSeAplicaAoContexto()) {
+        if (actionRef != null && actionRef.hasPermission() && actionRef.appliesToContext()) {
             this.link = actionRef;
-            setLinkTitle(actionRef.getNome());
+            setLinkTitle(actionRef.getName());
         }
         return this;
     }

@@ -42,6 +42,8 @@ public class OutputCellContext {
     @Nonnull
     private ColumnTypeProcessor columnProcessor;
 
+    private boolean columnWithSeparator;
+
     OutputCellContext(@Nonnull OutputTableContext outputTableContext, @Nonnull InfoCelula cell,
             @Nonnull DecoratorCell tempDecorator) {
         this.outputTableContext = outputTableContext;
@@ -139,5 +141,13 @@ public class OutputCellContext {
             return content.substring(0, tempDecorator.getMaxTextLength());
         }
         return content;
+    }
+
+    public void setColumnWithSeparator(boolean columnWithSeparator) {
+        this.columnWithSeparator = columnWithSeparator;
+    }
+
+    public boolean isColumnWithSeparator() {
+        return columnWithSeparator;
     }
 }

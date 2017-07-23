@@ -249,6 +249,10 @@ public final class TableTool implements Serializable {
         totalizar_ = totalizar;
     }
 
+    public boolean isTotalizar() {
+        return totalizar_;
+    }
+
     /**
      * Indica qual nivel deve ser utilizado para totalizar
      */
@@ -308,7 +312,7 @@ public final class TableTool implements Serializable {
         return visiveis;
     }
 
-    public PopulatorTable criarPreenchedorTabela() {
+    public PopulatorTable createSimpleTablePopulator() {
         PopulatorTable preenchedor = new PopulatorTable(this);
         leitor = preenchedor.asLeitorArvore();
         simpleTable = true;
@@ -343,7 +347,7 @@ public final class TableTool implements Serializable {
         this.id = id;
     }
 
-    public void gerar(@Nonnull TableOutput tableOutput) {
+    public void generate(@Nonnull TableOutput tableOutput) {
         if (getColumns().isEmpty()) {
             return;
         }
@@ -382,19 +386,22 @@ public final class TableTool implements Serializable {
         ctx.getOutput().generateTitleBlockStart(ctx);
         if (hasSuperTitles) {
             ctx.getOutput().generateTitleLineStart(ctx, true);
+            boolean nextColumnWithSeparator = false;
             for (int i = 0; i < visibles.size(); i++) {
                 Column c = visibles.get(i);
                 if (c == null) {
-                    ctx.getOutput().generateColumnSeparator(ctx, 1);
+                    nextColumnWithSeparator = true;
                 } else if (c.getSuperTitle() == null) {
-                    ctx.getOutput().generateTiltleCell(ctx, c, 2, false);
+                    ctx.getOutput().generateTiltleCell(ctx, c, 2, false, nextColumnWithSeparator);
+                    nextColumnWithSeparator = false;
                 } else {
                     int ult = i;
                     while ((ult + 1 < visibles.size()) && (visibles.get(ult + 1) != null) && (Objects.equals(
                             visibles.get(ult + 1).getSuperTitle(), c.getSuperTitle()))) {
                         ult++;
                     }
-                    ctx.getOutput().generateTitleCellSuper(ctx, c, ult - i + 1);
+                    ctx.getOutput().generateTitleCellSuper(ctx, c, ult - i + 1, nextColumnWithSeparator);
+                    nextColumnWithSeparator = false;
                     i = ult;
                 }
             }
@@ -402,11 +409,13 @@ public final class TableTool implements Serializable {
         }
         if (isShowTitles()) {
             ctx.getOutput().generateTitleLineStart(ctx, false);
+            boolean nextColumnWithSeparator = false;
             for (Column column : visibles) {
                 if (column == null) {
-                    ctx.getOutput().generateColumnSeparator(ctx, 1);
+                    nextColumnWithSeparator = true;
                 } else if ((column.getSuperTitle() != null) || !hasSuperTitles) {
-                    ctx.getOutput().generateTiltleCell(ctx, column, 1, hasSuperTitles);
+                    ctx.getOutput().generateTiltleCell(ctx, column, 1, hasSuperTitles, nextColumnWithSeparator);
+                    nextColumnWithSeparator = false;
                 }
             }
             ctx.getOutput().generateTitleLineEnd(ctx, false);
@@ -420,6 +429,7 @@ public final class TableTool implements Serializable {
 
     private void gerarFilhos(DadoLeitor filhos, OutputTableContext ctx, int nivel) {
         if (filhos != null && !filhos.isEmpty()) {
+            ctx.getOutput().generateBodyBlockStart(ctx);
             if (tabelaPorNivel || columns.stream().anyMatch(c -> c.getNivelDados() > 0)) {
                 int qtdNiveis = columns.stream().mapToInt(c -> c.getNivelDados()).max().getAsInt() + 1;
                 int[] contadorLinha = new int[qtdNiveis];
@@ -437,6 +447,7 @@ public final class TableTool implements Serializable {
                     }
                 }
             }
+            ctx.getOutput().generateBodyBlockEnd(ctx);
         }
     }
 
@@ -466,6 +477,7 @@ public final class TableTool implements Serializable {
             ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
 
             int idxColuna = 0;
+            boolean nextColumnWithSeparator = false;
             while (idxColuna < ctx.getVisibleColuns().size()) {
                 Column c = ctx.getVisibleColuns().get(idxColuna);
                 InfoCelula cell = line.get(c);
@@ -473,12 +485,13 @@ public final class TableTool implements Serializable {
                 int qtdSpan = 1;
                 if (c == null) {
                     if (linha[0] != null) {
-                        ctx.getOutput().generateColumnSeparator(ctx, linha[0].getLinhas());
+                        nextColumnWithSeparator = true;
                     }
                 } else {
                     int nivel = c.getNivelDados();
                     if (nivel >= nivelLinha) {
-                        OutputCellContext ctxCell = createCellContext(ctx, cell);
+                        OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
+                        nextColumnWithSeparator = false;
                         if (linha[nivel] != null) {
                             int rowSpan = linha[nivel].getLinhas();
                             ctxCell.getTempDecorator().setRowSpan(rowSpan);
@@ -516,18 +529,20 @@ public final class TableTool implements Serializable {
             ctx.getOutput().generateLineTreeStart(ctx, line, nivel);
 
             int idxColuna = 0;
+            boolean nextColumnWithSeparator = false;
             while (idxColuna < ctx.getVisibleColuns().size()) {
                 Column c = ctx.getVisibleColuns().get(idxColuna);
                 ctx.setIndiceColunaAtual(idxColuna);
                 if (c == null) {
-                    ctx.getOutput().generateColumnSeparator(ctx, 1);
+                    nextColumnWithSeparator = true;
                     idxColuna++;
                 } else {
                     InfoCelula cell = line.get(c);
                     if ((nivel == 0) && c.isCalcularPercentualPai()) {
                         c.setValorReferenciaPercentual(cell.getValueAsNumberOrNull());
                     }
-                    OutputCellContext ctxCell = createCellContext(ctx, cell);
+                    OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
+                    nextColumnWithSeparator = false;
                     ctxCell.setLevel(colunaIndentada == idxColuna ? nivel : -1);
                     if (ctxCell.getTempDecorator().getRowSpan() != 0) {
                         ctx.getOutput().generateCell(ctxCell);
@@ -557,18 +572,20 @@ public final class TableTool implements Serializable {
             ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
 
             int idxColuna = 0;
+            boolean nextColumnWithSeparator = false;
             while (idxColuna < ctx.getVisibleColuns().size()) {
                 Column c = ctx.getVisibleColuns().get(idxColuna);
                 ctx.setIndiceColunaAtual(idxColuna);
                 if (c == null) {
-                    ctx.getOutput().generateColumnSeparator(ctx, 1);
+                    nextColumnWithSeparator = true;
                     idxColuna++;
                 } else {
                     InfoCelula cell = line.get(c);
                     if (c.isCalcularPercentualPai()) {
                         c.setValorReferenciaPercentual(cell.getValueAsNumberOrNull());
                     }
-                    OutputCellContext ctxCell = createCellContext(ctx, cell);
+                    OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
+                    nextColumnWithSeparator = false;
                     ctxCell.setLevel(-1);
                     if (ctxCell.getTempDecorator().getRowSpan() != 0) {
                         ctx.getOutput().generateCell(ctxCell);
@@ -585,7 +602,7 @@ public final class TableTool implements Serializable {
     }
 
     @NotNull
-    private OutputCellContext createCellContext(OutputTableContext ctx, InfoCelula cell) {
+    private OutputCellContext createCellContext(OutputTableContext ctx, InfoCelula cell, boolean columnWithSeparator) {
         DecoratorCell decorator = cell.createTempDecorator();
         if (decorator.isColSpanAll()) {
             decorator.setColSpan(ctx.getQtdColunaVisiveis() - ctx.getIndiceColunaAtual());
@@ -601,6 +618,7 @@ public final class TableTool implements Serializable {
                 ctxCell.setValue(value);
             }
         }
+        ctxCell.setColumnWithSeparator(columnWithSeparator);
         return ctxCell;
     }
 
@@ -622,29 +640,29 @@ public final class TableTool implements Serializable {
         Decorator tmpDecorator = resolverDecorator(ctx, totalLine);
 
         if (ctx.getTableTool().isSimpleTable()) {
-            if (ctx.getTableTool().isCorLinhaAlternada()) {
-                ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, ctx.getIndiceLinhaAtual() % 2, -1);
-            } else {
-                ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, -1, -1);
-            }
+            ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, -1);
         } else {
-            ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, ctx.getIndiceLinhaAtual() % -1, nivelInicial);
+            ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, nivelInicial);
         }
 
         int indiceColuna = 0;
+        boolean nextColumnWithSeparator = false;
         for (Column c : ctx.getVisibleColuns()) {
             if (c == null) {
-                ctx.getOutput().generateColumnSeparator(ctx, 1);
+                nextColumnWithSeparator = true;
             } else if (!c.isTotalizar()) {
-                ctx.getOutput().generateTotalCellSkip(ctx, c);
+                ctx.getOutput().generateTotalCellSkip(ctx, c, nextColumnWithSeparator);
+                nextColumnWithSeparator = false;
             } else if (indiceColuna == 0) {
                 DecoratorCell tmpDecoratorCell = new DecoratorCell(c.getDecoratorValues());
                 ctx.getOutput().generateTotalLabel(ctx, c, "Total", tmpDecoratorCell, nivelInicial);
             } else {
                 InfoCelula cell = totalLine.get(c);
                 OutputCellContext ctxCell = new OutputCellContext(ctx, cell, cell.createTempDecorator()).setLevel(-1);
+                ctxCell.setColumnWithSeparator(nextColumnWithSeparator);
                 Number value = cell.getValueAsNumberOrNull();
                 ctx.getOutput().generateTotalCell(ctxCell, value);
+                nextColumnWithSeparator = false;
             }
             indiceColuna++;
         }

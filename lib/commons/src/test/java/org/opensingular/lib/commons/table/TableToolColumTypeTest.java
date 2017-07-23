@@ -119,7 +119,7 @@ public class TableToolColumTypeTest {
 
         TableOutputSimulated output = new TableOutputSimulated();
         table.setLeitorArvore(p.asLeitorArvore());
-        table.gerar(output);
+        table.generate(output);
         return output;
     }
 

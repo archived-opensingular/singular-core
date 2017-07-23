@@ -39,7 +39,7 @@ public class TableOutputSimulated extends TableOutput {
     }
 
     @Override
-    public boolean isStaticConent() {
+    public boolean isStaticContent() {
         return false;
     }
 
@@ -50,17 +50,18 @@ public class TableOutputSimulated extends TableOutput {
     public void generateTableEnd(OutputTableContext ctx, TableTool tableTool) { }
 
     @Override
+    public void generateBodyBlockStart(@Nonnull OutputTableContext ctx) {}
+
+    @Override
+    public void generateBodyBlockEnd(@Nonnull OutputTableContext ctx) {}
+
+    @Override
     public void generateLineSimpleStart(OutputTableContext ctx, InfoLinha line, int lineAlternation) {
         table.addLine();
     }
 
     @Override
     public void generateLineSimpleEnd(OutputTableContext ctx) { }
-
-    @Override
-    public void generateColumnSeparator(OutputTableContext ctx, int rowSpan) {
-        table.add("#");
-    }
 
     @Override
     public void generateLineTreeStart(OutputTableContext ctx, InfoLinha line, int nivel) {
@@ -72,6 +73,9 @@ public class TableOutputSimulated extends TableOutput {
 
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
+        if (ctx.isColumnWithSeparator()) {
+            table.add("#");
+        }
         DecoratorCell tempDecorator = ctx.getTempDecorator();
         String value = ctx.generateFormatDisplayString();
 
@@ -96,18 +100,25 @@ public class TableOutputSimulated extends TableOutput {
     public void generateTitleLineEnd(OutputTableContext ctx, boolean superTitleLine) { }
 
     @Override
-    public void generateTiltleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle) {
+    public void generateTiltleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
+            boolean columnWithSeparator) {
+        if (columnWithSeparator) {
+            table.add("#");
+        }
         table.add(rowSpan, 1, column.getTitle());
     }
 
     @Override
-    public void generateTitleCellSuper(OutputTableContext ctx, Column column, int colSpan) {
+    public void generateTitleCellSuper(OutputTableContext ctx, Column column, int colSpan, boolean columnWithSeparator) {
+        if (columnWithSeparator) {
+            table.add("#");
+        }
         table.add(1, colSpan, column.getSuperTitle());
     }
 
     @Override
     public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
-            @Nonnull Decorator tempDecorator, int lineAlternation, int level) {
+            @Nonnull Decorator tempDecorator, int level) {
         table.addLine();
     }
 
@@ -115,7 +126,11 @@ public class TableOutputSimulated extends TableOutput {
     public void generateTotalLineEnd(@Nonnull OutputTableContext ctx) { }
 
     @Override
-    public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column) {
+    public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column,
+            boolean columnWithSeparator) {
+        if (columnWithSeparator) {
+            table.add("#");
+        }
         table.add(null);
     }
 
@@ -130,6 +145,9 @@ public class TableOutputSimulated extends TableOutput {
 
     @Override
     public void generateTotalCell(@Nonnull OutputCellContext ctx, @Nullable Number value) {
+        if (ctx.isColumnWithSeparator()) {
+            table.add("#");
+        }
         table.add(ctx.generateFormatDisplayString(value));
     }
 }

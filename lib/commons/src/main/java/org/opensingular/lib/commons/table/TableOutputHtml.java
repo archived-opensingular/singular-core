@@ -17,10 +17,8 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
-import info.mirante.develox.view.CSSUtil;
-import info.mirante.develox.view.ViewOutput;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.net.WebRef;
+import org.opensingular.lib.commons.views.ViewOutput;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,17 +33,7 @@ public class TableOutputHtml extends TableOutput {
 
     private final ViewOutput vOut;
 
-    private boolean innerTable = true;
-
     public TableOutputHtml(ViewOutput vOut) {this.vOut = vOut;}
-
-    public void withoutInnerTable() {
-        innerTable = false;
-    }
-
-    final CSSUtil getCSS() {
-        return vOut.getCss();
-    }
 
     @Override
     public String getUrlApp() {
@@ -53,8 +41,8 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public boolean isStaticConent() {
-        return vOut.isEmail();
+    public boolean isStaticContent() {
+        return vOut.isStaticContent();
     }
 
     public ViewOutput getVOut() {
@@ -109,40 +97,50 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateTableStart(OutputTableContext ctx, TableTool tableTool) {
         println();
-        print("<table cellpadding='0' cellspacing='0' ");
-        print(getCSS().tbl("RA_TABELA_EXTERNA"));
+        print("<table cellpadding='0' cellspacing='0'");
+        if (tableTool.isCorLinhaAlternada()) {
+            printAtributo("class", "T_t table table-bordered table-condensed table-hover table-striped");
+        } else {
+            printAtributo("class", "T_t table table-bordered table-condensed table-hover");
+        }
         printAtributo("width", tableTool.getWidth());
         printAtributo("align", tableTool.getAlign());
         printAtributo("id", tableTool.getId());
-
         decorate(tableTool.getDecorator());
-
-        if (innerTable) {
-            println("><tr><td>");
-            print("<table cellpadding='2' cellspacing='1' ");
-            if (tableTool.getId() != null) {
-                printAtributo("id", tableTool.getId() + "_internal");
-            }
-            print(getCSS().tbl("RA_TABELA_INTERNA"));
-            if (tableTool.getWidth() != null) {
-                printAtributo("width", "100%");
-            }
-        }
         println(">");
     }
 
     @Override
     public void generateTableEnd(OutputTableContext ctx, TableTool tableTool) {
         println("</table>");
-        if (innerTable) {
-            println("</td></tr></table>");
-        }
         println();
     }
 
     @Override
+    public void generateBodyBlockStart(@Nonnull OutputTableContext ctx) {
+        if (ctx.getTableTool().isSimpleTable()) {
+            if (ctx.getTableTool().isCorLinhaAlternada()) {
+                println("<tbody class=\"T_content_simple T_striped\">");
+            } else {
+                println("<tbody class=\"T_content_simple\">");
+            }
+        } else {
+            println("<tbody class=\"T_content_tree\">");
+        }
+    }
+
+    @Override
+    public void generateBodyBlockEnd(@Nonnull OutputTableContext ctx) {
+        if (! ctx.getTableTool().isTotalizar()) {
+            println("</tbody>");
+        }
+    }
+
+    @Override
     public void generateLineSimpleStart(OutputTableContext ctx, InfoLinha line, int lineAlternation) {
-        ctx.getDecorador().setCssClass((lineAlternation == -1 || lineAlternation == 0) ? "RA_LIN_0" : "RA_LIN_1");
+        if (lineAlternation != -1 ) {
+            line.getDecorador().setCssClass(lineAlternation == 0 ? "T_ls0" : "T_ls1");
+        }
         print("  <tr");
         decorate(line.getDecorador());
         println(">");
@@ -154,18 +152,9 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateColumnSeparator(OutputTableContext ctx, int rowSpan) {
-        print("   <td ").print(getCSS().tbl("RA_TD_SEP"));
-        if (rowSpan > 1) {
-            printAtributo("rowspan", rowSpan);
-        }
-        println(">&nbsp;</td> ");
-    }
-
-    @Override
     public void generateLineTreeStart(OutputTableContext ctx, InfoLinha line, int nivel) {
         if (ctx.getDecorador().getCssClass() == null) {
-            ctx.getDecorador().setCssClass(nivel <= 2 ? "RA_TR_" + nivel : "RA_TR_N");
+            ctx.getDecorador().setCssClass(nivel <= 4 ? "T_R_" + nivel : "T_R_N");
         }
 
         print("  <tr");
@@ -180,7 +169,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateTitleBlockStart(OutputTableContext ctx) {
-        getOut().println("  <thead>");
+        getOut().println("<thead class=\"T_thead\">");
     }
 
     @Override
@@ -199,38 +188,38 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateTiltleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle) {
+    public void generateTiltleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
+            boolean columnWithSeparator) {
         PrintWriter out = getOut();
-        out.print("   <td");
+        out.print("   <th");
         if (column.getWidth() != null) {
             printAtributo("width", column.getWidth());
         }
         if (rowSpan > 1) {
             printAtributo("rowspan", Integer.toString(rowSpan));
         }
-        out.print(' ');
         if (asSubTitle) {
             switch (column.getAlinhamento()) {
                 case tpCentro:
-                    out.print(getCSS().tbl("RA_SUBTITULO_CEN"));
+                    printClass(out, "T_subtit_cen", columnWithSeparator);
                     break;
                 case tpDireita:
-                    out.print(getCSS().tbl("RA_SUBTITULO_DIR"));
+                    printClass(out, "T_subtit_dir", columnWithSeparator);
                     break;
                 default:
-                    out.print(getCSS().tbl("RA_SUBTITULO"));
+                    printClass(out, "T_subtit", columnWithSeparator);
                     break;
             }
         } else {
             switch (column.getAlinhamento()) {
                 case tpCentro:
-                    out.print(getCSS().tbl("RA_TITULO_CEN"));
+                    printClass(out, "T_tit_cen", columnWithSeparator);
                     break;
                 case tpDireita:
-                    out.print(getCSS().tbl("RA_TITULO_DIR"));
+                    printClass(out, "T_tit_dir", columnWithSeparator);
                     break;
                 default:
-                    out.print(getCSS().tbl("RA_TITULO"));
+                    printClass(out, null, columnWithSeparator);
                     break;
             }
         }
@@ -254,76 +243,91 @@ public class TableOutputHtml extends TableOutput {
                 out.print("</small>");
             }
         }
-        out.println("</td>");
+        out.println("</th>");
+    }
+
+    private void printClass(PrintWriter out, String style, boolean columnWithSeparator) {
+        if (style != null || columnWithSeparator) {
+            out.print(" class=\"");
+            if (style != null) {
+                out.print(style);
+                if (columnWithSeparator) {
+                    out.print(' ');
+                    out.print("T_sep");
+                }
+            } else {
+                out.print("T_sep");
+            }
+            out.print('"');
+        }
     }
 
     @Override
-    public void generateTitleCellSuper(OutputTableContext ctx, Column column, int colSpan) {
+    public void generateTitleCellSuper(OutputTableContext ctx, Column column, int colSpan, boolean cColumnWithSeparator) {
         PrintWriter out = getOut();
-        out.print("   <td");
+        out.print("   <th");
         if (colSpan > 1) {
             printAtributo("colspan", colSpan);
         }
-        out.print(' ');
-        out.print(getCSS().tbl("RA_TITULO_CEN"));
-        out.print("><b>");
+        printClass(out, "T_tit_super", cColumnWithSeparator);
+        out.print(">");
         out.print(column.getSuperTitle());
-        out.println("</b></td>");
+        out.println("</th>");
     }
 
     @Override
     public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
-            @Nonnull Decorator tempDecorator, int lineAlternation, int level) {
-        if (lineAlternation != -1) {
-            if (lineAlternation == 0) {
-                tempDecorator.setCssClass("RA_LIN_0");
-            } else {
-                tempDecorator.setCssClass("RA_LIN_1");
-            }
-        } else if (level != -1) {
+            @Nonnull Decorator tempDecorator, int level) {
+        if (level != -1) {
             if (level <= 2) {
                 tempDecorator.setCssClass("RA_TR_" + level);
             } else {
                 tempDecorator.setCssClass("RA_TR_N");
             }
         } else {
-            tempDecorator.setCssClass("RA_LIN_1");
+            tempDecorator.setCssClass("T_l_tot");
         }
 
         PrintWriter out = getOut();
         out.print("  <tr");
         decorate(tempDecorator);
-        out.println(">");
+        out.println('>');
     }
 
     @Override
     public void generateTotalLineEnd(@Nonnull OutputTableContext ctx) {
-        getOut().print("  </tr>");
+        getOut().println("  </tr>");
+        getOut().println("</tbody>");
     }
 
     @Override
-    public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column) {
-        getOut().print("   <td>&nbsp;</td>");
+    public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column,
+            boolean columnWithSeparator) {
+        if (columnWithSeparator) {
+            getOut().print("   <td class=\"T_sep\">&nbsp;</td>");
+        } else {
+            getOut().print("   <td>&nbsp;</td>");
+        }
     }
 
     @Override
     public void generateTotalLabel(@Nonnull OutputTableContext ctx, @Nonnull Column column, @Nonnull String label,
             @Nonnull DecoratorCell tempDecorator, int level) {
-        tempDecorator.setCssClass(resolveCellCss(column, level));
+        tempDecorator.setCssClass("T_tot_label");
 
         PrintWriter out = getOut();
         out.print("   <td");
         decorate(tempDecorator);
-        out.print("><strong>");
+        out.print('>');
         out.print(label);
-        out.print("</strong></td>");
+        out.println("</td>");
 
     }
 
     @Override
     public void generateTotalCell(@Nonnull OutputCellContext ctx, @Nullable Number value) {
 
-        ctx.getTempDecorator().setCssClass(resolveCellCss(ctx.getColumn(), -1));
+        ctx.getTempDecorator().setCssClass(resolveCellCss(ctx.getColumn(), -1, ctx.isColumnWithSeparator()));
 
         PrintWriter out = getOut();
         out.print("   <td");
@@ -333,12 +337,10 @@ public class TableOutputHtml extends TableOutput {
         if (value != null && !ctx.isActionCell()) {
             String s = ctx.generateFormatDisplayString(value);
             if (s != null) {
-                out.print("<strong>");
                 out.print(s);
-                out.print("</strong>");
             }
         }
-        out.print("</td>");
+        out.println("</td>");
     }
 
     @Override
@@ -353,13 +355,15 @@ public class TableOutputHtml extends TableOutput {
             tempDecorator.addStyle("padding-left", ctx.getLevel() * 16 + "px");
         }
         if (tempDecorator.getCssClass() == null) {
-            tempDecorator.setCssClass(resolveCellCss(column, ctx.getLevel()));
+            tempDecorator.setCssClass(resolveCellCss(column, ctx.getLevel(), ctx.isColumnWithSeparator()));
+        } else if (ctx.isColumnWithSeparator()) {
+            tempDecorator.setCssClass(tempDecorator.getCssClass() + " T_sep");
         }
         if (ctx.isActionCell()) {
             tempDecorator.setNoWrap();
         }
 
-        out.print("   <td ");
+        out.print("   <td");
         decorateCell(tempDecorator);
         out.print(">");
         if (ctx.isNullContent()) {
@@ -433,28 +437,28 @@ public class TableOutputHtml extends TableOutput {
         out.print('>');
     }
 
-    @NotNull
-    private String resolveCellCss(Column column, int level) {
+    private String resolveCellCss(Column column, int level, boolean columnWithSeparator) {
         if (level != -1) {
-            if (level <= 2) {
-                return "RA_TD" + level + "0";
+            if (level <= 4) {
+                return "T_DL" + level + "0";
             } else {
-                return "RA_TDN0";
+                return "T_DLN";
             }
         }
         switch (column.getAlinhamento()) {
             case tpCentro:
-                return "RA_TDN_CEN";
+                return columnWithSeparator ? "T_cen T_sep" : "T_cen";
             case tpDireita:
-                return "RA_TDN_DIR";
+                return columnWithSeparator ? "T_dir T_sep" : "T_dir";
             default:
-                return "RA_TDN_ESQ";
+                return columnWithSeparator ? "T_sep" : null;
         }
     }
 
     private static String gerarAcoes(ViewOutput out, InfoCelula cell) {
-        return cell.getAcoes().stream().filter(Predicates.notNull()).filter(WebRef::isSeAplicaAoContexto).map(
-                webActionEnabled -> webActionEnabled.gerarHtml(out.getUrlApp())).filter(Predicates.notNull()).collect(
+        return cell.getAcoes().stream().filter(Predicates.notNull()).filter(WebRef::appliesToContext).map(
+                webActionEnabled -> webActionEnabled.generateHtml(out.getUrlApp())).filter(Predicates.notNull())
+                .collect(
                 Collectors.joining());
     }
 
@@ -478,9 +482,7 @@ public class TableOutputHtml extends TableOutput {
      */
     final void decorate(@Nonnull Decorator decorator) {
         StringBuilder builder = new StringBuilder();
-        if (decorator.getCssClass() != null) {
-            builder.append(' ').append(getCSS().tbl(decorator.getCssClass()));
-        }
+        printAtributo("class", decorator.getCssClass());
         if (!decorator.getStyles().isEmpty()) {
             int indexStyle = builder.indexOf("style=\"");
             if (indexStyle == -1) {
