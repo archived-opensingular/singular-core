@@ -24,7 +24,7 @@ public interface IEntityTaskType {
 
     boolean isJava();
 
-    boolean isPeople();
+    boolean isHuman();
 
     boolean isWait();
 

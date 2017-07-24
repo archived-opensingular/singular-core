@@ -98,7 +98,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public final boolean isPeople() {
-        return getTaskType() == TaskType.PEOPLE;
+        return getTaskType() == TaskType.HUMAN;
     }
 
     public final boolean isWait() {

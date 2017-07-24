@@ -280,7 +280,7 @@ public class FlowInstance implements Serializable {
             return false;
         }
         IEntityTaskType tt = currentState.get().getTaskType();
-        if (tt.isPeople() || tt.isWait()) {
+        if (tt.isHuman() || tt.isWait()) {
             if (isAllocated(user.getCod())) {
                 return  true;
             }
