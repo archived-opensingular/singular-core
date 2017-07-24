@@ -120,6 +120,7 @@ public abstract class TableToolSimpleTestBase {
         populator.insertLine("L1", 10, 20.2, "Paulo");
         populator.insertLine("L2", 5, 1000.21, null);
         populator.insertLine("L3", 100, null, "Andrades");
+
         return table;
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.table;
+package org.opensingular.lib.commons.views;
 
 import org.apache.commons.io.IOUtils;
 
@@ -37,7 +37,7 @@ import java.util.Objects;
  *
  * @author Daniel C. Bordin on 21/07/2017.
  */
-class FullPageHtmlGenerator implements Closeable {
+public class FullPageHtmlGenerator implements Closeable {
 
     private final PrintWriter out;
     private final File outputFile;

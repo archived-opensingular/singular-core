@@ -14,33 +14,23 @@
  * limitations under the License.
  */
 
-package info.mirante.develox.view;
+package org.opensingular.lib.commons.views;
+
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
- * Representa um token tipado de um CSS.
+ * Indiecates that the {@link ViewGenerator} doesn't supports the particular type of {@link ViewOutput}.
  *
- * @author Bruno Pedroso
+ * @author Daniel C. Bordin on 24/07/2017.
  */
-final class SimpleCSSToken {
+public class SingularUnsupportedViewException extends SingularException {
 
-    private int tipo_;
-    private String texto_;
-
-    public SimpleCSSToken(int tipo, String texto) {
-        tipo_ = tipo;
-        texto_ = texto;
+    public SingularUnsupportedViewException() {
+        this(null);
     }
 
-    public int getTipo() {
-        return tipo_;
+    public SingularUnsupportedViewException(ViewOutput view) {
+        super("There is no implemetation supporting this particular type of ViewOutput");
+        add("viewClass", view == null ? null : view.getClass());
     }
-
-    public String getTexto() {
-        return texto_;
-    }
-
-    public String toString() {
-        return "CSSToken [" + getTipo() + ", " + getTexto() + "]";
-    }
-
 }

@@ -29,7 +29,7 @@ import java.io.Writer;
 @FunctionalInterface
 public interface ViewGenerator {
 
-    public abstract void generateView(ViewOutput vOut);
+    public abstract void generateView(ViewOutput vOut) throws SingularUnsupportedViewException;
 
     public default String generateAsHtmlString(boolean staticContent) {
         final ByteArrayOutputStream dataSource = new ByteArrayOutputStream();

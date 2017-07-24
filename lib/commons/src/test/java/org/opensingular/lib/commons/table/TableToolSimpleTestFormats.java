@@ -20,7 +20,9 @@ import org.apache.commons.io.output.WriterOutputStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.views.FullPageHtmlGenerator;
 import org.opensingular.lib.commons.views.ViewOutputHtml;
 
 import java.io.File;
@@ -34,16 +36,25 @@ import java.io.PrintStream;
 public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
 
     private static TempFileProvider tmpProvider;
+    private static boolean OPEN_GENERATED_FILE = false;
 
     @BeforeClass
     public static void createTmpProvider() {
         tmpProvider = TempFileProvider.createForUseInTryClause(TableToolSimpleTestFormats.class);
     }
 
+    public void cleanTmpProvider2() {
+        if (! OPEN_GENERATED_FILE) {
+            tmpProvider.deleteOrException();
+        }
+    }
+
     @AfterClass
     public static void cleanTmpProvider() {
-        OutputTestHelper.waitMilli(10000);
-        tmpProvider.deleteOrException();
+        if (OPEN_GENERATED_FILE) {
+            SingularTestUtil.waitMilli(10000);
+            tmpProvider.deleteOrException();
+        }
     }
 
 
@@ -74,7 +85,9 @@ public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        OutputTestHelper.showFileOnDesktopForUser(arq, -1);
+        if (OPEN_GENERATED_FILE) {
+            SingularTestUtil.showFileOnDesktopForUser(arq);
+        }
     }
 
     @Test
