@@ -43,9 +43,8 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
 
         this.selection()
                 .id(sigla)
-                .display("${nome} - ${sigla}")
+                .display("${nome!} - ${sigla!}")
                 .simpleProvider(listaBuilder -> {
-                    listaBuilder.add();
                     fillAC(listaBuilder.add().get());
                     fillAP(listaBuilder.add().get());
                     fillAM(listaBuilder.add().get());
