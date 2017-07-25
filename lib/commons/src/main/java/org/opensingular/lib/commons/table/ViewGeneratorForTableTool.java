@@ -16,11 +16,11 @@
 
 package org.opensingular.lib.commons.table;
 
-import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.commons.views.ViewGeneratorProvider;
 
 /**
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public interface ViewGeneratorForTableTool extends ViewGenerator {
+public abstract class ViewGeneratorForTableTool extends ViewGeneratorProvider<TableTool> {
 
 }

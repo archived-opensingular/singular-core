@@ -18,13 +18,13 @@ package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
 import org.jetbrains.annotations.NotNull;
-import org.opensingular.lib.commons.views.SingularUnsupportedViewException;
-import org.opensingular.lib.commons.views.ViewGenerator;
-import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewGeneratorProvider;
+import org.opensingular.lib.commons.views.ViewMultiGenerator;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class TableTool implements ViewGenerator, Serializable {
+public final class TableTool implements ViewMultiGenerator<TableTool>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -673,16 +673,10 @@ public final class TableTool implements ViewGenerator, Serializable {
         ctx.getOutput().generateTotalLineEnd(ctx);
     }
 
+    @Nonnull
     @Override
-    public void generateView(ViewOutput vOut) throws SingularUnsupportedViewException {
-
+    public Collection<ViewGeneratorProvider<TableTool>> getGenerators() {
+        return TableToolUtil.getGenerators();
     }
 
-//    private List<ViewOutputFormat> getDirectSupportedFormats() {
-//
-//    }
-//
-//    private ViewGenerator getGeneratorFor(ViewOutputFormat format) {
-//
-//    }
 }

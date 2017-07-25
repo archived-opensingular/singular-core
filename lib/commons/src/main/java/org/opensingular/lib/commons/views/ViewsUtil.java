@@ -16,8 +16,12 @@
 
 package org.opensingular.lib.commons.views;
 
-import org.opensingular.lib.commons.table.ViewGeneratorForTableTool;
-
+import javax.annotation.Nonnull;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.Objects;
 import java.util.ServiceLoader;
 
 /**
@@ -34,8 +38,43 @@ public class ViewsUtil {
         return formatsLoader;
     }
 
-    public static ViewGeneratorForTableTool find(ServiceLoader<ViewGeneratorForTableTool> generatorsLoader,
-            ViewOutputFormat format) {
-        return null;
+    @Nonnull
+    static final <T> ViewGeneratorProvider<T> getGeneratorFor(@Nonnull ViewMultiGenerator<T> target,
+            @Nonnull ViewOutputFormat format) throws SingularUnsupportedViewException {
+        for (ViewGeneratorProvider<T> p : target.getGenerators()) {
+            if (Objects.equals(format, p.getOutputFormat())) {
+                return p;
+            }
+        }
+        throw new SingularUnsupportedViewException(target, format);
+    }
+
+    public static String generateAsHtmlString(ViewGenerator target, boolean staticContent) {
+        final ByteArrayOutputStream dataSource = new ByteArrayOutputStream();
+        final PrintWriter writer = new PrintWriter(dataSource);
+        ViewOutput vOut = new ViewOutput() {
+            @Override
+            public boolean isStaticContent() {
+                return staticContent;
+            }
+
+            @Override
+            public Writer getWriter() {
+                return writer;
+            }
+
+            @Override
+            public void addImagem(String nome, byte[] dados) throws IOException {
+                throw new UnsupportedOperationException("addImagem(String, dados) n�o suportado ");
+            }
+
+            @Override
+            public ViewOutputFormat getFormat() {
+                return ViewOutputFormat.HTML;
+            }
+        };
+        target.generateView(vOut);
+        writer.flush();
+        return dataSource.toString();
     }
 }

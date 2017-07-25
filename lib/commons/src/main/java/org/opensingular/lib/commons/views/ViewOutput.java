@@ -153,6 +153,8 @@ public abstract class ViewOutput {
         return htmlCode;
     }
 
+    public abstract ViewOutputFormat getFormat();
+
     public class HtmlCode {
         public HtmlCode br() {
             getPrintWriter().println("<br style='clear: both;'/>");

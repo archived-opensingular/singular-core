@@ -14,42 +14,38 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.lib.wicket.views;
 
-import javax.annotation.Nonnull;
+import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
+
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * @author Daniel C. Bordin on 21/07/2017.
+ * @author Daniel C. Bordin on 24/07/2017.
  */
-public class ViewOutputHtml extends ViewOutput {
+public class ViewOutputWicket extends ViewOutput {
 
-    private final Writer writer;
-    private final boolean staticContent;
-
-    public ViewOutputHtml(@Nonnull Writer writer, boolean staticContent) {
-        this.writer = writer;
-        this.staticContent = staticContent;
-    }
-
-    @Override
-    public ViewOutputFormat getFormat() {
-        return ViewOutputFormat.HTML;
-    }
+    public static final ViewOutputFormat WICKET = new ViewOutputFormat("WICKET", "Wicket");
 
     @Override
     public boolean isStaticContent() {
-        return staticContent;
+        return false;
     }
 
     @Override
     public Writer getWriter() {
-        return writer;
+        throw new RuntimeException("Método não suportado");
     }
 
     @Override
     public void addImagem(String nome, byte[] dados) throws IOException {
-        throw new RuntimeException("Implementar");
+        throw new RuntimeException("Método não suprotado");
+    }
+
+    @Override
+    public ViewOutputFormat getFormat() {
+        return WICKET;
     }
 }
