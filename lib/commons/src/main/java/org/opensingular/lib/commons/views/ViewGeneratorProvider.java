@@ -19,13 +19,11 @@ package org.opensingular.lib.commons.views;
 import javax.annotation.Nonnull;
 
 /**
- * Implementa a lógica para a geração do conteúdo em um formato específico.
- *
- * @author Daniel C. Bordin.
+ * @author Daniel C. Bordin on 24/07/2017.
  */
-public interface ViewGenerator {
+public abstract class ViewGeneratorProvider<T> {
 
-    public void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException;
+    public abstract ViewOutputFormat getOutputFormat();
 
-    boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format);
+    public abstract void generate(@Nonnull T t, @Nonnull ViewOutput viewOutput);
 }

@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.lib.commons.table;
+
+import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
 
 import javax.annotation.Nonnull;
 
 /**
- * Implementa a lógica para a geração do conteúdo em um formato específico.
- *
- * @author Daniel C. Bordin.
+ * @author Daniel on 24/07/2017.
  */
-public interface ViewGenerator {
+public class ViewGeneratorForTableToolHtml extends ViewGeneratorForTableTool {
 
-    public void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException;
+    @Override
+    public ViewOutputFormat getOutputFormat() {
+        return ViewOutputFormat.HTML;
+    }
 
-    boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format);
+    @Override
+    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutput viewOutput) {
+        TableOutputHtml out = new TableOutputHtml(viewOutput);
+        tableTool.generate(out);
+    }
 }

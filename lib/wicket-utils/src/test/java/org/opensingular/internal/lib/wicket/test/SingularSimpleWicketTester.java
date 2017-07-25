@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.helpers;
+package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
-import org.opensingular.form.SType;
-import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.internal.lib.wicket.test.WicketSerializationDebugUtil;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import javax.servlet.ServletContext;
 import java.io.StringReader;
@@ -36,49 +33,51 @@ import java.util.List;
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class SingularWicketTester extends WicketTester {
+public class SingularSimpleWicketTester extends WicketTester {
 
-    public SingularWicketTester() {
+    public SingularSimpleWicketTester() {
         setUp();
     }
 
+
+
     @Deprecated
-    public SingularWicketTester(boolean turnOnSerializationCheck) {
+    public SingularSimpleWicketTester(boolean turnOnSerializationCheck) {
         setUp(turnOnSerializationCheck);
     }
 
-    public SingularWicketTester(Class<? extends Page> homePage) {
+    public SingularSimpleWicketTester(Class<? extends Page> homePage) {
         super(homePage);
         setUp();
     }
 
-    public SingularWicketTester(WebApplication application) {
+    public SingularSimpleWicketTester(WebApplication application) {
         super(application);
         setUp();
     }
 
     @Deprecated
-    public SingularWicketTester(boolean turnOnSerializationCheck, WebApplication application) {
+    public SingularSimpleWicketTester(boolean turnOnSerializationCheck, WebApplication application) {
         super(application);
         setUp(turnOnSerializationCheck);
     }
 
-    public SingularWicketTester(WebApplication application, String path) {
+    public SingularSimpleWicketTester(WebApplication application, String path) {
         super(application, path);
         setUp();
     }
 
-    public SingularWicketTester(WebApplication application, ServletContext servletCtx) {
+    public SingularSimpleWicketTester(WebApplication application, ServletContext servletCtx) {
         super(application, servletCtx);
         setUp();
     }
 
-    public SingularWicketTester(WebApplication application, boolean init) {
+    public SingularSimpleWicketTester(WebApplication application, boolean init) {
         super(application, init);
         setUp();
     }
 
-    public SingularWicketTester(WebApplication application, ServletContext servletCtx, boolean init) {
+    public SingularSimpleWicketTester(WebApplication application, ServletContext servletCtx, boolean init) {
         super(application, servletCtx, init);
         setUp();
     }
@@ -95,34 +94,29 @@ public class SingularWicketTester extends WicketTester {
     }
 
     /** Criar um objeto de assertivas para a última página executada. */
-    public final AssertionsWComponent getAssertionsPage() {
+    public final AssertionsSimpleWComponent getAssertionsPage() {
         checkIfStartPageCalled();
-        return new AssertionsWComponent(getLastRenderedPage());
-    }
-
-    public final AssertionsSInstance getAssertionsInstance() {
-        checkIfStartPageCalled();
-        return getAssertionsPage().getSubCompomentWithSInstance().assertSInstance();
+        return new AssertionsSimpleWComponent(getLastRenderedPage());
     }
 
     /** Criar um objeto de assertivas para o form da última página executada (assume que o ID é 'form'). */
-    public final AssertionsWComponent getAssertionsForm() {
+    public final AssertionsSimpleWComponent getAssertionsForm() {
         return getAssertionsForPath("form");
     }
 
     /** Criar um objeto de assertivas para o componente indicado no path da última página executada. */
-    public final AssertionsWComponent getAssertionsForPath(String path) {
+    public final AssertionsSimpleWComponent getAssertionsForPath(String path) {
         checkIfStartPageCalled();
-        return new AssertionsWComponent(getComponentFromLastRenderedPage(path));
+        return new AssertionsSimpleWComponent(getComponentFromLastRenderedPage(path));
     }
 
     /**
      * Cria um objeto de assertivas para o sub componente na hierarquia que for encontrado com o id informado ou dispara
      * exception senão encontrar o componente.
      */
-    public final AssertionsWComponent getAssertionsForSubComp(String id) {
+    public final AssertionsSimpleWComponent getAssertionsForSubComp(String id) {
         checkIfStartPageCalled();
-        return AssertionsWComponentBase.createAssertionForSubComponent(getLastRenderedPage(),
+        return AssertionsSimpleWComponentBase.createAssertionForSubComponent(getLastRenderedPage(),
                 c -> c.getId().equals(id));
     }
 
@@ -132,16 +126,9 @@ public class SingularWicketTester extends WicketTester {
         }
     }
 
-    public SingularFormTester newSingularFormTester(String path) {
-        return newSingularFormTester(path, true);
-    }
-
-    public SingularFormTester newSingularFormTester(String path, boolean fillBlankString) {
-        return new SingularFormTester(path, (Form<?>)getComponentFromLastRenderedPage(path), this, fillBlankString);
-    }
-
-    public <T extends SType<?>> STypeTester<T> newSingularSTypeTester(Class<? extends T> sypeClass){
-        return new STypeTester<>(this, sypeClass);
+    /** Exibe a página gerada no browser do computador atual para verificação peso desenvolvedor. */
+    public void showHtmlContentOnDesktopForUserAndWaitOpening() {
+        SingularTestUtil.showHtmlContentOnDesktopForUserAndWaitOpening(getLastResponseAsString());
     }
 
     public void checkToastrSuccessMessage(String expectedMessage) {

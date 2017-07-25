@@ -14,42 +14,46 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.lib.wicket.views;
 
-import javax.annotation.Nonnull;
+import org.apache.wicket.Component;
+import org.apache.wicket.request.Response;
+import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
+
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 
 /**
- * @author Daniel C. Bordin on 21/07/2017.
+ * @author Daniel on 25/07/2017.
  */
-public class ViewOutputHtml extends ViewOutput {
+public class ViewOutputHtmlFromWicket extends ViewOutput {
 
-    private final Writer writer;
-    private final boolean staticContent;
+    private final PrintWriter out;
 
-    public ViewOutputHtml(@Nonnull Writer writer, boolean staticContent) {
-        this.writer = writer;
-        this.staticContent = staticContent;
+    public ViewOutputHtmlFromWicket(Component component) {
+        Response response = component.getRequestCycle().getResponse();
+        out = new PrintWriter(response.getOutputStream());
+    }
+
+    @Override
+    public boolean isStaticContent() {
+        return false;
+    }
+
+    @Override
+    public Writer getWriter() {
+        return out;
+    }
+
+    @Override
+    public void addImagem(String nome, byte[] dados) throws IOException {
+        throw new RuntimeException("Nao implementado");
     }
 
     @Override
     public ViewOutputFormat getFormat() {
         return ViewOutputFormat.HTML;
-    }
-
-    @Override
-    public boolean isStaticContent() {
-        return staticContent;
-    }
-
-    @Override
-    public Writer getWriter() {
-        return writer;
-    }
-
-    @Override
-    public void addImagem(String nome, byte[] dados) throws IOException {
-        throw new RuntimeException("Implementar");
     }
 }

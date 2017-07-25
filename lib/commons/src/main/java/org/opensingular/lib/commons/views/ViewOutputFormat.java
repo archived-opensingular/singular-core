@@ -16,9 +16,60 @@
 
 package org.opensingular.lib.commons.views;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 /**
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public interface ViewOutputFormat {
+public class ViewOutputFormat {
 
+    public static final ViewOutputFormat HTML = new ViewOutputFormat("HTML", "html", "html");
+    public static final ViewOutputFormat PDF = new ViewOutputFormat("PDF", "pdf", "pdf");
+    public static final ViewOutputFormat EXCEL = new ViewOutputFormat("EXCEL", "Excel", "xlsx");
+
+    private final String name;
+    private final String displayName;
+    private final String fileExtension;
+
+
+    public ViewOutputFormat(@Nonnull String name, @Nonnull String displayName) {
+        this(name, displayName, null);
+    }
+
+    public ViewOutputFormat(@Nonnull String name, @Nonnull String displayName, @Nullable String fileExtension) {
+        this.name = Objects.requireNonNull(name);
+        this.displayName = Objects.requireNonNull(displayName);
+        this.fileExtension = fileExtension;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public boolean isFileFormat() {
+        return fileExtension != null;
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        return Objects.equals(name, ((ViewOutputFormat) o).name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
 }

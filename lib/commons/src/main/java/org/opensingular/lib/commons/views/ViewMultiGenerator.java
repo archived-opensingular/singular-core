@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.opensingular.lib.commons.views;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+/**
+ * Representa um objeto capaz de gerar multiplos formatos de saída.
+ *
+ * @author Daniel C. Bordin on 24/07/2017.
+ */
+public interface ViewMultiGenerator<T> extends ViewGenerator {
+
+    @Nonnull
+    public Collection<ViewGeneratorProvider<T>> getGenerators();
+
+    @Nonnull
+    default Collection<ViewOutputFormat> getDirectSupportedFormats() {
+        return getGenerators().stream().map(p -> p.getOutputFormat()).collect(Collectors.toList());
+    }
+
+    @Override
+    default void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException {
+        ViewGeneratorProvider<T> generator = ViewsUtil.getGeneratorFor(this, vOut.getFormat());
+        generator.generate((T) this, vOut);
+    }
+
+    @Override
+    default boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format) {
+        return getGenerators().stream().filter(p -> Objects.equals(format, p.getOutputFormat())).findAny().isPresent();
+    }
+
+    default ViewGenerator getGeneratorFor(@Nonnull ViewOutput vOut) {
+        return getGeneratorFor(vOut.getFormat());
+    }
+
+    default ViewGenerator getGeneratorFor(@Nonnull ViewOutputFormat format) {
+        ViewGeneratorProvider<T> generator = ViewsUtil.getGeneratorFor(this, format);
+        return new ViewGenerator() {
+            @Override
+            public void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException {
+                generator.generate((T) ViewMultiGenerator.this, vOut);
+            }
+
+            @Override
+            public boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format2) {
+                return format.equals(format2);
+            }
+        };
+    }
+}

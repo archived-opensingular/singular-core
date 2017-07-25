@@ -25,12 +25,33 @@ import org.opensingular.lib.commons.base.SingularException;
  */
 public class SingularUnsupportedViewException extends SingularException {
 
-    public SingularUnsupportedViewException() {
-        this(null);
+    public SingularUnsupportedViewException(Object target, ViewOutput view) {
+        super("There is no implementation supporting the format " + getFormatName(view, target));
+        if (view != null) {
+            add("viewClass", view.getClass());
+            ViewOutputFormat format = view.getFormat();
+            if (format != null) {
+                add("formatClass", format.getClass());
+            }
+        }
     }
 
-    public SingularUnsupportedViewException(ViewOutput view) {
-        super("There is no implemetation supporting this particular type of ViewOutput");
-        add("viewClass", view == null ? null : view.getClass());
+    public SingularUnsupportedViewException(Object target, ViewOutputFormat format) {
+        super("There is no implementation supporting the format " + getFormatName(format, target));
+        if (format != null) {
+            add("formatClass", format.getClass());
+        }
+    }
+
+    private static String getFormatName(ViewOutput view, Object target) {
+        return getFormatName(view == null ? null :view.getFormat(), target);
+    }
+
+    private static String getFormatName(ViewOutputFormat format, Object target) {
+        String s = format == null ? null : format.getName();
+        if (target != null) {
+            s += " for the target " + target + " (class " + target.getClass().getSimpleName() + ")";
+        }
+        return s;
     }
 }

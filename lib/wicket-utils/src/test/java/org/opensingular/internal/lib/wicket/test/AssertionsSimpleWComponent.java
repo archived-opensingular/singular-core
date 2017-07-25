@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.internal.lib.wicket.test;
 
-import javax.annotation.Nonnull;
+import org.apache.wicket.Component;
 
 /**
- * Implementa a lógica para a geração do conteúdo em um formato específico.
+ * Representa um conjunto de asserções voltadas para componentes genéricos do Wicket.
  *
- * @author Daniel C. Bordin.
+ * @author Daniel Bordin on 12/02/2017.
  */
-public interface ViewGenerator {
+public class AssertionsSimpleWComponent extends AssertionsSimpleWComponentBase<Component, AssertionsSimpleWComponent> {
 
-    public void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException;
-
-    boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format);
+    public AssertionsSimpleWComponent(Component c) {
+        super(c);
+    }
 }

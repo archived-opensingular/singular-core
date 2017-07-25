@@ -16,10 +16,10 @@
 
 package org.opensingular.lib.commons.table;
 
-import org.opensingular.lib.commons.views.ViewOutputFormat;
-import org.opensingular.lib.commons.views.ViewsUtil;
+import org.opensingular.lib.commons.views.ViewGeneratorProvider;
 
-import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -28,21 +28,16 @@ import java.util.ServiceLoader;
  */
 final class TableToolUtil {
 
-    private static ServiceLoader<ViewGeneratorForTableTool> generatorsLoader;
+    private static Collection<ViewGeneratorProvider<TableTool>> generators;
 
-    private List<ViewOutputFormat> getDirectSupportedFormats() {
-        return null;
-    }
-
-    private ViewGeneratorForTableTool getGeneratorFor(@Nonnull ViewOutputFormat format) {
-        return ViewsUtil.find(getGeneratorsLoader(), format);
-    }
-
-    @Nonnull
-    private static ServiceLoader<ViewGeneratorForTableTool> getGeneratorsLoader() {
-        if (generatorsLoader == null) {
-            generatorsLoader = ServiceLoader.load(ViewGeneratorForTableTool.class);
+    public static Collection<ViewGeneratorProvider<TableTool>> getGenerators() {
+        if (generators == null) {
+            List<ViewGeneratorProvider<TableTool>> list = new ArrayList<>();
+            for(ViewGeneratorProvider<TableTool> g : ServiceLoader.load(ViewGeneratorForTableTool.class)) {
+                list.add(g);
+            }
+            generators = list;
         }
-        return generatorsLoader;
+        return generators;
     }
 }

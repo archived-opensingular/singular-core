@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.internal.form.wicket.util;
+package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,8 +24,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.wicket.helpers.SingularWicketTester;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.util.function.Supplier;
 
@@ -39,7 +38,7 @@ public class TestWicketSerializationDebugUtil {
 
     @Before
     public void setUp() {
-        tester = new SingularWicketTester();
+        tester = new SingularSimpleWicketTester();
     }
 
     @Test
@@ -52,7 +51,7 @@ public class TestWicketSerializationDebugUtil {
         try {
             tester.clickLink("reload");
             Assert.fail("Era esperada uma exception de serialização");
-        } catch (SingularFormException e) {
+        } catch (SingularException e) {
             Assert.assertTrue(e.getMessage().contains("Erro serializando"));
         }
         Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains(" size=EXCEPTION"));
