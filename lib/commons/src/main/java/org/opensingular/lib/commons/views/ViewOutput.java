@@ -43,8 +43,6 @@ public abstract class ViewOutput {
 
     private HtmlCode htmlCode;
 
-    private ViewOutputFormat outputFormat;
-
     public void copiarConfig(ViewOutput vOut) {
         pathAnexo_ = vOut.pathAnexo_;
         urlApp_ = vOut.urlApp_;

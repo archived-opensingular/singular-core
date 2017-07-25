@@ -44,7 +44,7 @@ public class Decorator implements Serializable {
     /** Representa as configurações CSS a serem colocadas na Tag HTML. */
     private Map<String, String> styles;
 
-    private Integer maxTextLength;
+    private Integer maxTextLength;//NOSONAR
 
     public Decorator() {
         this.parent = null;

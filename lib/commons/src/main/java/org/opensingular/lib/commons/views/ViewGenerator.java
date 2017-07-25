@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
  */
 public interface ViewGenerator {
 
-    public void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException;
+    void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException;
 
     boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format);
 }

@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.table;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -42,7 +43,7 @@ final class AlocproToolkit {
         if (min == null) {
             return valorDefault;
         }
-        return toHora(min.intValue(), false);
+        return toHora(min, false);
     }
 
     public static String toHora(Number min, String valorDefault) {
@@ -69,8 +70,6 @@ final class AlocproToolkit {
     /**
      * Serve para transformar em formato 'hhmm' (24h) um hor�rio que esteja em minutos. Exemplo: 480 vira 0800.
      *
-     * @param min               a quantidade de minutos a converter, considerando o in�cio do dia como 0. Pode ser
-     *                          negativo.
      * @param horasComDuasCasas se false, 480 vira 800; se true, vira 0800. Default false.
      * @return String de 3 ou 4 posi��es representando os minutos em horas e minutos.
      */
@@ -117,7 +116,7 @@ final class AlocproToolkit {
         if (value == null) {
             return 0.0;
         }
-        return new Double(arredondar(value.doubleValue(), decimais));
+        return (double) arredondar(value.doubleValue(), decimais);
     }
 
     public static long arredondar(double value, int decimais) {
@@ -149,9 +148,9 @@ final class AlocproToolkit {
             if (a instanceof BigDecimal) {
                 return ((BigDecimal) a).add((BigDecimal) b);
             } else if (a instanceof Integer) {
-                return new Integer(a.intValue() + b.intValue());
+                return a.intValue() + b.intValue();
             } else if (a instanceof Long) {
-                return new Long(a.longValue() + b.longValue());
+                return a.longValue() + b.longValue();
             } else if ( a instanceof BigInteger) {
                 return ((BigInteger) a).add((BigInteger) b);
             }
@@ -166,9 +165,9 @@ final class AlocproToolkit {
             if (a instanceof BigDecimal) {
                 return ((BigDecimal) a).multiply((BigDecimal) b);
             } else if (a instanceof Integer) {
-                return new Integer(a.intValue() * b.intValue());
+                return a.intValue() * b.intValue();
             } else if (a instanceof Long) {
-                return new Long(a.longValue() * b.longValue());
+                return a.longValue() * b.longValue();
             } else if ( a instanceof BigInteger) {
                 return ((BigInteger) a).multiply((BigInteger) b);
             }
@@ -185,7 +184,7 @@ final class AlocproToolkit {
 
     public static boolean isZero(Number a) {
         if (a instanceof BigDecimal) {
-            return ((BigDecimal) a).equals(BigDecimal.ZERO);
+            return ((BigDecimal) a).compareTo(BigDecimal.ZERO) == 0;
         } else if (isIntegerOrLong(a)) {
             return a.longValue() == 0;
         }
@@ -212,7 +211,7 @@ final class AlocproToolkit {
 
 
     private static final char[] ALL_CHARS = new char[62];
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new SecureRandom();
 
     static {
         for (int i = 48, j = 0; i < 123; i++) {
@@ -266,9 +265,7 @@ final class AlocproToolkit {
         return cs.toString();
     }
 
-    private static final Pattern PATTERN_URL = Pattern.compile(
-            "(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" +
-                    "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");
+    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" +"()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
 
     private static CharSequence converterURL(CharSequence original) {
         Matcher matcher = PATTERN_URL.matcher(original);
@@ -323,7 +320,7 @@ final class AlocproToolkit {
                     if (c < 128) {
                         builder.append(c);
                     } else {
-                        builder.append("&#").append((int) c).append(";");
+                        builder.append("&#").append((int) c).append(';');
                     }
             }
         }

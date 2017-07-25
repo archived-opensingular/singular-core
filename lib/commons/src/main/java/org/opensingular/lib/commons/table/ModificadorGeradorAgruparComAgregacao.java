@@ -29,15 +29,15 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * Agrupador com agrega��o. Agrupa colunas e em seguida realiza a opera��o de agrega��o.
+ * Agrupador com agregaçaoo. Agrupa colunas e em seguida realiza a operaçao de agregção.
  * 
  * @author joao.gomes
  */
 class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
     private static final long serialVersionUID = 1L;
     
-    private final List<Column> colunasAgrupamento = new ArrayList<>();  // Colunas do agrupamento por ordem de inser��o
-    private final Map<Column, TipoAgregacaoCampo> colunaTipoAgregacao;  // Tipo de agrega��o por coluna
+    private final List<Column> colunasAgrupamento = new ArrayList<>();  // Colunas do agrupamento por ordem de inserção
+    private final Map<Column, TipoAgregacaoCampo> colunaTipoAgregacao;  // Tipo de agregação por coluna
     
     public ModificadorGeradorAgruparComAgregacao(TableTool table) {
         super(table);
@@ -47,7 +47,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
     public ModificadorGeradorAgruparComAgregacao(TableTool table,
                                                  Map<Column, TipoAgregacaoCampo> configuracaoAgregacao) {
         this(table);
-        configuracaoAgregacao.forEach((k, v) -> colunaTipoAgregacao.put(k, v)); 
+        configuracaoAgregacao.forEach(colunaTipoAgregacao::put);
     }
 
     public void addColuna(Column column) {
@@ -62,12 +62,11 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
         LinkedListMultimap<DadoLinha, DadoLinha> mapa = LinkedListMultimap.create();
         if(!linhas.isEmpty()){
             // Usa o comparador para determinar as quebras de grupo. Como j� houve a
-            // ordena��o pr�via, quando o valor da
-            // compara��o for diferente de zero, sinaliza quebra de grupo
+            // ordenaçãoo prévia, quando o valor da
+            // comparaçãoo for diferente de zero, sinaliza quebra de grupo
             DadoLinha[] piloto = new DadoLinha[] { linhas.get(0) }; 
-            linhas.stream().sorted(sortComparator).forEach(dado -> {
-                mapa.put(piloto[0] = (sortComparator.compare(dado, piloto[0]) != 0) ? dado : piloto[0], dado);
-            });
+            linhas.stream().sorted(sortComparator).forEach(dado ->
+                    mapa.put(piloto[0] = (sortComparator.compare(dado, piloto[0]) != 0) ? dado : piloto[0], dado));
         }
         
         List<DadoLinha> resultado = mapa.asMap().values().stream()
@@ -114,7 +113,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
             TipoAgregacaoCampo tipoAgregacao = entry.getValue();
             Column column = entry.getKey();
 
-            if (colunasAgrupamento.contains(column)) { continue; } // As colunas agrupadas n�o s�o agregadas
+            if (colunasAgrupamento.contains(column)) { continue; } // As colunas agrupadas não são agregadas //NOSONAR
             
             setValor(agregador.getInfoCelula(column), tipoAgregacao.calcular(recuperaDadosColuna(linhas, column)))
                 .getDecorator().addStyle("cursor", "pointer")
@@ -124,7 +123,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
 
     private static List<Object> recuperaDadosColuna(Collection<DadoLinha> linhas, Column column) {
         return linhas.stream().map(dado -> dado.getInfoCelula(column))
-            .map(dado -> dado == null ? dado : (Object)(dado.getValorReal() != null ? dado.getValorReal() : dado.getValue()))
+            .map(dado -> dado == null ? null : (Object)(dado.getValorReal() != null ? dado.getValorReal() : dado.getValue()))
             .collect(Collectors.toList());
     }
     
@@ -152,12 +151,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
     }
     
     private Comparator<DadoLinha> montaComparador(Column column) {
-        return new Comparator<DadoLinha>() {
-            @Override
-            public int compare(DadoLinha o1, DadoLinha o2) {
-                return column.compare(o1.getInfoCelula(column), o2.getInfoCelula(column));
-            }
-        };
+        return (o1, o2) -> column.compare(o1.getInfoCelula(column), o2.getInfoCelula(column));
     }
 
     private Comparator<DadoLinha> getSortComparator() {

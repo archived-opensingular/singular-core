@@ -40,17 +40,14 @@ import java.util.Objects;
 public class FullPageHtmlGenerator implements Closeable {
 
     private final PrintWriter out;
-    private final File outputFile;
     private final List<URL> internalCSS = new ArrayList<>();
 
     public FullPageHtmlGenerator(@Nonnull File outputFile) throws IOException {
-        this.outputFile = outputFile;
         this.out = new PrintWriter(new FileOutputStream(outputFile));
     }
 
     public FullPageHtmlGenerator(@Nonnull PrintWriter out) {
         this.out = Objects.requireNonNull(out);
-        this.outputFile = null;
     }
 
     public FullPageHtmlGenerator(@Nonnull Writer out) {

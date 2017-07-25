@@ -483,7 +483,6 @@ public final class TableTool implements ViewMultiGenerator<TableTool>, Serializa
             boolean nextColumnWithSeparator = false;
             while (idxColuna < ctx.getVisibleColuns().size()) {
                 Column c = ctx.getVisibleColuns().get(idxColuna);
-                InfoCelula cell = line.get(c);
                 ctx.setIndiceColunaAtual(idxColuna);
                 int qtdSpan = 1;
                 if (c == null) {
@@ -492,6 +491,7 @@ public final class TableTool implements ViewMultiGenerator<TableTool>, Serializa
                     }
                 } else {
                     int nivel = c.getNivelDados();
+                    InfoCelula cell = line.get(c);
                     if (nivel >= nivelLinha) {
                         OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
                         nextColumnWithSeparator = false;

@@ -39,8 +39,8 @@ public class ViewsUtil {
     }
 
     @Nonnull
-    static final <T> ViewGeneratorProvider<T> getGeneratorFor(@Nonnull ViewMultiGenerator<T> target,
-            @Nonnull ViewOutputFormat format) throws SingularUnsupportedViewException {
+    static <T> ViewGeneratorProvider<T> getGeneratorFor(@Nonnull ViewMultiGenerator<T> target,
+                                                        @Nonnull ViewOutputFormat format) throws SingularUnsupportedViewException {
         for (ViewGeneratorProvider<T> p : target.getGenerators()) {
             if (Objects.equals(format, p.getOutputFormat())) {
                 return p;
@@ -65,7 +65,7 @@ public class ViewsUtil {
 
             @Override
             public void addImagem(String nome, byte[] dados) throws IOException {
-                throw new UnsupportedOperationException("addImagem(String, dados) n�o suportado ");
+                throw new UnsupportedOperationException("addImagem(String, dados) não suportado ");//NOSONAR
             }
 
             @Override

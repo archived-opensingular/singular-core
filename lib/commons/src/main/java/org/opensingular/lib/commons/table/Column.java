@@ -251,7 +251,7 @@ public class Column implements Serializable {
     }
 
     public boolean isTipoAcao() {
-        return type.equals(TipoColuna.tpAction);
+        return TipoColuna.tpAction == type;
     }
 
     public void setSuperTitulo(String superTitulo) {
