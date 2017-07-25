@@ -5,26 +5,28 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.commons.views.ViewOutputExcel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TableOutputExcel extends TableOutput implements Loggable {
-    private final XSSFWorkbook workbook;
-    private final XSSFSheet sheet;
+    private final ViewOutputExcel viewOutputExcel;
 
     private int rowIndex = -1;
     private int columnIndex = -1;
     private XSSFRow row;
     private Map<Integer, Integer> columnRowSpanMap = new HashMap<>();
 
-    public TableOutputExcel(String worksheetName) {
-        this.workbook = new XSSFWorkbook();
-        this.sheet = workbook.createSheet(worksheetName);
+
+    public TableOutputExcel(ViewOutputExcel viewOutputExcel) {
+        super();
+        this.viewOutputExcel = viewOutputExcel;
     }
 
     private void incrementRow() {
@@ -37,7 +39,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
 
     private void newRow() {
         incrementRow();
-        row = sheet.createRow(rowIndex);
+        row = viewOutputExcel.getOutput().createRow(rowIndex);
         columnIndex = -1;
     }
 
@@ -157,7 +159,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         if (rowSpan > 1) {
             int spanOffset = rowSpan - 1;
             columnRowSpanMap.put(columnIndex, spanOffset);
-            sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex + spanOffset, columnIndex, columnIndex));
+            viewOutputExcel.getOutput().addMergedRegion(new CellRangeAddress(rowIndex, rowIndex + spanOffset, columnIndex, columnIndex));
         }
     }
 
@@ -172,7 +174,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
             cell.setCellValue(column.getSuperTitle());
             if (colSpan > 1) {
                 int spanOffset = colSpan - 1;
-                sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex += spanOffset));
+                viewOutputExcel.getOutput().addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex += spanOffset));
             }
         }
     }
@@ -213,19 +215,4 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         }
     }
 
-    public XSSFWorkbook getWorkbook() {
-        return workbook;
-    }
-
-    public XSSFSheet getSheet() {
-        return sheet;
-    }
-
-    public void writeResult(FileOutputStream fos) {
-        try {
-            workbook.write(fos);
-        } catch (IOException ioex) {
-            getLogger().error(ioex.getMessage(), ioex);
-        }
-    }
 }

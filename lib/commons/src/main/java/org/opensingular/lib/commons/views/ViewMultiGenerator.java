@@ -26,37 +26,38 @@ import java.util.stream.Collectors;
  *
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public interface ViewMultiGenerator<T> extends ViewGenerator {
+public interface ViewMultiGenerator extends ViewGenerator {
 
     @Nonnull
-    public Collection<ViewGeneratorProvider<T>> getGenerators();
+    Collection<ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>>> getGenerators();
 
     @Nonnull
     default Collection<ViewOutputFormat> getDirectSupportedFormats() {
-        return getGenerators().stream().map(p -> p.getOutputFormat()).collect(Collectors.toList());
+        return getGenerators().stream().map(ViewGeneratorProvider::getOutputFormat).collect(Collectors.toList());
     }
 
     @Override
-    default void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException {
-        ViewGeneratorProvider<T> generator = ViewsUtil.getGeneratorFor(this, vOut.getFormat());
-        generator.generate((T) this, vOut);
+    default void generateView(@Nonnull ViewOutput<?> vOut) throws SingularUnsupportedViewException {
+        ViewGeneratorProvider<ViewGenerator, ViewOutput<?>> generator = ViewsUtil.getGeneratorFor(this, vOut.getFormat());
+        generator.generate(this, vOut);
     }
+
 
     @Override
     default boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format) {
-        return getGenerators().stream().filter(p -> Objects.equals(format, p.getOutputFormat())).findAny().isPresent();
+        return getGenerators().stream().anyMatch(p -> Objects.equals(format, p.getOutputFormat()));
     }
 
-    default ViewGenerator getGeneratorFor(@Nonnull ViewOutput vOut) {
+    default ViewGenerator getGeneratorFor(@Nonnull ViewOutput<java.io.Writer> vOut) {
         return getGeneratorFor(vOut.getFormat());
     }
 
     default ViewGenerator getGeneratorFor(@Nonnull ViewOutputFormat format) {
-        ViewGeneratorProvider<T> generator = ViewsUtil.getGeneratorFor(this, format);
+        ViewGeneratorProvider<ViewGenerator, ViewOutput<?>> generator = ViewsUtil.getGeneratorFor(this, format);
         return new ViewGenerator() {
             @Override
-            public void generateView(@Nonnull ViewOutput vOut) throws SingularUnsupportedViewException {
-                generator.generate((T) ViewMultiGenerator.this, vOut);
+            public void generateView(@Nonnull ViewOutput<?> vOut) throws SingularUnsupportedViewException {
+                generator.generate(ViewMultiGenerator.this, vOut);
             }
 
             @Override

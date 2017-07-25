@@ -20,15 +20,15 @@ public class ViewOutputHtmlWebComponent extends WebComponent {
 
     @Override
     public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
-        ViewOutputHtmlFromWicket viewOutput = new ViewOutputHtmlFromWicket(getRequestCycle());
+        ViewOutputWriterHtmlFromWicket viewOutput = new ViewOutputWriterHtmlFromWicket(getRequestCycle());
         ViewGenerator generator = viewGeneratorSupplier.get();
         generator = resolveGenerator(generator, viewOutput);
         generator.generateView(viewOutput);
     }
 
-    private static ViewGenerator resolveGenerator(@Nonnull ViewGenerator generator, ViewOutput vOut) {
+    private static ViewGenerator resolveGenerator(@Nonnull ViewGenerator generator, ViewOutput<java.io.Writer> vOut) {
         if (generator instanceof ViewMultiGenerator) {
-            return ((ViewMultiGenerator<?>) generator).getGeneratorFor(vOut);
+            return ((ViewMultiGenerator) generator).getGeneratorFor(vOut);
         }
         return generator;
     }

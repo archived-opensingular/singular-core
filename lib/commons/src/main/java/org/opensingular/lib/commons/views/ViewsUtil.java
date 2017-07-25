@@ -39,11 +39,11 @@ public class ViewsUtil {
     }
 
     @Nonnull
-    static <T> ViewGeneratorProvider<T> getGeneratorFor(@Nonnull ViewMultiGenerator<T> target,
-                                                        @Nonnull ViewOutputFormat format) throws SingularUnsupportedViewException {
-        for (ViewGeneratorProvider<T> p : target.getGenerators()) {
-            if (Objects.equals(format, p.getOutputFormat())) {
-                return p;
+    static <V extends ViewOutput<?>> ViewGeneratorProvider<ViewGenerator, V> getGeneratorFor(@Nonnull ViewMultiGenerator target,
+                                                                                             @Nonnull ViewOutputFormat format) throws SingularUnsupportedViewException {
+        for (ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>> generator : target.getGenerators()) {
+            if (Objects.equals(format, generator.getOutputFormat())) {
+                return (ViewGeneratorProvider<ViewGenerator, V>) generator;
             }
         }
         throw new SingularUnsupportedViewException(target, format);
@@ -52,20 +52,20 @@ public class ViewsUtil {
     public static String generateAsHtmlString(ViewGenerator target, boolean staticContent) {
         final ByteArrayOutputStream dataSource = new ByteArrayOutputStream();
         final PrintWriter writer = new PrintWriter(dataSource);
-        ViewOutput vOut = new ViewOutput() {
+        ViewOutputWriter vOut = new ViewOutputWriter() {
             @Override
             public boolean isStaticContent() {
                 return staticContent;
             }
 
             @Override
-            public Writer getWriter() {
-                return writer;
+            public void addImagem(String nome, byte[] dados) throws IOException {
+                throw new UnsupportedOperationException("addImagem(String, dados) não suportado ");//NOSONAR
             }
 
             @Override
-            public void addImagem(String nome, byte[] dados) throws IOException {
-                throw new UnsupportedOperationException("addImagem(String, dados) não suportado ");//NOSONAR
+            public Writer getOutput() {
+                return writer;
             }
 
             @Override

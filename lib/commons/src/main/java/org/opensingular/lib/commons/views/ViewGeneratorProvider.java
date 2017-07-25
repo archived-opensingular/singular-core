@@ -18,12 +18,15 @@ package org.opensingular.lib.commons.views;
 
 import javax.annotation.Nonnull;
 
+
 /**
  * @author Daniel C. Bordin on 24/07/2017.
+ * @param <T>
+ * @param <V> the view output
  */
-public abstract class ViewGeneratorProvider<T> {
+public abstract class ViewGeneratorProvider<T extends ViewGenerator, V extends ViewOutput<?>> {
 
     public abstract ViewOutputFormat getOutputFormat();
 
-    public abstract void generate(@Nonnull T t, @Nonnull ViewOutput viewOutput);
+    public abstract void generate(@Nonnull T t, @Nonnull V viewOutput);
 }

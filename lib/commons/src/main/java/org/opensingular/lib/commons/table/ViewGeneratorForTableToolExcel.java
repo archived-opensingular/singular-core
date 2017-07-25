@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.views;
+package org.opensingular.lib.commons.table;
 
-import org.opensingular.lib.commons.table.TableTool;
-import org.opensingular.lib.commons.table.ViewGeneratorForTableTool;
-import org.opensingular.lib.commons.views.ViewOutputWriter;
+import org.opensingular.lib.commons.views.ViewOutputExcel;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
 import javax.annotation.Nonnull;
 
-/**
- * Gerador que produz um resultado Wicket (components de exibição) para a tabela informada.
- *
- * @author Daniel C. Bordin on 24/07/2017.
- */
-public class ViewGeneratorForTableToolWicket extends ViewGeneratorForTableTool<ViewOutputWriter> {
 
+public class ViewGeneratorForTableToolExcel extends ViewGeneratorForTableTool<ViewOutputExcel> {
     @Override
     public ViewOutputFormat getOutputFormat() {
-        return ViewOutputWriterWicket.WICKET;
+        return ViewOutputFormat.EXCEL;
     }
 
     @Override
-    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputWriter viewOutputWriter) {
-        throw new RuntimeException("Unssuported");
+    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputExcel viewOutputExcel) {
+        TableOutputExcel tableOutputExcel = new TableOutputExcel(viewOutputExcel);
+        tableTool.generate(tableOutputExcel);
     }
+
 }

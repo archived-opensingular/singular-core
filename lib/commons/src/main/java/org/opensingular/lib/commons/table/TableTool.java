@@ -18,21 +18,18 @@ package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
 import org.jetbrains.annotations.NotNull;
+import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewGeneratorProvider;
 import org.opensingular.lib.commons.views.ViewMultiGenerator;
+import org.opensingular.lib.commons.views.ViewOutput;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class TableTool implements ViewMultiGenerator<TableTool>, Serializable {
+public final class TableTool implements ViewMultiGenerator, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,7 +89,7 @@ public final class TableTool implements ViewMultiGenerator<TableTool>, Serializa
      * (opcional). Considera a primeira coluna como sendo a respons�vel pela
      * identa��o.
      *
-     * @param tipo   Tipo da classe a ser condiserada ao formatar a coluna.
+     * @param tipo  Tipo da classe a ser condiserada ao formatar a coluna.
      * @param title Texto para aparecer na primeira linha.
      * @return Coluna criada, para eventual modifica��o de formata��o.
      */
@@ -198,7 +195,7 @@ public final class TableTool implements ViewMultiGenerator<TableTool>, Serializa
     }
 
     public <T extends ModificadorGerador> T achaOuAdicionaModificador(Class<T> modificador,
-            Supplier<T> novoModificador) {
+                                                                      Supplier<T> novoModificador) {
         @SuppressWarnings("unchecked") Optional<T> find = (Optional<T>) modificadores.stream().filter(
                 Predicates.instanceOf(modificador)).findFirst();
         return find.orElseGet(() -> addModificador(novoModificador.get()));
@@ -673,10 +670,10 @@ public final class TableTool implements ViewMultiGenerator<TableTool>, Serializa
         ctx.getOutput().generateTotalLineEnd(ctx);
     }
 
+
     @Nonnull
     @Override
-    public Collection<ViewGeneratorProvider<TableTool>> getGenerators() {
+    public Collection<ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>>> getGenerators() {
         return TableToolUtil.getGenerators();
     }
-
 }

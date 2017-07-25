@@ -17,10 +17,12 @@
 package org.opensingular.lib.commons.table;
 
 import org.opensingular.lib.commons.views.ViewGeneratorProvider;
+import org.opensingular.lib.commons.views.ViewOutput;
 
 /**
+ * @param <V> the view output
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public abstract class ViewGeneratorForTableTool extends ViewGeneratorProvider<TableTool> {
+public abstract class ViewGeneratorForTableTool<V extends ViewOutput<?>> extends ViewGeneratorProvider<TableTool, V> {
 
 }

@@ -16,7 +16,7 @@
 
 package org.opensingular.lib.wicket.views;
 
-import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputWriter;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.io.Writer;
 /**
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public class ViewOutputWicket extends ViewOutput {
+public class ViewOutputWriterWicket extends ViewOutputWriter {
 
     public static final ViewOutputFormat WICKET = new ViewOutputFormat("WICKET", "Wicket");
 
@@ -35,7 +35,7 @@ public class ViewOutputWicket extends ViewOutput {
     }
 
     @Override
-    public Writer getWriter() {
+    public Writer getOutput() {
         throw new RuntimeException("Método não suportado");
     }
 

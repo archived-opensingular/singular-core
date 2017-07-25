@@ -16,7 +16,9 @@
 
 package org.opensingular.lib.commons.table;
 
+import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewGeneratorProvider;
+import org.opensingular.lib.commons.views.ViewOutput;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,12 +30,12 @@ import java.util.ServiceLoader;
  */
 final class TableToolUtil {
 
-    private static Collection<ViewGeneratorProvider<TableTool>> generators;
+    private static Collection<ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>>> generators;
 
-    public static Collection<ViewGeneratorProvider<TableTool>> getGenerators() {
+    public static Collection<ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>>> getGenerators() {
         if (generators == null) {
-            List<ViewGeneratorProvider<TableTool>> list = new ArrayList<>();
-            for(ViewGeneratorProvider<TableTool> g : ServiceLoader.load(ViewGeneratorForTableTool.class)) {
+            List<ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>>> list = new ArrayList<>();
+            for(ViewGeneratorProvider g : ServiceLoader.load(ViewGeneratorForTableTool.class)) {
                 list.add(g);
             }
             generators = list;

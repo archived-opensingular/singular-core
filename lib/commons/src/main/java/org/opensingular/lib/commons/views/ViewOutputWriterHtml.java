@@ -23,12 +23,12 @@ import java.io.Writer;
 /**
  * @author Daniel C. Bordin on 21/07/2017.
  */
-public class ViewOutputHtml extends ViewOutput {
+public class ViewOutputWriterHtml extends ViewOutputWriter {
 
     private final Writer writer;
     private final boolean staticContent;
 
-    public ViewOutputHtml(@Nonnull Writer writer, boolean staticContent) {
+    public ViewOutputWriterHtml(@Nonnull Writer writer, boolean staticContent) {
         this.writer = writer;
         this.staticContent = staticContent;
     }
@@ -44,7 +44,7 @@ public class ViewOutputHtml extends ViewOutput {
     }
 
     @Override
-    public Writer getWriter() {
+    public Writer getOutput() {
         return writer;
     }
 

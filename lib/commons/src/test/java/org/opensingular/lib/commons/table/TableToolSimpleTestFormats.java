@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.views.FullPageHtmlGenerator;
-import org.opensingular.lib.commons.views.ViewOutputHtml;
+import org.opensingular.lib.commons.views.ViewOutputWriterHtml;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
         try (FullPageHtmlGenerator generator = new FullPageHtmlGenerator(arq)) {
             generator.addInternalCSSFromResource(this, cssFile);
             generator.writeBegin();
-            TableOutput outputHtml = new TableOutputHtml(new ViewOutputHtml(generator.getOut(), false));
+            TableOutput outputHtml = new TableOutputHtml(new ViewOutputWriterHtml(generator.getOut(), false));
             table.generate(outputHtml);
 
             TableOutputSimulated output = new TableOutputSimulated();

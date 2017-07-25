@@ -21,7 +21,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputWriter;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
 import java.io.IOException;
@@ -30,11 +30,11 @@ import java.io.Writer;
 /**
  * @author Daniel on 25/07/2017.
  */
-public class ViewOutputHtmlFromWicket extends ViewOutput {
+public class ViewOutputWriterHtmlFromWicket extends ViewOutputWriter {
 
     private final Writer out;
 
-    public ViewOutputHtmlFromWicket(RequestCycle cycle) {
+    public ViewOutputWriterHtmlFromWicket(RequestCycle cycle) {
         Response response = cycle.getResponse();
         if (response instanceof WebResponse) {
             out = new WebResponseWriterAdapter((WebResponse) response);
@@ -49,7 +49,7 @@ public class ViewOutputHtmlFromWicket extends ViewOutput {
     }
 
     @Override
-    public Writer getWriter() {
+    public Writer getOutput() {
         return out;
     }
 

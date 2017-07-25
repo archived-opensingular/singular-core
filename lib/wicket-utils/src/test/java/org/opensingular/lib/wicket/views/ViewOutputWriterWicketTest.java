@@ -26,15 +26,15 @@ import org.opensingular.lib.commons.views.ViewOutputFormat;
 /**
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public class ViewOutputWicketTest {
+public class ViewOutputWriterWicketTest {
 
     @Test
     public void test() {
         TableTool table = createSimple();
         Assert.assertTrue(table.isDirectCompatiableWith(ViewOutputFormat.HTML));
-        Assert.assertTrue(table.isDirectCompatiableWith(ViewOutputWicket.WICKET));
+        Assert.assertTrue(table.isDirectCompatiableWith(ViewOutputWriterWicket.WICKET));
         Assert.assertTrue(table.getDirectSupportedFormats().contains(ViewOutputFormat.HTML));
-        Assert.assertTrue(table.getDirectSupportedFormats().contains(ViewOutputWicket.WICKET));
+        Assert.assertTrue(table.getDirectSupportedFormats().contains(ViewOutputWriterWicket.WICKET));
     }
 
     private TableTool createSimple() {

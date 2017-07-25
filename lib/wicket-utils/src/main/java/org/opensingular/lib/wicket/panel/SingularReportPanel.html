@@ -21,34 +21,25 @@
         <div class="portlet-title">
             <div class="caption">
                 <i class="icon-graph"></i>
-                <span class="caption-subject bold uppercase"> Produtividade por xis</span>
+                <span wicket:id="title" class="caption-subject bold uppercase"></span>
             </div>
             <div class="actions">
                 <div class="btn-group">
                     <a class="btn btn-circle btn-default " href="javascript:" data-toggle="dropdown"
                        aria-expanded="false">
-                        <i class="fa fa-user"></i> Exportar...
+                        <i class="fa fa-share"></i> Exportar
                         <i class="fa fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu pull-right">
                         <li>
-                            <a href="javascript:">
-                                <i class="fa  file-pdf-o"></i> PDF</a>
-                        </li>
-                        <li>
-                            <a href="javascript:">
-                                <i class="fa file-excel-o"></i> Excel</a>
+                            <a href="javascript:"><i class="fa file-excel-o"></i> Excel</a>
                         </li>
                     </ul>
                 </div>
-                <a class="btn btn-circle btn-icon-only btn-default fullscreen"
-                   href="javascript:" data-original-title="" title="">
-
-                </a>
             </div>
         </div>
         <div class="portlet-body">
-
+            <div wicket:id="table"></div>
         </div>
     </div>
 </wicket:panel>

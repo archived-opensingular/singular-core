@@ -19,13 +19,13 @@ package org.opensingular.lib.commons.views;
 import org.opensingular.lib.commons.base.SingularException;
 
 /**
- * Indiecates that the {@link ViewGenerator} doesn't supports the particular type of {@link ViewOutput}.
+ * Indiecates that the {@link ViewGenerator} doesn't supports the particular type of {@link ViewOutputWriter}.
  *
  * @author Daniel C. Bordin on 24/07/2017.
  */
 public class SingularUnsupportedViewException extends SingularException {
 
-    public SingularUnsupportedViewException(Object target, ViewOutput view) {
+    public SingularUnsupportedViewException(Object target, ViewOutput<java.io.Writer> view) {
         super("There is no implementation supporting the format " + getFormatName(view, target));
         if (view != null) {
             add("viewClass", view.getClass());
@@ -43,7 +43,7 @@ public class SingularUnsupportedViewException extends SingularException {
         }
     }
 
-    private static String getFormatName(ViewOutput view, Object target) {
+    private static String getFormatName(ViewOutput<java.io.Writer> view, Object target) {
         return getFormatName(view == null ? null :view.getFormat(), target);
     }
 

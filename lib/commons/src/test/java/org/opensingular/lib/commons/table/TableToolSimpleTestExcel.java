@@ -3,6 +3,7 @@ package org.opensingular.lib.commons.table;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.views.ViewOutputExcel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,11 +12,13 @@ import java.io.IOException;
 public class TableToolSimpleTestExcel extends TableToolSimpleTestBase {
 
     private TableOutputExcel tableOutputExcel;
-    private boolean isOpenEnabled = false;
+    private boolean isOpenEnabled = true;
+    private ViewOutputExcel viewOutputExcel;
 
     @Before
     public void setUp() throws Exception {
-        tableOutputExcel = new TableOutputExcel("dummy");
+        viewOutputExcel = new ViewOutputExcel("X");
+        tableOutputExcel = new TableOutputExcel(viewOutputExcel);
     }
 
     @Test
@@ -85,7 +88,7 @@ public class TableToolSimpleTestExcel extends TableToolSimpleTestBase {
         try {
             File xlsx = File.createTempFile("test", ".xlsx");
             FileOutputStream fos = new FileOutputStream(xlsx);
-            tableOutputExcel.writeResult(fos);
+            viewOutputExcel.write(fos);
             if (isOpenEnabled) {
                 SingularTestUtil.showFileOnDesktopForUser(xlsx);
             } else {
