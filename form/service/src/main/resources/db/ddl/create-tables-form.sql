@@ -43,7 +43,8 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_FORMULARIO (
    XML_CONTEUDO         VARCHAR(MAX)         NOT NULL,
    CO_AUTOR_INCLUSAO    INT                  NULL,
    NU_VERSAO_CACHE      INT                  NULL, -- deve ser no null apos implementação
-   CONSTRAINT PK_TB_VERSAO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO)
+   ST_INDEXADO          CHAR(1)              NULL,
+   CONSTRAINT PK_TB_VERSAO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO),
 );
 
 /*==============================================================*/
@@ -101,4 +102,31 @@ CREATE TABLE DBSINGULAR.TB_ANEXO_FORMULARIO
    CO_VERSAO_FORMULARIO NUMBER               NOT NULL,
    CO_ARQUIVO           NUMBER               NOT NULL,
    CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO, CO_ARQUIVO)
+);
+
+/*==============================================================*/
+/* Table: TB_CACHE_CAMPO                                        */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_CACHE_CAMPO
+(
+   CO_CACHE_CAMPO     NUMBER        NOT NULL,
+   CO_TIPO_FORMULARIO NUMBER            NULL,
+   DS_CAMINHO_CAMPO  VARCHAR(255)  NOT NULL,
+
+   CONSTRAINT PK_CACHE_CAMPO PRIMARY KEY (CO_CACHE_CAMPO)
+);
+
+/*==============================================================*/
+/* Table: TB_CACHE_VALOR                                        */
+/*==============================================================*/
+CREATE TABLE DBSINGULAR.TB_CACHE_VALOR
+(
+   CO_CACHE_VALOR         NUMBER        NOT NULL,
+   CO_CACHE_CAMPO         NUMBER        NOT NULL,
+   CO_VERSAO_FORMULARIO   NUMBER            NULL,
+   DS_VALOR              VARCHAR(2048)     NULL,
+   DT_VALOR               SMALLDATETIME     NULL,
+   NU_VALOR              NUMBER            NULL,
+   CO_PARENT              NUMBER            NULL,
+   CONSTRAINT PK_CACHE_VALOR PRIMARY KEY (CO_CACHE_VALOR)
 );
