@@ -72,15 +72,15 @@ public class DefinicaoComVariaveis extends FlowDefinition<FlowInstance> {
     }
 
     public Object setVar(ExecutionContext ctxExecucao) {
-        ctxExecucao.getProcessInstance().setVariable("nome", STRING_USADA_NO_TESTE);
-        ctxExecucao.getProcessInstance().setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
-        ctxExecucao.getProcessInstance().saveEntity();
+        ctxExecucao.getFlowInstance().setVariable("nome", STRING_USADA_NO_TESTE);
+        ctxExecucao.getFlowInstance().setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
+        ctxExecucao.getFlowInstance().saveEntity();
         return null;
     }
 
     public Object printVar(ExecutionContext ctxExecucao) {
-        System.out.println("########### nome          #####>" + ctxExecucao.getProcessInstance().getVariableValue("nome"));
-        System.out.println("########### qualquerCoisa #####>" + ctxExecucao.getProcessInstance().getVariableValue("qualquerCoisa"));
+        System.out.println("########### nome          #####>" + ctxExecucao.getFlowInstance().getVariableValue("nome"));
+        System.out.println("########### qualquerCoisa #####>" + ctxExecucao.getFlowInstance().getVariableValue("qualquerCoisa"));
         return null;
     }
 }

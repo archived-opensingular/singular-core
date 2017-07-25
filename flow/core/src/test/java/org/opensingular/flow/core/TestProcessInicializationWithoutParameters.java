@@ -82,8 +82,8 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
 
 
         public void doFirst(ExecutionContext<FlowInstance> processInstanceExecutionContext) {
-            Integer v = processInstanceExecutionContext.getProcessInstance().getVariables().getValueInteger(FLAG, 0);
-            processInstanceExecutionContext.getProcessInstance().getVariables().setValue(FLAG, v + 10);
+            Integer v = processInstanceExecutionContext.getFlowInstance().getVariables().getValueInteger(FLAG, 0);
+            processInstanceExecutionContext.getFlowInstance().getVariables().setValue(FLAG, v + 10);
         }
     }
 }
