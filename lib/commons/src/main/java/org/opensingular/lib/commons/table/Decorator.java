@@ -89,7 +89,7 @@ public class Decorator implements Serializable {
     }
 
     public Integer getMaxTextLength() {
-        return maxTextLength != null ? maxTextLength : parent == null ? null : parent.getMaxTextLength();
+        return maxTextLength != null ? maxTextLength : parent == null ? null : parent.getMaxTextLength();//NOSONAR
     }
 
     /** Define que a fonte seja bold ou não. */

@@ -21,86 +21,91 @@ import com.google.common.base.Predicates;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public enum TipoAgregacaoCampo {
-    CALCULAR("Calcular"){
+    CALCULAR("Calcular") {
         @Override
         public boolean seAplica(Class<?> dataClass) {
             return true;
         }
+
         @Override
-        public Object calcular(List<? extends Object> dados) {
+        public Object calcular(List<?> dados) {
             throw new UnsupportedOperationException();
         }
-    }, 
-    MIN("M�nimo"){
+    },
+    MIN("Mínimo") {
         @Override
         public boolean seAplica(Class<?> dataClass) {
             return Comparable.class.isAssignableFrom(dataClass);
         }
+
         @Override
-        public Object calcular(List<? extends Object> dados) {
+        public Object calcular(List<?> dados) {
             return dados.stream().filter(Predicates.instanceOf(Comparable.class)).map(Comparable.class::cast).min(Comparator.comparing(Function.identity())).orElse(null);
         }
-    }, 
-    MAX("M�ximo"){
+    },
+    MAX("Máximo") {
         @Override
         public boolean seAplica(Class<?> dataClass) {
             return Comparable.class.isAssignableFrom(dataClass);
         }
+
         @Override
-        public Object calcular(List<? extends Object> dados) {
+        public Object calcular(List<?> dados) {
             return dados.stream().filter(Predicates.instanceOf(Comparable.class)).map(Comparable.class::cast).max(Comparator.comparing(Function.identity())).orElse(null);
         }
-    }, 
-    MEDIA("M�dia"){
+    },
+    MEDIA("Média") {
         @Override
         public boolean seAplica(Class<?> dataClass) {
             return Long.class.isAssignableFrom(dataClass) ||
-                   Integer.class.isAssignableFrom(dataClass) ||
-                   Double.class.isAssignableFrom(dataClass);
+                    Integer.class.isAssignableFrom(dataClass) ||
+                    Double.class.isAssignableFrom(dataClass);
         }
+
         @Override
-        public Object calcular(List<? extends Object> dados) {
-            if(dados.stream().anyMatch(Predicates.instanceOf(Double.class))){
-                return dados.stream().map(dado -> dado == null? 0.0d : dado).filter(Predicates.instanceOf(Double.class)).mapToDouble(Double.class::cast).average().orElse(0.0);
+        public Object calcular(List<?> dados) {
+            if (dados.stream().anyMatch(Predicates.instanceOf(Double.class))) {
+                return dados.stream().map(dado -> dado == null ? 0.0d : dado).filter(Predicates.instanceOf(Double.class)).mapToDouble(Double.class::cast).average().orElse(0.0);
             }
-            if(dados.stream().anyMatch(Predicates.instanceOf(Integer.class))){
-                return dados.stream().map(dado -> dado == null? 0 : dado).filter(Predicates.instanceOf(Integer.class)).mapToInt(Integer.class::cast).average().orElse(0);
+            if (dados.stream().anyMatch(Predicates.instanceOf(Integer.class))) {
+                return dados.stream().map(dado -> dado == null ? 0 : dado).filter(Predicates.instanceOf(Integer.class)).mapToInt(Integer.class::cast).average().orElse(0);
             }
-            if(dados.stream().anyMatch(Predicates.instanceOf(Long.class))){
-                return dados.stream().map(dado -> dado == null? 0L : dado).filter(Predicates.instanceOf(Long.class)).mapToLong(Long.class::cast).average().orElse(0L);
+            if (dados.stream().anyMatch(Predicates.instanceOf(Long.class))) {
+                return dados.stream().map(dado -> dado == null ? 0L : dado).filter(Predicates.instanceOf(Long.class)).mapToLong(Long.class::cast).average().orElse(0L);
             }
             return 0;
         }
-    }, 
+    },
     SOMA("Soma") {
         @Override
         public boolean seAplica(Class<?> dataClass) {
             return Long.class.isAssignableFrom(dataClass) ||
-                   Integer.class.isAssignableFrom(dataClass) ||
-                   Double.class.isAssignableFrom(dataClass);
+                    Integer.class.isAssignableFrom(dataClass) ||
+                    Double.class.isAssignableFrom(dataClass);
         }
 
         @Override
-        public Object calcular(List<? extends Object> dados) {
-            if(dados.stream().anyMatch(Predicates.instanceOf(Collection.class))){
+        public Object calcular(List<?> dados) {
+            if (dados.stream().anyMatch(Predicates.instanceOf(Collection.class))) {
                 return dados.stream().filter(Predicates.instanceOf(Collection.class)).map(Collection.class::cast).flatMap(Collection::stream).distinct().collect(Collectors.toList());
             }
-            if(dados.stream().anyMatch(Predicates.instanceOf(Double.class))){
+            if (dados.stream().anyMatch(Predicates.instanceOf(Double.class))) {
                 return dados.stream().filter(Predicates.instanceOf(Double.class)).mapToDouble(Double.class::cast).sum();
             }
-            if(dados.stream().anyMatch(Predicates.instanceOf(Integer.class))){
+            if (dados.stream().anyMatch(Predicates.instanceOf(Integer.class))) {
                 return dados.stream().filter(Predicates.instanceOf(Integer.class)).mapToInt(Integer.class::cast).sum();
             }
-            if(dados.stream().anyMatch(Predicates.instanceOf(Long.class))){
+            if (dados.stream().anyMatch(Predicates.instanceOf(Long.class))) {
                 return dados.stream().filter(Predicates.instanceOf(Long.class)).mapToLong(Long.class::cast).sum();
             }
-            if(dados.stream().anyMatch(Predicates.instanceOf(String.class))){
+            if (dados.stream().anyMatch(Predicates.instanceOf(String.class))) {
                 return dados.stream().filter(Predicates.instanceOf(String.class)).map(String.class::cast).distinct().collect(Collectors.joining("; "));
             }
             return null;
@@ -113,8 +118,8 @@ public enum TipoAgregacaoCampo {
         }
 
         @Override
-        public Object calcular(List<? extends Object> dados) {
-            return dados.stream().filter(Predicates.notNull()).count();
+        public Object calcular(List<?> dados) {
+            return dados.stream().filter(Objects::nonNull).count();
         }
     },
     COUNT_DISTINCT("Qtd. �nica") {
@@ -122,43 +127,46 @@ public enum TipoAgregacaoCampo {
         public boolean seAplica(Class<?> dataClass) {
             return true;
         }
-        
+
         @Override
-        public Object calcular(List<? extends Object> dados) {
-            return dados.stream().filter(Predicates.notNull()).distinct().count();
+        public Object calcular(List<?> dados) {
+            return dados.stream().filter(Objects::nonNull).distinct().count();
         }
-    }
-    ;
-    
+    };
+
     private final String nome;
 
-    private TipoAgregacaoCampo(String nome) {
+    TipoAgregacaoCampo(String nome) {
         this.nome = nome;
     }
-    
+
     public String getNome() {
         return nome;
     }
-    
-    public boolean isCalcular(){
-        return equals(CALCULAR);
+
+    public boolean isCalcular() {
+        return this == CALCULAR;
     }
-    public boolean isSoma(){
-        return equals(SOMA);
+
+    public boolean isSoma() {
+        return this == SOMA;
     }
-    public boolean isCount(){
-        return equals(COUNT);
+
+    public boolean isCount() {
+        return this == COUNT;
     }
-    public boolean isCountDistinct(){
-        return equals(COUNT_DISTINCT);
+
+    public boolean isCountDistinct() {
+        return this == COUNT_DISTINCT;
     }
-    
-    public boolean seAplica(Class<?> dataClass){
+
+    public boolean seAplica(Class<?> dataClass) {
         return true;
     }
-    
-    public Object calcular(Supplier<List<? extends Object>> valueListSupplier){
+
+    public Object calcular(Supplier<List<?>> valueListSupplier) {
         return calcular(valueListSupplier.get());
     }
-    public abstract Object calcular(List<? extends Object> dados);
+
+    public abstract Object calcular(List<?> dados);
 }

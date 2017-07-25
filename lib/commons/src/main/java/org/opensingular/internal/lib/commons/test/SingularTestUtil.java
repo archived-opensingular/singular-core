@@ -180,7 +180,7 @@ public final class SingularTestUtil {
         }
         try {
             if (PDFUtil.isWindows()) {
-                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", arq.getAbsolutePath());
+                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", arq.getAbsolutePath());//NOSONAR
                 processBuilder.start();
             } else {
                 throw new RuntimeException("Sistema operacional não suportado");
