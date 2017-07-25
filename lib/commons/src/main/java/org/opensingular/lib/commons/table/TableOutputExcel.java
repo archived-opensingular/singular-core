@@ -103,6 +103,9 @@ public class TableOutputExcel extends TableOutput implements Loggable {
             case tpMoney:
                 cell.setCellValue(((Number) ctx.getValue()).doubleValue());
                 break;
+            case tpString:
+                cell.setCellValue((String) ctx.getValue());
+                break;
             default:
                 cell.setCellValue(ctx.generateFormatDisplayString());
                 break;
