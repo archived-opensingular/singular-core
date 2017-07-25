@@ -31,6 +31,7 @@ import org.opensingular.lib.commons.table.TableTool;
 public class WicketViewsUtilTest {
 
     protected SingularSimpleWicketTester tester;
+    protected boolean showContentOnDesktop = false;
 
     @Before
     public void setUp() {
@@ -41,7 +42,9 @@ public class WicketViewsUtilTest {
     public void testeWrongSerializationPage() {
         tester.startPage(WrongSerializationPage.class);
         tester.assertRenderedPage(WrongSerializationPage.class);
-        tester.showHtmlContentOnDesktopForUserAndWaitOpening();
+        if (showContentOnDesktop) {
+            tester.showHtmlContentOnDesktopForUserAndWaitOpening();
+        }
     }
 
     public static class WrongSerializationPage extends WebPage {
@@ -56,7 +59,7 @@ public class WicketViewsUtilTest {
 
         private TableTool createContent() {
             TableTool table = new TableTool();
-            table.addColumn(Column.TipoColuna.tpString,"A");
+            table.addColumn(Column.TipoColuna.tpString, "A");
             PopulatorTable populator = table.createSimpleTablePopulator();
             populator.insertLine("L0");
             return table;
