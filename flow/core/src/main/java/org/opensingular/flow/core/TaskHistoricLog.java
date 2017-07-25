@@ -38,7 +38,7 @@ public final class TaskHistoricLog {
     }
 
     @Nonnull
-    public ProcessInstance getProcessInstance() {
+    public FlowInstance getProcessInstance() {
         return Flow.getProcessInstance(history.getTaskInstance().getProcessInstance());
     }
 

@@ -17,7 +17,7 @@
 package org.opensingular.flow.core.service;
 
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -31,7 +31,7 @@ import java.util.Optional;
 /**
  * Service to provide an interface to retrieve data about the process runtime
  */
-public interface IProcessDataService<I extends ProcessInstance> {
+public interface IProcessDataService<I extends FlowInstance> {
 
     @Nonnull
     I retrieveInstance(@Nonnull Integer entityCod);

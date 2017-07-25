@@ -41,13 +41,13 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
      * Executa o código de assertivas duas vezes. A primeira direto no processo e novamente depois de recarregar o
      * processo a partir do banco.
      */
-    protected void assertReloadAssert(ProcessInstance pi, Consumer<ProcessInstance> assertionsCode) {
+    protected void assertReloadAssert(FlowInstance pi, Consumer<FlowInstance> assertionsCode) {
         assertionsCode.accept(pi);
         assertionsCode.accept(reload(pi));
     }
 
     /** Recarrega a instância de processo a partir do BD. */
-    protected ProcessInstance reload(ProcessInstance pi) {
+    protected FlowInstance reload(FlowInstance pi) {
         Session session = sessionFactory.getCurrentSession();
         session.flush();
         session.clear();

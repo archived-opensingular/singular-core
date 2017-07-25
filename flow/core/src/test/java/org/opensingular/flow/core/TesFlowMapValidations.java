@@ -21,9 +21,8 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TesFlowMapValidations.ProcessWithFlowValidation.StepsDI;
-import org.opensingular.flow.core.builder.BuilderJava;
-import org.opensingular.flow.core.builder.BuilderPeople;
+import org.opensingular.flow.core.TesFlowMapValidations.FlowWithFlowValidation.StepsDI;
+import org.opensingular.flow.core.builder.BuilderHuman;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
@@ -55,13 +54,13 @@ public class TesFlowMapValidations {
     @Test
     public void basic() {
         condicions = new ValidationCondicions();
-        ProcessWithFlowValidation definition = new ProcessWithFlowValidation();
+        FlowWithFlowValidation definition = new FlowWithFlowValidation();
 
         assertException(() -> definition.getFlowMap().getTaskByAbbreviationOrException("wrong"), "not found");
         definition.getFlowMap().getTaskByAbbreviationOrException(StepsDI.StepPeople.getKey());
-        assertException(() -> definition.getFlowMap().getPeopleTaskByAbbreviationOrException("wrong"), "not found");
-        definition.getFlowMap().getPeopleTaskByAbbreviationOrException(StepsDI.StepPeople.getKey());
-        assertException(() -> definition.getFlowMap().getPeopleTaskByAbbreviationOrException(StepsDI.StepWait.getKey()), "found, but it is of type");
+        assertException(() -> definition.getFlowMap().getHumanTaskByAbbreviationOrException("wrong"), "not found");
+        definition.getFlowMap().getHumanTaskByAbbreviationOrException(StepsDI.StepPeople.getKey());
+        assertException(() -> definition.getFlowMap().getHumanTaskByAbbreviationOrException(StepsDI.StepWait.getKey()), "found, but it is of type");
         assertException(() -> definition.getFlowMap().getTask(StepsDI.NoAndded), "não encontrada");
 
         List<STask<?>> result = definition.getFlowMap().getTasksWithMetadata(TAG);
@@ -75,31 +74,31 @@ public class TesFlowMapValidations {
     public void dontSetStart() {
         condicions = new ValidationCondicions();
         condicions.configStart = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "There is no initial task set");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "There is no initial task set");
     }
 
     @Test
-    public void dontConfigPeopleTask() {
+    public void dontConfigHumanTask() {
         condicions = new ValidationCondicions();
         condicions.configPeopleAccessStrategy = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi definida a estrategia de verificação de acesso da tarefa");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estrategia de verificação de acesso da tarefa");
 
         condicions = new ValidationCondicions();
         condicions.configPeopleExecutionPage = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi definida a estratégia da página para execução da tarefa");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estratégia da página para execução da tarefa");
     }
 
     @Test
     public void taskWithoutPathToEnd() {
         condicions = new ValidationCondicions();
         condicions.createTaskWithoutPathToEnd = true;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "no way to reach the end");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "no way to reach the end");
     }
 
     @Test
     public void flowMetaData() {
         condicions = new ValidationCondicions();
-        ProcessWithFlowValidation p = new ProcessWithFlowValidation();
+        FlowWithFlowValidation p = new FlowWithFlowValidation();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
         assertTrue(p.getMetaDataValue(TAG));
         p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
@@ -110,19 +109,19 @@ public class TesFlowMapValidations {
     public void taskJavaWithoutCall() {
         condicions = new ValidationCondicions();
         condicions.javaTaskSetCode = false;
-        assertException(() -> new ProcessWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
+        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
     }
 
     @Test
-    public void taskJavaWithCallByBlock() {
+    public void taskJavaWithBatchCall() {
         condicions = new ValidationCondicions();
         condicions.javaTaskSetCode = false;
         condicions.javaTaskSetCodeByBlock = true;
-        new ProcessWithFlowValidation().getFlowMap();
+        new FlowWithFlowValidation().getFlowMap();
     }
 
     @DefinitionInfo("WithFlowValidation")
-    public static class ProcessWithFlowValidation extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithFlowValidation extends FlowDefinition<FlowInstance> {
 
         public enum StepsDI implements ITaskDefinition {
             StepWait("F1"), StepWait2("F1"), StepPeople("S1"), StepJava("J1"), End("E1"), NoAndded("X");
@@ -142,20 +141,20 @@ public class TesFlowMapValidations {
             }
         }
 
-        public ProcessWithFlowValidation() {
-            super(ProcessInstance.class);
+        public FlowWithFlowValidation() {
+            super(FlowInstance.class);
         }
 
         @Override
         protected FlowMap createFlowMap() {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
 
-            BuilderPeople<?> peopleTask = f.addPeopleTask(StepsDI.StepPeople);
+            BuilderHuman<?> humanTask = f.addHumanTask(StepsDI.StepPeople);
             if (condicions.configPeopleExecutionPage) {
-                peopleTask.withExecutionPage((t, u) -> null);
+                humanTask.withExecutionPage((t, u) -> null);
             }
             if (condicions.configPeopleAccessStrategy) {
-                peopleTask.addAccessStrategy(new DummyAccessStrategy());
+                humanTask.uiAccess(new DummyAccessStrategy());
             }
 
             f.addWaitTask(StepsDI.StepWait).setMetaDataValue(TAG, Boolean.TRUE);
@@ -164,22 +163,22 @@ public class TesFlowMapValidations {
             assertException(() -> f.addWaitTask(StepsDI.StepWait2), "Task with name");
 
             if (condicions.javaTaskSetCodeByBlock) {
-                f.addJavaTask(StepsDI.StepJava).callByBlock( (STaskJava.ImplTaskBlock) (task) -> null,
+                f.addJavaTask(StepsDI.StepJava).batchCall((TaskJavaBatchCall) (task) -> null,
                         ScheduleDataBuilder.buildMinutely(60));
             } else if (condicions.javaTaskSetCode) {
-                f.addJavaTask(StepsDI.StepJava).call( (BuilderJava.ImplTaskJavaReturnInstanciaTarefa) (task) -> null);
+                f.addJavaTask(StepsDI.StepJava).call( (task) -> {});
             } else {
                 f.addJavaTask(StepsDI.StepJava);
             }
 
-            f.addEnd(StepsDI.End);
-            assertException(() -> f.addEnd(StepsDI.End), "already defined");
+            f.addEndTask(StepsDI.End);
+            assertException(() -> f.addEndTask(StepsDI.End), "already defined");
 
             assertException(() -> f.build().getStart(), "Task inicial não definida no processo");
 
             if (condicions.configStart) {
-                f.setStart(StepsDI.StepWait);
-                assertException(() -> f.setStart(StepsDI.StepWait), "The start point is already setted");
+                f.setStartTask(StepsDI.StepWait);
+                assertException(() -> f.setStartTask(StepsDI.StepWait), "The start point is already setted");
             }
 
             f.from(StepsDI.StepWait).go(StepsDI.StepPeople).thenGo(StepsDI.StepJava);
@@ -207,25 +206,25 @@ public class TesFlowMapValidations {
     }
 
 
-    public static class DummyAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
+    public static class DummyAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
         @Override
-        public boolean canExecute(ProcessInstance instance, SUser user) {
+        public boolean canExecute(FlowInstance instance, SUser user) {
             return false;
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(ProcessInstance instancia) {
+        public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
             return null;
         }
 
         @Override
-        public List<String> getExecuteRoleNames(ProcessDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
             return null;
         }
     }

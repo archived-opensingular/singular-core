@@ -39,7 +39,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 @Entity
 @GenericGenerator(name = AbstractProcessDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
-public class ProcessDefinitionEntity extends AbstractProcessDefinitionEntity<ProcessGroupEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, ProcessVersionEntity> {
+public class ProcessDefinitionEntity extends AbstractProcessDefinitionEntity<ModuleEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, ProcessVersionEntity> {
 
     private static final long serialVersionUID = 1L;
     

@@ -18,7 +18,7 @@ package org.opensingular.flow.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.ProcessWithInitialization.Steps;
+import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.FlowWithInitialization.Steps;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
@@ -48,12 +48,12 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
     @Test
     public void corretCall() {
         startInitializerCalled = false;
-        StartCall<ProcessInstance> startCall = new ProcessWithInitializationAndParameters().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithInitializationAndParameters().prepareStartCall()
             .setValue(PARAM_FLAG, 1.5d)
             .setValue(PARAM_BIG, VALUE_BIG)
             .setValue(PARAM_DT, VALUE_DT);
 
-        ProcessInstance pi = startCall.createAndStart();
+        FlowInstance pi = startCall.createAndStart();
 
         assertTrue(startInitializerCalled);
 
@@ -67,7 +67,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
     @Test
     public void callWithoutRequeridParameter() {
-        StartCall<ProcessInstance> startCall = new ProcessWithInitializationAndParameters().prepareStartCall();
+        StartCall<FlowInstance> startCall = new FlowWithInitializationAndParameters().prepareStartCall();
 
         SingularTestUtil.assertException(() -> startCall.createAndStart(), SingularFlowInvalidParametersException.class,
                 "paramFlag");
@@ -75,7 +75,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
     @Test
     public void callParameterValidation() {
-        StartCall<ProcessInstance> startCall = new ProcessWithInitializationAndParameters().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithInitializationAndParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, 0.0)
                 .setValue(PARAM_BIG, VALUE_BIG.pow(2));
 
@@ -85,12 +85,12 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
     @Test
     public void notBindedParamatersShouldNotBeCopied() {
-        StartCall<ProcessInstance> startCall = new ProcessWithInitializationAndParameters().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithInitializationAndParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, 1.5)
                 .setValue(PARAM_BIG, VALUE_BIG)
                 .setValue(PARAM_NOCOPY, "No");
 
-        ProcessInstance pi = startCall.createAndStart();
+        FlowInstance pi = startCall.createAndStart();
 
         assertReloadAssert(pi, p -> assertions(p).isAtTask(Steps.Second).isVariableValue(PARAM_NOCOPY, null)
                 .isVariablesSize(3, 2));
@@ -98,14 +98,14 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
     @Test
     public void serialization() {
-        StartCall<ProcessInstance> startCall = new ProcessWithInitializationAndParameters().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowWithInitializationAndParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, 1.5d)
                 .setValue(PARAM_BIG, VALUE_BIG)
                 .setValue(PARAM_DT, VALUE_DT);
 
         startCall = SingularIOUtils.serializeAndDeserialize(startCall, true);
 
-        ProcessInstance pi = startCall.createAndStart();
+        FlowInstance pi = startCall.createAndStart();
 
         assertions(pi).isAtTask(Steps.Second)
                 .isVariableValue(PARAM_FLAG, 7.5d)
@@ -115,7 +115,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
     }
 
     @DefinitionInfo("WithParameters")
-    public static class ProcessWithInitializationAndParameters extends ProcessDefinition<ProcessInstance> {
+    public static class FlowWithInitializationAndParameters extends FlowDefinition<FlowInstance> {
 
         public enum StepsIP implements ITaskDefinition {
             First, Second, End;
@@ -126,8 +126,8 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             }
         }
 
-        public ProcessWithInitializationAndParameters() {
-            super(ProcessInstance.class);
+        public FlowWithInitializationAndParameters() {
+            super(FlowInstance.class);
             getVariables().addVariableDouble(PARAM_FLAG);
             getVariables().addVariableBigDecimal(PARAM_BIG);
             getVariables().addVariableStringMultipleLines(PARAM_NOCOPY, PARAM_NOCOPY);
@@ -139,9 +139,9 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
 
             f.addJavaTask(StepsIP.First).call(this::doFirst);
             f.addWaitTask(StepsIP.Second);
-            f.addEnd(StepsIP.End);
+            f.addEndTask(StepsIP.End);
 
-            f.setStart(StepsIP.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
+            f.setStartTask(StepsIP.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
             f.from(StepsIP.First).go(StepsIP.Second).thenGo(StepsIP.End);
 
             return f.build();
@@ -163,7 +163,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             });
         }
 
-        private void processInitializer(ProcessInstance instance, StartCall<ProcessInstance> startCall) {
+        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             startInitializerCalled = true;
             Double v = startCall.getValueDouble(PARAM_FLAG);
             assertEquals((Double) 1.5d, v);
@@ -177,11 +177,11 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             instance.start();
         }
 
-        public void doFirst(TaskInstance task) {
-            Double v = task.getProcessInstance().getVariables().getValueDouble(PARAM_FLAG, 0.0);
+        public void doFirst(ExecutionContext<FlowInstance> processInstanceExecutionContext) {
+            Double v = processInstanceExecutionContext.getFlowInstance().getVariables().getValueDouble(PARAM_FLAG, 0.0);
             Assert.assertEquals((Double) 3.0, v);
-            Assert.assertEquals(VALUE_BIG, task.getProcessInstance().getVariables().getValueBigDecimal(PARAM_BIG));
-            task.getProcessInstance().getVariables().setValue(PARAM_FLAG, v * 2.5);
+            Assert.assertEquals(VALUE_BIG, processInstanceExecutionContext.getFlowInstance().getVariables().getValueBigDecimal(PARAM_BIG));
+            processInstanceExecutionContext.getFlowInstance().getVariables().setValue(PARAM_FLAG, v * 2.5);
         }
     }
 }

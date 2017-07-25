@@ -16,8 +16,6 @@
 
 package org.opensingular.form;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -72,11 +70,6 @@ public class SPackage extends SScopeBase {
     @Nullable
     public SScope getParentScope() {
         return null;
-    }
-
-    public <T extends SType<?>> T createType(String simpleNameNewType, Class<T> baseType) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
     }
 
     @Override

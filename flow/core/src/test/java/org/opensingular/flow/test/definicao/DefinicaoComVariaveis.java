@@ -20,8 +20,8 @@ import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.builder.FlowBuilder;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.VarDefinitionImpl;
@@ -31,13 +31,13 @@ import org.opensingular.flow.core.variable.type.VarTypeString;
 import java.math.BigDecimal;
 
 @DefinitionInfo("DefVar")
-public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
+public class DefinicaoComVariaveis extends FlowDefinition<FlowInstance> {
 
     public static final BigDecimal BIGDECIMAL_USADO_NO_TESTE = new BigDecimal("1111111123242343240.00001E-3");
     public static final String STRING_USADA_NO_TESTE = "Pessoa X";
 
     public DefinicaoComVariaveis() {
-        super(ProcessInstance.class);
+        super(FlowInstance.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }
@@ -56,9 +56,9 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         f.addJavaTask(APROVAR).call(this::print);
 
         ITaskDefinition END = () -> "Aprovado";
-        f.addEnd(END);
+        f.addEndTask(END);
 
-        f.setStart(SET_VARIAVEL);
+        f.setStartTask(SET_VARIAVEL);
         f.from(SET_VARIAVEL).go(APROVAR);
         f.from(APROVAR).go(PRINT);
         f.from(PRINT).go(END);
@@ -66,19 +66,21 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         return f.build();
     }
 
-    public void print(ProcessInstance instancia, ExecutionContext ctxExecucao) {
+    public Object print(ExecutionContext ctxExecucao) {
         System.out.println("legal");
+        return null;
     }
 
-    public void setVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-        instancia.setVariable("nome", STRING_USADA_NO_TESTE);
-        instancia.setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
-
-        instancia.saveEntity();
+    public Object setVar(ExecutionContext ctxExecucao) {
+        ctxExecucao.getFlowInstance().setVariable("nome", STRING_USADA_NO_TESTE);
+        ctxExecucao.getFlowInstance().setVariable("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
+        ctxExecucao.getFlowInstance().saveEntity();
+        return null;
     }
 
-    public void printVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
-        System.out.println("########### nome          #####>" + instancia.getVariableValue("nome"));
-        System.out.println("########### qualquerCoisa #####>" + instancia.getVariableValue("qualquerCoisa"));
+    public Object printVar(ExecutionContext ctxExecucao) {
+        System.out.println("########### nome          #####>" + ctxExecucao.getFlowInstance().getVariableValue("nome"));
+        System.out.println("########### qualquerCoisa #####>" + ctxExecucao.getFlowInstance().getVariableValue("qualquerCoisa"));
+        return null;
     }
 }

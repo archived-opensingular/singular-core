@@ -18,28 +18,28 @@ package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessDefinition;
-import org.opensingular.flow.core.SProcessRole;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.SBusinessRole;
 import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STaskEnd;
 import org.opensingular.flow.core.STaskJava;
-import org.opensingular.flow.core.STaskPeople;
+import org.opensingular.flow.core.STaskHuman;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
 
 import java.util.Objects;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderPeople<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderProcessRole<?>, ITaskDefinition> {
+        FlowBuilder<FlowDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderHuman<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderBusinessRole<?>, ITaskDefinition> {
 
-    public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
-        super(processDefinition);
+    public FlowBuilderImpl(FlowDefinition<?> flowDefinition) {
+        super(flowDefinition);
     }
 
     @Override
-    protected FlowMap newFlowMap(ProcessDefinition<?> processDefinition) {
-        return new FlowMap(processDefinition);
+    protected FlowMap newFlowMap(FlowDefinition<?> flowDefinition) {
+        return new FlowMap(flowDefinition);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderPeople<?> newPeopleTask(STaskPeople task) {
-        return new ImplBuilderPeople<>(this, task);
+    protected BuilderHuman<?> newHumanTask(STaskHuman task) {
+        return new ImplBuilderHuman<>(this, task);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderStart<?> newStart(SStart start) {
+    protected BuilderStart<?> newStartTask(SStart start) {
         return new ImplBuilderStart<>(start);
     }
 
@@ -78,8 +78,8 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderProcessRole<?> newProcessRole(SProcessRole sProcessRole) {
-        return new ImplBuilderProcessRole<>(sProcessRole);
+    protected BuilderBusinessRole<?> newProcessRole(SBusinessRole sBusinessRole) {
+        return new ImplBuilderBusinessRole<>(sBusinessRole);
     }
 
     public static class ImplBuilderTask<SELF extends ImplBuilderTask<SELF, TASK>, TASK extends STask<?>> implements BuilderTaskSelf<SELF, TASK> {
@@ -119,9 +119,9 @@ public class FlowBuilderImpl extends
         }
     }
 
-    protected static class ImplBuilderPeople<SELF extends ImplBuilderPeople<SELF>> extends ImplBuilderTask<SELF, STaskPeople>
-            implements BuilderPeople<SELF> {
-        public ImplBuilderPeople(FlowBuilderImpl flowBuilder, STaskPeople task) {
+    protected static class ImplBuilderHuman<SELF extends ImplBuilderHuman<SELF>> extends ImplBuilderTask<SELF, STaskHuman>
+            implements BuilderHuman<SELF> {
+        public ImplBuilderHuman(FlowBuilderImpl flowBuilder, STaskHuman task) {
             super(flowBuilder, task);
         }
     }
@@ -177,18 +177,18 @@ public class FlowBuilderImpl extends
         }
     }
 
-    public static class ImplBuilderProcessRole<SELF extends ImplBuilderProcessRole<SELF>> implements
-            BuilderProcessRole<SELF> {
+    public static class ImplBuilderBusinessRole<SELF extends ImplBuilderBusinessRole<SELF>> implements
+            BuilderBusinessRole<SELF> {
 
-        private final SProcessRole processRole;
+        private final SBusinessRole processRole;
 
-        public ImplBuilderProcessRole(SProcessRole processRole) {
+        public ImplBuilderBusinessRole(SBusinessRole processRole) {
             Objects.requireNonNull(processRole);
             this.processRole = processRole;
         }
 
         @Override
-        public SProcessRole getProcessRole() {
+        public SBusinessRole getBusinessRole() {
             return processRole;
         }
     }

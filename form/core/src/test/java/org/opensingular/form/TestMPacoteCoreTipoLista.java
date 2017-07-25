@@ -17,8 +17,11 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class TestMPacoteCoreTipoLista extends TestCaseForm {
@@ -331,7 +334,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         public static final class TestTipoListaComCargaInterna extends STypeList<STypeString, SIString> {
             @Override
             protected void onLoadType(TypeBuilder tb) {
-                withRequired(true);
+                asAtr().required(true);
                 asAtr().label("xxx");
             }
         }
@@ -576,5 +579,75 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     @Ignore
     public void testCircularReferenceWithIntermediaryClassAndWithOutTypeDefinedByClass() {
 
+    }
+
+    @Test
+    public void testListInstantionWithoutElementTypeDefinied() {
+        SDictionary dictionary = createTestDictionary();
+
+        SIList<SIString> siList = dictionary.newInstance(STypeList.class);
+
+        SingularTestUtil.assertException(() -> siList.addNew(), SingularFormException.class,
+                "doesn't have the type of its elements");
+        assertInstance(siList).isList(0).assertCorrectHierachyStructure();
+
+        SIString siString = dictionary.newInstance(STypeString.class);
+        siString.setValue("value");
+        SingularTestUtil.assertException(() -> siList.addElement(siString), SingularFormException.class,
+                "doesn't have the type of its elements");
+        assertInstance(siList).isList(0).assertCorrectHierachyStructure();
+    }
+
+    @Test
+    public void testMixingDifferenteElementsFromDiferentDocuments1() {
+        SIComposite instance = createTestDictionary().getType(MixedType.class).newInstance();
+
+        assertInstance(instance).assertCorrectTypeReferences();
+        assertInstance(instance).assertCorrectHierachyStructure();
+    }
+
+    @Test
+    public void testMixingDifferenteElementsFromDiferentDocuments2() {
+        SIComposite instance = createTestDictionary().getType(MixedType.class).newInstance();
+        SIList<SIComposite> list = (SIList<SIComposite>) instance.getFieldList("itens");
+        assertInstance(instance).assertCorrectHierachyStructure();
+
+        SType<?> fromOtherDictionary = SDictionary.create().getType(MixedType.class).newInstance().getFieldList("itens")
+                .getElementsType();
+        assertNotSame(instance.getDictionary(), fromOtherDictionary.getDictionary());
+
+        SIComposite newElement = (SIComposite) fromOtherDictionary.newInstance();
+        newElement.getField("name").setValue("item3");
+        list.addElement(newElement);
+        assertInstance(instance).assertCorrectHierachyStructure();
+    }
+
+    @SInfoPackage
+    public static class PackageMixingDocuments extends SPackage {
+
+    }
+
+    @SInfoType(spackage = PackageMixingDocuments.class)
+    public static class MixedType extends STypeComposite<SIComposite> {
+
+        public STypeList<STypeComposite<SIComposite>, SIComposite> itens;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+
+            itens = addFieldListOfComposite("itens", "item");
+            STypeComposite<SIComposite> item = itens.getElementsType();
+            item.addFieldString("name");
+            item.addFieldInteger("qtd");
+
+            itens.withInitListener((list) -> {
+                List<String> periodosStr = Arrays.asList("item1", "item2");
+                periodosStr.forEach(p -> {
+                    SIComposite e = itens.getElementsType().newInstance();
+                    e.getField("name").setValue(p);
+                    list.addElement(e);
+                });
+            });
+        }
     }
 }

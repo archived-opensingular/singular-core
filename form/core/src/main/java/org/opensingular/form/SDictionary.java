@@ -199,7 +199,7 @@ public class SDictionary {
             }
         }
         newType.setScope(scope);
-        newType.resolvSuperType(this);
+        newType.resolveSuperType(this);
         newType.setTypeId(++idCount);
         types.verifyMustNotBePresent(newType, this);
         ((SScopeBase) scope).register(newType);

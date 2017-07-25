@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 public enum TaskType implements IEntityTaskType {
 
     JAVA("J", "Java", "design/imagens/execute.png"),
-    PEOPLE("P", "Humana", "design/imagens/pessoa.png"),
+    HUMAN("P", "Humana", "design/imagens/pessoa.png"),
     WAIT("E", "Espera", "design/imagens/wait.png"),
     END("F", "Fim", "design/imagens/jbpm_end.png");
 
@@ -59,8 +59,8 @@ public enum TaskType implements IEntityTaskType {
     }
 
     @Override
-    public final boolean isPeople() {
-        return this == TaskType.PEOPLE;
+    public final boolean isHuman() {
+        return this == TaskType.HUMAN;
     }
 
     @Override

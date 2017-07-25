@@ -46,7 +46,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     private STransition defaultTransition;
 
-    private TaskAccessStrategy<ProcessInstance> accessStrategy;
+    private TaskAccessStrategy<FlowInstance> accessStrategy;
 
     private transient int order;
 
@@ -86,7 +86,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public String getCompleteName() {
-        return getFlowMap().getProcessDefinition().getKey() + '.' + name;
+        return getFlowMap().getFlowDefinition().getKey() + '.' + name;
     }
 
     public final boolean isEnd() {
@@ -98,7 +98,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public final boolean isPeople() {
-        return getTaskType() == TaskType.PEOPLE;
+        return getTaskType() == TaskType.HUMAN;
     }
 
     public final boolean isWait() {
@@ -273,22 +273,16 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     @Nonnull
     public K addAccessStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
         inject(accessStrategy);
-        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, (TaskAccessStrategy<ProcessInstance>) accessStrategy);
+        this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, (TaskAccessStrategy<FlowInstance>) accessStrategy);
         return (K) this;
     }
 
-    @Nonnull
-    public K addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
-        inject(accessStrategy);
-        return addAccessStrategy(accessStrategy.getOnlyVisualize());
-    }
-
-    public final <T extends ProcessInstance> TaskAccessStrategy<T> getAccessStrategy() {
+    public final <T extends FlowInstance> TaskAccessStrategy<T> getAccessStrategy() {
         return (TaskAccessStrategy<T>) accessStrategy;
     }
 
     final String createErrorMsg(String message) {
-        return "Processo '" + getFlowMap().getProcessDefinition().getName() + "' : Task '" +name + "' -> " + message;
+        return "Processo '" + getFlowMap().getFlowDefinition().getName() + "' : Task '" +name + "' -> " + message;
     }
 
     void verifyConsistency() {
@@ -320,6 +314,6 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     /** Faz a injeção de beans no objeto informado, se o mesmo necessitar. */
     @Nonnull
     final <V> V inject(@Nonnull V target) {
-        return getFlowMap().getProcessDefinition().inject(target);
+        return getFlowMap().getFlowDefinition().inject(target);
     }
 }

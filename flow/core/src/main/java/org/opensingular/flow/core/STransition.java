@@ -40,7 +40,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final String         abbreviation;
 
     private UITransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<SProcessRole>                       rolesToDefineUser;
+    private List<SBusinessRole> rolesToDefineUser;
 
     private MetaData metaData;
 
@@ -76,8 +76,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            for (SProcessRole processRole : rolesToDefineUser) {
-                if (!processRole.isAutomaticUserAllocation()) {
+            for (SBusinessRole processRole : rolesToDefineUser) {
+                if (!processRole.isAutomaticBusinessRoleAllocation()) {
                     return true;
                 }
             }
@@ -87,13 +87,13 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasAutomaticRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            return rolesToDefineUser.stream().anyMatch(SProcessRole::isAutomaticUserAllocation);
+            return rolesToDefineUser.stream().anyMatch(SBusinessRole::isAutomaticBusinessRoleAllocation);
         }
         return false;
     }
 
-    public STransition defineUserRoleInTransition(SProcessRole papel) {
-        if (origin.isPeople() || papel.isAutomaticUserAllocation()) {
+    public STransition defineBusinessRoleInTransition(SBusinessRole papel) {
+        if (origin.isPeople() || papel.isAutomaticBusinessRoleAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
             }
@@ -105,7 +105,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         }
     }
 
-    public List<SProcessRole> getRolesToDefine() {
+    public List<SBusinessRole> getRolesToDefine() {
         if (rolesToDefineUser == null) {
             return Collections.emptyList();
         }
@@ -170,7 +170,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public <K extends ProcessInstance> STransition setParametersInitializer(
+    public <K extends FlowInstance> STransition setParametersInitializer(
             @Nonnull ITransitionParametersInitializerProcess<K> initializerByProcess) {
         inject(initializerByProcess);
         return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializerByProcess.init(params, (K) ctx.getProcessInstance()));
@@ -187,7 +187,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public <K extends ProcessInstance> STransition setParametersValidator(
+    public <K extends FlowInstance> STransition setParametersValidator(
             @Nonnull ITransitionParametersValidatorProcess<K> validatorByProcess) {
         inject(validatorByProcess);
         return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validatorByProcess
@@ -253,7 +253,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersInitializerProcess<K extends ProcessInstance> extends Serializable {
+    public interface ITransitionParametersInitializerProcess<K extends FlowInstance> extends Serializable {
         void init(VarInstanceMap<?,?> params, K processInstance);
     }
 
@@ -263,7 +263,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersValidatorProcess<K extends ProcessInstance> extends Serializable {
+    public interface ITransitionParametersValidatorProcess<K extends FlowInstance> extends Serializable {
         void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, K processInstance);
     }
 

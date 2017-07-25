@@ -12,7 +12,7 @@ import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
 import org.opensingular.flow.core.ProcessDefinitionCache;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.opensingular.flow.core.TestProcessBeanInjection;
 import org.opensingular.flow.test.TestDAO;
@@ -83,7 +83,7 @@ public abstract class TestFlowSupport {
         }
     }
 
-    protected static AssertionsProcessInstance assertions(ProcessInstance target) {
+    protected static AssertionsProcessInstance assertions(FlowInstance target) {
         return new AssertionsProcessInstance(target);
     }
 

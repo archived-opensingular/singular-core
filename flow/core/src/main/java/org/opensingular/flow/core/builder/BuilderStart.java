@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.SStart;
 
@@ -51,7 +51,7 @@ public interface BuilderStart<SELF extends BuilderStart<SELF>> extends BuilderPa
      *
      * @see SStart#setStartInitializer(SStart.IStartInitializer)
      */
-    default <I extends ProcessInstance> SELF setInitializer(SStart.IStartInitializer<I> startInitializer) {
+    default <I extends FlowInstance> SELF setInitializer(SStart.IStartInitializer<I> startInitializer) {
         getStart().setStartInitializer(startInitializer);
         return self();
     }
@@ -62,7 +62,7 @@ public interface BuilderStart<SELF extends BuilderStart<SELF>> extends BuilderPa
      *
      * @see SStart#setStartValidator(SStart.IStartValidator)
      */
-    default <I extends ProcessInstance> SELF setValidator(SStart.IStartValidator<I> startValidator) {
+    default <I extends FlowInstance> SELF setValidator(SStart.IStartValidator<I> startValidator) {
         getStart().setStartValidator(startValidator);
         return self();
     }

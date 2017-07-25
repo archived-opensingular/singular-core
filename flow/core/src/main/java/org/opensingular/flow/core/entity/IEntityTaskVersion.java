@@ -57,7 +57,7 @@ public interface IEntityTaskVersion extends IEntityByCod<Integer> {
     }
 
     default boolean isPeople() {
-        return getType().isPeople();
+        return getType().isHuman();
     }
 
     default boolean isWait() {

@@ -5,7 +5,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
@@ -30,7 +30,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestFlowSupport {
 
     @Test
     public void teste1UsoDeVariaveis() {
-        ProcessInstance pi = new DefinicaoComVariaveis().prepareStartCall().createAndStart();
+        FlowInstance pi = new DefinicaoComVariaveis().prepareStartCall().createAndStart();
         String nome = pi.getVariableValue("nome");
         BigDecimal qualquerCoisa = pi.getVariableValue("qualquerCoisa");
         assertEquals(nome, DefinicaoComVariaveis.STRING_USADA_NO_TESTE);

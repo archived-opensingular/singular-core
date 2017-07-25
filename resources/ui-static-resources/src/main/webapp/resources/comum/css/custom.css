@@ -50,3 +50,11 @@
 .cke_panel {
 	z-index: 20001 !important;
 }
+
+.btn:focus {
+    color: #fffffc;
+}
+
+.btn-default:focus {
+    color: #333;
+}

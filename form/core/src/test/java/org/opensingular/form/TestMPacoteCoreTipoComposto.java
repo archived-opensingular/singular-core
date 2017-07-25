@@ -534,7 +534,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
             @Override
             protected void onLoadType(TypeBuilder tb) {
-                withRequired(true);
+                asAtr().required(true);
                 asAtr().label("xxx");
                 nome = addFieldString("nome");
             }
@@ -549,7 +549,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
             @Override
             protected void onLoadType(TypeBuilder tb) {
-                withRequired(true);
+                asAtr().required(true);
                 descricao = addFieldString("descricao");
                 bloco1 = addField("bloco1", TestTipoCompositeComCargaInterna.class);
                 bloco2 = addField("bloco2", TestTipoCompositeComCargaInterna.class);

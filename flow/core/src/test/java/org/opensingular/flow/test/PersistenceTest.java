@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.test.definicao.Peticao;
@@ -24,7 +24,7 @@ public class PersistenceTest extends TestFlowSupport {
 
     @Test
     public void testJoinTableCurrentTask() {
-        ProcessInstance pi = new Peticao().prepareStartCall().createAndStart();
+        FlowInstance pi = new Peticao().prepareStartCall().createAndStart();
         Integer cod = pi.getEntity().getCod();
         sessionFactory.getCurrentSession().flush();
         //Clear da sessão para evidenciar a consulta como única.

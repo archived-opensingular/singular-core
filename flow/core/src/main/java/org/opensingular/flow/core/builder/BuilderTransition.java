@@ -17,7 +17,7 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.ProcessInstance;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
@@ -59,17 +59,17 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
 
-    public default SELF defineUserRoleInTransition(BuilderProcessRole<?> processRole) {
-        getTransition().defineUserRoleInTransition(processRole.getProcessRole());
+    public default SELF defineBusinessRoleInTransition(BuilderBusinessRole<?> processRole) {
+        getTransition().defineBusinessRoleInTransition(processRole.getBusinessRole());
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
+    public default <K extends FlowInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
         getTransition().setParametersInitializer(parametrosInicializer);
         return self();
     }
 
-    public default <K extends ProcessInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
+    public default <K extends FlowInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
         getTransition().setParametersValidator(parametrosValidator);
         return self();
     }

@@ -25,7 +25,7 @@ public abstract class STaskUserExecutable<K extends STaskUserExecutable<?>> exte
     private ITaskPageStrategy executionPage;
     private ITaskPageStrategy backPage;
     private ITaskPageStrategy pageAfterTask;
-    private IExecutionDateStrategy<? extends ProcessInstance> targetDateExecutionStrategy;
+    private IExecutionDateStrategy<? extends FlowInstance> targetDateExecutionStrategy;
 
     public STaskUserExecutable(FlowMap flowMap, String name, String abbreviation) {
         super(flowMap, name, abbreviation);
@@ -38,24 +38,18 @@ public abstract class STaskUserExecutable<K extends STaskUserExecutable<?>> exte
     }
 
     @Override
-    @Nonnull
-    public K addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
-        return (K) super.addVisualizeStrategy(accessStrategy);
-    }
-
-    @Override
     public boolean isExecutable() {
         return true;
     }
 
     @Nonnull
-    public <T extends ProcessInstance> K withTargetDate(@Nonnull IExecutionDateStrategy<T> targetDateExecutionStrategy) {
+    public <T extends FlowInstance> K withTargetDate(@Nonnull IExecutionDateStrategy<T> targetDateExecutionStrategy) {
         this.targetDateExecutionStrategy = inject(targetDateExecutionStrategy);
         return (K) this;
     }
 
-    public final IExecutionDateStrategy<ProcessInstance> getTargetDateExecutionStrategy() {
-        return (IExecutionDateStrategy<ProcessInstance>) targetDateExecutionStrategy;
+    public final IExecutionDateStrategy<FlowInstance> getTargetDateExecutionStrategy() {
+        return (IExecutionDateStrategy<FlowInstance>) targetDateExecutionStrategy;
     }
 
     public ITaskPageStrategy getBackPage() {

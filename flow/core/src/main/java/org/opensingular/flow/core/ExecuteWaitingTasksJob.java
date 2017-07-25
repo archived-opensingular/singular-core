@@ -49,19 +49,20 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         final StringBuilder log = new StringBuilder();
         final Date today = new Date();
 
-        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+        for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+            definicaoProcessoMBPM.getFlowMap().getHumanTasks().stream()
+                    .filter(task -> task.getTargetDateExecutionStrategy() != null)
+                    .forEach(fillTargetEndDate(mbpmBean, log, definicaoProcessoMBPM));
+        }
+
+        for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (final STaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
                 executeTaskIfNecessary(mbpmBean, log, today, definicaoProcessoMBPM, task);
             }
         }
 
-        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
-            definicaoProcessoMBPM.getFlowMap().getPeopleTasks().stream()
-                    .filter(task -> task.getTargetDateExecutionStrategy() != null)
-                    .forEach(fillTargetEndDate(mbpmBean, log, definicaoProcessoMBPM));
-        }
 
-        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+        for (FlowDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (STask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
                 List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
                 if (!acoesAutomaticas.isEmpty()) {
@@ -75,11 +76,11 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
     }
 
     private void executeTaskIfNecessary(SingularFlowConfigurationBean mbpmBean, StringBuilder log, Date hoje,
-                                        ProcessDefinition<?> definicaoProcessoMBPM, STaskWait task) {
+                                        FlowDefinition<?> definicaoProcessoMBPM, STaskWait task) {
         if (task.hasExecutionDateStrategy()) {
-            for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
+            for (FlowInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                 TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
-                Date         dataExecucao    = task.getExecutionDate(instancia, instanciaTarefa);
+                Date         dataExecucao    = instanciaTarefa.getTargetEndDate();
                 if (!dataExecucao.equals(instanciaTarefa.getTargetEndDate())) {
                     instanciaTarefa.setTargetEndDate(dataExecucao);
                 }
@@ -93,10 +94,10 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         }
     }
 
-    private Consumer<STaskPeople> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM) {
+    private Consumer<STaskHuman> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, FlowDefinition<?> definicaoProcessoMBPM) {
         return task -> {
             // Preenche Data Alvo para os casos que estiverem null
-            for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
+            for (FlowInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                 TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
                 if (instanciaTarefa.getTargetEndDate() == null) {
                     Date alvo = task.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
@@ -111,13 +112,13 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         };
     }
 
-    private void executeAutomaticActions(SingularFlowConfigurationBean mbpmBean, StringBuilder log, ProcessDefinition<?> definicaoProcessoMBPM, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
-        for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
+    private void executeAutomaticActions(SingularFlowConfigurationBean mbpmBean, StringBuilder log, FlowDefinition<?> definicaoProcessoMBPM, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
+        for (FlowInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
             TaskInstance instanciaTarefa = instancia.getCurrentTaskOrException();
             for (IConditionalTaskAction acao : acoesAutomaticas) {
                 if (acao.getPredicate().test(instanciaTarefa)) {
                     log.append(instancia.getFullId()).append(": Condicao Atingida '")
-                            .append(acao.getPredicate().getDescription(instanciaTarefa)).append("' execudando '")
+                            .append(acao.getPredicate().getDescription(instanciaTarefa)).append("' executando '")
                             .append(acao.getCompleteDescription()).append("'\n");
                     acao.execute(instanciaTarefa);
                     mbpmBean.getPersistenceService().commitTransaction();

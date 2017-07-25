@@ -26,8 +26,4 @@ public interface ITaskDefinition {
     default String getKey() {
         return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
     }
-
-    default boolean isNameEquals(String name) {
-        return getName().equals(name);
-    }
 }
