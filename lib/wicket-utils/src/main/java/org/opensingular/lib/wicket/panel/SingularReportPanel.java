@@ -1,14 +1,17 @@
 package org.opensingular.lib.wicket.panel;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputExcel;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.views.ViewOutputHtmlWebComponent;
 
 import java.io.File;
@@ -17,15 +20,32 @@ import java.io.IOException;
 
 public class SingularReportPanel extends Panel {
     private final ISupplier<ViewGenerator> viewGeneratorSupplier;
+    private final BSModalBorder filterModalBorder;
 
     private IModel<String> titleModel = new Model<>();
 
-    public SingularReportPanel(String id, ISupplier<ViewGenerator> viewGeneratorSupplier) {
+    public SingularReportPanel(String id, ISupplier<ViewGenerator> viewGeneratorSupplier, BSModalBorder filterModalBorder) {
         super(id);
         this.viewGeneratorSupplier = viewGeneratorSupplier;
+        this.filterModalBorder = filterModalBorder;
         addTitle();
         addTable();
         addExportExcelLink();
+        addSearch();
+    }
+
+    private void addSearch() {
+        AjaxButton ajaxButton = new AjaxButton("search") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                super.onSubmit(target, form);
+                if (filterModalBorder != null) {
+                    filterModalBorder.show(target);
+                }
+            }
+        };
+        add(ajaxButton);
+        ajaxButton.setVisible(filterModalBorder != null);
     }
 
     private void addTable() {
