@@ -53,7 +53,7 @@ public class WicketViewsUtilTest {
 
         public WrongSerializationPage() {
             Form form = new Form("form");
-            WicketViewsUtil.add(form, "content", this::createContent);
+            form.add(new ViewOutputHtmlWebComponent("content", this::createContent));
             add(form);
         }
 
