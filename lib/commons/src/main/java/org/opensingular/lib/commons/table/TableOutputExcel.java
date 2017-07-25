@@ -92,9 +92,21 @@ public class TableOutputExcel extends TableOutput implements Loggable {
 
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
-        incrementColumn();
-        XSSFCell cell = row.createCell(columnIndex);
-        cell.setCellValue(ctx.generateFormatDisplayString());
+        XSSFCell cell = incrementColumnAndCreateNewCell();
+        if (ctx.getValue() == null) {
+            return;
+        }
+        switch (ctx.getCell().getColumn().getTipo()) {
+            case tpInteger:
+            case tpNumber:
+            case tpMoney:
+                cell.setCellValue(((Number) ctx.getValue()).doubleValue());
+                break;
+            default:
+                cell.setCellValue(ctx.generateFormatDisplayString());
+                break;
+
+        }
     }
 
     @Override
@@ -144,14 +156,18 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     @Override
     public void generateTitleCellSuper(@Nonnull OutputTableContext ctx, @Nonnull Column column, int colSpan, boolean columnWithSeparator) {
         if (column.getTitle() != null) {
-            incrementColumn();
-            XSSFCell cell = row.createCell(columnIndex);
+            XSSFCell cell = incrementColumnAndCreateNewCell();
             cell.setCellValue(column.getSuperTitle());
             if (colSpan > 1) {
                 int spanOffset = colSpan - 1;
                 sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex += spanOffset));
             }
         }
+    }
+
+    private XSSFCell incrementColumnAndCreateNewCell() {
+        incrementColumn();
+        return row.createCell(columnIndex);
     }
 
     @Override
@@ -173,12 +189,16 @@ public class TableOutputExcel extends TableOutput implements Loggable {
 
     @Override
     public void generateTotalLabel(@Nonnull OutputTableContext ctx, @Nonnull Column column, @Nonnull String label, @Nonnull DecoratorCell tempDecorator, int level) {
-
+        XSSFCell cell = incrementColumnAndCreateNewCell();
+        cell.setCellValue("Total");
     }
 
     @Override
     public void generateTotalCell(@Nonnull OutputCellContext ctx, @Nullable Number value) {
-
+        XSSFCell cell = incrementColumnAndCreateNewCell();
+        if (value != null) {
+            cell.setCellValue(value.doubleValue());
+        }
     }
 
     public XSSFWorkbook getWorkbook() {
