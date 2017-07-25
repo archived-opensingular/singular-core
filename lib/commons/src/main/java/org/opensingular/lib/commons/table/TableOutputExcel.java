@@ -184,7 +184,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
 
     @Override
     public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column, boolean columnWithSeparator) {
-
+        incrementColumn();
     }
 
     @Override
