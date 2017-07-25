@@ -27,29 +27,29 @@ import java.util.stream.Collectors;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
-    public static RoleAccessStrategy of(SProcessRole processRole) {
+    public static RoleAccessStrategy of(SBusinessRole processRole) {
         return new RoleAccessStrategy(processRole);
     }
 
-    public static RoleAccessStrategy of(SProcessRole executionRole, SProcessRole visualizeRole) {
+    public static RoleAccessStrategy of(SBusinessRole executionRole, SBusinessRole visualizeRole) {
         return new RoleAccessStrategy(executionRole, visualizeRole);
     }
 
-    private final SProcessRole executionRole;
+    private final SBusinessRole executionRole;
 
-    private final SProcessRole visualizeRole;
+    private final SBusinessRole visualizeRole;
 
-    protected RoleAccessStrategy(SProcessRole mPapelExecucao) {
+    protected RoleAccessStrategy(SBusinessRole mPapelExecucao) {
         this(mPapelExecucao, null);
     }
 
-    protected RoleAccessStrategy(SProcessRole mPapelExecucao, SProcessRole mPapelVisualizacao) {
+    protected RoleAccessStrategy(SBusinessRole mPapelExecucao, SBusinessRole mPapelVisualizacao) {
         super();
         this.executionRole = mPapelExecucao;
         this.visualizeRole = mPapelVisualizacao;
     }
 
-    public SProcessRole getPapelExecucao() {
+    public SBusinessRole getPapelExecucao() {
         return executionRole;
     }
 
@@ -75,7 +75,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
         return canExecute(instance, user);
     }
 
-    private boolean isSameRole(SProcessRole processRole, IEntityRoleInstance entityRole) {
+    private boolean isSameRole(SBusinessRole processRole, IEntityRoleInstance entityRole) {
         return entityRole.getRole().getAbbreviation().equalsIgnoreCase(processRole.getAbbreviation());
     }
 

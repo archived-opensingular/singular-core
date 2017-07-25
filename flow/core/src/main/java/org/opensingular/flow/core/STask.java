@@ -98,7 +98,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public final boolean isPeople() {
-        return getTaskType() == TaskType.PEOPLE;
+        return getTaskType() == TaskType.HUMAN;
     }
 
     public final boolean isWait() {
@@ -275,12 +275,6 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         inject(accessStrategy);
         this.accessStrategy = TaskAccessStrategy.or(this.accessStrategy, (TaskAccessStrategy<FlowInstance>) accessStrategy);
         return (K) this;
-    }
-
-    @Nonnull
-    public K addVisualizeStrategy(@Nonnull TaskAccessStrategy<?> accessStrategy) {
-        inject(accessStrategy);
-        return addAccessStrategy(accessStrategy.getOnlyVisualize());
     }
 
     public final <T extends FlowInstance> TaskAccessStrategy<T> getAccessStrategy() {

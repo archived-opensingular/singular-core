@@ -239,7 +239,7 @@ public class PeticaoTest extends TestFlowSupport {
         assertEquals("Papel definido", lastHistories.get(1).getType().getDescription());
         assertEquals(user2, lastHistories.get(2).getAllocatedUser());
         assertEquals("Alocação Automática", lastHistories.get(2).getType().getDescription());
-        assertNotNull(String.format("Descrição: %s não finalizada", lastHistories.get(2).getType().getDescription()), lastHistories.get(2).getEndDateAllocation());
+        assertNotNull(String.format("Descrição: %s não finalizada", lastHistories.get(2).getType().getDescription()), lastHistories.get(2).getAllocationEndDate());
         assertEquals("Papel definido", lastHistories.get(3).getType().getDescription());
     }
 
@@ -258,15 +258,15 @@ public class PeticaoTest extends TestFlowSupport {
         assertNull(String.format("Descrição: %s Causa: %s finalizada incorretamente",
                 lastHistories.get(0).getType().getDescription(),
                 lastHistories.get(0).getDescription()),
-                lastHistories.get(0).getEndDateAllocation());
+                lastHistories.get(0).getAllocationEndDate());
         assertNotNull(String.format("Descrição: %s Causa: %s não finalizada",
                 lastHistories.get(1).getType().getDescription(),
                 lastHistories.get(1).getDescription()),
-                lastHistories.get(1).getEndDateAllocation());
+                lastHistories.get(1).getAllocationEndDate());
         assertNotNull(String.format("Descrição: %s Causa: %s não finalizada",
                 lastHistories.get(2).getType().getDescription(),
                 lastHistories.get(2).getDescription()),
-                lastHistories.get(2).getEndDateAllocation());
+                lastHistories.get(2).getAllocationEndDate());
 
     }
 

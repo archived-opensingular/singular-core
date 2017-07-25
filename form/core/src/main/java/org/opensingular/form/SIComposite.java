@@ -19,15 +19,19 @@ package org.opensingular.form;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.util.transformer.Value;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class SIComposite extends SInstance implements ICompositeInstance {
+public class SIComposite extends SInstance implements ICompositeInstance, Iterable<SInstance> {
 
     private FieldMapOfRecordInstance fields;
 
@@ -84,6 +88,24 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     @Override
     public Stream<? extends SInstance> stream() {
         return fields == null ? Stream.empty() : fields.stream();
+    }
+
+    public Iterator<SInstance> iterator() {
+        return fields == null ? Collections.emptyIterator() : fields.iterator();
+    }
+
+    @Override
+    public void forEachChild(@Nonnull Consumer<? super SInstance> action) {
+        if (fields != null) {
+            fields.forEach(action);
+        }
+    }
+
+    @Override
+    public void forEach(@Nonnull Consumer<? super SInstance> action) {
+        if (fields != null) {
+            fields.forEach(action);
+        }
     }
 
     @Override
@@ -245,7 +267,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         return getType().equals(other.getType()) && Objects.equals(fields, other.fields);
     }
 
-    private final static class FieldMapOfRecordInstance {
+    private final static class FieldMapOfRecordInstance implements Iterable<SInstance> {
 
         private final SInstance[] instances;
 
@@ -265,12 +287,64 @@ public class SIComposite extends SInstance implements ICompositeInstance {
             instances[fieldIndex] = instance;
         }
 
+        @Nonnull
         public List<SInstance> getFields() {
-            return stream().collect(Collectors.toList());
+            List<SInstance> list = new ArrayList<>(instances.length);
+            for(SInstance i : instances) {
+                if (i  != null) {
+                    list.add(i);
+                }
+            }
+            return list;
         }
 
+        @Nonnull
         public Stream<SInstance> stream() {
             return Arrays.stream(instances).filter(i -> i != null);
+        }
+
+        @Override
+        public void forEach(@Nonnull Consumer<? super SInstance> action) {
+            for(SInstance i : instances) {
+                if (i  != null) {
+                    action.accept(i);
+                }
+            }
+        }
+
+        @Override
+        @Nonnull
+        public Iterator<SInstance> iterator() {
+            return new Iterator<SInstance>() {
+                private int pos = 0;
+
+                {
+                    findNext(0);
+                }
+
+                private void findNext(int initialPos) {
+                    for (pos = initialPos; pos < instances.length; pos++) {
+                        if (instances[pos] != null) {
+                            return;
+                        }
+                    }
+                    pos = -1;
+                }
+                @Override
+                public boolean hasNext() {
+                    return pos != -1;
+                }
+
+                @Override
+                public SInstance next() {
+                    if (pos == -1) {
+                        throw new NoSuchElementException();
+                    }
+                    int current = pos;
+                    findNext(pos + 1);
+                    return instances[current];
+                }
+            };
         }
 
         @Override

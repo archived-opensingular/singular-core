@@ -24,13 +24,13 @@ public interface IEntityTaskInstanceHistory extends IEntityByCod<Integer> {
 
     IEntityTaskInstance getTaskInstance();
 
-    Date getBeginDateAllocation();
+    Date getAllocationStartDate();
 
-    void setBeginDateAllocation(Date begin);
+    void setAllocationStartDate(Date begin);
 
-    Date getEndDateAllocation();
+    Date getAllocationEndDate();
 
-    void setEndDateAllocation(Date endDateAllocation);
+    void setAllocationEndDate(Date endDateAllocation);
 
     SUser getAllocatedUser();
 

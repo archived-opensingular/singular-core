@@ -168,7 +168,7 @@ class FlowEngine {
         initTask(processInstance, destinyTask, newTaskInstance);
 
         if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
-            automaticallySetUsersRole(processInstance, newTaskInstance, transition);
+            automaticallySetBusinessRole(processInstance, newTaskInstance, transition);
         }
 
         if (transition != null) {
@@ -179,12 +179,12 @@ class FlowEngine {
         return newTaskInstance;
     }
 
-    private static <P extends FlowInstance> void automaticallySetUsersRole(P instancia, TaskInstance instanciaTarefa,
-            STransition transicaoOrigem) {
-        for (SProcessRole papel : transicaoOrigem.getRolesToDefine()) {
-            if (papel.isAutomaticUserAllocation()) {
-                SUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
-                    instanciaTarefa);
+    private static <P extends FlowInstance> void automaticallySetBusinessRole(P instancia, TaskInstance instanciaTarefa,
+                                                                              STransition transicaoOrigem) {
+        for (SBusinessRole papel : transicaoOrigem.getRolesToDefine()) {
+            if (papel.isAutomaticBusinessRoleAllocation()) {
+                SUser pessoa = papel.getBusinessRoleStrategy().getUserForRole(instancia,
+                        instanciaTarefa);
                 Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
                         + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
 
@@ -197,12 +197,12 @@ class FlowEngine {
         if (taskDestiny.isWait()) {
             initTaskWait(instance, (STaskWait) taskDestiny, taskInstance);
         } else if (taskDestiny.isPeople()) {
-            initTaskPeople(instance, (STaskHuman) taskDestiny, taskInstance);
+            initTaskHuman(instance, (STaskHuman) taskDestiny, taskInstance);
         }
     }
 
-    private static <P extends FlowInstance> void initTaskPeople(P instance, STaskHuman taskDestiny,
-            TaskInstance taskInstance) {
+    private static <P extends FlowInstance> void initTaskHuman(P instance, STaskHuman taskDestiny,
+                                                               TaskInstance taskInstance) {
         TaskAccessStrategy<FlowInstance> strategy = taskDestiny.getAccessStrategy();
         if (strategy != null) {
             SUser person = strategy.getAutomaticAllocatedUser(instance, taskInstance);

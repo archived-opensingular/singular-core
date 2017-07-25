@@ -23,36 +23,36 @@ import javax.annotation.Nullable;
 
 public class ExecutionContext<K extends FlowInstance> {
 
-    private final K processInstance;
+    private final K flowInstance;
 
     private final TaskInstance taskInstance;
 
-    private final VarInstanceMap<?,?> input;
+    private final VarInstanceMap<?, ?> input;
 
     private STransition transition;
 
-    public ExecutionContext(K processInstance, TaskInstance taskInstance, VarInstanceMap<?,?> input) {
-        this(processInstance, taskInstance, input, null);
+    public ExecutionContext(K flowInstance, TaskInstance taskInstance, VarInstanceMap<?, ?> input) {
+        this(flowInstance, taskInstance, input, null);
     }
 
-    public ExecutionContext(K processInstance, TaskInstance taskInstance, VarInstanceMap<?,?> input, STransition transition) {
-        this.processInstance = processInstance;
+    public ExecutionContext(K flowInstance, TaskInstance taskInstance, VarInstanceMap<?, ?> input, STransition transition) {
+        this.flowInstance = flowInstance;
         this.taskInstance = taskInstance;
         this.input = input == null ? VarInstanceMap.empty() : input;
         this.transition = transition;
     }
 
-    public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?,?> input) {
-        this((K)taskInstance.getFlowInstance(), taskInstance, input);
+    public ExecutionContext(TaskInstance taskInstance, VarInstanceMap<?, ?> input) {
+        this((K) taskInstance.getFlowInstance(), taskInstance, input);
     }
 
-    public K getProcessInstance() {
-        return processInstance;
+    public K getFlowInstance() {
+        return flowInstance;
     }
 
     public TaskInstance getTaskInstance() {
         if (taskInstance == null) {
-            return processInstance.getCurrentTaskOrException();
+            return flowInstance.getCurrentTaskOrException();
         }
         return taskInstance;
     }

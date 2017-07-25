@@ -133,7 +133,7 @@ public class SFlowUtil {
 
     private static int calculateWeight(STask<?> task) {
         IEntityTaskType tt = task.getTaskType();
-        if (tt.isPeople()) {
+        if (tt.isHuman()) {
             return PESO_TASK_PESSOA;
         } else if (tt.isJava()) {
             return PESO_TASK_JAVA;

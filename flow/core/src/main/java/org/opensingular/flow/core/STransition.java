@@ -40,7 +40,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final String         abbreviation;
 
     private UITransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<SProcessRole>                       rolesToDefineUser;
+    private List<SBusinessRole> rolesToDefineUser;
 
     private MetaData metaData;
 
@@ -76,8 +76,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            for (SProcessRole processRole : rolesToDefineUser) {
-                if (!processRole.isAutomaticUserAllocation()) {
+            for (SBusinessRole processRole : rolesToDefineUser) {
+                if (!processRole.isAutomaticBusinessRoleAllocation()) {
                     return true;
                 }
             }
@@ -87,13 +87,13 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasAutomaticRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            return rolesToDefineUser.stream().anyMatch(SProcessRole::isAutomaticUserAllocation);
+            return rolesToDefineUser.stream().anyMatch(SBusinessRole::isAutomaticBusinessRoleAllocation);
         }
         return false;
     }
 
-    public STransition defineUserRoleInTransition(SProcessRole papel) {
-        if (origin.isPeople() || papel.isAutomaticUserAllocation()) {
+    public STransition defineBusinessRoleInTransition(SBusinessRole papel) {
+        if (origin.isPeople() || papel.isAutomaticBusinessRoleAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
             }
@@ -105,7 +105,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         }
     }
 
-    public List<SProcessRole> getRolesToDefine() {
+    public List<SBusinessRole> getRolesToDefine() {
         if (rolesToDefineUser == null) {
             return Collections.emptyList();
         }

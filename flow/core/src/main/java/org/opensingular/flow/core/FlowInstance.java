@@ -280,7 +280,7 @@ public class FlowInstance implements Serializable {
             return false;
         }
         IEntityTaskType tt = currentState.get().getTaskType();
-        if (tt.isPeople() || tt.isWait()) {
+        if (tt.isHuman() || tt.isWait()) {
             if (isAllocated(user.getCod())) {
                 return  true;
             }
@@ -668,10 +668,10 @@ public class FlowInstance implements Serializable {
         return getCurrentTask().map(TaskInstance::getDirectlyResponsibles).orElse(Collections.emptyList());
     }
 
-    private void addUserRole(SProcessRole sProcessRole, SUser user) {
-        if (getUserWithRole(sProcessRole.getAbbreviation()) == null) {
+    private void addUserRole(SBusinessRole sBusinessRole, SUser user) {
+        if (getUserWithRole(sBusinessRole.getAbbreviation()) == null) {
             getPersistenceService().setInstanceUserRole(getEntity(),
-                getProcessDefinition().getEntityProcessDefinition().getRole(sProcessRole.getAbbreviation()), user);
+                getProcessDefinition().getEntityProcessDefinition().getRole(sBusinessRole.getAbbreviation()), user);
         }
     }
 
@@ -684,41 +684,41 @@ public class FlowInstance implements Serializable {
      * @param newUser o novo usuário atribuído ao papel.
      */
     public final void addOrReplaceUserRole(final String roleAbbreviation, SUser newUser) {
-        SProcessRole sProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
-        if (sProcessRole == null) {
+        SBusinessRole sBusinessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
+        if (sBusinessRole == null) {
             throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation, this);
         }
-        SUser previousUser = getUserWithRole(sProcessRole.getAbbreviation());
+        SUser previousUser = getUserWithRole(sBusinessRole.getAbbreviation());
         if (Objects.isNull(previousUser)) {
-            addOrReplaceUserRoleForNewUser(newUser, sProcessRole);
+            addOrReplaceUserRoleForNewUser(newUser, sBusinessRole);
         } else if (Objects.isNull(newUser)|| !previousUser.equals(newUser)) {
-            addOrReplaceUserRoleForPreviousUser(newUser, sProcessRole, previousUser);
+            addOrReplaceUserRoleForPreviousUser(newUser, sBusinessRole, previousUser);
         }
     }
 
-    private void addOrReplaceUserRoleForPreviousUser(SUser newUser, SProcessRole sProcessRole, SUser previousUser) {
+    private void addOrReplaceUserRoleForPreviousUser(SUser newUser, SBusinessRole sBusinessRole, SUser previousUser) {
         IEntityProcessInstance entityTmp = getEntity();
-        getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(sProcessRole.getAbbreviation()));
+        getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(sBusinessRole.getAbbreviation()));
         if (Objects.nonNull(newUser)) {
-            addUserRole(sProcessRole, newUser);
+            addUserRole(sBusinessRole, newUser);
         }
-        getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, previousUser, newUser);
+        getProcessDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, previousUser, newUser);
         Optional<TaskInstance> latestTask = getTaskNewer();
         if (latestTask.isPresent()) {
             if (Objects.nonNull(newUser)) {
-                latestTask.get().log("Papel alterado", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName()));
+                latestTask.get().log("Papel alterado", String.format("%s: %s", sBusinessRole.getName(), newUser.getSimpleName()));
             } else {
-                latestTask.get().log("Papel removido", sProcessRole.getName());
+                latestTask.get().log("Papel removido", sBusinessRole.getName());
             }
         }
     }
 
-    private void addOrReplaceUserRoleForNewUser(SUser newUser, SProcessRole sProcessRole) {
+    private void addOrReplaceUserRoleForNewUser(SUser newUser, SBusinessRole sBusinessRole) {
         if (Objects.nonNull(newUser)) {
-            addUserRole(sProcessRole, newUser);
-            getProcessDefinition().getFlowMap().notifyRoleChange(this, sProcessRole, null, newUser);
+            addUserRole(sBusinessRole, newUser);
+            getProcessDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, null, newUser);
             Optional<TaskInstance> latestTask = getTaskNewer();
-            latestTask.ifPresent(taskInstance -> taskInstance.log("Papel definido", String.format("%s: %s", sProcessRole.getName(), newUser.getSimpleName())));
+            latestTask.ifPresent(taskInstance -> taskInstance.log("Papel definido", String.format("%s: %s", sBusinessRole.getName(), newUser.getSimpleName())));
         }
     }
 
