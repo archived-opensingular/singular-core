@@ -20,6 +20,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.core.request.handler.BufferedResponseRequestHandler;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
@@ -37,12 +38,12 @@ public class ViewOutputHtmlFromWicket extends ViewOutput {
 
     private final Writer out;
 
-    public ViewOutputHtmlFromWicket(Component component) {
-        Response response = component.getRequestCycle().getResponse();
+    public ViewOutputHtmlFromWicket(RequestCycle cycle) {
+        Response response = cycle.getResponse();
         if (response instanceof WebResponse) {
             BufferedWebResponse bufferedWebResponse = new BufferedWebResponse((WebResponse) response);
             out = new BufferedWebResponseWriterAdapter(bufferedWebResponse);
-            component.getRequestCycle().scheduleRequestHandlerAfterCurrent(new BufferedResponseRequestHandler(bufferedWebResponse));
+            cycle.scheduleRequestHandlerAfterCurrent(new BufferedResponseRequestHandler(bufferedWebResponse));
         } else {
             throw new SingularException("O RequestCycle atual não é uma WebResponse");
         }

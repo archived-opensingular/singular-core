@@ -39,7 +39,7 @@ public class WicketViewsUtil {
         parent.add(new WebComponent(id) {
             @Override
             public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
-                ViewOutputHtmlFromWicket vOut = new ViewOutputHtmlFromWicket(this);
+                ViewOutputHtmlFromWicket vOut = new ViewOutputHtmlFromWicket(this.getRequestCycle());
                 ViewGenerator generator = tableSupplir.get();
                 generator = resolveGenerator(generator, vOut);
 
