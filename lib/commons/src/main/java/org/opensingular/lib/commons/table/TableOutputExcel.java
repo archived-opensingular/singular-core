@@ -1,11 +1,9 @@
 package org.opensingular.lib.commons.table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
@@ -93,6 +91,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
         XSSFCell cell = incrementColumnAndCreateNewCell();
+        configurarAlinhamento(cell.getCellStyle(), ctx.getColumn().getAlinhamento());
         if (ctx.getValue() == null) {
             return;
         }
@@ -105,7 +104,20 @@ public class TableOutputExcel extends TableOutput implements Loggable {
             default:
                 cell.setCellValue(ctx.generateFormatDisplayString());
                 break;
+        }
+    }
 
+    private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.TipoAlinhamento alinhamento) {
+        switch (alinhamento) {
+            case tpCentro:
+                cellStyle.setAlignment(HorizontalAlignment.CENTER);
+                break;
+            case tpDireita:
+                cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+                break;
+            case tpEsquerda:
+                cellStyle.setAlignment(HorizontalAlignment.LEFT);
+                break;
         }
     }
 
