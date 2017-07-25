@@ -16,9 +16,6 @@
 
 package org.opensingular.lib.wicket.views;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.core.request.handler.BufferedResponseRequestHandler;
-import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
@@ -29,7 +26,6 @@ import org.opensingular.lib.commons.views.ViewOutputFormat;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author Daniel on 25/07/2017.
@@ -41,9 +37,7 @@ public class ViewOutputHtmlFromWicket extends ViewOutput {
     public ViewOutputHtmlFromWicket(RequestCycle cycle) {
         Response response = cycle.getResponse();
         if (response instanceof WebResponse) {
-            BufferedWebResponse bufferedWebResponse = new BufferedWebResponse((WebResponse) response);
-            out = new BufferedWebResponseWriterAdapter(bufferedWebResponse);
-            cycle.scheduleRequestHandlerAfterCurrent(new BufferedResponseRequestHandler(bufferedWebResponse));
+            out = new WebResponseWriterAdapter((WebResponse) response);
         } else {
             throw new SingularException("O RequestCycle atual não é uma WebResponse");
         }
@@ -69,26 +63,26 @@ public class ViewOutputHtmlFromWicket extends ViewOutput {
         return ViewOutputFormat.HTML;
     }
 
-    private static class BufferedWebResponseWriterAdapter extends Writer {
-        private final BufferedWebResponse bufferedWebResponse;
+    private static class WebResponseWriterAdapter extends Writer {
+        private final WebResponse webResponse;
 
-        private BufferedWebResponseWriterAdapter(BufferedWebResponse bufferedWebResponse) {
-            this.bufferedWebResponse = bufferedWebResponse;
+        private WebResponseWriterAdapter(WebResponse webResponse) {
+            this.webResponse = webResponse;
         }
 
         @Override
         public void write(@NotNull char[] cbuf, int off, int len) throws IOException {
-            bufferedWebResponse.write(new String(cbuf).getBytes(StandardCharsets.UTF_8), off, len);
+            webResponse.write(new String(cbuf, off, len));
         }
 
         @Override
         public void flush() throws IOException {
-            bufferedWebResponse.flush();
+            webResponse.flush();
         }
 
         @Override
         public void close() throws IOException {
-            bufferedWebResponse.close();
+            webResponse.close();
         }
     }
 }
