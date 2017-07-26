@@ -25,42 +25,23 @@ import java.util.Objects;
 
 public class Column implements Serializable {
 
-    public enum TipoColuna {
-        tpString(ColumnTypeProcessor.STRING), tpDate(ColumnTypeProcessor.DATE), tpDateHour(
-                ColumnTypeProcessor.DATE_HOUR), tpDateHourShort(ColumnTypeProcessor.DATE_HOUR_SHORT), tpInteger(
-                ColumnTypeProcessor.INTEGER), tpMoney(ColumnTypeProcessor.NUMBER), tpNumber(
-                ColumnTypeProcessor.NUMBER), tpPercent(ColumnTypeProcessor.PERCENT), tpHour(
-                ColumnTypeProcessor.HOUR), tpAction(ColumnTypeProcessor.ACTION), tpBoolean(
-                ColumnTypeProcessor.BOOLEAN), tpHtml(ColumnTypeProcessor.RAW), tpPeriodo(
-                ColumnTypeProcessor.RAW), tpDay(ColumnTypeProcessor.DAY);
-
-        private final ColumnTypeProcessor processor;
-
-        TipoColuna(@Nonnull ColumnTypeProcessor processor) {this.processor = processor;}
-
-        @Nonnull
-        public ColumnTypeProcessor getProcessor() {
-            return processor;
-        }
-    }
-
-    public enum TipoAlinhamento {
-        tpEsquerda, tpCentro, tpDireita
+    public enum Alignment {
+        Left, Center, Right
     }
 
     private String id;
 
-    private TipoColuna type;
+    private ColumnType type;
 
     private ColumnTypeProcessor processor;
 
     private int index;
 
-    private String superTitulo_;
+    private String superTitle;
 
     private String titulo_;
 
-    private TipoAlinhamento alinhamento_;
+    private Alignment alinhamento_;
 
     private String width_;
 
@@ -68,7 +49,7 @@ public class Column implements Serializable {
 
     private boolean strong_;
 
-    private boolean visivel_ = true;
+    private boolean visible = true;
 
     private Integer qtdDigitos_;
 
@@ -92,11 +73,11 @@ public class Column implements Serializable {
 
     private Decorator decoratorValues = decoratorTitleAndValue.newDerivedDecorator();
 
-    public Column(TipoColuna tipo) {
+    public Column(ColumnType tipo) {
         setTipo(tipo);
     }
 
-    public TipoColuna getTipo() {
+    public ColumnType getTipo() {
         return type;
     }
 
@@ -152,11 +133,11 @@ public class Column implements Serializable {
     }
 
     public boolean isVisivel() {
-        return visivel_;
+        return visible;
     }
 
-    public Column setAlinhamento(TipoAlinhamento tipoAlinhamento) {
-        alinhamento_ = tipoAlinhamento;
+    public Column setAlinhamento(Alignment alignment) {
+        alinhamento_ = alignment;
         return this;
     }
 
@@ -169,18 +150,18 @@ public class Column implements Serializable {
         return this;
     }
 
-    public Column setAlinhamentoEsquerda() {
-        alinhamento_ = TipoAlinhamento.tpEsquerda;
+    public Column setAlignmentLeft() {
+        alinhamento_ = Alignment.Left;
         return this;
     }
 
-    public Column setAlinhamentoCentro() {
-        alinhamento_ = TipoAlinhamento.tpCentro;
+    public Column setAlignmentCenter() {
+        alinhamento_ = Alignment.Center;
         return this;
     }
 
-    public Column setAlinhamentoDireita() {
-        alinhamento_ = TipoAlinhamento.tpDireita;
+    public Column setAlignmentRight() {
+        alinhamento_ = Alignment.Right;
         return this;
     }
 
@@ -227,43 +208,43 @@ public class Column implements Serializable {
         return defaultNumberOfDigits;
     }
 
-    public TipoAlinhamento getAlinhamento() {
+    public Alignment getAlignment() {
         if (alinhamento_ != null) {
             return alinhamento_;
         }
         switch (type) {
-            case tpDate:
-            case tpDay:
-            case tpPeriodo:
-            case tpDateHourShort:
-            case tpBoolean:
-            case tpDateHour:
-                return TipoAlinhamento.tpCentro;
-            case tpHour:
-            case tpInteger:
-            case tpNumber:
-            case tpMoney:
-            case tpPercent:
-                return TipoAlinhamento.tpDireita;
+            case Date:
+            case Day:
+            case Periodo:
+            case DateHourShort:
+            case Boolean:
+            case DateHour:
+                return Alignment.Center;
+            case Hour:
+            case Integer:
+            case Number:
+            case Money:
+            case Percent:
+                return Alignment.Right;
             default:
-                return TipoAlinhamento.tpEsquerda;
+                return Alignment.Left;
         }
     }
 
     public boolean isTipoAcao() {
-        return TipoColuna.tpAction == type;
+        return ColumnType.Action == type;
     }
 
-    public void setSuperTitulo(String superTitulo) {
-        superTitulo_ = superTitulo;
+    public void setSuperTitle(String superTitle) {
+        this.superTitle = superTitle;
     }
 
     public String getSuperTitle() {
-        return superTitulo_;
+        return superTitle;
     }
 
     public Column setVisible(boolean v) {
-        visivel_ = v;
+        visible = v;
         return this;
     }
 
@@ -299,7 +280,7 @@ public class Column implements Serializable {
         valorReferenciaPercentual_ = valorReferenciaPercentual;
     }
 
-    public void setTipo(TipoColuna tipo_) {
+    public void setTipo(ColumnType tipo_) {
         this.type = tipo_;
         this.processor = tipo_.getProcessor();
     }
@@ -352,16 +333,16 @@ public class Column implements Serializable {
             return 1;
         }
         switch (type) {
-            case tpString:
-            case tpHtml:
+            case String:
+            case Html:
                 if (c1.getValorReal() == null || c2.getValorReal() == null) {
                     return Objects.toString(c1.getValue()).compareToIgnoreCase(Objects.toString(c2.getValue()));
                 }
-            case tpMoney:
-            case tpNumber:
-            case tpInteger:
-            case tpPercent:
-            case tpHour:
+            case Money:
+            case Number:
+            case Integer:
+            case Percent:
+            case Hour:
                 Object valorReal1 = MoreObjects.<Object>firstNonNull(c1.getValorReal(), c1.getValue());
                 Object valorReal2 = MoreObjects.<Object>firstNonNull(c2.getValorReal(), c2.getValue());
                 if (valorReal1 instanceof Number && valorReal2 instanceof Number) {

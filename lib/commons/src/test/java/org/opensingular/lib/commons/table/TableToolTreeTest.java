@@ -125,9 +125,9 @@ public class TableToolTreeTest {
     @NotNull
     private TableTool createTableToolWith3Columns() {
         TableTool table = new TableTool();
-        table.addColumn(Column.TipoColuna.tpString, "A");
-        table.addColumn(Column.TipoColuna.tpInteger, "B");
-        table.addColumn(Column.TipoColuna.tpInteger, "C");
+        table.addColumn(ColumnType.String, "A");
+        table.addColumn(ColumnType.Integer, "B");
+        table.addColumn(ColumnType.Integer, "C");
         return table;
     }
 }

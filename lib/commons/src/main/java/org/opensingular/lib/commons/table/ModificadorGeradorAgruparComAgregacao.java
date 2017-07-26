@@ -82,7 +82,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
         
         colunasAgrupamento.forEach(coluna -> {
             colunasOrdenadas.add(coluna);
-            coluna.setSuperTitulo("");
+            coluna.setSuperTitle("");
         });
         colunasOrdenadas.add(null);
         
@@ -139,9 +139,9 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
         Map<Column, TipoAgregacaoCampo> agregacaoDefault = new HashMap<>();
         getColunas().forEach(coluna -> {
             switch (coluna.getTipo()) {
-            case tpNumber:
-            case tpInteger:
-            case tpMoney:
+            case Number:
+            case Integer:
+            case Money:
                 agregacaoDefault.put(coluna, TipoAgregacaoCampo.SOMA);
                 break;
             default: break;

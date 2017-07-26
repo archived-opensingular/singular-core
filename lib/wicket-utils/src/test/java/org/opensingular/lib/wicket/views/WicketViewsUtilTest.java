@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.wicket.test.SingularSimpleWicketTester;
-import org.opensingular.lib.commons.table.Column;
+import org.opensingular.lib.commons.table.ColumnType;
 import org.opensingular.lib.commons.table.PopulatorTable;
 import org.opensingular.lib.commons.table.TableTool;
 
@@ -53,13 +53,13 @@ public class WicketViewsUtilTest {
 
         public WrongSerializationPage() {
             Form form = new Form("form");
-            form.add(new ViewOutputHtmlWebComponent("content", this::createContent));
+            form.add(new WicketViewWrapperForViewOutputHtml("content", this::createContent));
             add(form);
         }
 
         private TableTool createContent() {
             TableTool table = new TableTool();
-            table.addColumn(Column.TipoColuna.tpString, "A");
+            table.addColumn(ColumnType.String, "A");
             PopulatorTable populator = table.createSimpleTablePopulator();
             populator.insertLine("L0");
             return table;

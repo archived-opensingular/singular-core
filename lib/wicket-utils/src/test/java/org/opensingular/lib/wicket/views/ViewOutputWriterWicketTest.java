@@ -18,7 +18,7 @@ package org.opensingular.lib.wicket.views;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.lib.commons.table.Column;
+import org.opensingular.lib.commons.table.ColumnType;
 import org.opensingular.lib.commons.table.PopulatorTable;
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
@@ -39,7 +39,7 @@ public class ViewOutputWriterWicketTest {
 
     private TableTool createSimple() {
         TableTool table = new TableTool();
-        table.addColumn(Column.TipoColuna.tpString,"A");
+        table.addColumn(ColumnType.String,"A");
         PopulatorTable populator = table.createSimpleTablePopulator();
         populator.insertLine("L0");
         return table;

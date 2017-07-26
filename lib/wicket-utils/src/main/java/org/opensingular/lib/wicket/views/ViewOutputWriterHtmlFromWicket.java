@@ -21,8 +21,8 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.views.ViewOutputWriter;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
+import org.opensingular.lib.commons.views.ViewOutputWriter;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -68,6 +68,16 @@ public class ViewOutputWriterHtmlFromWicket extends ViewOutputWriter {
 
         private WebResponseWriterAdapter(WebResponse webResponse) {
             this.webResponse = webResponse;
+        }
+
+        @Override
+        public void write(String str) throws IOException {
+            webResponse.write(str);
+        }
+
+        @Override
+        public void write(String str, int off, int len) throws IOException {
+            webResponse.write(str.substring(off, off + len));
         }
 
         @Override

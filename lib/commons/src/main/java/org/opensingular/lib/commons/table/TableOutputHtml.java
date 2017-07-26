@@ -199,11 +199,11 @@ public class TableOutputHtml extends TableOutput {
             printAtributo("rowspan", Integer.toString(rowSpan));
         }
         if (asSubTitle) {
-            switch (column.getAlinhamento()) {
-                case tpCentro:
+            switch (column.getAlignment()) {
+                case Center:
                     printClass(out, "T_subtit_cen", columnWithSeparator);
                     break;
-                case tpDireita:
+                case Right:
                     printClass(out, "T_subtit_dir", columnWithSeparator);
                     break;
                 default:
@@ -211,11 +211,11 @@ public class TableOutputHtml extends TableOutput {
                     break;
             }
         } else {
-            switch (column.getAlinhamento()) {
-                case tpCentro:
+            switch (column.getAlignment()) {
+                case Center:
                     printClass(out, "T_tit_cen", columnWithSeparator);
                     break;
-                case tpDireita:
+                case Right:
                     printClass(out, "T_tit_dir", columnWithSeparator);
                     break;
                 default:
@@ -445,10 +445,10 @@ public class TableOutputHtml extends TableOutput {
                 return "T_DLN";
             }
         }
-        switch (column.getAlinhamento()) {
-            case tpCentro:
+        switch (column.getAlignment()) {
+            case Center:
                 return columnWithSeparator ? "T_cen T_sep" : "T_cen";
-            case tpDireita:
+            case Right:
                 return columnWithSeparator ? "T_dir T_sep" : "T_dir";
             default:
                 return columnWithSeparator ? "T_sep" : null;

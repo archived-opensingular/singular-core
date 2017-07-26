@@ -3,15 +3,14 @@ package org.opensingular.lib.commons.table;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.commons.views.ViewOutputExcel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,17 +92,17 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
         XSSFCell cell = incrementColumnAndCreateNewCell();
-        configurarAlinhamento(cell.getCellStyle(), ctx.getColumn().getAlinhamento());
+        configurarAlinhamento(cell.getCellStyle(), ctx.getColumn().getAlignment());
         if (ctx.getValue() == null) {
             return;
         }
         switch (ctx.getCell().getColumn().getTipo()) {
-            case tpInteger:
-            case tpNumber:
-            case tpMoney:
+            case Integer:
+            case Number:
+            case Money:
                 cell.setCellValue(((Number) ctx.getValue()).doubleValue());
                 break;
-            case tpString:
+            case String:
                 cell.setCellValue((String) ctx.getValue());
                 break;
             default:
@@ -112,15 +111,15 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         }
     }
 
-    private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.TipoAlinhamento alinhamento) {
+    private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.Alignment alinhamento) {
         switch (alinhamento) {
-            case tpCentro:
+            case Center:
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 break;
-            case tpDireita:
+            case Right:
                 cellStyle.setAlignment(HorizontalAlignment.RIGHT);
                 break;
-            case tpEsquerda:
+            case Left:
                 cellStyle.setAlignment(HorizontalAlignment.LEFT);
                 break;
         }

@@ -25,7 +25,12 @@ import org.opensingular.lib.commons.views.ViewOutput;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -93,7 +98,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
      * @param title Texto para aparecer na primeira linha.
      * @return Coluna criada, para eventual modifica��o de formata��o.
      */
-    public Column addColumn(Column.TipoColuna tipo, String title) {
+    public Column addColumn(ColumnType tipo, String title) {
         Column column = new Column(tipo);
         column.setTitle(title);
         column.setIndex(columns.size());
@@ -101,7 +106,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         return column;
     }
 
-    public Column addColumn(Column.TipoColuna tipo) {
+    public Column addColumn(ColumnType tipo) {
         return addColumn(tipo, null);
     }
 
@@ -121,7 +126,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         hasSuperTitles = true;
         for (int i = colunaInicio; i <= colunaFim; i++) {
             Column c = columns.get(i);
-            c.setSuperTitulo(superTitulo);
+            c.setSuperTitle(superTitulo);
             c.setPossuiSeparador(separador);
         }
     }
@@ -611,7 +616,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
         // Trata a exibição do valor como percentual do valor pai
         if (ctxCell.getColumn().isCalcularPercentualPai()) {
-            ctxCell.setColumnProcessor(Column.TipoColuna.tpPercent.getProcessor());
+            ctxCell.setColumnProcessor(ColumnType.Percent.getProcessor());
             if (ctxCell.getValue() instanceof Number) {
                 Number value = (Number) ctxCell.getValue();
                 value = AlocproToolkit.divide(value, ctxCell.getColumn().getValorReferenciaPercentual());

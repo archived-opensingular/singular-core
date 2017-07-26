@@ -9,11 +9,12 @@ import org.opensingular.lib.commons.views.ViewMultiGenerator;
 import org.opensingular.lib.commons.views.ViewOutput;
 
 import javax.annotation.Nonnull;
+import java.io.Writer;
 
-public class ViewOutputHtmlWebComponent extends WebComponent {
+public class WicketViewWrapperForViewOutputHtml extends WebComponent {
     private final ISupplier<ViewGenerator> viewGeneratorSupplier;
 
-    public ViewOutputHtmlWebComponent(String id, ISupplier<ViewGenerator> viewGeneratorSupplier) {
+    public WicketViewWrapperForViewOutputHtml(String id, ISupplier<ViewGenerator> viewGeneratorSupplier) {
         super(id);
         this.viewGeneratorSupplier = viewGeneratorSupplier;
     }
@@ -26,7 +27,7 @@ public class ViewOutputHtmlWebComponent extends WebComponent {
         generator.generateView(viewOutput);
     }
 
-    private static ViewGenerator resolveGenerator(@Nonnull ViewGenerator generator, ViewOutput<java.io.Writer> vOut) {
+    private static ViewGenerator resolveGenerator(@Nonnull ViewGenerator generator, ViewOutput<Writer> vOut) {
         if (generator instanceof ViewMultiGenerator) {
             return ((ViewMultiGenerator) generator).getGeneratorFor(vOut);
         }

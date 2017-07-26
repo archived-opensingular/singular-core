@@ -19,7 +19,6 @@ package org.opensingular.lib.commons.table;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opensingular.lib.commons.table.Column.TipoColuna;
 
 import java.util.Date;
 import java.util.function.Consumer;
@@ -81,19 +80,19 @@ public class TableToolColumTypeTest {
 
     @Test
     public void testBoolean() {
-        assertOneCellResult(TipoColuna.tpBoolean, null, Boolean.TRUE, "Sim");
-        assertOneCellResult(TipoColuna.tpBoolean, null, Boolean.FALSE, "Não");
-        assertOneCellResult(TipoColuna.tpBoolean, null, null, null);
-        assertOneCellResult(TipoColuna.tpBoolean, null, "X", "X");
+        assertOneCellResult(ColumnType.Boolean, null, Boolean.TRUE, "Sim");
+        assertOneCellResult(ColumnType.Boolean, null, Boolean.FALSE, "Não");
+        assertOneCellResult(ColumnType.Boolean, null, null, null);
+        assertOneCellResult(ColumnType.Boolean, null, "X", "X");
     }
 
     @Test
     @Ignore
     public void testDate() {
-        assertOneCellResult(TipoColuna.tpDate, null, new Date(), "Sim");
+        assertOneCellResult(ColumnType.Date, null, new Date(), "Sim");
     }
 
-    private TableOutputSimulated assertOneCellResult(TipoColuna type, Consumer<Column> configColumn,
+    private TableOutputSimulated assertOneCellResult(ColumnType type, Consumer<Column> configColumn,
             Object valueToBeSet, Object expectedResult) {
         TableOutputSimulated output = createOnColumTable(type, configColumn, valueToBeSet);
         output.getResult().debug();
@@ -103,7 +102,7 @@ public class TableToolColumTypeTest {
         return output;
     }
 
-    private TableOutputSimulated createOnColumTable(TipoColuna type, Consumer<Column> configColumn, Object value) {
+    private TableOutputSimulated createOnColumTable(ColumnType type, Consumer<Column> configColumn, Object value) {
         TableTool table = new TableTool();
         table.addColumn(type, type.toString());
         if (configColumn != null) {
@@ -125,11 +124,11 @@ public class TableToolColumTypeTest {
 
     private TableTool createTableWithNumber(Consumer<Column> action) {
         TableTool table = new TableTool();
-        table.addColumn(TipoColuna.tpNumber, "Number");
-        table.addColumn(TipoColuna.tpInteger, "Integer");
-        table.addColumn(TipoColuna.tpMoney, "Money");
-        table.addColumn(TipoColuna.tpPercent, "Percent");
-        table.addColumn(TipoColuna.tpHour, "Hour");
+        table.addColumn(ColumnType.Number, "Number");
+        table.addColumn(ColumnType.Integer, "Integer");
+        table.addColumn(ColumnType.Money, "Money");
+        table.addColumn(ColumnType.Percent, "Percent");
+        table.addColumn(ColumnType.Hour, "Hour");
         if (action != null) {
             table.getColumns().forEach(action);
         }

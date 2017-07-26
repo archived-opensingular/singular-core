@@ -12,7 +12,7 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputExcel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
-import org.opensingular.lib.wicket.views.ViewOutputHtmlWebComponent;
+import org.opensingular.lib.wicket.views.WicketViewWrapperForViewOutputHtml;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,7 +49,7 @@ public class SingularReportPanel extends Panel {
     }
 
     private void addTable() {
-        add(new ViewOutputHtmlWebComponent("table", viewGeneratorSupplier));
+        add(new WicketViewWrapperForViewOutputHtml("table", viewGeneratorSupplier));
     }
 
     private void addTitle() {
