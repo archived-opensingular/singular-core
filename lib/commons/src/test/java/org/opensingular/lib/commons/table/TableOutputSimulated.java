@@ -117,6 +117,12 @@ public class TableOutputSimulated extends TableOutput {
     }
 
     @Override
+    public void generateTotalBlockStart(@Nonnull OutputTableContext ctx) {}
+
+    @Override
+    public void generateTotalBlockEnd(@Nonnull OutputTableContext ctx) {}
+
+    @Override
     public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
             @Nonnull Decorator tempDecorator, int level) {
         table.addLine();

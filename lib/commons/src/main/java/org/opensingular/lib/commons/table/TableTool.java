@@ -644,6 +644,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     private void generateTotalLine(OutputTableContext ctx) {
         Decorator tmpDecorator = resolverDecorator(ctx, totalLine);
 
+        ctx.getOutput().generateTotalBlockStart(ctx);
         if (ctx.getTableTool().isSimpleTable()) {
             ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, -1);
         } else {
@@ -673,6 +674,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         }
 
         ctx.getOutput().generateTotalLineEnd(ctx);
+        ctx.getOutput().generateTotalBlockEnd(ctx);
     }
 
 

@@ -189,6 +189,14 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
+    public void generateTotalBlockStart(@Nonnull OutputTableContext ctx) {
+    }
+
+    @Override
+    public void generateTotalBlockEnd(@Nonnull OutputTableContext ctx) {
+    }
+
+    @Override
     public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine, @Nonnull Decorator tempDecorator, int level) {
         if (totalLine.isExibirLinha()) {
             newRow();

@@ -145,9 +145,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateBodyBlockEnd(@Nonnull OutputTableContext ctx) {
-        if (! ctx.getTableTool().isTotalizar()) {
-            println("</tbody>");
-        }
+        println("</tbody>");
     }
 
     @Override
@@ -290,6 +288,16 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
+    public void generateTotalBlockStart(@Nonnull OutputTableContext ctx) {
+        println("<tfoot class=\"T_tfoot\">");
+    }
+
+    @Override
+    public void generateTotalBlockEnd(@Nonnull OutputTableContext ctx) {
+        println("</tfoot>");
+    }
+
+    @Override
     public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
             @Nonnull Decorator tempDecorator, int level) {
         if (level != -1) {
@@ -311,16 +319,15 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateTotalLineEnd(@Nonnull OutputTableContext ctx) {
         getOut().println("  </tr>");
-        getOut().println("</tbody>");
     }
 
     @Override
     public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column,
             boolean columnWithSeparator) {
         if (columnWithSeparator) {
-            getOut().print("   <td class=\"T_sep\">&nbsp;</td>");
+            getOut().println("   <td class=\"T_sep\">&nbsp;</td>");
         } else {
-            getOut().print("   <td>&nbsp;</td>");
+            getOut().println("   <td>&nbsp;</td>");
         }
     }
 

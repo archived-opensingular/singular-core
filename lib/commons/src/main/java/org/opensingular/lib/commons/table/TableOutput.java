@@ -112,6 +112,12 @@ public abstract class TableOutput {
     public abstract void generateTitleCellSuper(@Nonnull OutputTableContext ctx, @Nonnull Column column, int colSpan,
             boolean columnWithSeparator);
 
+    /** Gera o incio de um conjunto de linhas que representa o rodapé dos dados. */
+    public abstract void generateTotalBlockStart(@Nonnull OutputTableContext ctx);
+
+    /** Gera o fim de um conjunto de linhas que representa o rodapé dos dados. */
+    public abstract void generateTotalBlockEnd(@Nonnull OutputTableContext ctx);
+
     /**
      * Gera o início de uma nova linha de totalização da tabela.
      *

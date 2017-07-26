@@ -126,6 +126,11 @@ table {
     text-align: center;
 }
 
+.T_tfoot {
+    background-color: #FFEFAE;
+    font-weight: bold;
+}
+
 .T_l_tot {
     background-color: #FFEFAE;
     font-weight: bold;
