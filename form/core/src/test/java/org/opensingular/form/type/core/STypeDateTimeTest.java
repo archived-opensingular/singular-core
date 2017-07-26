@@ -1,10 +1,14 @@
 package org.opensingular.form.type.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.AbstractTestOneType;
+
+import java.util.Date;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -16,7 +20,7 @@ public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDate
     }
 
     @Test
-    public void storesDateInISOFormat(){
+    public void storesDateInISOFormat() {
         SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000-02:00");
@@ -24,7 +28,8 @@ public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDate
         assertThat(d.toStringPersistence()).isEqualTo("2016-01-01T07:21:33.000+00:00");
     }
 
-    @Test public void displaysDateInLatinFormat(){
+    @Test
+    public void displaysDateInLatinFormat() {
         SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000");
@@ -32,7 +37,8 @@ public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDate
         assertThat(d.toStringDisplayDefault()).isEqualTo("01/01/2016 05:21");
     }
 
-    @Test public void selectLabelIsInLatinFormat(){
+    @Test
+    public void selectLabelIsInLatinFormat() {
         SIDateTime d = newInstance();
 
         DateTime reference = DateTime.parse("2016-01-01T05:21:33.000");
@@ -42,10 +48,13 @@ public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDate
 
     @Test public void convertsFromISOForrmat(){
         SIDateTime d = newInstance();
-
-        DateTime reference = DateTime.parse("2016-01-01T05:21:33.000-02:00");
+        Date reference = DateTimeFormat
+                .forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+                .withZone(DateTimeZone.UTC)
+                .parseLocalDateTime("2016-01-01T05:21:33.000-02:00")
+                .toDate();
         d.setValue("2016-01-01T05:21:33.000-02:00");
-        assertThat(d.getValue()).isEqualTo(reference.toDate());
+        assertThat(d.getValue()).isEqualTo(reference);
     }
 
     @Test public void convertsLatinForrmat(){
