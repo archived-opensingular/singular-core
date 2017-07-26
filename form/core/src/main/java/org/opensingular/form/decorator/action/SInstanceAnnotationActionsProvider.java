@@ -40,23 +40,17 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
 
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
-        if (!annotationsVisible.test(instance))
+        final boolean annotatable = instance.asAtrAnnotation().isAnnotated();
+        if (!annotatable || !annotationsVisible.test(instance))
             return Collections.emptyList();
 
-        final boolean annotatable = instance.asAtrAnnotation().isAnnotated();
         final boolean editable = !isEmpty(instance) && annotationsEditable.test(instance);
 
-        if (!annotatable)
-            return Collections.emptyList();
-
-        final SIcon icon = resolveIcon(instance);
-        final Preview preview = resolvePreview(instance);
-
         SInstanceAction editAction = new SInstanceAction(SInstanceAction.ActionType.NORMAL)
-            .setIcon(icon)
+            .setIcon(resolveIcon(instance))
             .setText(getEditActionTitle(instance))
             .setPosition(Integer.MAX_VALUE)
-            .setPreview(preview)
+            .setPreview(resolvePreview(instance))
             .setActionHandler(new EditAnnotationHandler());
 
         return Arrays.asList(editAction);
@@ -72,8 +66,19 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
 
         return new Preview()
             .setTitle("Comentário")
-            .setMessage("")
-            .setFormat("")
+            .setMessage(String.format(""
+                + "<div class='annotation-toggle-container'>"
+                + "<p class='annotation-text'>%s</p>"
+                + "<hr/>"
+                + "%s"
+                + "</div>",
+                instance.asAtrAnnotation().text(),
+                isTrue(instance.asAtrAnnotation().approved())
+                    ? "<div class='annotation-status annotation-status-approved'>Aprovado</div>"
+                    : isFalse(instance.asAtrAnnotation().approved())
+                        ? "<div class='annotation-status annotation-status-rejected'>Rejeitado</div>"
+                        : ""))
+            .setFormat("html")
             .setActions(Arrays.asList(
                 new SInstanceAction(ActionType.LINK)
                     .setText("Editar")
@@ -97,7 +102,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
     }
 
     private static boolean isEmpty(SInstance instance) {
-        return !isApproved(instance) || !isRejected(instance);
+        return !isApproved(instance) && !isRejected(instance);
     }
 
     private static boolean isRejected(SInstance instance) {
@@ -146,12 +151,12 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                 null,
                 formSupplier,
                 fd -> Arrays.asList(
-                    new SInstanceAction(SInstanceAction.ActionType.NORMAL)
-                        .setText("Cancelar")
-                        .setActionHandler(new CloseFormHandler(fd)),
-                    new SInstanceAction(SInstanceAction.ActionType.PRIMARY)
+                    new SInstanceAction(SInstanceAction.ActionType.CONFIRM)
                         .setText("Confirmar")
-                        .setActionHandler(new ConfirmarEdicaoHandler(fd)) //
+                        .setActionHandler(new ConfirmarEdicaoHandler(fd)), //
+                    new SInstanceAction(SInstanceAction.ActionType.CANCEL)
+                        .setText("Cancelar")
+                        .setActionHandler(new CloseFormHandler(fd)) //
                 ));
         }
     }
@@ -165,14 +170,14 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                 "Deseja realmente prosseguir e apagá-lo?",
                 () -> null,
                 fd -> Arrays.asList(
-                    new SInstanceAction(ActionType.PRIMARY)
+                    new SInstanceAction(ActionType.CONFIRM)
                         .setText("Apagar")
                         .setActionHandler((a, i, d) -> {
-                            i.get().asAtrAnnotation().clear();
-                            d.refreshFieldForInstance(i.get());
+                            d.getInstanceRef().get().asAtrAnnotation().clear();
+                            d.refreshFieldForInstance(d.getInstanceRef().get());
                             fd.close();
                         }),
-                    new SInstanceAction(ActionType.PRIMARY)
+                    new SInstanceAction(ActionType.CANCEL)
                         .setText("Cancelar")
                         .setActionHandler((a, i, d) -> fd.close())//
                 ));

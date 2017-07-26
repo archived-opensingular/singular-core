@@ -14,12 +14,15 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
 
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
-        return (isBlank(instance.asAtr().getHelp()))
+        final String helpText = instance.asAtr().getHelp();
+        return (isBlank(helpText))
             ? Collections.emptyList()
             : Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
                 .setIcon(SIcon.resolve("question"))
                 .setText("Ajuda")
                 .setPosition(Integer.MIN_VALUE)
-                .setActionHandler((a, i, d) -> d.showMessage("Ajuda", i.get().asAtr().getHelp())));
+                .setPreview(new SInstanceAction.Preview()
+//                    .setTitle("Ajuda")
+                    .setMessage(helpText)));
     }
 }

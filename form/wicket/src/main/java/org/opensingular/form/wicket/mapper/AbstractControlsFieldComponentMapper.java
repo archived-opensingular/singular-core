@@ -96,7 +96,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
             BSControls labelBar = new BSControls("labelBar")
                 .appendLabel(label);
-            SInstanceActionsPanel.addFilteredPanelsTo(
+            SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
                 labelBar,
                 instanceActionsProviders,
                 model,

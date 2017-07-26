@@ -62,14 +62,14 @@ public class BSModalBorder extends Border {
 
     public enum ButtonStyle {
         //@formatter:off
-        EMPTY(""),
-        DEFAULT("btn-default"),
-        PRIMARY("btn-primary"),
-        LINK("btn-link"),
-        DANGER("btn-danger"),
-        BLUE("blue"),
-        CANCEL("cancel-btn"),
-        CONFIRM("confirm-btn");
+        EMPTY       (""),
+        DEFAULT     ("btn-default"),
+        PRIMARY     ("btn-primary"),
+        LINK        ("btn-link"),
+        DANGER      ("btn-danger"),
+        BLUE        ("blue"),
+        CANCEL      ("cancel-btn"),
+        CONFIRM     ("confirm-btn");
         //@formatter:on
 
         private String cssClass;

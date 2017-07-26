@@ -19,7 +19,7 @@ public class SInstanceAction implements Serializable {
      * Tipo de ação. Pode alterar a forma como a ação é exibida na tela.
      */
     public enum ActionType {
-        PRIMARY, NORMAL, LINK, WARNING;
+        PRIMARY, NORMAL, LINK, DANGER, CONFIRM, CANCEL;
     }
 
     /**

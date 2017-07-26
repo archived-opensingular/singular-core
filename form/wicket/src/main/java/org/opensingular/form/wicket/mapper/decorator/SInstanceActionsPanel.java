@@ -7,6 +7,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -18,6 +19,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
+import org.opensingular.form.decorator.action.SInstanceAction.Preview;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
@@ -31,9 +33,7 @@ import org.opensingular.lib.wicket.util.jquery.JQuery;
 public class SInstanceActionsPanel extends TemplatePanel {
 
     public enum Mode {
-        BAR,
-        MENU,
-        ;
+        BAR, MENU;
         boolean isMenu() {
             return this == MENU;
         }
@@ -44,48 +44,24 @@ public class SInstanceActionsPanel extends TemplatePanel {
         switch (c.mode) {
             case MENU:
                 return ""
-                    + "\n<div class='md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "'>"
-                    + "\n  <button type='button' class='md-skip btn btn-link dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"
+                    + "\n<div class='singular-form-action-menu dropdown md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "'>"
+                    + "\n  <button type='button' class='md-skip btn btn-link dropdown-toggle singular-form-action-menu-button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"
                     + "\n    <i class='fa fa-ellipsis-h'></i>"
                     + "\n  </button>"
-                    + "\n  <ul class='dropdown-menu dropdown-menu-right pull-right'>"
-                    + "\n    <li class='text-right' wicket:id='actions'>"
-                    + "\n      <a wicket:id='link' style='text-align:right'><span wicket:id='label'></span> <i wicket:id='icon'></i></a>"
-                    + "\n      <div wicket:id1='preview' class='dropdown-menu theme-panel pull-right dropdown-custom hold-on-click singular-form-action-preview'>"
-                    + "\n        <div class='row'>"
-                    + "\n          <div class='container-fluid'>"
-                    + "\n            <h5 class='preview-title' wicket:id1='previewTitle'></h5>"
-                    + "\n            <div class='singular-form-action-preview-actions'>"
-                    + "\n              <a class='singular-form-action-preview-action' wicket:id1='previewAction' href='javascript:;'><i wicket:id1='previewActionIcon'></i></a>"
-                    + "\n            </div>"
-                    + "\n            <div class='singular-form-action-preview-text' wicket:id1='previewText'></div>"
-                    + "\n          </div>"
-                    + "\n        </div>"
-                    + "\n      </div>"
+                    + "\n  <ul class='dropdown-menu pull-right'>"
+                    + "\n    <li wicket:id='actions' class='text-right singular-form-action dropdown'>"
+                    + "\n      <a wicket:id='link' class='singular-form-action-link' style='text-align:right'><span wicket:id='label'></span> <i wicket:id='icon'></i></a>"
+                    + "\n      <div wicket:id='preview'></div>"
                     + "\n    </li>"
                     + "\n  </ul>"
                     + "\n</div>";
             case BAR:
             default:
                 return ""
-                    + "\n<div class='md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "' style='margin-left:-1px !important;'>"
-                    + "\n  <div wicket:id='actions'>"
-                    + "\n    <a wicket:id='link'"
-                    + "\n        class='md-skip btn btn-link' style='padding:0px;'"
-                    + "\n        data-toggle='tooltip' data-placement='top' data-animation='false' data-trigger='hover'>"
-                    + "\n      <span wicket:id='label'></span> <i wicket:id='icon'></i>"
-                    + "\n    </a>"
-                    + "\n    <div wicket:id1='preview' class='dropdown-menu theme-panel pull-right dropdown-custom hold-on-click singular-form-action-preview'>"
-                    + "\n      <div class='row'>"
-                    + "\n        <div class='container-fluid'>"
-                    + "\n          <h5 class='preview-title' wicket:id1='previewTitle'></h5>"
-                    + "\n          <div class='singular-form-action-preview-actions'>"
-                    + "\n            <a class='singular-form-action-preview-action' wicket:id1='previewAction' href='javascript:;'><i wicket:id1='previewActionIcon'></i></a>"
-                    + "\n          </div>"
-                    + "\n          <div class='singular-form-action-preview-text' wicket:id1='previewText'></div>"
-                    + "\n        </div>"
-                    + "\n      </div>"
-                    + "\n    </div>"
+                    + "\n<div class='singular-form-action-bar md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "' style='margin-left:-1px !important;'>"
+                    + "\n  <div wicket:id='actions' class='singular-form-action dropdown'>"
+                    + "\n    <a wicket:id='link' href='javascript:void;' class='md-skip btn btn-link singular-form-action-link' style='padding:0px;'><span wicket:id='label'></span> <i wicket:id='icon'></i></a>"
+                    + "\n    <div wicket:id='preview'></div>"
                     + "\n  </div>"
                     + "\n</div>";
         }
@@ -94,6 +70,8 @@ public class SInstanceActionsPanel extends TemplatePanel {
     private final Mode                                       mode;
     private final ISupplier<? extends List<SInstanceAction>> actionsSupplier;
     private boolean                                          large = false;
+
+    private final ActionsView                                actionsView;
 
     public SInstanceActionsPanel(
         String id,
@@ -106,11 +84,9 @@ public class SInstanceActionsPanel extends TemplatePanel {
         this.actionsSupplier = actionsSupplier;
 
         add($b.classAppender("decorator-actions"));
+        add($b.onReadyScript(c -> JQuery.$(c, ".singular-form-action-menu-button") + ".dropdown()"));
 
-        if (!mode.isMenu())
-            add($b.onReadyScript(c -> JQuery.$(c) + ".find('[data-toggle=\"tooltip\"]').tooltip();"));
-
-        add(new ActionsView("actions", mode, instanceModel, internalContextListProvider, actionsSupplier));
+        add(actionsView = new ActionsView("actions", mode, instanceModel, internalContextListProvider, actionsSupplier));
     }
 
     public SInstanceActionsPanel setLarge(boolean large) {
@@ -121,10 +97,13 @@ public class SInstanceActionsPanel extends TemplatePanel {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        setVisible(!actionsSupplier.get().isEmpty());
+        setVisible(Optional.ofNullable(actionsSupplier)
+            .map(it -> it.get())
+            .filter(it -> !it.isEmpty())
+            .isPresent());
     }
 
-    public static <C extends BSContainer<C>> C addFilteredPanelsTo(
+    public static <C extends BSContainer<C>> C addLeftSecondaryRightPanelsTo(
         C container,
         SInstanceActionsProviders instanceActionsProviders,
         IModel<? extends SInstance> model,
@@ -147,11 +126,41 @@ public class SInstanceActionsPanel extends TemplatePanel {
         return container;
     }
 
+    public static <C extends BSContainer<C>> C addPrimarySecondaryPanelsTo(
+        C container,
+        SInstanceActionsProviders instanceActionsProviders,
+        IModel<? extends SInstance> model,
+        boolean large,
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
+
+        ISupplier<? extends List<SInstanceAction>> filterPrimary = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary());
+        ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary());
+        container
+            .appendTag("div", new SInstanceActionsPanel("actionsPrimary", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterPrimary)
+                .setLarge(large)
+                .add($b.classAppender("align-left")))
+            .appendTag("div", new SInstanceActionsPanel("actionsSecondary", model, internalContextListProvider, SInstanceActionsPanel.Mode.MENU, filterSecondary)
+                .setLarge(large)
+                .add($b.classAppender("align-right")));
+        return container;
+    }
+
+    public SInstanceActionsPanel setActionClassFunction(IFunction<SInstanceAction, String> actionClassFunction) {
+        this.actionsView.setActionClassFunction(actionClassFunction);
+        return this;
+    }
+    public SInstanceActionsPanel setLinkClassFunction(IFunction<SInstanceAction, String> linkClassFunction) {
+        this.actionsView.setLinkClassFunction(linkClassFunction);
+        return this;
+    }
+
     private static final class ActionsView extends RefreshingView<SInstanceAction> {
         private final Mode                                       mode;
         private final IFunction<AjaxRequestTarget, List<?>>      internalContextListProvider;
         private final IModel<? extends SInstance>                instanceModel;
         private final ISupplier<? extends List<SInstanceAction>> actionsSupplier;
+        private IFunction<SInstanceAction, String>               actionClassFunction = it -> "";
+        private IFunction<SInstanceAction, String>               linkClassFunction   = it -> "";
         private ActionsView(String id,
             Mode mode,
             IModel<? extends SInstance> instanceModel,
@@ -166,21 +175,34 @@ public class SInstanceActionsPanel extends TemplatePanel {
         @Override
         protected void populateItem(Item<SInstanceAction> item) {
             IModel<SInstanceAction> itemModel = item.getModel();
-            item.setRenderBodyOnly(!mode.isMenu());
+            //item.setRenderBodyOnly(!mode.isMenu());
             SInstanceAction action = itemModel.getObject();
 
-            MarkupContainer link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
-                @Override
-                protected void onAction(AjaxRequestTarget target) {
-                    final List<?> contextList = internalContextListProvider.apply(target);
+            MarkupContainer link;
+            Preview preview = action.getPreview();
+            if (preview != null) {
+                link = new WebMarkupContainer("link");
+                link.add($b.attr("data-toggle", "dropdown"));
+                item.add(new SInstanceActionPreviewPanel("preview",
+                    $m.map(itemModel, it -> it.getPreview()),
+                    instanceModel,
+                    internalContextListProvider));
+            } else {
+                link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target) {
+                        final List<?> contextList = internalContextListProvider.apply(target);
 
-                    final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel, contextList);
+                        final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel, contextList);
 
-                    SInstanceAction instanceAction = this.getModelObject();
-                    instanceAction.getActionHandler()
-                        .onAction(instanceAction, instanceModel::getObject, delegate);
-                }
-            };
+                        SInstanceAction instanceAction = this.getModelObject();
+                        instanceAction.getActionHandler()
+                            .onAction(instanceAction, instanceModel::getObject, delegate);
+                    }
+                };
+                item.add(new WebMarkupContainer("preview")
+                    .setVisible(false));
+            }
 
             Label label = new Label("label", $m.get(() -> action.getText()));
             link.add(label
@@ -188,7 +210,10 @@ public class SInstanceActionsPanel extends TemplatePanel {
 
             addIcon(link, itemModel);
 
-            item.add(link);
+            item
+                .add(link
+                    .add($b.classAppender($m.map(itemModel, linkClassFunction))))
+                .add($b.classAppender($m.map(itemModel, actionClassFunction)));
         }
         private void addIcon(MarkupContainer container, IModel<SInstanceAction> itemModel) {
             final IModel<String> titleModel = $m.map(itemModel, action -> defaultString(action.getText(), action.getDescription()));
@@ -200,7 +225,14 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 .add($b.styleAppender($m.map(itemModel, it -> it.getIcon().getContainerCssStyles())))
                 .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null)))
                 .add($b.attr("title", titleModel))
-                .add($b.attr("data-toggle", "tooltip"));
+            //                .add($b.onReadyScript(c -> (mode.isMenu())
+            //                    ? ""
+            //                    : JQuery.$(c) + ".tooltip({"
+            //                        + "placement:'top',"
+            //                        + "animation:'false',"
+            //                        + "trigger:'hover'"
+            //                        + "});"))
+            ;
         }
         @Override
         protected Iterator<IModel<SInstanceAction>> getItemModels() {
@@ -208,6 +240,14 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 .sorted(Comparator.comparing(it -> it.getPosition()))
                 .map(it -> (IModel<SInstanceAction>) Model.of(it))
                 .iterator();
+        }
+        public ActionsView setActionClassFunction(IFunction<SInstanceAction, String> actionClassFunction) {
+            this.actionClassFunction = actionClassFunction;
+            return this;
+        }
+        public ActionsView setLinkClassFunction(IFunction<SInstanceAction, String> linkClassFunction) {
+            this.linkClassFunction = linkClassFunction;
+            return this;
         }
     }
 }

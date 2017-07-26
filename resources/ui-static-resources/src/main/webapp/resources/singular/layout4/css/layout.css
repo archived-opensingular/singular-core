@@ -1731,6 +1731,28 @@ Theme Panel
 .confirm-btn {
   background-color: #40BAA7; }
 
+.singular-form-action-preview .singular-form-action-preview-title {
+  display: inline-block;
+  font-weight: 600; }
+
+.singular-form-action-preview .singular-form-action-preview-actions {
+  float: right;
+  margin-right: 10px; }
+  .singular-form-action-preview .singular-form-action-preview-actions .singular-form-action-preview-action {
+    display: inline-block;
+    color: #acb1c2;
+    margin-left: 10px; }
+  .singular-form-action-preview .singular-form-action-preview-actions .singular-form-action-preview-action:hover {
+    color: #65697C; }
+
+.decorator-actions.align-right .singular-form-action-preview {
+  right: 0;
+  left: auto;
+  float: right !important; }
+
+.singular-form-action-bar .singular-form-action {
+  display: inline-block; }
+
 .upload-fileinput {
   width: 0.1px;
   height: 0.1px;

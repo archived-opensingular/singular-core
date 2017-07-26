@@ -93,13 +93,30 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
         for (int i = 0; i < actionsList.size(); i++) {
             final SInstanceAction action = actionsList.get(i);
 
-            final ButtonStyle style = WicketSIconActionDelegate.resolveButtonStyle(action.getType());
+            final ButtonStyle style = resolveButtonStyle(action.getType());
             final Model<String> label = Model.of(action.getText());
             final FooterButton button = new FooterButton("action" + i, action, instanceModel, formInstanceModel);
             buttons.add(new ButtonDef(style, label, button));
         }
-        return buttons
-            .iterator();
+        return buttons.iterator();
+    }
+
+    private static ButtonStyle resolveButtonStyle(SInstanceAction.ActionType actionType) {
+        switch (actionType) {
+            case PRIMARY:
+                return ButtonStyle.PRIMARY;
+            case LINK:
+                return ButtonStyle.LINK;
+            case DANGER:
+                return ButtonStyle.DANGER;
+            case CONFIRM:
+                return ButtonStyle.CONFIRM;
+            case CANCEL:
+                return ButtonStyle.CANCEL;
+            case NORMAL:
+            default:
+                return ButtonStyle.DEFAULT;
+        }
     }
 
     static final class FooterButton extends ActionAjaxButton {

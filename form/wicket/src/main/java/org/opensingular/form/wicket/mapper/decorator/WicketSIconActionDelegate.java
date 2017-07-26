@@ -25,7 +25,6 @@ import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
 
 /**
  * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
@@ -86,20 +85,6 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
             Optional<MarkupContainer> fieldContainer = WicketFormUtils.findChildByInstance(comp.get().getPage(), instance)
                 .flatMap(WicketFormUtils::findCellContainer);
             target.get().add(fieldContainer.get());
-        }
-    }
-
-    static ButtonStyle resolveButtonStyle(SInstanceAction.ActionType actionType) {
-        switch (actionType) {
-            case PRIMARY:
-                return ButtonStyle.PRIMARY;
-            case LINK:
-                return ButtonStyle.LINK;
-            case WARNING:
-                return ButtonStyle.DANGER;
-            case NORMAL:
-            default:
-                return ButtonStyle.DEFAULT;
         }
     }
 

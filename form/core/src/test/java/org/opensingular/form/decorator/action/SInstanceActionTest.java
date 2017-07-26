@@ -14,7 +14,7 @@ public class SInstanceActionTest {
         SInstanceAction action = new SInstanceAction(ActionType.NORMAL)
             .setType(ActionType.LINK)
             .setType(ActionType.PRIMARY)
-            .setType(ActionType.WARNING)
+            .setType(ActionType.DANGER)
             .setText("text")
             .setIcon(SIcon.resolve("star"))
             .setDescription("description")
@@ -29,7 +29,7 @@ public class SInstanceActionTest {
                 d.getInternalContext(null);
             });
 
-        assertEquals(ActionType.WARNING, action.getType());
+        assertEquals(ActionType.DANGER, action.getType());
         assertEquals("text", action.getText());
         assertEquals("description", action.getDescription());
         assertEquals(0, action.getPosition());
