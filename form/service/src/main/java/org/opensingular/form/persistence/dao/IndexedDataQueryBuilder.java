@@ -36,8 +36,8 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
         String joinAlias = "tb_cache_campo_" + ++colCount;
 
-        join.append("  inner join " + Constants.SCHEMA + ".tb_cache_campo ").append(joinAlias).append(" on ").append(joinAlias).append(".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
-        join.append("  inner join " + Constants.SCHEMA + ".tb_cache_valor ").append(columnAlias).append(" on ").append(columnAlias).append(".co_cache_campo = ").append(joinAlias).append(".co_cache_campo \n");
+        join.append("  inner join ").append(Constants.SCHEMA).append(".tb_cache_campo ").append(joinAlias).append(" on ").append(joinAlias).append(".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
+        join.append("  inner join ").append(Constants.SCHEMA).append(".tb_cache_valor ").append(columnAlias).append(" on ").append(columnAlias).append(".co_cache_campo = ").append(joinAlias).append(".co_cache_campo \n");
         join.append("          and ").append(columnAlias).append(".co_versao_formulario = formulario.co_versao_atual \n");
         join.append("          and ").append(joinAlias).append(".ds_caminho_campo in (").append(fieldsNames).append(") \n");
     }
