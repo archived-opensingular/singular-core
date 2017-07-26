@@ -36,10 +36,10 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
         String joinAlias = "tb_cache_campo_" + ++colCount;
 
-        join.append("  inner join " + Constants.SCHEMA + ".tb_cache_campo " + joinAlias + " on " + joinAlias + ".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
-        join.append("  inner join " + Constants.SCHEMA + ".tb_cache_valor " + columnAlias + " on " + columnAlias + ".co_cache_campo = " + joinAlias + ".co_cache_campo \n");
-        join.append("          and " + columnAlias + ".co_versao_formulario = formulario.co_versao_atual \n");
-        join.append("          and " + joinAlias + ".ds_caminho_campo in (" + fieldsNames + ") \n");
+        join.append("  inner join " + Constants.SCHEMA + ".tb_cache_campo ").append(joinAlias).append(" on ").append(joinAlias).append(".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
+        join.append("  inner join " + Constants.SCHEMA + ".tb_cache_valor ").append(columnAlias).append(" on ").append(columnAlias).append(".co_cache_campo = ").append(joinAlias).append(".co_cache_campo \n");
+        join.append("          and ").append(columnAlias).append(".co_versao_formulario = formulario.co_versao_atual \n");
+        join.append("          and ").append(joinAlias).append(".ds_caminho_campo in (").append(fieldsNames).append(") \n");
     }
 
     private String getFieldsNames(String[] fields) {

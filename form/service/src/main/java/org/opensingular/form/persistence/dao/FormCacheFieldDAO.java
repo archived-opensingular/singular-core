@@ -45,6 +45,6 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
         Query query = getSession().createQuery("delete FormCacheFieldEntity");
 
         int result = query.executeUpdate();
-        getLogger().info(result + " itens excluidos na atualização dos campos indexados");
+        getLogger().info("{} itens excluidos na atualização dos campos indexados", result);
     }
 }

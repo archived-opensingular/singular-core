@@ -31,8 +31,7 @@ public class AtrIndex extends STranslatorForAttribute {
 
 
     public Boolean isPersistent() {
-        Boolean attributeValue = getAttributeValue(SPackagePersistence.ATR_PERSISTENT) == null ? false : getAttributeValue(SPackagePersistence.ATR_PERSISTENT);
-        return attributeValue;
+        return getAttributeValue(SPackagePersistence.ATR_PERSISTENT) == null ? Boolean.FALSE: getAttributeValue(SPackagePersistence.ATR_PERSISTENT);
     }
 
     public String getAlias() {

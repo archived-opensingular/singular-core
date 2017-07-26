@@ -87,15 +87,15 @@ public class FormIndexService {
                     dto.setForm(form);
                     instancesToIndex.add(dto);
                 } else {
-                    LOGGER.info("Não foi possível indexar o form " + formType);
+                    LOGGER.info("Não foi possível indexar o form {}", formType);
                 }
             }
             formFieldService.saveFields(instancesToIndex);
-            instancesToIndex = new ArrayList<>();
+            instancesToIndex = new ArrayList<>();//NOSONAR
         }
 
         long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-        LOGGER.info("Indexação completa. Duração: " + duration + " millis");
+        LOGGER.info("Indexação completa. Duração: {} millis", duration );
     }
 
 
