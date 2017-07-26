@@ -22,7 +22,6 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
                 .setText("Ajuda")
                 .setPosition(Integer.MIN_VALUE)
                 .setPreview(new SInstanceAction.Preview()
-//                    .setTitle("Ajuda")
                     .setMessage(helpText)));
     }
 }

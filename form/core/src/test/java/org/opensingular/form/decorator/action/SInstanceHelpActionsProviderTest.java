@@ -1,7 +1,5 @@
 package org.opensingular.form.decorator.action;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +46,7 @@ public class SInstanceHelpActionsProviderTest extends TestCaseForm {
 
         SInstanceAction helpAction = actions.get(0);
 
-        MockSInstanceActionDelegate delegate = new MockSInstanceActionDelegate();
-        helpAction.getActionHandler().onAction(helpAction, () -> instance, delegate);
-        assertEquals(1, delegate._showMessageCount);
+        assertNotNull(helpAction.getPreview());
     }
 
 }
