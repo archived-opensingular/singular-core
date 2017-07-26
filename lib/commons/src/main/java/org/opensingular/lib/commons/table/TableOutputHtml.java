@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class TableOutputHtml extends TableOutput {
 
     private final ViewOutputWriter vOut;
+    private final String tableid = UUID.randomUUID().toString();
 
     public TableOutputHtml(ViewOutputWriter vOut) {this.vOut = vOut;}
 
@@ -97,7 +99,7 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateTableStart(OutputTableContext ctx, TableTool tableTool) {
         println();
-        print("<table cellpadding='0' cellspacing='0'");
+        print("<table id='"+tableid+"' cellpadding='0' cellspacing='0'");
         if (tableTool.isCorLinhaAlternada()) {
             printAtributo("class", "T_t table table-bordered table-condensed table-hover table-striped");
         } else {
@@ -113,6 +115,18 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateTableEnd(OutputTableContext ctx, TableTool tableTool) {
         println("</table>");
+        println();
+        println("<script type='text/javascript'>");
+        println("(function(){\n" +
+                "if(typeof $ !== 'undefined'){\n" +
+                "    $(document).ready(function(){\n" +
+                "        var table = $('#"+tableid+"');\n" +
+                "        if(table.DataTable){\n" +
+                "            table.DataTable("+datatablesOptions()+");\n" +
+                "        }\n" +
+                "    });}\n" +
+                "}());");
+        println("</script>");
         println();
     }
 
@@ -522,5 +536,31 @@ public class TableOutputHtml extends TableOutput {
 
     private static String stringValue(Map.Entry<String, String> entry) {
         return entry.getValue() == null ? "null" : entry.getValue();
+    }
+
+    private String datatablesOptions(){
+        return "{'oLanguage' : {\n" +
+                "    'sEmptyTable': 'Nenhum registro encontrado',\n" +
+                "    'sInfo': 'Mostrando de _START_ até _END_ de _TOTAL_ registros',\n" +
+                "    'sInfoEmpty': 'Mostrando 0 até 0 de 0 registros',\n" +
+                "    'sInfoFiltered': '(Filtrados de _MAX_ registros)',\n" +
+                "    'sInfoPostFix': '',\n" +
+                "    'sInfoThousands': '.',\n" +
+                "    'sLengthMenu': '_MENU_ resultados por página',\n" +
+                "    'sLoadingRecords': 'Carregando...',\n" +
+                "    'sProcessing': 'Processando...',\n" +
+                "    'sZeroRecords': 'Nenhum registro encontrado',\n" +
+                "    'sSearch': 'Pesquisar',\n" +
+                "    'oPaginate': {\n" +
+                "        'sNext': 'Próximo',\n" +
+                "        'sPrevious': 'Anterior',\n" +
+                "        'sFirst': 'Primeiro',\n" +
+                "        'sLast': 'Último'\n" +
+                "    },\n" +
+                "    'oAria': {\n" +
+                "        'sSortAscending': ': Ordenar colunas de forma ascendente',\n" +
+                "        'sSortDescending': ': Ordenar colunas de forma descendente'\n" +
+                "    }\n" +
+                "}}";
     }
 }
