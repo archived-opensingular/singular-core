@@ -97,18 +97,19 @@ public class TableOutputExcel extends TableOutput implements Loggable {
             return;
         }
         switch (ctx.getCell().getColumn().getTipo()) {
-            case Integer:
-            case Number:
-            case Money:
+            case INTEGER:
+            case NUMBER:
+            case MONEY:
                 cell.setCellValue(((Number) ctx.getValue()).doubleValue());
                 break;
-            case String:
+            case STRING:
                 cell.setCellValue((String) ctx.getValue());
                 break;
             default:
                 cell.setCellValue(ctx.generateFormatDisplayString());
                 break;
         }
+        viewOutputExcel.getOutput().autoSizeColumn(cell.getColumnIndex());
     }
 
     private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.Alignment alinhamento) {
@@ -163,6 +164,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
             columnRowSpanMap.put(columnIndex, spanOffset);
             viewOutputExcel.getOutput().addMergedRegion(new CellRangeAddress(rowIndex, rowIndex + spanOffset, columnIndex, columnIndex));
         }
+        viewOutputExcel.getOutput().autoSizeColumn(cell.getColumnIndex());
     }
 
     private boolean containsRowSpanForColumn() {

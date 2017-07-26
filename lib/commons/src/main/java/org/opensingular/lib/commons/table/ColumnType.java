@@ -23,20 +23,20 @@ import javax.annotation.Nonnull;
  */
 public enum ColumnType {
     //@formatter:off
-    String(ColumnTypeProcessor.STRING),
-    Date(ColumnTypeProcessor.DATE),
-    DateHour(ColumnTypeProcessor.DATE_HOUR),
-    DateHourShort(ColumnTypeProcessor.DATE_HOUR_SHORT),
-    Integer(ColumnTypeProcessor.INTEGER),
-    Money(ColumnTypeProcessor.NUMBER),
-    Number(ColumnTypeProcessor.NUMBER),
-    Percent(ColumnTypeProcessor.PERCENT),
-    Hour(ColumnTypeProcessor.HOUR),
-    Action(ColumnTypeProcessor.ACTION),
-    Boolean(ColumnTypeProcessor.BOOLEAN),
-    Html(ColumnTypeProcessor.RAW),
-    Periodo(ColumnTypeProcessor.RAW),
-    Day(ColumnTypeProcessor.DAY);
+    STRING(ColumnTypeProcessor.STRING),
+    DATE(ColumnTypeProcessor.DATE),
+    DATEHOUR(ColumnTypeProcessor.DATE_HOUR),
+    DATEHOURSHORT(ColumnTypeProcessor.DATE_HOUR_SHORT),
+    INTEGER(ColumnTypeProcessor.INTEGER),
+    MONEY(ColumnTypeProcessor.NUMBER),
+    NUMBER(ColumnTypeProcessor.NUMBER),
+    PERCENT(ColumnTypeProcessor.PERCENT),
+    HOUR(ColumnTypeProcessor.HOUR),
+    ACTION(ColumnTypeProcessor.ACTION),
+    BOOLEAN(ColumnTypeProcessor.BOOLEAN),
+    HTML(ColumnTypeProcessor.RAW),
+    PERIODO(ColumnTypeProcessor.RAW),
+    DAY(ColumnTypeProcessor.DAY);
     //@formatter:on
 
     private final ColumnTypeProcessor processor;

@@ -213,18 +213,18 @@ public class Column implements Serializable {
             return alinhamento_;
         }
         switch (type) {
-            case Date:
-            case Day:
-            case Periodo:
-            case DateHourShort:
-            case Boolean:
-            case DateHour:
+            case DATE:
+            case DAY:
+            case PERIODO:
+            case DATEHOURSHORT:
+            case BOOLEAN:
+            case DATEHOUR:
                 return Alignment.Center;
-            case Hour:
-            case Integer:
-            case Number:
-            case Money:
-            case Percent:
+            case HOUR:
+            case INTEGER:
+            case NUMBER:
+            case MONEY:
+            case PERCENT:
                 return Alignment.Right;
             default:
                 return Alignment.Left;
@@ -232,7 +232,7 @@ public class Column implements Serializable {
     }
 
     public boolean isTipoAcao() {
-        return ColumnType.Action == type;
+        return ColumnType.ACTION == type;
     }
 
     public void setSuperTitle(String superTitle) {
@@ -333,16 +333,16 @@ public class Column implements Serializable {
             return 1;
         }
         switch (type) {
-            case String:
-            case Html:
+            case STRING:
+            case HTML:
                 if (c1.getValorReal() == null || c2.getValorReal() == null) {
                     return Objects.toString(c1.getValue()).compareToIgnoreCase(Objects.toString(c2.getValue()));
                 }
-            case Money:
-            case Number:
-            case Integer:
-            case Percent:
-            case Hour:
+            case MONEY:
+            case NUMBER:
+            case INTEGER:
+            case PERCENT:
+            case HOUR:
                 Object valorReal1 = MoreObjects.<Object>firstNonNull(c1.getValorReal(), c1.getValue());
                 Object valorReal2 = MoreObjects.<Object>firstNonNull(c2.getValorReal(), c2.getValue());
                 if (valorReal1 instanceof Number && valorReal2 instanceof Number) {

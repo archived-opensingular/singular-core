@@ -139,9 +139,9 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
         Map<Column, TipoAgregacaoCampo> agregacaoDefault = new HashMap<>();
         getColunas().forEach(coluna -> {
             switch (coluna.getTipo()) {
-            case Number:
-            case Integer:
-            case Money:
+            case NUMBER:
+            case INTEGER:
+            case MONEY:
                 agregacaoDefault.put(coluna, TipoAgregacaoCampo.SOMA);
                 break;
             default: break;

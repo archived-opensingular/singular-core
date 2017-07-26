@@ -44,7 +44,7 @@ public class TableToolUtilTest {
     
     private TableTool createSimple() {
         TableTool table = new TableTool();
-        table.addColumn(ColumnType.String,"A");
+        table.addColumn(ColumnType.STRING,"A");
         PopulatorTable populator = table.createSimpleTablePopulator();
         populator.insertLine("L0");
         return table;

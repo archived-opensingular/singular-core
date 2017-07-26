@@ -616,7 +616,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
         // Trata a exibição do valor como percentual do valor pai
         if (ctxCell.getColumn().isCalcularPercentualPai()) {
-            ctxCell.setColumnProcessor(ColumnType.Percent.getProcessor());
+            ctxCell.setColumnProcessor(ColumnType.PERCENT.getProcessor());
             if (ctxCell.getValue() instanceof Number) {
                 Number value = (Number) ctxCell.getValue();
                 value = AlocproToolkit.divide(value, ctxCell.getColumn().getValorReferenciaPercentual());

@@ -80,16 +80,16 @@ public class TableToolColumTypeTest {
 
     @Test
     public void testBoolean() {
-        assertOneCellResult(ColumnType.Boolean, null, Boolean.TRUE, "Sim");
-        assertOneCellResult(ColumnType.Boolean, null, Boolean.FALSE, "Não");
-        assertOneCellResult(ColumnType.Boolean, null, null, null);
-        assertOneCellResult(ColumnType.Boolean, null, "X", "X");
+        assertOneCellResult(ColumnType.BOOLEAN, null, Boolean.TRUE, "Sim");
+        assertOneCellResult(ColumnType.BOOLEAN, null, Boolean.FALSE, "Não");
+        assertOneCellResult(ColumnType.BOOLEAN, null, null, null);
+        assertOneCellResult(ColumnType.BOOLEAN, null, "X", "X");
     }
 
     @Test
     @Ignore
     public void testDate() {
-        assertOneCellResult(ColumnType.Date, null, new Date(), "Sim");
+        assertOneCellResult(ColumnType.DATE, null, new Date(), "Sim");
     }
 
     private TableOutputSimulated assertOneCellResult(ColumnType type, Consumer<Column> configColumn,
@@ -124,11 +124,11 @@ public class TableToolColumTypeTest {
 
     private TableTool createTableWithNumber(Consumer<Column> action) {
         TableTool table = new TableTool();
-        table.addColumn(ColumnType.Number, "Number");
-        table.addColumn(ColumnType.Integer, "Integer");
-        table.addColumn(ColumnType.Money, "Money");
-        table.addColumn(ColumnType.Percent, "Percent");
-        table.addColumn(ColumnType.Hour, "Hour");
+        table.addColumn(ColumnType.NUMBER, "Number");
+        table.addColumn(ColumnType.INTEGER, "Integer");
+        table.addColumn(ColumnType.MONEY, "Money");
+        table.addColumn(ColumnType.PERCENT, "Percent");
+        table.addColumn(ColumnType.HOUR, "Hour");
         if (action != null) {
             table.getColumns().forEach(action);
         }

@@ -33,9 +33,9 @@ public abstract class TableToolSimpleTestBase {
 
     public TableTool testSimpleTable_build() {
         TableTool table = new TableTool();
-        table.addColumn(ColumnType.String);
-        table.addColumn(ColumnType.Integer);
-        table.addColumn(ColumnType.Integer);
+        table.addColumn(ColumnType.STRING);
+        table.addColumn(ColumnType.INTEGER);
+        table.addColumn(ColumnType.INTEGER);
         setSimpleData(table);
         return table;
     }
@@ -107,10 +107,10 @@ public abstract class TableToolSimpleTestBase {
 
     protected TableTool testSimpleTable_withSuperTitleAndTotalization_build() {
         TableTool table = new TableTool();
-        table.addColumn(ColumnType.String,"A");
-        table.addColumn(ColumnType.Integer, "B");
-        table.addColumn(ColumnType.Number, "C");
-        table.addColumn(ColumnType.String, "D").setAlignmentCenter();
+        table.addColumn(ColumnType.STRING,"A");
+        table.addColumn(ColumnType.INTEGER, "B");
+        table.addColumn(ColumnType.NUMBER, "C");
+        table.addColumn(ColumnType.STRING, "D").setAlignmentCenter();
         table.addSuperTitulo(1,2,"Super");
         table.setTotalizar(true);
         table.getColumn(1).setTotalizar(false);
@@ -141,9 +141,9 @@ public abstract class TableToolSimpleTestBase {
     @NotNull
     private TableTool createTableToolWith3Columns() {
         TableTool table = new TableTool();
-        table.addColumn(ColumnType.String,"A");
-        table.addColumn(ColumnType.Integer, "B");
-        table.addColumn(ColumnType.Integer, "C");
+        table.addColumn(ColumnType.STRING,"A");
+        table.addColumn(ColumnType.INTEGER, "B");
+        table.addColumn(ColumnType.INTEGER, "C");
         return table;
     }
 
