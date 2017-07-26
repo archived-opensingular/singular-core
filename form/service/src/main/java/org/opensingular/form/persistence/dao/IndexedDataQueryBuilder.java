@@ -30,7 +30,7 @@ public class IndexedDataQueryBuilder {
         if (colCount == 0) {
             select.append("  , ").append(column).append(".co_versao_formulario as co_versao_formulario \n");
         }
-        select.append("  , ").append(column).append(".ds_valor as ").append(column).append("\n");
+        select.append("  , ").append(column).append(".ds_valor as ").append(column).append('\n');
     }
 
     private void addJoinClause(String columnAlias, String fieldsNames) {
@@ -47,7 +47,7 @@ public class IndexedDataQueryBuilder {
 
          if (fields != null) {
              for (int i=0; i<fields.length; i++) {
-                fieldsNames.append("'").append(fields[i]).append("'");
+                fieldsNames.append('\'').append(fields[i]).append('\'');
                 if (fields.length - i > 1) {
                     fieldsNames.append(", ");
                 }
