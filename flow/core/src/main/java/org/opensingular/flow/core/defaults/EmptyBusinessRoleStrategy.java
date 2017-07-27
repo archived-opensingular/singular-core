@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core;
+package org.opensingular.flow.core.defaults;
 
-import java.io.Serializable;
+import org.opensingular.flow.core.FlowInstance;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.BusinessRoleStrategy;
+
+import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("serial")
-public abstract class UserRoleSettingStrategy<K extends FlowInstance> implements Serializable {
+public class EmptyBusinessRoleStrategy extends BusinessRoleStrategy<FlowInstance> {
 
-    public abstract List<? extends SUser> listAllocableUsers(K instancia);
-
-    public SUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
-        return null;
+    @Override
+    public List<? extends SUser> listAllocableUsers(FlowInstance flowInstance) {
+            return Collections.emptyList();
     }
+
 }

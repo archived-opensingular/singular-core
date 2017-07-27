@@ -9,5 +9,7 @@ import java.io.Serializable;
  */
 @FunctionalInterface
 public interface TaskJavaCall<K extends FlowInstance> extends Serializable {
-    void call(ExecutionContext<K> execucaoTask);
+
+    void call(ExecutionContext<K> context);
+
 }

@@ -108,13 +108,13 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#PEOPLE}.</p>
+     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#HUMAN}.</p>
      *
-     * @return as tarefas definidas do tipo {@link TaskType#PEOPLE} ou uma lista vazia.
+     * @return as tarefas definidas do tipo {@link TaskType#HUMAN} ou uma lista vazia.
      */
     @Nonnull
     public Collection<STaskHuman> getHumanTasks() {
-        return (Collection<STaskHuman>) getTasks(TaskType.PEOPLE);
+        return (Collection<STaskHuman>) getTasks(TaskType.HUMAN);
     }
 
     /**
@@ -198,14 +198,14 @@ public class FlowMap {
      *
      * @param name o nome do papel.
      * @param abbreviation a sigla do papel.
-     * @param userRoleSettingStrategy o {@link UserRoleSettingStrategy} do papel.
+     * @param businessRoleStrategy o {@link BusinessRoleStrategy} do papel.
      * @param automaticUserAllocation indicador de alocação automática.
      * @return o papel adicionado ao mapa.
      */
     public SBusinessRole addRoleDefinition(String name, String abbreviation,
-            UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy,
+            BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
+        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, businessRoleStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
             throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
         }
@@ -264,7 +264,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#PEOPLE}.</p>
+     * <p>Cria e adiciona uma nova tarefa do tipo {@link TaskType#HUMAN}.</p>
      *
      * @param definition a definição da tarefa.
      * @return a nova tarefa criada e adicionada.
@@ -398,7 +398,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna a tarefa do tipo {@link TaskType#PEOPLE} deste mapa com a sigla especificada.</p>
+     * <p>Retorna a tarefa do tipo {@link TaskType#HUMAN} deste mapa com a sigla especificada.</p>
      *
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada; ou {@code null} caso não a encontre.
@@ -408,7 +408,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna a tarefa do tipo {@link TaskType#PEOPLE} deste mapa com a sigla especificada.</p>
+     * <p>Retorna a tarefa do tipo {@link TaskType#HUMAN} deste mapa com a sigla especificada.</p>
      *
      * @param abbreviation a sigla especificada.
      * @return a tarefa deste mapa com a sigla especificada.

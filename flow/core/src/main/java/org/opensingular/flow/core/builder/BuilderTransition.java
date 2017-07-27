@@ -59,8 +59,8 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
 
-    public default SELF defineUserRoleInTransition(BuilderBusinessRole<?> processRole) {
-        getTransition().defineUserRoleInTransition(processRole.getBusinessRole());
+    public default SELF defineBusinessRoleInTransition(BuilderBusinessRole<?> processRole) {
+        getTransition().defineBusinessRoleInTransition(processRole.getBusinessRole());
         return self();
     }
 

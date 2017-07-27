@@ -18,8 +18,8 @@ package org.opensingular.form.view;
 
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.provider.Provider;
 import org.opensingular.form.SType;
+import org.opensingular.form.provider.Provider;
 import org.opensingular.form.provider.ProviderContext;
 
 /**
@@ -36,7 +36,7 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
         if (listInstance instanceof SIList) {
             SIList<?> listType    = (SIList<?>) listInstance;
             SType<?> elementType = listType.getElementsType();
-            if (elementType != null && elementType.asAtrProvider().getProvider() != null) {
+            if (elementType.asAtrProvider().getProvider() != null) {
                 return decideView(listInstance, elementType.asAtrProvider().getProvider());
             }
         }
