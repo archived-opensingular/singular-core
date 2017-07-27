@@ -5,6 +5,7 @@ import org.opensingular.form.SType;
 import org.opensingular.lib.commons.views.ViewGenerator;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * SingularFormReport
@@ -27,7 +28,7 @@ public interface SingularFormReport<E extends Serializable, T extends SType<I>, 
      * The type to build the filter
      * @return the type
      */
-    T getFilterType();
+    Class<T> getFilterType();
 
     /**
      * the view generator to build the reports
@@ -41,6 +42,6 @@ public interface SingularFormReport<E extends Serializable, T extends SType<I>, 
      * @param filter the filter to be applied
      * @return the result values
      */
-    Iterable<E> queryReportValues(I filter);
+    Collection<E> queryReportValues(I filter);
 
 }
