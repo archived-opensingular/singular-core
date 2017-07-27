@@ -17,7 +17,9 @@
 package org.opensingular.form;
 
 import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.util.transformer.Value;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +45,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         SDictionary dictionary = elementsType.getDictionary();
         STypeList type = dictionary.getType(STypeList.class);
         SIList<I> lista = (SIList<I>) type.newInstance();
-        lista.setType(type);
         lista.elementsType = elementsType;
         return lista;
     }
@@ -54,9 +55,14 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @SuppressWarnings("unchecked")
+    @Nonnull
     public SType<E> getElementsType() {
         if (elementsType == null) {
             elementsType = (SType<E>) getType().getElementsType();
+            if (elementsType == null) {
+                throw new SingularFormException(
+                        "Internal Erro: the list doesn't have the type of its elements definided", this);
+            }
         }
         return elementsType;
     }
@@ -88,30 +94,59 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
 
+    @Nonnull
     public E addNew() {
-        E instance = getElementsType().newInstance(getDocument());
-        return addInternal(instance, true, -1);
+        return addNewInternal(true, -1);
     }
 
-    public E addNew(Consumer<E> consumer) {
+    @Nonnull
+    public E addNewAt(int index) {
+        return addNewInternal(false, index);
+    }
+
+    @Nonnull
+    private E addNewInternal(boolean atEnd, int index) {
+        E instance = getElementsType().newInstance(getDocument());
+        addInternal(instance, atEnd, index);
+        instance.init();
+        return instance;
+    }
+
+    @Nonnull
+    public E addNew(@Nonnull Consumer<E> consumer) {
         E instance = addNew();
         consumer.accept(instance);
         return instance;
     }
 
-    public E addElement(E e) {
-        e.setDocument(getDocument());
-        return addInternal(e, true, -1);
+    /**
+     * Adiciona a instância informada. Se a mesma não for do mesmo documento da lista, faz uma copia dos valores. Se for
+     * do mesmo documento da lista, então move.
+     */
+    @Nonnull
+    public E addElement(@Nonnull E e) {
+        return addElementInternal(e, true, -1);
     }
 
-    public E addElementAt(int index, E e) {
-        e.setDocument(getDocument());
-        return addInternal(e, false, index);
+    /**
+     * Adiciona a instância informada na posição indicada. Se a mesma não for do mesmo documento da lista, faz uma copia
+     * dos valores. Se for
+     * do mesmo documento da lista, então move.
+     */
+    @Nonnull
+    public E addElementAt(int index, @Nonnull E e) {
+        return addElementInternal(e, false, index);
     }
 
-    public E addNewAt(int index) {
-        E instance = getElementsType().newInstance(getDocument());
-        return addInternal(instance, false, index);
+    @Nonnull
+    private E addElementInternal(@Nonnull E instance, boolean atEnd, int index) {
+        if (instance.getDocument() == getDocument()) {
+            return addInternal(instance, atEnd, index);
+        } else {
+            E copy = getElementsType().newInstance(getDocument());
+            Value.copyValues(instance, copy);
+            return addInternal(copy, atEnd, index);
+        }
     }
 
     public E addValue(Object value) {
@@ -141,7 +176,6 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             values.add(index, instance);
         }
         instance.setParent(this);
-        instance.init();
         return instance;
     }
 
@@ -299,6 +333,10 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @Override
     public List<E> getChildren() {
         return getValues();
+    }
+
+    public void forEach(@Nonnull Consumer<? super E> action) {
+        getChildren().forEach(action);
     }
 
     @Override

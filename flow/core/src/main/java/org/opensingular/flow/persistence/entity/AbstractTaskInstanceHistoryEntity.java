@@ -99,22 +99,22 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends SUser, TASK
     }
 
     @Override
-    public Date getBeginDateAllocation() {
+    public Date getAllocationStartDate() {
         return beginDateAllocation;
     }
 
     @Override
-    public void setBeginDateAllocation(Date beginDateAllocation) {
+    public void setAllocationStartDate(Date beginDateAllocation) {
         this.beginDateAllocation = beginDateAllocation;
     }
 
     @Override
-    public Date getEndDateAllocation() {
+    public Date getAllocationEndDate() {
         return endDateAllocation;
     }
 
     @Override
-    public void setEndDateAllocation(Date endDateAllocation) {
+    public void setAllocationEndDate(Date endDateAllocation) {
         this.endDateAllocation = endDateAllocation;
     }
 

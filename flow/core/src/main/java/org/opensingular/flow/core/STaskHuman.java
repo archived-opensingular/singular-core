@@ -26,7 +26,7 @@ public class STaskHuman extends STaskUserExecutable<STaskHuman> {
 
     @Override
     public IEntityTaskType getTaskType() {
-        return TaskType.PEOPLE;
+        return TaskType.HUMAN;
     }
 
     @Override

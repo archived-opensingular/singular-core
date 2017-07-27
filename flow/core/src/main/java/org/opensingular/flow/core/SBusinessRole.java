@@ -27,16 +27,16 @@ public final class SBusinessRole implements Serializable {
 
     private final boolean automaticUserAllocation;
 
-    private final UserRoleSettingStrategy<FlowInstance> userRoleSettingStrategy;
+    private final BusinessRoleStrategy<FlowInstance> businessRoleStrategy;
 
     @SuppressWarnings("unchecked")
-    SBusinessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends FlowInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
+    SBusinessRole(String name, String abbreviation, BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy, boolean automaticUserAllocation) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(abbreviation);
-        Objects.requireNonNull(userRoleSettingStrategy);
+        Objects.requireNonNull(businessRoleStrategy);
         this.abbreviation = abbreviation;
         this.name = name;
-        this.userRoleSettingStrategy = (UserRoleSettingStrategy<FlowInstance>) userRoleSettingStrategy;
+        this.businessRoleStrategy = (BusinessRoleStrategy<FlowInstance>) businessRoleStrategy;
         this.automaticUserAllocation = automaticUserAllocation;
     }
 
@@ -48,18 +48,18 @@ public final class SBusinessRole implements Serializable {
         return name;
     }
 
-    public UserRoleSettingStrategy<FlowInstance> getUserRoleSettingStrategy() {
-        return userRoleSettingStrategy;
+    public BusinessRoleStrategy<FlowInstance> getBusinessRoleStrategy() {
+        return businessRoleStrategy;
     }
 
-    public boolean isAutomaticUserAllocation() {
+    public boolean isAutomaticBusinessRoleAllocation() {
         return automaticUserAllocation;
     }
 
     @Override
     public String toString() {
         return "SProcessRole [abbreviation=" + abbreviation + ", name=" + name
-                + ", automaticUserAllocation=" + automaticUserAllocation
-                + ", userRoleSettingStrategy=" + userRoleSettingStrategy + "]";
+                + ", automaticBusinessRoleAllocation=" + automaticUserAllocation
+                + ", businessRoleSettingStrategy=" + businessRoleStrategy + "]";
     }
 }
