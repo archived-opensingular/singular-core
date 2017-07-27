@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.lib.commons.views.format;
 
 import org.apache.commons.io.IOUtils;
 

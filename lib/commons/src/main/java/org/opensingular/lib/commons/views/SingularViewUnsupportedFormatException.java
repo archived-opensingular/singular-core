@@ -16,16 +16,16 @@
 
 package org.opensingular.lib.commons.views;
 
-import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
 /**
- * Indiecates that the {@link ViewGenerator} doesn't supports the particular type of {@link ViewOutputWriter}.
+ * Indiecates that the {@link ViewGenerator} doesn't supports the particular type of {@link ViewOutputHtml}.
  *
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public class SingularUnsupportedViewException extends SingularException {
+public class SingularViewUnsupportedFormatException extends SingularViewException {
 
-    public SingularUnsupportedViewException(Object target, ViewOutput<java.io.Writer> view) {
+    public SingularViewUnsupportedFormatException(Object target, ViewOutput<java.io.Writer> view) {
         super("There is no implementation supporting the format " + getFormatName(view, target));
         if (view != null) {
             add("viewClass", view.getClass());
@@ -36,7 +36,7 @@ public class SingularUnsupportedViewException extends SingularException {
         }
     }
 
-    public SingularUnsupportedViewException(Object target, ViewOutputFormat format) {
+    public SingularViewUnsupportedFormatException(Object target, ViewOutputFormat format) {
         super("There is no implementation supporting the format " + getFormatName(format, target));
         if (format != null) {
             add("formatClass", format.getClass());

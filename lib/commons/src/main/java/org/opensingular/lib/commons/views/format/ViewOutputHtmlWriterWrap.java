@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.lib.commons.views.format;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -23,19 +23,14 @@ import java.io.Writer;
 /**
  * @author Daniel C. Bordin on 21/07/2017.
  */
-public class ViewOutputWriterHtml extends ViewOutputWriter {
+public class ViewOutputHtmlWriterWrap extends ViewOutputHtml {
 
     private final Writer writer;
     private final boolean staticContent;
 
-    public ViewOutputWriterHtml(@Nonnull Writer writer, boolean staticContent) {
+    public ViewOutputHtmlWriterWrap(@Nonnull Writer writer, boolean staticContent) {
         this.writer = writer;
         this.staticContent = staticContent;
-    }
-
-    @Override
-    public ViewOutputFormat getFormat() {
-        return ViewOutputFormat.HTML;
     }
 
     @Override

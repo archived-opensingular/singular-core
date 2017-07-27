@@ -3,7 +3,7 @@ package org.opensingular.lib.commons.table;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
-import org.opensingular.lib.commons.views.ViewOutputExcel;
+import org.opensingular.lib.commons.views.format.ViewOutputExcel;
 
 import java.io.File;
 import java.io.FileOutputStream;

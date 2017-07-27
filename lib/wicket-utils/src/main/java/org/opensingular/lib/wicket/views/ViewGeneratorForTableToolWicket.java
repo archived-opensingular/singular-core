@@ -18,8 +18,8 @@ package org.opensingular.lib.wicket.views;
 
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.table.ViewGeneratorForTableTool;
-import org.opensingular.lib.commons.views.ViewOutputWriter;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
+import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
 import javax.annotation.Nonnull;
 
@@ -28,15 +28,15 @@ import javax.annotation.Nonnull;
  *
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public class ViewGeneratorForTableToolWicket extends ViewGeneratorForTableTool<ViewOutputWriter> {
+public class ViewGeneratorForTableToolWicket extends ViewGeneratorForTableTool<ViewOutputHtml> {
 
     @Override
     public ViewOutputFormat getOutputFormat() {
-        return ViewOutputWriterWicket.WICKET;
+        return ViewOutputWicket.WICKET;
     }
 
     @Override
-    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputWriter viewOutputWriter) {
+    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputHtml viewOutputHtml) {
         throw new RuntimeException("Unssuported");
     }
 }

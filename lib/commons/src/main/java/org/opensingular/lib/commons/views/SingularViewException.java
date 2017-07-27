@@ -16,16 +16,24 @@
 
 package org.opensingular.lib.commons.views;
 
-import javax.annotation.Nonnull;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
- * Implementa a lógica para a geração do conteúdo em um formato específico.
+ * Represents a fail related to view manipulation.
  *
- * @author Daniel C. Bordin.
+ * @author Daniel C. Bordin on 26/07/2017.
  */
-public interface ViewGenerator {
+public class SingularViewException extends SingularException {
 
-    void generateView(@Nonnull ViewOutput<?> vOut) throws SingularViewUnsupportedFormatException;
+    public SingularViewException(String msg) {
+        super(msg);
+    }
 
-    boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format);
+    public SingularViewException(String msg, Throwable throwable) {
+        super(msg, throwable);
+    }
+
+    public SingularViewException(Throwable e) {
+        super(e);
+    }
 }

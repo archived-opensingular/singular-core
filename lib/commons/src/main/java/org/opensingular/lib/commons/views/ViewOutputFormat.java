@@ -16,48 +16,41 @@
 
 package org.opensingular.lib.commons.views;
 
+import org.opensingular.lib.commons.views.format.ViewOutputFormatExcel;
+import org.opensingular.lib.commons.views.format.ViewOutputFormatHtml;
+import org.opensingular.lib.commons.views.format.ViewOutputFormatPdf;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
+ * Representa um tipo de formato de geração da view. Um formato pode ou não ser um arquivo.
+ *
  * @author Daniel C. Bordin on 24/07/2017.
  */
 public class ViewOutputFormat {
 
-    public static final ViewOutputFormat HTML = new ViewOutputFormat("HTML", "html", "html");
-    public static final ViewOutputFormat PDF = new ViewOutputFormat("PDF", "pdf", "pdf");
-    public static final ViewOutputFormat EXCEL = new ViewOutputFormat("EXCEL", "Excel", "xlsx");
+    public static final ViewOutputFormatExportable HTML = new ViewOutputFormatHtml();
+    public static final ViewOutputFormatExportable PDF = new ViewOutputFormatPdf();
+    public static final ViewOutputFormatExportable EXCEL = new ViewOutputFormatExcel();
 
     private final String name;
-    private final String displayName;
-    private final String fileExtension;
 
+    private final String displayName;
 
     public ViewOutputFormat(@Nonnull String name, @Nonnull String displayName) {
-        this(name, displayName, null);
-    }
-
-    public ViewOutputFormat(@Nonnull String name, @Nonnull String displayName, @Nullable String fileExtension) {
         this.name = Objects.requireNonNull(name);
         this.displayName = Objects.requireNonNull(displayName);
-        this.fileExtension = fileExtension;
     }
 
+    /** Nome abreviado (sigla) que representa unicamente esse formato. */
     public String getName() {
         return name;
     }
 
+    /** Nome legível para o usuário que representa o formato. */
     public String getDisplayName() {
         return displayName;
-    }
-
-    public boolean isFileFormat() {
-        return fileExtension != null;
-    }
-
-    public String getFileExtension() {
-        return fileExtension;
     }
 
     @Override

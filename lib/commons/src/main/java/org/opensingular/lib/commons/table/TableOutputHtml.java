@@ -18,7 +18,7 @@ package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
 import org.opensingular.lib.commons.net.WebRef;
-import org.opensingular.lib.commons.views.ViewOutputWriter;
+import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
  */
 public class TableOutputHtml extends TableOutput {
 
-    private final ViewOutputWriter vOut;
+    private final ViewOutputHtml vOut;
     private final String tableid = UUID.randomUUID().toString();
 
-    public TableOutputHtml(ViewOutputWriter vOut) {this.vOut = vOut;}
+    public TableOutputHtml(ViewOutputHtml vOut) {this.vOut = vOut;}
 
     @Override
     public String getUrlApp() {
@@ -47,7 +47,7 @@ public class TableOutputHtml extends TableOutput {
         return vOut.isStaticContent();
     }
 
-    public ViewOutputWriter getVOut() {
+    public ViewOutputHtml getVOut() {
         return vOut;
     }
 
@@ -476,7 +476,7 @@ public class TableOutputHtml extends TableOutput {
         }
     }
 
-    private static String gerarAcoes(ViewOutputWriter out, InfoCelula cell) {
+    private static String gerarAcoes(ViewOutputHtml out, InfoCelula cell) {
         return cell.getAcoes().stream().filter(Predicates.notNull()).filter(WebRef::appliesToContext).map(
                 webActionEnabled -> webActionEnabled.generateHtml(out.getUrlApp())).filter(Predicates.notNull())
                 .collect(

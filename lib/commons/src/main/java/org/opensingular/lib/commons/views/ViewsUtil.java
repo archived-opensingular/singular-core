@@ -16,11 +16,16 @@
 
 package org.opensingular.lib.commons.views;
 
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.util.TempFileUtils;
+import org.opensingular.lib.commons.views.format.ViewOutputHtml;
+import org.opensingular.lib.commons.views.format.ViewOutputHtmlWriterWrap;
+
 import javax.annotation.Nonnull;
-import java.io.ByteArrayOutputStream;
+import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
@@ -38,43 +43,85 @@ public class ViewsUtil {
         return formatsLoader;
     }
 
+    static ViewGenerator getGeneratorFor(@Nonnull ViewMultiGenerator target, @Nonnull ViewOutputFormat format)
+            throws SingularViewUnsupportedFormatException {
+        ViewGeneratorProvider<ViewGenerator, ViewOutput<?>> provider = getGeneratorProviderFor(target, format);
+        return new ViewGenerator() {
+            @Override
+            public void generateView(@Nonnull ViewOutput<?> vOut) throws SingularViewUnsupportedFormatException {
+                provider.generate(target, vOut);
+            }
+
+            @Override
+            public boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format2) {
+                return format.equals(format2);
+            }
+        };
+
+    }
+
     @Nonnull
-    static <V extends ViewOutput<?>> ViewGeneratorProvider<ViewGenerator, V> getGeneratorFor(@Nonnull ViewMultiGenerator target,
-                                                                                             @Nonnull ViewOutputFormat format) throws SingularUnsupportedViewException {
+    private static <V extends ViewOutput<?>> ViewGeneratorProvider<ViewGenerator, V> getGeneratorProviderFor(
+            @Nonnull ViewMultiGenerator target, @Nonnull ViewOutputFormat format)
+            throws SingularViewUnsupportedFormatException {
         for (ViewGeneratorProvider<ViewGenerator, ? extends ViewOutput<?>> generator : target.getGenerators()) {
             if (Objects.equals(format, generator.getOutputFormat())) {
                 return (ViewGeneratorProvider<ViewGenerator, V>) generator;
             }
         }
-        throw new SingularUnsupportedViewException(target, format);
+        throw new SingularViewUnsupportedFormatException(target, format);
     }
 
     public static String generateAsHtmlString(ViewGenerator target, boolean staticContent) {
-        final ByteArrayOutputStream dataSource = new ByteArrayOutputStream();
-        final PrintWriter writer = new PrintWriter(dataSource);
-        ViewOutputWriter vOut = new ViewOutputWriter() {
-            @Override
-            public boolean isStaticContent() {
-                return staticContent;
-            }
+        try (StringWriter out = new StringWriter()) {
+            ViewOutputHtml vOut = new ViewOutputHtmlWriterWrap(out, staticContent);
+            target.generateView(vOut);
+            return out.toString();
+        } catch (IOException e) {
+            throw new SingularViewException(e);
+        }
+    }
 
-            @Override
-            public void addImagem(String nome, byte[] dados) throws IOException {
-                throw new UnsupportedOperationException("addImagem(String, dados) não suportado ");//NOSONAR
-            }
+    @Nullable
+    private ViewGenerator findDirectCompatiable(@Nonnull ViewGenerator viewGenerator, @Nonnull ViewOutputFormatExportable format) {
+        if (viewGenerator.isDirectCompatiableWith(format)) {
+            return viewGenerator;
+        } else if (viewGenerator instanceof ViewMultiGenerator) {
+            return getGeneratorFor((ViewMultiGenerator) viewGenerator, format);
+        }
+        throw new SingularViewUnsupportedFormatException(viewGenerator, format);
+    }
 
-            @Override
-            public Writer getOutput() {
-                return writer;
-            }
+    @Nonnull
+    public static File exportToTempFile(@Nonnull ViewGenerator viewGenerator,
+            @Nonnull ViewOutputFormatExportable format) {
+        return exportToTempFile(viewGenerator, format, null);
+    }
 
-            @Override
-            public ViewOutputFormat getFormat() {
-                return ViewOutputFormat.HTML;
+    @Nonnull
+    public static File exportToTempFile(@Nonnull ViewGenerator viewGenerator,
+            @Nonnull ViewOutputFormatExportable format, @Nullable TempFileProvider tmpProvider) {
+        if (!viewGenerator.isDirectCompatiableWith(format)) {
+            if (viewGenerator instanceof ViewMultiGenerator) {
+                viewGenerator = getGeneratorFor((ViewMultiGenerator) viewGenerator, format);
             }
-        };
-        target.generateView(vOut);
-        writer.flush();
-        return dataSource.toString();
+            throw new SingularViewUnsupportedFormatException(viewGenerator, format);
+        }
+        try {
+            File arq = File.createTempFile(ViewsUtil.class.getSimpleName() + "_report",
+                    "." + format.getFileExtension());
+            boolean ok = false;
+            try {
+                format.generateFile(arq, viewGenerator);
+                ok = true;
+            } finally {
+                if (!ok) {
+                    TempFileUtils.deleteAndFailQuietily(arq, ViewsUtil.class);
+                }
+            }
+            return arq;
+        } catch (Exception e) {
+            throw new SingularViewException("Fail to generate file in " + format.getName() + " format", e);
+        }
     }
 }

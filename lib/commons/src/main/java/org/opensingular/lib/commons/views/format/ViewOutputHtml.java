@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.views;
+package org.opensingular.lib.commons.views.format;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,7 +33,7 @@ import java.util.Map;
  *
  * @author Daniel C. Bordin - 21/09/2005
  */
-public abstract class ViewOutputWriter implements ViewOutput<Writer> {
+public abstract class ViewOutputHtml implements ViewOutput<Writer> {
 
     private String pathAnexo_;
 
@@ -43,7 +45,12 @@ public abstract class ViewOutputWriter implements ViewOutput<Writer> {
 
     private HtmlCode htmlCode;
 
-    public void copiarConfig(ViewOutputWriter vOut) {
+    @Override
+    public ViewOutputFormat getFormat() {
+        return ViewOutputFormat.HTML;
+    }
+
+    public void copiarConfig(ViewOutputHtml vOut) {
         pathAnexo_ = vOut.pathAnexo_;
         urlApp_ = vOut.urlApp_;
         if (vOut.atributos != null) {
@@ -150,7 +157,7 @@ public abstract class ViewOutputWriter implements ViewOutput<Writer> {
             getPrintWriter().println("<br style='clear: both;'/>");
             return this;
         }
-        
+
         public HtmlCode tag(String tag, String texto) {
             return tag(tag, texto, "");
         }
@@ -160,16 +167,16 @@ public abstract class ViewOutputWriter implements ViewOutput<Writer> {
             getPrintWriter().print(StringUtils.trimToEmpty(texto));
             return closeTag(tag);
         }
-        
+
         public HtmlCode openTag(String tag) {
             return openTag(tag, "");
         }
-        
+
         public HtmlCode openTag(String tag, String atributtes) {
             getPrintWriter().print("<" + tag + " " + atributtes + ">");
             return this;
         }
-        
+
         public HtmlCode closeTag(String lastTag) {
             getPrintWriter().println("</" + lastTag + ">");
             return this;

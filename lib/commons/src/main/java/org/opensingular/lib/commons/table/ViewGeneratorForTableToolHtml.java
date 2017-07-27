@@ -17,14 +17,14 @@
 package org.opensingular.lib.commons.table;
 
 import org.opensingular.lib.commons.views.ViewOutputFormat;
-import org.opensingular.lib.commons.views.ViewOutputWriter;
+import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author Daniel on 24/07/2017.
  */
-public class ViewGeneratorForTableToolHtml extends ViewGeneratorForTableTool<ViewOutputWriter> {
+public class ViewGeneratorForTableToolHtml extends ViewGeneratorForTableTool<ViewOutputHtml> {
 
     @Override
     public ViewOutputFormat getOutputFormat() {
@@ -32,8 +32,8 @@ public class ViewGeneratorForTableToolHtml extends ViewGeneratorForTableTool<Vie
     }
 
     @Override
-    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputWriter viewOutputWriter) {
-        TableOutputHtml out = new TableOutputHtml(viewOutputWriter);
+    public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputHtml viewOutputHtml) {
+        TableOutputHtml out = new TableOutputHtml(viewOutputHtml);
         tableTool.generate(out);
     }
 }

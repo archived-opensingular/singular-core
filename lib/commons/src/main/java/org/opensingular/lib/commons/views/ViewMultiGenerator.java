@@ -37,9 +37,8 @@ public interface ViewMultiGenerator extends ViewGenerator {
     }
 
     @Override
-    default void generateView(@Nonnull ViewOutput<?> vOut) throws SingularUnsupportedViewException {
-        ViewGeneratorProvider<ViewGenerator, ViewOutput<?>> generator = ViewsUtil.getGeneratorFor(this, vOut.getFormat());
-        generator.generate(this, vOut);
+    default void generateView(@Nonnull ViewOutput<?> vOut) throws SingularViewUnsupportedFormatException {
+        ViewsUtil.getGeneratorFor(this, vOut.getFormat()).generateView(vOut);
     }
 
 
@@ -53,17 +52,6 @@ public interface ViewMultiGenerator extends ViewGenerator {
     }
 
     default ViewGenerator getGeneratorFor(@Nonnull ViewOutputFormat format) {
-        ViewGeneratorProvider<ViewGenerator, ViewOutput<?>> generator = ViewsUtil.getGeneratorFor(this, format);
-        return new ViewGenerator() {
-            @Override
-            public void generateView(@Nonnull ViewOutput<?> vOut) throws SingularUnsupportedViewException {
-                generator.generate(ViewMultiGenerator.this, vOut);
-            }
-
-            @Override
-            public boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format2) {
-                return format.equals(format2);
-            }
-        };
+        return ViewsUtil.getGeneratorFor(this, format);
     }
 }

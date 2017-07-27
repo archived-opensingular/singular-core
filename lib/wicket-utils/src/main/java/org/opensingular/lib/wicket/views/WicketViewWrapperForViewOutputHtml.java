@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import java.io.Writer;
 
 public class WicketViewWrapperForViewOutputHtml extends WebComponent {
+
     private final ISupplier<ViewGenerator> viewGeneratorSupplier;
 
     public WicketViewWrapperForViewOutputHtml(String id, ISupplier<ViewGenerator> viewGeneratorSupplier) {
@@ -21,7 +22,7 @@ public class WicketViewWrapperForViewOutputHtml extends WebComponent {
 
     @Override
     public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
-        ViewOutputWriterHtmlFromWicket viewOutput = new ViewOutputWriterHtmlFromWicket(getRequestCycle());
+        ViewOutputHtmlToWicket viewOutput = new ViewOutputHtmlToWicket(getRequestCycle());
         ViewGenerator generator = viewGeneratorSupplier.get();
         generator = resolveGenerator(generator, viewOutput);
         generator.generateView(viewOutput);

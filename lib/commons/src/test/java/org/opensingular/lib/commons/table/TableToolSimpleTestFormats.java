@@ -22,8 +22,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
-import org.opensingular.lib.commons.views.FullPageHtmlGenerator;
-import org.opensingular.lib.commons.views.ViewOutputWriterHtml;
+import org.opensingular.lib.commons.util.TempFileUtils;
+import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
+import org.opensingular.lib.commons.views.ViewsUtil;
+import org.opensingular.lib.commons.views.format.FullPageHtmlGenerator;
+import org.opensingular.lib.commons.views.format.ViewOutputHtmlWriterWrap;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,14 +64,28 @@ public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
     private void generateFormats(TableTool table) {
         generateFormats(table, "bootstrap.min.css");
         generateFormats(table, "alocpro.css");
+
+       // generateFormats(table, ViewOutputFormat.EXCEL);
+        //generateFormats(table, ViewOutputFormat.PDF);
     }
 
+    private void generateFormats(TableTool table, ViewOutputFormatExportable format) {
+        File arq = ViewsUtil.exportToTempFile(table, format);
+        try {
+            if (OPEN_GENERATED_FILE) {
+                SingularTestUtil.showFileOnDesktopForUser(arq);
+            }
+        } finally {
+            TempFileUtils.deleteOrException(arq, this);
+        }
+
+    }
     private void generateFormats(TableTool table, String cssFile) {
         File arq = tmpProvider.createTempFile(".html");
         try (FullPageHtmlGenerator generator = new FullPageHtmlGenerator(arq)) {
             generator.addInternalCSSFromResource(this, cssFile);
             generator.writeBegin();
-            TableOutput outputHtml = new TableOutputHtml(new ViewOutputWriterHtml(generator.getOut(), false));
+            TableOutput outputHtml = new TableOutputHtml(new ViewOutputHtmlWriterWrap(generator.getOut(), false));
             table.generate(outputHtml);
 
             TableOutputSimulated output = new TableOutputSimulated();

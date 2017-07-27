@@ -22,19 +22,19 @@ import org.apache.wicket.request.http.WebResponse;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
-import org.opensingular.lib.commons.views.ViewOutputWriter;
+import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * @author Daniel on 25/07/2017.
+ * @author Daniel C. Bordin on 25/07/2017.
  */
-public class ViewOutputWriterHtmlFromWicket extends ViewOutputWriter {
+public class ViewOutputHtmlToWicket extends ViewOutputHtml {
 
     private final Writer out;
 
-    public ViewOutputWriterHtmlFromWicket(RequestCycle cycle) {
+    public ViewOutputHtmlToWicket(RequestCycle cycle) {
         Response response = cycle.getResponse();
         if (response instanceof WebResponse) {
             out = new WebResponseWriterAdapter((WebResponse) response);

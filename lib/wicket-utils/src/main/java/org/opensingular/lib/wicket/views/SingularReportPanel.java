@@ -1,4 +1,20 @@
-package org.opensingular.lib.wicket.panel;
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.opensingular.lib.wicket.views;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -10,13 +26,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.views.ViewGenerator;
-import org.opensingular.lib.commons.views.ViewOutputExcel;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
+import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
+import org.opensingular.lib.commons.views.ViewsUtil;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
-import org.opensingular.lib.wicket.views.WicketViewWrapperForViewOutputHtml;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class SingularReportPanel extends Panel {
     private final ISupplier<ViewGenerator> viewGeneratorSupplier;
@@ -65,20 +80,11 @@ public class SingularReportPanel extends Panel {
         DownloadLink downloadLink = new DownloadLink("excel", new Model<File>() {
             @Override
             public File getObject() {
-                try {
-                    ViewOutputExcel viewOutputExcel = new ViewOutputExcel(titleModel.getObject());
-                    viewGeneratorSupplier.get().generateView(viewOutputExcel);
-                    File xlsx = File.createTempFile("report", ".xlsx");
-                    FileOutputStream fos = new FileOutputStream(xlsx);
-                    viewOutputExcel.write(fos);
-                    xlsx.deleteOnExit();
-                    return xlsx;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
+                    ViewOutputFormatExportable format = ViewOutputFormat.EXCEL;
+                    return ViewsUtil.exportToTempFile(viewGeneratorSupplier.get(), format);
             }
         }, "report.xlsx");
+        downloadLink.setDeleteAfterDownload(true);
         add(downloadLink);
     }
 }

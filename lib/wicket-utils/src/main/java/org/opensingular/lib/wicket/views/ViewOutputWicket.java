@@ -16,32 +16,20 @@
 
 package org.opensingular.lib.wicket.views;
 
-import org.opensingular.lib.commons.views.ViewOutputWriter;
+import org.apache.wicket.Component;
+import org.opensingular.lib.commons.views.ViewOutput;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
-
-import java.io.IOException;
-import java.io.Writer;
 
 /**
  * @author Daniel C. Bordin on 24/07/2017.
  */
-public class ViewOutputWriterWicket extends ViewOutputWriter {
+public class ViewOutputWicket implements ViewOutput<Component> {
 
     public static final ViewOutputFormat WICKET = new ViewOutputFormat("WICKET", "Wicket");
 
     @Override
-    public boolean isStaticContent() {
-        return false;
-    }
-
-    @Override
-    public Writer getOutput() {
+    public Component getOutput() {
         throw new RuntimeException("Método não suportado");
-    }
-
-    @Override
-    public void addImagem(String nome, byte[] dados) throws IOException {
-        throw new RuntimeException("Método não suprotado");
     }
 
     @Override

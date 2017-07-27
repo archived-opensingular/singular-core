@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.commons.views.ViewOutputExcel;
+import org.opensingular.lib.commons.views.format.ViewOutputExcel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

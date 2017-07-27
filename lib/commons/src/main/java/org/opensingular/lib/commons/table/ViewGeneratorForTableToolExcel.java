@@ -16,8 +16,8 @@
 
 package org.opensingular.lib.commons.table;
 
-import org.opensingular.lib.commons.views.ViewOutputExcel;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
+import org.opensingular.lib.commons.views.format.ViewOutputExcel;
 
 import javax.annotation.Nonnull;
 
