@@ -5,7 +5,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.springframework.web.util.HtmlUtils;
+import org.opensingular.lib.commons.util.HTMLUtil;
 
 public class HtmlConversionUtils {
 
@@ -13,34 +13,33 @@ public class HtmlConversionUtils {
         return toHtmlMessage(message, null);
     }
     public static String toHtmlMessage(String message, String forcedFormat) {
+        if (isEmpty(message))
+            return "";
+
         switch (defaultIfBlank(forcedFormat, "").toLowerCase()) {
 
+            case "html": // no escaping (doesn't prevent XSS)
+                return message;
+
             case "markdown":
-            case "commonmark":
+            case "commonmark": { // embedded HTML allowed
                 Parser parser = Parser.builder().build();
                 Node node = parser.parse(message);
                 return HtmlRenderer.builder().build().render(node);
+            }
+
+            case "puremarkdown":
+            case "purecommonmark": { // no HTML allowed
+                Parser parser = Parser.builder().build();
+                Node node = parser.parse(HTMLUtil.escapeHtml(message));
+                return HtmlRenderer.builder().build().render(node);
+            }
 
             case "text":
             case "plaintext":
             case "plain text":
-                return "<p>" + HtmlUtils.htmlUnescape(message) + "</p>";
-
-            case "html":
-                return message;
-
             default:
-                return toHtmlMessage(message, resolveMessageFormat(message));
+                return "<p>" + HTMLUtil.escapeHtml(message) + "</p>";
         }
     }
-
-    public static String resolveMessageFormat(String msg) {
-        String s = msg.trim();
-        if (s.startsWith("<") || s.contains("</") || s.contains("/>"))
-            return "html";
-        if (s.contains("**") || s.contains("##") || s.contains("]("))
-            return "markdown";
-        return "plaintext";
-    }
-
 }

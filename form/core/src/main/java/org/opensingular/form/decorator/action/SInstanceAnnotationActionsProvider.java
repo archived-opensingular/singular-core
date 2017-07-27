@@ -25,6 +25,7 @@ import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
+import org.opensingular.lib.commons.util.HTMLUtil;
 
 /**
  * Provider para a ação de exibição do Help do campo.
@@ -44,13 +45,13 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         if (!annotatable || !annotationsVisible.test(instance))
             return Collections.emptyList();
 
-        final boolean editable = !isEmpty(instance) && annotationsEditable.test(instance);
+        final boolean editable = annotationsEditable.test(instance);
 
         SInstanceAction editAction = new SInstanceAction(SInstanceAction.ActionType.NORMAL)
             .setIcon(resolveIcon(instance))
             .setText(getEditActionTitle(instance))
             .setPosition(Integer.MAX_VALUE)
-            .setPreview(resolvePreview(instance))
+            .setPreview(resolvePreview(instance, editable))
             .setActionHandler(new EditAnnotationHandler());
 
         return Arrays.asList(editAction);
@@ -60,36 +61,43 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         return "Comentários sobre " + instance.asAtr().getLabel();
     }
 
-    private static Preview resolvePreview(SInstance instance) {
-        if (isEmpty(instance))
-            return null;
+    private static Preview resolvePreview(SInstance instance, boolean editable) {
+        if (isEmpty(instance)) {
+            return (!editable)
+                ? new Preview()
+                    .setMessage("<i>Nenhum comentário</i>")
+                    .setFormat("html")
+                : null;
 
-        return new Preview()
-            .setTitle("Comentário")
-            .setMessage(String.format(""
-                + "<div class='annotation-toggle-container'>"
-                + "<p class='annotation-text'>%s</p>"
-                + "<hr/>"
-                + "%s"
-                + "</div>",
-                instance.asAtrAnnotation().text(),
-                isTrue(instance.asAtrAnnotation().approved())
-                    ? "<div class='annotation-status annotation-status-approved'>Aprovado</div>"
-                    : isFalse(instance.asAtrAnnotation().approved())
-                        ? "<div class='annotation-status annotation-status-rejected'>Rejeitado</div>"
-                        : ""))
-            .setFormat("html")
-            .setActions(Arrays.asList(
-                new SInstanceAction(ActionType.LINK)
-                    .setText("Editar")
-                    .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EDIT))
-                    .setActionHandler(new EditAnnotationHandler()), //
-
-                new SInstanceAction(ActionType.LINK)
-                    .setText("Remover")
-                    .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REMOVE))
-                    .setActionHandler(new RemoveAnnotationHandler()) //
-        ));
+        } else {
+            return new Preview()
+                .setTitle("Comentário")
+                .setMessage(String.format(""
+                    + "<div class='annotation-toggle-container'>"
+                    + "<p class='annotation-text'>%s</p>"
+                    + "<hr/>"
+                    + "%s"
+                    + "</div>",
+                    HTMLUtil.escapeHtml(instance.asAtrAnnotation().text()),
+                    isTrue(instance.asAtrAnnotation().approved())
+                        ? "<div class='annotation-status annotation-status-approved'>Aprovado</div>"
+                        : isFalse(instance.asAtrAnnotation().approved())
+                            ? "<div class='annotation-status annotation-status-rejected'>Rejeitado</div>"
+                            : ""))
+                .setFormat("html")
+                .setActions(
+                    (editable)
+                        ? Arrays.asList(
+                            new SInstanceAction(ActionType.LINK)
+                                .setText("Editar")
+                                .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EDIT))
+                                .setActionHandler(new EditAnnotationHandler()),
+                            new SInstanceAction(ActionType.LINK)
+                                .setText("Remover")
+                                .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REMOVE))
+                                .setActionHandler(new RemoveAnnotationHandler()))
+                        : Collections.emptyList());
+        }
     }
 
     private static SIcon resolveIcon(SInstance instance) {

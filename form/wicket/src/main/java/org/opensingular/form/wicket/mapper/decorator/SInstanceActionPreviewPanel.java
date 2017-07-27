@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction.Preview;
+import org.opensingular.internal.form.wicket.util.HtmlConversionUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
 
 public class SInstanceActionPreviewPanel extends Panel {
@@ -19,10 +20,13 @@ public class SInstanceActionPreviewPanel extends Panel {
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
         super(id, previewModel);
 
+        IModel<String> messageModel = $m.map(previewModel, it -> HtmlConversionUtils
+            .toHtmlMessage(it.getMessage(), it.getFormat()));
+
         add($b.classAppender("singular-form-action-preview dropdown-menu theme-panel hold-on-click dropdown-custom"));
         add(new Label("title", $m.map(previewModel, it -> it.getTitle()))
             .add($b.visibleIfModelObject(it -> it != null)));
-        add(new Label("previewText", $m.map(previewModel, it -> it.getMessage()))
+        add(new Label("previewText", messageModel)
             .setEscapeModelStrings(false));
         add(new SInstanceActionsPanel("actionsContainer",
             instanceModel,

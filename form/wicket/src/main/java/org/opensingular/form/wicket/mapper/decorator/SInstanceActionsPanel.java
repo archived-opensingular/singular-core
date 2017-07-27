@@ -19,6 +19,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
+import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
 import org.opensingular.form.decorator.action.SInstanceAction.Preview;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -175,7 +176,6 @@ public class SInstanceActionsPanel extends TemplatePanel {
         @Override
         protected void populateItem(Item<SInstanceAction> item) {
             IModel<SInstanceAction> itemModel = item.getModel();
-            //item.setRenderBodyOnly(!mode.isMenu());
             SInstanceAction action = itemModel.getObject();
 
             MarkupContainer link;
@@ -191,13 +191,13 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
-                        final List<?> contextList = internalContextListProvider.apply(target);
-
-                        final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel, contextList);
-
                         SInstanceAction instanceAction = this.getModelObject();
-                        instanceAction.getActionHandler()
-                            .onAction(instanceAction, instanceModel::getObject, delegate);
+                        ActionHandler actionHandler = instanceAction.getActionHandler();
+                        if (actionHandler != null) {
+                            final List<?> contextList = internalContextListProvider.apply(target);
+                            final SInstanceAction.Delegate delegate = new WicketSIconActionDelegate(instanceModel, contextList);
+                            actionHandler.onAction(instanceAction, instanceModel::getObject, delegate);
+                        }
                     }
                 };
                 item.add(new WebMarkupContainer("preview")
@@ -224,15 +224,7 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 .add($b.classAppender($m.map(itemModel, it -> it.getIcon().getContainerCssClassesString())))
                 .add($b.styleAppender($m.map(itemModel, it -> it.getIcon().getContainerCssStyles())))
                 .add($b.visibleIf($m.map(itemModel, it -> it.getIcon() != null)))
-                .add($b.attr("title", titleModel))
-            //                .add($b.onReadyScript(c -> (mode.isMenu())
-            //                    ? ""
-            //                    : JQuery.$(c) + ".tooltip({"
-            //                        + "placement:'top',"
-            //                        + "animation:'false',"
-            //                        + "trigger:'hover'"
-            //                        + "});"))
-            ;
+                .add($b.attr("title", titleModel));
         }
         @Override
         protected Iterator<IModel<SInstanceAction>> getItemModels() {

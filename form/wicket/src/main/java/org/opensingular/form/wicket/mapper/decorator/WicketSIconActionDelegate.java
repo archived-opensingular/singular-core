@@ -23,6 +23,7 @@ import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.util.WicketFormUtils;
+import org.opensingular.internal.form.wicket.util.HtmlConversionUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 
@@ -66,7 +67,7 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
         SInstanceActionOpenModalEvent evt = new SInstanceActionOpenModalEvent(
             title,
             getInternalContext(AjaxRequestTarget.class).orElse(null),
-            $m.get(() -> text),
+            $m.get(() -> HtmlConversionUtils.toHtmlMessage(Objects.toString(text, ""))),
             instanceModel,
             formInstanceModel,
             () -> actionsFactory.getActions(formDelegate.get()));
