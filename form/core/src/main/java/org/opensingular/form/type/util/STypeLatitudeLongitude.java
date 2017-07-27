@@ -19,6 +19,8 @@ package org.opensingular.form.type.util;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
 /**
@@ -30,8 +32,8 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
     public static final String FIELD_LATITUDE  = "latitude";
     public static final String FIELD_LONGITUDE = "longitude";
 
-    public STypeString latitude;
-    public STypeString longitude;
+    public STypeDecimal latitude;
+    public STypeDecimal longitude;
     
     public STypeLatitudeLongitude() {
         super(SILatitudeLongitude.class);
@@ -39,7 +41,15 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        latitude = addFieldString(FIELD_LATITUDE);
-        longitude = addFieldString(FIELD_LONGITUDE);
+        latitude = addFieldDecimal(FIELD_LATITUDE);
+        longitude = addFieldDecimal(FIELD_LONGITUDE);
+
+        latitude
+                .asAtr().label("Latitude")
+                .asAtrBootstrap().colPreference(2);
+
+        longitude
+                .asAtr().label("Longitude")
+                .asAtrBootstrap().colPreference(2);
     }
 }

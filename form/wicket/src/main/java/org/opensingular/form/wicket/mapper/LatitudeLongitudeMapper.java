@@ -16,36 +16,40 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.lib.wicket.util.maps.MarkableGoogleMapsPanel;
-import org.apache.wicket.model.IModel;
 
-public class LatitudeLongitudeMapper implements IWicketComponentMapper {
+import java.util.ArrayList;
+import java.util.List;
+
+public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
+        super.buildView(ctx);
 
-        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        List<String> markups = new ArrayList<>();
+        ctx.getContainer().visitChildren((TextField.class), (component, iVisit) -> markups.add(component.getMarkupId(true)));
+
+        String latitudeId = null;
+        String longitudeId = null;
+        for(String t : markups){
+            if(t.contains(STypeLatitudeLongitude.FIELD_LATITUDE))
+                latitudeId = t;
+            if(t.contains(STypeLatitudeLongitude.FIELD_LONGITUDE))
+                longitudeId = t;
+        };
+
         final IModel<? extends SInstance> model = ctx.getModel();
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(model.getObject().getName(), latitudeId, longitudeId);
 
-        final IModel<SInstance> latModel = createValorModel(model, STypeLatitudeLongitude.FIELD_LATITUDE);
-        final IModel<SInstance> lngModel = createValorModel(model, STypeLatitudeLongitude.FIELD_LONGITUDE);
-
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(model.getObject().getName(), latModel, lngModel);
-
-        googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
-
-        formGroup.appendDiv(googleMapsPanel);
+        ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
     }
-
-    private IModel<SInstance> createValorModel(IModel<? extends SInstance> root, String path) {
-        return new SInstanceValueModel<>(new SInstanceFieldModel<>(root, path));
-    }
-
 }

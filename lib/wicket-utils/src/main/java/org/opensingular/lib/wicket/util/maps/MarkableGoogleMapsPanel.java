@@ -21,13 +21,17 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +40,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MarkableGoogleMapsPanel<T> extends Panel {
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
+public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
     private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
@@ -49,24 +55,23 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     private final WebMarkupContainer map = new WebMarkupContainer("map");
     private final HiddenField<String> metadados = new HiddenField<>("metadados", metadadosModel);
 
-    private final HiddenField<T> lat = new HiddenField<>("lat");
-    private final HiddenField<T> lng = new HiddenField<>("lng");
+    private final String lat;
+    private final String lng ;
 
     @Override
     public void renderHead(IHeaderResponse response) {
-
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("createBelverMap(" + stringfyId(metadados) + ");"));
+        response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ");"));
 
         super.renderHead(response);
     }
 
-    public MarkableGoogleMapsPanel(String id, IModel<T> latModel, IModel<T> lngModel) {
+    public MarkableGoogleMapsPanel(String id, String lat, String lng) {
         super(id);
-        lat.setModel(latModel);
-        lng.setModel(lngModel);
+        this.lat = lat;
+        this.lng = lng;
     }
 
     private void popularMetadados() {
@@ -74,8 +79,8 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
         final Map<String, Object> properties = new HashMap<>();
         try (final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON)){
             properties.put("idMap", map.getMarkupId(true));
-            properties.put("idLat", lat.getMarkupId(true));
-            properties.put("idLng", lng.getMarkupId(true));
+            properties.put("idLat", lat);
+            properties.put("idLng", lng);
             properties.put("zoom", DEFAULT_ZOOM);
             properties.put("readOnly", isReadOnly());
             metadataJSON.interpolate(properties);
@@ -90,7 +95,14 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         popularMetadados();
-        add(map, lat, lng, metadados);
+
+        TemplatePanel templatePanel = newTemplateTag(tt -> {
+            final StringBuilder templateBuilder = new StringBuilder();
+            templateBuilder.append(" <div wicket:id=\"map\" style=\"height: 100%;\"> </div> ");
+            templateBuilder.append(" <input type=\"hidden\" wicket:id=\"metadados\"> ");
+            return templateBuilder.toString();
+        });
+        templatePanel.add(map, metadados);
     }
 
     @Override
