@@ -24,8 +24,10 @@ public class WicketViewWrapperForViewOutputHtml extends WebComponent {
     public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
         ViewOutputHtmlToWicket viewOutput = new ViewOutputHtmlToWicket(getRequestCycle());
         ViewGenerator generator = viewGeneratorSupplier.get();
-        generator = resolveGenerator(generator, viewOutput);
-        generator.generateView(viewOutput);
+        if (generator != null) {
+            generator = resolveGenerator(generator, viewOutput);
+            generator.generateView(viewOutput);
+        }
     }
 
     private static ViewGenerator resolveGenerator(@Nonnull ViewGenerator generator, ViewOutput<Writer> vOut) {
