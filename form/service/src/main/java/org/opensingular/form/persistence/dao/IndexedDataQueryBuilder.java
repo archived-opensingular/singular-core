@@ -5,7 +5,8 @@ import org.opensingular.lib.support.persistence.util.Constants;
 public class IndexedDataQueryBuilder {
 
     private StringBuilder select   = new StringBuilder("select distinct tipoformulario.co_tipo_formulario as co_tipo_formulario \n");
-    private StringBuilder from     = new StringBuilder("from " + Constants.SCHEMA + ".tb_tipo_formulario tipoformulario\n  inner join " + Constants.SCHEMA + ".tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
+    private StringBuilder from     = new StringBuilder("from ").append(Constants.SCHEMA).append(".tb_tipo_formulario tipoformulario\n  inner join ")
+                                            .append(Constants.SCHEMA).append(".tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
     private StringBuilder join     = new StringBuilder();
     private int          colCount = 0;
 
