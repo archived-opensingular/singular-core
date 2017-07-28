@@ -61,6 +61,7 @@ import org.opensingular.form.view.SViewReadOnly;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.form.view.ViewMapperRegistry;
@@ -96,6 +97,7 @@ import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
 import org.opensingular.form.wicket.mapper.selection.AutocompleteMapper;
 import org.opensingular.form.wicket.mapper.selection.BooleanRadioMapper;
 import org.opensingular.form.wicket.mapper.selection.BooleanSelectMapper;
+import org.opensingular.form.wicket.mapper.selection.BooleanSwitchMapper;
 import org.opensingular.form.wicket.mapper.selection.MultipleCheckMapper;
 import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
 import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
@@ -194,6 +196,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
+                .register(STypeBoolean.class,    SViewBooleanSwitch.class,              BooleanSwitchMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class))
                 .register(STypeLong.class,                                              () -> new NumberMapper<>(Long.class))

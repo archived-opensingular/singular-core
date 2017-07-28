@@ -23,9 +23,9 @@ import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.util.WicketFormUtils;
-import org.opensingular.internal.form.wicket.util.HtmlConversionUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
+import org.opensingular.lib.commons.util.HTMLUtil;
 
 /**
  * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
@@ -64,10 +64,13 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
             .map(it -> it.get())
             .map(it -> new SInstanceRootModel<>(it))
             .orElse(null);
+        ISupplier<String> textProvider = () -> (text instanceof String)
+            ? HTMLUtil.escapeHtml((String) text)
+            : Objects.toString(text, "");
         SInstanceActionOpenModalEvent evt = new SInstanceActionOpenModalEvent(
             title,
             getInternalContext(AjaxRequestTarget.class).orElse(null),
-            $m.get(() -> HtmlConversionUtils.toHtmlMessage(Objects.toString(text, ""))),
+            $m.get(textProvider),
             instanceModel,
             formInstanceModel,
             () -> actionsFactory.getActions(formDelegate.get()));
@@ -107,7 +110,6 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
      * AS CLASSES ABAIXO NÃO SÃO LAMBDAS PARA MANTER O CONTROLE DAS REFERÊNCIAS,
      * POIS O DELEGATE NÃO É SERIALIZÁVEL!!!
      */
-
 
     private static final class FormDelegateImpl implements FormDelegate {
         private final Component                   component;

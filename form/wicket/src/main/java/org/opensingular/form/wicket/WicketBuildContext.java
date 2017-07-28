@@ -196,7 +196,6 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     /**
      * Configura formComponentes, adicionando comportamentos de acordo com sua definição.
-     *
      * @param mapper        o mapper
      * @param formComponent o componente que tem como model IMInstanciaAwareModel
      */
@@ -213,9 +212,9 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
             // final SType<?> tipo = selectedModel.getSInstance().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
+                this,
                 formComponent,
-                ISInstanceAwareModel.getInstanceModel(selectedModel),
-                new OnFieldUpdatedListener());
+                ISInstanceAwareModel.getInstanceModel(selectedModel), new OnFieldUpdatedListener());
         }
         return formComponent;
     }

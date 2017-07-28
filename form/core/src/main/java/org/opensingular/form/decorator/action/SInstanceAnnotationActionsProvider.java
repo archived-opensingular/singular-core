@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.BooleanUtils.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
@@ -21,6 +22,7 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
+import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -78,7 +80,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                     + "<hr/>"
                     + "%s"
                     + "</div>",
-                    HTMLUtil.escapeHtml(instance.asAtrAnnotation().text()),
+                    HTMLUtil.escapeHtml(Objects.toString(instance.asAtrAnnotation().text(), "")),
                     isTrue(instance.asAtrAnnotation().approved())
                         ? "<div class='annotation-status annotation-status-approved'>Aprovado</div>"
                         : isFalse(instance.asAtrAnnotation().approved())
@@ -121,7 +123,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         return isTrue(instance.asAtrAnnotation().approved());
     }
 
-    private static final class FormAnotacaoRefType extends RefType {
+    private static final class EditAnotacaoRefType extends RefType {
         static final String JUSTIFICATIVA = "justificativa";
         static final String APROVADO      = "aprovado";
 
@@ -134,6 +136,10 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
             final STypeString justificativa = anotacao.addField(JUSTIFICATIVA, STypeString.class);
 
             aprovado.asAtr().label("Aprovado?");
+            aprovado.asAtrBootstrap().colPreference(12);
+            aprovado.setView(() -> new SViewBooleanSwitch<Boolean>()
+                .setColorFunction(it -> (Boolean.TRUE.equals(it)) ? "success" : "danger")
+                .setTextFunction(it -> (Boolean.TRUE.equals(it)) ? "Sim" : "Não"));
 
             justificativa.setView(SViewTextArea::new);
             justificativa.asAtr().label("Justificativa");
@@ -146,10 +152,10 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> fieldInstance, Delegate delegate) {
             ISupplier<SInstance> formSupplier = () -> {
-                SInstance ins = SDocumentFactory.empty().createInstance(new FormAnotacaoRefType());
-                ins.getField(FormAnotacaoRefType.APROVADO)
+                SInstance ins = SDocumentFactory.empty().createInstance(new EditAnotacaoRefType());
+                ins.getField(EditAnotacaoRefType.APROVADO)
                     .setValue(fieldInstance.get().asAtrAnnotation().approved());
-                ins.getField(FormAnotacaoRefType.JUSTIFICATIVA)
+                ins.getField(EditAnotacaoRefType.JUSTIFICATIVA)
                     .setValue(fieldInstance.get().asAtrAnnotation().text());
                 return ins;
             };
@@ -203,8 +209,8 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
             final SInstance fieldInstance = delegate.getInstanceRef().get();
             final SIAnnotation annotationInstance = fieldInstance.asAtrAnnotation().annotation();
 
-            annotationInstance.setApproved(formInstance.getValue(FormAnotacaoRefType.APROVADO));
-            annotationInstance.setText(formInstance.getValue(FormAnotacaoRefType.JUSTIFICATIVA));
+            annotationInstance.setApproved(formInstance.getValue(EditAnotacaoRefType.APROVADO));
+            annotationInstance.setText(formInstance.getValue(EditAnotacaoRefType.JUSTIFICATIVA));
 
             delegate.refreshFieldForInstance(fieldInstance);
             formDelegate.close();

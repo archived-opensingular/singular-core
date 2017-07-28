@@ -21,7 +21,6 @@ import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
 import org.opensingular.form.wicket.panel.IOpenModalEvent;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.internal.form.wicket.util.HtmlConversionUtils;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
@@ -70,8 +69,7 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
 
         Component textPanel = (textModel != null)
             ? new Label("textPanel", IMappingModel.of(textModel)
-                .map(it -> it.toString())
-                .map(it -> HtmlConversionUtils.toHtmlMessage(it)))
+                .map(it -> it.toString()))
                     .setEscapeModelStrings(false)
                     .add($b.visibleIf($m.isNotNullOrEmpty(this.textModel)))
             : new WebMarkupContainer("textPanel");

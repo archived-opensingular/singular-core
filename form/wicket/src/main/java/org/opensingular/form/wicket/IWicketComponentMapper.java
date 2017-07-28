@@ -32,14 +32,18 @@ public interface IWicketComponentMapper extends UIComponentMapper {
 
     void buildView(WicketBuildContext ctx);
 
-    default void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    default void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
         component.setOutputMarkupId(true);
-        adjustJSEvents(component);
+        adjustJSEvents(ctx, component);
         new AjaxUpdateListenersFactory().getBehaviorsForm(component, model, listener).forEach(component::add);
     }
-
+    
     default void adjustJSEvents(Component comp) {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
+    }
+
+    default void adjustJSEvents(WicketBuildContext ctx, Component comp) {
+        adjustJSEvents(comp);
     }
 
     @FunctionalInterface

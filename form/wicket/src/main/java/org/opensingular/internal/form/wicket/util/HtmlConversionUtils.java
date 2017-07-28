@@ -39,7 +39,7 @@ public class HtmlConversionUtils {
             case "plaintext":
             case "plain text":
             default:
-                return "<p>" + HTMLUtil.escapeHtml(message) + "</p>";
+                return toHtmlMessage("<p>" + defaultString(HTMLUtil.escapeHtml(message)) + "</p>", "html");
         }
     }
 }
