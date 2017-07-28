@@ -114,13 +114,13 @@ public class TableOutputExcel extends TableOutput implements Loggable {
 
     private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.Alignment alinhamento) {
         switch (alinhamento) {
-            case Center:
+            case CENTER:
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 break;
-            case Right:
+            case RIGHT:
                 cellStyle.setAlignment(HorizontalAlignment.RIGHT);
                 break;
-            case Left:
+            case LEFT:
                 cellStyle.setAlignment(HorizontalAlignment.LEFT);
                 break;
         }

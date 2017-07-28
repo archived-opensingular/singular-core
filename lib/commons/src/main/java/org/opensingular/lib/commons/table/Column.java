@@ -26,7 +26,7 @@ import java.util.Objects;
 public class Column implements Serializable {
 
     public enum Alignment {
-        Left, Center, Right
+        LEFT, CENTER, RIGHT
     }
 
     private String id;
@@ -151,17 +151,17 @@ public class Column implements Serializable {
     }
 
     public Column setAlignmentLeft() {
-        alinhamento_ = Alignment.Left;
+        alinhamento_ = Alignment.LEFT;
         return this;
     }
 
     public Column setAlignmentCenter() {
-        alinhamento_ = Alignment.Center;
+        alinhamento_ = Alignment.CENTER;
         return this;
     }
 
     public Column setAlignmentRight() {
-        alinhamento_ = Alignment.Right;
+        alinhamento_ = Alignment.RIGHT;
         return this;
     }
 
@@ -219,15 +219,15 @@ public class Column implements Serializable {
             case DATEHOURSHORT:
             case BOOLEAN:
             case DATEHOUR:
-                return Alignment.Center;
+                return Alignment.CENTER;
             case HOUR:
             case INTEGER:
             case NUMBER:
             case MONEY:
             case PERCENT:
-                return Alignment.Right;
+                return Alignment.RIGHT;
             default:
-                return Alignment.Left;
+                return Alignment.LEFT;
         }
     }
 
@@ -351,7 +351,7 @@ public class Column implements Serializable {
                     }
                     double db1 = ((Number) valorReal1).doubleValue();
                     double db2 = ((Number) valorReal2).doubleValue();
-                    return db1 < db2 ? -1 : db2 < db1 ? 1 : 0;
+                    return Double.compare(db1, db2);
                 }
             default:
                 if (c1.getValue() instanceof Comparable<?> && c1.getValue().getClass().isAssignableFrom(

@@ -212,10 +212,10 @@ public class TableOutputHtml extends TableOutput {
         }
         if (asSubTitle) {
             switch (column.getAlignment()) {
-                case Center:
+                case CENTER:
                     printClass(out, "T_subtit_cen", columnWithSeparator);
                     break;
-                case Right:
+                case RIGHT:
                     printClass(out, "T_subtit_dir", columnWithSeparator);
                     break;
                 default:
@@ -224,10 +224,10 @@ public class TableOutputHtml extends TableOutput {
             }
         } else {
             switch (column.getAlignment()) {
-                case Center:
+                case CENTER:
                     printClass(out, "T_tit_cen", columnWithSeparator);
                     break;
-                case Right:
+                case RIGHT:
                     printClass(out, "T_tit_dir", columnWithSeparator);
                     break;
                 default:
@@ -467,9 +467,9 @@ public class TableOutputHtml extends TableOutput {
             }
         }
         switch (column.getAlignment()) {
-            case Center:
+            case CENTER:
                 return columnWithSeparator ? "T_cen T_sep" : "T_cen";
-            case Right:
+            case RIGHT:
                 return columnWithSeparator ? "T_dir T_sep" : "T_dir";
             default:
                 return columnWithSeparator ? "T_sep" : null;
