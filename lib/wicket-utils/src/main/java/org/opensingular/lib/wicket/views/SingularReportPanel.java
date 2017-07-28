@@ -96,7 +96,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     }
 
     protected Boolean isShowReport() {
-        return true;
+        return Boolean.TRUE;
     }
 
     private ViewGenerator makeViewGenerator() {
