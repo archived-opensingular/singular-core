@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
@@ -23,11 +26,14 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.component.SingularButton;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.lib.wicket.util.maps.MarkableGoogleMapsPanel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
@@ -48,8 +54,16 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
         };
 
         final IModel<? extends SInstance> model = ctx.getModel();
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(model.getObject().getName(), latitudeId, longitudeId);
 
-        ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
+        Button cleanButton = new Button("cleanButton", $m.ofValue("Limpar"));
+
+        cleanButton.setDefaultFormProcessing(false);
+        ctx.getContainer().newFormGroup().appendInputButton(cleanButton);
+        Button verNoMaps = new Button("verNoMaps", $m.ofValue("Visualizar no Google Maps"));
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel =
+                new MarkableGoogleMapsPanel<>(model.getObject().getName(), latitudeId, longitudeId, cleanButton.getMarkupId(true), verNoMaps);
+
+        googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
+        ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel).appendInputButton(verNoMaps);
     }
 }

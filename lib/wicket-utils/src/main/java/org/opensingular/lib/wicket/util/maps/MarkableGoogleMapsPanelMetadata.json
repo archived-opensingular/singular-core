@@ -3,6 +3,6 @@
   "idLat": "${idLat}",
   "idLng": "${idLng}",
   "zoom": "${zoom}",
-  "readOnly" : "${readOnly}"
-  
+  "readOnly" : "${readOnly}",
+  "idButton" : "${idButton}"
 }
