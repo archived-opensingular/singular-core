@@ -77,7 +77,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
-    public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
         adjustJSEvents(component);
         BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(component);
         datepicker.getTextField()
@@ -96,6 +96,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
                         .setSupportComponents(datepicker.getButton()));
     }
 
+    @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         if ((model != null) && (model.getObject() != null)) {
             SInstance instancia = model.getObject();
