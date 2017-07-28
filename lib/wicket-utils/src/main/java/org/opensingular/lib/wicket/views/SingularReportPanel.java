@@ -16,27 +16,32 @@
 
 package org.opensingular.lib.wicket.views;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.DownloadLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
+import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
-import org.opensingular.lib.commons.views.ViewGenerator;
-import org.opensingular.lib.commons.views.ViewOutputFormat;
-import org.opensingular.lib.commons.views.ViewsUtil;
+import org.opensingular.lib.commons.util.FormatUtil;
+import org.opensingular.lib.commons.views.*;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.*;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extends Panel {
     private final ISupplier<SingularReport<R, T>> singularReportSupplier;
@@ -57,7 +62,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         addTable();
         addSearchModal();
         addExportButton();
-        addExportExcelLink();
+        addExportButtons();
         addSearchButton();
     }
 
@@ -109,17 +114,49 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         form.add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
     }
 
-    public void addExportExcelLink() {
-        DownloadLink downloadLink = new DownloadLink("excel", new Model<File>() {
+    private List<ViewOutputFormat> exportFormatList() {
+        ViewGenerator vg = makeViewGenerator();
+        if (vg instanceof ViewMultiGenerator) {
+            return new ArrayList<>(((ViewMultiGenerator) vg).getDirectSupportedFormats());
+        }
+        return Collections.emptyList();
+    }
+
+    public void addExportButtons() {
+        ListView<ViewOutputFormat> formats = new ListView<ViewOutputFormat>("export-list-item", $m.get(this::exportFormatList)) {
+            @Override
+            protected void populateItem(ListItem<ViewOutputFormat> item) {
+                if (item.getModelObject() instanceof ViewOutputFormatExportable) {
+                    addDownloadLinkToItem(item);
+                } else {
+                    item.setVisible(false);
+                }
+            }
+        };
+        formats.add($b.visibleIf(this::isShowReport));
+        form.add(new WebMarkupContainer("export-list").add(formats));
+    }
+
+    private void addDownloadLinkToItem(ListItem<ViewOutputFormat> item) {
+        DownloadLink downloadLink = new DownloadLink("export-link", new Model<File>() {
             @Override
             public File getObject() {
-                return ViewsUtil.exportToTempFile(makeViewGenerator(), ViewOutputFormat.EXCEL);
+                return ViewsUtil.exportToTempFile(makeViewGenerator(), (ViewOutputFormatExportable) item.getModelObject());
             }
-        }, "report.xlsx");
+        }, generateExportFileName(item));
         downloadLink.setDeleteAfterDownload(true);
         downloadLink.setCacheDuration(Duration.NONE);
-        downloadLink.add($b.visibleIf(this::isShowReport));
-        form.add(downloadLink);
+        downloadLink.add(new Label("export-label", item.getModelObject().getName()));
+        item.add(downloadLink);
+    }
+
+    @NotNull
+    private String generateExportFileName(ListItem<ViewOutputFormat> item) {
+        return singularReportSupplier.get().getReportName()
+                + " "
+                + FormatUtil.dateToDefaultTimestampString(new Date())
+                + "."
+                + ((ViewOutputFormatExportable) item.getModelObject()).getFileExtension();
     }
 
     private Optional<SingularReport<R, T>> getSingularReport() {
