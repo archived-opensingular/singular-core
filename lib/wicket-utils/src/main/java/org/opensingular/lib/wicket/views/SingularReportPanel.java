@@ -39,6 +39,7 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
@@ -115,9 +116,12 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     }
 
     private List<ViewOutputFormat> exportFormatList() {
-        ViewGenerator vg = makeViewGenerator();
+        final ViewGenerator vg = makeViewGenerator();
         if (vg instanceof ViewMultiGenerator) {
-            return new ArrayList<>(((ViewMultiGenerator) vg).getDirectSupportedFormats());
+            final List<ViewOutputFormat> enabledFormats = getSingularReport()
+                    .map(SingularReport::getEnabledExportFormats).orElse(Collections.emptyList());
+            return ((ViewMultiGenerator) vg).getDirectSupportedFormats().stream()
+                    .filter(enabledFormats::contains).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

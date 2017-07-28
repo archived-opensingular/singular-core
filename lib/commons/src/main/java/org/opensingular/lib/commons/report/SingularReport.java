@@ -1,6 +1,11 @@
 package org.opensingular.lib.commons.report;
 
 import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.commons.views.ViewOutput;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -28,5 +33,13 @@ public interface SingularReport<R extends ReportMetadata<T>, T> {
      */
     default Boolean eagerLoading(){
         return Boolean.FALSE;
+    }
+
+    /**
+     * Retorna os tipos de arquivo habilitados para exportação
+     * @return uma lista de {@link ViewOutputFormat}
+     */
+    default List<ViewOutputFormat> getEnabledExportFormats(){
+        return Arrays.asList(ViewOutputFormat.HTML, ViewOutputFormat.EXCEL, ViewOutputFormat.HTML);
     }
 }
