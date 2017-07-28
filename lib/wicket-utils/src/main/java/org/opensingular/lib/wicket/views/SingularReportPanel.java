@@ -30,7 +30,6 @@ import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
-import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
 import org.opensingular.lib.commons.views.ViewsUtil;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
@@ -41,41 +40,59 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extends Panel {
     private final ISupplier<SingularReport<R, T>> singularReportSupplier;
-    private final BSModalBorder filterModalBorder;
 
-    public SingularReportPanel(String id, ISupplier<SingularReport<R, T>> singularReportSupplier, BSModalBorder filterModalBorder) {
+    private Form<Void> form;
+    private BSModalBorder searchModal;
+
+    public SingularReportPanel(String id, ISupplier<SingularReport<R, T>> singularReportSupplier) {
         super(id);
         this.singularReportSupplier = singularReportSupplier;
-        this.filterModalBorder = filterModalBorder;
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        addForm();
         addTitle();
         addTable();
+        addSearchModal();
         addExportButton();
         addExportExcelLink();
-        addSearch();
+        addSearchButton();
+    }
+
+    private void addSearchModal() {
+        searchModal = new BSModalBorder("search-modal");
+        form.add(searchModal);
+        customizeModal(searchModal);
+    }
+
+    protected abstract void customizeModal(BSModalBorder searchModal);
+
+    private void addForm() {
+        form = new Form<>("form");
+        add(form);
     }
 
     private void addExportButton() {
         Button exportButton = new Button("export");
-        add(exportButton);
+        form.add(exportButton);
         exportButton.add($b.enabledIf(this::isShowReport));
     }
 
-    private void addSearch() {
+    private void addSearchButton() {
         AjaxButton ajaxButton = new AjaxButton("search") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
-                if (filterModalBorder != null) {
-                    filterModalBorder.show(target);
-                }
+                searchModal.show(target);
             }
         };
-        add(ajaxButton);
-        ajaxButton.setVisible(filterModalBorder != null);
+        form.add(ajaxButton);
     }
 
     private void addTable() {
-        add(new WicketViewWrapperForViewOutputHtml("table", this::makeViewGenerator).add($b.visibleIf(this::isShowReport)));
+        form.add(new WicketViewWrapperForViewOutputHtml("table", this::makeViewGenerator).add($b.visibleIf(this::isShowReport)));
     }
 
     protected Boolean isShowReport() {
@@ -89,7 +106,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     protected abstract R getReportMetadata();
 
     private void addTitle() {
-        add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
+        form.add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
     }
 
     public void addExportExcelLink() {
@@ -102,10 +119,14 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         downloadLink.setDeleteAfterDownload(true);
         downloadLink.setCacheDuration(Duration.NONE);
         downloadLink.add($b.visibleIf(this::isShowReport));
-        add(downloadLink);
+        form.add(downloadLink);
     }
 
     private Optional<SingularReport<R, T>> getSingularReport() {
         return Optional.ofNullable(singularReportSupplier.get());
+    }
+
+    public Form<Void> getForm() {
+        return form;
     }
 }

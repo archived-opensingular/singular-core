@@ -16,9 +16,14 @@ public class SingularReportPanelTest {
 
     @Test
     public void testRendering() throws Exception {
-        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel(id, () -> null, null) {
+        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel<ReportMetadata<Void>, Void>(id, () -> null) {
             @Override
-            protected ReportMetadata getReportMetadata() {
+            protected void customizeModal(BSModalBorder searchModal) {
+
+            }
+
+            @Override
+            protected ReportMetadata<Void> getReportMetadata() {
                 return null;
             }
         }));
@@ -28,13 +33,18 @@ public class SingularReportPanelTest {
     @Test
     public void testRenderingSearchModal() throws Exception {
         BSModalBorder filter = new BSModalBorder("modal");
-        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel(id, () -> null, filter) {
+        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel<ReportMetadata<Void>, Void>(id, () -> null) {
             @Override
-            protected ReportMetadata getReportMetadata() {
+            protected void customizeModal(BSModalBorder searchModal) {
+
+            }
+
+            @Override
+            protected ReportMetadata<Void> getReportMetadata() {
                 return null;
             }
         }));
-        tester.executeAjaxEvent("f:srp:search", "click");
+        tester.executeAjaxEvent("f:srp:form:search", "click");
         tester.assertVisible(filter.getPageRelativePath());
     }
 
