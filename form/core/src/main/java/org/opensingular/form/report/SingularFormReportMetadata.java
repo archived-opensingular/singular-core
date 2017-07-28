@@ -5,19 +5,13 @@ import org.opensingular.lib.commons.report.ReportMetadata;
 
 public class SingularFormReportMetadata<I extends SInstance> implements ReportMetadata<I> {
     private final I filter;
-    private final Boolean executeQuery;
 
-    public SingularFormReportMetadata(I filter, Boolean executeQuery) {
+    public SingularFormReportMetadata(I filter) {
         this.filter = filter;
-        this.executeQuery = executeQuery;
     }
 
     @Override
     public I getFilter() {
         return filter;
-    }
-
-    public Boolean getExecuteQuery() {
-        return executeQuery;
     }
 }

@@ -9,6 +9,11 @@ import org.opensingular.lib.commons.views.ViewGenerator;
  * @param <T> the filter type
  */
 public interface SingularReport<R extends ReportMetadata<T>, T> {
+    /**
+     * The Report Name
+     * @return the name
+     */
+    String getReportName();
 
     /**
      * the view generator to build the reports
@@ -16,4 +21,12 @@ public interface SingularReport<R extends ReportMetadata<T>, T> {
      */
     ViewGenerator makeViewGenerator(R reportMetadata);
 
+    /**
+     * Informa se o relatorio deve ser carregado automaticamente ou somente apos
+     * uma iteração do usuario (Somente para relatorios manuais)
+     * @return se deve ser carregado automaticamente
+     */
+    default Boolean eagerLoading(){
+        return Boolean.FALSE;
+    }
 }

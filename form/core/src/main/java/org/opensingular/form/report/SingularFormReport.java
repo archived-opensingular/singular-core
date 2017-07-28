@@ -19,12 +19,6 @@ public interface SingularFormReport<E extends Serializable, T extends SType<I>, 
         extends Serializable, SingularReport<SingularFormReportMetadata<I>, I> {
 
     /**
-     * The Report Name
-     * @return the name
-     */
-    String getReportName();
-
-    /**
      * The type to build the filter
      * @return the type
      */

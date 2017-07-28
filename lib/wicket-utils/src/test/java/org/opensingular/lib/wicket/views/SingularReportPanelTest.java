@@ -3,6 +3,7 @@ package org.opensingular.lib.wicket.views;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 public class SingularReportPanelTest {
@@ -15,14 +16,24 @@ public class SingularReportPanelTest {
 
     @Test
     public void testRendering() throws Exception {
-        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel(id, () -> null, null)));
+        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel(id, () -> null, null) {
+            @Override
+            protected ReportMetadata getReportMetadata() {
+                return null;
+            }
+        }));
         tester.assertRenderedPage(MockSingularReportPage.class);
     }
 
     @Test
     public void testRenderingSearchModal() throws Exception {
         BSModalBorder filter = new BSModalBorder("modal");
-        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel(id, () -> null, filter)));
+        tester.startPage(new MockSingularReportPage(id -> new SingularReportPanel(id, () -> null, filter) {
+            @Override
+            protected ReportMetadata getReportMetadata() {
+                return null;
+            }
+        }));
         tester.executeAjaxEvent("f:srp:search", "click");
         tester.assertVisible(filter.getPageRelativePath());
     }
