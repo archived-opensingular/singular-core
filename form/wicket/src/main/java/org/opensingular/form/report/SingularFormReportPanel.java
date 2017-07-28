@@ -40,11 +40,15 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
             @Override
             public void onConfigure(Component component) {
                 super.onConfigure(component);
-                if (RequestCycle.get().find(AjaxRequestTarget.class) == null && !singularFormReport.eagerLoading()) {
+                if (isFirstRequestAndIsNotEagerLoading()) {
                     searchModal.show(null);
                 }
             }
         });
+    }
+
+    private boolean isFirstRequestAndIsNotEagerLoading() {
+        return RequestCycle.get().find(AjaxRequestTarget.class) == null && !singularFormReport.eagerLoading();
     }
 
     private void addCloseButton(BSModalBorder bsModalBorder) {
