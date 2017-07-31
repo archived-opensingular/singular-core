@@ -17,6 +17,7 @@
 package org.opensingular.lib.wicket.util.maps;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -24,7 +25,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
@@ -39,6 +42,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
 public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
@@ -50,16 +55,18 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     public static final String MAP_STATIC_ID = "mapStatic";
 
     private final IModel<String> metadadosModel = new Model<>();
+    private final IModel<String> zoomModel = new Model<>();
     private final IModel<Boolean> readOnly = Model.of(Boolean.FALSE);
 
     private final WebMarkupContainer map = new WebMarkupContainer(MAP_ID);
     private final WebMarkupContainer mapStatic = new WebMarkupContainer(MAP_STATIC_ID);
     private final HiddenField<String> metadados = new HiddenField<>("metadados", metadadosModel);
+    private final HiddenField<String> zoomField = new HiddenField<>("zoomField", zoomModel);
 
     private final String lat;
     private final String lng;
-    private final String cleanButtonId;
-    private final Button verNoMaps;
+    private final Button cleanButton;
+    private final ExternalLink verNoMaps;
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -76,19 +83,36 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         super.renderHead(response);
     }
 
-    public MarkableGoogleMapsPanel(String id, String lat, String lng, String cleanButtonId, Button verNoMaps) {
+    public MarkableGoogleMapsPanel(String id, String lat, String lng) {
         super(id);
         this.lat = lat;
         this.lng = lng;
-        this.cleanButtonId = cleanButtonId;
-        this.verNoMaps = verNoMaps;
+        this.cleanButton = new Button("cleanButton", $m.ofValue("Limpar"));
+
+        LoadableDetachableModel<String> model = $m.loadable(()->{
+            if(lat != null && lng != null){
+                return "https://www.google.com.br/maps/dir/@"+lat+","+lng+"z"; // TODO definir como vai pegar os dados
+            }else {
+                return "https://www.google.com.br/maps/dir/@-15.7481632,-47.8872134,15z";
+            }
+        });
+        verNoMaps = new ExternalLink("verNoMaps", model, $m.ofValue("Visualizar no Google Maps")){
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("target", "_blank");
+            }
+        };
+
+        cleanButton.setDefaultFormProcessing(false);
+        zoomModel.setObject(DEFAULT_ZOOM.toString());
     }
 
     private void popularMetadados() {
 
         final Map<String, Object> properties = new HashMap<>();
         try (final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON)){
-            properties.put("idButton", cleanButtonId);
+            properties.put("idButton", cleanButton.getMarkupId(true));
             properties.put("idMap", map.getMarkupId(true));
             properties.put("idLat", lat);
             properties.put("idLng", lng);
@@ -109,17 +133,22 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
         TemplatePanel templatePanel = newTemplateTag(tt -> {
             final StringBuilder templateBuilder = new StringBuilder();
+            templateBuilder.append(" <div class=\"form-group\"> ");
+            templateBuilder.append("    <input type=\"button\" class=\"btn btn-default\" wicket:id=\"cleanButton\"> ");
+            templateBuilder.append("    <a class=\"btn btn-default\" wicket:id=\"verNoMaps\"></a> ");
+            templateBuilder.append(" </div>");
             templateBuilder.append(" <div wicket:id=\"map\" style=\"height: 100%;\"> </div> ");
             templateBuilder.append(" <input type=\"hidden\" wicket:id=\"metadados\"> ");
+            templateBuilder.append(" <input type=\"hidden\" wicket:id=\"zoomField\"> ");
             templateBuilder.append(createHtmlStaticMap());
             return templateBuilder.toString();
         });
-        templatePanel.add(map, metadados, mapStatic);
+        templatePanel.add(verNoMaps, cleanButton, map, metadados, mapStatic, zoomField);
     }
 
     private String createHtmlStaticMap() {
         StringBuilder parameters = new StringBuilder();
-        parameters.append("key=AIzaSyDda6eqjAVOfU4HeV1j9ET-FRxZkagjnRQ");
+        parameters.append("key=AIzaSyDda6eqjAVOfU4HeV1j9ET-FRxZkagjnRQ"); // TODO revisar chave
         parameters.append("&center=-15.7922, -47.4609");
         parameters.append("&zoom=4");
         parameters.append("&size=1000x"+getHeight());
@@ -137,13 +166,15 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         visitChildren(FormComponent.class, (comp, visit) ->comp.setEnabled( !isReadOnly()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
 
+        verNoMaps.setVisible(isReadOnly());
+        cleanButton.setVisible(!isReadOnly());
+
         visitChildren(WebMarkupContainer.class, (comp, visit)->{
             if(comp.getId().equals(MAP_ID)){
                 comp.setVisible(!isReadOnly());
             }
             if(comp.getId().equals(MAP_STATIC_ID)){
                 comp.setVisible(isReadOnly());
-                verNoMaps.setVisible(isReadOnly());
             }
         });
     }

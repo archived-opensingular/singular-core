@@ -19,9 +19,9 @@ package org.opensingular.form.type.util;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+
+import java.math.BigDecimal;
 
 /**
  * Created by danilo.mesquita on 04/01/2016.
@@ -32,8 +32,8 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
     public static final String FIELD_LATITUDE  = "latitude";
     public static final String FIELD_LONGITUDE = "longitude";
 
-    public STypeDecimal latitude;
-    public STypeDecimal longitude;
+    public STypeString latitude;
+    public STypeString longitude;
     
     public STypeLatitudeLongitude() {
         super(SILatitudeLongitude.class);
@@ -41,15 +41,41 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        latitude = addFieldDecimal(FIELD_LATITUDE);
-        longitude = addFieldDecimal(FIELD_LONGITUDE);
+        latitude = addFieldString(FIELD_LATITUDE);
+        longitude = addFieldString(FIELD_LONGITUDE);
 
         latitude
-                .asAtr().label("Latitude")
+                .asAtr().label("Latitude")//.fractionalMaxLength(16)
                 .asAtrBootstrap().colPreference(2);
 
+        latitude.addInstanceValidator(validatable ->{
+           // TODO maneira de estar decimal
+            if(validatable.getInstance().getValue() != null){
+                BigDecimal decimal = new BigDecimal(validatable.getInstance().getValue());
+                if (decimal.compareTo(new BigDecimal(85)) == 1){
+                    validatable.error("O valor máximo para latitude é 85º");
+                };
+                if (decimal.compareTo(new BigDecimal(-85)) == -1){
+                    validatable.error("O valor mínimo para latitude é -85º");
+                };
+            }
+        });
+
         longitude
-                .asAtr().label("Longitude")
+                .asAtr().label("Longitude")//.fractionalMaxLength(16)
                 .asAtrBootstrap().colPreference(2);
+
+        longitude.addInstanceValidator(validatable ->{
+            // TODO verificar maneira de estar decimal
+            if(validatable.getInstance().getValue() != null){
+                BigDecimal decimal = new BigDecimal(validatable.getInstance().getValue());
+                if (decimal.compareTo(new BigDecimal(180)) == 1){
+                    validatable.error("O valor máximo para longitude é 180º");
+                };
+                if (decimal.compareTo(new BigDecimal(-180)) == -1){
+                    validatable.error("O valor mínimo para longitude é -180º");
+                };
+            }
+        });
     }
 }
