@@ -16,7 +16,6 @@
 
 package org.opensingular.lib.wicket.views;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -38,7 +37,10 @@ import org.opensingular.lib.commons.views.*;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -165,9 +167,5 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
 
     private Optional<SingularReport<R, T>> getSingularReport() {
         return Optional.ofNullable(singularReportSupplier.get());
-    }
-
-    public Form<Void> getForm() {
-        return form;
     }
 }
