@@ -12,7 +12,6 @@ import java.io.IOException;
 public class TableToolSimpleTestExcel extends TableToolSimpleTestBase {
 
     private TableOutputExcel tableOutputExcel;
-    private boolean isOpenEnabled = true;
     private ViewOutputExcel viewOutputExcel;
 
     @Before
@@ -89,7 +88,7 @@ public class TableToolSimpleTestExcel extends TableToolSimpleTestBase {
             File xlsx = File.createTempFile("test", ".xlsx");
             FileOutputStream fos = new FileOutputStream(xlsx);
             viewOutputExcel.write(fos);
-            if (isOpenEnabled) {
+            if (OPEN_GENERATED_FILE) {
                 SingularTestUtil.showFileOnDesktopForUser(xlsx);
             } else {
                 xlsx.deleteOnExit();

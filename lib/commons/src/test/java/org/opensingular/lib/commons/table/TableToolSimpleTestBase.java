@@ -28,6 +28,8 @@ import java.util.List;
  */
 public abstract class TableToolSimpleTestBase {
 
+    protected static boolean OPEN_GENERATED_FILE = false;
+
     @Test
     public abstract void testSimpleTable();
 

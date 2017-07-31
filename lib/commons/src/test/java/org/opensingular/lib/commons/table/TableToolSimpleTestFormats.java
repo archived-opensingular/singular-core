@@ -39,7 +39,6 @@ import java.io.PrintStream;
 public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
 
     private static TempFileProvider tmpProvider;
-    private static boolean OPEN_GENERATED_FILE = false;
 
     @BeforeClass
     public static void createTmpProvider() {
