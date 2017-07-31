@@ -31,6 +31,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -94,15 +95,10 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
         @Override
         public void buildView() {
 
-            BSContainer<?> container = ctx.getContainer();
-            if (renderAnnotations()) {
-//                container.appendTag("div", new AnnotationComponent("annotation", ctx, model));
-            }
-
             final BSGrid grid = createCompositeGrid(ctx);
 
             if (!findFeedbackAwareParent().isPresent()) {
-                final BSContainer<?> rootContainer = container;
+                final BSContainer<?> rootContainer = ctx.getContainer();
                 final BSContainer<?> externalContainer = ctx.getExternalContainer();
                 SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(rootContainer, externalContainer));
                 feedbackHandler.findNestedErrorsMaxLevel();
@@ -181,18 +177,20 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
 
                 IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
                     mapper,
-                    target,
+                    RequestCycle.get().find(AjaxRequestTarget.class),
                     model,
                     model.getObject(),
                     ctx,
                     ctx.getContainer());
 
-                return SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
                     column,
                     mapper.instanceActionsProviders,
                     model,
                     true,
                     internalContextListProvider);
+
+                return column;
             }
 
             return null;
@@ -213,10 +211,6 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             }));
         }
 
-        private boolean renderAnnotations() {
-            return ctx.getRootContext().getAnnotationMode().enabled() &&
-                getInstance().asAtrAnnotation().isAnnotated();
-        }
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
 
             final BSContainer<?> parentCol = ctx.getContainer();

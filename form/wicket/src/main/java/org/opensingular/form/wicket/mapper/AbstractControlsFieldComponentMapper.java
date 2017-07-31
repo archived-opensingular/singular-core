@@ -31,10 +31,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -82,20 +82,20 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         configureLabel(ctx, labelModel, hintNoDecoration, label);
 
-        List<SInstanceAction> actions = this.instanceActionsProviders.actionList(model);
-        if (hintNoDecoration || actions.isEmpty()) {
+        if (hintNoDecoration) {
             formGroup.appendLabel(label);
         } else {
+            BSControls labelBar = new BSControls("labelBar")
+                .appendLabel(label);
+
             IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
                 AbstractControlsFieldComponentMapper.this,
-                target,
+                RequestCycle.get().find(AjaxRequestTarget.class),
                 model,
                 model.getObject(),
                 ctx,
                 ctx.getContainer());
 
-            BSControls labelBar = new BSControls("labelBar")
-                .appendLabel(label);
             SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
                 labelBar,
                 instanceActionsProviders,

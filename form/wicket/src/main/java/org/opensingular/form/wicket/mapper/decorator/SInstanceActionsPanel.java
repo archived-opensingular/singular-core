@@ -104,8 +104,8 @@ public class SInstanceActionsPanel extends TemplatePanel {
             .isPresent());
     }
 
-    public static <C extends BSContainer<C>> C addLeftSecondaryRightPanelsTo(
-        C container,
+    public static void addLeftSecondaryRightPanelsTo(
+        BSContainer<?> container,
         SInstanceActionsProviders instanceActionsProviders,
         IModel<? extends SInstance> model,
         boolean large,
@@ -124,11 +124,10 @@ public class SInstanceActionsPanel extends TemplatePanel {
             .appendTag("div", new SInstanceActionsPanel("actionsRight", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterRight)
                 .setLarge(large)
                 .add($b.classAppender("align-right")));
-        return container;
     }
 
-    public static <C extends BSContainer<C>> C addPrimarySecondaryPanelsTo(
-        C container,
+    public static void addPrimarySecondaryPanelsTo(
+        BSContainer<?> container,
         SInstanceActionsProviders instanceActionsProviders,
         IModel<? extends SInstance> model,
         boolean large,
@@ -143,7 +142,6 @@ public class SInstanceActionsPanel extends TemplatePanel {
             .appendTag("div", new SInstanceActionsPanel("actionsSecondary", model, internalContextListProvider, SInstanceActionsPanel.Mode.MENU, filterSecondary)
                 .setLarge(large)
                 .add($b.classAppender("align-right")));
-        return container;
     }
 
     public SInstanceActionsPanel setActionClassFunction(IFunction<SInstanceAction, String> actionClassFunction) {
