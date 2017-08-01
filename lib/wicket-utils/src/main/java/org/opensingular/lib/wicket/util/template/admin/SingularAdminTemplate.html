@@ -21,6 +21,7 @@
         <div wicket:id="app-header"></div>
         <div class="clearfix"></div>
         <div class="page-container">
+            <div wicket:id="menu"></div>
             <div class="page-content-wrapper">
                 <div class="page-content">
                     <div wicket:id="page-content" class="page-head">
@@ -47,7 +48,7 @@
     </div>
     <script>
         jQuery(document).ready(function () {
-            Wicket.Event.subscribe('/ajax/call/beforeSend', function () {
+            Wicket.Event.subscribe('/ajax/call/beforeSend', function (evt, attrs) {
                 var blockImmediately = $('#' + attrs.c).is('button,input[type=button],input[type=submit],a,i');
                 var showLoading = enableAJAXPageBlock;
                 if (attrs && attrs['ep']) {
