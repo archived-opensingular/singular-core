@@ -67,7 +67,7 @@ import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.DateTimeMapper;
 import org.opensingular.form.wicket.mapper.DecimalMapper;
-import org.opensingular.form.wicket.mapper.LatitudeLongitudeMapper;
+import org.opensingular.form.wicket.mapper.maps.LatitudeLongitudeMapper;
 import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
 import org.opensingular.form.wicket.mapper.MoneyMapper;
 import org.opensingular.form.wicket.mapper.NumberMapper;

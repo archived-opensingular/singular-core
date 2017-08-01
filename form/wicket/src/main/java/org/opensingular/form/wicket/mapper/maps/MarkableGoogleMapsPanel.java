@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.util.maps;
+package org.opensingular.form.wicket.mapper.maps;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
@@ -31,6 +31,10 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
+import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
@@ -42,6 +46,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class MarkableGoogleMapsPanel<T> extends BSContainer {
@@ -68,6 +73,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private final Button cleanButton;
     private final ExternalLink verNoMaps;
 
+    private IModel<SInstance> latitudeModel;
+    private IModel<SInstance> longitudeModel;
+
     @Override
     public void renderHead(IHeaderResponse response) {
         String property = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_KEY);
@@ -83,20 +91,23 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         super.renderHead(response);
     }
 
-    public MarkableGoogleMapsPanel(String id, String lat, String lng) {
-        super(id);
+    public MarkableGoogleMapsPanel(IModel<? extends SInstance> model, String lat, String lng) {
+        super(model.getObject().getName());
         this.lat = lat;
         this.lng = lng;
         this.cleanButton = new Button("cleanButton", $m.ofValue("Limpar"));
 
-        LoadableDetachableModel<String> model = $m.loadable(()->{
-            if(lat != null && lng != null){
-                return "https://www.google.com.br/maps/dir/@"+lat+","+lng+"z"; // TODO definir como vai pegar os dados
+        latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
+        longitudeModel= new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
+
+        LoadableDetachableModel<String> model2 = $m.loadable(()->{
+            if(latitudeModel.getObject() != null && longitudeModel.getObject() != null){
+                return "https://www.google.com.br/maps/search/"+latitudeModel.getObject()+","+longitudeModel.getObject();
             }else {
                 return "https://www.google.com.br/maps/dir/@-15.7481632,-47.8872134,15z";
             }
         });
-        verNoMaps = new ExternalLink("verNoMaps", model, $m.ofValue("Visualizar no Google Maps")){
+        verNoMaps = new ExternalLink("verNoMaps", model2, $m.ofValue("Visualizar no Google Maps")){
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
@@ -150,18 +161,29 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         StringBuilder parameters = new StringBuilder();
         parameters.append("key=AIzaSyDda6eqjAVOfU4HeV1j9ET-FRxZkagjnRQ"); // TODO revisar chave
         parameters.append("&center=-15.7922, -47.4609");
-        parameters.append("&zoom=4");
+        parameters.append("&zoom=4" +
+                "src=\"https://maps.googleapis.com/maps/api/staticmap?\"+parameters+\"\"");
         parameters.append("&size=1000x"+getHeight());
 
 
         return " <div class=\"form-group\">" +
-                "<img src=\"https://maps.googleapis.com/maps/api/staticmap?"+parameters+"\" wicket:id=\"mapStatic\" > " +
+                    "<img wicket:id=\"mapStatic\" > " +
                 " </div>";
     }
 
     @Override
     protected void onConfigure() {
         super.onConfigure();
+
+        mapStatic.add($b.attr("src", $m.loadable( ()->{
+            String parameters = "key=AIzaSyDda6eqjAVOfU4HeV1j9ET-FRxZkagjnRQ"+
+                    latitudeModel.getObject() != null
+                        ? "&center="+latitudeModel.getObject()+","+longitudeModel.getObject()
+                        : "center=-15.7922, -47.4609"
+                    +"&zoom=4"
+                    +"&size=1000x"+getHeight();
+            return "https://maps.googleapis.com/maps/api/staticmap?+"+parameters;
+        })));
 
         visitChildren(FormComponent.class, (comp, visit) ->comp.setEnabled( !isReadOnly()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));

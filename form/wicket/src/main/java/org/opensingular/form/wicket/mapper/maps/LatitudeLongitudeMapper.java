@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper;
+package org.opensingular.form.wicket.mapper.maps;
 
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
@@ -22,7 +22,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
-import org.opensingular.lib.wicket.util.maps.MarkableGoogleMapsPanel;
+import org.opensingular.form.wicket.mapper.maps.MarkableGoogleMapsPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
 
         final MarkableGoogleMapsPanel<SInstance> googleMapsPanel =
-                new MarkableGoogleMapsPanel<>(model.getObject().getName(), latitudeId, longitudeId);
+                new MarkableGoogleMapsPanel<>(model, latitudeId, longitudeId);
 
         googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
