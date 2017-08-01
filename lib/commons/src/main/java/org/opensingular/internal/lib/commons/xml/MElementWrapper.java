@@ -149,7 +149,6 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param namespaceURI Tipicamente o name space possui o formato de uma URL
      * (não é obrigatório) no formato, por exemplo,
-     * http://www.miranteinfo.com/sisfinanceiro/cobranca/registraPagamento.
      * @param qualifiedName o nome do elemento que será criado. Pode conter
      * prefixo (ex.: "fin:ContaPagamento").
      * @return o elemento que foi criado
