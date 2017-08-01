@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class SingularAdminTemplate extends SingularTemplate {
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
@@ -35,14 +34,23 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
     private MarkupContainer pageContent;
 
     public SingularAdminTemplate() {
-    }
-
-    public SingularAdminTemplate(IModel<?> model) {
-        super(model);
+        super();
+        buildPage();
     }
 
     public SingularAdminTemplate(PageParameters parameters) {
         super(parameters);
+        buildPage();
+    }
+
+    private void buildPage() {
+        addPageBody();
+        addHeader();
+        addPageMenu();
+        addPageContent();
+        addPageContentTitle();
+        addPageContentSubtitle();
+        addFooter();
     }
 
     @Override
@@ -51,18 +59,6 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         for (String script : initializerJavascripts) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
-    }
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        addPageBody();
-        addHeader();
-        addPageMenu();
-        addPageContent();
-        addPageContentTitle();
-        addPageContentSubtitle();
-        addFooter();
     }
 
     private void addPageBody() {
@@ -95,12 +91,12 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
     }
 
     private void addPageContentTitle() {
-        Label title = new Label("content-title", $m.get(this::getContentTitle));
+        Label title = new Label("content-title", getContentTitle());
         pageContent.add(title);
     }
 
     private void addPageContentSubtitle() {
-        Label subttile = new Label("content-subtitle",  $m.get(this::getContentSubtitle));
+        Label subttile = new Label("content-subtitle", getContentSubtitle());
         pageContent.add(subttile);
     }
 
@@ -150,9 +146,9 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         }
     }
 
-    protected abstract String getContentTitle();
+    protected abstract IModel<String> getContentTitle();
 
-    protected abstract String getContentSubtitle();
+    protected abstract IModel<String> getContentSubtitle();
 
     protected abstract boolean isWithMenu();
 }

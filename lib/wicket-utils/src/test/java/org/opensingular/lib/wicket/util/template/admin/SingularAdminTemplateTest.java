@@ -12,13 +12,13 @@ public class SingularAdminTemplateTest extends WicketTestCase {
     public void testRendering() throws Exception {
         tester.startPage(new SingularAdminTemplate() {
             @Override
-            protected String getContentTitle() {
-                return "";
+            protected IModel<String> getContentTitle() {
+                return Model.of("");
             }
 
             @Override
-            protected String getContentSubtitle() {
-                return "";
+            protected IModel<String> getContentSubtitle() {
+                return Model.of("");
             }
 
             @Override
