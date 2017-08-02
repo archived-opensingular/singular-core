@@ -31,6 +31,7 @@ function createSingularMap(idMetadados, googleMapsKey) {
             var metadados = JSON.parse(document.getElementById(idMetadados).value),
                 lat = document.getElementById(metadados.idLat).value,
                 lng = document.getElementById(metadados.idLng).value,
+                zoom = document.getElementById(metadados.idZoom).value,
                 latLong = new google.maps.LatLng(lat, lng),
                 map, marker;
             if (!lat && !lng) {
@@ -41,7 +42,7 @@ function createSingularMap(idMetadados, googleMapsKey) {
                 });
             }
             map = new google.maps.Map(document.getElementById(metadados.idMap), {
-                zoom: Number(metadados.zoom),
+                zoom: Number(zoom),
                 center: latLong
             });
             marker = new google.maps.Marker({
@@ -49,6 +50,14 @@ function createSingularMap(idMetadados, googleMapsKey) {
                 map: map
             });
             if (!JSON.parse(metadados.readOnly)) {
+                if(document.getElementById(metadados.idLat).value != ""
+                && document.getElementById(metadados.idLng).value != ""){
+                    lat = document.getElementById(metadados.idLat).value;
+                    lng = document.getElementById(metadados.idLng).value;
+                    latLong = new google.maps.LatLng(lat, lng);
+                    marker.setPosition(latLong);
+                }
+
                 map.addListener('click', function (event) {
                     if (!marker.getVisible()) {
                         marker.setVisible(true);
@@ -75,8 +84,9 @@ function createSingularMap(idMetadados, googleMapsKey) {
                 });
             }
             map.addListener('zoom_changed', function () {
-                metadados.zoom = map.zoom;
-                document.getElementById(idMetadados).value = JSON.stringify(metadados);
+                // metadados.zoom = map.zoom;
+                document.getElementById(metadados.idZoom).value = map.zoom;
+                // document.getElementById(idMetadados).value = JSON.stringify(metadados);
             });
 
             function defineMarkerPositionManual () {
