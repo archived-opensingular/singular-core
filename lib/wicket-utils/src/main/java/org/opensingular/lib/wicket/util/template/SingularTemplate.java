@@ -132,7 +132,6 @@ public abstract class SingularTemplate extends WebPage {
 
     public SingularTemplate() {
         initSkins();
-
     }
 
     public SingularTemplate(PageParameters parameters) {
@@ -150,7 +149,7 @@ public abstract class SingularTemplate extends WebPage {
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
-        add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
+        add(new Label("pageTitle", getPageTitleModel()));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
         add(new KeepSessionAliveBehaviour());
     }
@@ -161,8 +160,8 @@ public abstract class SingularTemplate extends WebPage {
         getJavaScriptsUrls().forEach(response::render);
     }
 
-    protected String getPageTitleLocalKey() {
-        return "label.page.title.local";
+    protected IModel<String> getPageTitleModel(){
+        return new ResourceModel("label.page.title.local");
     }
 
     protected void initSkins() {

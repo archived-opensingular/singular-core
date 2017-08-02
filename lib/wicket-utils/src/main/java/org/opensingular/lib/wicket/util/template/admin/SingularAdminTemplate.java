@@ -27,11 +27,11 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 public abstract class SingularAdminTemplate extends SingularTemplate {
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 
-    private MarkupContainer pageBody;
-    private MarkupContainer pageHeader;
-    private MarkupContainer pageFooter;
-    private MarkupContainer pageMenu;
-    private MarkupContainer pageContent;
+    protected MarkupContainer pageBody;
+    protected MarkupContainer pageHeader;
+    protected MarkupContainer pageFooter;
+    protected MarkupContainer pageMenu;
+    protected MarkupContainer pageContent;
 
     public SingularAdminTemplate() {
         super();
