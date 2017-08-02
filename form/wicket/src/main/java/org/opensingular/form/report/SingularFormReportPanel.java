@@ -24,11 +24,18 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
 
     private SingularFormPanel singularFormPanel;
     private SingularSaveButton filterButton;
+    private boolean initRequest = false;
 
     public SingularFormReportPanel(String id, SingularFormReport<E, T, I> singularFormReport) {
         super(id, () -> singularFormReport);
         this.singularFormReport = singularFormReport;
         this.showTable = new Model<>(singularFormReport.eagerLoading());
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        initRequest = true;
     }
 
     @Override
@@ -42,13 +49,14 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
                 super.onConfigure(component);
                 if (isFirstRequestAndIsNotEagerLoading()) {
                     searchModal.show(null);
+                    initRequest = false;
                 }
             }
         });
     }
 
     private boolean isFirstRequestAndIsNotEagerLoading() {
-        return RequestCycle.get().find(AjaxRequestTarget.class) == null && !singularFormReport.eagerLoading();
+        return initRequest && !singularFormReport.eagerLoading();
     }
 
     private void addCloseButton(BSModalBorder bsModalBorder) {

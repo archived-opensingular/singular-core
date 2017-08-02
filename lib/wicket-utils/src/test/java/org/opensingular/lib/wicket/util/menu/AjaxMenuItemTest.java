@@ -9,7 +9,7 @@ public class AjaxMenuItemTest extends WicketTestCase {
 
     @Test
     public void testRendering() throws Exception {
-        AjaxMenuItem ajaxMenuItem = new AjaxMenuItem(DefaultIcons.DOCS, null, null) {
+        AjaxMenuItem ajaxMenuItem = new AjaxMenuItem(DefaultIcons.DOCS, null) {
             @Override
             protected void onAjax(AjaxRequestTarget target) {
 

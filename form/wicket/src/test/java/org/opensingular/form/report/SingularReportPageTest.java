@@ -1,5 +1,9 @@
 package org.opensingular.form.report;
 
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.mock.MockApplication;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTestCase;
 import org.junit.Test;
 import org.opensingular.lib.commons.report.ReportMetadata;
@@ -8,19 +12,20 @@ import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 
-public class SingularReportBoxPanelTest extends WicketTestCase {
+public class SingularReportPageTest extends WicketTestCase {
 
     @Test
     public void testRendering() throws Exception {
-        SingularReportBoxPanel reportBoxPanel = new SingularReportBoxPanel("box") {
+        SingularReportPage reportPage = new SingularReportPage() {
             @Override
             protected void configureMenu(MetronicMenu menu) {
-                menu.addItem(new ReportAjaxMenuItem(DefaultIcons.PENCIL, "X", makeSingularReport()));
+                menu.addItem(new ReportAjaxMenuItem(DefaultIcons.PENCIL, "X", () -> makeSingularReport()));
             }
         };
-        tester.startComponentInPage(reportBoxPanel);
-        tester.assertComponent("box", SingularReportBoxPanel.class);
+        tester.startPage(reportPage);
+        assertTrue(tester.getLastRenderedPage().equals(reportPage));
     }
 
     private SingularFormReport makeSingularReport() {
@@ -47,5 +52,12 @@ public class SingularReportBoxPanelTest extends WicketTestCase {
         };
     }
 
+    @Override
+    protected WebApplication newApplication() {
+        return new AdminApp();
+    }
+
+    private class AdminApp extends MockApplication implements SingularAdminApp {
+    }
 
 }
