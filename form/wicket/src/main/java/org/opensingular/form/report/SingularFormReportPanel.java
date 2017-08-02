@@ -5,17 +5,23 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
+import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
+import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class SingularFormReportPanel<E extends Serializable, T extends SType<I>, I extends SInstance>
         extends SingularReportPanel<SingularFormReportMetadata<I>, I> {
@@ -24,6 +30,7 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
 
     private SingularFormPanel singularFormPanel;
     private SingularSaveButton filterButton;
+    private BSModalBorder searchModal;
     private boolean initRequest = false;
 
     public SingularFormReportPanel(String id, SingularFormReport<E, T, I> singularFormReport) {
@@ -39,21 +46,49 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
     }
 
     @Override
-    protected void customizeModal(BSModalBorder searchModal) {
-        addFilter(searchModal);
-        addFilterButton(searchModal);
-        addCloseButton(searchModal);
-        searchModal.add(new Behavior() {
+    protected List<ButtonReportPlugin> lookupButtonReportPlugins() {
+        List<ButtonReportPlugin> loadedPlugins = super.lookupButtonReportPlugins();
+        loadedPlugins.add(new ButtonReportPlugin() {
             @Override
-            public void onConfigure(Component component) {
-                super.onConfigure(component);
-                if (isFirstRequestAndIsNotEagerLoading()) {
-                    searchModal.show(null);
-                    initRequest = false;
-                }
+            public Icon getIcon() {
+                return DefaultIcons.SEARCH;
+            }
+
+            @Override
+            public String getName() {
+                return "Pesquisar";
+            }
+
+            @Override
+            public void onAction(AjaxRequestTarget ajaxRequestTarget, ViewGenerator viewGenerator) {
+                searchModal.show(ajaxRequestTarget);
+            }
+
+            @Override
+            public void onBuild(RepeatingView repeatingView) {
+                TemplatePanel templatePanel = new TemplatePanel(repeatingView.newChildId(),
+                        "<div wicket:id='modal-border'><div wicket:id='singular-form-panel'></div></div>");
+                searchModal = new BSModalBorder("modal-border");
+                addFilter(searchModal);
+                addFilterButton(searchModal);
+                addCloseButton(searchModal);
+                searchModal.add(new Behavior() {
+                    @Override
+                    public void onConfigure(Component component) {
+                        super.onConfigure(component);
+                        if (isFirstRequestAndIsNotEagerLoading()) {
+                            searchModal.show(null);
+                            initRequest = false;
+                        }
+                    }
+                });
+                templatePanel.add(searchModal);
+                repeatingView.add(templatePanel);
             }
         });
+        return loadedPlugins;
     }
+
 
     private boolean isFirstRequestAndIsNotEagerLoading() {
         return initRequest && !singularFormReport.eagerLoading();
@@ -82,7 +117,7 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
     }
 
     private void addFilter(BSModalBorder bsModalBorder) {
-        singularFormPanel = new SingularFormPanel("filter", singularFormReport.getFilterType());
+        singularFormPanel = new SingularFormPanel("singular-form-panel", singularFormReport.getFilterType());
         singularFormPanel.setNested(true);
         bsModalBorder.add(singularFormPanel);
     }

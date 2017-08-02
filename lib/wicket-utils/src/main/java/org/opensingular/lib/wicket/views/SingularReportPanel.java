@@ -26,21 +26,21 @@ import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
 import org.jetbrains.annotations.NotNull;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.util.FormatUtil;
 import org.opensingular.lib.commons.views.*;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -50,7 +50,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     private final ISupplier<SingularReport<R, T>> singularReportSupplier;
 
     private Form<Void> form;
-    private BSModalBorder searchModal;
+    private RepeatingView pluginContainerView;
 
     public SingularReportPanel(String id, ISupplier<SingularReport<R, T>> singularReportSupplier) {
         super(id);
@@ -63,19 +63,17 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         addForm();
         addTitle();
         addTable();
-        addSearchModal();
+        addPluginContainerView();
         addExportButton();
         addExportButtons();
-        addSearchButton();
+        addPluginButtons();
     }
 
-    private void addSearchModal() {
-        searchModal = new BSModalBorder("search-modal");
-        form.add(searchModal);
-        customizeModal(searchModal);
+    private void addPluginContainerView() {
+        pluginContainerView = new RepeatingView("plugin-container-view");
+        form.add(pluginContainerView);
+        lookupButtonReportPlugins().forEach(b -> b.onBuild(pluginContainerView));
     }
-
-    protected abstract void customizeModal(BSModalBorder searchModal);
 
     private void addForm() {
         form = new Form<>("form");
@@ -88,15 +86,36 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         exportButton.add($b.enabledIf(this::isShowReport));
     }
 
-    private void addSearchButton() {
-        AjaxButton ajaxButton = new AjaxButton("search") {
+    protected List<ButtonReportPlugin> lookupButtonReportPlugins() {
+        return SingularExtensionUtil.get().findExtensionByClass(ButtonReportPlugin.class);
+    }
+
+    private void addPluginButtons() {
+        ListView<ButtonReportPlugin> buttons = new ListView<ButtonReportPlugin>("plugin-buttons", lookupButtonReportPlugins()) {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                super.onSubmit(target, form);
-                searchModal.show(target);
+            protected void populateItem(ListItem<ButtonReportPlugin> item) {
+                final ButtonReportPlugin buttonReportPlugin = item.getModelObject();
+                AjaxButton pluginButton = new AjaxButton("plugin-button") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        super.onSubmit(target, form);
+                        buttonReportPlugin.onAction(target, makeViewGenerator());
+                    }
+                };
+                item.add(pluginButton);
+                String icoCss = "";
+                if(buttonReportPlugin.getIcon() != null){
+                    icoCss = buttonReportPlugin.getIcon().getCssClass();
+                }
+                pluginButton
+                        .add(new WebMarkupContainer("button-icon")
+                                .add($b.classAppender(icoCss)));
+                pluginButton
+                        .add(new Label("button-label", buttonReportPlugin.getName()).setRenderBodyOnly(true));
+                item.setRenderBodyOnly(true);
             }
         };
-        form.add(ajaxButton);
+        form.add(buttons);
     }
 
     private void addTable() {
