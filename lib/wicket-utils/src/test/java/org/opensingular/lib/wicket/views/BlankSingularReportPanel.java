@@ -12,7 +12,7 @@ public class BlankSingularReportPanel extends SingularReportPanel<ReportMetadata
     }
 
     @Override
-    protected ReportMetadata<Void> getReportMetadata() {
+    protected ReportMetadata<Void> makeReportMetadata() {
         return null;
     }
 }

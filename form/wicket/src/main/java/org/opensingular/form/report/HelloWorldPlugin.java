@@ -26,9 +26,4 @@ public class HelloWorldPlugin implements ButtonReportPlugin {
         ajaxRequestTarget.appendJavaScript("alert('Ola Mundo!');");
     }
 
-    @Override
-    public void onBuild(RepeatingView repeatingView) {
-
-    }
-
 }

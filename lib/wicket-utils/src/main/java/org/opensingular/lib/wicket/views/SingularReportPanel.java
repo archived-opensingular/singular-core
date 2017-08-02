@@ -16,8 +16,10 @@
 
 package org.opensingular.lib.wicket.views;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -30,7 +32,6 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
 import org.jetbrains.annotations.NotNull;
-import org.opensingular.lib.commons.context.SingularContext;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
@@ -40,7 +41,10 @@ import org.opensingular.lib.commons.views.*;
 import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -48,13 +52,18 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extends Panel {
     private final ISupplier<SingularReport<R, T>> singularReportSupplier;
+    private final List<ButtonReportPlugin> buttonReportPlugins;
 
     private Form<Void> form;
     private RepeatingView pluginContainerView;
+    private WicketViewWrapperForViewOutputHtml table;
+    private Button exportButton;
+    private ListView<ViewOutputFormat> formats;
 
     public SingularReportPanel(String id, ISupplier<SingularReport<R, T>> singularReportSupplier) {
         super(id);
         this.singularReportSupplier = singularReportSupplier;
+        this.buttonReportPlugins = SingularExtensionUtil.get().findExtensionByClass(ButtonReportPlugin.class);
     }
 
     @Override
@@ -67,12 +76,15 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         addExportButton();
         addExportButtons();
         addPluginButtons();
+        buttonReportPlugins.forEach(b -> {
+            b.init(singularReportSupplier.get());
+            b.onBuild(SingularReportPanel.this);
+        });
     }
 
     private void addPluginContainerView() {
         pluginContainerView = new RepeatingView("plugin-container-view");
         form.add(pluginContainerView);
-        lookupButtonReportPlugins().forEach(b -> b.onBuild(pluginContainerView));
     }
 
     private void addForm() {
@@ -81,17 +93,12 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     }
 
     private void addExportButton() {
-        Button exportButton = new Button("export");
+        exportButton = new Button("export");
         form.add(exportButton);
-        exportButton.add($b.enabledIf(this::isShowReport));
-    }
-
-    protected List<ButtonReportPlugin> lookupButtonReportPlugins() {
-        return SingularExtensionUtil.get().findExtensionByClass(ButtonReportPlugin.class);
     }
 
     private void addPluginButtons() {
-        ListView<ButtonReportPlugin> buttons = new ListView<ButtonReportPlugin>("plugin-buttons", lookupButtonReportPlugins()) {
+        ListView<ButtonReportPlugin> buttons = new ListView<ButtonReportPlugin>("plugin-buttons", buttonReportPlugins) {
             @Override
             protected void populateItem(ListItem<ButtonReportPlugin> item) {
                 final ButtonReportPlugin buttonReportPlugin = item.getModelObject();
@@ -104,7 +111,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
                 };
                 item.add(pluginButton);
                 String icoCss = "";
-                if(buttonReportPlugin.getIcon() != null){
+                if (buttonReportPlugin.getIcon() != null) {
                     icoCss = buttonReportPlugin.getIcon().getCssClass();
                 }
                 pluginButton
@@ -119,18 +126,18 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     }
 
     private void addTable() {
-        form.add(new WicketViewWrapperForViewOutputHtml("table", this::makeViewGenerator).add($b.visibleIf(this::isShowReport)));
+        table = new WicketViewWrapperForViewOutputHtml("table", this::makeViewGenerator);
+        form.add(table);
     }
 
-    protected Boolean isShowReport() {
-        return Boolean.TRUE;
-    }
 
     private ViewGenerator makeViewGenerator() {
-        return getSingularReport().map(r -> r.makeViewGenerator(getReportMetadata())).orElse(null);
+        R reportMetadata = makeReportMetadata();
+        buttonReportPlugins.forEach(b -> b.updateReportMetatada(reportMetadata));
+        return getSingularReport().map(r -> r.makeViewGenerator(reportMetadata)).orElse(null);
     }
 
-    protected abstract R getReportMetadata();
+    protected abstract R makeReportMetadata();
 
     private void addTitle() {
         form.add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
@@ -148,7 +155,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     }
 
     public void addExportButtons() {
-        ListView<ViewOutputFormat> formats = new ListView<ViewOutputFormat>("export-list-item", $m.get(this::exportFormatList)) {
+        formats = new ListView<ViewOutputFormat>("export-list-item", $m.get(this::exportFormatList)) {
             @Override
             protected void populateItem(ListItem<ViewOutputFormat> item) {
                 if (item.getModelObject() instanceof ViewOutputFormatExportable) {
@@ -158,7 +165,13 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
                 }
             }
         };
-        formats.add($b.visibleIf(this::isShowReport));
+        formats.add(new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                formats.setVisible(component.isEnabledInHierarchy());
+            }
+        });
         form.add(new WebMarkupContainer("export-list").add(formats));
     }
 
@@ -186,5 +199,25 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
 
     private Optional<SingularReport<R, T>> getSingularReport() {
         return Optional.ofNullable(singularReportSupplier.get());
+    }
+
+    public List<ButtonReportPlugin> getButtonReportPlugins() {
+        return buttonReportPlugins;
+    }
+
+    public Form<Void> getForm() {
+        return form;
+    }
+
+    public RepeatingView getPluginContainerView() {
+        return pluginContainerView;
+    }
+
+    public WicketViewWrapperForViewOutputHtml getTable() {
+        return table;
+    }
+
+    public Button getExportButton() {
+        return exportButton;
     }
 }

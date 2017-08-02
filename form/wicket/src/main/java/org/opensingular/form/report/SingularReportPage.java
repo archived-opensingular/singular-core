@@ -60,9 +60,9 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
     protected abstract void configureMenu(MetronicMenu menu);
 
     protected class ReportAjaxMenuItem<E extends Serializable, T extends SType<I>, I extends SInstance> extends AjaxMenuItem {
-        private final ISupplier<SingularFormReport<E, T, I>> singularFormReport;
+        private final ISupplier<SingularFormReport<T, I>> singularFormReport;
 
-        public ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularFormReport<E, T, I>> singularFormReport) {
+        public ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> singularFormReport) {
             super(icon, title);
             this.singularFormReport = singularFormReport;
         }
