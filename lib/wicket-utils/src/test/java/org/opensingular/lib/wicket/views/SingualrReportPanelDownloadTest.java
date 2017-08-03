@@ -62,7 +62,7 @@ public class SingualrReportPanelDownloadTest extends WicketTestCase {
     private DownloadLink getDownloadLinkByFormat(ViewOutputFormatExportable format) {
         return ((MarkupContainer) mockSingularReportPage.get("f:srp:form:export-list:export-list-item"))
                 .visitChildren(DownloadLink.class, (IVisitor<DownloadLink, DownloadLink>) (downloadLink, visit) -> {
-                    if (format.getName().equals(downloadLink.get("export-label").getDefaultModelObjectAsString())) {
+                    if (format.getName().equalsIgnoreCase(downloadLink.get("export-label").getDefaultModelObjectAsString())) {
                         visit.stop(downloadLink);
                     }
                 });
