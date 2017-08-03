@@ -71,7 +71,6 @@ public abstract class AjaxMenuItem extends AbstractMenuItem {
     }
 
     private void inativeAllButThis() {
-        List<AjaxMenuItem> ajaxMenuItems = new ArrayList<>();
         visitParents(MetronicMenu.class, (IVisitor<MetronicMenu, AjaxMenuItem>) (mm, v) -> {
             mm.visitChildren(AjaxMenuItem.class, (IVisitor<AjaxMenuItem, AjaxMenuItem>) (ajaxMenu, vv) -> {
                 if (!ajaxMenu.equals(AjaxMenuItem.this)) {
