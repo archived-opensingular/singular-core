@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.wicket.views;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -160,7 +161,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         }, generateExportFileName(item));
         downloadLink.setDeleteAfterDownload(true);
         downloadLink.setCacheDuration(Duration.NONE);
-        downloadLink.add(new Label("export-label", item.getModelObject().getName()));
+        downloadLink.add(new Label("export-label", WordUtils.capitalize(item.getModelObject().getName().toLowerCase())));
         item.add(downloadLink);
     }
 
