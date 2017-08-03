@@ -98,31 +98,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     }
 
     private void addPluginButtons() {
-        ListView<ButtonReportPlugin> buttons = new ListView<ButtonReportPlugin>("plugin-buttons", buttonReportPlugins) {
-            @Override
-            protected void populateItem(ListItem<ButtonReportPlugin> item) {
-                final ButtonReportPlugin buttonReportPlugin = item.getModelObject();
-                AjaxButton pluginButton = new AjaxButton("plugin-button") {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        super.onSubmit(target, form);
-                        buttonReportPlugin.onAction(target, makeViewGenerator());
-                    }
-                };
-                item.add(pluginButton);
-                String icoCss = "";
-                if (buttonReportPlugin.getIcon() != null) {
-                    icoCss = buttonReportPlugin.getIcon().getCssClass();
-                }
-                pluginButton
-                        .add(new WebMarkupContainer("button-icon")
-                                .add($b.classAppender(icoCss)));
-                pluginButton
-                        .add(new Label("button-label", buttonReportPlugin.getName()).setRenderBodyOnly(true));
-                item.setRenderBodyOnly(true);
-            }
-        };
-        form.add(buttons);
+        form.add(new ButtonReportListView());
     }
 
     private void addTable() {
@@ -195,6 +171,41 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
                 + FormatUtil.dateToDefaultTimestampString(new Date())
                 + "."
                 + ((ViewOutputFormatExportable) item.getModelObject()).getFileExtension();
+    }
+
+    private class ButtonReportListView extends ListView<ButtonReportPlugin> {
+        public ButtonReportListView() {
+            super("plugin-buttons", buttonReportPlugins);
+        }
+
+        @Override
+        protected void populateItem(ListItem<ButtonReportPlugin> item) {
+            final ButtonReportPlugin buttonReportPlugin = item.getModelObject();
+            AjaxButton pluginButton = new AjaxButton("plugin-button") {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    super.onSubmit(target, form);
+                    buttonReportPlugin.onAction(target, makeViewGenerator());
+                }
+            };
+            addButtonIcon(buttonReportPlugin, pluginButton);
+            addButtonLabel(buttonReportPlugin, pluginButton);
+            item.add(pluginButton);
+            item.setRenderBodyOnly(true);
+        }
+
+        private void addButtonLabel(ButtonReportPlugin buttonReportPlugin, AjaxButton pluginButton) {
+            pluginButton.add(new Label("button-label", buttonReportPlugin.getName()).setRenderBodyOnly(true));
+        }
+
+        private void addButtonIcon(ButtonReportPlugin buttonReportPlugin, AjaxButton pluginButton) {
+            String icoCss = "";
+            if (buttonReportPlugin.getIcon() != null) {
+                icoCss = buttonReportPlugin.getIcon().getCssClass();
+            }
+            pluginButton.add(new WebMarkupContainer("button-icon").add($b.classAppender(icoCss)));
+        }
+
     }
 
     private Optional<SingularReport<R, T>> getSingularReport() {
