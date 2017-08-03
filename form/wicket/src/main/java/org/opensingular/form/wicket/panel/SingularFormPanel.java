@@ -74,6 +74,9 @@ public class SingularFormPanel extends Panel {
 
     private RefSDocumentFactory documentFactoryRef;
 
+    //Set this if is this panel is nested inside a modal, to prevent z-index errors
+    private BSContainer<?> modalContainer = null;
+
     /**
      * Construtor do painel.
      *
@@ -226,8 +229,15 @@ public class SingularFormPanel extends Panel {
         bodyContainer.setOutputMarkupId(true);
         addOrReplace(bodyContainer);
 
+        BSContainer<?> externalContainer;
+        if(modalContainer != null){
+            externalContainer = modalContainer;
+        } else {
+            externalContainer = bodyContainer;
+        }
+
         // Chama o builder wicket para construção do formulário
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, getInstanceModel());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
@@ -391,5 +401,14 @@ public class SingularFormPanel extends Panel {
 
     public void setNested(boolean nested) {
         this.nested = nested;
+    }
+
+    /**
+     * Set the container to be used as the modal container, usefful when this form is nested inside a component
+     * with setted z-index
+     * @param modalContainer the modal container
+     */
+    public void setModalContainer(BSContainer<?> modalContainer) {
+        this.modalContainer = modalContainer;
     }
 }
