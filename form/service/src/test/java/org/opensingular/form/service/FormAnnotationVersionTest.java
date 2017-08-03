@@ -30,7 +30,7 @@ public class FormAnnotationVersionTest extends FormServiceTest {
         return pessoa;
     }
 
-    private FormKey insert() {
+    protected FormKey insert() {
         SIComposite pessoa = formWithAnnotations();
         FormKey pessoaKey = formService.insert(pessoa, 1);
         SIComposite pessoaLoaded = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);

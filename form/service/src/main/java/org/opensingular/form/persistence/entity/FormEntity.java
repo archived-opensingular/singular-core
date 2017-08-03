@@ -16,9 +16,13 @@
 package org.opensingular.form.persistence.entity;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 
+import org.hibernate.annotations.Cache;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
@@ -26,6 +30,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 /**
  * The persistent class for the TB_FORMULARIO database table.
  */
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @GenericGenerator(name = FormEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_FORMULARIO", schema = Constants.SCHEMA)

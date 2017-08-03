@@ -40,6 +40,11 @@ public class FormVersionDAO extends BaseDAO<FormVersionEntity, Long> {
     public void delete(FormVersionEntity obj) {
         super.delete(obj);
         getSession().flush();
+    }
 
+    public void resetIndexedFlag() {
+        List<FormVersionEntity> formVersionEntities = super.listAll();
+        formVersionEntities.forEach(fv -> fv.setIndexed('N'));
+        getSession().flush();
     }
 }
