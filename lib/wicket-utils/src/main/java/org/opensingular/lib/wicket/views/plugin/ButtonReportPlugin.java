@@ -37,6 +37,22 @@ public interface ButtonReportPlugin extends Serializable {
     }
 
     /**
+     * Allow the control of the enabled state
+     * @return if is enabled
+     */
+    default boolean isButtonEnabled(){
+        return true;
+    }
+
+    /**
+     * Allow the control of the visible state
+     * @return if is visible
+     */
+    default boolean isButtonVisible(){
+        return true;
+    }
+
+    /**
      * @return the button icon
      */
     Icon getIcon();
@@ -52,7 +68,5 @@ public interface ButtonReportPlugin extends Serializable {
      * @param viewGenerator the view generator
      */
     void onAction(AjaxRequestTarget ajaxRequestTarget, ViewGenerator viewGenerator);
-
-
 
 }

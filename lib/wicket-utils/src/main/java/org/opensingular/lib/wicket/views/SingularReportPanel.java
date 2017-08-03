@@ -193,6 +193,8 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
             addButtonLabel(buttonReportPlugin, pluginButton);
             item.add(pluginButton);
             item.setRenderBodyOnly(true);
+            item.add($b.visibleIf(buttonReportPlugin::isButtonVisible));
+            item.add($b.enabledIf(buttonReportPlugin::isButtonEnabled));
         }
 
         private void addButtonLabel(ButtonReportPlugin buttonReportPlugin, AjaxButton pluginButton) {
