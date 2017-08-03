@@ -50,8 +50,9 @@ function createSingularMap(idMetadados, googleMapsKey) {
                 map: map
             });
             if (!JSON.parse(metadados.readOnly)) {
-                if(document.getElementById(metadados.idLat).value != ""
-                && document.getElementById(metadados.idLng).value != ""){
+                if(document.getElementById(metadados.idLat).value != "" &&
+                    document.getElementById(metadados.idLng).value != ""){
+
                     lat = document.getElementById(metadados.idLat).value;
                     lng = document.getElementById(metadados.idLng).value;
                     latLong = new google.maps.LatLng(lat, lng);
@@ -84,9 +85,7 @@ function createSingularMap(idMetadados, googleMapsKey) {
                 });
             }
             map.addListener('zoom_changed', function () {
-                // metadados.zoom = map.zoom;
                 document.getElementById(metadados.idZoom).value = map.zoom;
-                // document.getElementById(idMetadados).value = JSON.stringify(metadados);
             });
 
             function defineMarkerPositionManual () {

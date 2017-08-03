@@ -33,6 +33,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -54,26 +55,26 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
     private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
     private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
-    private static final Integer DEFAULT_ZOOM = 4;
+
     private static final String SINGULAR_GOOGLEMAPS_KEY = "singular.googlemaps.key";
     public static final String MAP_ID = "map";
     public static final String MAP_STATIC_ID = "mapStatic";
 
     private final IModel<String> metadadosModel = new Model<>();
-    private final IModel<String> zoomModel = Model.of(DEFAULT_ZOOM.toString());
-    private final IModel<Boolean> readOnly = Model.of(Boolean.FALSE);
+    private final IModel<Boolean> readOnly = $m.ofValue(Boolean.FALSE);
 
     private IModel<SInstance> latitudeModel;
     private IModel<SInstance> longitudeModel;
+    private IModel<SInstance> zoomModel;
 
     private final ImgMap mapStatic;
 
     private final WebMarkupContainer map = new WebMarkupContainer(MAP_ID);
     private final HiddenField<String> metadados = new HiddenField<>("metadados", metadadosModel);
-    private final HiddenField<String> zoomField = new HiddenField<>("zoomField", zoomModel);
 
     private final String lat;
     private final String lng;
+    private final String zoom;
     private final Button cleanButton;
     private final ExternalLink verNoMaps;
 
@@ -91,20 +92,22 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         super.renderHead(response);
     }
 
-    public MarkableGoogleMapsPanel(IModel<? extends SInstance> model, String lat, String lng) {
+    public MarkableGoogleMapsPanel(IModel<? extends SInstance> model, String lat, String lng, String zoom) {
         super(model.getObject().getName());
         this.lat = lat;
         this.lng = lng;
+        this.zoom = zoom;
         this.cleanButton = new Button("cleanButton", $m.ofValue("Limpar"));
 
         latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
         longitudeModel= new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
+        zoomModel= new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_ZOOM));
 
         LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(()->{
             if(latitudeModel.getObject() != null && longitudeModel.getObject() != null){
                 return "https://www.google.com.br/maps/search/"+latitudeModel.getObject()+","+longitudeModel.getObject();
             }else {
-                return "https://www.google.com.br/maps/dir/@-15.7481632,-47.8872134,15z";
+                return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
             }
         });
         verNoMaps = new ExternalLink("verNoMaps", googleMapsLinkModel, $m.ofValue("Visualizar no Google Maps")){
@@ -116,9 +119,8 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         };
 
         cleanButton.setDefaultFormProcessing(false);
-        zoomModel.setObject(DEFAULT_ZOOM.toString());
 
-        LoadableDetachableModel<String> mapStaticModel = $m.loadable(() -> {
+        mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
             String latLng = "-15.7922, -47.4609";
             if(latitudeModel.getObject() != null && longitudeModel.getObject() != null)
                 latLng =  latitudeModel.getObject() + "," + longitudeModel.getObject();
@@ -129,14 +131,13 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             }
 
             String parameters = "key=AIzaSyDda6eqjAVOfU4HeV1j9ET-FRxZkagjnRQ"
-                    + "&size=1000x" + getHeight()
+                    + "&size=1000x" + (getHeight() - 35)
                     + "&zoom="+zoomModel.getObject()
                     + "&center=" + latLng
                     + marker;
 
             return "https://maps.googleapis.com/maps/api/staticmap?" + parameters;
-        });
-        mapStatic = new ImgMap(MAP_STATIC_ID, mapStaticModel);
+        }));
     }
 
     private void popularMetadados() {
@@ -147,7 +148,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             properties.put("idMap", map.getMarkupId(true));
             properties.put("idLat", lat);
             properties.put("idLng", lng);
-            properties.put("idZoom", zoomField.getMarkupId(true));
+            properties.put("idZoom", zoom);
             properties.put("readOnly", isReadOnly());
             metadataJSON.interpolate(properties);
             metadadosModel.setObject(metadataJSON.getString());
@@ -168,15 +169,14 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             templateBuilder.append("    <input type=\"button\" class=\"btn btn-default\" wicket:id=\"cleanButton\"> ");
             templateBuilder.append("    <a class=\"btn btn-default\" wicket:id=\"verNoMaps\"></a> ");
             templateBuilder.append(" </div>");
-            templateBuilder.append(" <div wicket:id=\"map\" style=\"height: 100%;\"> </div> ");
+            templateBuilder.append(" <div wicket:id=\"map\" style=\"height: 90%;\"> </div> ");
             templateBuilder.append(" <input type=\"hidden\" wicket:id=\"metadados\"> ");
-            templateBuilder.append(" <input type=\"hidden\" wicket:id=\"zoomField\"> ");
             templateBuilder.append("<div class=\"form-group\">");
             templateBuilder.append("    <img wicket:id=\"mapStatic\" > ");
             templateBuilder.append(" </div>");
             return templateBuilder.toString();
         });
-        templatePanel.add(verNoMaps, cleanButton, map, metadados, mapStatic, zoomField);
+        templatePanel.add(verNoMaps, cleanButton, map, metadados, mapStatic);
     }
 
     @Override

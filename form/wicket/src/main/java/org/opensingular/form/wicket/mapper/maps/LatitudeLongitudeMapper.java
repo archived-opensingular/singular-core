@@ -38,17 +38,20 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
         String latitudeId = null;
         String longitudeId = null;
+        String zoomId = null;
         for(String t : markups){
             if(t.contains(STypeLatitudeLongitude.FIELD_LATITUDE))
                 latitudeId = t;
             if(t.contains(STypeLatitudeLongitude.FIELD_LONGITUDE))
                 longitudeId = t;
+            if(t.contains(STypeLatitudeLongitude.FIELD_ZOOM))
+                zoomId = t;
         };
 
         final IModel<? extends SInstance> model = ctx.getModel();
 
         final MarkableGoogleMapsPanel<SInstance> googleMapsPanel =
-                new MarkableGoogleMapsPanel<>(model, latitudeId, longitudeId);
+                new MarkableGoogleMapsPanel<>(model, latitudeId, longitudeId, zoomId);
 
         googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
