@@ -7,7 +7,7 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 public class BlankSingularReportPanel extends SingularReportPanel<ReportMetadata<Void>, Void> {
     public BlankSingularReportPanel(String id,
-                                    ISupplier<SingularReport<ReportMetadata<Void>, Void>> singularReportSupplier) {
+                                    ISupplier<SingularReport> singularReportSupplier) {
         super(id, singularReportSupplier);
     }
 

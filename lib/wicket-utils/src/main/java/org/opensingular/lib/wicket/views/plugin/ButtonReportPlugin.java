@@ -2,6 +2,7 @@ package org.opensingular.lib.wicket.views.plugin;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.repeater.RepeatingView;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.views.ViewGenerator;
@@ -18,7 +19,7 @@ public interface ButtonReportPlugin extends Serializable {
     /**
      * Allow Configuration based on SingularReport
      */
-    default void init(SingularReport singularReport){
+    default void init(ISupplier<SingularReport> singularReport){
 
     }
 

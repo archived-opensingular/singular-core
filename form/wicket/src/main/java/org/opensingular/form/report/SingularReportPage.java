@@ -8,13 +8,16 @@ import org.apache.wicket.model.Model;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.report.extension.ReportMenuExtension;
+import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.menu.AjaxMenuItem;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 
-import java.io.Serializable;
+import java.util.List;
 
 /**
  * A Box panel to show reports grouped by menus
@@ -37,9 +40,30 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
     @NotNull
     @Override
     protected WebMarkupContainer buildPageMenu(String id) {
-        menu = new MetronicMenu("menu");
-        configureMenu(menu);
-        return menu;
+        return menu = new MetronicMenu("menu");
+    }
+
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        rebuildMenu(null);
+    }
+
+    public void rebuildMenu(AjaxRequestTarget ajaxRequestTarget) {
+        menu = (MetronicMenu) menu.replaceWith(new MetronicMenu("menu"));
+        ReportMenuBuilder reportMenuBuilder = new ReportMenuBuilder();
+        configureMenu(reportMenuBuilder);
+        configureExtensionButton(reportMenuBuilder);
+        if(ajaxRequestTarget != null){
+            ajaxRequestTarget.add(menu);
+        }
+    }
+
+    private void configureExtensionButton(ReportMenuBuilder reportMenuBuilder) {
+        List<ReportMenuExtension> menuExtensions = SingularExtensionUtil.get().findExtensionByClass(ReportMenuExtension.class);
+        for (ReportMenuExtension menuExtension : menuExtensions) {
+            menuExtension.configure(reportMenuBuilder);
+        }
     }
 
     @Override
@@ -57,9 +81,9 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
         return true;
     }
 
-    protected abstract void configureMenu(MetronicMenu menu);
+    protected abstract void configureMenu(ReportMenuBuilder menu);
 
-    protected class ReportAjaxMenuItem<E extends Serializable, T extends SType<I>, I extends SInstance> extends AjaxMenuItem {
+    protected class ReportAjaxMenuItem<T extends SType<I>, I extends SInstance> extends AjaxMenuItem {
         private final ISupplier<SingularFormReport<T, I>> singularFormReport;
 
         public ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> singularFormReport) {
@@ -74,4 +98,44 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
             target.add(body, menu);
         }
     }
+
+
+    public class ReportMenuBuilder {
+        public ReportMenuGroupBuilder addGroup(Icon icon, String title, boolean openByDefault) {
+            MetronicMenuGroup group = new MetronicMenuGroup(icon, title);
+            menu.addItem(group);
+            if (openByDefault) {
+                group.setOpen();
+            }
+            return new ReportMenuGroupBuilder(group);
+        }
+
+        public <T extends SType<I>, I extends SInstance> ReportMenuBuilder addItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> report) {
+            menu.addItem(new ReportAjaxMenuItem<>(icon, title, report));
+            return this;
+        }
+    }
+
+    public class ReportMenuGroupBuilder {
+        private final MetronicMenuGroup group;
+
+        public ReportMenuGroupBuilder(MetronicMenuGroup group) {
+            this.group = group;
+        }
+
+        public <T extends SType<I>, I extends SInstance> ReportMenuGroupBuilder addItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> report) {
+            group.addItem(new ReportAjaxMenuItem<>(icon, title, report));
+            return this;
+        }
+
+        public ReportMenuGroupBuilder addGroup(Icon icon, String title, boolean openByDefault) {
+            MetronicMenuGroup newGroup = new MetronicMenuGroup(icon, title);
+            group.addItem(newGroup);
+            if (openByDefault) {
+                newGroup.setOpen();
+            }
+            return new ReportMenuGroupBuilder(newGroup);
+        }
+    }
+
 }

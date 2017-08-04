@@ -23,4 +23,9 @@ public interface SingularFormReport<T extends SType<I>, I extends SInstance>
      */
     Class<T> getFilterType();
 
+
+    default void onFilterInit(I filter){
+
+    }
+
 }

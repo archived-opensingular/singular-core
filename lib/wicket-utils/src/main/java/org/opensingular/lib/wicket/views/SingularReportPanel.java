@@ -52,7 +52,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extends Panel {
-    private final ISupplier<SingularReport<R, T>> singularReportSupplier;
+    private final ISupplier<SingularReport> singularReportSupplier;
     private final List<ButtonReportPlugin> buttonReportPlugins;
 
     private Form<Void> form;
@@ -61,7 +61,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     private Button exportButton;
     private ListView<ViewOutputFormat> formats;
 
-    public SingularReportPanel(String id, ISupplier<SingularReport<R, T>> singularReportSupplier) {
+    public SingularReportPanel(String id, ISupplier<SingularReport> singularReportSupplier) {
         super(id);
         this.singularReportSupplier = singularReportSupplier;
         this.buttonReportPlugins = SingularExtensionUtil.get().findExtensionByClass(ButtonReportPlugin.class);
@@ -78,7 +78,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         addExportButtons();
         addPluginButtons();
         buttonReportPlugins.forEach(b -> {
-            b.init(singularReportSupplier.get());
+            b.init(singularReportSupplier);
             b.onBuild(SingularReportPanel.this);
         });
     }

@@ -11,6 +11,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.extension.SingularExtension;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.views.ViewGenerator;
@@ -18,7 +19,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.resource.Icon;
-import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
 
@@ -31,12 +31,12 @@ public class SearchReportPlugin implements ButtonReportPlugin {
     private SingularSaveButton filterButton;
     private BSModalBorder searchModal;
     private boolean init = true;
-    private SingularFormReport singularFormReport;
+    private ISupplier<SingularReport> singularFormReport;
 
     @Override
-    public void init(SingularReport singularReport) {
-        if (singularReport instanceof SingularFormReport) {
-            this.singularFormReport = (SingularFormReport) singularReport;
+    public void init(ISupplier<SingularReport> singularReport) {
+        if (singularReport.get() instanceof SingularFormReport) {
+            this.singularFormReport = singularReport;
         }
     }
 
@@ -107,13 +107,15 @@ public class SearchReportPlugin implements ButtonReportPlugin {
     }
 
     private void addFilter(BSModalBorder bsModalBorder) {
-        singularFormPanel = new SingularFormPanel("singular-form-panel", singularFormReport.getFilterType());
+        SingularFormReport sr = (SingularFormReport) singularFormReport.get();
+        singularFormPanel = new SingularFormPanel("singular-form-panel", sr.getFilterType());
         singularFormPanel.setNested(true);
         bsModalBorder.add(singularFormPanel);
+        sr.onFilterInit(singularFormPanel.getInstance());
     }
 
     private boolean isFirstRequestAndIsNotEagerLoading() {
-        return init && !singularFormReport.eagerLoading();
+        return init && !singularFormReport.get().eagerLoading();
     }
 
 }

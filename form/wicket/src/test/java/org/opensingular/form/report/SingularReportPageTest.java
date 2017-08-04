@@ -20,8 +20,8 @@ public class SingularReportPageTest extends WicketTestCase {
     public void testRendering() throws Exception {
         SingularReportPage reportPage = new SingularReportPage() {
             @Override
-            protected void configureMenu(MetronicMenu menu) {
-                menu.addItem(new ReportAjaxMenuItem(DefaultIcons.PENCIL, "X", () -> makeSingularReport()));
+            protected void configureMenu(ReportMenuBuilder menu) {
+                menu.addItem(DefaultIcons.PENCIL, "X", () -> makeSingularReport());
             }
         };
         tester.startPage(reportPage);
