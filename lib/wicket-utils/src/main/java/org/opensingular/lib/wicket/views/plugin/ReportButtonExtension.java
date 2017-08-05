@@ -14,7 +14,7 @@ import java.io.Serializable;
 /**
  * Allow creation of reports buttons plugins
  */
-public interface ButtonReportPlugin extends Serializable {
+public interface ReportButtonExtension extends Serializable {
 
     /**
      * Allow Configuration based on SingularReport

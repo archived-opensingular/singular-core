@@ -39,7 +39,7 @@ import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.util.FormatUtil;
 import org.opensingular.lib.commons.views.*;
-import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
+import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
 import java.io.File;
 import java.util.Collections;
@@ -53,7 +53,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extends Panel {
     private final ISupplier<SingularReport> singularReportSupplier;
-    private final List<ButtonReportPlugin> buttonReportPlugins;
+    private final List<ReportButtonExtension> reportButtonExtensions;
 
     private Form<Void> form;
     private RepeatingView pluginContainerView;
@@ -64,7 +64,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     public SingularReportPanel(String id, ISupplier<SingularReport> singularReportSupplier) {
         super(id);
         this.singularReportSupplier = singularReportSupplier;
-        this.buttonReportPlugins = SingularExtensionUtil.get().findExtensionByClass(ButtonReportPlugin.class);
+        this.reportButtonExtensions = SingularExtensionUtil.get().findExtensionByClass(ReportButtonExtension.class);
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         addExportButton();
         addExportButtons();
         addPluginButtons();
-        buttonReportPlugins.forEach(b -> {
+        reportButtonExtensions.forEach(b -> {
             b.init(singularReportSupplier);
             b.onBuild(SingularReportPanel.this);
         });
@@ -110,7 +110,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
 
     private ViewGenerator makeViewGenerator() {
         R reportMetadata = makeReportMetadata();
-        buttonReportPlugins.forEach(b -> b.updateReportMetatada(reportMetadata));
+        reportButtonExtensions.forEach(b -> b.updateReportMetatada(reportMetadata));
         return getSingularReport().map(r -> r.makeViewGenerator(reportMetadata)).orElse(null);
     }
 
@@ -174,37 +174,37 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
                 + ((ViewOutputFormatExportable) item.getModelObject()).getFileExtension();
     }
 
-    private class ButtonReportListView extends ListView<ButtonReportPlugin> {
+    private class ButtonReportListView extends ListView<ReportButtonExtension> {
         public ButtonReportListView() {
-            super("plugin-buttons", buttonReportPlugins);
+            super("plugin-buttons", reportButtonExtensions);
         }
 
         @Override
-        protected void populateItem(ListItem<ButtonReportPlugin> item) {
-            final ButtonReportPlugin buttonReportPlugin = item.getModelObject();
+        protected void populateItem(ListItem<ReportButtonExtension> item) {
+            final ReportButtonExtension reportButtonExtension = item.getModelObject();
             AjaxButton pluginButton = new AjaxButton("plugin-button") {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     super.onSubmit(target, form);
-                    buttonReportPlugin.onAction(target, makeViewGenerator());
+                    reportButtonExtension.onAction(target, makeViewGenerator());
                 }
             };
-            addButtonIcon(buttonReportPlugin, pluginButton);
-            addButtonLabel(buttonReportPlugin, pluginButton);
+            addButtonIcon(reportButtonExtension, pluginButton);
+            addButtonLabel(reportButtonExtension, pluginButton);
             item.add(pluginButton);
             item.setRenderBodyOnly(true);
-            item.add($b.visibleIf(buttonReportPlugin::isButtonVisible));
-            item.add($b.enabledIf(buttonReportPlugin::isButtonEnabled));
+            item.add($b.visibleIf(reportButtonExtension::isButtonVisible));
+            item.add($b.enabledIf(reportButtonExtension::isButtonEnabled));
         }
 
-        private void addButtonLabel(ButtonReportPlugin buttonReportPlugin, AjaxButton pluginButton) {
-            pluginButton.add(new Label("button-label", buttonReportPlugin.getName()).setRenderBodyOnly(true));
+        private void addButtonLabel(ReportButtonExtension reportButtonExtension, AjaxButton pluginButton) {
+            pluginButton.add(new Label("button-label", reportButtonExtension.getName()).setRenderBodyOnly(true));
         }
 
-        private void addButtonIcon(ButtonReportPlugin buttonReportPlugin, AjaxButton pluginButton) {
+        private void addButtonIcon(ReportButtonExtension reportButtonExtension, AjaxButton pluginButton) {
             String icoCss = "";
-            if (buttonReportPlugin.getIcon() != null) {
-                icoCss = buttonReportPlugin.getIcon().getCssClass();
+            if (reportButtonExtension.getIcon() != null) {
+                icoCss = reportButtonExtension.getIcon().getCssClass();
             }
             pluginButton.add(new WebMarkupContainer("button-icon").add($b.classAppender(icoCss)));
         }
@@ -215,8 +215,8 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
         return Optional.ofNullable(singularReportSupplier.get());
     }
 
-    public List<ButtonReportPlugin> getButtonReportPlugins() {
-        return buttonReportPlugins;
+    public List<ReportButtonExtension> getReportButtonExtensions() {
+        return reportButtonExtensions;
     }
 
     public Form<Void> getForm() {

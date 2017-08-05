@@ -10,7 +10,6 @@ import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.lib.commons.extension.SingularExtension;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
@@ -20,12 +19,11 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
-import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
+import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
-@SingularExtension
-public class SearchReportPlugin implements ButtonReportPlugin {
+public class SearchReportButtonExtension implements ReportButtonExtension {
 
     private SingularFormPanel singularFormPanel;
     private SingularSaveButton filterButton;

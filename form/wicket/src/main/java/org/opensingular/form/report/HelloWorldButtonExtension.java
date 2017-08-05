@@ -1,14 +1,12 @@
 package org.opensingular.form.report;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.opensingular.lib.commons.extension.SingularExtension;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.resource.Icon;
-import org.opensingular.lib.wicket.views.plugin.ButtonReportPlugin;
+import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
-@SingularExtension
-public class HelloWorldPlugin implements ButtonReportPlugin {
+public class HelloWorldButtonExtension implements ReportButtonExtension {
     @Override
     public Icon getIcon() {
         return DefaultIcons.ROCKET;
