@@ -1,24 +1,20 @@
 package org.opensingular.form.report;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.mock.MockApplication;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTestCase;
 import org.junit.Test;
-import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.table.ColumnType;
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewGenerator;
-import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 
-public class SingularReportPageTest extends WicketTestCase {
+public class ReportPageTest extends WicketTestCase {
 
     @Test
     public void testRendering() throws Exception {
-        SingularReportPage reportPage = new SingularReportPage() {
+        ReportPage reportPage = new ReportPage() {
             @Override
             protected void configureMenu(ReportMenuBuilder menu) {
                 menu.addItem(DefaultIcons.PENCIL, "X", () -> makeSingularReport());
@@ -41,7 +37,7 @@ public class SingularReportPageTest extends WicketTestCase {
             }
 
             @Override
-            public ViewGenerator makeViewGenerator(ReportMetadata reportMetadata) {
+            public ViewGenerator makeViewGenerator(FormReportMetadata reportMetadata) {
                 TableTool tableTool = new TableTool();
                 tableTool.addColumn(ColumnType.STRING, "nome");
                 tableTool.createSimpleTablePopulator()

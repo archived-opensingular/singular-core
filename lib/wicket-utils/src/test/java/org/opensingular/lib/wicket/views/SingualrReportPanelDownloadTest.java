@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.report.ReportFilter;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.table.ColumnType;
@@ -26,7 +27,7 @@ import java.nio.file.Path;
 public class SingualrReportPanelDownloadTest extends WicketTestCase {
     private static final boolean OPEN_DOWNLOADED_FILE = false;
 
-    private SingularReport<ReportMetadata<Void>, Void> singularReport;
+    private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> singularReport;
     private MockSingularReportPage mockSingularReportPage;
 
     @Before
@@ -69,15 +70,15 @@ public class SingualrReportPanelDownloadTest extends WicketTestCase {
     }
 
     @NotNull
-    private SingularReport<ReportMetadata<Void>, Void> makeSingularReport() {
-        return new SingularReport<ReportMetadata<Void>, Void>() {
+    private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> makeSingularReport() {
+        return new SingularReport<ReportMetadata<ReportFilter>, ReportFilter>() {
             @Override
             public String getReportName() {
                 return "X";
             }
 
             @Override
-            public ViewGenerator makeViewGenerator(ReportMetadata<Void> reportMetadata) {
+            public ViewGenerator makeViewGenerator(ReportMetadata<ReportFilter> reportMetadata) {
                 TableTool tt = new TableTool();
                 tt.addColumn(ColumnType.STRING, "nome");
                 tt.addColumn(ColumnType.INTEGER, "idade");

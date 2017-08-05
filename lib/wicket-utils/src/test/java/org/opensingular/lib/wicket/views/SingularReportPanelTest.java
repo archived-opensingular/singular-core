@@ -2,7 +2,6 @@ package org.opensingular.lib.wicket.views;
 
 import org.apache.wicket.util.tester.WicketTestCase;
 import org.junit.Test;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 public class SingularReportPanelTest extends WicketTestCase {
     @Test

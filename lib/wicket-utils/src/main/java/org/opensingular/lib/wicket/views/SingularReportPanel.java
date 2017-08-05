@@ -36,22 +36,20 @@ import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
+import org.opensingular.lib.commons.report.ReportMetadataFactory;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.util.FormatUtil;
 import org.opensingular.lib.commons.views.*;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
-public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extends Panel {
+public class SingularReportPanel extends Panel {
     private final ISupplier<SingularReport> singularReportSupplier;
     private final List<ReportButtonExtension> reportButtonExtensions;
 
@@ -60,11 +58,13 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
     private WicketViewWrapperForViewOutputHtml table;
     private Button exportButton;
     private ListView<ViewOutputFormat> formats;
+    private ReportMetadata reportMetadata;
 
     public SingularReportPanel(String id, ISupplier<SingularReport> singularReportSupplier) {
         super(id);
         this.singularReportSupplier = singularReportSupplier;
         this.reportButtonExtensions = SingularExtensionUtil.get().findExtensionByClass(ReportButtonExtension.class);
+        this.reportMetadata = makeReportMetadata();
     }
 
     @Override
@@ -109,12 +109,14 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
 
 
     private ViewGenerator makeViewGenerator() {
-        R reportMetadata = makeReportMetadata();
         reportButtonExtensions.forEach(b -> b.updateReportMetatada(reportMetadata));
         return getSingularReport().map(r -> r.makeViewGenerator(reportMetadata)).orElse(null);
     }
 
-    protected abstract R makeReportMetadata();
+    protected ReportMetadata makeReportMetadata() {
+        ReportMetadataFactory reportMetadataFactory = SingularExtensionUtil.get().findExtensionByClass(ReportMetadataFactory.class).iterator().next();
+        return reportMetadataFactory.get();
+    }
 
     private void addTitle() {
         form.add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
@@ -211,7 +213,7 @@ public abstract class SingularReportPanel<R extends ReportMetadata<T>, T> extend
 
     }
 
-    private Optional<SingularReport<R, T>> getSingularReport() {
+    private Optional<SingularReport> getSingularReport() {
         return Optional.ofNullable(singularReportSupplier.get());
     }
 

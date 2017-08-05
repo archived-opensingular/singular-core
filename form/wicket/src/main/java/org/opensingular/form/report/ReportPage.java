@@ -6,23 +6,23 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.jetbrains.annotations.NotNull;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.report.extension.ReportMenuExtension;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.wicket.util.menu.AjaxMenuItem;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
+import org.opensingular.lib.wicket.views.SingularReportPanel;
 
 import java.util.List;
 
 /**
  * A Box panel to show reports grouped by menus
  */
-public abstract class SingularReportPage extends SingularAdminTemplate {
+public abstract class ReportPage extends SingularAdminTemplate {
     private MetronicMenu menu;
     private Component body;
 
@@ -54,7 +54,7 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
         ReportMenuBuilder reportMenuBuilder = new ReportMenuBuilder();
         configureMenu(reportMenuBuilder);
         configureExtensionButton(reportMenuBuilder);
-        if(ajaxRequestTarget != null){
+        if (ajaxRequestTarget != null) {
             ajaxRequestTarget.add(menu);
         }
     }
@@ -83,18 +83,18 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
 
     protected abstract void configureMenu(ReportMenuBuilder menu);
 
-    protected class ReportAjaxMenuItem<T extends SType<I>, I extends SInstance> extends AjaxMenuItem {
-        private final ISupplier<SingularFormReport<T, I>> singularFormReport;
+    protected class ReportAjaxMenuItem extends AjaxMenuItem {
+        private final ISupplier<SingularReport> reportSupplier;
 
-        public ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> singularFormReport) {
+        public ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> reportSupplier) {
             super(icon, title);
-            this.singularFormReport = singularFormReport;
+            this.reportSupplier = reportSupplier;
         }
 
         @Override
         protected void onAjax(AjaxRequestTarget target) {
-            body = new SingularFormReportPanel<>("body", singularFormReport.get());
-            SingularReportPage.this.replace(body);
+            body = new SingularReportPanel("body", reportSupplier);
+            ReportPage.this.replace(body);
             target.add(body, menu);
         }
     }
@@ -110,8 +110,8 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
             return new ReportMenuGroupBuilder(group);
         }
 
-        public <T extends SType<I>, I extends SInstance> ReportMenuBuilder addItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> report) {
-            menu.addItem(new ReportAjaxMenuItem<>(icon, title, report));
+        public ReportMenuBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
+            menu.addItem(new ReportAjaxMenuItem(icon, title, report));
             return this;
         }
     }
@@ -123,8 +123,8 @@ public abstract class SingularReportPage extends SingularAdminTemplate {
             this.group = group;
         }
 
-        public <T extends SType<I>, I extends SInstance> ReportMenuGroupBuilder addItem(Icon icon, String title, ISupplier<SingularFormReport<T, I>> report) {
-            group.addItem(new ReportAjaxMenuItem<>(icon, title, report));
+        public ReportMenuGroupBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
+            group.addItem(new ReportAjaxMenuItem(icon, title, report));
             return this;
         }
 

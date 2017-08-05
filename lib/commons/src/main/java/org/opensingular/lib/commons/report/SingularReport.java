@@ -14,7 +14,7 @@ import java.util.List;
  * @param <R> the report metadata type
  * @param <T> the filter type
  */
-public interface SingularReport<R extends ReportMetadata<T>, T> extends Serializable {
+public interface SingularReport<R extends ReportMetadata<T>, T extends ReportFilter> extends Serializable {
     /**
      * The Report Name
      *
@@ -46,5 +46,9 @@ public interface SingularReport<R extends ReportMetadata<T>, T> extends Serializ
      */
     default List<ViewOutputFormat> getEnabledExportFormats() {
         return Arrays.asList(ViewOutputFormat.HTML, ViewOutputFormat.EXCEL, ViewOutputFormat.HTML);
+    }
+
+    default void onFilterInit(T filter){
+
     }
 }

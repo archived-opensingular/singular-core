@@ -30,19 +30,16 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
     private BSModalBorder searchModal;
     private boolean init = true;
     private ISupplier<SingularReport> singularFormReport;
+    private SingularFormReportFilter formReportFilter;
 
     @Override
     public void init(ISupplier<SingularReport> singularReport) {
-        if (singularReport.get() instanceof SingularFormReport) {
-            this.singularFormReport = singularReport;
-        }
+        this.singularFormReport = singularReport;
     }
 
     @Override
     public void updateReportMetatada(ReportMetadata reportMetadata) {
-        if (reportMetadata instanceof SingularFormReportMetadata) {
-            ((SingularFormReportMetadata) (reportMetadata)).setFilter(singularFormPanel.getInstance());
-        }
+        reportMetadata.setFilter(formReportFilter);
     }
 
     @Override
@@ -109,7 +106,8 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
         singularFormPanel = new SingularFormPanel("singular-form-panel", sr.getFilterType());
         singularFormPanel.setNested(true);
         bsModalBorder.add(singularFormPanel);
-        sr.onFilterInit(singularFormPanel.getInstance());
+        formReportFilter = new SingularFormReportFilter(() -> singularFormPanel.getInstance());
+        sr.onFilterInit(formReportFilter);
     }
 
     private boolean isFirstRequestAndIsNotEagerLoading() {

@@ -1,9 +1,9 @@
 package org.opensingular.form.report.extension;
 
-import org.opensingular.form.report.SingularReportPage;
+import org.opensingular.form.report.ReportPage;
 
 public interface ReportMenuExtension {
 
-    void configure(SingularReportPage.ReportMenuBuilder reportMenuBuilder);
+    void configure(ReportPage.ReportMenuBuilder reportMenuBuilder);
 
 }
