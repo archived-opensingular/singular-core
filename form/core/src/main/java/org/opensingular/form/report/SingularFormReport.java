@@ -14,8 +14,7 @@ import java.io.Serializable;
  * @param <T> the filter type
  * @param <I> the filter instance
  */
-public interface SingularFormReport<T extends SType<I>, I extends SInstance>
-        extends Serializable, SingularReport<SingularFormReportMetadata<I>, I> {
+public interface SingularFormReport<T extends SType<I>, I extends SInstance> extends SingularReport<SingularFormReportMetadata<I>, I> {
 
     /**
      * The type to build the filter
