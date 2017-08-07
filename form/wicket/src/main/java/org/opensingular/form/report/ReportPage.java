@@ -40,13 +40,15 @@ public abstract class ReportPage extends SingularAdminTemplate {
 
     public ReportPage(PageParameters parameters) {
         super(parameters);
+        if (parameters == null) {
+            return;
+        }
         this.identity = parameters.get(IDENTITY).toString(null);
         Serializable successMessage = Session.get().getAttribute(sucessMessageAttribute(identity));
         if (successMessage != null) {
             new ToastrHelper(this).addToastrMessage(ToastrType.SUCCESS, (String) successMessage);
             Session.get().removeAttribute(sucessMessageAttribute(identity));
         }
-
     }
 
     @NotNull
