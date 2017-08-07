@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<STypePeticaoPrimariaSimplificada id="1" lastId="256">
+    <tipoPeticao id="4">
+        <id id="16">FORMULADO_EQUIVALENTE</id>
+        <nome id="17">Produto formulado com base em produto técnico equivalente (PFE)</nome>
+    </tipoPeticao>
+    <nivel id="5">III</nivel>
+    <codigoAssunto id="2">5117</codigoAssunto>
+    <dadosGerais id="6">
+        <numeroProcessoPeticaoMatriz id="18">1</numeroProcessoPeticaoMatriz>
+        <declaracaoVinculoPeticaoMatriz id="19">
+            <fileId id="211">1</fileId>
+            <name id="212">Guide-Writing Testable Code.pdf</name>
+            <hashSHA1 id="213">da39a3ee5e6b4b0d3255bfef95601890afd80709</hashSHA1>
+            <size id="214">952961</size>
+        </declaracaoVinculoPeticaoMatriz>
+        <justificativa id="20">Texto da justificativa detalhando o pedido</justificativa>
+    </dadosGerais>
+    <requerente id="7">
+        <tipoEntidade id="22">Nacional</tipoEntidade>
+        <tipoPessoa id="23">Jurídica</tipoPessoa>
+        <cnpj id="24">75623181000101</cnpj>
+        <nome id="26">Associação Hospitalar Beneficente de Bandeirantes</nome>
+        <enderecoEletronico id="27">e.furtado@ig.com.br</enderecoEletronico>
+        <cep id="30">86.360-000</cep>
+        <bairro id="33">CENTRO</bairro>
+        <endereco id="34">Av EDELINA MENEGHEL RANDO</endereco>
+        <celular id="38">(43) 3542-4483</celular>
+    </requerente>
+    <representanteLegal id="8">
+        <tipoEntidade id="41">Nacional</tipoEntidade>
+        <tipoPessoa id="42">Física</tipoPessoa>
+        <nome id="45">Marina de Melo</nome>
+        <enderecoEletronico id="46">marina@mail.com</enderecoEletronico>
+        <cep id="49">70.000-000</cep>
+        <estado id="50">
+            <sigla id="98">DF</sigla>
+            <nome id="99">Distrito Federal</nome>
+        </estado>
+        <cidade id="51">
+            <id id="100">743</id>
+            <nome id="101">BRASÍLIA</nome>
+            <UF id="102">DF</UF>
+        </cidade>
+        <bairro id="52">Asa Sul</bairro>
+        <endereco id="53">Rua 1</endereco>
+        <telefoneNacional id="54">(61) 95555-5555</telefoneNacional>
+        <fax id="56">(61) 95555-5551</fax>
+        <celular id="57">(61) 95555-5552</celular>
+        <comprovante id="59">
+            <fileId id="103">2</fileId>
+            <name id="104">Guide-Writing Testable Code.pdf</name>
+            <hashSHA1 id="105">da39a3ee5e6b4b0d3255bfef95601890afd80709</hashSHA1>
+            <size id="106">952961</size>
+        </comprovante>
+    </representanteLegal>
+    <ingredienteAtivoPeticao id="9">
+        <ingredientesAtivos id="60">
+            <STypeIngredienteAtivo id="239">
+                <idAtivo id="240">9bcdbade-197e-4dcc-b2fd-cb56a577dff7</idAtivo>
+                <nomeQuimicoInternacional id="241">6-chloro-N2-ethyl-N4-isopropyl-1,3,5-triazine-2,4-diamine
+                </nomeQuimicoInternacional>
+                <nomeQuimico id="242">6-chloro-N2-ethyl-N4-isopropyl-1,3,5-triazine-2,4-diamine</nomeQuimico>
+                <nomeComum id="243">ATRAZINA</nomeComum>
+                <nomeComumPortugues id="244">ATRAZINA</nomeComumPortugues>
+                <grupoQuimico id="246">Triazina</grupoQuimico>
+                <numeroCAS id="247">1912249</numeroCAS>
+                <sinonimias id="248">
+                    <sinonimia id="253">
+                        <nome id="254">g 30027</nome>
+                    </sinonimia>
+                </sinonimias>
+                <formulasBrutasEstruturais id="249">
+                    <formulaBrutaEstrutural id="255">
+                        <fileId id="257">3</fileId>
+                        <name id="256">triazina.pdf</name>
+                        <hashSHA1 id="258">da39a3ee5e6b4b0d3255bfef95601890afd80709</hashSHA1>
+                        <size id="259">75710</size>
+                    </formulaBrutaEstrutural>
+                </formulasBrutasEstruturais>
+            </STypeIngredienteAtivo>
+        </ingredientesAtivos>
+    </ingredienteAtivoPeticao>
+    <produtoTecnicoPeticao id="11">
+        <produtosTecnicos id="63">
+            <STypeProdutoTecnico id="261">
+                <numeroProcessoProdutoTecnico id="262">11</numeroProcessoProdutoTecnico>
+                <nomeProdutoTecnico id="263">Atrazina</nomeProdutoTecnico>
+                <finalidadeConformeMatriz id="264">true</finalidadeConformeMatriz>
+                <classeConformeMatriz id="265">true</classeConformeMatriz>
+                <modoAcaoConformeMatriz id="266">true</modoAcaoConformeMatriz>
+                <certificadosDeRegistros id="267">
+                    <certificadoDeRegistro id="275">
+                        <fileId id="277">4</fileId>
+                        <name id="276">Guide-Writing Testable Code.pdf</name>
+                        <hashSHA1 id="278">da39a3ee5e6b4b0d3255bfef95601890afd80709</hashSHA1>
+                        <size id="279">952961</size>
+                    </certificadoDeRegistro>
+                </certificadosDeRegistros>
+            </STypeProdutoTecnico>
+        </produtosTecnicos>
+    </produtoTecnicoPeticao>
+</STypePeticaoPrimariaSimplificada>

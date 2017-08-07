@@ -23,10 +23,9 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
 import org.opensingular.form.SType;
 import org.opensingular.form.helpers.AssertionsSInstance;
-import org.opensingular.internal.form.wicket.util.WicketSerializationDebugUtil;
+import org.opensingular.internal.lib.wicket.test.WicketSerializationDebugUtil;
 
 import javax.servlet.ServletContext;
-
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -42,8 +41,6 @@ public class SingularWicketTester extends WicketTester {
     public SingularWicketTester() {
         setUp();
     }
-
-
 
     @Deprecated
     public SingularWicketTester(boolean turnOnSerializationCheck) {

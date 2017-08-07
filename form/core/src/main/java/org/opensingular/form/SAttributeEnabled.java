@@ -20,6 +20,7 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.provider.AtrProvider;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.AtrBootstrap;
+import org.opensingular.form.type.basic.AtrIndex;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 
 import javax.annotation.Nonnull;
@@ -102,6 +103,14 @@ public interface SAttributeEnabled {
      */
     public default AtrBootstrap asAtrBootstrap() {
         return as(AtrBootstrap::new);
+    }
+
+    /**
+     * Retorna o leitor de atributos relacionados a persistencia dos dados.
+     * @return
+     */
+    public default AtrIndex asAtrIndex() {
+        return as(AtrIndex::new);
     }
 
     /**

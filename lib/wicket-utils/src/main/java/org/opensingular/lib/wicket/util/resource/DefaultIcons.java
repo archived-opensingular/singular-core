@@ -48,6 +48,7 @@ public enum DefaultIcons implements Icon {
     HOTEL("fa fa-h-square"),
     HOURGLASS("icon-hourglass"),
     INFO_CIRCLE("fa fa-info-circle"),
+    LINE_CHART("fa fa-line-chart"),
     LIST("fa fa-list"),
     LIST_ALT("fa fa-list-alt"),
     LOCK("fa fa-lock"),

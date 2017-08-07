@@ -2,16 +2,19 @@ package org.opensingular.form.service;
 
 import org.hibernate.SessionFactory;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.RefService;
 import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -29,7 +32,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@Rollback(value = false)
+@Rollback(value = true)
 public abstract class FormServiceTest {
 
     @Inject
@@ -43,8 +46,11 @@ public abstract class FormServiceTest {
     protected STypeInteger      idade;
     protected STypeString       nome;
     protected SDocumentFactory  documentFactory;
-    protected RefType tipoPessoaRef = RefType.of(() -> tipoPessoa);
-    private SDocument                     document;
+    protected RefType           tipoPessoaRef = RefType.of(() -> tipoPessoa);
+    private SDocument           document;
+
+    protected static final Integer IDADE_15 = 15;
+    protected static final Integer IDADE_22 = 22;
 
     @Before
     public void setUp() {
@@ -52,7 +58,10 @@ public abstract class FormServiceTest {
         tipoPessoa = pb.createType("pessoa", STypeComposite.class);
         idade = tipoPessoa.addFieldInteger("idade");
         nome = tipoPessoa.addFieldString("nome");
+
         tipoPessoa.asAtrAnnotation().setAnnotated();
+        idade.asAtrIndex().persistent(true);
+        nome.asAtrIndex().persistent(true);
 
         documentFactory = SDocumentFactory.of(doc -> {
             IAttachmentPersistenceHandler<?> tempHandler = mock(IAttachmentPersistenceHandler.class);
@@ -63,6 +72,22 @@ public abstract class FormServiceTest {
         TransactionSynchronizationManager.bindResource(this.sessionFactory, new SessionHolder(sessionFactory.openSession()));
     }
 
+    protected SIComposite formWithoutAnnotations() {
+        SIComposite pessoa = (SIComposite) documentFactory.createInstance(tipoPessoaRef);
+        pessoa.setValue(idade, IDADE_15);
+        pessoa.setValue(nome, "João");
+        return pessoa;
+    }
+
+    protected FormKey insert() {
+        SIComposite pessoa = formWithoutAnnotations();
+        FormKey pessoaKey = formService.insert(pessoa, 1);
+        SIComposite pessoaLoaded = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
+        Assert.assertEquals(pessoa, pessoaLoaded);
+        return pessoaKey;
+    }
+
+
     @After
     public void dispose() {
         TransactionSynchronizationManager.unbindResource(this.sessionFactory);
@@ -71,6 +96,5 @@ public abstract class FormServiceTest {
     protected final SDictionary createTestDictionary() {
         return SDictionary.create();
     }
-
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.internal.form.wicket.util;
+package org.opensingular.internal.lib.wicket.test;
 
 import com.google.common.base.Throwables;
 import org.apache.wicket.Application;
@@ -23,7 +23,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.application.IComponentOnAfterRenderListener;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
@@ -173,7 +172,7 @@ public class WicketSerializationDebugUtil {
                     " serialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
             try {
                 if (result == null) {
-                    throw new SingularFormException("Erro serializando a página " + c.getClass().getName() +
+                    throw new SingularException("Erro serializando a página " + c.getClass().getName() +
                             ". Verifique o log para obter a pilha de erro da serialização.");
                 }
 

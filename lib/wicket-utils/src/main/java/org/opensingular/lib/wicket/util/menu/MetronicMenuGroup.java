@@ -45,7 +45,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         this.title = title;
     }
 
-    public MetronicMenuGroup addItem(MetronicMenuItem item) {
+    public MetronicMenuGroup addItem(AbstractMenuItem item) {
         itens.add(item);
         return this;
     }
@@ -57,7 +57,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         WebMarkupContainer iconMarkup = new WebMarkupContainer("icon");
 
         if (icon != null) {
-            iconMarkup.add($b.classAppender(icon));
+            iconMarkup.add($b.classAppender(icon.getCssClass()));
         } else {
             iconMarkup.setVisible(false);
         }
