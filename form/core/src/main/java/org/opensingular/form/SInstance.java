@@ -604,6 +604,10 @@ public abstract class SInstance implements SAttributeEnabled {
         return SInstances.findNearest(this, targetType);
     }
 
+    public <A extends SInstance> Optional<A> findNearest(Class<? extends SType<A>> targetTypeClass) {
+        return SInstances.findNearest(this, targetTypeClass);
+    }
+
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
         Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
