@@ -19,21 +19,23 @@ function createSingularMap(idMetadados, googleMapsKey) {
     if (typeof google != 'undefined') {
         createSingularMapImpl();
     } else {
-        var result = $.getScript('https://maps.googleapis.com/maps/api/js?key='+googleMapsKey, createSingularMapImpl);
-        if(result.statusText == 'OVER_QUERY_LIMIT'){
-            var meta = JSON.parse(document.getElementById(idMetadados).value);
-            document.getElementById(meta.idMap).style.visibility = "hidden";
-        }
+        var result = $.getScript('https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey, createSingularMapImpl)
+            .done(function (s, Status){
+                if (Status == 'OverQuotaMapError') {
+                    var meta = JSON.parse(document.getElementById(idMetadados).value);
+                    document.getElementById(meta.idMap).style.visibility = "hidden";
+                }
+            });
     }
 
     function createSingularMapImpl() {
         var meta = JSON.parse(document.getElementById(idMetadados).value);
-        if(document.getElementById(meta.idLat) != null){
+        if (document.getElementById(meta.idLat) != null) {
             var metadados = JSON.parse(document.getElementById(idMetadados).value),
                 lat = document.getElementById(metadados.idLat).value,
                 lng = document.getElementById(metadados.idLng).value,
                 zoom = document.getElementById(metadados.idZoom).value,
-                latLong = new google.maps.LatLng(lat.replace(",","."), lng.replace(",",".")),
+                latLong = new google.maps.LatLng(lat.replace(",", "."), lng.replace(",", ".")),
                 map, marker;
 
             var latElement = document.getElementById(metadados.idLat);
@@ -53,13 +55,13 @@ function createSingularMap(idMetadados, googleMapsKey) {
             });
 
             if (!JSON.parse(metadados.readOnly)) {
-                if(latElement.value != "" && lngElement.value != ""){
-                    lat = latElement.value;
-                    lng = lngElement.value;
+                if (latElement.value != "" && lngElement.value != "") {
+                    lat = latElement.value.replace(",", ".");
+                    lng = lngElement.value.replace(",", ".");
                     latLong = new google.maps.LatLng(lat, lng);
                     marker.setPosition(latLong);
                     marker.setVisible(true);
-                }else{
+                } else {
                     marker.setVisible(false);
                 }
 
@@ -71,7 +73,7 @@ function createSingularMap(idMetadados, googleMapsKey) {
                     latElement.value = event.latLng.lat();
                     lngElement.value = event.latLng.lng();
                 });
-                marker.addListener('click', function() {
+                marker.addListener('click', function () {
                     if (marker.getVisible()) {
                         marker.setVisible(false);
                         latElement.value = null;
@@ -79,10 +81,10 @@ function createSingularMap(idMetadados, googleMapsKey) {
                     }
                 });
 
-                $("#"+metadados.idLat).on('change', defineMarkerPositionManual);
-                $("#"+metadados.idLng).on('change', defineMarkerPositionManual);
+                $("#" + metadados.idLat).on('change', defineMarkerPositionManual);
+                $("#" + metadados.idLng).on('change', defineMarkerPositionManual);
 
-                $("#"+metadados.idButton).on('click', function () {
+                $("#" + metadados.idButton).on('click', function () {
                     latElement.value = null;
                     lngElement.value = null;
                     marker.setVisible(false);
@@ -92,29 +94,30 @@ function createSingularMap(idMetadados, googleMapsKey) {
                 zoomElement.value = map.zoom;
             });
 
-            function defineMarkerPositionManual () {
-                var valLat = $("#"+metadados.idLat).val();
-                var valLng = $("#"+metadados.idLng).val();
-
-                if(valLat != null && valLng !== "" &&
-                    valLat && valLng !== ""){
-
-                    var valLat = valLat.replace(",",".");
-                    var valLng = valLng.replace(",",".");
-
-                    latLong = new google.maps.LatLng(valLat, valLng);
-                    map.setCenter(latLong);
-                    marker.setPosition(latLong);
-                    marker.setMap(map);
-                    if (!marker.getVisible()) {
-                        marker.setVisible(true);
-                    }
-                } else{
-                    marker.setVisible(false);
-                }
-            }
-        }else{
+        } else {
             document.getElementById(meta.idMap).style.visibility = "hidden";
+        }
+
+        function defineMarkerPositionManual() {
+            var valLat = $("#" + metadados.idLat).val();
+            var valLng = $("#" + metadados.idLng).val();
+
+            if (valLat != null && valLng !== "" &&
+                valLat && valLng !== "") {
+
+                valLat = valLat.replace(",", ".");
+                valLng = valLng.replace(",", ".");
+
+                latLong = new google.maps.LatLng(valLat, valLng);
+                map.setCenter(latLong);
+                marker.setPosition(latLong);
+                marker.setMap(map);
+                if (!marker.getVisible()) {
+                    marker.setVisible(true);
+                }
+            } else {
+                marker.setVisible(false);
+            }
         }
     }
 }

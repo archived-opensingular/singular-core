@@ -37,6 +37,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
@@ -56,12 +57,12 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
     private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
 
-    private static final String SINGULAR_GOOGLEMAPS_KEY = "singular.googlemaps.key";
+    private static final String SINGULAR_GOOGLEMAPS_JS_KEY = "singular.googlemaps.js.key";
     private static final String SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
     public static final String MAP_ID = "map";
     public static final String MAP_STATIC_ID = "mapStatic";
 
-    private String singularKeyMaps = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_KEY);
+    private String singularKeyMaps = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_JS_KEY);
     private String singularKeyMapStatic = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_STATIC_KEY);
 
     private final IModel<String> metadadosModel = new Model<>();
@@ -83,8 +84,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
     @Override
     public void renderHead(IHeaderResponse response) {
-        if(singularKeyMaps == null)
-            singularKeyMaps = "AIzaSyALU10ekJ7BQ8jBbMyiCfBK4Yw3giSRmqk";
+        if(singularKeyMaps == null || singularKeyMapStatic.isEmpty()){
+            throw new SingularException("Não foi definida a chave contendo a Key do Google Maps JS no arquivo properties");
+        }
 
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
@@ -107,7 +109,8 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
         LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(()->{
             if(latitudeModel.getObject() != null && longitudeModel.getObject() != null){
-                return "https://www.google.com.br/maps/search/"+latitudeModel.getObject()+","+longitudeModel.getObject();
+                String coordenadas = latitudeModel.getObject()+","+longitudeModel.getObject()+"/@"+latitudeModel.getObject()+","+longitudeModel.getObject();
+                return "https://www.google.com.br/maps/place/"+coordenadas+","+zoomModel.getObject()+"z";
             }else {
                 return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
             }
@@ -131,8 +134,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             if(latLng.equals("-15.7922, -47.4609"))
                 marker = "";
 
-            if(singularKeyMapStatic == null)
-                singularKeyMapStatic = "AIzaSyDda6eqjAVOfU4HeV1j9ET-FRxZkagjnRQ";
+            if(singularKeyMapStatic == null || singularKeyMapStatic .isEmpty()){
+                throw new SingularException("Não foi definida a chave contendo a Key do Google Maps Static no arquivo properties");
+            }
 
             String parameters = "key=" + singularKeyMapStatic
                     + "&size=1000x" + (getHeight() - 35)
