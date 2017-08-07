@@ -2,19 +2,21 @@ package org.opensingular.form.report;
 
 import org.opensingular.lib.commons.report.ReportMetadata;
 
-public class FormReportMetadata implements ReportMetadata<SingularFormReportFilter> {
-    private SingularFormReportFilter filter = null;
+public class FormReportMetadata implements ReportMetadata<FormReportFilter> {
+    private FormReportFilter filter;
 
-    public FormReportMetadata() {
+    FormReportMetadata() {
+        filter = null;
     }
 
     @Override
-    public void setFilter(SingularFormReportFilter filter) {
+    public void setFilter(FormReportFilter filter) {
         this.filter = filter;
     }
 
+
     @Override
-    public SingularFormReportFilter getFilter() {
+    public FormReportFilter getFilter() {
         return filter;
     }
 }

@@ -59,6 +59,11 @@ public abstract class ReportPage extends SingularAdminTemplate {
         }
     }
 
+    public void hideBody(AjaxRequestTarget ajaxRequestTarget){
+        this.body = body.replaceWith(new WebMarkupContainer("body"));
+        ajaxRequestTarget.add(body);
+    }
+
     private void configureExtensionButton(ReportMenuBuilder reportMenuBuilder) {
         List<ReportMenuExtension> menuExtensions = SingularExtensionUtil.get().findExtensionByClass(ReportMenuExtension.class);
         for (ReportMenuExtension menuExtension : menuExtensions) {

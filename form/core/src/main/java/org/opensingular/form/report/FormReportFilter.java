@@ -5,11 +5,16 @@ import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportFilter;
 
-public class SingularFormReportFilter implements ReportFilter {
-    private final ISupplier<? extends SInstance> instanceSupplier;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-    public SingularFormReportFilter(ISupplier<? extends SInstance> instanceSupplier) {
+public class FormReportFilter implements ReportFilter {
+    private final ISupplier<? extends SInstance> instanceSupplier;
+    private final Map<String, Object> parameters;
+
+    public FormReportFilter(ISupplier<? extends SInstance> instanceSupplier) {
         this.instanceSupplier = instanceSupplier;
+        this.parameters = new LinkedHashMap<>();
     }
 
     @Override
@@ -20,6 +25,16 @@ public class SingularFormReportFilter implements ReportFilter {
     @Override
     public String dumpXML() {
         return SFormXMLUtil.toStringXMLOrEmptyXML(instanceSupplier.get());
+    }
+
+    @Override
+    public void setParam(String key, Object val) {
+        parameters.put(key, val);
+    }
+
+    @Override
+    public Object getParam(String key) {
+        return parameters.get(key);
     }
 
     public SInstance getInstance() {

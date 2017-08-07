@@ -8,8 +8,16 @@ import java.io.Serializable;
  */
 public interface ReportMetadata<F extends ReportFilter> extends Serializable{
 
+    /**
+     * The filter to be used in the view generator
+     * @return the filter
+     */
     F getFilter();
 
+    /**
+     * Set the filter
+     * @param filter the filter
+     */
     void setFilter(F filter);
 
 }

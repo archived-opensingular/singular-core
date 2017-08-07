@@ -30,7 +30,7 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
     private BSModalBorder searchModal;
     private boolean init = true;
     private ISupplier<SingularReport> singularFormReport;
-    private SingularFormReportFilter formReportFilter;
+    private FormReportFilter formReportFilter;
 
     @Override
     public void init(ISupplier<SingularReport> singularReport) {
@@ -106,7 +106,7 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
         singularFormPanel = new SingularFormPanel("singular-form-panel", sr.getFilterType());
         singularFormPanel.setNested(true);
         bsModalBorder.add(singularFormPanel);
-        formReportFilter = new SingularFormReportFilter(() -> singularFormPanel.getInstance());
+        formReportFilter = new FormReportFilter(() -> singularFormPanel.getInstance());
         sr.onFilterInit(formReportFilter);
     }
 
