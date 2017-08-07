@@ -1,5 +1,6 @@
 package org.opensingular.lib.commons.report;
 
+import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
@@ -50,5 +51,9 @@ public interface SingularReport<R extends ReportMetadata<T>, T extends ReportFil
 
     default void onFilterInit(T filter){
 
+    }
+
+    default String getIdentity(){
+        return SingularUtil.convertToJavaIdentity(getReportName(), true);
     }
 }

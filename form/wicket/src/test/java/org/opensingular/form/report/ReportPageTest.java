@@ -14,7 +14,7 @@ public class ReportPageTest extends WicketTestCase {
 
     @Test
     public void testRendering() throws Exception {
-        ReportPage reportPage = new ReportPage() {
+        ReportPage reportPage = new ReportPage(null) {
             @Override
             protected void configureMenu(ReportMenuBuilder menu) {
                 menu.addItem(DefaultIcons.PENCIL, "X", () -> makeSingularReport());

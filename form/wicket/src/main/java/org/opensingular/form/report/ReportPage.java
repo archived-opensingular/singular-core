@@ -1,39 +1,75 @@
 package org.opensingular.form.report;
 
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.lang.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.report.extension.ReportMenuExtension;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.SingularReport;
-import org.opensingular.lib.wicket.util.menu.AjaxMenuItem;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
+import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * A Box panel to show reports grouped by menus
  */
 public abstract class ReportPage extends SingularAdminTemplate {
+    public static final String IDENTITY = "identity";
+
     private MetronicMenu menu;
     private Component body;
+    private String identity;
+    private ISupplier<SingularReport> activeReport;
+
+    public ReportPage(PageParameters parameters) {
+        super(parameters);
+        this.identity = parameters.get(IDENTITY).toString(null);
+        Serializable successMessage = Session.get().getAttribute(sucessMessageAttribute(identity));
+        if (successMessage != null) {
+            new ToastrHelper(this).addToastrMessage(ToastrType.SUCCESS, (String) successMessage);
+            Session.get().removeAttribute(sucessMessageAttribute(identity));
+        }
+
+    }
+
+    @NotNull
+    private static String sucessMessageAttribute(String identity) {
+        return "message_" + Objects.defaultIfNull(identity, "empty");
+    }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        ReportMenuBuilder reportMenuBuilder = new ReportMenuBuilder();
+        configureMenu(reportMenuBuilder);
+        configureExtensionButton(reportMenuBuilder);
         addBody();
     }
 
     private void addBody() {
-        body = new WebMarkupContainer("body");
+        if (activeReport != null) {
+            body = new SingularReportPanel("body", activeReport);
+        }
+        if (body == null) {
+            body = new WebMarkupContainer("body");
+        }
         add(body);
     }
 
@@ -41,27 +77,6 @@ public abstract class ReportPage extends SingularAdminTemplate {
     @Override
     protected WebMarkupContainer buildPageMenu(String id) {
         return menu = new MetronicMenu("menu");
-    }
-
-    @Override
-    protected void onConfigure() {
-        super.onConfigure();
-        rebuildMenu(null);
-    }
-
-    public void rebuildMenu(AjaxRequestTarget ajaxRequestTarget) {
-        menu = (MetronicMenu) menu.replaceWith(new MetronicMenu("menu"));
-        ReportMenuBuilder reportMenuBuilder = new ReportMenuBuilder();
-        configureMenu(reportMenuBuilder);
-        configureExtensionButton(reportMenuBuilder);
-        if (ajaxRequestTarget != null) {
-            ajaxRequestTarget.add(menu);
-        }
-    }
-
-    public void hideBody(AjaxRequestTarget ajaxRequestTarget){
-        this.body = body.replaceWith(new WebMarkupContainer("body"));
-        ajaxRequestTarget.add(body);
     }
 
     private void configureExtensionButton(ReportMenuBuilder reportMenuBuilder) {
@@ -88,59 +103,76 @@ public abstract class ReportPage extends SingularAdminTemplate {
 
     protected abstract void configureMenu(ReportMenuBuilder menu);
 
-    protected class ReportAjaxMenuItem extends AjaxMenuItem {
-        private final ISupplier<SingularReport> reportSupplier;
+    protected class ReportAjaxMenuItem extends MetronicMenuItem {
+        private final ISupplier<SingularReport> supplier;
 
-        public ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> reportSupplier) {
-            super(icon, title);
-            this.reportSupplier = reportSupplier;
+        ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> supplier) throws Exception {
+            super(icon, title, ReportPage.this.getClass(), new PageParameters().set("identity", supplier.get().getIdentity()));
+            this.supplier = supplier;
         }
 
         @Override
-        protected void onAjax(AjaxRequestTarget target) {
-            body = new SingularReportPanel("body", reportSupplier);
-            ReportPage.this.replace(body);
-            target.add(body, menu);
+        protected boolean isActive() {
+            return supplier.get().getIdentity().equals(identity);
         }
     }
 
-
-    public class ReportMenuBuilder {
-        public ReportMenuGroupBuilder addGroup(Icon icon, String title, boolean openByDefault) {
+    public class ReportMenuBuilder implements Loggable {
+        public ReportMenuGroupBuilder addGroup(Icon icon, String title) {
             MetronicMenuGroup group = new MetronicMenuGroup(icon, title);
             menu.addItem(group);
-            if (openByDefault) {
-                group.setOpen();
-            }
             return new ReportMenuGroupBuilder(group);
         }
 
         public ReportMenuBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
-            menu.addItem(new ReportAjaxMenuItem(icon, title, report));
+            try {
+                menu.addItem(newMenuItem(icon, title, report));
+            } catch (Exception ex) {
+                getLogger().error("Não foi possivel criar o menu, todos os construtores foram sobreescritos?", ex);
+            }
             return this;
         }
     }
 
-    public class ReportMenuGroupBuilder {
+    public class ReportMenuGroupBuilder implements Loggable {
         private final MetronicMenuGroup group;
 
-        public ReportMenuGroupBuilder(MetronicMenuGroup group) {
+        ReportMenuGroupBuilder(MetronicMenuGroup group) {
             this.group = group;
         }
 
         public ReportMenuGroupBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
-            group.addItem(new ReportAjaxMenuItem(icon, title, report));
+            try {
+                group.addItem(newMenuItem(icon, title, report));
+            } catch (Exception ex) {
+                getLogger().error("Não foi possivel criar o menu, todos os construtores foram sobreescritos?", ex);
+            }
             return this;
         }
 
-        public ReportMenuGroupBuilder addGroup(Icon icon, String title, boolean openByDefault) {
+        public ReportMenuGroupBuilder addGroup(Icon icon, String title) {
             MetronicMenuGroup newGroup = new MetronicMenuGroup(icon, title);
             group.addItem(newGroup);
-            if (openByDefault) {
-                newGroup.setOpen();
-            }
             return new ReportMenuGroupBuilder(newGroup);
         }
     }
 
+    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, ISupplier<SingularReport> report) throws Exception {
+        ReportAjaxMenuItem newAjaxItem = new ReportAjaxMenuItem(icon, title, report);
+        if (newAjaxItem.isActive()) {
+            activeReport = report;
+        }
+        return newAjaxItem;
+    }
+
+    public static void setAsRespondePageWithMessage(Component c, String message, String identity) {
+        if (StringUtils.isNotBlank(message)) {
+            Session.get().setAttribute(sucessMessageAttribute(identity), message);
+        }
+        PageParameters params = new PageParameters();
+        if (identity != null) {
+            params.add(IDENTITY, identity);
+        }
+        RequestCycle.get().setResponsePage(c.getPage().getClass(), params);
+    }
 }
