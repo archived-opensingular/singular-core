@@ -82,7 +82,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
     }
 
     private void configureExtensionButton(ReportMenuBuilder reportMenuBuilder) {
-        List<ReportMenuExtension> menuExtensions = SingularExtensionUtil.get().findExtensionByClass(ReportMenuExtension.class);
+        List<ReportMenuExtension> menuExtensions = SingularExtensionUtil.get().findExtensionsByClass(ReportMenuExtension.class);
         for (ReportMenuExtension menuExtension : menuExtensions) {
             menuExtension.configure(reportMenuBuilder);
         }
