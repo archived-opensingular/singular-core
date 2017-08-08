@@ -45,7 +45,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -907,6 +906,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     public void withSelectionFromProvider(String providerName) {
         this.typelessSelection().selfIdAndDisplay().provider(providerName);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void withSelectionFromSimpleProvider(SimpleProvider<?, I> provider) {
+        this.typelessSelection().selfIdAndDisplay().simpleProvider(provider);
     }
 
     /**
