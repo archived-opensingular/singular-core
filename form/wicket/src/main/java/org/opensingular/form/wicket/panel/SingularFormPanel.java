@@ -59,7 +59,7 @@ import java.util.function.Supplier;
 public class SingularFormPanel extends Panel {
 
     private final SInstanceRootModel<SInstance> instanceModel = new SInstanceRootModel<>();
-    private final boolean nested;
+    private boolean nested;
     // Container onde os componentes serão adicionados
     private BSGrid container = new BSGrid("generated");
     //Pode ser transient pois é usado apenas uma vez na inicialização do painel
@@ -387,5 +387,9 @@ public class SingularFormPanel extends Panel {
                     SDocument::getDocumentFactoryRef);
         }
         return Optional.of(documentFactoryRef);
+    }
+
+    public void setNested(boolean nested) {
+        this.nested = nested;
     }
 }

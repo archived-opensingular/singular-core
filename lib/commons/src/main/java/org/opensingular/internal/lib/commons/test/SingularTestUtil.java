@@ -16,11 +16,19 @@
 
 package org.opensingular.internal.lib.commons.test;
 
+import org.apache.commons.io.IOUtils;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
+import org.opensingular.lib.commons.pdf.PDFUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Objects;
 
 /**
  * Oferece métodos utilitários para apoio a contrução de testes.
@@ -141,5 +149,71 @@ public final class SingularTestUtil {
         System.out.println("-------------------------------------------");
         System.out.println("  " + testName + ": T=" + SingularIOUtils.humanReadableMiliSeconds(time) + " R=" + count +
                 "  qtd/seg=" + ConversorToolkit.printNumber(resultPerSecond, 0));
+    }
+
+    /**
+     * Abre o arqivo informado com o aplicativo associado no sistema operacional e espera 5 segundos para
+     * prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
+     */
+    public static void showFileOnDesktopForUserAndWaitOpening(File arq) {
+        showFileOnDesktopForUser(arq, 5000);
+    }
+
+    /**
+     * Abre o arqivo informado com o aplicativo associado no sistema operacional e espera o tempo indicado para
+     * prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
+     *
+     * @param waitTimeMilliAfterCall Indica o tempo de espera em milisegundo. Se for negativo, não espera.
+     */
+    public static void showFileOnDesktopForUser(@Nonnull File arq, int waitTimeMilliAfterCall) {
+        showFileOnDesktopForUser(arq);
+        waitMilli(waitTimeMilliAfterCall);
+    }
+
+    /**
+     * Abre o arqivo informado com o aplicativo associado no sistema operacional. Útil para inspecionar visualmente
+     * um arquivo que acabou de ser gerado por um teste.
+     */
+    public static void showFileOnDesktopForUser(@Nonnull File arq) {
+        if (!arq.exists() || arq.isDirectory()) {
+            throw new RuntimeException("Não existe o arquivo " + arq.getAbsolutePath());
+        }
+        try {
+            if (PDFUtil.isWindows()) {
+                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", arq.getAbsolutePath());//NOSONAR
+                processBuilder.start();
+            } else {
+                throw new RuntimeException("Sistema operacional não suportado");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** Faz uma pausa segundo o tempo informado em millisegundos. */
+    public static void waitMilli(int waitTimeMilli) {
+        if (waitTimeMilli > 0) {
+            try {
+                Thread.sleep(waitTimeMilli);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Abre o conteúdo html informado com o aplicativo associado no sistema operacional (browser default) e espera 5
+     * segundos para prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
+     */
+    public static void showHtmlContentOnDesktopForUserAndWaitOpening(@Nonnull String content) {
+        try (TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(Objects.class)) {
+            File arq = tmpProvider.createTempFile(".html");
+            try (Writer out = new FileWriter(arq)) {
+                IOUtils.write(content, out);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(arq);
+        }
     }
 }

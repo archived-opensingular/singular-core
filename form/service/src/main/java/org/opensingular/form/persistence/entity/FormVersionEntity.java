@@ -56,6 +56,9 @@ public class FormVersionEntity extends BaseEntity<Long> {
     @Column(name = "NU_VERSAO_CACHE")
     private Long cacheVersion;
 
+    @Column(name = "ST_INDEXADO")
+    private Character indexed;
+
     @OneToMany
     @JoinColumn(referencedColumnName = "CO_VERSAO_FORMULARIO", name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false)
     private List<FormAnnotationEntity> formAnnotations = new ArrayList<>(0);
@@ -120,5 +123,10 @@ public class FormVersionEntity extends BaseEntity<Long> {
     public void setFormAnnotations(List<FormAnnotationEntity> formAnnotations) {
         this.formAnnotations = formAnnotations;
     }
-
+    public Character getIndexed() {
+        return indexed;
+    }
+    public void setIndexed(Character indexed) {
+        this.indexed = indexed;
+    }
 }
