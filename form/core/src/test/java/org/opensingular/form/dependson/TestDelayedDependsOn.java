@@ -7,19 +7,24 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
 import org.opensingular.form.sample.AntaqPackage;
 import org.opensingular.form.sample.Resolucao912Form;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestDelayedDependsOn {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestDelayedDependsOn.class);
 
     @Test
     public void testDependsOn() throws Exception {
         SDictionary dictionary = SDictionary.create();
         dictionary.loadPackage(AntaqPackage.class);
 
-        Resolucao912Form stype = dictionary.getType(Resolucao912Form.class);
-        SIComposite composite = stype.newInstance();
+        Resolucao912Form stype     = dictionary.getType(Resolucao912Form.class);
+        SIComposite      composite = stype.newInstance();
 
+        org.junit.Assert.assertEquals(2, stype.embarcacoes.embarcacoes.getDependentTypes().size());
         for (SType s : stype.embarcacoes.embarcacoes.getDependentTypes()){
-            System.out.println(s.getName());
+            logger.info(s.getName());
         }
 
     }
