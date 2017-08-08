@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.sample.AntaqPackage;
 import org.opensingular.form.sample.Resolucao912Form;
 import org.slf4j.Logger;
@@ -23,9 +24,28 @@ public class TestDelayedDependsOn {
         SIComposite      composite = stype.newInstance();
 
         org.junit.Assert.assertEquals(2, stype.embarcacoes.embarcacoes.getDependentTypes().size());
-        for (SType s : stype.embarcacoes.embarcacoes.getDependentTypes()){
+        for (SType s : stype.embarcacoes.embarcacoes.getDependentTypes()) {
             logger.info(s.getName());
         }
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testNullSafe() throws Exception {
+        SDictionary dictionary = SDictionary.create();
+        dictionary.loadPackage(AntaqPackage.class);
+
+        Resolucao912Form stype = dictionary.getType(Resolucao912Form.class);
+        stype.asAtr().dependsOn((SType<?>[]) null);
+
+    }
+
+    @Test(expected = SingularFormException.class)
+    public void testNullSafeArray() throws Exception {
+        SDictionary dictionary = SDictionary.create();
+        dictionary.loadPackage(AntaqPackage.class);
+
+        Resolucao912Form stype = dictionary.getType(Resolucao912Form.class);
+        stype.asAtr().dependsOn(null, null, null);
 
     }
 }

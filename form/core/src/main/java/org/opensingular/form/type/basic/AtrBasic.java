@@ -23,6 +23,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypes;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
@@ -48,6 +49,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class AtrBasic extends STranslatorForAttribute {
 
+    private static final String DEPENDSON_NULL_PARAM_MSG = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
     public AtrBasic() {
@@ -86,10 +88,6 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-//    public AtrBasic editSize(Integer value) {
-//        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
-//        return this;
-//    }
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -140,6 +138,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic dependsOn(Supplier<Collection<DelayedDependsOnResolver>> value) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, value);
         Supplier<Collection<DelayedDependsOnResolver>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
             Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
@@ -150,10 +149,12 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic dependsOn(Class<? extends SType<?>> typeClass) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, typeClass);
         return dependsOn(typeClass, stype -> stype);
     }
 
     public <T extends SType<?>> AtrBasic dependsOn(Class<T> typeClass, IFunction<T, ? extends SType> typefinder) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, typefinder);
         Supplier<Collection<DelayedDependsOnResolver>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
             Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
@@ -176,7 +177,23 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic dependsOn(SType<?>... tipos) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, tipos);
         return dependsOn(() -> Arrays.asList(tipos).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
+    }
+
+    private void assertNoNull(String msg, Object ...o){
+        boolean paramNull = o == null;
+        if (!paramNull){
+            for (Object item : o){
+                paramNull |= item==null;
+                if (paramNull){
+                    break;
+                }
+            }
+        }
+        if (paramNull){
+            throw new SingularFormException(msg);
+        }
     }
 
     public AtrBasic required() {
