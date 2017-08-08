@@ -19,8 +19,8 @@ function createSingularMap(idMetadados, googleMapsKey) {
     if (typeof google != 'undefined') {
         createSingularMapImpl();
     } else {
-        var result = $.getScript('https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey, createSingularMapImpl)
-            .done(function (s, Status){
+        var result = $.getScript('https://maps.googleapsi.com/maps/api/js?key=' + googleMapsKey, createSingularMapImpl)
+            .fail(function (s, Status){
                 if (Status == 'OverQuotaMapError') {
                     var meta = JSON.parse(document.getElementById(idMetadados).value);
                     document.getElementById(meta.idMap).style.visibility = "hidden";

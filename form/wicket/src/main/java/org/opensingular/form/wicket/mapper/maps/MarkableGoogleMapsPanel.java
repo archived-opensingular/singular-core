@@ -85,13 +85,13 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     public void renderHead(IHeaderResponse response) {
         if(singularKeyMaps == null || singularKeyMapStatic.isEmpty()){
-            throw new SingularException("Não foi definida a chave contendo a Key do Google Maps JS no arquivo properties");
+            throw new SingularException("Não foi encontrada a Key do Google Maps JS no arquivo properties");
         }
 
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + singularKeyMaps + "');"));
+        response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + "AIzaSyCNj8Ly8xcGqsWncWoCJqBxbKxAvwdYs1o" + "');"));
 
         super.renderHead(response);
     }
@@ -135,7 +135,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
                 marker = "";
 
             if(singularKeyMapStatic == null || singularKeyMapStatic .isEmpty()){
-                throw new SingularException("Não foi definida a chave contendo a Key do Google Maps Static no arquivo properties");
+                throw new SingularException("Não foi encontrada a Key do Google Maps Static no arquivo properties");
             }
 
             String parameters = "key=" + singularKeyMapStatic
