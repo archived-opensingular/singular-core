@@ -40,6 +40,7 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SIPredicate;
 import org.opensingular.form.STypeBehavior;
 import org.opensingular.form.STypePredicate;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import java.util.Collection;
 import java.util.Date;
@@ -91,7 +92,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeMapper, SIMapper, UIComponentMapper>          ATR_MAPPER                = new AtrRef<>(SPackageBasic.class, "mapper", STypeMapper.class, SIMapper.class, UIComponentMapper.class);
 
 
-    public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
+    public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<AtrBasic.DelayedDependsOnResolver>>>
             ATR_DEPENDS_ON_FUNCTION = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);
 
     //    public static final AtrRef<MTipoBehavior, MIBehavior, IBehavior<MInstancia>>   ATR_ONCHANGE_BEHAVIOR = new AtrRef(MPacoteBasic.class, "onchangeBehavior", MTipoBehavior.class, MIBehavior.class, IBehavior.class);

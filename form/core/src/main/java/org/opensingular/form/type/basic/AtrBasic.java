@@ -16,6 +16,21 @@
 
 package org.opensingular.form.type.basic;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STranslatorForAttribute;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypes;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.enums.PhraseBreak;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,18 +40,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.opensingular.form.SAttributeEnabled;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.SType;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
 
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -134,22 +139,44 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic dependsOn(Supplier<Collection<SType<?>>> value) {
-        Supplier<Collection<SType<?>>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
+    public AtrBasic dependsOn(Supplier<Collection<DelayedDependsOnResolver>> value) {
+        Supplier<Collection<DelayedDependsOnResolver>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
-            Set<SType<?>> union = new LinkedHashSet<>(previous.get());
+            Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
             union.addAll(value.get());
             return union;
         });
         return this;
     }
 
-    public Supplier<Collection<SType<?>>> dependsOn() {
+    public AtrBasic dependsOn(Class<? extends SType<?>> typeClass) {
+        return dependsOn(typeClass, stype -> stype);
+    }
+
+    public <T extends SType<?>> AtrBasic dependsOn(Class<T> typeClass, IFunction<T, ? extends SType> typefinder) {
+        Supplier<Collection<DelayedDependsOnResolver>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
+        setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
+            Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
+            union.add((root, current) -> {
+                    final List<SType<?>> dependentTypes = new ArrayList<SType<?>>();
+                    STypes.visitAll(root, stype -> {
+                        if (typeClass.isAssignableFrom(stype.getClass())) {
+                            dependentTypes.add(typefinder.apply((T) stype));
+                        }
+                    });
+                return dependentTypes;
+            });
+            return union;
+        });
+        return this;
+    }
+
+    public Supplier<Collection<DelayedDependsOnResolver>> dependsOn() {
         return ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
     }
 
     public AtrBasic dependsOn(SType<?>... tipos) {
-        return dependsOn(() -> Arrays.asList(tipos));
+        return dependsOn(() -> Arrays.asList(tipos).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
     }
 
     public AtrBasic required() {
@@ -182,7 +209,7 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic replaceExists(IFunction<Predicate<SInstance>, Predicate<SInstance>> replacementFunction) {
         Predicate<SInstance> currentExists = getAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION);
-        if(currentExists == null){
+        if (currentExists == null) {
             currentExists = (i) -> Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
         }
         return exists(replacementFunction.apply(currentExists));
@@ -295,6 +322,12 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public Boolean isUpperCaseText() {
         return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
+    }
+
+
+    public interface DelayedDependsOnResolver {
+
+        public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);
     }
 
 }

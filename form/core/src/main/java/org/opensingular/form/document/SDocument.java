@@ -32,12 +32,14 @@ import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 import org.opensingular.form.validation.ValidationError;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -190,10 +192,12 @@ public class SDocument {
         this.root = Objects.requireNonNull(root);
         STypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
             // init dependencies
-            final Supplier<Collection<SType<?>>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<AtrBasic.DelayedDependsOnResolver>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
-                for (SType<?> dependency : func.get()) {
-                    dependency.addDependentType(tipo);
+                for (AtrBasic.DelayedDependsOnResolver resolver : func.get()) {
+                    for (SType s : resolver.resolve(getRoot().getType(), tipo)){
+                        s.addDependentType(tipo);
+                    }
                 }
             }
         });
