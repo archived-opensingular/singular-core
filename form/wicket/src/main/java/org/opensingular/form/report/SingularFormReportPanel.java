@@ -74,11 +74,12 @@ public class SingularFormReportPanel<E extends Serializable, T extends SType<I>,
     }
 
     private void addFilter(BSModalBorder bsModalBorder) {
-        singularFormPanel = new SingularFormPanel("filter", singularFormReport.getFilterType());
-        singularFormPanel.setNested(true);
+        singularFormPanel = new SingularFormPanel("filter", true)
+            .setInstanceFromType(singularFormReport.getFilterType());
         bsModalBorder.add(singularFormPanel);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected SingularFormReportMetadata<I> getReportMetadata() {
         return new SingularFormReportMetadata<>((I) singularFormPanel.getInstance());

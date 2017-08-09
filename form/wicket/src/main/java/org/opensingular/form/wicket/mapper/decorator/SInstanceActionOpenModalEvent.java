@@ -75,14 +75,17 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
             : new WebMarkupContainer("textPanel");
 
         Component formPanel = (formInstanceModel != null)
-            ? new SingularFormPanel("formPanel", new ModelGetterSupplier<SInstance>(formInstanceModel))
+            ? new SingularFormPanel("formPanel", true)
+                .setInstanceCreator(new ModelGetterSupplier<SInstance>(formInstanceModel))
                 .add($b.visibleIf($m.isNotNullOrEmpty(this.formInstanceModel)))
             : new WebMarkupContainer("formPanel");
 
-        return new TemplatePanel(id, "<div wicket:id='textPanel'></div><div wicket:id='formPanel'></div>")
-            .add(textPanel)
-            .add(formPanel)
-            .setDefaultModel((formInstanceModel != null) ? formInstanceModel : $m.ofValue());
+        return new TemplatePanel(id, ""
+            + "<div wicket:id='textPanel'></div>"
+            + "<div wicket:id='formPanel'></div>")
+                .add(textPanel)
+                .add(formPanel)
+                .setDefaultModel((formInstanceModel != null) ? formInstanceModel : $m.ofValue());
     }
     @Override
     public Iterator<ButtonDef> getFooterButtons(IConsumer<AjaxRequestTarget> closeCallback) {

@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.model.IModel;
@@ -83,12 +82,16 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
 
     @Override
     public void refreshFieldForInstance(SInstance instance) {
-        Optional<AjaxRequestTarget> target = getInternalContext(AjaxRequestTarget.class);
-        Optional<Component> comp = getInternalContext(Component.class);
-        if (target.isPresent() && comp.isPresent()) {
-            Optional<MarkupContainer> fieldContainer = WicketFormUtils.findChildByInstance(comp.get().getPage(), instance)
-                .flatMap(WicketFormUtils::findCellContainer);
-            target.get().add(fieldContainer.get());
+        Optional<AjaxRequestTarget> optTarget = getInternalContext(AjaxRequestTarget.class);
+        Optional<Component> optComp = getInternalContext(Component.class);
+        if (optTarget.isPresent() && optComp.isPresent()) {
+            AjaxRequestTarget target = optTarget.get();
+            Component comp = optComp.get();
+
+            target.add(
+                WicketFormUtils.normalizeComponentsToAjaxRefresh(
+                    WicketFormUtils.streamChildrenByInstance(comp.getPage(), instance)
+                        .collect(toSet())));
         }
     }
 

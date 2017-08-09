@@ -16,10 +16,16 @@
 
 package org.opensingular.form.wicket.util;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,18 +102,22 @@ public abstract class WicketFormUtils {
     }
 
     public static Optional<Component> findChildByInstance(Component root, SInstance instance) {
+        return streamChildrenByInstance(root, instance).findAny();
+    }
+    public static Stream<Component> streamChildrenByInstance(Component root, SInstance instance) {
+        Predicate<? super Component> sameInstanceFilter = c -> instanciaIfAware(c.getDefaultModel())
+            .filter(it -> Objects.equal(it.getName(), instance.getName()))
+            .filter(it -> Objects.equal(it.getId(), instance.getId()))
+            .isPresent();
         return streamDescendants(root)
-            .filter(c -> instanciaIfAware(c.getDefaultModel())
-                //.filter(it -> it == instance)
-                .filter(it -> Objects.equal(it.getName(), instance.getName()))
-                .filter(it -> Objects.equal(it.getId(), instance.getId()))
-                .isPresent())
-            .findAny();
+            .filter(sameInstanceFilter);
     }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
             ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
-            : Optional.empty();
+            : Optional.ofNullable(model)
+                .map(it -> it.getObject())
+                .map($L.castOrNull(SInstance.class));
     }
 
     public static Stream<MarkupContainer> streamAscendants(Component root) {
@@ -191,5 +201,31 @@ public abstract class WicketFormUtils {
         }
         return null;
 
+    }
+
+    /**
+     * De-duplicate, and replace components with the appropriate parent container, if necessary.
+     */
+    public static Component[] normalizeComponentsToAjaxRefresh(Collection<Component> children) {
+        Collection<Component> set = new HashSet<>();
+        for (Component child : children) {
+            set.add(child);
+            Optional<MarkupContainer> container = findCellContainer(child);
+            if (container.isPresent())
+                set.add(container.get());
+        }
+        List<Component> list = new ArrayList<>(set);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            final Component ic = list.get(i);
+            for (int j = list.size() - 1; j >= 0; j--) {
+                final Component jc = list.get(j);
+                if ((ic != jc) && ic.getPageRelativePath().contains(jc.getPageRelativePath())) {
+                    list.remove(i);
+                    break;
+                }
+            }
+        }
+        Component[] components = list.toArray(new Component[0]);
+        return components;
     }
 }

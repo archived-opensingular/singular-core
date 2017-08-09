@@ -65,7 +65,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
 
     static final HintKey<HashMap<String, Integer>> COL_WIDTHS               = HashMap::new;
 
-    private SInstanceActionsProviders              instanceActionsProviders = new SInstanceActionsProviders(this);
+    private final SInstanceActionsProviders        instanceActionsProviders = new SInstanceActionsProviders(this);
 
     @Override
     public void buildView(WicketBuildContext ctx) {
@@ -76,7 +76,11 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
 
     @Override
     public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
-        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
+        this.getInstanceActionsProviders().addSInstanceActionsProvider(sortPosition, provider);
+    }
+
+    protected SInstanceActionsProviders getInstanceActionsProviders() {
+        return instanceActionsProviders;
     }
 
     protected static abstract class AbstractCompositeViewBuilder implements ICompositeViewBuilder, Serializable {
@@ -159,7 +163,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
-            final List<SInstanceAction> actionsIterator = mapper.instanceActionsProviders.actionList(model);
+            final List<SInstanceAction> actionsIterator = mapper.getInstanceActionsProviders().actionList(model);
             final IModel<String> label = $m.ofValue(trimToEmpty(getInstance().asAtr().getLabel()));
 
             final boolean hasLabel = isNotBlank(label.getObject());
@@ -175,21 +179,22 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                     column.setVisible(!ctx.getParent().isTitleInBlock());
                 }
 
-                IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                    mapper,
-                    RequestCycle.get().find(AjaxRequestTarget.class),
-                    model,
-                    model.getObject(),
-                    ctx,
-                    ctx.getContainer());
+                if (!ctx.getParent().isTitleInBlock()) {
+                    IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                        mapper,
+                        RequestCycle.get().find(AjaxRequestTarget.class),
+                        model,
+                        model.getObject(),
+                        ctx,
+                        ctx.getContainer());
 
-                SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-                    column,
-                    mapper.instanceActionsProviders,
-                    model,
-                    true,
-                    internalContextListProvider);
-
+                    SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                        column,
+                        mapper.getInstanceActionsProviders(),
+                        model,
+                        true,
+                        internalContextListProvider);
+                }
                 return column;
             }
 
