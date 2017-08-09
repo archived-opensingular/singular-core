@@ -103,11 +103,14 @@ public class FormService implements IFormService {
     @Nonnull
     public FormKey insertOrUpdate(@Nonnull SInstance instance, Integer inclusionActor) {
         Optional<FormKey> key = getFormKeyManager().readFormKeyOptional(instance);
+        FormKey updatedKey;
         if (key.isPresent()) {
             updateInternal(loadFormEntity(key.get()), instance, inclusionActor);
-            return key.get();
+            updatedKey = key.get();
+        } else {
+            updatedKey = insertImpl(instance, inclusionActor);
         }
-        return insertImpl(instance, inclusionActor);
+        return updatedKey;
     }
 
     @Override
@@ -116,7 +119,8 @@ public class FormService implements IFormService {
         if (instance == null) {
             throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
         }
-        return insertImpl(instance, inclusionActor);
+        FormKey formKey = insertImpl(instance, inclusionActor);
+        return formKey;
     }
 
     @Nonnull
@@ -338,7 +342,8 @@ public class FormService implements IFormService {
     public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor, boolean keepAnnotations) {
         FormKey    formKey    = getFormKeyManager().readFormKeyOrException(instance);
         FormEntity formEntity = loadFormEntity(formKey);
-        saveOrUpdateFormVersion(instance, formEntity, new FormVersionEntity(), inclusionActor, keepAnnotations);
+        FormVersionEntity newFormVersion = new FormVersionEntity();
+        saveOrUpdateFormVersion(instance, formEntity, newFormVersion, inclusionActor, keepAnnotations);
         return formKey;
     }
 

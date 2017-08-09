@@ -185,6 +185,15 @@ public interface IBehaviorsMixin extends Serializable {
         };
     }
 
+    default Behavior enabledIf(ISupplier<Boolean> supplier) {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                component.setEnabled(supplier.get());
+            }
+        };
+    }
+
     default Behavior enabledIf(IModel<Boolean> model) {
         return new Behavior() {
             @Override
