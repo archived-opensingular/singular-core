@@ -3,7 +3,7 @@ package org.opensingular.lib.commons.ref;
 import java.io.Serializable;
 import java.util.Optional;
 
-public final class Out<T> implements Serializable {
+public final class Out<T extends Serializable> implements Serializable {
     private T value;
     public Out() {}
     public Out(T value) {

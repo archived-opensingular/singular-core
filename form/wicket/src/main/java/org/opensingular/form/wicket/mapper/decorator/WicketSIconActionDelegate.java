@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,14 +34,14 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
 
     private IModel<? extends SInstance> instanceModel;
     private transient List<?>           contextList;
-    private List<?>                     serializableContextList;
+    private ArrayList<?>                serializableContextList;
 
     public WicketSIconActionDelegate(IModel<? extends SInstance> instanceModel, List<?> contextList) {
         this.instanceModel = instanceModel;
         this.contextList = contextList;
         this.serializableContextList = contextList.stream()
             .filter(it -> it instanceof Serializable)
-            .collect(toList());
+            .collect(toCollection(ArrayList::new));
     }
 
     /*

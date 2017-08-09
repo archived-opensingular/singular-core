@@ -16,6 +16,12 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -23,19 +29,13 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
-
 public class SingularEventsHandlers extends Behavior {
 
-    public static final String       OPTS_ORIGINAL_PROCESS_EVENT  = "originalProcessEvent";
-    public static final String       OPTS_ORIGINAL_VALIDATE_EVENT = "originalValidateEvent";
+    public static final String            OPTS_ORIGINAL_PROCESS_EVENT  = "originalProcessEvent";
+    public static final String            OPTS_ORIGINAL_VALIDATE_EVENT = "originalValidateEvent";
 
-    private final FUNCTION[]          functions;
-    private final Map<String, Object> options                      = new HashMap<>();
+    private final FUNCTION[]              functions;
+    private final HashMap<String, Object> options                      = new HashMap<>();
 
     public SingularEventsHandlers(FUNCTION... functions) {
         this.functions = functions;
