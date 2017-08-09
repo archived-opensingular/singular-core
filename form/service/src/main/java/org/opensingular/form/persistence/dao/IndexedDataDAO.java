@@ -17,8 +17,8 @@ public class IndexedDataDAO {
     @Inject
     protected SessionFactory sessionFactory;
 
-    protected String createSqlFromDTO (Class<? extends BaseDTO> dto) {
-        IndexedDataQueryBuilder builder = new IndexedDataQueryBuilder();
+    protected String createSqlFromDTO (Class<? extends BaseDTO> dto, String schema) {
+        IndexedDataQueryBuilder builder = new IndexedDataQueryBuilder(schema);
         for (Field field : dto.getDeclaredFields()) {
             if (field.getAnnotation(STypeIndexed.class).indexedColumn()) {
                 builder.addColumn(field.getName(), field.getAnnotation(STypeIndexed.class).path());
