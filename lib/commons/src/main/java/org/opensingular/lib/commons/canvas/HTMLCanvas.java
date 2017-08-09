@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -71,19 +72,30 @@ public class HTMLCanvas implements DocumentCanvas {
 
     @Override
     public void label(String label, String value) {
+        writer.write("<span style='margin-right:25px;'>");
         if (!StringUtils.isEmpty(label)) {
-            writer.write("<span style='margin-right:15px;'>");
-            writer.write("<label>");
+            writer.write("<label style='font-weight:bold;'>");
             writer.write(label);
             writer.write(": </label>");
-            writer.write(defaultIfNull(value, ""));
-            writer.write("</span>");
         }
+        writer.write(defaultIfNull(value, ""));
+        writer.write("</span>");
     }
 
     @Override
     public void breakLine() {
         writer.write("<br />");
+    }
+
+    @Override
+    public void list(List<String> values) {
+        writer.write("<ul>");
+        for (String v : values) {
+            writer.write("<li>");
+            writer.write(v);
+            writer.write("</li>");
+        }
+        writer.write("</ul>");
     }
 
     public void stylesheet(String css) {
