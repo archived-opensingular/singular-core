@@ -1,24 +1,18 @@
 package org.opensingular.lib.wicket.views;
 
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.report.ReportFilter;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
-public class BlankSingularReportPanel extends SingularReportPanel<ReportMetadata<Void>, Void> {
-
+public class BlankSingularReportPanel extends SingularReportPanel {
     public BlankSingularReportPanel(String id,
-                                    ISupplier<SingularReport<ReportMetadata<Void>, Void>> singularReportSupplier) {
+                                    ISupplier<SingularReport> singularReportSupplier) {
         super(id, singularReportSupplier);
     }
 
     @Override
-    protected void customizeModal(BSModalBorder searchModal) {
-
-    }
-
-    @Override
-    protected ReportMetadata<Void> getReportMetadata() {
+    protected ReportMetadata<ReportFilter> makeReportMetadata() {
         return null;
     }
 }
