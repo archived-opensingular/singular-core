@@ -30,7 +30,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 /**
  * The persistent class for the TB_FORMULARIO database table.
  */
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @GenericGenerator(name = FormEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_FORMULARIO", schema = Constants.SCHEMA)
