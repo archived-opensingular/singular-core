@@ -92,7 +92,7 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeAppender styleAppender(IModel<? extends Map<String, String>> stylesModel) {
-        return styleAppender(stylesModel, $m.ofValue(true));
+        return styleAppender(stylesModel, $m.ofValue(Boolean.TRUE));
     }
     default AttributeAppender styleAppender(IModel<? extends Map<String, String>> stylesModel, IModel<Boolean> enabledModel) {
         IModel<Object> stylesStringModel = $m.map(stylesModel, styles -> styles.entrySet().stream()
@@ -101,7 +101,7 @@ public interface IBehaviorsMixin extends Serializable {
         return attrAppender("style", stylesStringModel, ";", enabledModel);
     }
     default AttributeAppender styleAppender(Map<String, String> styles) {
-        return styleAppender(styles, $m.ofValue(true));
+        return styleAppender(styles, $m.ofValue(Boolean.TRUE));
     }
     default AttributeAppender styleAppender(Map<String, String> styles, IModel<Boolean> enabledModel) {
         return attrAppender("style", $m.ofValue(new HashMap<>(styles)), ";", enabledModel);

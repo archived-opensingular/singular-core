@@ -230,11 +230,11 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             portletTitle.add(caption);
             caption
                 .appendTag("span", titleLabel.add($b.classAppender("caption-subject")))
-                .add($b.styleAppender("width", "100%", $m.ofValue(true)));
+                .add($b.styleAppender("width", "100%", $m.ofValue(Boolean.TRUE)));
 
             if (ctx.isTitleInBlock()) {
                 IModel<? extends SInstance> model = IMappingModel.of(ctx.getModel())
-                    .map(it -> block.getSingleType(it).get());
+                    .map(it -> block.getSingleType(it).orElse(null));
                 IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
                     mapper,
                     RequestCycle.get().find(AjaxRequestTarget.class),
