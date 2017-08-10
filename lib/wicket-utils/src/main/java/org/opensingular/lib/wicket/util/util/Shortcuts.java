@@ -16,16 +16,19 @@
 
 package org.opensingular.lib.wicket.util.util;
 
+import org.opensingular.lib.wicket.util.lambda.ILambdasMixin;
+
 public class Shortcuts {
 
     public static final IModelsMixin     $m = Impl.INSTANCE;
     public static final IBehaviorsMixin  $b = Impl.INSTANCE;
     public static final IValidatorsMixin $v = Impl.INSTANCE;
+    public static final ILambdasMixin    $L = Impl.INSTANCE;
 
     private Shortcuts() {}
 
     // é um enum para evitar problemas com a serialização
-    private enum Impl implements IModelsMixin, IBehaviorsMixin, IValidatorsMixin {
+    private enum Impl implements IModelsMixin, IBehaviorsMixin, IValidatorsMixin, ILambdasMixin {
         INSTANCE;
     }
 }

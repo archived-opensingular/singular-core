@@ -34,8 +34,8 @@ public class SingularFormAnnotationsIconProvider implements SIconProvider {
                 return icon
                     .setContainerCssClasses("annotation-action-remove")
                     .setIconCssClasses("icon-trash");
+            default:
+                return null;
         }
-        return null;
     }
-
 }

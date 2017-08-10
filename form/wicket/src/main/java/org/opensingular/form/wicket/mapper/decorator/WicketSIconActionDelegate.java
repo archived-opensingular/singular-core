@@ -5,13 +5,13 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.model.IModel;
@@ -34,14 +34,14 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
 
     private IModel<? extends SInstance> instanceModel;
     private transient List<?>           contextList;
-    private List<?>                     serializableContextList;
+    private ArrayList<?>                serializableContextList;
 
     public WicketSIconActionDelegate(IModel<? extends SInstance> instanceModel, List<?> contextList) {
         this.instanceModel = instanceModel;
         this.contextList = contextList;
         this.serializableContextList = contextList.stream()
             .filter(it -> it instanceof Serializable)
-            .collect(toList());
+            .collect(toCollection(ArrayList::new));
     }
 
     /*
@@ -83,12 +83,16 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
 
     @Override
     public void refreshFieldForInstance(SInstance instance) {
-        Optional<AjaxRequestTarget> target = getInternalContext(AjaxRequestTarget.class);
-        Optional<Component> comp = getInternalContext(Component.class);
-        if (target.isPresent() && comp.isPresent()) {
-            Optional<MarkupContainer> fieldContainer = WicketFormUtils.findChildByInstance(comp.get().getPage(), instance)
-                .flatMap(WicketFormUtils::findCellContainer);
-            target.get().add(fieldContainer.get());
+        Optional<AjaxRequestTarget> optTarget = getInternalContext(AjaxRequestTarget.class);
+        Optional<Component> optComp = getInternalContext(Component.class);
+        if (optTarget.isPresent() && optComp.isPresent()) {
+            AjaxRequestTarget target = optTarget.get();
+            Component comp = optComp.get();
+
+            target.add(
+                WicketFormUtils.normalizeComponentsToAjaxRefresh(
+                    WicketFormUtils.streamChildrenByInstance(comp.getPage(), instance)
+                        .collect(toSet())));
         }
     }
 

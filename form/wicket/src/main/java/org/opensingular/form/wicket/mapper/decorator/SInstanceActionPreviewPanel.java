@@ -20,8 +20,8 @@ public class SInstanceActionPreviewPanel extends Panel {
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
         super(id, previewModel);
 
-        IModel<String> messageModel = $m.map(previewModel, it -> HtmlConversionUtils
-            .toHtmlMessage(it.getMessage(), it.getFormat()));
+        IModel<String> messageModel = $m.map(previewModel,
+            it -> HtmlConversionUtils.toHtmlMessage(it.getMessage(), it.getFormat()));
 
         add($b.classAppender("singular-form-action-preview dropdown-menu theme-panel hold-on-click dropdown-custom"));
         add(new Label("title", $m.map(previewModel, it -> it.getTitle()))
