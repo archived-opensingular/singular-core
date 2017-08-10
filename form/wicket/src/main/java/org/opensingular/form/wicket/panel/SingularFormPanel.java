@@ -71,7 +71,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 public class SingularFormPanel extends Panel {
 
     private final SInstanceRootModel<SInstance> instanceModel  = new SInstanceRootModel<>();
-    private final boolean                       nested;
+    private boolean                       nested;
     // Container onde os componentes serão adicionados
     private BSGrid                              container      = new BSGrid("generated");
     //Pode ser transient pois é usado apenas uma vez na inicialização do painel
