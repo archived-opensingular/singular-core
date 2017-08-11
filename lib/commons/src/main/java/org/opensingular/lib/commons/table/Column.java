@@ -33,7 +33,7 @@ public class Column implements Serializable {
 
     private ColumnType type;
 
-    private ColumnTypeProcessor processor;
+    private transient ColumnTypeProcessor processor;
 
     private int index;
 
@@ -106,13 +106,14 @@ public class Column implements Serializable {
     }
 
     public void addTotal(Number number) {
+        Number n = number;
         if (number == null) {
-            number = 0.0;
+            n = 0.0;
         }
         if (total == null) {
-            total = number.doubleValue();
+            total = n.doubleValue();
         } else {
-            total += number.doubleValue();
+            total += n.doubleValue();
         }
     }
 
@@ -318,7 +319,9 @@ public class Column implements Serializable {
         this.index = index;
     }
 
-    public int compare(InfoCelula c1, InfoCelula c2) {
+    public int compare(InfoCelula infoCelula1, InfoCelula infoCelula2) {
+        InfoCelula c1 = infoCelula1;
+        InfoCelula c2 = infoCelula2;
         if (c1 != null && c1.getValue() == null) {
             c1 = null;
         }
@@ -342,7 +345,6 @@ public class Column implements Serializable {
             case NUMBER:
             case INTEGER:
             case PERCENT:
-            case HOUR:
                 Object valorReal1 = MoreObjects.<Object>firstNonNull(c1.getValorReal(), c1.getValue());
                 Object valorReal2 = MoreObjects.<Object>firstNonNull(c2.getValorReal(), c2.getValue());
                 if (valorReal1 instanceof Number && valorReal2 instanceof Number) {
@@ -352,13 +354,37 @@ public class Column implements Serializable {
                     double db1 = ((Number) valorReal1).doubleValue();
                     double db2 = ((Number) valorReal2).doubleValue();
                     return Double.compare(db1, db2);
+                } else {
+                    throw new ColumnExpection("Não foi possivel executar a comparação do tipo " + type );
                 }
             default:
                 if (c1.getValue() instanceof Comparable<?> && c1.getValue().getClass().isAssignableFrom(
                         c2.getValue().getClass())) {
                     return ((Comparable<?>) c1.getValue()).compareTo(c2.getValue());
                 }
-                throw new RuntimeException("Comparador para coluna do tipo " + type + " n�o implementado");
+                throw new ColumnExpection("Comparador para coluna do tipo " + type + " n�o implementado");
+        }
+
+    }
+
+    private static class ColumnExpection extends RuntimeException {
+        public ColumnExpection() {
+        }
+
+        public ColumnExpection(String message) {
+            super(message);
+        }
+
+        public ColumnExpection(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public ColumnExpection(Throwable cause) {
+            super(cause);
+        }
+
+        public ColumnExpection(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
         }
     }
 }

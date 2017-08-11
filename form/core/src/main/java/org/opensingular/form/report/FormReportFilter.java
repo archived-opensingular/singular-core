@@ -5,12 +5,13 @@ import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportFilter;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FormReportFilter implements ReportFilter {
     private final ISupplier<? extends SInstance> instanceSupplier;
-    private final Map<String, Object> parameters;
+    private final Map<String, Serializable> parameters;
 
     public FormReportFilter(ISupplier<? extends SInstance> instanceSupplier) {
         this.instanceSupplier = instanceSupplier;
@@ -28,7 +29,7 @@ public class FormReportFilter implements ReportFilter {
     }
 
     @Override
-    public void setParam(String key, Object val) {
+    public void setParam(String key, Serializable val) {
         parameters.put(key, val);
     }
 

@@ -98,12 +98,10 @@ final class AlocproToolkit {
     public static Number arredondar(Number value, int decimals) {
         if (value == null) {
             return null;
-        } else if (value instanceof Integer || value instanceof Long) {
+        } else if (value instanceof Integer || value instanceof Long || value instanceof BigInteger) {
             return value;
         } else if (value instanceof BigDecimal) {
             return arredondar((BigDecimal) value, decimals);
-        } else if (value instanceof BigInteger) {
-            return value;
         }
         return arredondar(value.doubleValue(), decimals);
     }
@@ -135,7 +133,7 @@ final class AlocproToolkit {
             v = v.scaleByPowerOfTen(decimais).divideToIntegralValue(BigDecimal.ONE).scaleByPowerOfTen(-decimais);
             return v.doubleValue();
         } catch (Exception e) {
-            throw new RuntimeException("Valor: " + value, e);
+            throw new AlocproToolkitException("Valor: " + value, e);
         }
     }
 
@@ -151,7 +149,7 @@ final class AlocproToolkit {
                 return a.intValue() + b.intValue();
             } else if (a instanceof Long) {
                 return a.longValue() + b.longValue();
-            } else if ( a instanceof BigInteger) {
+            } else if (a instanceof BigInteger) {
                 return ((BigInteger) a).add((BigInteger) b);
             }
         }
@@ -168,7 +166,7 @@ final class AlocproToolkit {
                 return a.intValue() * b.intValue();
             } else if (a instanceof Long) {
                 return a.longValue() * b.longValue();
-            } else if ( a instanceof BigInteger) {
+            } else if (a instanceof BigInteger) {
                 return ((BigInteger) a).multiply((BigInteger) b);
             }
         }
@@ -179,7 +177,7 @@ final class AlocproToolkit {
         if (a == null || b == null || isZero(b)) {
             return null;
         }
-        return toBigDecimal(a).divide(toBigDecimal(b),MathContext.DECIMAL32);
+        return toBigDecimal(a).divide(toBigDecimal(b), MathContext.DECIMAL32);
     }
 
     public static boolean isZero(Number a) {
@@ -194,18 +192,14 @@ final class AlocproToolkit {
     private static BigDecimal toBigDecimal(Number a) {
         if (a instanceof BigDecimal) {
             return (BigDecimal) a;
-        } else if (a instanceof Double) {
-            return new BigDecimal(a.doubleValue());
+        } else if (a instanceof Double || a instanceof Float) {
+            return BigDecimal.valueOf(a.doubleValue());
         } else if (a instanceof Integer) {
-            return new BigDecimal(a.intValue());
-        } else if (a instanceof Long) {
-            return new BigDecimal(a.longValue());
-        } else if (a instanceof Float) {
-            return new BigDecimal(a.doubleValue());
+            return BigDecimal.valueOf(a.intValue());
         } else if (a instanceof BigInteger) {
             return new BigDecimal((BigInteger) a);
         } else {
-            return new BigDecimal(a.longValue());
+            return BigDecimal.valueOf(a.longValue());
         }
     }
 
@@ -265,7 +259,7 @@ final class AlocproToolkit {
         return cs.toString();
     }
 
-    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" +"()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
+    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" + "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
 
     private static CharSequence converterURL(CharSequence original) {
         Matcher matcher = PATTERN_URL.matcher(original);
@@ -342,5 +336,26 @@ final class AlocproToolkit {
 
     private static boolean isIntegerOrLong(Number value) {
         return value instanceof Integer || value instanceof Long;
+    }
+
+    private static class AlocproToolkitException extends RuntimeException {
+        public AlocproToolkitException() {
+        }
+
+        public AlocproToolkitException(String message) {
+            super(message);
+        }
+
+        public AlocproToolkitException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public AlocproToolkitException(Throwable cause) {
+            super(cause);
+        }
+
+        public AlocproToolkitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
+        }
     }
 }

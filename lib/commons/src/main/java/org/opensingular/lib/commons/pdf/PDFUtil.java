@@ -143,7 +143,7 @@ public abstract class PDFUtil implements Loggable {
      * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
     @Nonnull
-    public final File convertHTML2PDF(@Nonnull String rawHtml, @Nullable String rawHeader, @Nullable String rawFooter,
+    public final File convertHTML2PDF(String rawHtml, @Nullable String rawHeader, @Nullable String rawFooter,
             @Nullable List<String> additionalConfig) throws SingularPDFException {
         try (TempFileProvider tmp = TempFileProvider.createForUseInTryClause(this)){
 

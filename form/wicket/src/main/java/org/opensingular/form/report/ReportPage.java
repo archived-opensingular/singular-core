@@ -31,7 +31,7 @@ import java.util.List;
  * A Box panel to show reports grouped by menus
  */
 public abstract class ReportPage extends SingularAdminTemplate {
-    public static final String IDENTITY = "identity";
+    public static final String IDENTITY_PARAM = "identity";
 
     private MetronicMenu menu;
     private Component body;
@@ -43,7 +43,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         if (parameters == null) {
             return;
         }
-        this.identity = parameters.get(IDENTITY).toString(null);
+        this.identity = parameters.get(IDENTITY_PARAM).toString(null);
         Serializable successMessage = Session.get().getAttribute(sucessMessageAttribute(identity));
         if (successMessage != null) {
             new ToastrHelper(this).addToastrMessage(ToastrType.SUCCESS, (String) successMessage);
@@ -108,7 +108,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
     protected class ReportAjaxMenuItem extends MetronicMenuItem {
         private final ISupplier<SingularReport> supplier;
 
-        ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> supplier) throws Exception {
+        ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> supplier) {
             super(icon, title, ReportPage.this.getClass(), new PageParameters().set("identity", supplier.get().getIdentity()));
             this.supplier = supplier;
         }
@@ -159,7 +159,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         }
     }
 
-    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, ISupplier<SingularReport> report) throws Exception {
+    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, ISupplier<SingularReport> report) {
         ReportAjaxMenuItem newAjaxItem = new ReportAjaxMenuItem(icon, title, report);
         if (newAjaxItem.isActive()) {
             activeReport = report;
@@ -173,7 +173,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         }
         PageParameters params = new PageParameters();
         if (identity != null) {
-            params.add(IDENTITY, identity);
+            params.add(IDENTITY_PARAM, identity);
         }
         RequestCycle.get().setResponsePage(c.getPage().getClass(), params);
     }
