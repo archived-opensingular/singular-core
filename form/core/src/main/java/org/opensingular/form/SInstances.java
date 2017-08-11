@@ -225,7 +225,7 @@ public abstract class SInstances {
      * @return Optional da instância do ancestral comum
      */
     @SuppressWarnings("unchecked")
-    public static <CA extends SInstance & ICompositeInstance, A extends SInstance> Optional<CA> findCommonAncestorByStypeClass(SInstance node, Class<? extends SType<A>> targetTypeClass) {
+    public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestorByStypeClass(SInstance node, Class<? extends SType> targetTypeClass) {
         for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
             if (targetTypeClass.isAssignableFrom(ancestor.getType().getClass()) && ancestor instanceof ICompositeInstance) {
                 return Optional.of((CA) ancestor);
