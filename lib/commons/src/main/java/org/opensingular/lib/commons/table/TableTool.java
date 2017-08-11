@@ -18,6 +18,7 @@ package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
 import org.jetbrains.annotations.NotNull;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewGeneratorProvider;
 import org.opensingular.lib.commons.views.ViewMultiGenerator;
@@ -475,7 +476,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             }
         }
         if (line == null) {
-            throw new RuntimeException("Invalid State");
+            throw new SingularException("Invalid State");
         }
         if (ctx.isExibirLinha()) {
             int lineAlternation = isCorLinhaAlternada() ? linhaCor : -1;
