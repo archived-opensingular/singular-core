@@ -171,7 +171,7 @@ public abstract class PDFUtil implements Loggable {
          * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
          */
     @Nonnull
-    public final File convertHTML2PDF(@Nonnull File htmlFile, @Nullable File headerFile, @Nullable File footerFile,
+    public final File convertHTML2PDF(@Nullable File htmlFile, @Nullable File headerFile, @Nullable File footerFile,
             @Nullable List<String> additionalConfig, @Nonnull File pdfFile) throws SingularPDFException {
         getWkhtml2pdfHome(); // Força verifica se o Home está configurado corretamente
 
@@ -575,8 +575,11 @@ public abstract class PDFUtil implements Loggable {
 
 
     /** Permite ajustar o path do arquivo se necessário no sistema operacional em questão. */
-    protected @Nonnull String fixPathArg(@Nonnull File arq) {
-        return arq.getAbsolutePath();
+    protected @Nonnull String fixPathArg(@Nullable File arq) {
+        if(arq != null) {
+            return arq.getAbsolutePath();
+        }
+        throw new SingularPDFException("Nenhum diretorio informado");
     }
 
     /**

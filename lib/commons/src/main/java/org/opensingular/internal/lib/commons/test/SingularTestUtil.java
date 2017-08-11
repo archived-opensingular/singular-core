@@ -206,6 +206,7 @@ public final class SingularTestUtil {
                 Thread.sleep(waitTimeMilli);
             } catch (InterruptedException e) {
                 LOGGER.error(e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
         }
     }

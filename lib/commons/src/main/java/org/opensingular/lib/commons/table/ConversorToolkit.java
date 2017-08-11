@@ -108,7 +108,8 @@ import java.util.Locale;
         }
     }
 
-    public static double getDouble(String valor) throws NumberFormatException {
+    public static double getDouble(String val) throws NumberFormatException {
+        String valor = val;
         if (valor == null) {
             throw new NumberFormatException("Valor null");
         }

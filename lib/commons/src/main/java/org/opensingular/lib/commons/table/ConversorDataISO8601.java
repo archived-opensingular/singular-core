@@ -294,18 +294,19 @@ final class ConversorDataISO8601 {
 
     private static void formatMiliAndNanoIfNecessary(StringBuilder buffer, int nano, byte prescisao) {
         int mili;
-        if ((nano < 0) || (nano > 999999999)) {
+        int nanoCopy = nano;
+        if ((nanoCopy < 0) || (nanoCopy > 999999999)) {
             throw new IllegalArgumentException("Nanos <0 ou >999999999");
         }
         // Geralmente so tem precisão de mili segundos
         // Se forem apenas milisegundos fica .999
         // Se realm
-        mili = nano / 1000000;
+        mili = nanoCopy / 1000000;
         formatMiliIfNecessary(buffer, mili, prescisao);
         if (prescisao == NANO) {
-            nano = nano % 1000000;
-            if (nano != 0) {
-                String nanoS = Integer.toString(nano);
+            nanoCopy = nanoCopy % 1000000;
+            if (nanoCopy != 0) {
+                String nanoS = Integer.toString(nanoCopy);
                 for (int i = 6 - nanoS.length(); i != 0; i--) {
                     buffer.append('0');
                 }

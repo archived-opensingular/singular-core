@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.table;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.base.AbstractInstant;
+import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -108,7 +109,7 @@ public interface ColumnTypeProcessor {
 
         @Override
         public void generatePrintValue(PrintResult result, Column column, Object value) {
-            throw new RuntimeException("This method shouldn't be called");
+            throw new SingularException("This method shouldn't be called");
         }
 
     }

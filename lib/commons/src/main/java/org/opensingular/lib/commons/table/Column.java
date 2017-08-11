@@ -341,6 +341,7 @@ public class Column implements Serializable {
                 if (c1.getValorReal() == null || c2.getValorReal() == null) {
                     return Objects.toString(c1.getValue()).compareToIgnoreCase(Objects.toString(c2.getValue()));
                 }
+                break;
             case MONEY:
             case NUMBER:
             case INTEGER:
@@ -354,9 +355,8 @@ public class Column implements Serializable {
                     double db1 = ((Number) valorReal1).doubleValue();
                     double db2 = ((Number) valorReal2).doubleValue();
                     return Double.compare(db1, db2);
-                } else {
-                    throw new ColumnExpection("Não foi possivel executar a comparação do tipo " + type );
                 }
+                break;
             default:
                 if (c1.getValue() instanceof Comparable<?> && c1.getValue().getClass().isAssignableFrom(
                         c2.getValue().getClass())) {
@@ -364,6 +364,7 @@ public class Column implements Serializable {
                 }
                 throw new ColumnExpection("Comparador para coluna do tipo " + type + " n�o implementado");
         }
+        throw new ColumnExpection("Não foi possivel executar a comparação do tipo " + type );
 
     }
 
