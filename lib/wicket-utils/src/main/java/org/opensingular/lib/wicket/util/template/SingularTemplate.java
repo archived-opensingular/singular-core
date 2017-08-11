@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -161,7 +162,7 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     protected IModel<String> getPageTitleModel(){
-        return new ResourceModel("label.page.title.local");
+        return new StringResourceModel("label.page.title.local");
     }
 
     protected void initSkins() {
