@@ -76,7 +76,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
      */
     private Integer nivelTotalizar = 0;
 
-    private InfoLinha totalLine;
+    private transient InfoLinha totalLine;
 
     private String id;
 
@@ -208,7 +208,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     public <T extends ModificadorGerador> T addModificador(T m) {
-        if (modificadores.size() > 0) {
+        if (!modificadores.isEmpty()) {
             modificadores.get(0).addFimCadeia(m);
         }
         modificadores.add(m);
@@ -369,7 +369,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
         ctx.getOutput().generateTableStart(ctx, this);
 
-        if (modificadores.size() > 0) {
+        if (!modificadores.isEmpty()) {
             ctx.setVisibleColuns(modificadores.get(0).adjustTitles(ctx.getVisibleColuns()));
             generateTitles(ctx);
             dadoLeitor = modificadores.get(0).aplicar(dadoLeitor);

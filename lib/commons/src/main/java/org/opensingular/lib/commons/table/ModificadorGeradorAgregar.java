@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ModificadorGeradorAgregar extends ModificadorGerador {
 
     private final Map<Column, TipoAgregacaoCampo> colunaTipoAgregacao = new HashMap<>();
-    private final Map<Column, Object> colunaCalculoExterno = new HashMap<>();
+    private final transient Map<Column, Object> colunaCalculoExterno = new HashMap<>();
 
     ModificadorGeradorAgregar(TableTool tableTool) {
         super(tableTool);
@@ -86,7 +86,8 @@ public class ModificadorGeradorAgregar extends ModificadorGerador {
         }
     }
     
-    private InfoCelula setValor(InfoCelula celula, Object valor) {
+    private InfoCelula setValor(InfoCelula celula, Object val) {
+        Object valor = val;
         if (valor instanceof Double) {
             valor = ConversorToolkit.printNumber((Double)valor);
         } else if (valor instanceof Number) {

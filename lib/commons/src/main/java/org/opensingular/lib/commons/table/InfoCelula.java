@@ -30,9 +30,9 @@ public final class InfoCelula implements Serializable {
 
     private final Column column;
 
-    private Object valor_;
+    private transient Object valor_;
 
-    private Comparable<?> valorReal;
+    private transient Comparable<?> valorReal;
 
     private WebRef link;
 

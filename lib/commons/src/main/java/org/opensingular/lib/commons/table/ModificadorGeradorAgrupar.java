@@ -40,13 +40,15 @@ class ModificadorGeradorAgrupar extends ModificadorGerador {
         DadoLeitorFixo filhos = null;
         for (DadoLinha linha : dadoLeitor) {
             InfoCelula celula = linha.getInfoCelula(column);
-            Object valorCelulaLinha = celula == null ? null : celula.getValue();
+            Object valorCelulaLinha = celula.getValue();
             if (!Objects.equals(valorAtual, valorCelulaLinha)) {
                 filhos = new DadoLeitorFixo(dadoLeitor);
                 grupo.add(new DadoLinha(linha, new DadoLeitorModificador(filhos, getProximoModificador())));
                 valorAtual = valorCelulaLinha;
             }
-            filhos.add(linha);
+            if (filhos != null) {
+                filhos.add(linha);
+            }
         }
 
         return grupo;

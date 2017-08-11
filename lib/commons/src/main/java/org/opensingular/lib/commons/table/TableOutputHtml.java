@@ -520,14 +520,14 @@ public class TableOutputHtml extends TableOutput {
         }
         if (!decorator.getAttributes().isEmpty()) {
             for (Map.Entry<String, String> att : decorator.getAttributes().entrySet()) {
-                if (att.getKey().equalsIgnoreCase("class")) {
+                if ("class".equalsIgnoreCase(att.getKey())) {
                     int indexClass = builder.indexOf("class=\"");
                     if (indexClass > -1) {
                         indexClass = builder.substring(indexClass + 7).indexOf('"') + indexClass + 7;
                         builder.insert(indexClass, " ".concat(stringValue(att)));
                         continue;
                     }
-                } else if (att.getKey().equalsIgnoreCase("style")) {
+                } else if ("style".equalsIgnoreCase(att.getKey())) {
                     int indexStyle = builder.indexOf("style=\"");
                     if (indexStyle > -1) {
                         builder.insert(indexStyle + 7, " ".concat(stringValue(att)).concat(";"));
