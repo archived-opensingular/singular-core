@@ -23,13 +23,9 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
-
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
@@ -43,6 +39,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
+    @Override
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<? extends SInstance> model = ctx.getModel();
@@ -64,7 +61,7 @@ public class BooleanMapper implements IWicketComponentMapper {
 
         final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
         final Label label = buildLabel("_", labelModel);
-        adjustJSEvents(label);
+        adjustJSEvents(ctx, label);
         formGroup.appendCheckbox(input, label);
         input.add(DisabledClassBehavior.getInstance());
         formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
@@ -110,7 +107,7 @@ public class BooleanMapper implements IWicketComponentMapper {
     }
 
     @Override
-    public void adjustJSEvents(Component comp) {
+    public void adjustJSEvents(WicketBuildContext ctx, Component comp) {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
 

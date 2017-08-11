@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.pdf;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.List;
 
@@ -28,8 +29,11 @@ import java.util.List;
 final class PDFUtilUnix extends PDFUtil {
 
     @Override
-    protected @Nonnull String fixPathArg(@Nonnull File arq) {
-        return "file://".concat(arq.getAbsolutePath());
+    protected @Nonnull String fixPathArg(@Nullable File arq) {
+        if(arq != null) {
+            return "file://".concat(arq.getAbsolutePath());
+        }
+        throw new SingularPDFException("Nenhum arquivo informado");
     }
 
     @Override

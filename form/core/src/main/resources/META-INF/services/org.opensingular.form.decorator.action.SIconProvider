@@ -1,0 +1,4 @@
+org.opensingular.form.decorator.action.SIconProviders$SimpleLineIconProvider
+org.opensingular.form.decorator.action.SIconProviders$FontAwesomeIconProvider
+org.opensingular.form.decorator.action.SIconProviders$GlyphiconsIconProvider
+org.opensingular.form.decorator.action.SingularFormAnnotationsIconProvider

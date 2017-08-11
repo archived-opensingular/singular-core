@@ -19,17 +19,20 @@ package org.opensingular.form.view;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 
 /**
  * Created by Daniel on 08/06/2016.
  */
 public class Block implements Serializable {
 
-    private String name;
+    private String       name;
     private List<String> types = new ArrayList<>();
 
-    public Block() {
-    }
+    public Block() {}
 
     public Block(String name) {
         this.name = name;
@@ -49,5 +52,16 @@ public class Block implements Serializable {
 
     public void setTypes(List<String> types) {
         this.types = types;
+    }
+
+    public Optional<SInstance> getSingleType(SInstance baseInstance) {
+        if ((baseInstance instanceof SIComposite) && isSingleType()) {
+            return Optional.of(((SIComposite) baseInstance).getField(this.getTypes().get(0)));
+        }
+        return Optional.empty();
+    }
+
+    public boolean isSingleType() {
+        return this.getTypes().size() == 1;
     }
 }

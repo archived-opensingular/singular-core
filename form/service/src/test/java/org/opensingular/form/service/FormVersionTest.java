@@ -1,37 +1,24 @@
 package org.opensingular.form.service;
 
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.entity.FormEntity;
-import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.entity.FormCacheFieldEntity;
+import org.opensingular.form.persistence.entity.FormCacheValueEntity;
+import org.opensingular.form.persistence.entity.FormEntity;
+import org.opensingular.form.persistence.entity.FormVersionEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
 public class FormVersionTest extends FormServiceTest {
-
-
-    private static final Integer IDADE_15 = 15;
-    private static final Integer IDADE_22 = 22;
-
-    private SIComposite formWithoutAnnotations() {
-        SIComposite pessoa = (SIComposite) documentFactory.createInstance(tipoPessoaRef);
-        pessoa.setValue(idade, IDADE_15);
-        pessoa.setValue(nome, "João");
-        return pessoa;
-    }
-
-    private FormKey insert() {
-        SIComposite pessoa = formWithoutAnnotations();
-        FormKey pessoaKey = formService.insert(pessoa, 1);
-        SIComposite pessoaLoaded = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory);
-        Assert.assertEquals(pessoa, pessoaLoaded);
-        return pessoaKey;
-    }
 
     @Test
     public void insertTestAndLoad(){
@@ -75,8 +62,44 @@ public class FormVersionTest extends FormServiceTest {
         SIComposite pessoav2 = (SIComposite) formService.loadSInstance(pessoaKey, tipoPessoaRef, documentFactory, versions.get(1).getCod());
         Assert.assertEquals(IDADE_15, pessoav1.getValue(idade));
         Assert.assertEquals(IDADE_22, pessoav2.getValue(idade));
-
     }
+
+    @Test
+    @Ignore
+    public void indexFieldAlreadyRegisteredDoesNotDuplicate() {
+        Session  session  = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(FormCacheFieldEntity.class);
+        List<FormCacheFieldEntity> indexedFields = criteria.list();
+        Assert.assertTrue(indexedFields.size() == 0);
+
+        insert();
+        indexedFields = criteria.list();
+        Assert.assertTrue(indexedFields.size() == 2);
+
+        insert();
+        indexedFields = criteria.list();
+        Assert.assertTrue(indexedFields.size() == 2);
+    }
+
+    @Test
+    @Ignore
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    public void indexFieldValues() {
+        Session  session  = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(FormCacheValueEntity.class);
+        List<FormCacheValueEntity> indexedValues = criteria.list();
+        Assert.assertTrue(indexedValues.size() == 0);
+
+        insert();
+        indexedValues = criteria.list();
+        Assert.assertTrue(indexedValues.size() == 2);
+
+        insert();
+        indexedValues = criteria.list();
+        System.out.println("Total de " + indexedValues.size());
+        Assert.assertTrue(indexedValues.size() == 4);
+    }
+
 }
 
 

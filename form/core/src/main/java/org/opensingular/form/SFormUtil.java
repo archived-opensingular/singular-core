@@ -24,6 +24,7 @@ import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
@@ -277,6 +278,7 @@ public final class SFormUtil {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
                 addPackage(builder, SPackageUtil.class);
                 addPackage(builder, SPackageBootstrap.class);
+                addPackage(builder, SPackagePersistence.class);
                 addPackage(builder, SPackageCountryBrazil.class);
                 return builder.build();
             });

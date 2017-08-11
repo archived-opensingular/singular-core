@@ -22,8 +22,11 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -33,17 +36,22 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
-import org.opensingular.form.util.transformer.Value;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
@@ -51,18 +59,26 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-public class PanelListMapper extends AbstractListMapper {
+public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
-    public void buildView(WicketBuildContext ctx) {
-        final BSContainer<?> parentCol = ctx.getContainer();
-        parentCol.appendComponent((id) -> this.newpanel(id, ctx));
+    private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
+
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
     }
 
-    public MetronicPanel newpanel(String id, WicketBuildContext ctx) {
+    @Override
+    public void buildView(WicketBuildContext ctx) {
+        final BSContainer<?> parentCol = ctx.getContainer();
+        parentCol.appendComponent((id) -> this.newPanel(id, ctx));
+    }
+
+    private MetronicPanel newPanel(String id, WicketBuildContext ctx) {
         final IModel<SIList<SInstance>> listaModel = new ReadOnlyCurrentInstanceModel<>(ctx);
-        final SIList<?>                 iLista     = listaModel.getObject();
-        final IModel<String>            label      = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
-        final SViewListByForm           view       = (SViewListByForm) ctx.getView();
+        final SIList<?> iLista = listaModel.getObject();
+        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
+        final SViewListByForm view = (SViewListByForm) ctx.getView();
 
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
@@ -71,33 +87,48 @@ public class PanelListMapper extends AbstractListMapper {
         ctx.configureContainer(label);
 
         MetronicPanel panel = MetronicPanel.MetronicPanelBuilder.build(id,
-                (heading, form) -> {
-                    heading.appendTag("span", new Label("_title", label));
-                    heading.setVisible(ctx.isTitleInBlock());
-                },
-                (content, form) -> {
+            (heading, form) -> {
+                heading.appendTag("span", new Label("_title", label));
 
-                    TemplatePanel list = content.newTemplateTag(t -> ""
-                            + "    <ul class='list-group list-by-form'>"
-                            + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
-                            + "         <div wicket:id='_r'></div>"
-                            + "      </li>"
-                            + "      <div wicket:id='_empty' class='list-by-form-empty-state'>"
-                            + "         <span>Nenhum item foi adicionado</span>"
-                            + "      </div>"
-                            + "    </ul>"
-                    );
-                    final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form);
-                    elements.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
-                    list.add(elements);
-                    final WebMarkupContainer empty = new WebMarkupContainer("_empty");
-                    empty.add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
-                    list.add(empty);
-                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
-                    content.getParent().add(dependsOnModifier(listaModel));
-                },
-                (f, form) -> buildFooter(f, form, ctx)
-        );
+                IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                    this,
+                    RequestCycle.get().find(AjaxRequestTarget.class),
+                    listaModel,
+                    listaModel.getObject(),
+                    ctx,
+                    ctx.getContainer());
+
+                SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                    heading,
+                    this.instanceActionsProviders,
+                    listaModel,
+                    true,
+                    internalContextListProvider);
+
+                heading.add($b.visibleIf(() -> ctx.isTitleInBlock()
+                    || !this.instanceActionsProviders.actionList(listaModel).isEmpty()));
+            },
+            (content, form) -> {
+
+                TemplatePanel list = content.newTemplateTag(t -> ""
+                    + "    <ul class='list-group list-by-form'>"
+                    + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
+                    + "         <div wicket:id='_r'></div>"
+                    + "      </li>"
+                    + "      <div wicket:id='_empty' class='list-by-form-empty-state'>"
+                    + "         <span>Nenhum item foi adicionado</span>"
+                    + "      </div>"
+                    + "    </ul>");
+                final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form);
+                elements.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
+                list.add(elements);
+                final WebMarkupContainer empty = new WebMarkupContainer("_empty");
+                empty.add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
+                list.add(empty);
+                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+                content.getParent().add(dependsOnModifier(listaModel));
+            },
+            (f, form) -> buildFooter(f, form, ctx));
 
         return panel;
     }
@@ -110,11 +141,11 @@ public class PanelListMapper extends AbstractListMapper {
         private final UIBuilderWicket    wicketBuilder;
 
         private PanelElementsView(String id,
-                                  IModel<SIList<SInstance>> model,
-                                  UIBuilderWicket wicketBuilder,
-                                  WicketBuildContext ctx,
-                                  SViewListByForm view,
-                                  Form<?> form) {
+            IModel<SIList<SInstance>> model,
+            UIBuilderWicket wicketBuilder,
+            WicketBuildContext ctx,
+            SViewListByForm view,
+            Form<?> form) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
@@ -126,7 +157,7 @@ public class PanelListMapper extends AbstractListMapper {
         public void renderHead(IHeaderResponse response) {
             super.renderHead(response);
             PackageResourceReference cssFile =
-                    new PackageResourceReference(this.getClass(), "PanelElementsView.js");
+                new PackageResourceReference(this.getClass(), "PanelElementsView.js");
             JavaScriptHeaderItem javascriptItem = JavaScriptHeaderItem.forReference(cssFile);
 
             response.render(javascriptItem);
@@ -135,7 +166,7 @@ public class PanelListMapper extends AbstractListMapper {
 
         @Override
         protected void populateItem(Item<SInstance> item) {
-            final BSGrid   grid     = new BSGrid("_r");
+            final BSGrid grid = new BSGrid("_r");
             final ViewMode viewMode = ctx.getViewMode();
 
             buildHeader(item, grid, viewMode);
@@ -148,18 +179,18 @@ public class PanelListMapper extends AbstractListMapper {
             final BSRow header = grid.newRow();
             header.add($b.classAppender("list-item-header"));
             final BSCol title = header.newCol(11).newGrid().newColInRow();
-            Model model = new Model() {
+            Model<Serializable> model = new Model<Serializable>() {
                 @Override
                 public Serializable getObject() {
                     if (view.getHeaderPath() != null) {
-                        return Optional.ofNullable(Value.of(item.getModelObject(), view.getHeaderPath())).orElse("").toString();
+                        return Optional.ofNullable(item.getModelObject().getValue(view.getHeaderPath())).orElse("").toString();
                     } else {
                         return item.getModelObject().toStringDisplay();
                     }
                 }
             };
             title.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
-                    .add(new Label("_title", model));
+                .add(new Label("_title", model));
 
             final BSGrid btnGrid = header.newCol(1).newGrid();
 
@@ -180,15 +211,15 @@ public class PanelListMapper extends AbstractListMapper {
         private void buildBody(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
             final BSRow body = grid.newRow();
             body.add($b.classAppender("list-item-body"));
-            wicketBuilder.build(ctx.createChild(body.newCol(12), true, item.getModel()), viewMode);
+            wicketBuilder.build(ctx.createChild(body.newCol(12), item.getModel()), viewMode);
         }
     }
 
     protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
         final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
         cell
-                .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
-                .add(btn);
+            .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
+            .add(btn);
         return btn;
     }
 

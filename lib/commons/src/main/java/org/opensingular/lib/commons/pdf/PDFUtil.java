@@ -143,18 +143,39 @@ public abstract class PDFUtil implements Loggable {
      * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
     @Nonnull
-    public final File convertHTML2PDF(@Nonnull String rawHtml, @Nullable String rawHeader, @Nullable String rawFooter,
+    public final File convertHTML2PDF(String rawHtml, @Nullable String rawHeader, @Nullable String rawFooter,
             @Nullable List<String> additionalConfig) throws SingularPDFException {
-        getWkhtml2pdfHome(); // Força verifica se o Home está configurado corretamente
-
-        final String html   = safeWrapHtml(rawHtml);
-        final String header = safeWrapHtml(rawHeader);
-        final String footer = safeWrapHtml(rawFooter);
-
         try (TempFileProvider tmp = TempFileProvider.createForUseInTryClause(this)){
 
-            File htmlFile = tmp.createTempFile( "content.html");
-            writeToFile(htmlFile, html);
+            File htmlFile = safeWrapHtmlToFile(rawHtml, tmp, "content.html");
+            File headerFile = safeWrapHtmlToFile(rawHeader, tmp, "header.html");
+            File footerFile = safeWrapHtmlToFile(rawFooter, tmp, "footer.html");
+            File pdfFile  = tmp.createTempFileByDontPutOnDeleteList( "result.pdf");
+
+            return convertHTML2PDF(htmlFile, headerFile, footerFile, additionalConfig, pdfFile);
+        }
+    }
+
+    @Nonnull
+    public final File convertHTML2PDF(@Nonnull File htmlFile, @Nonnull File pdfFile) throws SingularPDFException {
+        return convertHTML2PDF(htmlFile, null, null, null, pdfFile);
+    }
+
+        /**
+         * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
+         *
+         * @param html             o código HTML.
+         * @param header           o código HTML do cabeçalho.
+         * @param footer           o código HTML do rodapé.
+         * @param additionalConfig configurações adicionais.
+         * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
+         */
+    @Nonnull
+    public final File convertHTML2PDF(@Nullable File htmlFile, @Nullable File headerFile, @Nullable File footerFile,
+            @Nullable List<String> additionalConfig, @Nonnull File pdfFile) throws SingularPDFException {
+        getWkhtml2pdfHome(); // Força verifica se o Home está configurado corretamente
+
+        try (TempFileProvider tmp = TempFileProvider.createForUseInTryClause(this)) {
 
             List<String> commandAndArgs = new ArrayList<>(0);
             commandAndArgs.add(getHomeAbsolutePath("bin", fixExecutableName("wkhtmltopdf")));
@@ -165,23 +186,18 @@ public abstract class PDFUtil implements Loggable {
                 addDefaultPDFCommandArgs(commandAndArgs);
             }
 
-            if (header != null) {
-                File headerFile = tmp.createTempFile( "header.html");
-                writeToFile(headerFile, header);
+            if (headerFile != null) {
                 commandAndArgs.add("--header-html");
                 commandAndArgs.add(fixPathArg(headerFile));
                 addDefaultHeaderCommandArgs(commandAndArgs);
             }
 
-            if (footer != null) {
-                File footerFile = tmp.createTempFile( "footer.html");
-                writeToFile(footerFile, footer);
+            if (footerFile != null) {
                 commandAndArgs.add("--footer-html");
                 commandAndArgs.add(fixPathArg(footerFile));
                 addDefaultFooterCommandArgs(commandAndArgs);
             }
 
-            File pdfFile  = tmp.createTempFileByDontPutOnDeleteList( "result.pdf");
             commandAndArgs.add(fixPathArg(htmlFile));
             commandAndArgs.add(pdfFile.getAbsolutePath());
 
@@ -485,6 +501,16 @@ public abstract class PDFUtil implements Loggable {
         }
     }
 
+    private File safeWrapHtmlToFile(String rawHtml, TempFileProvider tmp, String name) {
+        if (rawHtml == null) {
+            return null;
+        }
+        File file = tmp.createTempFile( name);
+        writeToFile(file, safeWrapHtml(rawHtml));
+        return file;
+    }
+
+
     private String safeWrapHtml(String html) {
         if (html == null || html.startsWith(("<!DOCTYPE"))) {
             return html;
@@ -549,8 +575,11 @@ public abstract class PDFUtil implements Loggable {
 
 
     /** Permite ajustar o path do arquivo se necessário no sistema operacional em questão. */
-    protected @Nonnull String fixPathArg(@Nonnull File arq) {
-        return arq.getAbsolutePath();
+    protected @Nonnull String fixPathArg(@Nullable File arq) {
+        if(arq != null) {
+            return arq.getAbsolutePath();
+        }
+        throw new SingularPDFException("Nenhum diretorio informado");
     }
 
     /**

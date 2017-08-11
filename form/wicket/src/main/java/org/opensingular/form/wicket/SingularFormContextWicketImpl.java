@@ -20,18 +20,15 @@ import org.opensingular.form.context.SingularFormContextImpl;
 
 public class SingularFormContextWicketImpl extends SingularFormContextImpl implements SingularFormContextWicket {
 
-    private UIBuilderWicket buildContext;
+    private UIBuilderWicket builder;
 
     public SingularFormContextWicketImpl(SingularFormConfigWicketImpl config) {
         super(config);
+        this.builder = config.getUIBuilder();
     }
 
     @Override
     public UIBuilderWicket getUIBuilder() {
-        if (buildContext == null) {
-            buildContext = new UIBuilderWicket();
-        }
-        return buildContext;
+        return builder;
     }
-
 }

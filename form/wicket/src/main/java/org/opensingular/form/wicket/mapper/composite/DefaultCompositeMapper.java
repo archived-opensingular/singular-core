@@ -26,18 +26,18 @@ public class DefaultCompositeMapper extends AbstractCompositeMapper {
 
     @Override
     protected ICompositeViewBuilder getViewBuilder(WicketBuildContext ctx) {
-        return new CompositeViewBuilder(ctx);
+        return new DefaultCompositeViewBuilder(ctx, this);
     }
 
-    private static class CompositeViewBuilder extends AbstractCompositeViewBuilder {
-        CompositeViewBuilder(WicketBuildContext ctx) {
-            super(ctx);
+    private class DefaultCompositeViewBuilder extends AbstractCompositeViewBuilder {
+        DefaultCompositeViewBuilder(WicketBuildContext ctx, AbstractCompositeMapper mapper) {
+            super(ctx, mapper);
         }
 
         @Override
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
-            if ((ctx.getCurrentInstance().getParent() == null && !ctx.isNested())
-                    || (ctx.getParent().getView() instanceof SViewTab && !(ctx.getView() instanceof SViewByBlock))) {
+            if (((ctx.getCurrentInstance().getParent() == null) && (!ctx.isNested())) ||
+                ((ctx.getParent().getView() instanceof SViewTab) && !(ctx.getView() instanceof SViewByBlock))) {
                 grid.setCssClass("singular-container");
             }
             super.buildFields(ctx, grid);

@@ -19,4 +19,5 @@ package org.opensingular.form.wicket;
 import org.opensingular.form.context.SingularFormConfig;
 
 public interface SingularFormConfigWicket extends SingularFormConfig {
+    UIBuilderWicket getUIBuilder();
 }

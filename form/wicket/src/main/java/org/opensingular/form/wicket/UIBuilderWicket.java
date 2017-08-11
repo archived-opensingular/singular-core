@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
@@ -58,6 +61,7 @@ import org.opensingular.form.view.SViewReadOnly;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.form.view.ViewMapperRegistry;
@@ -93,6 +97,7 @@ import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
 import org.opensingular.form.wicket.mapper.selection.AutocompleteMapper;
 import org.opensingular.form.wicket.mapper.selection.BooleanRadioMapper;
 import org.opensingular.form.wicket.mapper.selection.BooleanSelectMapper;
+import org.opensingular.form.wicket.mapper.selection.BooleanSwitchMapper;
 import org.opensingular.form.wicket.mapper.selection.MultipleCheckMapper;
 import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
 import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
@@ -105,28 +110,64 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     private final ViewMapperRegistry<IWicketComponentMapper> registry = newViewMapperRegistry();
 
+    public UIBuilderWicket() {}
+
     ViewMapperRegistry<IWicketComponentMapper> getViewMapperRegistry() {
         return registry;
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
-        WicketBuildContext child = ctx;
+        final Deque<IWicketBuildListener> listeners = new LinkedList<>(ctx.getListeners());
+        listeners.removeIf(it -> !it.isActive(ctx, null));
+
+        ctx.init(this, viewMode);
+
+        // onBuildContextInitialized
+        listeners.stream().forEach(it -> it.onBuildContextInitialized(ctx));
+
+        final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
+
+        if (mapper instanceof IWicketBuildListener) {
+            IWicketBuildListener listenerMapper = (IWicketBuildListener) mapper;
+            if (listenerMapper.isActive(ctx, mapper))
+                listeners.addFirst(listenerMapper);
+        }
+
+        // onMapperResolved
+        listeners.stream().forEach(it -> it.onMapperResolved(ctx, mapper));
+
+        // decorateContext
+        WicketBuildContext childCtx = ctx;
+        for (IWicketBuildListener listener : listeners) {
+            WicketBuildContext newContext = listener.decorateContext(ctx, mapper);
+            if (newContext != null && newContext != childCtx) {
+                childCtx = newContext;
+                childCtx.init(this, viewMode);
+            }
+        }
+
         if (ctx.getParent() == null || ctx.isShowBreadcrumb()) {
-            ctx.init(this, viewMode);
             BreadPanel panel = new BreadPanel("panel", ctx.getBreadCrumbs()) {
                 @Override
                 public boolean isVisible() {
-                    return !isEmpty();
+                    return !this.isEmpty();
                 }
             };
 
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
-            child = ctx.createChild(row.newCol(), true, ctx.getModel());
+            childCtx = ctx.createChild(row.newCol(), ctx.getModel());
+            childCtx.init(this, viewMode);
         }
 
-        final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
-        mapper.buildView(child.init(this, viewMode));
+        // onBeforeBuild
+        final WicketBuildContext finalCtx = childCtx;
+        listeners.stream().forEach(it -> it.onBeforeBuild(finalCtx, mapper));
+
+        mapper.buildView(finalCtx);
+
+        // onAfterBuild
+        listeners.stream().forEach(it -> it.onAfterBuild(finalCtx, mapper));
     }
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
@@ -138,12 +179,12 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 return (IWicketComponentMapper) customMapper;
             } else {
                 throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessário " + customMapper.getClass().getName()
-                        + " implementar IWicketComponentMapper", instancia);
+                    + " implementar IWicketComponentMapper", instancia);
             }
         } else {
             final SView view = ViewResolver.resolve(instancia);
             return getViewMapperRegistry().getMapper(instancia, view).orElseThrow(
-                    () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
+                () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
         }
     }
 
@@ -155,6 +196,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
                 .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
+                .register(STypeBoolean.class,    SViewBooleanSwitch.class,              BooleanSwitchMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class))
                 .register(STypeLong.class,                                              () -> new NumberMapper<>(Long.class))

@@ -96,6 +96,11 @@ public final class SFormXMLUtil {
         return (T) fromXMLInterno(novo, xml);
     }
 
+    @Nonnull
+    public static <T extends SInstance> void fromXML(@Nonnull T instance, @Nullable String xml) {
+        fromXMLInterno(instance, parseXml(xml));
+    }
+
     /**
      * Preenche a instância criada com o xml fornecido.
      */

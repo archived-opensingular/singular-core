@@ -42,9 +42,8 @@ import java.util.function.Supplier;
  */
 public class SingularFormPanelTest {
 
-
     private ConfigurableApplicationContext springContext;
-    protected WicketTester tester;
+    protected WicketTester                 tester;
 
     @Before
     public void setUp() {
@@ -56,7 +55,7 @@ public class SingularFormPanelTest {
         MockApplication wicketApplication = new MockApplication();
 
         wicketApplication.getComponentInstantiationListeners().add(
-                new SpringComponentInjector(wicketApplication, springContext, true));
+            new SpringComponentInjector(wicketApplication, springContext, true));
 
         tester = new SingularWicketTester(wicketApplication);
     }
@@ -72,12 +71,12 @@ public class SingularFormPanelTest {
 
     public static class WrongSerializationPage extends WebPage {
 
-        private SingularFormPanel singularFormPanel;
+        private SingularFormPanel   singularFormPanel;
 
-        public Object o;
+        public Object               o;
 
         @Inject
-        private MyTestService myTestService;
+        private MyTestService       myTestService;
 
         @Inject
         @Named("formConfig")
@@ -103,7 +102,8 @@ public class SingularFormPanelTest {
             singularFormPanel.setAnnotationMode(AnnotationMode.READ_ONLY);
             singularFormPanel.setViewMode(ViewMode.READ_ONLY);
 
-            add(new Form("form").add(singularFormPanel));
+            add(new Form<>("form")
+                .add(singularFormPanel));
         }
     }
 
