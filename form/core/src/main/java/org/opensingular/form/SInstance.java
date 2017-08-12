@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
@@ -583,6 +584,15 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     public Collection<SInstance> getAttributes() {
         return AttributeValuesManager.staticGetAttributes(attributes);
+    }
+
+    /**
+     * Looks for the best match implementation of the aspect being request.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    @Nonnull
+    public <T> Optional<T> getAspect(@Nonnull AspectRef<T> aspectRef) {
+        return getDictionary().getMasterAspectRegistry().getAspect(this, aspectRef);
     }
 
     @Nullable
