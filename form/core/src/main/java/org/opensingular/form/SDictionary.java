@@ -18,6 +18,7 @@ package org.opensingular.form;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import org.opensingular.form.aspect.MasterAspectRegistry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.view.ViewResolver;
@@ -49,6 +50,9 @@ public class SDictionary {
 
     /** Lista de processadores pendentes para execução para novos SType. */
     Multimap<SType<?>, Runnable> pendingTypeProcessorExecution;
+
+    /** List of aspect registry associated to this {@link SDictionary}. */
+    private MasterAspectRegistry masterAspectRegistry;
 
     private SDictionary() {
     }
@@ -366,5 +370,13 @@ public class SDictionary {
             ref = getAttributeReferenceOrException(atr.getNameFull());
         }
         return ref;
+    }
+
+    /** Returns the registry of aspect registries associeted to this {@link SDictionary}. */
+    final MasterAspectRegistry getMasterAspectRegistry() {
+        if (masterAspectRegistry == null) {
+            masterAspectRegistry = new MasterAspectRegistry();
+        }
+        return masterAspectRegistry;
     }
 }
