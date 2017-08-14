@@ -81,7 +81,7 @@ public abstract class TableToolSimpleTestBase {
 
     protected TableTool testSimpleTable_withSuperTitle_build() {
         TableTool table = createTableToolWith3Columns();
-        table.addSuperTitulo(1,2,"Super");
+        table.addSuperTitle(1,2,"Super");
         setSimpleData(table);
         return table;
     }
@@ -90,7 +90,7 @@ public abstract class TableToolSimpleTestBase {
 
     protected TableTool testSimpleTable_withTotalizationLine1_build() {
         TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
+        table.setShowTotalLine(true);
         setSimpleData(table);
         return table;
     }
@@ -99,8 +99,8 @@ public abstract class TableToolSimpleTestBase {
 
     protected TableTool testSimpleTable_withTotalizationLine2_build() {
         TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
-        table.getColumn(1).setTotalizar(false);
+        table.setShowTotalLine(true);
+        table.getColumn(1).setTotalize(false);
         setSimpleData(table);
         return table;
     }
@@ -113,11 +113,11 @@ public abstract class TableToolSimpleTestBase {
         table.addColumn(ColumnType.INTEGER, "B");
         table.addColumn(ColumnType.NUMBER, "C");
         table.addColumn(ColumnType.STRING, "D").setAlignmentCenter();
-        table.addSuperTitulo(1,2,"Super");
-        table.setTotalizar(true);
-        table.getColumn(1).setTotalizar(false);
+        table.addSuperTitle(1,2,"Super");
+        table.setShowTotalLine(true);
+        table.getColumn(1).setTotalize(false);
 
-        PopulatorTable populator = table.createSimpleTablePopulator();
+        TablePopulator populator = table.createSimpleTablePopulator();
         populator.insertLine("L0", 3, 10.2, "Flavio Almeida");
         populator.insertLine("L1", 10, 20.2, "Paulo");
         populator.insertLine("L2", 5, 1000.21, null);

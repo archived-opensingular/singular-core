@@ -19,6 +19,7 @@ package org.opensingular.form;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.form.util.ArrUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,20 +63,20 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
 
     @Nullable
     protected final SInstance set(@Nonnull AttrInternalRef ref, @Nullable SInstance attrInstance) {
-        attributes = AtrUtil.arraySet(attributes, ref.getIndex(), attrInstance, SInstance.class, ref.getMax());
+        attributes = ArrUtil.arraySet(attributes, ref.getIndex(), attrInstance, SInstance.class, ref.getMax());
         return attrInstance;
     }
 
     /** Lista todos os atributos definidos. */
     @Nonnull
     public final Collection<SInstance> getAttributes() {
-        return AtrUtil.arrayAsCollection(attributes);
+        return ArrUtil.arrayAsCollection(attributes);
     }
 
     /** Retorna o atributo se existir associado no mapa atual de atributos. */
     @Nullable
     public SInstance get(@Nonnull AttrInternalRef ref) {
-        SInstance instance = AtrUtil.arrayGet(attributes, ref.getIndex());
+        SInstance instance = ArrUtil.arrayGet(attributes, ref.getIndex());
         if (instance != null && instance.isAttributeShouldMigrate() && ref.isResolved()) {
             //Precida migra o atributo de String para o tipo definitivo, pois a carga do valor foi lazy
             SInstance newAttr = createNewAttribute(ref);
@@ -174,6 +175,6 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
 
     @Nonnull
     public static Collection<SInstance> staticGetAttributes(@Nullable AttributeValuesManager attributes) {
-        return attributes == null ? Collections.emptyList() : AtrUtil.arrayAsCollection(attributes.attributes);
+        return attributes == null ? Collections.emptyList() : ArrUtil.arrayAsCollection(attributes.attributes);
     }
 }

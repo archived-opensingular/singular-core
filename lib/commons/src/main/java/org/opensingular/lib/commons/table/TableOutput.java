@@ -100,7 +100,7 @@ public abstract class TableOutput {
      * @param rowSpan    Quantas linhas deve ocupar o título
      * @param asSubTitle Indica se está sendo gerado título de baixo de um super título
      */
-    public abstract void generateTiltleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan,
+    public abstract void generateTitleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan,
             boolean asSubTitle, boolean columnWithSeparator);
 
     /**
