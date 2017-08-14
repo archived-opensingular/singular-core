@@ -16,6 +16,9 @@
 
 package org.opensingular.lib.commons.table;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -248,20 +251,20 @@ final class AlocproToolkit {
         return null;
     }
 
-    public static String plainTextToHtml(CharSequence original, boolean converterURL) {
+    public static String plainTextToHtml(@Nullable String original, boolean converterURL) {
         if (original == null) {
             return null;
         }
-        CharSequence cs = escapeHTML(original);
+        String cs = StringEscapeUtils.escapeHtml4(original);
         if (converterURL) {
             cs = converterURL(cs);
         }
-        return cs.toString();
+        return cs;
     }
 
     private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" + "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
 
-    private static CharSequence converterURL(CharSequence original) {
+    private static String converterURL(String original) {
         Matcher matcher = PATTERN_URL.matcher(original);
         if (matcher.find()) {
             if (matcher.group(1).startsWith("http://")) {
@@ -272,53 +275,6 @@ final class AlocproToolkit {
         } else {
             return original;
         }
-    }
-
-    private static StringBuilder escapeHTML(CharSequence s) {
-        StringBuilder builder = new StringBuilder(Math.min(s.length() * 2, 32));
-        boolean previousWasASpace = false;
-        int length = s.length();
-        for (int i = 0; i < length; i++) {
-            char c = s.charAt(i);
-            if (c == ' ') {
-                if (previousWasASpace) {
-                    builder.append("&nbsp;");
-                    previousWasASpace = false;
-                    continue;
-                }
-                previousWasASpace = true;
-            } else {
-                previousWasASpace = false;
-            }
-            switch (c) {
-                case '<':
-                    builder.append("&lt;");
-                    break;
-                case '>':
-                    builder.append("&gt;");
-                    break;
-                case '&':
-                    builder.append("&amp;");
-                    break;
-                case '"':
-                    builder.append("&quot;");
-                    break;
-                case '\n':
-                    builder.append("<br>");
-                    break;
-                // We need Tab support here, because we print StackTraces as HTML
-                case '\t':
-                    builder.append("&nbsp; &nbsp; &nbsp;");
-                    break;
-                default:
-                    if (c < 128) {
-                        builder.append(c);
-                    } else {
-                        builder.append("&#").append((int) c).append(';');
-                    }
-            }
-        }
-        return builder;
     }
 
     public static String printNumber(Number value, int qtdDigitos) {

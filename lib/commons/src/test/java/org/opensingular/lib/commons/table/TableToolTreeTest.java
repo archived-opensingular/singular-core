@@ -47,7 +47,7 @@ public class TableToolTreeTest {
     @Test
     public void tesWithTotalizationLine() {
         TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
+        table.setShowTotalLine(true);
         TableOutputSimulated output = generateWithTreeData(table);
 
         output.getResult().assertLinesSize(9);
@@ -73,7 +73,7 @@ public class TableToolTreeTest {
     @Test
     public void testPercetOfParent() {
         TableTool table = createTableToolWith3Columns();
-        table.getColumn(1).setCalcularPercentualPai(true);
+        table.getColumn(1).setShowAsPercentageOfParent(true);
         TableOutputSimulated output = generateWithTreeData(table);
 
         output.getResult().debug();

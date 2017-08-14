@@ -100,7 +100,7 @@ public class TableOutputSimulated extends TableOutput {
     public void generateTitleLineEnd(OutputTableContext ctx, boolean superTitleLine) { }
 
     @Override
-    public void generateTiltleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
+    public void generateTitleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
             boolean columnWithSeparator) {
         if (columnWithSeparator) {
             table.add("#");

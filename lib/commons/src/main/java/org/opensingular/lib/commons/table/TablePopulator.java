@@ -19,7 +19,7 @@ package org.opensingular.lib.commons.table;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PopulatorTable {
+public class TablePopulator {
 
     private final TableTool tableTool;
 
@@ -27,17 +27,17 @@ public class PopulatorTable {
 
     private InfoCelula ultima;
 
-    public PopulatorTable(TableTool tableTool) {
+    public TablePopulator(TableTool tableTool) {
         this.tableTool = tableTool;
     }
 
-    public PopulatorTable insertLine() {
+    public TablePopulator insertLine() {
         celulas.add(new InfoCelula[tableTool.getColumns().size()]);
         ultima = null;
         return this;
     }
 
-    public PopulatorTable insertLine(Object... valores) {
+    public TablePopulator insertLine(Object... valores) {
         insertLine();
         setValores(valores);
         return this;

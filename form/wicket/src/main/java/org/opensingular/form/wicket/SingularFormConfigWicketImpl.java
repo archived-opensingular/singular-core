@@ -16,30 +16,11 @@
 
 package org.opensingular.form.wicket;
 
-import java.util.Map;
-
-import org.opensingular.form.SType;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.form.context.SingularFormConfigImpl;
 
 public class SingularFormConfigWicketImpl extends SingularFormConfigImpl implements SingularFormConfigWicket {
 
     private UIBuilderWicket builder = new UIBuilderWicket();
-
-    public void setCustomMappers(Map<Class<? extends SType<?>>, Class<IWicketComponentMapper>> customMappers) {
-        if (customMappers != null) {
-            for (Map.Entry<Class<? extends SType<?>>, Class<IWicketComponentMapper>> entry : customMappers.entrySet()) {
-                Class<IWicketComponentMapper> c = entry.getValue();
-                builder.getViewMapperRegistry().register(entry.getKey(), () -> {
-                    try {
-                        return c.newInstance();
-                    } catch (Exception e) {
-                        throw new SingularFormException("Não é possível instanciar o mapper: " + entry.getValue(), e);
-                    }
-                });
-            }
-        }
-    }
 
     @Override
     public UIBuilderWicket getUIBuilder() {

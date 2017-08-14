@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form;
+package org.opensingular.internal.form.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,9 +33,9 @@ import java.util.NoSuchElementException;
  *
  * @author Daniel C. Bordin on 01/05/2017.
  */
-final class AtrUtil {
+public final class ArrUtil {
 
-    private AtrUtil() {}
+    private ArrUtil() {}
 
     /**
      * Seta o valor informado na posição indicada. Criará um novo array (copiando os dados anteriores),
@@ -46,7 +46,7 @@ final class AtrUtil {
      * @return O array original ou um novo array (se necessário expadir/criar o mesmo)
      */
     @Nullable
-    final static <T> T[] arraySet(@Nullable T[] original, int index, @Nullable T value, Class<T> classArray,
+    public final static <T> T[] arraySet(@Nullable T[] original, int index, @Nullable T value, Class<T> classArray,
             int defaultMaxSize) {
         T[] content = original;
         if (content == null) {
@@ -69,13 +69,13 @@ final class AtrUtil {
      * a posição extrapolar o tamanho do array. Nesses últimos casos, retorna null.
      */
     @Nullable
-    final static <T> T arrayGet(@Nullable T[] original, int index) {
+    public final static <T> T arrayGet(@Nullable T[] original, int index) {
         return (original == null || original.length <= index) ? null : original[index];
     }
 
     /** Retorna uma lista apenas com os elementos não nulos do array informado, mesmo se o array for null. */
     @Nonnull
-    final static <T> List<T> arrayAsCollection(@Nullable T[] original) {
+    public final static <T> List<T> arrayAsCollection(@Nullable T[] original) {
         if (original == null) {
             return Collections.emptyList();
         }

@@ -13,7 +13,7 @@ import org.opensingular.lib.commons.report.ReportFilter;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.table.ColumnType;
-import org.opensingular.lib.commons.table.PopulatorTable;
+import org.opensingular.lib.commons.table.TablePopulator;
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
@@ -82,7 +82,7 @@ public class SingualrReportPanelDownloadTest extends WicketTestCase {
                 TableTool tt = new TableTool();
                 tt.addColumn(ColumnType.STRING, "nome");
                 tt.addColumn(ColumnType.INTEGER, "idade");
-                PopulatorTable populator = tt.createSimpleTablePopulator();
+                TablePopulator populator = tt.createSimpleTablePopulator();
                 populator.insertLine();
                 populator.setValor(0, "John");
                 populator.setValor(1, 25);
