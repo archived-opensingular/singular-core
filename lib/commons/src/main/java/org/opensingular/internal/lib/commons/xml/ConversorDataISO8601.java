@@ -286,7 +286,7 @@ public final class ConversorDataISO8601 {
     }
 
     private static boolean isTimeZero(int hour, int minute, int second, int milli, int nano) {
-        return (hour == 0) && (minute == 0) && (second == 0) && (milli == 0) ? (nano == 0) : false;
+        return (hour == 0) && (minute == 0) && (second == 0) ? (milli == 0) && (nano == 0) : false;
     }
 
     private static void formatYearMonthDay(StringBuilder buffer, int year, int month, int day) {

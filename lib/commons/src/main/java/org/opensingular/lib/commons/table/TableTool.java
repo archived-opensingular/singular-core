@@ -486,61 +486,65 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         int linhaCor = 0;
         InfoLinha line = null;
         for (int i = 0; i < linha.length; i++) {
-            if (linha[i] != null) {
-                if (nivelLinha == -1) {
-                    nivelLinha = i;
-                    contadorLinha[i]++;
-                    for (int j = i + 1; j < contadorLinha.length; j++) {
-                        contadorLinha[j] = contadorLinha[i];
-                    }
-                    linhaCor = contadorLinha[i];
-                }
-                ctx.getLineReadContext().setLevel(nivelLinha);
-                line = linha[i].recuperarValores(ctx.getLineReadContext(), i, nivelLinha == i, false);
+            if (linha[i] == null) {
+                continue;
             }
+            if (nivelLinha == -1) {
+                nivelLinha = i;
+                contadorLinha[i]++;
+                for (int j = i + 1; j < contadorLinha.length; j++) {
+                    contadorLinha[j] = contadorLinha[i];
+                }
+                linhaCor = contadorLinha[i];
+            }
+            ctx.getLineReadContext().setLevel(nivelLinha);
+            line = linha[i].recuperarValores(ctx.getLineReadContext(), i, nivelLinha == i, false);
         }
         if (line == null) {
             throw new SingularException("Invalid State");
         }
         if (ctx.isExibirLinha()) {
-            int lineAlternation = isCorLinhaAlternada() ? linhaCor : -1;
-            ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
-
-            int idxColuna = 0;
-            boolean nextColumnWithSeparator = false;
-            while (idxColuna < ctx.getVisibleColuns().size()) {
-                Column c = ctx.getVisibleColuns().get(idxColuna);
-                ctx.setIndiceColunaAtual(idxColuna);
-                int qtdSpan = 1;
-                if (c == null) {
-                    if (linha[0] != null) {
-                        nextColumnWithSeparator = true;
-                    }
-                } else {
-                    int nivel = c.getNivelDados();
-                    InfoCelula cell = line.get(c);
-                    if (nivel >= nivelLinha) {
-                        OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
-                        nextColumnWithSeparator = false;
-                        if (linha[nivel] != null) {
-                            int rowSpan = linha[nivel].getLinhas();
-                            ctxCell.getTempDecorator().setRowSpan(rowSpan);
-                        }
-                        if (ctxCell.getTempDecorator().getRowSpan() != 0) {
-                            ctxCell.setLevel(colunaIndentada == idxColuna ? nivel : -1);
-                            ctx.getOutput().generateCell(ctxCell);
-                        }
-
-                        addToTotal(c, cell, nivel);
-                        qtdSpan = ctxCell.getTempDecorator().getColSpan();
-                    }
-                }
-                idxColuna += qtdSpan;
-            }
-            ctx.getOutput().generateLineSimpleEnd(ctx);
-
-            ctx.incIndiceLinhaAtual();
+            generateTableByLevelLine(linha, ctx, line, nivelLinha, linhaCor);
         }
+    }
+
+    private void generateTableByLevelLine(DadoLinha[] linha, OutputTableContext ctx, InfoLinha line, int nivelLinha,
+            int linhaCor) {
+        int lineAlternation = isCorLinhaAlternada() ? linhaCor : -1;
+        ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
+
+        int columnIndex = 0;
+        boolean nextColumnWithSeparator = false;
+        while (columnIndex < ctx.getVisibleColuns().size()) {
+            Column c = ctx.getVisibleColuns().get(columnIndex);
+            ctx.setIndiceColunaAtual(columnIndex);
+            int qtdSpan = 1;
+            if (c == null) {
+                if (linha[0] != null) {
+                    nextColumnWithSeparator = true;
+                }
+            } else if (c.getNivelDados() >= nivelLinha) {
+                int level = c.getNivelDados();
+                InfoCelula cell = line.get(c);
+                OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
+                nextColumnWithSeparator = false;
+                if (linha[level] != null) {
+                    int rowSpan = linha[level].getLinhas();
+                    ctxCell.getTempDecorator().setRowSpan(rowSpan);
+                }
+                if (ctxCell.getTempDecorator().getRowSpan() != 0) {
+                    ctxCell.setLevel(colunaIndentada == columnIndex ? level : -1);
+                    ctx.getOutput().generateCell(ctxCell);
+                }
+
+                addToTotal(c, cell, level);
+                qtdSpan = ctxCell.getTempDecorator().getColSpan();
+            }
+            columnIndex += qtdSpan;
+        }
+        ctx.getOutput().generateLineSimpleEnd(ctx);
+
+        ctx.incIndiceLinhaAtual();
     }
 
     private Decorator resolverDecorator(OutputTableContext ctx, InfoLinha line) {
