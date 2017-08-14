@@ -100,7 +100,7 @@ public class TableOutputHtml extends TableOutput {
     public void generateTableStart(OutputTableContext ctx, TableTool tableTool) {
         println();
         print("<table id='"+tableid+"' cellpadding='0' cellspacing='0'");
-        if (tableTool.isCorLinhaAlternada()) {
+        if (tableTool.isStrippedLines()) {
             printAtributo("class", "T_t table table-bordered table-condensed table-hover table-striped");
         } else {
             printAtributo("class", "T_t table table-bordered table-condensed table-hover");
@@ -133,7 +133,7 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateBodyBlockStart(@Nonnull OutputTableContext ctx) {
         if (ctx.getTableTool().isSimpleTable()) {
-            if (ctx.getTableTool().isCorLinhaAlternada()) {
+            if (ctx.getTableTool().isStrippedLines()) {
                 println("<tbody class=\"T_content_simple T_striped\">");
             } else {
                 println("<tbody class=\"T_content_simple\">");

@@ -47,7 +47,7 @@ public class TableToolTreeTest {
     @Test
     public void tesWithTotalizationLine() {
         TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
+        table.setShowTotalLine(true);
         TableOutputSimulated output = generateWithTreeData(table);
 
         output.getResult().assertLinesSize(9);

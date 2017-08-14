@@ -120,8 +120,8 @@ public class SingleAspectRegistry<T, QUALIFIER> {
 
     private Optional<T> findAspect(@Nonnull SType<?> type, @Nonnull QualifierMatcher matcher) {
         T result = findAspectOnTypeTree(type, matcher);
-        if (result == null && !matcher.isAny() && QualifierMatcher.ANY != null) {
-            result = findAspectOnTypeTree(type, QualifierMatcher.ANY);
+        if (result == null && !matcher.isAny()) {
+            result = findAspectOnTypeTree(type, Objects.requireNonNull(QualifierMatcher.ANY));
         }
         return Optional.ofNullable(result);
     }

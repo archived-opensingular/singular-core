@@ -61,7 +61,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
     private int colunaIndentada;
 
-    private boolean corLinhaAlternada = true;
+    private boolean strippedLines = true;
 
     private List<ModificadorGerador> modificadores = new ArrayList<>();
 
@@ -69,7 +69,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
      * configura��o a respeito de gerar ou n�o uma linha com o total das colunas
      * no final da tabela
      */
-    private boolean totalizar_;
+    private boolean showTotalLine;
 
     /**
      * Indica qual nivel deve ser utilizado para totalizar
@@ -107,8 +107,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         return column;
     }
 
-    public Column addColumn(ColumnType tipo) {
-        return addColumn(tipo, null);
+    public Column addColumn(ColumnType type) {
+        return addColumn(type, null);
     }
 
     /**
@@ -253,12 +253,12 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
      * Indica se deve ser gerada uma linha com a soma total de cada coluna no
      * final da tabela
      */
-    public void setTotalizar(boolean totalizar) {
-        totalizar_ = totalizar;
+    public void setShowTotalLine(boolean showTotalLine) {
+        this.showTotalLine = showTotalLine;
     }
 
-    public boolean isTotalizar() {
-        return totalizar_;
+    public boolean isShowTotalLine() {
+        return showTotalLine;
     }
 
     /**
@@ -268,12 +268,12 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         this.nivelTotalizar = nivelTotalizar;
     }
 
-    public boolean isCorLinhaAlternada() {
-        return corLinhaAlternada;
+    public boolean isStrippedLines() {
+        return strippedLines;
     }
 
-    public void setCorLinhaAlternada(boolean corLinhaAlternada) {
-        this.corLinhaAlternada = corLinhaAlternada;
+    public void setStrippedLines(boolean strippedLines) {
+        this.strippedLines = strippedLines;
     }
 
     public List<Column> getColumns() {
@@ -284,9 +284,9 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         return columns.get(index);
     }
 
-    public Column getColumn(String titulo) {
-        return columns.stream().filter(c -> titulo.equalsIgnoreCase(c.getTitle())).findFirst().orElseGet(
-                () -> columns.stream().filter(c -> titulo.equalsIgnoreCase(c.getId())).findFirst().orElse(null));
+    public Column getColumn(String titleOrId) {
+        return columns.stream().filter(c -> titleOrId.equalsIgnoreCase(c.getTitle())).findFirst().orElseGet(
+                () -> columns.stream().filter(c -> titleOrId.equalsIgnoreCase(c.getId())).findFirst().orElse(null));
     }
 
     public void setInitialLevel(int initialLevel) {
@@ -392,7 +392,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             generateTitles(ctx);
         }
         gerarFilhos(dadoLeitor, ctx, nivelInicial);
-        if (totalizar_) {
+        if (showTotalLine) {
             generateTotalLine(ctx);
         }
 
@@ -510,7 +510,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
     private void generateTableByLevelLine(DadoLinha[] linha, OutputTableContext ctx, InfoLinha line, int nivelLinha,
             int linhaCor) {
-        int lineAlternation = isCorLinhaAlternada() ? linhaCor : -1;
+        int lineAlternation = isStrippedLines() ? linhaCor : -1;
         ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
 
         int columnIndex = 0;
@@ -603,7 +603,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             return;
         }
 
-        int lineAlternation = isCorLinhaAlternada() ? ctx.getIndiceLinhaAtual() % 2 : -1;
+        int lineAlternation = isStrippedLines() ? ctx.getIndiceLinhaAtual() % 2 : -1;
         ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
 
         int idxColuna = 0;
@@ -657,7 +657,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     private void addToTotal(Column c, InfoCelula cell, int nivel) {
-        if (totalizar_ && c.isTotalizar() && (nivelTotalizar == null || nivel == nivelTotalizar)) {
+        if (showTotalLine && c.isTotalizar() && (nivelTotalizar == null || nivel == nivelTotalizar)) {
             InfoCelula total = totalLine.get(c);
             Number value = null;
             if (cell.getValue() instanceof Number) {

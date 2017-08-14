@@ -90,7 +90,7 @@ public abstract class TableToolSimpleTestBase {
 
     protected TableTool testSimpleTable_withTotalizationLine1_build() {
         TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
+        table.setShowTotalLine(true);
         setSimpleData(table);
         return table;
     }
@@ -99,7 +99,7 @@ public abstract class TableToolSimpleTestBase {
 
     protected TableTool testSimpleTable_withTotalizationLine2_build() {
         TableTool table = createTableToolWith3Columns();
-        table.setTotalizar(true);
+        table.setShowTotalLine(true);
         table.getColumn(1).setTotalizar(false);
         setSimpleData(table);
         return table;
@@ -114,7 +114,7 @@ public abstract class TableToolSimpleTestBase {
         table.addColumn(ColumnType.NUMBER, "C");
         table.addColumn(ColumnType.STRING, "D").setAlignmentCenter();
         table.addSuperTitle(1,2,"Super");
-        table.setTotalizar(true);
+        table.setShowTotalLine(true);
         table.getColumn(1).setTotalizar(false);
 
         TablePopulator populator = table.createSimpleTablePopulator();
