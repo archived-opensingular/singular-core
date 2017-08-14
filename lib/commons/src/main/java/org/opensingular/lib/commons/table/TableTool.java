@@ -657,7 +657,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     private void addToTotal(Column c, InfoCelula cell, int nivel) {
-        if (showTotalLine && c.isTotalizar() && (nivelTotalizar == null || nivel == nivelTotalizar)) {
+        if (showTotalLine && c.isTotalize() && (nivelTotalizar == null || nivel == nivelTotalizar)) {
             InfoCelula total = totalLine.get(c);
             Number value = null;
             if (cell.getValue() instanceof Number) {
@@ -685,7 +685,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         for (Column c : ctx.getVisibleColuns()) {
             if (c == null) {
                 nextColumnWithSeparator = true;
-            } else if (!c.isTotalizar()) {
+            } else if (!c.isTotalize()) {
                 ctx.getOutput().generateTotalCellSkip(ctx, c, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
             } else if (indiceColuna == 0) {

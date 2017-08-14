@@ -41,15 +41,15 @@ public class Column implements Serializable {
 
     private Alignment alignment;
 
-    private String width_;
+    private String width;
 
-    private boolean small_;
+    private boolean small;
 
-    private boolean strong_;
+    private boolean strong;
 
     private boolean visible = true;
 
-    private Integer qtdDigitos_;
+    private Integer fractionDigits;
 
     private boolean showZero;
 
@@ -57,7 +57,7 @@ public class Column implements Serializable {
 
     private Number valorReferenciaPercentual_;
 
-    private boolean totalizar = true;
+    private boolean totalize = true;
 
     private Double total;
 
@@ -94,12 +94,12 @@ public class Column implements Serializable {
         return decoratorValues;
     }
 
-    public boolean isTotalizar() {
-        return totalizar;
+    public boolean isTotalize() {
+        return totalize;
     }
 
-    public Column setTotalizar(boolean totalizar) {
-        this.totalizar = totalizar;
+    public Column setTotalize(boolean totalize) {
+        this.totalize = totalize;
         return this;
     }
 
@@ -165,46 +165,43 @@ public class Column implements Serializable {
     }
 
     public Column setWidth(String w) {
-        width_ = w;
+        this.width = w;
         return this;
     }
 
     public String getWidth() {
-        return width_;
+        return width;
     }
 
     public Column setSmall(boolean v) {
-        small_ = v;
+        this.small = v;
         return this;
     }
 
     public boolean isSmall() {
-        return small_;
+        return small;
     }
 
     public Column setStrong(boolean strong) {
-        strong_ = strong;
+        this.strong = strong;
         return this;
     }
 
     public boolean isStrong() {
-        return strong_;
+        return strong;
     }
 
-    public Column setQtdDigitos(Integer qtd) {
-        qtdDigitos_ = qtd;
+    public Column setFractionDigits(Integer qtd) {
+        fractionDigits = qtd;
         return this;
     }
 
-    public Integer getQtdDigitos() {
-        return qtdDigitos_;
+    public Integer getFractionDigits() {
+        return fractionDigits;
     }
 
-    int getQtdDigitos(int defaultNumberOfDigits) {
-        if (qtdDigitos_ != null) {
-            return qtdDigitos_;
-        }
-        return defaultNumberOfDigits;
+    int getFractionDigits(int defaultNumberOfDigits) {
+        return fractionDigits != null ? fractionDigits : defaultNumberOfDigits;
     }
 
     public Alignment getAlignment() {

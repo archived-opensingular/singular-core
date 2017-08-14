@@ -56,7 +56,7 @@ public class TableToolColumTypeTest {
 
     @Test
     public void testNumber_setPrecision() {
-        TableTool table = createTableWithNumber(c -> c.setQtdDigitos(3));
+        TableTool table = createTableWithNumber(c -> c.setFractionDigits(3));
         TableOutputSimulated output = generate(table, p -> {
             p.insertLine(1.2345, 1.2345, 1.2345, 1.2345, 1.2345);
         });

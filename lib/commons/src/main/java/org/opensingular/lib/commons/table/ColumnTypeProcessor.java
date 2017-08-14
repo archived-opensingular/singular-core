@@ -273,7 +273,7 @@ public interface ColumnTypeProcessor {
         }
 
         protected String format(Column column, Number value) {
-            return AlocproToolkit.printNumber(value, column.getQtdDigitos(defaultNumberOfDigits));
+            return AlocproToolkit.printNumber(value, column.getFractionDigits(defaultNumberOfDigits));
         }
 
         @Override
