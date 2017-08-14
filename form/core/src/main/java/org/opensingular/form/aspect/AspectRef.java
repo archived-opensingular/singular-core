@@ -119,7 +119,6 @@ import java.util.function.Supplier;
  */
 public class AspectRef<ASPECT> {
 
-    @Nonnull
     private final Class<ASPECT> aspectClass;
 
     private final Class<? extends SingleAspectRegistry<ASPECT, ?>> registryClass;

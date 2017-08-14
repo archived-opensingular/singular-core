@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.wicket.test.SingularSimpleWicketTester;
 import org.opensingular.lib.commons.table.ColumnType;
-import org.opensingular.lib.commons.table.PopulatorTable;
+import org.opensingular.lib.commons.table.TablePopulator;
 import org.opensingular.lib.commons.table.TableTool;
 
 /**
@@ -60,7 +60,7 @@ public class WicketViewsUtilTest {
         private TableTool createContent() {
             TableTool table = new TableTool();
             table.addColumn(ColumnType.STRING, "A");
-            PopulatorTable populator = table.createSimpleTablePopulator();
+            TablePopulator populator = table.createSimpleTablePopulator();
             populator.insertLine("L0");
             return table;
         }

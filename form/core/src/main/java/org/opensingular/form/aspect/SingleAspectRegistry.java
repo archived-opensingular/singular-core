@@ -127,7 +127,7 @@ public class SingleAspectRegistry<T, QUALIFIER> {
     }
 
     @Nullable
-    private T findAspectOnTypeTree(@Nonnull SType<?> type, QualifierMatcher matcher) {
+    private T findAspectOnTypeTree(@Nonnull SType<?> type, @Nonnull QualifierMatcher matcher) {
         for (SType<?> current = type; current != null; current = current.getSuperType()) {
             Object result = InternalAccess.INTERNAL.getAspectDirect(current, getIndex());
             if (result == null && !isNextSuperTypeOfTheSameClass(current)) {
@@ -145,37 +145,35 @@ public class SingleAspectRegistry<T, QUALIFIER> {
         return null;
     }
 
-    private T lookupOnMap(SType<?> current, QualifierMatcher matcher) {
-        T result = null;
+    @Nullable
+    private T lookupOnMap(@Nonnull SType<?> current, @Nonnull QualifierMatcher matcher) {
         List<AspectEntry<T, QUALIFIER>> list = registry.get(current.getClass());
-        if (list != null) {
-            result = findEntryMoreRelevant(list, matcher);
+        if (list == null) {
+            return null;
         }
-        return result;
+        AspectEntry<T, QUALIFIER> currentEntry = null;
+        for (AspectEntry<T, QUALIFIER> entry : list) {
+            if (matcher.isMatch(entry)) {
+                currentEntry = selectBestMatch(matcher, currentEntry, entry);
+            }
+        }
+        return currentEntry == null ? null : currentEntry.getFactory().get();
     }
 
     private boolean isNextSuperTypeOfTheSameClass(SType<?> type) {
         return type.getSuperType() != null && type.getClass() == type.getSuperType().getClass();
     }
 
-    @Nullable
-    private T findEntryMoreRelevant(List<AspectEntry<T, QUALIFIER>> list, QualifierMatcher matcher) {
-        AspectEntry<T, QUALIFIER> result = null;
-        for (AspectEntry<T, QUALIFIER> entry : list) {
-            if (matcher.isMatch(entry)) {
-                if (result == null) {
-                    result = entry;
-                } else {
-                    int relevancy = matcher.compare(result, entry);
-                    if (relevancy > 0) {
-                        result = entry;
-                    } else if (relevancy == 0 || entry.getPriority() > result.getPriority()) {
-                        result = entry;
-                    }
-                }
-            }
+    private AspectEntry<T, QUALIFIER> selectBestMatch(QualifierMatcher matcher, AspectEntry<T, QUALIFIER> currentResult,
+            AspectEntry<T, QUALIFIER> newEntry) {
+        if (currentResult == null) {
+            return newEntry;
         }
-        return result.getFactory().get();
+        int relevancy = matcher.compare(currentResult, newEntry);
+        if (relevancy > 0 || (relevancy == 0 && newEntry.getPriority() > currentResult.getPriority())) {
+            return newEntry;
+        }
+        return currentResult;
     }
 
     final void setIndex(Integer index) {

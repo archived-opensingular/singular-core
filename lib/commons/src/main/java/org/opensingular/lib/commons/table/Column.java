@@ -39,9 +39,9 @@ public class Column implements Serializable {
 
     private String superTitle;
 
-    private String titulo_;
+    private String title;
 
-    private Alignment alinhamento_;
+    private Alignment alignment;
 
     private String width_;
 
@@ -63,7 +63,7 @@ public class Column implements Serializable {
 
     private Double total;
 
-    private boolean possuiSeparador;
+    private boolean hasSeparator;
 
     private int nivelDados = 0;
 
@@ -125,44 +125,44 @@ public class Column implements Serializable {
         return total;
     }
 
-    public void setTitle(String titulo) {
-        titulo_ = titulo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
-        return titulo_;
+        return title;
     }
 
-    public boolean isVisivel() {
+    public boolean isVisible() {
         return visible;
     }
 
-    public Column setAlinhamento(Alignment alignment) {
-        alinhamento_ = alignment;
+    public Column setAlignment(Alignment alignment) {
+        this.alignment = alignment;
         return this;
     }
 
-    public boolean isPossuiSeparador() {
-        return possuiSeparador;
+    public boolean hasSeparator() {
+        return hasSeparator;
     }
 
-    public Column setPossuiSeparador(boolean possuiSeparador) {
-        this.possuiSeparador = possuiSeparador;
+    public Column setHasSeparator(boolean hasSeparator) {
+        this.hasSeparator = hasSeparator;
         return this;
     }
 
     public Column setAlignmentLeft() {
-        alinhamento_ = Alignment.LEFT;
+        alignment = Alignment.LEFT;
         return this;
     }
 
     public Column setAlignmentCenter() {
-        alinhamento_ = Alignment.CENTER;
+        alignment = Alignment.CENTER;
         return this;
     }
 
     public Column setAlignmentRight() {
-        alinhamento_ = Alignment.RIGHT;
+        alignment = Alignment.RIGHT;
         return this;
     }
 
@@ -210,8 +210,8 @@ public class Column implements Serializable {
     }
 
     public Alignment getAlignment() {
-        if (alinhamento_ != null) {
-            return alinhamento_;
+        if (alignment != null) {
+            return alignment;
         }
         switch (type) {
             case DATE:

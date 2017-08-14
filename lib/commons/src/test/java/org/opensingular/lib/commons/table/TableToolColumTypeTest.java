@@ -112,8 +112,8 @@ public class TableToolColumTypeTest {
     }
 
     @NotNull
-    private TableOutputSimulated generate(TableTool table, Consumer<PopulatorTable> populatorCode) {
-        PopulatorTable p = new PopulatorTable(table);
+    private TableOutputSimulated generate(TableTool table, Consumer<TablePopulator> populatorCode) {
+        TablePopulator p = new TablePopulator(table);
         populatorCode.accept(p);
 
         TableOutputSimulated output = new TableOutputSimulated();

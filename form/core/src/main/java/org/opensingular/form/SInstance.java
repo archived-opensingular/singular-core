@@ -72,6 +72,7 @@ public abstract class SInstance implements SAttributeEnabled {
     private InstanceSerializableRef<SInstance> serializableRef;
     private ISInstanceListener.EventCollector eventCollector;
 
+    @Nonnull
     public SType<?> getType() {
         return type;
     }
