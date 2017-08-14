@@ -146,7 +146,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateTiltleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan, boolean asSubTitle, boolean columnWithSeparator) {
+    public void generateTitleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan, boolean asSubTitle, boolean columnWithSeparator) {
         if (column.getTitle() == null) {
             return;
         }

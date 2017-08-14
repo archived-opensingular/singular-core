@@ -24,6 +24,7 @@ import org.opensingular.lib.commons.base.SingularException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Fornece as implementações de manituplação de um tipo específicos de coluna, bem como meta dados sobre esse tipo.
@@ -69,6 +70,24 @@ public interface ColumnTypeProcessor {
     public static final ColumnTypeProcessor PERCENT = new ColumnTypeProcessorTypePercent();
     public static final ColumnTypeProcessor HOUR = new ColumnTypeProcessorTypeHour();
 
+    public default Column.Alignment getDefaultAlignment() {
+        return Column.Alignment.LEFT;
+    }
+
+    /**
+     * Verify the order between the two values.
+     *
+     * @see java.util.Comparator#compare(Object, Object)
+     */
+    public default int compare(@Nonnull Object v1, @Nonnull Object v2) {
+        if (v1 instanceof Comparable<?> && v1.getClass().isAssignableFrom(v2.getClass())) {
+            return ((Comparable<Object>) v1).compareTo(v2);
+        }
+        throw new SingularException(
+                "It's not possible to compare the object of the class " + v1.getClass().getName() + " and " +
+                        v2.getClass().getName());
+
+    }
 
     public static class PrintResult {
 
@@ -122,6 +141,20 @@ public interface ColumnTypeProcessor {
                 result.setContent((Boolean) value ? "Sim" : "Não");
             }
         }
+
+        @Override
+        public Column.Alignment getDefaultAlignment() {
+            return Column.Alignment.CENTER;
+        }
+
+        public int compare(@Nonnull Object v1, @Nonnull Object v2) {
+            if (v1 instanceof Boolean && v2 instanceof Boolean) {
+                return Boolean.compare((Boolean) v1, (Boolean) v2);
+            }
+            throw new SingularException(
+                    "It's not possible to compare the object of the class " + v1.getClass().getName() + " and " +
+                            v2.getClass().getName());
+        }
     }
 
     static class ColumnTypeProcessorTypeDateBased implements ColumnTypeProcessor {
@@ -153,6 +186,24 @@ public interface ColumnTypeProcessor {
             }
             return null;
         }
+
+        @Override
+        public Column.Alignment getDefaultAlignment() {
+            return Column.Alignment.CENTER;
+        }
+
+        public int compare(@Nonnull Object v1, @Nonnull Object v2) {
+            Date d1 = asDate(v1);
+            Date d2 = asDate(v2);
+            if (d1 == d2) {
+                return 0;
+            } else if( d1 == null) {
+                return -1;
+            } else if (d2 == null) {
+                return 1;
+            }
+            return d1.compareTo(d2);
+        }
     }
 
     static class ColumnTypeProcessorTypeRaw implements ColumnTypeProcessor {
@@ -161,6 +212,11 @@ public interface ColumnTypeProcessor {
         public void generatePrintValue(PrintResult result, Column column, Object value) {
             result.setContent(value == null ? null : value.toString());
         }
+
+        @Override
+        public int compare(@Nonnull Object v1, @Nonnull Object v2) {
+            return Objects.toString(v1).compareToIgnoreCase(Objects.toString(v2));
+        }
     }
 
     static class ColumnTypeProcessorTypeString implements ColumnTypeProcessor {
@@ -168,6 +224,11 @@ public interface ColumnTypeProcessor {
         @Override
         public void generatePrintValue(PrintResult result, Column column, Object value) {
             //Deixa o tratamento default, que inclui a introdução de escapes HTML
+        }
+
+        @Override
+        public int compare(@Nonnull Object v1, @Nonnull Object v2) {
+            return Objects.toString(v1).compareToIgnoreCase(Objects.toString(v2));
         }
     }
 
@@ -213,6 +274,23 @@ public interface ColumnTypeProcessor {
 
         protected String format(Column column, Number value) {
             return AlocproToolkit.printNumber(value, column.getQtdDigitos(defaultNumberOfDigits));
+        }
+
+        @Override
+        public Column.Alignment getDefaultAlignment() {
+            return Column.Alignment.RIGHT;
+        }
+
+        @Override
+        public int compare(@Nonnull Object v1, @Nonnull Object v2) {
+            if (v1 instanceof Integer && v2 instanceof Integer) {
+                return Integer.compare((Integer) v1, (Integer) v2);
+            } else if (v1 instanceof Number && v2 instanceof Number) {
+                return Double.compare(((Number) v1).doubleValue(), ((Number) v2).doubleValue());
+            }
+            throw new SingularException(
+                    "It's not possible to compare the object of the class " + v1.getClass().getName() + " and " +
+                            v2.getClass().getName());
         }
     }
 

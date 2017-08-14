@@ -828,7 +828,7 @@ public abstract class SInstance implements SAttributeEnabled {
         sb.append('(');
         sb.append("path=").append(getPathFull());
         sb.append("; type=");
-        if (getType() != null) {
+        if (type != null) {
             sb.append(getType().getClass().getSimpleName()).append('@').append(getType().getTypeId());
         }
         return sb;

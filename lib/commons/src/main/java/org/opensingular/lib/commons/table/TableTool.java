@@ -328,7 +328,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     private void addColumnSeparator(List<Column> visible) {
-        if (visible.size() != 0) {
+        if (! visible.isEmpty()) {
             visible.add(null);
         }
     }
@@ -420,7 +420,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             if (column == null) {
                 nextColumnWithSeparator = true;
             } else if ((column.getSuperTitle() != null) || !hasSuperTitles) {
-                ctx.getOutput().generateTiltleCell(ctx, column, 1, hasSuperTitles, nextColumnWithSeparator);
+                ctx.getOutput().generateTitleCell(ctx, column, 1, hasSuperTitles, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
             }
         }
@@ -436,7 +436,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             if (c == null) {
                 nextColumnWithSeparator = true;
             } else if (c.getSuperTitle() == null) {
-                ctx.getOutput().generateTiltleCell(ctx, c, 2, false, nextColumnWithSeparator);
+                ctx.getOutput().generateTitleCell(ctx, c, 2, false, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
             } else {
                 int ult = i;

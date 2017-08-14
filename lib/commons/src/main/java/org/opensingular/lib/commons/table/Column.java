@@ -16,12 +16,10 @@
 
 package org.opensingular.lib.commons.table;
 
-import com.google.common.base.MoreObjects;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Column implements Serializable {
 
@@ -213,26 +211,10 @@ public class Column implements Serializable {
         if (alignment != null) {
             return alignment;
         }
-        switch (type) {
-            case DATE:
-            case DAY:
-            case PERIODO:
-            case DATEHOURSHORT:
-            case BOOLEAN:
-            case DATEHOUR:
-                return Alignment.CENTER;
-            case HOUR:
-            case INTEGER:
-            case NUMBER:
-            case MONEY:
-            case PERCENT:
-                return Alignment.RIGHT;
-            default:
-                return Alignment.LEFT;
-        }
+        return getProcessor().getDefaultAlignment();
     }
 
-    public boolean isTipoAcao() {
+    public boolean isTypeAction() {
         return ColumnType.ACTION == type;
     }
 
@@ -320,72 +302,19 @@ public class Column implements Serializable {
     }
 
     public int compare(InfoCelula infoCelula1, InfoCelula infoCelula2) {
-        InfoCelula c1 = infoCelula1;
-        InfoCelula c2 = infoCelula2;
-        if (c1 != null && c1.getValue() == null) {
-            c1 = null;
-        }
-        if (c2 != null && c2.getValue() == null) {
-            c2 = null;
-        }
-        if (c1 == c2) {
+        Object v1 = normalizeToNull(infoCelula1);
+        Object v2 = normalizeToNull(infoCelula2);
+        if (v1 == v2) {
             return 0;
-        } else if (c1 == null) {
+        } else if (v1 == null) {
             return -1;
-        } else if (c2 == null) {
+        } else if (v2 == null) {
             return 1;
         }
-        switch (type) {
-            case STRING:
-            case HTML:
-                if (c1.getValorReal() == null || c2.getValorReal() == null) {
-                    return Objects.toString(c1.getValue()).compareToIgnoreCase(Objects.toString(c2.getValue()));
-                }
-                break;
-            case MONEY:
-            case NUMBER:
-            case INTEGER:
-            case PERCENT:
-                Object valorReal1 = MoreObjects.<Object>firstNonNull(c1.getValorReal(), c1.getValue());
-                Object valorReal2 = MoreObjects.<Object>firstNonNull(c2.getValorReal(), c2.getValue());
-                if (valorReal1 instanceof Number && valorReal2 instanceof Number) {
-                    if (valorReal1 instanceof Integer && valorReal2 instanceof Integer) {
-                        return ((Integer) valorReal1).intValue() - ((Integer) valorReal2).intValue();
-                    }
-                    double db1 = ((Number) valorReal1).doubleValue();
-                    double db2 = ((Number) valorReal2).doubleValue();
-                    return Double.compare(db1, db2);
-                }
-                break;
-            default:
-                if (c1.getValue() instanceof Comparable<?> && c1.getValue().getClass().isAssignableFrom(
-                        c2.getValue().getClass())) {
-                    return ((Comparable<?>) c1.getValue()).compareTo(c2.getValue());
-                }
-                throw new ColumnExpection("Comparador para coluna do tipo " + type + " n�o implementado");
-        }
-        throw new ColumnExpection("Não foi possivel executar a comparação do tipo " + type );
-
+        return getProcessor().compare(v1, v2);
     }
 
-    private static class ColumnExpection extends RuntimeException {
-        public ColumnExpection() {
-        }
-
-        public ColumnExpection(String message) {
-            super(message);
-        }
-
-        public ColumnExpection(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public ColumnExpection(Throwable cause) {
-            super(cause);
-        }
-
-        public ColumnExpection(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-            super(message, cause, enableSuppression, writableStackTrace);
-        }
+    private Object normalizeToNull(InfoCelula c) {
+        return c == null ? null : c.getValorReal() != null ? c.getValorReal() : c.getValue();
     }
 }

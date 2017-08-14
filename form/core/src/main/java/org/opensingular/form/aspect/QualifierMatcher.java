@@ -32,6 +32,7 @@ import java.util.Comparator;
 public interface QualifierMatcher extends Comparator<AspectEntry<?, ?>> {
 
     /** A dummy matcher that answer true for any aspect entry. */
+    @Nonnull
     public static final QualifierMatcher ANY = new QualifierMatcher() {
 
         @Override

@@ -255,8 +255,7 @@ public final class ConversorDataISO8601 {
             int day,
             int hour,
             int minute,
-            int second,
-            int mili,
+            int second, int milli,
             int nano,
             byte precision) {
 
@@ -264,7 +263,7 @@ public final class ConversorDataISO8601 {
 
         formatYearMonthDay(buffer, year, month, day);
 
-        if ((precision == DIA) || isTimeZero(hour, minute, second, mili, nano)) {
+        if ((precision == DIA) || isTimeZero(hour, minute, second, milli, nano)) {
             return buffer.toString();
         }
 
@@ -276,8 +275,8 @@ public final class ConversorDataISO8601 {
         format2(buffer, second);
 
         if (nano == 0) {
-            formatMiliIfNecessary(buffer, mili, precision);
-        } else if (mili != 0) {
+            formatMiliIfNecessary(buffer, milli, precision);
+        } else if (milli != 0) {
             throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
         } else {
             formatMiliAndNanoIfNecessary(buffer, nano, precision);
@@ -286,8 +285,8 @@ public final class ConversorDataISO8601 {
         return buffer.toString();
     }
 
-    private static boolean isTimeZero(int hour, int minute, int second, int mili, int nano) {
-        return (hour == 0) && (minute == 0) && (second == 0) && (mili == 0) && (nano == 0);
+    private static boolean isTimeZero(int hour, int minute, int second, int milli, int nano) {
+        return (hour == 0) && (minute == 0) && (second == 0) && (milli == 0) ? (nano == 0) : false;
     }
 
     private static void formatYearMonthDay(StringBuilder buffer, int year, int month, int day) {
