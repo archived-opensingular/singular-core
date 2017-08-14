@@ -260,20 +260,22 @@ public abstract class SInstances {
      */
     @SuppressWarnings("unchecked")
     public static <A extends SInstance> Optional<A> findNearest(SInstance node, Class<? extends SType<A>> targetTypeClass) {
-       return findNearest(null, node, targetTypeClass);
+        return findNearest(null, node, targetTypeClass);
     }
 
     @SuppressWarnings("unchecked")
     public static <A extends SInstance> Optional<A> findNearest(SInstance children, SInstance node, Class<? extends SType<A>> targetTypeClass) {
-        Optional<A> desc = (Optional<A>) SInstances.streamDescendants(node, false)
+        Optional<A> desc = (Optional<A>) SInstances.streamDescendants(node, true)
                 .filter(sInstance -> sInstance != children)
                 .filter(sInstance -> targetTypeClass.isAssignableFrom(sInstance.getType().getClass()))
                 .findFirst();
         if (desc.isPresent()) {
             return desc;
-        }
-        else
+        } else if (node.getParent() != null) {
             return findNearest(node, node.getParent(), targetTypeClass);
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
