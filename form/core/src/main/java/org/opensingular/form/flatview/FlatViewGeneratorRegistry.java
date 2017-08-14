@@ -16,8 +16,13 @@
 
 package org.opensingular.form.flatview;
 
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.aspect.SingleAspectRegistry;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.country.brazil.STypeUF;
 
 import javax.annotation.Nonnull;
 
@@ -30,6 +35,10 @@ public class FlatViewGeneratorRegistry extends SingleAspectRegistry<FlatViewGene
 
     public FlatViewGeneratorRegistry(@Nonnull AspectRef<FlatViewGenerator> aspectRef) {
         super(aspectRef);
-        //TODO registrar as implementações aqui
+        add(STypeSimple.class, SISimpleFlatViewGenerator::new);
+        add(STypeList.class, SIListFlatViewGenerator::new);
+        add(STypeAttachment.class, SIAttachmentFlatViewGenerator::new);
+        add(STypeUF.class, UFFlatViewGenerator::new);
+        add(STypeComposite.class, SICompositeFlatViewGenerator::new);
     }
 }
