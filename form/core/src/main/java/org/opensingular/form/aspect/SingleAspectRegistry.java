@@ -122,7 +122,7 @@ public class SingleAspectRegistry<T, QUALIFIER> {
         Objects.requireNonNull(type);
         T result = findAspectOnTypeTree(type, matcher);
         if (result == null && !matcher.isAny()) {
-            result = findAspectOnTypeTree(type, Objects.requireNonNull(QualifierMatcher.ANY));
+            result = findAspectOnTypeTree(type, QualifierMatcher.ANY);
         }
         return Optional.ofNullable(result);
     }

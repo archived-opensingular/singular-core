@@ -25,6 +25,7 @@ import org.opensingular.lib.commons.views.ViewMultiGenerator;
 import org.opensingular.lib.commons.views.ViewOutput;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,23 +92,25 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     /**
-     * Adiciona uma nova coluna no relat�rio segundo o t�tulo e tipo informado
+     * Adiciona uma nova coluna no relat�rio segundo o t�tulo e type informado
      * (opcional). Considera a primeira coluna como sendo a respons�vel pela
      * identa��o.
      *
-     * @param tipo  Tipo da classe a ser condiserada ao formatar a coluna.
+     * @param type  Tipo da classe a ser condiserada ao formatar a coluna.
      * @param title Texto para aparecer na primeira linha.
      * @return Coluna criada, para eventual modifica��o de formata��o.
      */
-    public Column addColumn(ColumnType tipo, String title) {
-        Column column = new Column(tipo);
+    @Nonnull
+    public Column addColumn(@Nonnull ColumnType type, @Nullable String title) {
+        Column column = new Column(type);
         column.setTitle(title);
         column.setIndex(columns.size());
         columns.add(column);
         return column;
     }
 
-    public Column addColumn(ColumnType type) {
+    @Nonnull
+    public Column addColumn(@Nonnull ColumnType type) {
         return addColumn(type, null);
     }
 
@@ -461,8 +464,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             return;
         }
         ctx.getOutput().generateBodyBlockStart(ctx);
-        if (tabelaPorNivel || columns.stream().anyMatch(c -> c.getNivelDados() > 0)) {
-            int qtdNiveis = columns.stream().mapToInt(c -> c.getNivelDados()).max().getAsInt() + 1;
+        if (tabelaPorNivel || columns.stream().anyMatch(c -> c.getDataLevel() > 0)) {
+            int qtdNiveis = columns.stream().mapToInt(c -> c.getDataLevel()).max().getAsInt() + 1;
             int[] contadorLinha = new int[qtdNiveis];
             for (DadoLinha dado : filhos) {
                 for (DadoLinha[] linha : dado.normalizarNiveis(qtdNiveis)) {
@@ -523,8 +526,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
                 if (linha[0] != null) {
                     nextColumnWithSeparator = true;
                 }
-            } else if (c.getNivelDados() >= nivelLinha) {
-                int level = c.getNivelDados();
+            } else if (c.getDataLevel() >= nivelLinha) {
+                int level = c.getDataLevel();
                 InfoCelula cell = line.get(c);
                 OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
@@ -575,8 +578,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
                 idxColuna++;
             } else {
                 InfoCelula cell = line.get(c);
-                if ((nivel == 0) && c.isCalcularPercentualPai()) {
-                    c.setValorReferenciaPercentual(cell.getValueAsNumberOrNull());
+                if ((nivel == 0) && c.isShowAsPercentageOfParent()) {
+                    c.setValueForPercentageCalculation(cell.getValueAsNumberOrNull());
                 }
                 OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
@@ -616,8 +619,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
                 idxColuna++;
             } else {
                 InfoCelula cell = line.get(c);
-                if (c.isCalcularPercentualPai()) {
-                    c.setValorReferenciaPercentual(cell.getValueAsNumberOrNull());
+                if (c.isShowAsPercentageOfParent()) {
+                    c.setValueForPercentageCalculation(cell.getValueAsNumberOrNull());
                 }
                 OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
@@ -644,11 +647,11 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         OutputCellContext ctxCell = new OutputCellContext(ctx, cell, decorator);
 
         // Trata a exibição do valor como percentual do valor pai
-        if (ctxCell.getColumn().isCalcularPercentualPai()) {
+        if (ctxCell.getColumn().isShowAsPercentageOfParent()) {
             ctxCell.setColumnProcessor(ColumnType.PERCENT.getProcessor());
             if (ctxCell.getValue() instanceof Number) {
                 Number value = (Number) ctxCell.getValue();
-                value = AlocproToolkit.divide(value, ctxCell.getColumn().getValorReferenciaPercentual());
+                value = AlocproToolkit.divide(value, ctxCell.getColumn().getValueForPercentageCalculation());
                 ctxCell.setValue(value);
             }
         }

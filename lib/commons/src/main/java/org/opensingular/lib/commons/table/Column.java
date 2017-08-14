@@ -53,9 +53,9 @@ public class Column implements Serializable {
 
     private boolean showZero;
 
-    private boolean calcularPercentualPai_;
+    private boolean showAsPercentageOfParent;
 
-    private Number valorReferenciaPercentual_;
+    private Number valueForPercentageCalculation;
 
     private boolean totalize = true;
 
@@ -63,7 +63,7 @@ public class Column implements Serializable {
 
     private boolean hasSeparator;
 
-    private int nivelDados = 0;
+    private int dataLevel = 0;
 
     private Decorator decoratorTitleAndValue = new Decorator();
 
@@ -71,11 +71,11 @@ public class Column implements Serializable {
 
     private Decorator decoratorValues = decoratorTitleAndValue.newDerivedDecorator();
 
-    public Column(ColumnType tipo) {
-        setTipo(tipo);
+    public Column(@Nonnull ColumnType type) {
+        setType(type);
     }
 
-    public ColumnType getTipo() {
+    public ColumnType getType() {
         return type;
     }
 
@@ -240,29 +240,29 @@ public class Column implements Serializable {
     /**
      * Indica se o valor a ser exibido � um percentual do valor raiz da coluna.
      */
-    public final boolean isCalcularPercentualPai() {
-        return calcularPercentualPai_;
+    public final boolean isShowAsPercentageOfParent() {
+        return showAsPercentageOfParent;
     }
 
     /**
      * Indica se o valor a ser exibido � um percentual do valor raiz da coluna.
      */
-    public final Column setCalcularPercentualPai(boolean calcularPercentualPai) {
-        calcularPercentualPai_ = calcularPercentualPai;
+    public final Column setShowAsPercentageOfParent(boolean showAsPercentageOfParent) {
+        this.showAsPercentageOfParent = showAsPercentageOfParent;
         return this;
     }
 
-    final Number getValorReferenciaPercentual() {
-        return valorReferenciaPercentual_;
+    final Number getValueForPercentageCalculation() {
+        return valueForPercentageCalculation;
     }
 
-    final void setValorReferenciaPercentual(Number valorReferenciaPercentual) {
-        valorReferenciaPercentual_ = valorReferenciaPercentual;
+    final void setValueForPercentageCalculation(Number valueForPercentageCalculation) {
+        this.valueForPercentageCalculation = valueForPercentageCalculation;
     }
 
-    public void setTipo(ColumnType tipo_) {
-        this.type = tipo_;
-        this.processor = tipo_.getProcessor();
+    public void setType(@Nonnull ColumnType type) {
+        this.type = type;
+        this.processor = type.getProcessor();
     }
 
     @Nonnull
@@ -282,12 +282,12 @@ public class Column implements Serializable {
         return showZero;
     }
 
-    public void setNivelDados(int valor) {
-        nivelDados = valor;
+    public void setDataLevel(int valor) {
+        dataLevel = valor;
     }
 
-    public final int getNivelDados() {
-        return nivelDados;
+    public final int getDataLevel() {
+        return dataLevel;
     }
 
     public final int getIndex() {

@@ -27,8 +27,8 @@ class ModificadorGeradorAgrupar extends ModificadorGerador {
         super(table);
         this.column = column;
         for (Column c : getColunas()) {
-            if (c != column && c.getNivelDados() >= column.getNivelDados()) {
-                c.setNivelDados(c.getNivelDados() + 1);
+            if (c != column && c.getDataLevel() >= column.getDataLevel()) {
+                c.setDataLevel(c.getDataLevel() + 1);
             }
         }
     }
@@ -61,7 +61,7 @@ class ModificadorGeradorAgrupar extends ModificadorGerador {
             int posNova = posColuna;
             for (int i = posColuna - 1; i >= 0; i--) {
                 Column c = visiveis.get(i);
-                if (c.getNivelDados() > column.getNivelDados()) {
+                if (c.getDataLevel() > column.getDataLevel()) {
                     posNova = i;
                 }
             }

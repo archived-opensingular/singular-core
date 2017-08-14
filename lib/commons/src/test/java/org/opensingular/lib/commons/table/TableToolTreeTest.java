@@ -73,7 +73,7 @@ public class TableToolTreeTest {
     @Test
     public void testPercetOfParent() {
         TableTool table = createTableToolWith3Columns();
-        table.getColumn(1).setCalcularPercentualPai(true);
+        table.getColumn(1).setShowAsPercentageOfParent(true);
         TableOutputSimulated output = generateWithTreeData(table);
 
         output.getResult().debug();

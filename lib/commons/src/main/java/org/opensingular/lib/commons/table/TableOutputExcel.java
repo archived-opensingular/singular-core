@@ -96,7 +96,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         if (ctx.getValue() == null) {
             return;
         }
-        switch (ctx.getCell().getColumn().getTipo()) {
+        switch (ctx.getCell().getColumn().getType()) {
             case INTEGER:
             case NUMBER:
             case MONEY:
