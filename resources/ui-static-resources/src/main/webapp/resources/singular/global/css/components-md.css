@@ -12222,10 +12222,8 @@ Customized Bootstrap Tabs
 .tabs-left.nav-tabs {
   padding: 6px; }
   .tabs-left.nav-tabs > li {
-    border-radius: 4px;
     text-align: left; }
     .tabs-left.nav-tabs > li > a {
-      border-radius: 4px;
       display: block;
       margin-right: -1px;
       color: #40BAA7; }
