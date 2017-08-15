@@ -2,8 +2,8 @@ package org.opensingular.lib.commons.canvas;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.canvas.builder.RawHtmlBuilder;
 
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class HTMLCanvas implements DocumentCanvas {
-    private final PrintWriter writer;
+    private final RawHtmlBuilder rawHtmlBuilder;
     private final boolean showTitleLevel;
 
     private String titlePrefix;
@@ -19,14 +19,19 @@ public class HTMLCanvas implements DocumentCanvas {
     private int headerTagLevel;
     private Map<Integer, HTMLCanvas> indexChildMap;
 
-    public HTMLCanvas(PrintWriter writer, boolean showTitleLevel) {
-        this.writer = writer;
+    public HTMLCanvas(boolean showTitleLevel) {
+        this(new RawHtmlBuilder("div"), showTitleLevel);
+    }
+
+    public HTMLCanvas(RawHtmlBuilder rawHtmlBuilder, boolean showTitleLevel) {
+        this.rawHtmlBuilder = rawHtmlBuilder;
         this.showTitleLevel = showTitleLevel;
         this.titlePrefix = "";
         this.index = 0;
         this.indexChildMap = new HashMap<>();
         this.headerTagLevel = 1;
     }
+
 
     @Override
     public void addTitle(String title) {
@@ -37,10 +42,9 @@ public class HTMLCanvas implements DocumentCanvas {
             }
             index++;
         }
-        writer.write("<h" + headerTagLevel + ">");
-        writer.write(prefix);
-        writer.write(ObjectUtils.defaultIfNull(title, ""));
-        writer.write("</h" + headerTagLevel + ">");
+        RawHtmlBuilder header = this.rawHtmlBuilder.newChild("h"+headerTagLevel);
+        header.appendText(prefix);
+        header.appendText(ObjectUtils.defaultIfNull(title, ""));
         if (headerTagLevel == 1) {
             headerTagLevel++;
         }
@@ -50,7 +54,7 @@ public class HTMLCanvas implements DocumentCanvas {
     public DocumentCanvas newChild() {
         int titleIndex = (index - 1);
         if (!indexChildMap.containsKey(titleIndex)) {
-            HTMLCanvas newChild = new HTMLCanvas(writer, showTitleLevel);
+            HTMLCanvas newChild = new HTMLCanvas(rawHtmlBuilder.newChild("div"), showTitleLevel);
             if (showTitleLevel) {
                 newChild.index = 1;
                 newChild.headerTagLevel = childHeaderTagLevel();
@@ -72,35 +76,37 @@ public class HTMLCanvas implements DocumentCanvas {
 
     @Override
     public void label(String label, String value) {
-        writer.write("<span style='margin-right:25px;'>");
+        RawHtmlBuilder span = this.rawHtmlBuilder.newChild("span");
+        span.putAttribute("style", "margin-right:25px;");
         if (!StringUtils.isEmpty(label)) {
-            writer.write("<label style='font-weight:bold;'>");
-            writer.write(label);
-            writer.write(": </label>");
+            RawHtmlBuilder labelComp = span.newChild("label");
+            labelComp.putAttribute("style", "font-weight:bold;");
+            labelComp.appendText(label);
+            labelComp.appendText(": ");
         }
-        writer.write(defaultIfNull(value, ""));
-        writer.write("</span>");
+        span.appendText(defaultIfNull(value, ""));
     }
 
     @Override
     public void breakLine() {
-        writer.write("<br />");
+        rawHtmlBuilder.newChild("br");
     }
 
     @Override
     public void list(List<String> values) {
-        writer.write("<ul>");
+        RawHtmlBuilder ul = this.rawHtmlBuilder.newChild("ul");
         for (String v : values) {
-            writer.write("<li>");
-            writer.write(v);
-            writer.write("</li>");
+            RawHtmlBuilder li = ul.newChild("li");
+            li.appendText(v);
         }
-        writer.write("</ul>");
     }
 
     public void stylesheet(String css) {
-        writer.write("<style>");
-        writer.write(css);
-        writer.write("</style>");
+        RawHtmlBuilder style = rawHtmlBuilder.newChild("style");
+        style.appendTextWithoutEscape(css);
+    }
+
+    public String build() {
+        return rawHtmlBuilder.build();
     }
 }
