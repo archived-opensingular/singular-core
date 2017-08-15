@@ -92,7 +92,7 @@ public abstract class BSPanelGrid extends Panel {
                     "  $(window).scroll(function(){\n" +
                     "    if(isBellowPageHeader()){\n" +
                     "      $tab.css('position', 'fixed');\n" +
-                    "      $tab.css('top', $('.page-header.navbar.navbar-fixed-top').height() + 15);\n" +
+                    "      $tab.css('top', $('.page-header.navbar.navbar-fixed-top').height() + 25);\n" +
                     "      $tab.css('width', width);\n" +
                     "    } else{\n" +
                     "      $tab.css('position', 'relative');\n" +
