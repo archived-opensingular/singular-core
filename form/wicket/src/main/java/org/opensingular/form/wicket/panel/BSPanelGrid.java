@@ -46,6 +46,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SInstance;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public abstract class BSPanelGrid extends Panel {
 
@@ -56,6 +57,7 @@ public abstract class BSPanelGrid extends Panel {
     private BSGrid                container  = new BSGrid("grid");
     private Map<String, BSTab>    tabMap     = new LinkedHashMap<>();
     private BSTab                 activeTab  = null;
+    private WebMarkupContainer    tabMenu    = new WebMarkupContainer("tab-menu");
 
     public BSPanelGrid(String id) {
         super(id);
@@ -71,13 +73,50 @@ public abstract class BSPanelGrid extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         rebuildForm();
+        tabMenu.add(WicketUtils.$b.onReadyScript(c -> {
+            return "(function(){\n" +
+                    "  var $tab = $('#"+c.getMarkupId(true)+"'),\n" +
+                    "    offsetTop = ($tab.offset().top),\n" +
+                    "    width;\n" +
+                    "\n" +
+                    "  function saveTabParentWidth(){\n" +
+                    "    width = $tab.parent().width();\n" +
+                    "  }\n" +
+                    "\n" +
+                    "  function isBellowPageHeader(){\n" +
+                    "    return offsetTop - $(window).scrollTop() <= $('.page-header.navbar.navbar-fixed-top').height();\n" +
+                    "  }\n" +
+                    "\n" +
+                    "  saveTabParentWidth();\n" +
+                    "\n" +
+                    "  $(window).scroll(function(){\n" +
+                    "    if(isBellowPageHeader()){\n" +
+                    "      $tab.css('position', 'fixed');\n" +
+                    "      $tab.css('top', $('.page-header.navbar.navbar-fixed-top').height() + 15);\n" +
+                    "      $tab.css('width', width);\n" +
+                    "    } else{\n" +
+                    "      $tab.css('position', 'relative');\n" +
+                    "      $tab.css('top', 'auto');\n" +
+                    "      $tab.css('width', 'auto');\n" +
+                    "    }\n" +
+                    "  });\n" +
+                    "\n" +
+                    "  $(window).resize(function(){\n" +
+                    "    saveTabParentWidth();\n" +
+                    "    if(isBellowPageHeader()){\n" +
+                    "      $tab.css('width', width);\n" +
+                    "    } \n" +
+                    "  });\n" +
+                    "}());";
+        }));
     }
+
 
     private void rebuildForm() {
         add(form);
         form.add(navigation);
         form.add(content);
-        navigation.add(buildTabControl());
+        navigation.add(tabMenu.add(buildTabControl()));
         buildTabContent();
 
         configureColspan();
