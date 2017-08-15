@@ -11,6 +11,7 @@ public class MockDocumentCanvas implements DocumentCanvas {
 
     private List<String> titles = new ArrayList<>();
     private List<MockDocumentCanvas> children = new ArrayList<>();
+    private List<FormItem> formItens = new ArrayList<>();
 
 
     @Override
@@ -27,7 +28,7 @@ public class MockDocumentCanvas implements DocumentCanvas {
 
     @Override
     public void label(FormItem formItem) {
-
+        formItens.add(formItem);
     }
 
     @Override
@@ -53,5 +54,9 @@ public class MockDocumentCanvas implements DocumentCanvas {
     public MockDocumentCanvas assertChildCount(int i) {
         Assert.assertEquals(i, children.size());
         return this;
+    }
+
+    public void assertLabelValue(String value) {
+        Assert.assertTrue(formItens.stream().map(FormItem::getValue).anyMatch(value::equalsIgnoreCase));
     }
 }
