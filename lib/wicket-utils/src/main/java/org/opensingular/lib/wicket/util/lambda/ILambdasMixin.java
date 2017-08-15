@@ -24,11 +24,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.collections.ComparatorUtils;
+import org.apache.wicket.model.IModel;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
-import org.apache.commons.collections.ComparatorUtils;
-import org.apache.wicket.model.IModel;
 
 public interface ILambdasMixin {
 
@@ -123,5 +123,11 @@ public interface ILambdasMixin {
                 ? Stream.empty()
                 : toStream.apply(childrenFunction.apply(t))
                     .flatMap(recursiveIterable(childrenFunction)));
+    }
+
+    default <T> Stream<T> optionalToStream(Optional<T> opt) {
+        return opt
+            .map(it -> Stream.of(it))
+            .orElse(Stream.empty());
     }
 }

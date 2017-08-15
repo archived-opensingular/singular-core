@@ -232,6 +232,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
 
+    @SuppressWarnings("unchecked")
     protected static void buildFooter(BSContainer<?> footer,
                                       Form<?> form,
                                       WicketBuildContext ctx) {
@@ -263,6 +264,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
     protected static void personalizeCSS(BSContainer<?> footer) {
         footer.add(new ClassAttributeModifier() {
+            @Override
             protected Set<String> update(Set<String> oldClasses) {
                 oldClasses.remove("text-right");
                 return oldClasses;

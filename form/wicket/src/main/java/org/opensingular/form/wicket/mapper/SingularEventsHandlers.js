@@ -28,9 +28,13 @@
 
         var contex = {};
 
-        function addTextFieldHandlers(input) {
+        function addTextFieldHandlers(input, options) {
+            var opts = options || {};
+            var originalProcessEvent  = opts.originalProcessEvent  || 'blur';
+            var originalValidateEvent = opts.originalValidateEvent || 'change';
+            
             var inputJQueryRef = $('#'+input);
-            inputJQueryRef.on('blur', function (event) {
+            inputJQueryRef.on(originalProcessEvent, function (event) {
                 if (!contex.hasOwnProperty(SINGULAR_CHANGE_KEY)) {
                     contex[SINGULAR_BLUR_KEY] = window.setTimeout(function () {
                         inputJQueryRef.trigger(SINGULAR_VALIDATE);
@@ -38,7 +42,7 @@
                     }, 40);
                 }
             });
-            inputJQueryRef.on('change', function (event) {
+            inputJQueryRef.on(originalValidateEvent, function (event) {
                 if (contex.hasOwnProperty(SINGULAR_BLUR_KEY)) {
                     window.clearTimeout(contex[SINGULAR_BLUR_KEY]);
                     delete contex[SINGULAR_BLUR_KEY];

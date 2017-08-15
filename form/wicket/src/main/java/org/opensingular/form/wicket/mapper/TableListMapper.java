@@ -16,20 +16,32 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -39,6 +51,8 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
@@ -50,14 +64,14 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
 
-import java.util.Collection;
-import java.util.Set;
+public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+    private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
-public class TableListMapper extends AbstractListMapper {
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
+    }
 
     @Override
     public void buildView(WicketBuildContext ctx) {
@@ -71,10 +85,10 @@ public class TableListMapper extends AbstractListMapper {
         }
 
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
-        ctx.getContainer().appendComponent((String id) -> buildPannel(ctx, id));
+        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, id));
     }
 
-    private TableListPanel buildPannel(WicketBuildContext ctx, String id) {
+    private TableListPanel buildPanel(WicketBuildContext ctx, String id) {
 
         final IModel<SIList<SInstance>> list        = new ReadOnlyCurrentInstanceModel<>(ctx);
         final SViewListByTable          view        = (SViewListByTable) ctx.getView();
@@ -99,7 +113,23 @@ public class TableListMapper extends AbstractListMapper {
         final Label          title = new Label("_title", label);
 
         ctx.configureContainer(label);
+        
         header.appendTag("span", title);
+        
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+            this,
+            RequestCycle.get().find(AjaxRequestTarget.class),
+            list,
+            list.getObject(),
+            ctx,
+            ctx.getContainer());
+
+        SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+            header,
+            this.instanceActionsProviders,
+            list,
+            true,
+            internalContextListProvider);
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
@@ -246,10 +276,10 @@ public class TableListMapper extends AbstractListMapper {
 
                 for (SType<?> ft : ct.getFields()) {
                     final IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    wicketBuilder.build(ctx.createChild(row.newCol(), true, fm), viewMode);
+                    wicketBuilder.build(ctx.createChild(row.newCol(), fm), viewMode);
                 }
             } else {
-                wicketBuilder.build(ctx.createChild(row.newCol(), true, im), viewMode);
+                wicketBuilder.build(ctx.createChild(row.newCol(), im), viewMode);
             }
 
             if (viewListByTable.isDeleteEnabled() && viewMode.isEdition()) {

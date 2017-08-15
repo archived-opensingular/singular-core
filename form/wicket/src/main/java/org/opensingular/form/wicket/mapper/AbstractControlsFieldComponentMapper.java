@@ -16,10 +16,10 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -27,24 +27,33 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
-public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper {
+public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    final static HintKey<Boolean> NO_DECORATION = (HintKey<Boolean>) () -> Boolean.FALSE;
+    final static HintKey<Boolean>           NO_DECORATION            = (HintKey<Boolean>) () -> Boolean.FALSE;
+
+    private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
     protected abstract Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel);
 
@@ -58,6 +67,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         return comp;
     }
 
+    @Override
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<? extends SInstance> model = ctx.getModel();
@@ -72,12 +82,34 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         configureLabel(ctx, labelModel, hintNoDecoration, label);
 
-        formGroup.appendLabel(label);
+        if (hintNoDecoration) {
+            formGroup.appendLabel(label);
+        } else {
+            BSControls labelBar = new BSControls("labelBar")
+                .appendLabel(label);
+
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                AbstractControlsFieldComponentMapper.this,
+                RequestCycle.get().find(AjaxRequestTarget.class),
+                model,
+                model.getObject(),
+                ctx,
+                ctx.getContainer());
+
+            SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
+                labelBar,
+                instanceActionsProviders,
+                model,
+                false,
+                internalContextListProvider);
+            formGroup.appendDiv(labelBar);
+        }
+
         formGroup.newHelpBlock(subtitle)
             .add($b.classAppender("hidden-xs"))
             .add($b.classAppender("hidden-sm"))
             .add($b.classAppender("hidden-md"));
-            //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
+        //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
 
@@ -158,4 +190,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         comp.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS));
     }
 
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
+    }
 }

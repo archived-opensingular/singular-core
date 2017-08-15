@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.context.UIComponentMapper;
@@ -28,6 +29,7 @@ import org.opensingular.form.validation.InstanceValidator;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.internal.form.util.ArrUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
@@ -45,7 +47,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,6 +88,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     private SType<I> superType;
 
     private SView view;
+
+    /** List os aspectes implementations registered locally to the type. */
+    private Supplier<?>[] aspects;
 
     /**
      * Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}.
@@ -871,17 +875,59 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public <T extends UIComponentMapper> SType<I> withCustomMapper(T mapper) {
-        this.asAtr().setAttributeValue(SPackageBasic.ATR_MAPPER, mapper);
+        setAttributeValue(SPackageBasic.ATR_MAPPER, mapper);
         return this;
     }
 
+    /**
+     * Looks for the best match implementation of the aspect being request.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    @Nonnull
+    public <T> Optional<T> getAspect(@Nonnull AspectRef<T> aspectRef) {
+        return getDictionary().getMasterAspectRegistry().getAspect(this, aspectRef);
+    }
+
+    /**
+     * Returns, if available, the associated implementation of the aspect registered in the local map os aspects. It's
+     * only for internal use.
+     */
+    @Nullable
+    final Object getAspectDirect(int index) {
+        Supplier<?> supplier = ArrUtil.arrayGet(aspects, index);
+        return supplier == null ? null : supplier.get();
+    }
+
+    /**
+     * Binds locally a specific implementation factory for the aspect. This method should be typically called during the
+     * type configuration into {@link SType#onLoadType(TypeBuilder)}.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    public <T> void setAspect(@Nonnull AspectRef<T> aspectRef, @Nonnull Supplier<T> factory) {
+        Objects.requireNonNull(aspectRef);
+        Objects.requireNonNull(factory);
+        Integer index = getDictionary().getMasterAspectRegistry().getIndex(aspectRef);
+        aspects = ArrUtil.arraySet(aspects, index, factory, Supplier.class, 1);
+    }
+
+    /**
+     * Binds locally a specific implementation factory for the aspect. It's the same of
+     * {@link SType#setAspect(AspectRef, Supplier)}, but set a instantiated implementation. This method should be
+     * typically called during the
+     * type configuration into {@link SType#onLoadType(TypeBuilder)}.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    public <T> void setAspectFixImplementation(@Nonnull AspectRef<T> aspectRef, @Nonnull T implementation) {
+        setAspect(aspectRef, (Supplier<T>) () -> implementation);
+    }
+
     public UIComponentMapper getComponentMapper() {
-        return this.asAtr().getAttributeValue(SPackageBasic.ATR_MAPPER);
+        return this.getAttributeValue(SPackageBasic.ATR_MAPPER);
     }
 
     @SuppressWarnings("unchecked")
     public IConsumer<SInstance> getUpdateListener() {
-        return asAtr().getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
+        return getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
     }
 
     /**
@@ -907,6 +953,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     public void withSelectionFromProvider(String providerName) {
         this.typelessSelection().selfIdAndDisplay().provider(providerName);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void withSelectionFromSimpleProvider(SimpleProvider<?, I> provider) {
+        this.typelessSelection().selfIdAndDisplay().simpleProvider(provider);
     }
 
     /**

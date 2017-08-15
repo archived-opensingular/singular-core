@@ -18,7 +18,6 @@ package org.opensingular.internal.lib.commons.xml;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.stream.Stream;
 
 /**
  * Fornece métodos de conversão de string de Data/Hora no formato
@@ -256,19 +255,15 @@ public final class ConversorDataISO8601 {
             int day,
             int hour,
             int minute,
-            int second,
-            int mili,
+            int second, int milli,
             int nano,
-            byte prescisao) {
+            byte precision) {
 
         StringBuilder buffer = new StringBuilder(40);
 
         formatYearMonthDay(buffer, year, month, day);
 
-        boolean timeIsZero = Stream.of(hour, mili, second, mili, nano).allMatch(x -> x.equals(0));
-
-        if ((prescisao == DIA)
-                || timeIsZero) {
+        if ((precision == DIA) || isTimeZero(hour, minute, second, milli, nano)) {
             return buffer.toString();
         }
 
@@ -280,14 +275,21 @@ public final class ConversorDataISO8601 {
         format2(buffer, second);
 
         if (nano == 0) {
-            formatMiliIfNecessary(buffer, mili, prescisao);
-        } else if (mili != 0) {
+            formatMiliIfNecessary(buffer, milli, precision);
+        } else if (milli != 0) {
             throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
         } else {
-            formatMiliAndNanoIfNecessary(buffer, nano, prescisao);
+            formatMiliAndNanoIfNecessary(buffer, nano, precision);
         }
 
         return buffer.toString();
+    }
+
+    private static boolean isTimeZero(int hour, int minute, int second, int milli, int nano) {
+        if ((hour == 0) && (minute == 0) && (second == 0)) {
+            return (milli == 0) && (nano == 0);
+        }
+        return false;
     }
 
     private static void formatYearMonthDay(StringBuilder buffer, int year, int month, int day) {

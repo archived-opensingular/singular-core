@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -31,7 +32,8 @@ import java.util.stream.StreamSupport;
  */
 public abstract class STypes {
 
-    private STypes() {}
+    private STypes() {
+    }
 
     /**
      * Percorre todos as instâncias filha da instancia informada chamando o
@@ -46,6 +48,7 @@ public abstract class STypes {
      * Percorre todos as instâncias filha da instancia informada chamando o
      * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
+     *
      * @param containedTypesFirst se true o percorrimento é bottom-up
      */
     public static void visitAllContainedTypes(SType<?> parent, boolean containedTypesFirst, Consumer<SType<?>> consumer) {
@@ -69,6 +72,7 @@ public abstract class STypes {
      * Percorre a instância informada e todos as instâncias filha da instancia
      * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
      * faz um pecorrimento em profundidade.
+     *
      * @param containedTypesFirst se true o percorrimento é bottom-up
      */
     public static void visitAll(SType<?> type, boolean containedTypesFirst, Consumer<SType<?>> consumer) {
@@ -83,6 +87,7 @@ public abstract class STypes {
 
     /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
+     *
      * @param root instância inicial da busca
      * @return Stream das instâncias de descendentes
      */
@@ -113,5 +118,23 @@ public abstract class STypes {
             tipo = tipo.getParentScope();
         }
         return list;
+    }
+
+    /***
+     * Retorna optional empty caso já seja a raiz
+     *
+     * @param root
+     * @return
+     */
+    public static Optional<SType<?>> findRootAscendant(SType<?> root) {
+        SScope   tipo      = root.getParentScope();
+        SType<?> rootStype = null;
+        while (tipo != null) {
+            if (tipo instanceof SType<?>) {
+                rootStype = (SType<?>) tipo;
+            }
+            tipo = tipo.getParentScope();
+        }
+        return Optional.ofNullable(rootStype);
     }
 }

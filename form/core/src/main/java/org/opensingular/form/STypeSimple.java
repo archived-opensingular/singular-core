@@ -26,6 +26,7 @@ import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
 import javax.annotation.Nullable;
@@ -163,9 +164,9 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
             msg += complement;
         }
         if (e != null) {
-            return new RuntimeException(msg, e);
+            return SingularException.rethrow(msg, e);
         }
-        return new RuntimeException(msg);
+        return new SingularException(msg);
     }
 
     @SafeVarargs

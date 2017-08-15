@@ -155,7 +155,6 @@ jQuery(document).ready(function () {
     	delay(function(){
 	   	  	align('div > div.can-have-error');
 	   	  	align('div > span.help-block');
-	   	  	console.log("executou");
     	}, 10);
     });
     

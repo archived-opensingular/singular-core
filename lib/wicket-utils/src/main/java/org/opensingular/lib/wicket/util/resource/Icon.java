@@ -7,4 +7,7 @@ public interface Icon extends Serializable {
 
     String getCssClass();
 
+    static Icon of(String cssClass){
+        return () -> cssClass;
+    }
 }

@@ -78,6 +78,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
         this.viewMode = viewMode;
+        buildFileUploadInput();
     }
 
     @SuppressWarnings("unchecked")
@@ -113,9 +114,8 @@ public class FileUploadPanel extends Panel implements Loggable {
         };
     }
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
+    protected void buildFileUploadInput() {
+
 
         adder = new AddFileBehavior();
         add(adder);

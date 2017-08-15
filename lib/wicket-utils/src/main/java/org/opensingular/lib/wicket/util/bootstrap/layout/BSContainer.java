@@ -16,7 +16,12 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
-import org.opensingular.lib.wicket.util.bootstrap.BootstrapSize;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -25,11 +30,10 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.bootstrap.BootstrapSize;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
@@ -151,6 +155,20 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         C comp = factory.newComponent(newChildId());
         getItems().add(comp);
         return comp;
+    }
+
+    public Component removeItem(Component component) {
+        List<Component> list = Stream.concat(
+            Stream.of(component),
+            WicketUtils.listParents(component).stream())
+            .collect(toList());
+        for (Component comp : list) {
+            if (comp.getParent() == getItems()) {
+                comp.remove();
+                return comp;
+            }
+        }
+        return null;
     }
 
     public THIS setTagName(String tagName) {

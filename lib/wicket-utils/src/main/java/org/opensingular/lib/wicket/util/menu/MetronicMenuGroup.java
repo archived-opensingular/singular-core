@@ -45,7 +45,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         this.title = title;
     }
 
-    public MetronicMenuGroup addItem(MetronicMenuItem item) {
+    public MetronicMenuGroup addItem(AbstractMenuItem item) {
         itens.add(item);
         return this;
     }
@@ -57,7 +57,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         WebMarkupContainer iconMarkup = new WebMarkupContainer("icon");
 
         if (icon != null) {
-            iconMarkup.add($b.classAppender(icon));
+            iconMarkup.add($b.classAppender(icon.getCssClass()));
         } else {
             iconMarkup.setVisible(false);
         }
@@ -77,18 +77,29 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         add(menuGroup);
     }
 
+    public MetronicMenuGroup setOpen() {
+        subMenu.add($b.attr("style", "display: block;"));
+        menuGroup.add($b.classAppender("open"));
+        arrow.add($b.classAppender("open"));
+        return this;
+    }
+
+    public MetronicMenuGroup setActive() {
+        setOpen();
+        menuGroup.add($b.classAppender("active"));
+        return this;
+    }
+
     @Override
     protected boolean configureActiveItem() {
         for (AbstractMenuItem i : itens) {
             if (i.configureActiveItem()) {
-                subMenu.add($b.attr("style", "display: block;"));
-                menuGroup.add($b.classAppender("active"));
-                menuGroup.add($b.classAppender("open"));
-                arrow.add($b.classAppender("open"));
+                setActive();
                 return true;
             }
         }
         return false;
     }
+
 
 }

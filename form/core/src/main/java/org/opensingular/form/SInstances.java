@@ -39,31 +39,8 @@ import java.util.stream.StreamSupport;
  */
 public abstract class SInstances {
 
-    public static interface IVisit<R> {
-        void stop();
-        void stop(R result);
-        void dontGoDeeper();
-        void setPartial(R result);
-        R getPartial();
+    private SInstances() {
     }
-
-    @FunctionalInterface
-    public interface IVisitor<I extends SInstance, R> {
-        public void onInstance(I object, IVisit<R> visit);
-    }
-
-    public interface IVisitFilter extends Serializable {
-        boolean visitObject(Object object);
-        default boolean visitChildren(Object object) {
-            return true;
-        }
-
-        public static IVisitFilter visitAll() {
-            return o -> true;
-        }
-    }
-
-    private SInstances() {}
 
     /**
      * Faz um pecorrimento em profundidade de parent e seus filhos.
@@ -123,7 +100,7 @@ public abstract class SInstances {
      */
     @SuppressWarnings("unchecked")
     private static <I extends SInstance, R> void internalVisitChildren(SInstance rootInstance, IVisitor<I, R> visitor, IVisitFilter filter, Visit<R> visit) {
-        if (! (rootInstance instanceof ICompositeInstance)) {
+        if (!(rootInstance instanceof ICompositeInstance)) {
             return;
         }
         for (SInstance object : ((ICompositeInstance) rootInstance).getAllChildren()) {
@@ -160,7 +137,7 @@ public abstract class SInstances {
             final ICompositeInstance parent = (ICompositeInstance) rootInstance;
             final Visit<R> childVisit = new Visit<>(visit.getPartial());
             for (SInstance child : parent.getAllChildren()) {
-                if (! filter.visitObject(child)) {
+                if (!filter.visitObject(child)) {
                     continue;
                 }
                 internalVisitPostOrder(child, visitor, filter, childVisit);
@@ -180,7 +157,8 @@ public abstract class SInstances {
 
     /**
      * Busca por um ancestral de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     *
+     * @param node         instância inicial da busca
      * @param ancestorType tipo do ancestral
      * @return instância do ancestral do tipo especificado
      * @throws SingularFormException se não encontrar nenhum ancestral deste tipo
@@ -203,7 +181,8 @@ public abstract class SInstances {
 
     /**
      * Busca por um ancestral de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     *
+     * @param node         instância inicial da busca
      * @param ancestorType tipo do ancestral
      * @return Optional da instância do ancestral do tipo especificado
      */
@@ -220,7 +199,8 @@ public abstract class SInstances {
     /**
      * Busca por um ancestral de <code>node</code> cujo tipo é um ancestral comum do tipo de <code>node</code>
      * e <code>targetType</code>.
-     * @param node instância inicial da busca
+     *
+     * @param node       instância inicial da busca
      * @param targetType tipo de outro campo
      * @return Optional da instância do ancestral comum
      */
@@ -237,8 +217,27 @@ public abstract class SInstances {
     }
 
     /**
+     * Busca por um ancestral de <code>node</code> cujo tipo é um ancestral comum do tipo de <code>node</code>
+     * e <code>targetTypeClass</code>.
+     *
+     * @param node            instância inicial da busca
+     * @param targetTypeClass Classe que define um  tipo de outro campo
+     * @return Optional da instância do ancestral comum
+     */
+    @SuppressWarnings("unchecked")
+    public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestorByStypeClass(SInstance node, Class<? extends SType> targetTypeClass) {
+        for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
+            if (targetTypeClass.isAssignableFrom(ancestor.getType().getClass()) && ancestor instanceof ICompositeInstance) {
+                return Optional.of((CA) ancestor);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Busca por o no mais próximo de <code>node</code> na hierarquia de instâncias, cujo tipo é igual a <code>targetType</code>.
-     * @param node instância inicial da busca
+     *
+     * @param node       instância inicial da busca
      * @param targetType tipo do campo a ser procurado
      * @return Optional da instância do targetType encontrado
      */
@@ -248,12 +247,38 @@ public abstract class SInstances {
             return desc;
         else
             return SInstances.findCommonAncestor(node, targetType)
-                .flatMap(ancestor -> ancestor.findDescendant(targetType))
-                .map(targetNode -> targetNode);
+                    .flatMap(ancestor -> ancestor.findDescendant(targetType))
+                    .map(targetNode -> targetNode);
+    }
+
+    /**
+     * Busca por o no mais próximo de <code>node</code> na hierarquia de instâncias, cujo tipo é definido pela classe  <code>targetTypeClass</code>.
+     *
+     * @param node            instância inicial da busca
+     * @param targetTypeClass Classe que define o  tipo do campo a ser procurado
+     * @return Optional da instância do targetType encontrado
+     */
+    @SuppressWarnings("unchecked")
+    public static <A extends SInstance> Optional<A> findNearest(SInstance node, Class<? extends SType<A>> targetTypeClass) {
+       return findNearest(null, node, targetTypeClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <A extends SInstance> Optional<A> findNearest(SInstance children, SInstance node, Class<? extends SType<A>> targetTypeClass) {
+        Optional<A> desc = (Optional<A>) SInstances.streamDescendants(node, false)
+                .filter(sInstance -> sInstance != children)
+                .filter(sInstance -> targetTypeClass.isAssignableFrom(sInstance.getType().getClass()))
+                .findFirst();
+        if (desc.isPresent()) {
+            return desc;
+        }
+        else
+            return findNearest(node, node.getParent(), targetTypeClass);
     }
 
     /**
      * Lista os ancestrais de <code>node</code>.
+     *
      * @param instance instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
@@ -264,8 +289,10 @@ public abstract class SInstances {
     public static List<SInstance> listAscendants(SInstance instance, boolean selfIncluded) {
         return listAscendants(instance, null, selfIncluded);
     }
+
     /**
      * Lista os ancestrais de <code>node</code>.
+     *
      * @param instance instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
@@ -275,6 +302,7 @@ public abstract class SInstances {
 
     /**
      * Lista os ancestrais de <code>node</code>.
+     *
      * @param instance instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
@@ -293,7 +321,8 @@ public abstract class SInstances {
 
     /**
      * Busca pelo primeiro descendente de <code>node</code> do tipo especificado.
-     * @param node instância inicial da busca
+     *
+     * @param node           instância inicial da busca
      * @param descendantType tipo do descendente
      * @return instância do primeiro descendente do tipo especificado
      * @throws NoSuchElementException se não encontrar nenhum descendente deste tipo
@@ -305,7 +334,8 @@ public abstract class SInstances {
 
     /**
      * Busca pelo primeiro descendente de <code>node</code> do tipo especificado.
-     * @param instance instância inicial da busca
+     *
+     * @param instance       instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Optional da instância do primeiro descendente do tipo especificado
      */
@@ -326,7 +356,8 @@ public abstract class SInstances {
 
     /**
      * Lista os descendentes de <code>node</code> do tipo especificado.
-     * @param instance instância inicial da busca
+     *
+     * @param instance       instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Lista das instâncias de descendentes do tipo especificado
      */
@@ -336,14 +367,15 @@ public abstract class SInstances {
 
     /**
      * Lista os descendentes de <code>node</code> do tipo especificado.
-     * @param instance instância inicial da busca
+     *
+     * @param instance       instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Lista das instâncias de descendentes do tipo especificado
      */
     @SuppressWarnings("unchecked")
     public static <D extends SInstance, V> List<V> listDescendants(SInstance instance, SType<?> descendantType, Function<D, V> function) {
-        List<V> result = new ArrayList<>();
-        final Deque<SInstance> deque = new ArrayDeque<>();
+        List<V>                result = new ArrayList<>();
+        final Deque<SInstance> deque  = new ArrayDeque<>();
         deque.add(instance);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
@@ -358,19 +390,21 @@ public abstract class SInstances {
 
     /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
-     * @param root instância inicial da busca
+     *
+     * @param root           instância inicial da busca
      * @param descendantType tipo do descendente
      * @return Stream das instâncias de descendentes do tipo especificado
      */
     @SuppressWarnings("unchecked")
     public static <D extends SInstance> Stream<D> streamDescendants(SInstance root, boolean includeRoot, SType<D> descendantType) {
         return streamDescendants(root, includeRoot)
-            .filter(it -> it.getType().isTypeOf(descendantType))
-            .map(it -> (D) it);
+                .filter(it -> it.getType().isTypeOf(descendantType))
+                .map(it -> (D) it);
     }
 
     /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
+     *
      * @param root instância inicial da busca
      * @return Stream das instâncias de descendentes
      */
@@ -387,6 +421,7 @@ public abstract class SInstances {
 
     /**
      * Verifica se a instância ou algum filho atende a condição informada ou não.
+     *
      * @param checkRoot Indica se a condição deve ser verificada ao nó raiz informado ou somente a partir dos filhos.
      */
     private static boolean hasAny(SInstance instance, boolean checkRoot, Predicate<SInstance> predicate) {
@@ -394,13 +429,14 @@ public abstract class SInstances {
             return true;
         } else if (instance instanceof ICompositeInstance) {
             for (SInstance si : ((ICompositeInstance) instance).getAllChildren()) {
-                if( hasAny(si, true, predicate)) {
+                if (hasAny(si, true, predicate)) {
                     return true;
                 }
             }
         }
         return false;
     }
+
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */
@@ -411,9 +447,9 @@ public abstract class SInstances {
     }
 
     public static void updateBooleanAttribute(
-                                              SInstance instance,
-                                              AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
-                                              AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
+            SInstance instance,
+            AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
+            AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
 
         Predicate<SInstance> pred = instance.getAttributeValue(predicateAttribute);
         if (pred != null)
@@ -424,9 +460,39 @@ public abstract class SInstances {
         V value = instance.getAttributeValue(attribute);
         return (value != null) ? value : defaultValue;
     }
+
     public static <V> boolean hasAttributeValue(SInstance instance, AtrRef<?, ?, V> attribute) {
         V value = instance.getAttributeValue(attribute);
         return (value != null);
+    }
+
+    public static interface IVisit<R> {
+        void stop();
+
+        void stop(R result);
+
+        void dontGoDeeper();
+
+        R getPartial();
+
+        void setPartial(R result);
+    }
+
+    @FunctionalInterface
+    public interface IVisitor<I extends SInstance, R> {
+        public void onInstance(I object, IVisit<R> visit);
+    }
+
+    public interface IVisitFilter extends Serializable {
+        public static IVisitFilter visitAll() {
+            return o -> true;
+        }
+
+        boolean visitObject(Object object);
+
+        default boolean visitChildren(Object object) {
+            return true;
+        }
     }
 
     private static class Visit<R> implements IVisit<R> {
@@ -434,29 +500,35 @@ public abstract class SInstances {
         boolean stopped;
         R       result;
         R       partial;
+
         public Visit(R partial) {
             this.partial = partial;
         }
+
         @Override
         public void dontGoDeeper() {
             this.dontGoDeeper = true;
         }
+
         @Override
         public void stop() {
             this.stopped = true;
         }
+
         @Override
         public void stop(R result) {
             this.result = result;
             stop();
         }
-        @Override
-        public void setPartial(R result) {
-            partial = result;
-        }
+
         @Override
         public R getPartial() {
             return partial;
+        }
+
+        @Override
+        public void setPartial(R result) {
+            partial = result;
         }
     }
 }

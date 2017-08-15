@@ -104,6 +104,10 @@ public class BSModalWindow extends Panel {
         return bodyContainer;
     }
 
+    public final Component getBody() {
+        return getBodyContainer().iterator().next();
+    }
+    
     public Form<?> getForm() {
         return (Form<?>) form;
     }
@@ -151,10 +155,17 @@ public class BSModalWindow extends Panel {
     }
 
     public BSModalWindow setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallback) {
-        getModalBorder().setCloseIconCallback(closeIconCallback);
+        getModalBorder()
+            .setCloseIconCallback(closeIconCallback)
+            .setCloseIconVisible(true);
         return this;
     }
 
+    public BSModalWindow setOnHideCallBack(IConsumer<AjaxRequestTarget> onHideCallBack) {
+        getModalBorder().setOnHideCallback(onHideCallBack);
+        return this;
+    }
+    
     private static final class NonForm extends WebMarkupContainer {
         private NonForm(String id) {
             super(id);

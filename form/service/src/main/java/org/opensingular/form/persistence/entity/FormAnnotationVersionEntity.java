@@ -16,14 +16,18 @@
 
 package org.opensingular.form.persistence.entity;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @GenericGenerator(name = FormAnnotationVersionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_VERSAO_ANOTACAO_FORMULARIO", schema = Constants.SCHEMA)

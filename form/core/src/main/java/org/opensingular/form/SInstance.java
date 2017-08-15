@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
@@ -71,6 +72,7 @@ public abstract class SInstance implements SAttributeEnabled {
     private InstanceSerializableRef<SInstance> serializableRef;
     private ISInstanceListener.EventCollector eventCollector;
 
+    @Nonnull
     public SType<?> getType() {
         return type;
     }
@@ -585,6 +587,15 @@ public abstract class SInstance implements SAttributeEnabled {
         return AttributeValuesManager.staticGetAttributes(attributes);
     }
 
+    /**
+     * Looks for the best match implementation of the aspect being request.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    @Nonnull
+    public <T> Optional<T> getAspect(@Nonnull AspectRef<T> aspectRef) {
+        return getDictionary().getMasterAspectRegistry().getAspect(this, aspectRef);
+    }
+
     @Nullable
     public SInstance getParent() {
         return this.parent;
@@ -602,6 +613,10 @@ public abstract class SInstance implements SAttributeEnabled {
 
     public <A extends SInstance> Optional<A> findNearest(SType<A> targetType) {
         return SInstances.findNearest(this, targetType);
+    }
+
+    public <A extends SInstance> Optional<A> findNearest(Class<? extends SType<A>> targetTypeClass) {
+        return SInstances.findNearest(this, targetTypeClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -813,7 +828,7 @@ public abstract class SInstance implements SAttributeEnabled {
         sb.append('(');
         sb.append("path=").append(getPathFull());
         sb.append("; type=");
-        if (getType() != null) {
+        if (type != null) {
             sb.append(getType().getClass().getSimpleName()).append('@').append(getType().getTypeId());
         }
         return sb;

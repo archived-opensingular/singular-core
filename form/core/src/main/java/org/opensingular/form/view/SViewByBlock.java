@@ -75,7 +75,7 @@ public class SViewByBlock extends AbstractSViewByBlock {
             this.sViewByBlock = sViewByBlock;
         }
 
-        public BlockBuilder add(SType type) {
+        public BlockBuilder add(SType<?> type) {
             return add(type.getNameSimple());
         }
 
@@ -92,6 +92,10 @@ public class SViewByBlock extends AbstractSViewByBlock {
 
         public BlockBuilder newBlock(String blockName) {
             return sViewByBlock.newBlock(blockName);
+        }
+
+        public SViewByBlock getView() {
+            return sViewByBlock;
         }
     }
 }
