@@ -72,12 +72,12 @@ import static com.google.common.collect.Lists.newLinkedList;
 @SuppressWarnings("serial")
 public class WicketBuildContext implements Serializable, IFormBuildContext {
 
-    static final HintKey<HashMap<String, Integer>>                       COL_WIDTHS                                    = () -> new HashMap<>();
+    // static final HintKey<HashMap<String, Integer>>                       COL_WIDTHS                                    = HashMap::new;
 
     public static final MetaDataKey<WicketBuildContext>                  METADATA_KEY                                  = new MetaDataKey<WicketBuildContext>() {};
 
     public static final HintKey<IModel<String>>                          TITLE_KEY                                     = () -> null;
-    public static final HintKey<Boolean>                                 RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
+    // public static final HintKey<Boolean>                                 RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
     private final List<WicketBuildContext>                               children                                      = newArrayList();
     private final HashMap<HintKey<?>, Serializable>                      hints                                         = new HashMap<>();
@@ -95,7 +95,6 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     private AnnotationMode                                               annotation                                    = AnnotationMode.NONE;
 
     private boolean                                                      nested                                        = false;
-    private boolean                                                      titleInBlock                                  = false;
     private boolean                                                      showBreadcrumb;
     private List<String>                                                 breadCrumbs                                   = newArrayList();
     private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus                              = newLinkedList();
@@ -518,14 +517,6 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     @SuppressWarnings("unchecked")
     public <T extends SInstance> T getCurrentInstance() {
         return (T) getModel().getObject();
-    }
-
-    public boolean isTitleInBlock() {
-        return titleInBlock;
-    }
-
-    public void setTitleInBlock(boolean titleInBlock) {
-        this.titleInBlock = titleInBlock;
     }
 
     public boolean isNested() {
