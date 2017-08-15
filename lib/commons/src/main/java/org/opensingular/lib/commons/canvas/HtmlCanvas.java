@@ -2,6 +2,7 @@ package org.opensingular.lib.commons.canvas;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.canvas.builder.RawHtmlBuilder;
 
 import java.util.HashMap;
@@ -10,28 +11,29 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public class HTMLCanvas implements DocumentCanvas {
-    private final RawHtmlBuilder rawHtmlBuilder;
+public class HtmlCanvas implements DocumentCanvas {
     private final boolean showTitleLevel;
+    private final RawHtmlBuilder rootHtmlBuilder;
+    private RawHtmlBuilder currentHtmlBuilder;
 
     private String titlePrefix;
     private int index;
     private int headerTagLevel;
-    private Map<Integer, HTMLCanvas> indexChildMap;
+    private Map<Integer, HtmlCanvas> indexChildMap;
 
-    public HTMLCanvas(boolean showTitleLevel) {
+    public HtmlCanvas(boolean showTitleLevel) {
         this(new RawHtmlBuilder("div"), showTitleLevel);
     }
 
-    public HTMLCanvas(RawHtmlBuilder rawHtmlBuilder, boolean showTitleLevel) {
-        this.rawHtmlBuilder = rawHtmlBuilder;
+    protected HtmlCanvas(RawHtmlBuilder rootHtmlBuilder, boolean showTitleLevel) {
+        this.rootHtmlBuilder = rootHtmlBuilder;
         this.showTitleLevel = showTitleLevel;
         this.titlePrefix = "";
         this.index = 0;
         this.indexChildMap = new HashMap<>();
         this.headerTagLevel = 1;
+        this.currentHtmlBuilder = rootHtmlBuilder;
     }
-
 
     @Override
     public void addTitle(String title) {
@@ -42,19 +44,31 @@ public class HTMLCanvas implements DocumentCanvas {
             }
             index++;
         }
-        RawHtmlBuilder header = this.rawHtmlBuilder.newChild("h"+headerTagLevel);
+        if (headerTagLevel == 1) {
+            addPageHeader(prefix, title);
+            headerTagLevel++;
+        } else {
+            RawHtmlBuilder header = createSubheaderTag(headerTagLevel);
+            header.appendText(prefix);
+            header.appendText(ObjectUtils.defaultIfNull(title, ""));
+        }
+    }
+
+    protected RawHtmlBuilder createSubheaderTag(Integer headerTagLevel) {
+        return currentHtmlBuilder.newChild("h" + headerTagLevel);
+    }
+
+    protected void addPageHeader(String prefix, String title) {
+        RawHtmlBuilder header = currentHtmlBuilder.newChild("h1");
         header.appendText(prefix);
         header.appendText(ObjectUtils.defaultIfNull(title, ""));
-        if (headerTagLevel == 1) {
-            headerTagLevel++;
-        }
     }
 
     @Override
     public DocumentCanvas newChild() {
         int titleIndex = (index - 1);
         if (!indexChildMap.containsKey(titleIndex)) {
-            HTMLCanvas newChild = new HTMLCanvas(rawHtmlBuilder.newChild("div"), showTitleLevel);
+            HtmlCanvas newChild = newHtmlChildCanvas(currentHtmlBuilder.newChild("div"), showTitleLevel);
             if (showTitleLevel) {
                 newChild.index = 1;
                 newChild.headerTagLevel = childHeaderTagLevel();
@@ -66,35 +80,40 @@ public class HTMLCanvas implements DocumentCanvas {
 
     }
 
+    @NotNull
+    protected HtmlCanvas newHtmlChildCanvas(RawHtmlBuilder child, boolean showTitleLevel) {
+        return new HtmlCanvas(child, showTitleLevel);
+    }
+
     private int childHeaderTagLevel() {
         int newHeaderTagLevel = headerTagLevel + 1;
-        if (newHeaderTagLevel > 6) {
-            return 6;
+        if (newHeaderTagLevel > 4) {
+            return 4;
         }
         return newHeaderTagLevel;
     }
 
     @Override
-    public void label(String label, String value) {
-        RawHtmlBuilder span = this.rawHtmlBuilder.newChild("span");
+    public void label(FormItem formItem) {
+        RawHtmlBuilder span = this.currentHtmlBuilder.newChild("span");
         span.putAttribute("style", "margin-right:25px;");
-        if (!StringUtils.isEmpty(label)) {
+        if (!StringUtils.isEmpty(formItem.getLabel())) {
             RawHtmlBuilder labelComp = span.newChild("label");
             labelComp.putAttribute("style", "font-weight:bold;");
-            labelComp.appendText(label);
+            labelComp.appendText(formItem.getLabel());
             labelComp.appendText(": ");
         }
-        span.appendText(defaultIfNull(value, ""));
+        span.appendText(defaultIfNull(formItem.getValue(), ""));
     }
 
     @Override
     public void breakLine() {
-        rawHtmlBuilder.newChild("br");
+        currentHtmlBuilder.newChild("br");
     }
 
     @Override
     public void list(List<String> values) {
-        RawHtmlBuilder ul = this.rawHtmlBuilder.newChild("ul");
+        RawHtmlBuilder ul = this.currentHtmlBuilder.newChild("ul");
         for (String v : values) {
             RawHtmlBuilder li = ul.newChild("li");
             li.appendText(v);
@@ -102,11 +121,23 @@ public class HTMLCanvas implements DocumentCanvas {
     }
 
     public void stylesheet(String css) {
-        RawHtmlBuilder style = rawHtmlBuilder.newChild("style");
+        RawHtmlBuilder style = currentHtmlBuilder.newChild("style");
         style.appendTextWithoutEscape(css);
     }
 
     public String build() {
-        return rawHtmlBuilder.build();
+        return rootHtmlBuilder.build();
+    }
+
+    protected RawHtmlBuilder getcurrentHtmlBuilder() {
+        return currentHtmlBuilder;
+    }
+
+    public void setcurrentHtmlBuilder(RawHtmlBuilder currentHtmlBuilder) {
+        this.currentHtmlBuilder = currentHtmlBuilder;
+    }
+
+    public RawHtmlBuilder getRootHtmlBuilder() {
+        return rootHtmlBuilder;
     }
 }

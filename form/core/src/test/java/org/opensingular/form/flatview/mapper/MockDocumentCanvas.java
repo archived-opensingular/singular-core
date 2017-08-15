@@ -2,6 +2,7 @@ package org.opensingular.form.flatview.mapper;
 
 import org.junit.Assert;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
+import org.opensingular.lib.commons.canvas.FormItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MockDocumentCanvas implements DocumentCanvas {
     }
 
     @Override
-    public void label(String label, String value) {
+    public void label(FormItem formItem) {
 
     }
 

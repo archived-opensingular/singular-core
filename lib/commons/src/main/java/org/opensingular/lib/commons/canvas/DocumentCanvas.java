@@ -7,9 +7,10 @@ public interface DocumentCanvas {
 
     DocumentCanvas newChild();
 
-    void label(String label, String value);
+    void label(FormItem formItem);
 
     void breakLine();
 
     void list(List<String> values);
+
 }

@@ -6,13 +6,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class HTMLCanvasTest {
+public class HtmlCanvasTest {
 
-    HTMLCanvas htmlCanvas;
+    HtmlCanvas htmlCanvas;
 
     @Before
     public void setUp() throws Exception {
-        htmlCanvas = new HTMLCanvas(true);
+        htmlCanvas = new HtmlCanvas(true);
     }
 
     @Test
