@@ -63,7 +63,7 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
             column.putAttribute("class", "col-md-" + formItem.getCols());
         }
         if (formItem.getLabel() != null) {
-            column.appendText(formItem.getLabel()).appendText(": ");
+            column.newChild("strong").appendText(formItem.getLabel()).appendText(": ");
         }
         if (formItem.getValue() != null) {
             column.appendText(formItem.getValue());
