@@ -1,6 +1,6 @@
 package org.opensingular.form.sample;
 
-public enum TipoPropriedadeEmbarcacao {
+public enum ComboDomainEnum {
 
     PROPRIA("Própria"),
     AFREATAMENTO_CASCO_NU("Afretamento a casco nu"),
@@ -8,7 +8,7 @@ public enum TipoPropriedadeEmbarcacao {
 
     private String descricao;
 
-    TipoPropriedadeEmbarcacao(String descricao) {
+    ComboDomainEnum(String descricao) {
         this.descricao = descricao;
     }
 

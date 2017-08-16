@@ -112,7 +112,7 @@ public final class SFormXMLUtil {
         }
 
         // Colocar em modo de não geraçao de IDs
-        novo.getDocument().setLastId(-1);
+        novo.getDocument().initRestoreMode();
         fromXML(novo, xml);
 
         int maxId = verificarIds(novo, new HashSet<>());
@@ -121,7 +121,7 @@ public final class SFormXMLUtil {
         } else {
             novo.getDocument().setLastId(lastId);
         }
-
+        novo.getDocument().finishRestoreMode();
         return novo;
     }
 

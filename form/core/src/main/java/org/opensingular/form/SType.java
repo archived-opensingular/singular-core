@@ -925,11 +925,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return this.getAttributeValue(SPackageBasic.ATR_MAPPER);
     }
 
-    @SuppressWarnings("unchecked")
-    public IConsumer<SInstance> getUpdateListener() {
-        return getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
-    }
-
     /**
      * Lambda para inicialização da {@link SInstance} desse {@link SType}
      * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.

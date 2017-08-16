@@ -11,8 +11,8 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewListByTable;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "EsquemasOperacionais")
-public class STypeEsquemasOperacionais extends STypeComposite<SIComposite> {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeAnotherComposite")
+public class STypeAnotherComposite extends STypeComposite<SIComposite> {
 
     public STypeComposite<SIComposite> dadosGerais;
     public STypeString                 regiaoHidrografica;
@@ -34,8 +34,8 @@ public class STypeEsquemasOperacionais extends STypeComposite<SIComposite> {
     public STypeList<STypeString, SIString> rios;
     public STypeInteger                     frequencia;
 
-    public STypeList<STypeEsquemaOperacional, SIComposite> esquemasOperacionaisVolta;
-    public STypeList<STypeEsquemaOperacional, SIComposite> esquemasOperacionaisIda;
+    public STypeList<STypeAnotherComposisteChildListElement, SIComposite> esquemasOperacionaisVolta;
+    public STypeList<STypeAnotherComposisteChildListElement, SIComposite> esquemasOperacionaisIda;
 
 
     @Override
@@ -123,8 +123,8 @@ public class STypeEsquemasOperacionais extends STypeComposite<SIComposite> {
         //3 - 
         rios = dadosGerais.addFieldListOf("rios", STypeString.class);
         rios.withView(SViewListByTable::new);
-        rios.withInitListener(list -> list.addNew());
-        rios.withMiniumSizeOf(Resolucao912Form.QUANTIDADE_MINIMA);
+        rios.withInitListener(list -> list.addNew());//USED by TestSDocumentRestoreMode
+        rios.withMiniumSizeOf(STypeFormTest.QUANTIDADE_MINIMA);
         rios.asAtrBootstrap().colPreference(12);
         rios.asAtr().label("Rios");
 
@@ -141,9 +141,9 @@ public class STypeEsquemasOperacionais extends STypeComposite<SIComposite> {
 
         //6 - Esquema Operacional 
 
-        esquemasOperacionaisIda = addFieldListOf("esquemasOperacionaisIda", STypeEsquemaOperacional.class);
+        esquemasOperacionaisIda = addFieldListOf("esquemasOperacionaisIda", STypeAnotherComposisteChildListElement.class);
         
-        esquemasOperacionaisVolta = addFieldListOf("esquemasOperacionaisVolta", STypeEsquemaOperacional.class);
+        esquemasOperacionaisVolta = addFieldListOf("esquemasOperacionaisVolta", STypeAnotherComposisteChildListElement.class);
         
     
         this.withView(new SViewByBlock(), v -> v.newBlock("Esquema Operacional Anexo")
