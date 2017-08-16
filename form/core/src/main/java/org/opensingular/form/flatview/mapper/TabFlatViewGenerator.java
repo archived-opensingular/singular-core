@@ -27,7 +27,7 @@ public class TabFlatViewGenerator extends AbstractFlatViewGenerator {
     }
 
     void callChildWrite(DocumentCanvas newChild, SInstance child, FlatViewGenerator i) {
-        i.writeOnCanvas(newChild, new FlatViewContext(child));
+        i.writeOnCanvas(newChild, new FlatViewContext(child, true));
     }
 
 }

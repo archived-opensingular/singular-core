@@ -6,9 +6,16 @@ import org.opensingular.form.SInstance;
 public class FlatViewContext {
 
     private final SInstance instance;
+    private final boolean withoutTitle;
 
     public FlatViewContext(SInstance instance) {
         this.instance = instance;
+        this.withoutTitle = false;
+    }
+
+    public FlatViewContext(SInstance instance, boolean withoutTitle) {
+        this.instance = instance;
+        this.withoutTitle = true;
     }
 
     public <T extends SInstance> T getInstanceAs(Class<T> tClass) {
@@ -34,4 +41,7 @@ public class FlatViewContext {
         return instance.asAtr().isVisible() && instance.asAtr().isExists();
     }
 
+    public boolean isWithoutTitle() {
+        return withoutTitle;
+    }
 }

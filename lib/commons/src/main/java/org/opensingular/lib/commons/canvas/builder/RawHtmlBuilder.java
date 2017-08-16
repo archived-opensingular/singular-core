@@ -37,12 +37,14 @@ public class RawHtmlBuilder implements HtmlBuilder {
         return rawHtmlBuilder;
     }
 
-    public void putAttribute(String key, String val) {
+    public RawHtmlBuilder putAttribute(String key, String val) {
         attribues.put(key, val);
+        return this;
     }
 
-    public void appendText(String text) {
+    public RawHtmlBuilder appendText(String text) {
         childs.add(new EscapedTextHtmlBuilder(text));
+        return this;
     }
 
     @Override
@@ -55,12 +57,13 @@ public class RawHtmlBuilder implements HtmlBuilder {
         return buffer.toString();
     }
 
-    public void appendAttribute(String attr, String value, String separator) {
+    public RawHtmlBuilder appendAttribute(String attr, String value, String separator) {
         if (!attribues.containsKey(attr)) {
             putAttribute(attr, value);
         } else {
             putAttribute(attr, attribues.get(attr) + separator + value);
         }
+        return this;
     }
 
     public void appendTextWithoutEscape(String text) {
