@@ -26,6 +26,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.type.core.STypeInteger;
@@ -35,6 +36,7 @@ import org.opensingular.form.type.util.STypeEMail;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * @author Daniel C. Bordin on 10/08/2017.
@@ -52,7 +54,7 @@ public class AspectRefTest extends TestCaseForm {
 
         STypeString typeString = dictionary.getType(STypeString.class);
         Optional<MyInterface> aspect = typeString.getAspect(ASPECT_MY_INTERFACE);
-        Assert.assertEquals("string", aspect.orElse(null).getText());
+        Assert.assertEquals("string", aspect.orElse(null).get());
 
         assertAspectResult(dictionary, STypeSimple.class, "simple");
         assertAspectResult(dictionary, STypeInteger.class, "simple");
@@ -146,40 +148,43 @@ public class AspectRefTest extends TestCaseForm {
         assertAspectResult(ASPECT_MY_INTERFACE2, dictionary, STypeEMail.class, "string");
     }
 
-    private <T extends SType<?>> void assertAspectResult(SDictionary dictionary, Class<T> typeClass,
+    static <T extends SType<?>> void assertAspectResult(SDictionary dictionary, Class<T> typeClass,
             String expectedResult) {
         assertAspectResult(dictionary.getType(typeClass), expectedResult);
     }
 
-    private <A extends MyInterface, T extends SType<?>> void assertAspectResult(AspectRef<A> aspectRef,
+    static <A extends Supplier<String>, T extends SType<?>> void assertAspectResult(AspectRef<A> aspectRef,
             SDictionary dictionary, Class<T> typeClass, String expectedResult) {
         assertAspectResult(aspectRef, dictionary.getType(typeClass), expectedResult);
     }
 
-    private <T extends SType<?>> void assertAspectResult(T type, String expectedResult) {
+    static <T extends SType<?>> void assertAspectResult(T type, String expectedResult) {
         assertAspectResult(ASPECT_MY_INTERFACE, type, expectedResult);
     }
 
-    private <A extends MyInterface, T extends SType<?>> void assertAspectResult(AspectRef<A> aspectRef, T type,
+    static <A extends Supplier<String>, T extends SType<?>> void assertAspectResult(AspectRef<A> aspectRef, T type,
             String expectedResult) {
         Optional<A> aspect = type.getAspect(aspectRef);
-        String found = aspect.map(a -> a.getText()).orElse(null);
+        String found = aspect.map(a -> a.get()).orElse(null);
         Assert.assertEquals(expectedResult, found);
 
         if (type.getInstanceClass() != null) {
             SInstance instance = type.newInstance();
             aspect = instance.getAspect(aspectRef);
-            found = aspect.map(a -> a.getText()).orElse(null);
+            found = aspect.map(a -> a.get()).orElse(null);
             Assert.assertEquals(expectedResult, found);
         }
     }
+
+    //---------------------------------------------------------
+    //Aspect with a default registry and without a qualifier
+    //---------------------------------------------------------
 
     public static final AspectRef<MyInterface> ASPECT_MY_INTERFACE = new AspectRef<>(MyInterface.class,
             MyInterfaceRegistry.class);
 
     @FunctionalInterface
-    private static interface MyInterface {
-        public String getText();
+    private static interface MyInterface extends Supplier<String> {
     }
 
     public static class MyInterfaceRegistry extends SingleAspectRegistry<MyInterface, Object> {
@@ -191,11 +196,89 @@ public class AspectRefTest extends TestCaseForm {
         }
     }
 
+    //---------------------------------------------------------
+    //Aspect without default registry and qualifier
+    //---------------------------------------------------------
+
     public static final AspectRef<MyInterface2> ASPECT_MY_INTERFACE2 = new AspectRef<>(MyInterface2.class);
 
     @FunctionalInterface
-    private static interface MyInterface2 extends MyInterface {
-        public String getText();
+    private static interface MyInterface2 extends Supplier<String> {
     }
 
+    //---------------------------------------------------------
+    //Aspect with qualifier strategy
+    //---------------------------------------------------------
+
+    @Test
+    public void testAspectWithDefaultRegisterAndQualifier() {
+        SDictionary dictionary = createTestDictionary();
+        PackageBuilder pkg = dictionary.createNewPackage("test");
+
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeString.class, "string0");
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeEMail.class, "string5");
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeComposite.class, "composite8");
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeAttachment.class, "composite8");
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeList.class, null);
+
+        STypeString address = pkg.createType("address", STypeString.class);
+        assertAspectResult(ASPECT_MY_INTERFACE3, address, "string0");
+        address.asAtr().label("address");
+        assertAspectResult(ASPECT_MY_INTERFACE3, address, "string5");
+
+        dictionary.getType(STypeAttachment.class).setAspectFixImplementation(ASPECT_MY_INTERFACE3, () -> "attachment0");
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeAttachment.class, "attachment0");
+        assertAspectResult(ASPECT_MY_INTERFACE3, dictionary, STypeComposite.class, "composite8");
+
+    }
+
+    @FunctionalInterface
+    private static interface MyInterface3 extends Supplier<String> {
+    }
+
+    public static final AspectRef<MyInterface3> ASPECT_MY_INTERFACE3 = new AspectRef<>(MyInterface3.class,
+            MyInterfaceRegistry3.class);
+
+    public static class MyInterfaceRegistry3 extends SingleAspectRegistry<MyInterface3, Integer> {
+
+        public MyInterfaceRegistry3(@Nonnull AspectRef<MyInterface3> aspectRef) {
+            super(aspectRef, new MyInterface3QualifierByLabelDistance());
+            addFixImplementation(STypeComposite.class, 8, () -> "composite8");
+            addFixImplementation(STypeString.class, null, () -> "string0");
+            addFixImplementation(STypeString.class, 5, () -> "string5");
+            addFixImplementation(STypeSimple.class, 10, () -> "simple10");
+        }
+    }
+
+    public static final class MyInterface3QualifierByLabelDistance implements QualifierStrategy<Integer> {
+
+        @Override
+        public QualifierMatcher<Integer> getMatcherFor(SType<?> type) {
+            return new MyInterface3QualifierMatcher(type.asAtr().getLabel());
+        }
+
+        private static class MyInterface3QualifierMatcher implements QualifierMatcher<Integer> {
+
+            private final int targetLabelSize;
+
+            private MyInterface3QualifierMatcher(String label) {
+                this.targetLabelSize = label == null ? 0 : label.length();
+            }
+
+            @Override
+            public boolean isMatch(@Nonnull AspectEntry<?, Integer> aspectEntry) {
+                return true;
+            }
+
+            @Override
+            public int compare(AspectEntry<?, Integer> o1, AspectEntry<?, Integer> o2) {
+                return labelSizeDistance(o1) - labelSizeDistance(o2);
+            }
+
+            private int labelSizeDistance(AspectEntry<?, Integer> o1) {
+                int qualifier = o1.getQualifier() == null ? 0 : o1.getQualifier();
+                return Math.abs(targetLabelSize - qualifier);
+            }
+        }
+    }
 }

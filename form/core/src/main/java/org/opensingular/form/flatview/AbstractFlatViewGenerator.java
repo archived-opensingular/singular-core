@@ -11,4 +11,5 @@ public abstract class AbstractFlatViewGenerator implements FlatViewGenerator {
             doWriteOnCanvas(canvas, context);
         }
     }
+
 }
