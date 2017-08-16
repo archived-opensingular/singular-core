@@ -8,13 +8,14 @@ import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
 import org.opensingular.form.view.Block;
 import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.ViewResolver;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 
 public class BlockFlatViewGenerator extends AbstractFlatViewGenerator {
     @Override
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         SIComposite instance = (SIComposite) context.getInstance();
-        SViewByBlock viewByBlock = (SViewByBlock) instance.getType().getView();
+        SViewByBlock viewByBlock = (SViewByBlock) ViewResolver.resolveView(instance.getType());
         for (Block block : viewByBlock.getBlocks()) {
             String blockTitle = null;
             boolean hideTitle = false;

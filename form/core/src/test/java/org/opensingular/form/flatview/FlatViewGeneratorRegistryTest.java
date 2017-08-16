@@ -3,14 +3,13 @@ package org.opensingular.form.flatview;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
+import org.opensingular.form.*;
 import org.opensingular.form.flatview.mapper.BlockFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.SelectionFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.TabFlatViewGenerator;
+import org.opensingular.form.flatview.mapper.TableFlatViewGenerator;
 import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.form.view.SViewTab;
 
@@ -44,4 +43,12 @@ public class FlatViewGeneratorRegistryTest {
         foobar.withView(new SViewSelectionBySelect());
         assertThat(foobar.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR).orElse(null), Matchers.instanceOf(SelectionFlatViewGenerator.class));
     }
+
+    @Test
+    public void testRetrieveByTable() throws Exception {
+        STypeList<STypeComposite<SIComposite>, SIComposite> foobars = fooBarpackage.createListOfNewCompositeType("foobars", "foobar");
+        foobars.withView(new SViewListByTable());
+        assertThat(foobars.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR).orElse(null), Matchers.instanceOf(TableFlatViewGenerator.class));
+    }
+
 }

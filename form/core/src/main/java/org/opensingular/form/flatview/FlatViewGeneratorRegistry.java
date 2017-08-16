@@ -24,12 +24,10 @@ import org.opensingular.form.aspect.SingleAspectRegistry;
 import org.opensingular.form.flatview.mapper.BlockFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.SelectionFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.TabFlatViewGenerator;
+import org.opensingular.form.flatview.mapper.TableFlatViewGenerator;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.country.brazil.STypeUF;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.view.*;
 
 import javax.annotation.Nonnull;
 
@@ -43,9 +41,10 @@ public class FlatViewGeneratorRegistry extends SingleAspectRegistry<FlatViewGene
     public FlatViewGeneratorRegistry(@Nonnull AspectRef<FlatViewGenerator> aspectRef) {
         super(aspectRef, new SViewQualifierQualifierStrategy());
         add(STypeSimple.class, SISimpleFlatViewGenerator::new);
-        add(STypeList.class, SIListFlatViewGenerator::new);
         add(STypeAttachment.class, SIAttachmentFlatViewGenerator::new);
         add(STypeUF.class, UFFlatViewGenerator::new);
+        add(STypeList.class, SViewListByTable.class, TableFlatViewGenerator::new);
+        add(STypeList.class, SIListFlatViewGenerator::new);
         add(STypeComposite.class, SViewByBlock.class, BlockFlatViewGenerator::new);
         add(STypeComposite.class, SViewTab.class, TabFlatViewGenerator::new);
         add(STypeComposite.class, SViewSelectionBySelect.class, SelectionFlatViewGenerator::new);
