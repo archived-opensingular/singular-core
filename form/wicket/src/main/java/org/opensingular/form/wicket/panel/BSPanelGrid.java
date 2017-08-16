@@ -73,42 +73,43 @@ public abstract class BSPanelGrid extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         rebuildForm();
-        tabMenu.add(WicketUtils.$b.onReadyScript(c -> {
-            return "(function(){\n" +
-                    "  var $tab = $('#"+c.getMarkupId(true)+"'),\n" +
-                    "    offsetTop = ($tab.offset().top),\n" +
-                    "    width;\n" +
-                    "\n" +
-                    "  function saveTabParentWidth(){\n" +
-                    "    width = $tab.parent().width();\n" +
-                    "  }\n" +
-                    "\n" +
-                    "  function isBellowPageHeader(){\n" +
-                    "    return offsetTop - $(window).scrollTop() <= $('.page-header.navbar.navbar-fixed-top').height();\n" +
-                    "  }\n" +
-                    "\n" +
-                    "  saveTabParentWidth();\n" +
-                    "\n" +
-                    "  $(window).scroll(function(){\n" +
-                    "    if(isBellowPageHeader()){\n" +
-                    "      $tab.css('position', 'fixed');\n" +
-                    "      $tab.css('top', $('.page-header.navbar.navbar-fixed-top').height() + 25);\n" +
-                    "      $tab.css('width', width);\n" +
-                    "    } else{\n" +
-                    "      $tab.css('position', 'relative');\n" +
-                    "      $tab.css('top', 'auto');\n" +
-                    "      $tab.css('width', 'auto');\n" +
-                    "    }\n" +
-                    "  });\n" +
-                    "\n" +
-                    "  $(window).resize(function(){\n" +
-                    "    saveTabParentWidth();\n" +
-                    "    if(isBellowPageHeader()){\n" +
-                    "      $tab.css('width', width);\n" +
-                    "    } \n" +
-                    "  });\n" +
-                    "}());";
-        }));
+        tabMenu.add(WicketUtils.$b.onReadyScript(c -> "(function(){\n" +
+                "  var $tab = $('#"+c.getMarkupId(true)+"'),\n" +
+                "    offsetTop = ($tab.offset().top),\n" +
+                "    width;\n" +
+                "\n" +
+                "  function saveTabParentWidth(){\n" +
+                "    width = $tab.parent().width();\n" +
+                "  }\n" +
+                "\n" +
+                "  function isBellowPageHeader(){\n" +
+                "    return offsetTop - $(window).scrollTop() <= $('.page-header.navbar.navbar-fixed-top').height();\n" +
+                "  }\n" +
+                "\n" +
+                "  saveTabParentWidth();\n" +
+                "\n" +
+                "  function togglePosition(){\n" +
+                "    if(isBellowPageHeader()){\n" +
+                "      $tab.css('position', 'fixed');\n" +
+                "      $tab.css('top', $('.page-header.navbar.navbar-fixed-top').height() + 25);\n" +
+                "      $tab.css('width', width);\n" +
+                "    } else{\n" +
+                "      $tab.css('position', 'relative');\n" +
+                "      $tab.css('top', 'auto');\n" +
+                "      $tab.css('width', 'auto');\n" +
+                "    }\n" +
+                "  }\n" +
+                "\n" +
+                "  $(window).scroll(togglePosition);\n" +
+                "  Wicket.Event.subscribe(\"/ajax/call/complete\", togglePosition);\n" +
+                "\n" +
+                "  $(window).resize(function(){\n" +
+                "    saveTabParentWidth();\n" +
+                "    if(isBellowPageHeader()){\n" +
+                "      $tab.css('width', width);\n" +
+                "    }\n" +
+                "  });\n" +
+                "}());\n"));
     }
 
 
