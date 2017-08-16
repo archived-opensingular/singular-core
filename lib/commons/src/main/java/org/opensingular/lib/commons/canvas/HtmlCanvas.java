@@ -4,6 +4,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.canvas.builder.RawHtmlBuilder;
+import org.opensingular.lib.commons.canvas.table.HtmlTableCanvas;
+import org.opensingular.lib.commons.canvas.table.TableCanvas;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +38,7 @@ public class HtmlCanvas implements DocumentCanvas {
     }
 
     @Override
-    public void addTitle(String title) {
+    public void addSubtitle(String title) {
         String prefix = "";
         if (showTitleLevel) {
             if (index > 0) {
@@ -65,7 +67,7 @@ public class HtmlCanvas implements DocumentCanvas {
     }
 
     @Override
-    public DocumentCanvas newChild() {
+    public DocumentCanvas addChild() {
         int titleIndex = (index - 1);
         if (!indexChildMap.containsKey(titleIndex)) {
             HtmlCanvas newChild = newHtmlChildCanvas(currentHtmlBuilder.newChild("div"), showTitleLevel);
@@ -94,7 +96,7 @@ public class HtmlCanvas implements DocumentCanvas {
     }
 
     @Override
-    public void label(FormItem formItem) {
+    public void addFormItem(FormItem formItem) {
         RawHtmlBuilder span = this.currentHtmlBuilder.newChild("span");
         span.putAttribute("style", "margin-right:25px;");
         if (!StringUtils.isEmpty(formItem.getLabel())) {
@@ -107,17 +109,23 @@ public class HtmlCanvas implements DocumentCanvas {
     }
 
     @Override
-    public void breakLine() {
+    public void addLineBreak() {
         currentHtmlBuilder.newChild("br");
     }
 
     @Override
-    public void list(List<String> values) {
+    public void addList(List<String> values) {
         RawHtmlBuilder ul = this.currentHtmlBuilder.newChild("ul");
         for (String v : values) {
             RawHtmlBuilder li = ul.newChild("li");
             li.appendText(v);
         }
+    }
+
+    @Override
+    public TableCanvas addTable() {
+        addLineBreak();
+        return new HtmlTableCanvas(getRootHtmlBuilder().newChild("table"));
     }
 
     public void stylesheet(String css) {

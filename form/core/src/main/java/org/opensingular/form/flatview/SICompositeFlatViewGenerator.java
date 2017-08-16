@@ -11,11 +11,11 @@ public class SICompositeFlatViewGenerator extends AbstractFlatViewGenerator {
         if ((instance.getAllFields().size() == 1 && instance.asAtr().getLabel() == null) || context.isWithoutTitle()) {
             subcanvas = canvas;
         } else {
-            canvas.addTitle(context.getLabelOrName());
+            canvas.addSubtitle(context.getLabelOrName());
             if (instance.getParent() == null) {
                 subcanvas = canvas;
             } else {
-                subcanvas = canvas.newChild();
+                subcanvas = canvas.addChild();
             }
         }
         instance.getAllFields()
@@ -29,9 +29,7 @@ public class SICompositeFlatViewGenerator extends AbstractFlatViewGenerator {
                     }
                     return compare;
                 })
-                .forEach(child -> {
-                    child.getAspect(ASPECT_FLAT_VIEW_GENERATOR)
-                            .ifPresent(viewGenerator -> viewGenerator.writeOnCanvas(subcanvas, new FlatViewContext(child)));
-                });
+                .forEach(child -> child.getAspect(ASPECT_FLAT_VIEW_GENERATOR)
+                        .ifPresent(viewGenerator -> viewGenerator.writeOnCanvas(subcanvas, new FlatViewContext(child))));
     }
 }
