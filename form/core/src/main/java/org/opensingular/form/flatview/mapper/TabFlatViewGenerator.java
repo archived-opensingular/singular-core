@@ -13,15 +13,15 @@ public class TabFlatViewGenerator extends AbstractFlatViewGenerator {
     @Override
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         SIComposite instance = (SIComposite) context.getInstance();
-        canvas.addTitle(context.getLabelOrName());
+        canvas.addSubtitle(context.getLabelOrName());
         SViewTab viewTab = (SViewTab) instance.getType().getView();
         for (SViewTab.STab tab : viewTab.getTabs()) {
-            canvas.addTitle(tab.getTitle());
+            canvas.addSubtitle(tab.getTitle());
             for (String path : tab.getTypesName()) {
                 SInstance child = instance.getField(path);
                 child.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
                         .ifPresent(viewGenerator ->
-                                callChildWrite(canvas.newChild(), child, viewGenerator));
+                                callChildWrite(canvas.addChild(), child, viewGenerator));
             }
         }
     }

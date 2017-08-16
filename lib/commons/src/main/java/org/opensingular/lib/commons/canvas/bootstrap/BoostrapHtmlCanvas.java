@@ -52,7 +52,7 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
     }
 
     @Override
-    public void label(FormItem formItem) {
+    public void addFormItem(FormItem formItem) {
         if (formItem.isValueAndLabelNull()) {
             return;
         }
@@ -69,7 +69,7 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
     }
 
     @Override
-    public void list(List<String> values) {
+    public void addList(List<String> values) {
         RawHtmlBuilder ul = getcurrentHtmlBuilder()
                 .newChild("div").putAttribute("class", "col-md-12")
                 .newChild("ul").putAttribute("class", "list-unstyled");
@@ -80,7 +80,7 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
     }
 
     @Override
-    public void breakLine() {
+    public void addLineBreak() {
         getcurrentHtmlBuilder()
                 .newChild("div").putAttribute("class", "col-md-12");
     }

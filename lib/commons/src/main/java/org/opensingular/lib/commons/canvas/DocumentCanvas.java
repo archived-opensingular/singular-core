@@ -1,16 +1,21 @@
 package org.opensingular.lib.commons.canvas;
 
+import org.opensingular.lib.commons.canvas.table.TableCanvas;
+
 import java.util.List;
 
 public interface DocumentCanvas {
-    void addTitle(String title);
 
-    DocumentCanvas newChild();
+    void addSubtitle(String title);
 
-    void label(FormItem formItem);
+    DocumentCanvas addChild();
 
-    void breakLine();
+    void addFormItem(FormItem formItem);
 
-    void list(List<String> values);
+    void addLineBreak();
+
+    void addList(List<String> values);
+
+    TableCanvas addTable();
 
 }

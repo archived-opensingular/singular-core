@@ -7,7 +7,7 @@ import org.opensingular.lib.commons.canvas.FormItem;
 public class UFFlatViewGenerator extends AbstractFlatViewGenerator {
     @Override
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
-        canvas.label(new FormItem("UF",
+        canvas.addFormItem(new FormItem("UF",
                 context.getInstance().getValue(STypeUF.class, i -> i.nome),
                 context.getInstance().asAtrBootstrap().getColPreference()));
     }
