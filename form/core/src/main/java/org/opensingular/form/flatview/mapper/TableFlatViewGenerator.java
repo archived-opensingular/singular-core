@@ -16,6 +16,8 @@ import org.opensingular.lib.commons.canvas.table.TableRowCanvas;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 /**
  * Show list of composites in a table
  */
@@ -30,28 +32,35 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         List<String> headerColumns = new ArrayList<>();
         if (elementsType instanceof STypeComposite) {
             for (SType<?> e : ((STypeComposite<?>) elementsType).getFields()) {
-                if(e.asAtr().isVisible()) {
+                if (e.asAtr().isVisible()) {
                     headerColumns.add(e.asAtr().getLabel());
                 }
             }
         } else {
-            headerColumns.add(elementsType.asAtr().getLabel());
+            String label = elementsType.asAtr().getLabel();
+            if (label != null) {
+                headerColumns.add(label);
+            }
         }
 
         TableCanvas tableCanvas = canvas.addTable();
 
-        TableRowCanvas tableHeaderRow = tableCanvas.getTableHeader().addRow();
-        for (String column : headerColumns) {
-            tableHeaderRow.addColumn(column);
+        if (!headerColumns.isEmpty()) {
+            TableRowCanvas tableHeaderRow = tableCanvas.getTableHeader().addRow();
+            for (String column : headerColumns) {
+                tableHeaderRow.addColumn(column);
+            }
         }
 
         TableBodyCanvas tableBody = tableCanvas.getTableBody();
         for (SInstance child : siList) {
-            child.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
-                    .ifPresent(viewGenerator ->
-                            viewGenerator
-                                    .writeOnCanvas(new TableRowDocumentCanvasAdapter(tableBody.addRow()),
-                                            new FlatViewContext(child, true)));
+            FlatViewContext flatViewContext = new FlatViewContext(child, true);
+            if (!child.isEmptyOfData() && flatViewContext.shouldRender()) {
+                child.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
+                        .ifPresent(viewGenerator ->
+                                viewGenerator
+                                        .writeOnCanvas(new TableRowDocumentCanvasAdapter(tableBody.addRow()), flatViewContext));
+            }
         }
     }
 
@@ -74,7 +83,7 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
 
         @Override
         public void addFormItem(FormItem formItem) {
-            tableRow.addColumn(formItem.getValue());
+            tableRow.addColumn(defaultIfNull(formItem.getValue(), "-"));
         }
 
         @Override

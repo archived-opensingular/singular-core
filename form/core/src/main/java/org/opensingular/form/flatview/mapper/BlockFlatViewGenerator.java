@@ -23,6 +23,8 @@ public class BlockFlatViewGenerator extends AbstractFlatViewGenerator {
                 blockTitle = block.getName();
             } else if (block.getTypes().size() == 1) {
                 blockTitle = instance.getField(block.getTypes().get(0)).asAtr().getLabel();
+            }
+            if (block.getTypes().size() == 1) {
                 hideTitle = true;
             }
             canvas.addSubtitle(blockTitle);
