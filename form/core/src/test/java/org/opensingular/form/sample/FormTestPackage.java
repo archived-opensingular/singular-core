@@ -7,8 +7,8 @@ import org.opensingular.form.persistence.SPackageFormPersistence;
 
 import javax.annotation.Nonnull;
 
-@SInfoPackage(name = AntaqPackage.PACKAGE_NAME)
-public class AntaqPackage extends SPackage {
+@SInfoPackage(name = FormTestPackage.PACKAGE_NAME)
+public class FormTestPackage extends SPackage {
 
     public static final String PACKAGE_NAME = "br.gov.antaq.form";
 

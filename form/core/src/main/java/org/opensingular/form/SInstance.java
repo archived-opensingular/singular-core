@@ -200,7 +200,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public final void init() {
         //Não deve chamar o init se estiver no modo de leitura do XML
-        if (getDocument().getLastId() != -1) {
+        if (!getDocument().isRestoreMode()) {
             ((SType) getType()).init(() -> this);
         }
     }

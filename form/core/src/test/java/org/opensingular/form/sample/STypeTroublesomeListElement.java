@@ -4,13 +4,15 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "HabilitacaoTecnicaCargaLong")
-public class STypeHabilitacaoTecnica extends STypeComposite<SIComposite> {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeTroublesomeListElement")
+public class STypeTroublesomeListElement extends STypeComposite<SIComposite> {
 
     private final String PDF = "pdf";
 
+    public STypeBoolean                keepThisLine;
     public STypeComposite<SIComposite> registroEmbarcacaoComp;
     public STypeAttachment             anexoReg1;
     public STypeAttachment             anexoReg2;
@@ -43,6 +45,9 @@ public class STypeHabilitacaoTecnica extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
+        keepThisLine = addFieldBoolean("keepThisLine");
+        keepThisLine.asAtr().visible(false);
+        keepThisLine.setInitialValue(true);
 
 
         registroEmbarcacaoComp = addFieldComposite("registroEmbarcacaoComp");

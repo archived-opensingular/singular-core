@@ -4,8 +4,8 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "PortoLocal")
-public class STypePortoLocal extends STypePorto {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "PortoLocal")
+public class StypeFooDataLocation extends STypeFoo {
 
     public STypeString localAtracacao;
 

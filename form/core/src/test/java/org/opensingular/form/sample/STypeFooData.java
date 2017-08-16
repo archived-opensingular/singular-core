@@ -7,8 +7,8 @@ import org.opensingular.form.type.core.STypeTime;
 
 import java.util.Calendar;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "PortoLocalHorario")
-public class STypePortoLocalHorario extends STypePortoLocal {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "PortoLocalHorario")
+public class STypeFooData extends StypeFooDataLocation {
 
     
     public STypeString diaSemana;
