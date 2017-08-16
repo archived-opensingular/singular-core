@@ -9,6 +9,6 @@ public class HtmlTableBodyCanvas extends AbstractTableCanvas implements TableBod
 
     @Override
     public TableRowCanvas addRow() {
-        return new HtmlTableRowCanvas(getRawHtmlBuilder().newChild("tr"));
+        return new HtmlTableRowCanvas(getRawHtmlBuilder().newChild("tr"), HtmlTableRowCanvas.TYPE.BODY);
     }
 }

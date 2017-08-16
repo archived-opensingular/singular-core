@@ -10,6 +10,6 @@ public class HtmlTableHeadCanvas extends AbstractTableCanvas implements TableHea
 
     @Override
     public TableRowCanvas addRow() {
-        return new HtmlTableRowCanvas(getRawHtmlBuilder().newChild("th"));
+        return new HtmlTableRowCanvas(getRawHtmlBuilder().newChild("tr"), HtmlTableRowCanvas.TYPE.HEAD);
     }
 }

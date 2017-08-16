@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.canvas.builder.RawHtmlBuilder;
+import org.opensingular.lib.commons.canvas.table.HtmlTableCanvas;
 import org.opensingular.lib.commons.canvas.table.TableCanvas;
 
 import java.util.HashMap;
@@ -123,7 +124,8 @@ public class HtmlCanvas implements DocumentCanvas {
 
     @Override
     public TableCanvas addTable() {
-        return null;
+        addLineBreak();
+        return new HtmlTableCanvas(getRootHtmlBuilder().newChild("table"));
     }
 
     public void stylesheet(String css) {

@@ -1,5 +1,6 @@
 package org.opensingular.form.flatview.mapper;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 import org.opensingular.lib.commons.canvas.FormItem;
@@ -9,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockDocumentCanvas implements DocumentCanvas {
-
     private List<String> titles = new ArrayList<>();
     private List<MockDocumentCanvas> children = new ArrayList<>();
     private List<FormItem> formItens = new ArrayList<>();
+    private List<MockTableCanvas> tableCanvasMocks = new ArrayList<>();
 
     @Override
     public void addSubtitle(String title) {
@@ -43,7 +44,9 @@ public class MockDocumentCanvas implements DocumentCanvas {
 
     @Override
     public TableCanvas addTable() {
-        return null;
+        MockTableCanvas mockTableCanvas = new MockTableCanvas();
+        tableCanvasMocks.add(mockTableCanvas);
+        return mockTableCanvas;
     }
 
     public MockDocumentCanvas assertTitleCount(int count) {
@@ -63,5 +66,16 @@ public class MockDocumentCanvas implements DocumentCanvas {
 
     public void assertLabelValue(String value) {
         Assert.assertTrue(formItens.stream().map(FormItem::getValue).anyMatch(value::equalsIgnoreCase));
+    }
+
+    public void assertTableCount(int count) {
+        Assert.assertThat(tableCanvasMocks, Matchers.hasSize(count));
+    }
+
+    public MockTableCanvas getMockTableCanvas(int index) {
+        if (tableCanvasMocks.size() < index + 1) {
+            throw new AssertionError("tables size is "+tableCanvasMocks.size());
+        }
+        return tableCanvasMocks.get(index);
     }
 }

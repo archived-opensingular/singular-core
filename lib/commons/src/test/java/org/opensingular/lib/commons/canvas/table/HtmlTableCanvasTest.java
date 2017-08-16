@@ -26,8 +26,7 @@ public class HtmlTableCanvasTest {
         tableBody.addRow().addColumn("3");
         String html = tableRawBuilder.build();
         System.out.println(html);
-        Assert.assertEquals("<table><thead><th><td>IDs</td>" +
-                "</th></thead><tbody><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr></tbody></table>", html);
+        Assert.assertEquals("<table><thead><tr><th>IDs</th></tr></thead><tbody><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr></tbody></table>", html);
     }
 
 
@@ -47,8 +46,8 @@ public class HtmlTableCanvasTest {
 
         String html = tableRawBuilder.build();
         System.out.println(html);
-        Assert.assertEquals("<table><thead><th><td>IDs</td>" +
-                "<td>Nome</td></th></thead><tbody><tr><td>1</td><td>Danilo</td>" +
-                "</tr><tr><td>2</td><td>Ronaldo</td></tr></tbody></table>", html);
+        Assert.assertEquals("<table><thead><tr><th>IDs</th>" +
+                "<th>Nome</th></tr></thead><tbody><tr><td>1</td>" +
+                "<td>Danilo</td></tr><tr><td>2</td><td>Ronaldo</td></tr></tbody></table>", html);
     }
 }
