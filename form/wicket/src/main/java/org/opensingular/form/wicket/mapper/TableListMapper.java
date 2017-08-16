@@ -264,7 +264,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final SViewListByTable viewListByTable = (SViewListByTable) view;
 
-            if (viewListByTable.isInsertEnabled()) {
+            if (viewListByTable.isInsertEnabled() && viewMode.isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendInserirButton(this, form, item, actionColumn);
