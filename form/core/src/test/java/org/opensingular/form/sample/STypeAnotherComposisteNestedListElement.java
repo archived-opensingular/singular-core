@@ -5,17 +5,17 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "HorariosEsquemaOperacional")
-public class STypeHorariosEsquemaOperacional extends STypeComposite<SIComposite> {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeAnotherComposisteNestedListElement")
+public class STypeAnotherComposisteNestedListElement extends STypeComposite<SIComposite> {
 
-    public STypePortoLocalHorario partida;
-    public STypePortoLocalHorario chegada;
+    public STypeFooData partida;
+    public STypeFooData chegada;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
 
-        partida = this.addField("partida", STypePortoLocalHorario.class);
-        chegada = this.addField("chegada", STypePortoLocalHorario.class);
+        partida = this.addField("partida", STypeFooData.class);
+        chegada = this.addField("chegada", STypeFooData.class);
 
         partida.asAtr().label("Partida");
         chegada.asAtr().label("Chegada");

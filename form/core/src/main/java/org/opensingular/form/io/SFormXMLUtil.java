@@ -18,17 +18,20 @@ package org.opensingular.form.io;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.ICompositeType;
 import org.opensingular.form.InternalAccess;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SISimple;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.basic.AtrXML;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.internal.lib.commons.xml.MDocument;
@@ -39,6 +42,7 @@ import org.w3c.dom.NamedNodeMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -112,7 +116,7 @@ public final class SFormXMLUtil {
         }
 
         // Colocar em modo de não geraçao de IDs
-        novo.getDocument().setLastId(-1);
+        novo.getDocument().initRestoreMode();
         fromXML(novo, xml);
 
         int maxId = verificarIds(novo, new HashSet<>());
@@ -121,7 +125,7 @@ public final class SFormXMLUtil {
         } else {
             novo.getDocument().setLastId(lastId);
         }
-
+        novo.getDocument().finishRestoreMode();
         return novo;
     }
 
@@ -266,12 +270,40 @@ public final class SFormXMLUtil {
                 .toXML(instancia);
     }
 
+
+    private static List<SType<?>> collectConfiguredXMLAtrSubtypes(SType<?> type) {
+        List<SType<?>> types = new ArrayList<>();
+        if (type.as(AtrXML::new).isKeepNodePredicateConfigured()) {
+            types.add(type);
+        }
+        if (type instanceof ICompositeType) {
+            for (SType<?> field : ((ICompositeType) type).getContainedTypes()) {
+                types.addAll(collectConfiguredXMLAtrSubtypes(field));
+            }
+        }
+        return types;
+    }
+
+    private static void initATRXmlEnabledFields(SInstance instance) {
+        if (instance instanceof ICompositeInstance) {
+            initSubtypesForFurtherEvaluation(instance, collectConfiguredXMLAtrSubtypes(instance.getType()));
+        }
+    }
+
+    private static void initSubtypesForFurtherEvaluation(SInstance instance, List<SType<?>> types) {
+        for (SType<?> t : types) {
+            SInstances.streamDescendants(instance, false, t).forEach(si -> si.getChildren());
+        }
+    }
+
     @Nullable
     static MElement toXML(MElement pai, String nomePai, @Nonnull SInstance instancia,
                           @Nonnull PersistenceBuilderXML builder) {
 
         MDocument         xmlDocument = (pai == null) ? MDocument.newInstance() : pai.getMDocument();
         ConfXMLGeneration conf        = new ConfXMLGeneration(builder, xmlDocument);
+
+        initATRXmlEnabledFields(instancia);
 
         MElement xmlResultado = toXML(conf, instancia);
         if (xmlResultado == null) {
@@ -401,17 +433,18 @@ public final class SFormXMLUtil {
     private static MElement toXML(ConfXMLGeneration conf, SInstance instance) {
         MElement newElement = null;
         if (instance instanceof SISimple<?>) {
-            SISimple<?> iSimples     = (SISimple<?>) instance;
-            String      sPersistence = iSimples.toStringPersistence();
+            SISimple<?> iSimples = (SISimple<?>) instance;
+            String sPersistence = iSimples.toStringPersistence();
             if (sPersistence != null) {
                 newElement = conf.createMElementComValor(instance, sPersistence);
-            } else if (conf.isPersistirNull()) {
+            } else if (conf.isPersistirNull() || instance.as(AtrXML::new).getKeepNodePredicate().test(instance)) {
                 newElement = conf.createMElement(instance);
             }
-        } else if (instance instanceof SIComposite) {
-            newElement = toXMLChildren(conf, instance, newElement, ((SIComposite) instance).getFields());
-        } else if (instance instanceof SIList) {
-            newElement = toXMLChildren(conf, instance, newElement, ((SIList<?>) instance).getValues());
+        } else if (instance instanceof ICompositeInstance) {
+            if (instance.as(AtrXML::new).getKeepNodePredicate().test(instance)){
+                newElement = conf.createMElement(instance);
+            }
+            newElement = toXMLChildren(conf, instance, newElement, ((ICompositeInstance) instance).getChildren());
         } else {
             throw new SingularFormException("Instancia da classe " + instance.getClass().getName() + " não suportada",
                     instance);
@@ -421,6 +454,7 @@ public final class SFormXMLUtil {
 
         return newElement;
     }
+
 
     /**
      * Gera no XML a os elemento filhos (senão existirem).

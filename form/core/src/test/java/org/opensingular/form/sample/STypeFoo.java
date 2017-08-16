@@ -6,8 +6,8 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "Porto")
-public class STypePorto extends STypeComposite<SIComposite> {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "Porto")
+public class STypeFoo extends STypeComposite<SIComposite> {
 
     public STypeString municipio;
     public STypeString pais;

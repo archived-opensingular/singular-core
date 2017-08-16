@@ -12,16 +12,16 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import java.util.Optional;
 import java.util.UUID;
 
-@SInfoType(spackage = AntaqPackage.class, newable = false, name = "Embarcacao")
-public class STypeEmbarcacao extends STypeComposite<SIComposite> {
+@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeFirstListElement")
+public class STypeFirstListElement extends STypeComposite<SIComposite> {
 
-    public STypeString                                     identificador;
-    public STypeString                                     nome;
-    public STypeString                                     inscricao;
+    public STypeString                                         identificador;
+    public STypeString                                         nome;
+    public STypeString                                         inscricao;
     //    public STypeDate                                       validade;
-    public STypeString                                     tipoEmbarcacao;
-    public STypeList<STypeHabilitacaoTecnica, SIComposite> habilitacaoTecnicaList;
-    public STypeString                                     naturezaTransporte;
+    public STypeString                                         tipoEmbarcacao;
+    public STypeList<STypeTroublesomeListElement, SIComposite> theNestedTroublesomeList;
+    public STypeString                                         naturezaTransporte;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -34,7 +34,7 @@ public class STypeEmbarcacao extends STypeComposite<SIComposite> {
 
         nome = this.addFieldString("nome");
         nome.asAtr()
-                .required(Resolucao912Form.OBRIGATORIO)
+                .required(STypeFormTest.OBRIGATORIO)
                 .label("Nome da Embarcação")
                 .asAtrBootstrap()
                 .colPreference(3);
@@ -42,7 +42,7 @@ public class STypeEmbarcacao extends STypeComposite<SIComposite> {
         inscricao = this.addFieldString("inscricao");
         inscricao
                 .asAtr()
-                .required(Resolucao912Form.OBRIGATORIO)
+                .required(STypeFormTest.OBRIGATORIO)
                 .label("Número de Inscrição").asAtrBootstrap()
                 .colPreference(3);
 
@@ -57,36 +57,36 @@ public class STypeEmbarcacao extends STypeComposite<SIComposite> {
         tipoEmbarcacao = this.addFieldString("tipoEmbarcacao");
         tipoEmbarcacao
                 .asAtr()
-                .required(Resolucao912Form.OBRIGATORIO)
+                .required(STypeFormTest.OBRIGATORIO)
                 .label("Embarcação")
                 .asAtrBootstrap()
                 .colPreference(3);
 
-        tipoEmbarcacao.selectionOfEnum(TipoPropriedadeEmbarcacao.class);
+        tipoEmbarcacao.selectionOfEnum(ComboDomainEnum.class);
 
-        
+
         naturezaTransporte = this.addFieldString("naturezaTransporte");
         naturezaTransporte.selectionOf("Misto", "Passageiros");
         naturezaTransporte.asAtr().label("Natureza do transporte");
         naturezaTransporte.asAtrBootstrap().colPreference(3);
 
-        
-        habilitacaoTecnicaList = this.addFieldListOf("habilitacaoTecnicaList", STypeHabilitacaoTecnica.class);
-        habilitacaoTecnicaList.asAtr().label("Habilitação técnica da embarcação");
-        habilitacaoTecnicaList.withInitListener(list -> list.addNew());
-        habilitacaoTecnicaList.withMiniumSizeOf(1);
-        habilitacaoTecnicaList.withMaximumSizeOf(1);
-        habilitacaoTecnicaList.withView(() -> new SViewListByMasterDetail()
+
+        theNestedTroublesomeList = this.addFieldListOf("theNestedTroublesomeList", STypeTroublesomeListElement.class);
+        theNestedTroublesomeList.asAtr().label("Habilitação técnica da embarcação");
+        theNestedTroublesomeList.withInitListener(list -> list.addNew());
+        theNestedTroublesomeList.withMiniumSizeOf(1);
+        theNestedTroublesomeList.withMaximumSizeOf(1);
+        theNestedTroublesomeList.withView(() -> new SViewListByMasterDetail()
                 .fullSize()
                 .disableInsert()
                 .disableDelete()
                 .disableNew()
                 .col("Habilitação Técnica", "Editar anexos de habilitação técnica"));
 
-        habilitacaoTecnicaList.getElementsType().cascoNuComp
+        theNestedTroublesomeList.getElementsType().cascoNuComp
                 .asAtr()
                 .exists(this::isCascoNu);
-        habilitacaoTecnicaList.getElementsType().contrucaoReformaComp
+        theNestedTroublesomeList.getElementsType().contrucaoReformaComp
                 .asAtr()
                 .exists(this::isConstrucao);
 
@@ -104,17 +104,17 @@ public class STypeEmbarcacao extends STypeComposite<SIComposite> {
 //    }
 
     private boolean isCascoNu(SInstance habilitacaoTecnica) {
-        return isTipoEmbarcacao(habilitacaoTecnica, TipoPropriedadeEmbarcacao.AFREATAMENTO_CASCO_NU);
+        return isTipoEmbarcacao(habilitacaoTecnica, ComboDomainEnum.AFREATAMENTO_CASCO_NU);
     }
 
     private boolean isConstrucao(SInstance habilitacaoTecnica) {
-        return isTipoEmbarcacao(habilitacaoTecnica, TipoPropriedadeEmbarcacao.EM_CONSTRUCAO);
+        return isTipoEmbarcacao(habilitacaoTecnica, ComboDomainEnum.EM_CONSTRUCAO);
     }
 
-    private boolean isTipoEmbarcacao(SInstance habilitacaoTecnica, TipoPropriedadeEmbarcacao tipo) {
+    private boolean isTipoEmbarcacao(SInstance habilitacaoTecnica, ComboDomainEnum tipo) {
         Optional<String> value = habilitacaoTecnica.findNearestValue(tipoEmbarcacao);
         if (value.isPresent()) {
-            return tipo.equals(TipoPropriedadeEmbarcacao.valueOf(value.get()));
+            return tipo.equals(ComboDomainEnum.valueOf(value.get()));
         }
         return false;
     }
