@@ -19,32 +19,24 @@ package org.opensingular.form.aspect;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 
+import javax.annotation.Nonnull;
+
 /**
  * It's a factory for creating a {@link QualifierMatcher} witch will look for the best result for a particular {@link
  * SType} or {@link SInstance}.
  *
  * @author Daniel C. Bordin on 09/08/2017.
  */
-public interface QualifierStrategy {
-
-    /** Its factory for that creates a matcher that accepts any {@link AspectEntry}. */
-    public static final QualifierStrategy NO_QUALIFIER = new EmptyQualifierStrategy();
-
-    /** Creates a matcher for a particular {@link SInstance}. */
-    public QualifierMatcher getMatcherFor(SInstance instance);
+public interface QualifierStrategy<QUALIFIER> {
 
     /** Creates a matcher for a particular {@link SType}. */
-    public QualifierMatcher getMatcherFor(SType<?> type);
+    public QualifierMatcher<QUALIFIER> getMatcherFor(@Nonnull SType<?> type);
 
-    static final class EmptyQualifierStrategy implements QualifierStrategy {
-
-        @Override
-        public QualifierMatcher getMatcherFor(SInstance instance) {
-            return QualifierMatcher.ANY;
-        }
-
-        @Override
-        public QualifierMatcher getMatcherFor(SType<?> type) { return QualifierMatcher.ANY; }
-
+    /**
+     * Creates a matcher for a particular {@link SInstance}. The default implementation calls {@link
+     * #getMatcherFor(SType)} for the instance.
+     */
+    public default QualifierMatcher<QUALIFIER> getMatcherFor(@Nonnull SInstance instance) {
+        return getMatcherFor(instance.getType());
     }
 }
