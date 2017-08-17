@@ -33,4 +33,9 @@ final class QualifierMatcherNullQualifier implements QualifierMatcher<Object> {
         return entry.getQualifier() == null;
     }
 
+    @Override
+    public boolean isTheBestPossibleMatch(@Nonnull AspectEntry<?, Object> entry) {
+        return true;
+    }
+
 }

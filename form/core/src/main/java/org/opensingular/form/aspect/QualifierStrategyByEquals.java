@@ -50,6 +50,11 @@ public abstract class QualifierStrategyByEquals<T> implements QualifierStrategy<
 
         @Override
         public boolean isMatch(@Nonnull AspectEntry<?, T> entry) {
+            return entry.getQualifier() == null || Objects.equals(qualifierTarget, entry.getQualifier());
+        }
+
+        @Override
+        public boolean isTheBestPossibleMatch(@Nonnull AspectEntry<?, T> entry) {
             return Objects.equals(qualifierTarget, entry.getQualifier());
         }
     }

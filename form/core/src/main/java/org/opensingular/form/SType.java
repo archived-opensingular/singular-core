@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.aspect.AspectEntry;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
@@ -90,7 +91,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     private SView view;
 
     /** List os aspectes implementations registered locally to the type. */
-    private Supplier<?>[] aspects;
+    private AspectEntry<?,?>[] aspects;
 
     /**
      * Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}.
@@ -893,9 +894,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * only for internal use.
      */
     @Nullable
-    final Object getAspectDirect(int index) {
-        Supplier<?> supplier = ArrUtil.arrayGet(aspects, index);
-        return supplier == null ? null : supplier.get();
+    final AspectEntry<?,?> getAspectDirect(int index) {
+        return ArrUtil.arrayGet(aspects, index);
     }
 
     /**
@@ -907,7 +907,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         Objects.requireNonNull(aspectRef);
         Objects.requireNonNull(factory);
         Integer index = getDictionary().getMasterAspectRegistry().getIndex(aspectRef);
-        aspects = ArrUtil.arraySet(aspects, index, factory, Supplier.class, 1);
+        AspectEntry<T,Object> entry = new AspectEntry<>(null, factory);
+        aspects = ArrUtil.arraySet(aspects, index, entry, AspectEntry.class, 1);
     }
 
     /**

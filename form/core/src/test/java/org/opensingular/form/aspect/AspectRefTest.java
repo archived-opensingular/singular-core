@@ -35,6 +35,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.util.STypeEMail;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -244,7 +245,7 @@ public class AspectRefTest extends TestCaseForm {
         public MyInterfaceRegistry3(@Nonnull AspectRef<MyInterface3> aspectRef) {
             super(aspectRef, new MyInterface3QualifierByLabelDistance());
             addFixImplementation(STypeComposite.class, 8, () -> "composite8");
-            addFixImplementation(STypeString.class, null, () -> "string0");
+            addFixImplementation(STypeString.class, 0, () -> "string0");
             addFixImplementation(STypeString.class, 5, () -> "string5");
             addFixImplementation(STypeSimple.class, 10, () -> "simple10");
         }
@@ -268,6 +269,11 @@ public class AspectRefTest extends TestCaseForm {
             @Override
             public boolean isMatch(@Nonnull AspectEntry<?, Integer> aspectEntry) {
                 return true;
+            }
+
+            @Override
+            public boolean isTheBestPossibleMatch(@Nonnull AspectEntry<?, Integer> entry) {
+                return Objects.equals(targetLabelSize, entry.getQualifier());
             }
 
             @Override

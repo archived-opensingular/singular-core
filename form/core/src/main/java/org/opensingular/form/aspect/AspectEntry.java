@@ -35,7 +35,12 @@ public final class AspectEntry<T, QUALIFIER> {
     private final Supplier<T> factory;
     private final int priority;
 
-    AspectEntry(@Nullable QUALIFIER qualifier, @Nonnull Supplier<T> factory, int priority) {
+    /** Creates a entry with the default priority ({@link #DEFAULT_ENTRY_PRIORITY}).*/
+    public AspectEntry(@Nullable QUALIFIER qualifier, @Nonnull Supplier<T> factory) {
+        this(qualifier, factory, DEFAULT_ENTRY_PRIORITY);
+    }
+
+    public AspectEntry(@Nullable QUALIFIER qualifier, @Nonnull Supplier<T> factory, int priority) {
         this.qualifier = qualifier;
         this.factory = factory;
         this.priority = priority;

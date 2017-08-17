@@ -46,7 +46,7 @@ public class QualifierStrategyTest extends TestCaseForm {
     }
 
     @Test
-    public void testAspectWithDefaultRegisterAndQualifier() {
+    public void testAspectWithDefaultRegisterAndQualifierByEquals() {
         SDictionary dictionary = createTestDictionary();
         PackageBuilder pkg = dictionary.createNewPackage("test");
 
@@ -104,6 +104,103 @@ public class QualifierStrategyTest extends TestCaseForm {
             addFixImplementation(STypeSimple.class, 10, () -> "simple10");
         }
     }
+
+    @Test
+    public void testAspectWithQualifierByClass() {
+        SDictionary dictionary = createTestDictionary();
+        PackageBuilder pkg = dictionary.createNewPackage("test");
+
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeString.class, "stringNull");
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeEMail.class, "stringNull");
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeComposite.class, null);
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeAttachment.class, null);
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeList.class, null);
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeInteger.class, "simpleNull");
+
+        STypeString address = pkg.createType("address", STypeString.class);
+        address.asAtr().label("a");
+        assertAspectResult(ASPECT_BY_CLASS, address, "stringNull");
+        address.asAtr().label("aa");
+        assertAspectResult(ASPECT_BY_CLASS, address, "stringAA");
+        address.asAtr().label("aaa");
+        assertAspectResult(ASPECT_BY_CLASS, address, "simpleAAA");
+
+        STypeEMail mail = pkg.createType("mail", STypeEMail.class);
+        mail.asAtr().label("a");
+        assertAspectResult(ASPECT_BY_CLASS, mail, "stringNull");
+        mail.asAtr().label("aa");
+        assertAspectResult(ASPECT_BY_CLASS, mail, "stringAA");
+        mail.asAtr().label("aaa");
+        assertAspectResult(ASPECT_BY_CLASS, mail, "simpleAAA");
+
+        STypeInteger qtd = pkg.createType("qtd", STypeInteger.class);
+        qtd.asAtr().label("a");
+        assertAspectResult(ASPECT_BY_CLASS, qtd, "simpleNull");
+        qtd.asAtr().label("aa");
+        assertAspectResult(ASPECT_BY_CLASS, qtd, "simpleNull");
+        qtd.asAtr().label("aaa");
+        assertAspectResult(ASPECT_BY_CLASS, qtd, "simpleAAA");
+
+
+        STypeAttachment pdf1 = pkg.createType("pdf1", STypeAttachment.class);
+        pdf1.asAtr().label("a");
+        assertAspectResult(ASPECT_BY_CLASS, pdf1, null);
+        pdf1.asAtr().label("aa");
+        assertAspectResult(ASPECT_BY_CLASS, pdf1, "compositeAA");
+        pdf1.asAtr().label("aaa");
+        assertAspectResult(ASPECT_BY_CLASS, pdf1, "compositeAA");
+
+        dictionary.getType(STypeAttachment.class).setAspectFixImplementation(ASPECT_BY_CLASS, () -> "attachment0");
+        assertAspectResult(ASPECT_BY_CLASS, dictionary, STypeAttachment.class, "attachment0");
+        assertAspectResult(ASPECT_BY_CLASS, pdf1, "attachment0");
+
+    }
+
+    @FunctionalInterface
+    private static interface MyInterfaceByClass extends Supplier<String> {
+    }
+
+    public static final AspectRef<MyInterfaceByClass> ASPECT_BY_CLASS = new AspectRef<>(MyInterfaceByClass.class,
+            MyRegistryByClass.class);
+
+    public static class MyRegistryByClass extends SingleAspectRegistry<MyInterfaceByClass, Class<? extends Q_A>> {
+
+        public MyRegistryByClass(@Nonnull AspectRef<MyInterfaceByClass> aspectRef) {
+            super(aspectRef, new QualifierStrategyMyRegistry());
+            addFixImplementation(STypeComposite.class, Q_AA.class, () -> "compositeAA");
+            addFixImplementation(STypeString.class, null, () -> "stringNull");
+            addFixImplementation(STypeString.class, Q_AA.class, () -> "stringAA");
+            addFixImplementation(STypeSimple.class, null, () -> "simpleNull");
+            addFixImplementation(STypeSimple.class, Q_AAA.class, () -> "simpleAAA");
+        }
+
+        public static class QualifierStrategyMyRegistry extends QualifierStrategyByClassQualifier<Class<? extends Q_A>> {
+            @Nullable
+            @Override
+            protected Class<? extends Q_A> extractQualifier(@Nonnull SType<?> type) {
+                String label = type.asAtr().getLabel();
+                if ("a".equals(label)) {
+                    return Q_A.class;
+                } else if ("aa".equals(label)) {
+                    return Q_AA.class;
+                } else if ("aaa".equals(label)) {
+                    return Q_AAA.class;
+                }
+                return null;
+            }
+        }
+    }
+
+    public static class Q_A {
+    }
+
+    public static class Q_AA extends Q_A {
+    }
+
+    public static class Q_AAA extends Q_AA {
+    }
+
+    // -------------------------- Helpers for the tests
 
     static <A extends Supplier<String>, T extends SType<?>> void assertAspectResult(AspectRef<A> aspectRef,
             SDictionary dictionary, Class<T> typeClass, String expectedResult) {

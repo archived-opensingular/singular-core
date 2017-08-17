@@ -32,11 +32,20 @@ import java.util.Comparator;
 public interface QualifierMatcher<QUALIFIER> extends Comparator<AspectEntry<?, QUALIFIER>> {
 
     /**
-     * Verifies if the {@link org.opensingular.form.aspect.AspectEntry} is valid selection.
+     * Verifies if the {@link org.opensingular.form.aspect.AspectEntry} is valid selection, even if it isn't the best
+     * possible match.
      *
      * @see AspectEntry#getQualifier()
      */
     boolean isMatch(@Nonnull AspectEntry<?, QUALIFIER> entry);
+
+    /**
+     * Verifies if the entry fits exactly the search criteria and the search should stop with this entry.
+     *
+     * @return If true, it's the best possible match and the search should stop. If false, the search should will keep
+     * looking in the parent {@link org.opensingular.form.SType} for a better match.
+     */
+    public boolean isTheBestPossibleMatch(@Nonnull AspectEntry<?, QUALIFIER> entry);
 
     /**
      * Verify between the two entries, already verified by {@link #isMatch(AspectEntry)}, witch is a better match. If
@@ -46,19 +55,15 @@ public interface QualifierMatcher<QUALIFIER> extends Comparator<AspectEntry<?, Q
      * <li>zero, than both are equivalent</li>
      * <li>positive, than the second one is more relevant</li>
      * </ul>
-     * <p>Usually this method should consider the {@link
-     * AspectEntry#getQualifier()}. By default, this methods considers the two entries equivalent.</p>
+     * <p>Usually this method should consider the {@link AspectEntry#getQualifier()}.</p>
+     * <p>By default, this methods considers the entry without a qualifier as less importante, otherwise considers
+     * the two entries equivalent.</p>
      *
      * @see AspectEntry#getQualifier()
      */
     @Override
     default int compare(AspectEntry<?, QUALIFIER> entry1, AspectEntry<?, QUALIFIER> entry2) {
         return 0;
-    }
-
-    /** Returns a matcher that aceppts any entry and has preference for the first entry found for a type. */
-    public static <T> QualifierMatcher<T> any() {
-        return (QualifierMatcher<T>) QualifierMatcherAny.ANY;
     }
 
     /**
