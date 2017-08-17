@@ -38,7 +38,7 @@ public class FlatViewContext {
     }
 
     public boolean shouldRender() {
-        return instance.asAtr().isVisible() && instance.asAtr().isExists();
+        return instance.asAtr().isVisible() && instance.asAtr().isExists() && !instance.isEmptyOfData();
     }
 
     public boolean isWithoutTitle() {
