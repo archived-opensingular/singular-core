@@ -111,7 +111,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             (content, form) -> {
 
                 TemplatePanel list = content.newTemplateTag(t -> ""
-                    + "    <ul class='list-group list-by-form'>"
+                    + "    <ul wicket:id='_u' class='list-group list-by-form'>"
                     + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
                     + "         <div wicket:id='_r'></div>"
                     + "      </li>"
@@ -119,14 +119,20 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                     + "         <span>Nenhum item foi adicionado</span>"
                     + "      </div>"
                     + "    </ul>");
-                final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form);
-                elements.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
-                list.add(elements);
+
+                final WebMarkupContainer container = new WebMarkupContainer("_u");
+                final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form, container);
                 final WebMarkupContainer empty = new WebMarkupContainer("_empty");
-                empty.add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
-                list.add(empty);
+
+                list
+                    .add(container
+                        .add(elements
+                            .add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())))))
+                    .add(empty
+                        .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty()))));
                 content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
-                content.getParent().add(dependsOnModifier(listaModel));
+                content.getParent()
+                    .add(dependsOnModifier(listaModel));
             },
             (f, form) -> buildFooter(f, form, ctx));
 
@@ -145,8 +151,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             UIBuilderWicket wicketBuilder,
             WicketBuildContext ctx,
             SViewListByForm view,
-            Form<?> form) {
-            super(id, model);
+            Form<?> form,
+            WebMarkupContainer parentContainer) {
+            super(id, model, parentContainer);
             this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
             this.view = view;
