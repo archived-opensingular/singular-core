@@ -4,7 +4,9 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SICompositeFlatViewGenerator extends AbstractFlatViewGenerator {
@@ -12,10 +14,10 @@ public class SICompositeFlatViewGenerator extends AbstractFlatViewGenerator {
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         SIComposite instance = context.getInstanceAs(SIComposite.class);
         DocumentCanvas subcanvas;
-        if (instance.getAllFields().size() == 1 || instance.asAtr().getLabel() == null || context.isWithoutTitle()) {
+        if (isFlatView(context, instance)) {
             subcanvas = canvas;
         } else {
-            canvas.addSubtitle(context.getLabelOrName());
+            canvas.addSubtitle(context.getLabel());
             if (instance.getParent() == null) {
                 subcanvas = canvas;
             } else {
@@ -24,23 +26,25 @@ public class SICompositeFlatViewGenerator extends AbstractFlatViewGenerator {
         }
         List<SInstance> fields = instance.getAllFields()
                 .stream()
-                .sorted((a, b) -> {
-                    Integer _a = a.getType().isComposite() || a.getType().isList() ? 1 : 0;
-                    Integer _b = b.getType().isComposite() || a.getType().isList() ? 1 : 0;
-                    Integer compare = _a.compareTo(_b);
-                    if (compare == 0) {
-                        return Integer.compare(instance.getAllFields().indexOf(a), instance.getAllFields().indexOf(b));
-                    }
-                    return compare;
-                }).collect(Collectors.toList());
+                .sorted(Comparator.comparing(this::isChildWithSessionBreaker)).collect(Collectors.toList());
         int rowCount = 0;
-        for(SInstance child : fields){
+        for (SInstance child : fields) {
             rowCount += child.asAtrBootstrap().getColPreference();
-            if(rowCount > 12){
+            if (rowCount > 12 || isChildWithSessionBreaker(child)) {
                 rowCount = 0;
                 subcanvas.addLineBreak();
             }
-            child.getAspect(ASPECT_FLAT_VIEW_GENERATOR).ifPresent(viewGenerator -> viewGenerator.writeOnCanvas(subcanvas, new FlatViewContext(child)));
+            Optional<FlatViewGenerator> aspect = child.getAspect(ASPECT_FLAT_VIEW_GENERATOR);
+            aspect.ifPresent(flatViewGenerator -> flatViewGenerator.writeOnCanvas(subcanvas, new FlatViewContext(child)));
         }
+    }
+
+    private boolean isFlatView(FlatViewContext context, SIComposite instance) {
+        return instance.asAtr().getLabel() == null || context.isWithoutTitle();
+    }
+
+    private Boolean isChildWithSessionBreaker(SInstance a) {
+        return (a.asAtrBootstrap().getColPreference(12) == 12 && a.getType().isComposite()
+                && a.asAtr().getLabel() != null) || a.getType().isList();
     }
 }

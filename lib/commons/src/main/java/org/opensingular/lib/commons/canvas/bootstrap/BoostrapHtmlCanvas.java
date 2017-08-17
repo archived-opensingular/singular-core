@@ -48,7 +48,7 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
     protected void addPageHeader(String prefix, String title) {
         getcurrentHtmlBuilder()
                 .newChild("div")
-                .putAttribute("class", "page-header")
+                .putAttribute("class", "page-header text-center")
                 .newChild("h1")
                 .appendText(ObjectUtils.defaultIfNull(title, ""));
     }
@@ -58,15 +58,16 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
         if (formItem.isValueAndLabelNull()) {
             return;
         }
-        RawHtmlBuilder column = getcurrentHtmlBuilder().newChild("div");
+        RawHtmlBuilder item = getcurrentHtmlBuilder().newChild("div");
+        item.putAttribute("style", "word-wrap:break-word");
         if (formItem.getCols() != null) {
-            column.putAttribute("class", "col-md-" + formItem.getCols());
+            item.appendAttribute("class", "col-md-" + formItem.getCols(), " ");
         }
         if (formItem.getLabel() != null) {
-            column.newChild("strong").appendText(formItem.getLabel()).appendText(": ");
+            item.newChild("strong").appendText(formItem.getLabel()).appendText(": ");
         }
         if (formItem.getValue() != null) {
-            column.appendText(formItem.getValue());
+            item.appendText(formItem.getValue());
         }
     }
 

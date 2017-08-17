@@ -8,6 +8,7 @@ import org.opensingular.form.flatview.AbstractFlatViewGenerator;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
+import org.opensingular.lib.commons.canvas.EmptyDocumentCanvas;
 import org.opensingular.lib.commons.canvas.FormItem;
 import org.opensingular.lib.commons.canvas.table.TableBodyCanvas;
 import org.opensingular.lib.commons.canvas.table.TableCanvas;
@@ -24,7 +25,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
     @Override
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
-        canvas.addSubtitle(context.getLabelOrName());
+        canvas.addSubtitle(context.getLabel());
 
         SIList<?> siList = context.getInstanceAs(SIList.class);
         SType<?> elementsType = siList.getElementsType();
@@ -57,48 +58,22 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
             FlatViewContext flatViewContext = new FlatViewContext(child, true);
             if (!child.isEmptyOfData() && flatViewContext.shouldRender()) {
                 child.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
-                        .ifPresent(viewGenerator ->
-                                viewGenerator
-                                        .writeOnCanvas(new TableRowDocumentCanvasAdapter(tableBody.addRow()), flatViewContext));
+                        .ifPresent(viewGenerator -> viewGenerator
+                                .writeOnCanvas(new TableRowDocumentCanvasAdapter(tableBody.addRow()), flatViewContext));
             }
         }
     }
 
-    public static class TableRowDocumentCanvasAdapter implements DocumentCanvas {
+    public static class TableRowDocumentCanvasAdapter extends EmptyDocumentCanvas {
         private final TableRowCanvas tableRow;
 
-        public TableRowDocumentCanvasAdapter(TableRowCanvas tableRow) {
+        TableRowDocumentCanvasAdapter(TableRowCanvas tableRow) {
             this.tableRow = tableRow;
-        }
-
-        @Override
-        public void addSubtitle(String title) {
-
-        }
-
-        @Override
-        public DocumentCanvas addChild() {
-            return this;
         }
 
         @Override
         public void addFormItem(FormItem formItem) {
             tableRow.addColumn(defaultIfNull(formItem.getValue(), "-"));
-        }
-
-        @Override
-        public void addLineBreak() {
-
-        }
-
-        @Override
-        public void addList(List<String> values) {
-
-        }
-
-        @Override
-        public TableCanvas addTable() {
-            return null;
         }
     }
 

@@ -16,22 +16,27 @@ public class BlockFlatViewGenerator extends AbstractFlatViewGenerator {
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         SIComposite instance = (SIComposite) context.getInstance();
         SViewByBlock viewByBlock = (SViewByBlock) ViewResolver.resolveView(instance.getType());
+
         for (Block block : viewByBlock.getBlocks()) {
             String blockTitle = null;
             boolean hideTitle = false;
+
             if (StringUtils.isNotEmpty(block.getName())) {
                 blockTitle = block.getName();
             } else if (block.getTypes().size() == 1) {
                 blockTitle = instance.getField(block.getTypes().get(0)).asAtr().getLabel();
             }
+
             if (block.getTypes().size() == 1) {
                 hideTitle = true;
             }
             canvas.addSubtitle(blockTitle);
             DocumentCanvas subcanvas = canvas.addChild();
+
             for (String type : block.getTypes()) {
                 SInstance f = instance.getField(type);
                 FlatViewGenerator flatViewGenerator = f.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR).orElse(null);
+
                 if (flatViewGenerator != null) {
                     flatViewGenerator.writeOnCanvas(subcanvas, new FlatViewContext(f, hideTitle));
                 }
