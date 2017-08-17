@@ -15,7 +15,7 @@ public class FlatViewContext {
 
     public FlatViewContext(SInstance instance, boolean withoutTitle) {
         this.instance = instance;
-        this.withoutTitle = true;
+        this.withoutTitle = withoutTitle;
     }
 
     public <T extends SInstance> T getInstanceAs(Class<T> tClass) {
@@ -26,7 +26,7 @@ public class FlatViewContext {
         return instance;
     }
 
-    public String getLabelOrName() {
+    public String getLabel() {
         String label = instance.asAtr().getLabel();
         if (label == null) {
             label = SFormUtil.getTypeLabel(instance.getType().getClass()).orElse(null);
@@ -37,11 +37,12 @@ public class FlatViewContext {
         return label;
     }
 
-    public boolean shouldRender(){
-        return instance.asAtr().isVisible() && instance.asAtr().isExists();
+    public boolean shouldRender() {
+        return instance.asAtr().isVisible() && instance.asAtr().isExists() && !instance.isEmptyOfData();
     }
 
     public boolean isWithoutTitle() {
         return withoutTitle;
     }
+
 }

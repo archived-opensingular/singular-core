@@ -60,14 +60,37 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
     @Override
     public void setObject(List<Serializable> objects) {
         SIList<?> list = model.getObject();
-        list.clearInstance();
-        selects.clear();
-        for (int i = 0; i <= objects.size(); i += 1) {
-            final Serializable o = objects.get(i);
-            final SInstance newElement = list.addNew();
-            model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
-            selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
+        //check if the selection actually has changed beacause in this case wicket do not do that.
+        if (checkIfChanged(objects, list)) {
+            list.clearInstance();
+            selects.clear();
+            for (int i = 0; i <= objects.size(); i += 1) {
+                final Serializable o = objects.get(i);
+                final SInstance newElement = list.addNew();
+                model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
+                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
+            }
         }
+    }
+
+    /**
+     * compares the objects list
+     * here we consider value and order to decide if the value list has changed.
+     * @param objects
+     * @param list
+     * @return
+     */
+    private boolean checkIfChanged(List<Serializable> objects, SIList<?> list){
+        if (objects.size() == list.size()){
+            for (int i = 0; i < objects.size(); i++) {
+                Object currentValue = model.getObject().asAtrProvider().getConverter().toObject(list.get(i));
+                if (!currentValue.equals(objects.get(i))){
+                    break;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     public SelectSInstanceAwareModel.SelectConverterResolver getCustomSelectConverterResolver(){

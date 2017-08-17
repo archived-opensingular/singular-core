@@ -19,6 +19,7 @@ package org.opensingular.form.flatview;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 
+
 /**
  * Represents the capability of generating a flat representation (usually a html) of a {@link
  * org.opensingular.form.SInstance}.

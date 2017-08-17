@@ -14,6 +14,7 @@ public class MockDocumentCanvas implements DocumentCanvas {
     private List<MockDocumentCanvas> children = new ArrayList<>();
     private List<FormItem> formItens = new ArrayList<>();
     private List<MockTableCanvas> tableCanvasMocks = new ArrayList<>();
+    private List<List<String>> lists = new ArrayList<>();
 
     @Override
     public void addSubtitle(String title) {
@@ -39,7 +40,7 @@ public class MockDocumentCanvas implements DocumentCanvas {
 
     @Override
     public void addList(List<String> values) {
-
+        lists.add(values);
     }
 
     @Override
@@ -55,13 +56,17 @@ public class MockDocumentCanvas implements DocumentCanvas {
     }
 
     public MockDocumentCanvas assertTitle(String expectedTitle) {
-        Assert.assertTrue(titles.contains(expectedTitle));
+        Assert.assertTrue("Title not found: " + expectedTitle + ", actual titles are" + titles, titles.contains(expectedTitle));
         return this;
     }
 
     public MockDocumentCanvas assertChildCount(int i) {
         Assert.assertEquals(i, children.size());
         return this;
+    }
+
+    public MockDocumentCanvas getChild(int i) {
+        return children.get(i);
     }
 
     public void assertLabelValue(String value) {
@@ -74,8 +79,18 @@ public class MockDocumentCanvas implements DocumentCanvas {
 
     public MockTableCanvas getMockTableCanvas(int index) {
         if (tableCanvasMocks.size() < index + 1) {
-            throw new AssertionError("tables size is "+tableCanvasMocks.size());
+            throw new AssertionError("tables size is " + tableCanvasMocks.size());
         }
         return tableCanvasMocks.get(index);
     }
+
+    public void assertList(List<String> expectedList) {
+        for (List<String> list : lists) {
+            if (list.equals(expectedList)) {
+                return;
+            }
+        }
+        throw new AssertionError("no list with values " + expectedList + " was added" + expectedList);
+    }
+
 }
