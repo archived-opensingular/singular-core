@@ -7,15 +7,24 @@ public class FlatViewContext {
 
     private final SInstance instance;
     private final boolean withoutTitle;
+    private final boolean renderIfEmpty;
 
     public FlatViewContext(SInstance instance) {
         this.instance = instance;
         this.withoutTitle = false;
+        this.renderIfEmpty = false;
     }
 
     public FlatViewContext(SInstance instance, boolean withoutTitle) {
         this.instance = instance;
         this.withoutTitle = withoutTitle;
+        this.renderIfEmpty = false;
+    }
+
+    public FlatViewContext(SInstance instance, boolean withoutTitle, boolean renderIfEmpty) {
+        this.instance = instance;
+        this.withoutTitle = withoutTitle;
+        this.renderIfEmpty = renderIfEmpty;
     }
 
     public <T extends SInstance> T getInstanceAs(Class<T> tClass) {
@@ -38,7 +47,9 @@ public class FlatViewContext {
     }
 
     public boolean shouldRender() {
-        return instance.asAtr().isVisible() && instance.asAtr().isExists() && !instance.isEmptyOfData();
+        return instance.asAtr().isVisible()
+                && instance.asAtr().isExists()
+                && (renderIfEmpty || !instance.isEmptyOfData());
     }
 
     public boolean isWithoutTitle() {

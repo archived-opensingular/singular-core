@@ -1,9 +1,7 @@
 package org.opensingular.form.flatview.mapper;
 
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.*;
 import org.opensingular.form.flatview.AbstractFlatViewGenerator;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
@@ -55,13 +53,21 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
 
         TableBodyCanvas tableBody = tableCanvas.getTableBody();
         for (SInstance child : siList) {
-            FlatViewContext flatViewContext = new FlatViewContext(child, true);
-            if (!child.isEmptyOfData() && flatViewContext.shouldRender()) {
-                child.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
-                        .ifPresent(viewGenerator -> viewGenerator
-                                .writeOnCanvas(new TableRowDocumentCanvasAdapter(tableBody.addRow()), flatViewContext));
+            TableRowDocumentCanvasAdapter row = new TableRowDocumentCanvasAdapter(tableBody.addRow());
+            if (child.getType().isComposite()) {
+                for (SInstance compositeField : ((SIComposite) child).getAllFields()) {
+                    callListItemDoWrite(row, compositeField);
+                }
+            } else {
+                callListItemDoWrite(row, child);
             }
         }
+    }
+
+    private void callListItemDoWrite(TableRowDocumentCanvasAdapter row, SInstance field) {
+        field.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
+                .ifPresent(viewGenerator -> viewGenerator
+                        .writeOnCanvas(row, new FlatViewContext(field, true, true)));
     }
 
     public static class TableRowDocumentCanvasAdapter extends EmptyDocumentCanvas {
@@ -73,7 +79,13 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
 
         @Override
         public void addFormItem(FormItem formItem) {
-            tableRow.addColumn(defaultIfNull(formItem.getValue(), "-"));
+            String value;
+            if(StringUtils.isBlank(formItem.getValue())){
+                value = "-";
+            } else {
+                value = formItem.getValue();
+            }
+            tableRow.addColumn(value);
         }
     }
 
