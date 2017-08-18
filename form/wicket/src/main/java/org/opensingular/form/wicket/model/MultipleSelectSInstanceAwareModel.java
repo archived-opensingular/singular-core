@@ -64,7 +64,7 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
         if (checkIfChanged(objects, list)) {
             list.clearInstance();
             selects.clear();
-            for (int i = 0; i <= objects.size(); i += 1) {
+            for (int i = 0; i < objects.size(); i += 1) {
                 final Serializable o = objects.get(i);
                 final SInstance newElement = list.addNew();
                 model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
@@ -85,7 +85,7 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
             for (int i = 0; i < objects.size(); i++) {
                 Object currentValue = model.getObject().asAtrProvider().getConverter().toObject(list.get(i));
                 if (!currentValue.equals(objects.get(i))){
-                    break;
+                    return true;
                 }
             }
             return false;
