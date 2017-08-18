@@ -51,7 +51,16 @@ import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    final static HintKey<Boolean>           NO_DECORATION            = (HintKey<Boolean>) () -> Boolean.FALSE;
+    final static HintKey<Boolean>           NO_DECORATION            = new HintKey<Boolean>() {
+                                                                         @Override
+                                                                         public Boolean getDefaultValue() {
+                                                                             return false;
+                                                                         }
+                                                                         @Override
+                                                                         public boolean isInheritable() {
+                                                                             return true;
+                                                                         }
+                                                                     };
 
     private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
@@ -153,7 +162,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
-            if (ctx.isTitleInBlock() || StringUtils.isEmpty(labelModel.getObject())) {
+            if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(labelModel.getObject())) {
                 c.setVisible(false);
             }
         }));
