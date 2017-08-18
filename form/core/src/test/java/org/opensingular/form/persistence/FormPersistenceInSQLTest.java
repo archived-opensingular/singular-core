@@ -16,6 +16,8 @@
 
 package org.opensingular.form.persistence;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
 import org.junit.Test;
@@ -24,14 +26,31 @@ import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.persistence.relational.RelationalData;
 
 /**
  * @author Edmundo Andrade on 17/08/2017.
  */
 @RunWith(Parameterized.class)
 public class FormPersistenceInSQLTest extends TestCaseForm {
+	public final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
+
+	public interface RelationalMapper {
+		List<RelationalData> toRelational(SInstance instance);
+	}
+
+	public class BasicRelationalMapper implements RelationalMapper {
+		public List<RelationalData> toRelational(SInstance instance) {
+			List<RelationalData> list = new ArrayList<>();
+			list.add(new RelationalData(instance.getParent().getName(), null, instance.getName(), null));
+			return list;
+		}
+	}
+
 	public FormPersistenceInSQLTest(TestFormConfig testFormConfig) {
 		super(testFormConfig);
 	}
@@ -39,10 +58,6 @@ public class FormPersistenceInSQLTest extends TestCaseForm {
 	@Test
 	public void select() {
 		STypeComposite<SIComposite> entity = createEntityA();
-		assertEquals("schema.entityA", entity.getName());
-		assertEquals("entityA", entity.getNameSimple());
-		assertEquals("id", entity.getField(0).getNameSimple());
-		assertEquals("name", entity.getField(1).getNameSimple());
 		assertEquals("select id, name from schema.entityA", sqlSelectAll(entity));
 	}
 
@@ -50,8 +65,8 @@ public class FormPersistenceInSQLTest extends TestCaseForm {
 		SDictionary dictionary = createTestDictionary();
 		PackageBuilder pack = dictionary.createNewPackage("schema");
 		STypeComposite<SIComposite> entity = pack.createCompositeType("entityA");
-		entity.addFieldString("id");
-		entity.addFieldString("name");
+		entity.addFieldString("id").setAspect(ASPECT_RELATIONAL_MAP, BasicRelationalMapper::new);
+		entity.addFieldString("name").setAspect(ASPECT_RELATIONAL_MAP, BasicRelationalMapper::new);
 		return entity;
 	}
 
