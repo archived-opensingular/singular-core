@@ -16,37 +16,34 @@
 
 package org.opensingular.form.persistence.relational;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+
 /**
- * Relational data to persist into a Relational DBMS.
+ * Relational table metadata to persist into a Relational DBMS.
  *
  * @author Edmundo Andrade
  */
-public class RelationalData {
-	private String tableName;
-	private Object[] tupleKey;
-	private String fieldName;
-	private Object fieldValue;
+public class RelationalTable {
+	private String name;
+	private List<SType<SInstance>> columns = new ArrayList<>();
 
-	public RelationalData(String tableName, Object[] tupleKey, String fieldName, Object fieldValue) {
-		this.tableName = tableName;
-		this.tupleKey = tupleKey;
-		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
+	public RelationalTable(String name) {
+		this.name = name;
 	}
 
-	public String getTableName() {
-		return tableName;
+	public String getName() {
+		return name;
 	}
 
-	public Object[] getTupleKey() {
-		return tupleKey;
+	public List<SType<SInstance>> getColumns() {
+		return columns;
 	}
 
-	public String getFieldName() {
-		return fieldName;
-	}
-
-	public Object getFieldValue() {
-		return fieldValue;
+	public void addColumn(SType<SInstance> columnType) {
+		columns.add(columnType);
 	}
 }

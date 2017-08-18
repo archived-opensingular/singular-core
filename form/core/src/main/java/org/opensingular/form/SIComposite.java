@@ -56,9 +56,10 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
     }
 
     /**
-     * Retorna apenas os campos do tipo que já foram instanciados.
+     * List only those fields already instantiated.
+     * OBS: field instantiation occurs automatically when its value is set for the first time.
      *
-     * @return instancias dos campos
+     * @return field instances
      */
     public List<SInstance> getFields() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
