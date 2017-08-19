@@ -56,5 +56,27 @@ public class TableFlatViewGeneratorTest {
         bodyRow_2.assertColumn(1, "27");
     }
 
+    @Test
+    public void shouldCreateTableWithEmptyState() throws Exception {
+        SIList<SIComposite> ipessoas = pessoas.newInstance();
+        SIComposite ipessoa_1 = ipessoas.addNew();
+        ipessoa_1.setValue(nome, "Danilo");
+        ipessoa_1.setValue(idade, null);
+        SIComposite ipessoa_2 = ipessoas.addNew();
+        ipessoa_2.setValue(nome, "Daniel");
+        ipessoa_2.setValue(idade, "XX");
+        tableFlatViewGenerator.doWriteOnCanvas(mockDocumentCanvas, new FlatViewContext(ipessoas));
+        mockDocumentCanvas.assertTableCount(1);
+
+        MockTableRowCanvas bodyRow_1 = mockDocumentCanvas.getMockTableCanvas(0).getMockTableBody().getMockTableRowCanvas(0);
+        bodyRow_1.assertColumnCount(2);
+        bodyRow_1.assertColumn(0, "Danilo");
+        bodyRow_1.assertColumn(1, "-");
+
+        MockTableRowCanvas bodyRow_2 = mockDocumentCanvas.getMockTableCanvas(0).getMockTableBody().getMockTableRowCanvas(1);
+        bodyRow_2.assertColumnCount(2);
+        bodyRow_2.assertColumn(0, "Daniel");
+        bodyRow_2.assertColumn(1, "XX");
+    }
 
 }

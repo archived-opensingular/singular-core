@@ -163,6 +163,9 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
+            if (ctx.getHint(HIDE_LABEL))
+                return null;
+            
             final List<SInstanceAction> actionsIterator = mapper.getInstanceActionsProviders().actionList(model);
             final IModel<String> label = $m.ofValue(trimToEmpty(getInstance().asAtr().getLabel()));
 
@@ -176,25 +179,23 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                     column.appendTag("h4", new Label("_title", label)
                         .add($b.classAppender("singular-composite-title")));
                     ctx.configureContainer(label);
-                    column.setVisible(!ctx.getParent().isTitleInBlock());
                 }
 
-                if (!ctx.getParent().isTitleInBlock()) {
-                    IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                        mapper,
-                        RequestCycle.get().find(AjaxRequestTarget.class),
-                        model,
-                        model.getObject(),
-                        ctx,
-                        ctx.getContainer());
+                IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                    mapper,
+                    RequestCycle.get().find(AjaxRequestTarget.class),
+                    model,
+                    model.getObject(),
+                    ctx,
+                    ctx.getContainer());
 
-                    SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-                        column,
-                        mapper.getInstanceActionsProviders(),
-                        model,
-                        true,
-                        internalContextListProvider);
-                }
+                SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                    column,
+                    mapper.getInstanceActionsProviders(),
+                    model,
+                    true,
+                    internalContextListProvider);
+
                 return column;
             }
 

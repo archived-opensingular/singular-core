@@ -20,11 +20,10 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.converter.SInstanceConverter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -32,11 +31,11 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
 
     private static final long serialVersionUID = -4455601838581324870L;
 
-    private final IModel<? extends SIList<?>>     model;
+    private final IModel<? extends SIList<?>> model;
     private final List<SelectSInstanceAwareModel> selects;
 
     public MultipleSelectSInstanceAwareModel(IModel<? extends SInstance> model) {
-        if (! (model.getObject() instanceof SIList)) {
+        if (!(model.getObject() instanceof SIList)) {
             throw new SingularFormException("Este model somente deve ser utilizado para tipo lista", model.getObject());
         }
         this.model = (IModel<? extends SIList<?>>) model;
@@ -59,41 +58,46 @@ public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareMod
 
     @Override
     public void setObject(List<Serializable> objects) {
-        SIList<?> list = model.getObject();
-        //check if the selection actually has changed beacause in this case wicket do not do that.
-        if (checkIfChanged(objects, list)) {
-            list.clearInstance();
-            selects.clear();
-            for (int i = 0; i <= objects.size(); i += 1) {
-                final Serializable o = objects.get(i);
-                final SInstance newElement = list.addNew();
-                model.getObject().asAtrProvider().getConverter().fillInstance(newElement, o);
-                selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
+        SIList list = model.getObject();
+        SInstanceConverter converter = model.getObject().asAtrProvider().getConverter();
+        Map<Serializable, SInstance> deletedValuesMap = makeValueInstanceMap(list, converter);
+
+        //remove submited fields from deletion and store new values
+        List<Serializable> newValues = new ArrayList<>();
+        for (Serializable next : objects) {
+            if (deletedValuesMap.containsKey(next)) {
+                deletedValuesMap.remove(next);
+            } else {
+                newValues.add(next);
             }
+        }
+
+        //delete remove values from silist
+        deletedValuesMap.forEach((key, val) -> {
+            list.remove(val);
+        });
+
+        //convert new values and add to the list
+        for (Serializable newValue : newValues) {
+            addNewValue(list, converter, newValue);
         }
     }
 
-    /**
-     * compares the objects list
-     * here we consider value and order to decide if the value list has changed.
-     * @param objects
-     * @param list
-     * @return
-     */
-    private boolean checkIfChanged(List<Serializable> objects, SIList<?> list){
-        if (objects.size() == list.size()){
-            for (int i = 0; i < objects.size(); i++) {
-                Object currentValue = model.getObject().asAtrProvider().getConverter().toObject(list.get(i));
-                if (!currentValue.equals(objects.get(i))){
-                    break;
-                }
-            }
-            return false;
-        }
-        return true;
+    private void addNewValue(SIList list, SInstanceConverter converter, Serializable newValue) {
+        final SInstance newElement = list.addNew();
+        converter.fillInstance(newElement, newValue);
+        selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, list.indexOf(newElement)), getCustomSelectConverterResolver()));
     }
 
-    public SelectSInstanceAwareModel.SelectConverterResolver getCustomSelectConverterResolver(){
+    private Map<Serializable, SInstance> makeValueInstanceMap(SIList list, SInstanceConverter converter) {
+        Map<Serializable, SInstance> valueInstanceMap = new LinkedHashMap<>();
+        list.forEach(instance -> {
+            valueInstanceMap.put(converter.toObject((SInstance) instance), (SInstance) instance);
+        });
+        return valueInstanceMap;
+    }
+
+    public SelectSInstanceAwareModel.SelectConverterResolver getCustomSelectConverterResolver() {
         return si -> Optional.ofNullable(si.getParent().asAtrProvider().getConverter());
     }
 
