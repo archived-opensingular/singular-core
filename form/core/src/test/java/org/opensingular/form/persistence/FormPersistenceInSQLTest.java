@@ -26,56 +26,33 @@ import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
+import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.persistence.FormPersistenceInSQLTest.TestPackage.TestEntityA;
 import org.opensingular.form.persistence.relational.RelationalData;
+import org.opensingular.form.type.core.STypeString;
 
 /**
  * @author Edmundo Andrade on 17/08/2017.
  */
 @RunWith(Parameterized.class)
 public class FormPersistenceInSQLTest extends TestCaseForm {
-	public final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
-
-	public interface RelationalMapper {
-		boolean isPrimaryKey(SType<SInstance> fieldType);
-
-		List<RelationalData> toRelational(SInstance fieldInstance);
-	}
-
-	public class BasicRelationalMapper implements RelationalMapper {
-		public boolean isPrimaryKey(SType<SInstance> fieldType) {
-			return fieldType.getNameSimple().equalsIgnoreCase("id");
-		}
-
-		public List<RelationalData> toRelational(SInstance fieldInstance) {
-			List<RelationalData> list = new ArrayList<>();
-			list.add(new RelationalData(fieldInstance.getParent().getName(), null, fieldInstance.getName(), null));
-			return list;
-		}
-	}
-
 	public FormPersistenceInSQLTest(TestFormConfig testFormConfig) {
 		super(testFormConfig);
 	}
 
 	@Test
 	public void select() {
-		STypeComposite<SIComposite> entityTypeA = createEntityTypeA();
-		SIComposite entityInstanceA = entityTypeA.newInstance();
-		assertEquals("select id, name from schema.entityA", sqlSelectList(entityInstanceA)[0]);
-	}
-
-	private STypeComposite<SIComposite> createEntityTypeA() {
 		SDictionary dictionary = createTestDictionary();
-		PackageBuilder pack = dictionary.createNewPackage("schema");
-		STypeComposite<SIComposite> entityType = pack.createCompositeType("entityA");
-		entityType.addFieldString("id").setAspect(ASPECT_RELATIONAL_MAP, BasicRelationalMapper::new);
-		entityType.addFieldString("name").setAspect(ASPECT_RELATIONAL_MAP, BasicRelationalMapper::new);
-		return entityType;
+		TestEntityA entityTypeA = dictionary.getType(TestEntityA.class);
+		SIComposite entityInstanceA = entityTypeA.newInstance();
+		assertEquals("select name from testPackage.TestEntityA", sqlSelectList(entityInstanceA)[0]);
 	}
 
 	private String[] sqlSelectList(SIComposite entityInstance) {
@@ -93,5 +70,40 @@ public class FormPersistenceInSQLTest extends TestCaseForm {
 
 	private String tableName(SIComposite entityInstance) {
 		return entityInstance.getType().getName();
+	}
+
+	public static final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
+
+	public interface RelationalMapper {
+		List<RelationalData> toRelational(SInstance fieldInstance);
+	}
+
+	public static class BasicRelationalMapper implements RelationalMapper {
+		public List<RelationalData> toRelational(SInstance fieldInstance) {
+			List<RelationalData> list = new ArrayList<>();
+			list.add(new RelationalData(fieldInstance.getParent().getName(), null, fieldInstance.getName(), null));
+			return list;
+		}
+	}
+
+	@SInfoPackage(name = "testPackage")
+	public static final class TestPackage extends SPackage {
+		@Override
+		protected void onLoadPackage(PackageBuilder pb) {
+			pb.createType(TestEntityA.class);
+		}
+
+		@SInfoType(name = "TestEntityA", spackage = TestPackage.class)
+		public static final class TestEntityA extends STypeComposite<SIComposite> {
+			public STypeString name;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				asAtr().required(true);
+				asAtr().label("Entity A");
+				name = addFieldString("name");
+				name.setAspect(ASPECT_RELATIONAL_MAP, BasicRelationalMapper::new);
+			}
+		}
 	}
 }
