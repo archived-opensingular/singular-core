@@ -32,7 +32,7 @@ import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.persistence.FormPersistenceInSQLTest.TestPackage.TestEntityA;
+import org.opensingular.form.persistence.RelationalQueryTest.TestPackage.TestEntityA;
 import org.opensingular.form.persistence.relational.BasicRelationalMapper;
 import org.opensingular.form.persistence.relational.RelationalQuery;
 import org.opensingular.form.type.core.STypeString;
@@ -41,10 +41,10 @@ import org.opensingular.form.type.core.STypeString;
  * @author Edmundo Andrade
  */
 @RunWith(Parameterized.class)
-public class FormPersistenceInSQLTest extends TestCaseForm {
+public class RelationalQueryTest extends TestCaseForm {
 	private TestEntityA entityTypeA;
 
-	public FormPersistenceInSQLTest(TestFormConfig testFormConfig) {
+	public RelationalQueryTest(TestFormConfig testFormConfig) {
 		super(testFormConfig);
 	}
 
@@ -55,7 +55,7 @@ public class FormPersistenceInSQLTest extends TestCaseForm {
 	}
 
 	@Test
-	public void query() {
+	public void querySelect() {
 		RelationalQuery query = select(entityTypeA.getFields()).orderBy(entityTypeA.name);
 		assertEquals("select T1.name from testPackage.TestEntityA T1 order by T1.name", query.toSQL());
 	}
