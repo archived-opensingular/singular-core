@@ -16,7 +16,6 @@
 
 package org.opensingular.form;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.aspect.AspectEntry;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.builder.selection.SelectionBuilder;
@@ -27,6 +26,7 @@ import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.validation.InstanceValidator;
+import org.opensingular.form.validation.ValidationEntry;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
@@ -40,9 +40,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -80,7 +79,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     private int typeId;
     private SScope scope;
-    private Map<InstanceValidator<I>, ValidationErrorLevel> instanceValidators;
+    private List<ValidationEntry<I>> validators;
     private Set<SType<?>> dependentTypes;
     private AttrInternalRef attrInternalRef;
     /**
@@ -98,6 +97,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     private boolean callingOnLoadType;
 
+    /** It's the package that owns this type. */
+    private SPackage pkg;
+
     protected SType() {
         this(null, null);
     }
@@ -107,14 +109,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     protected SType(@Nullable String simpleName, @Nullable Class<? extends I> instanceClass) {
-        String resolvedName = simpleName;
         if (simpleName == null) {
-            resolvedName = getInfoType().name();
-            if (StringUtils.isEmpty(resolvedName)) {
-                resolvedName = getClass().getSimpleName();
-            }
+            this.nameSimple = SFormUtil.getTypeSimpleName(getClass());
+        } else {
+            this.nameSimple = SFormUtil.validateSimpleName(simpleName);
         }
-        this.nameSimple = SFormUtil.validateSimpleName(resolvedName);
         this.instanceClass = instanceClass;
     }
 
@@ -133,10 +132,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     protected void onLoadType(@Nonnull TypeBuilder tb) {
         throw new SingularFormException("As implementações de onLoadType() não devem chamar super.onLoadType()", this);
         // Esse método será implementado nas classes derevidas se precisarem
-    }
-
-    final SInfoType getInfoType() {
-        return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
     }
 
     @Nonnull
@@ -166,10 +161,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     @Override
+    @Nonnull
     public String getName() {
+        if (nameFull == null) {
+            this.nameFull = getParentScope().getName() + '.' + nameSimple;
+        }
         return nameFull;
     }
 
+    @Nonnull
     public String getNameSimple() {
         return nameSimple;
     }
@@ -189,9 +189,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return (Class<I>) instanceClass;
     }
 
-    final void setScope(SScope packageScope) {
-        this.scope = packageScope;
-        this.nameFull = packageScope.getName() + '.' + nameSimple;
+    final void setScope(SScope scope) {
+        this.scope = scope;
     }
 
     @Override
@@ -203,6 +202,18 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                     "dê override no método onLoadType() e mova as chamada de configuração para ele.", this);
         }
         return scope;
+    }
+
+    @Nonnull
+    @Override
+    public final SPackage getPackage() {
+        if (pkg == null) {
+            pkg = getParentScope().getPackage();
+            if (pkg == null) {
+                throw new SingularFormException("Internal Error: Não foi possível encontrar o pacote do tipo", this);
+            }
+        }
+        return pkg;
     }
 
     @Override
@@ -595,42 +606,37 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return STypes.listAscendants(this, true).stream().anyMatch(SType::dependsOnAnyType);
     }
 
-    public SType<I> addInstanceValidator(InstanceValidator<I> validador) {
-        return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
+    public SType<I> addInstanceValidator(InstanceValidator<I> validator) {
+        return addInstanceValidator(ValidationErrorLevel.ERROR, validator);
     }
 
     public SType<I> addInstanceValidator(ValidationErrorLevel level, InstanceValidator<I> validator) {
-        if (instanceValidators == null) {
-            instanceValidators = new LinkedHashMap<>();
+        if (validators == null) {
+            validators = new ArrayList<>(2);
         }
-        instanceValidators.put(validator, level);
+        validators.add(new ValidationEntry(validator, level));
         return this;
     }
 
-    public Collection<InstanceValidator<I>> getValidators() {
-        Collection<InstanceValidator<I>> list =
-                superType == null ? Collections.emptyList() : superType.getValidators();
-        if (instanceValidators != null && !instanceValidators.isEmpty()) {
+    public final boolean hasValidator(InstanceValidator<?> validator) {
+        if (validators != null && validators.contains(validator)) {
+            return true;
+        } else if (superType != null) {
+            return superType.hasValidator(validator);
+        }
+        return false;
+    }
+
+    public final List<ValidationEntry<I>> getValidators() {
+        List<ValidationEntry<I>> list = superType == null ? Collections.emptyList() : superType.getValidators();
+        if (validators != null && !validators.isEmpty()) {
             if (list.isEmpty()) {
-                list = instanceValidators.keySet();
+                list = new ArrayList<>(validators);
             } else {
-                if (!(list instanceof ArrayList)) {
-                    ArrayList<InstanceValidator<I>> list2 = new ArrayList<>(list.size() + instanceValidators.size());
-                    list2.addAll(list);
-                    list = list2;
-                }
-                list.addAll(instanceValidators.keySet());
+                list.addAll(validators);
             }
         }
         return list;
-    }
-
-    public ValidationErrorLevel getValidatorErrorLevel(InstanceValidator<I> validator) {
-        ValidationErrorLevel level = instanceValidators == null ? null : instanceValidators.get(validator);
-        if (level == null && superType != null) {
-            level = superType.getValidatorErrorLevel(validator);
-        }
-        return level;
     }
 
     @SuppressWarnings("unchecked")
@@ -871,7 +877,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     private boolean hasValidationInternal() {
-        return (instanceValidators != null && !instanceValidators.isEmpty()) ||
+        return (validators != null && !validators.isEmpty()) ||
                 (superType != null && superType.hasValidationInternal());
     }
 
@@ -969,7 +975,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Override
     public String toString() {
-        return nameFull + '(' + getClass().getSimpleName() + '@' + typeId + ')';
+        String n = nameFull;
+        if (n == null) {
+            if (scope == null) {
+                n = nameSimple;
+            } else {
+                n = scope.getName() + '.' + nameSimple;
+            }
+        }
+        return n + '(' + getClass().getSimpleName() + '@' + typeId + ')';
     }
 
     final boolean isCallingOnLoadType() {

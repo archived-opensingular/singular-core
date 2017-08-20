@@ -103,7 +103,7 @@ public class CoreAttributesTest extends TestCaseForm {
 
         exceptionAtCorrentPoint = false;
         assertException(() -> createTestDictionary().loadPackage(PackageWrongAttribute2.class),
-                SingularFormException.class, "já está criada em");
+                SingularFormException.class, "já está criada");
         assertTrue(exceptionAtCorrentPoint);
     }
 

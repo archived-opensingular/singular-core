@@ -16,9 +16,6 @@
 
 package org.opensingular.form.processor;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.InternalAccess;
 import org.opensingular.form.SType;
@@ -54,17 +51,6 @@ public class TypeProcessorAttributeReadFromFile {
      */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
 
-    /**
-     * Cache com informações sobre a presença ou não de arquivos de definição de atribuitos associados a um classe
-     * específica.
-     */
-    private final LoadingCache<Class<?>, FileDefinitions> cache = CacheBuilder.newBuilder().softValues().build(
-            new CacheLoader<Class<?>, FileDefinitions>() {
-                public FileDefinitions load(Class<?> key) {
-                    return readDefinitionsFor(key);
-                }
-            });
-
     TypeProcessorAttributeReadFromFile() {
     }
 
@@ -72,8 +58,10 @@ public class TypeProcessorAttributeReadFromFile {
      * Método chamado logo após o registro do tipo. Nesse caso verificará se precisa transferir algum atributo.
      */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
-        FileDefinitions definitions = cache.getUnchecked(typeClass);
-        for (AttibuteEntry entry : definitions.definitions) {
+        FileDefinitions definitions = ClassInspectionCache.getInfo(typeClass,
+                ClassInspectionCache.CacheKey.FILE_DEFINITIONS,
+                TypeProcessorAttributeReadFromFile::readDefinitionsFor);
+        for (AttributeEntry entry : definitions.definitions) {
             try {
                 SType<?> target = type;
                 if (entry.subFieldPath != null) {
@@ -94,7 +82,7 @@ public class TypeProcessorAttributeReadFromFile {
      * @return Nunca null, mas pode ser um lista com conteúdo zero.
      */
     @Nonnull
-    private FileDefinitions readDefinitionsFor(@Nonnull Class<?> typeClass) {
+    private static FileDefinitions readDefinitionsFor(@Nonnull Class<?> typeClass) {
         URL url = lookForFile(typeClass);
         if (url != null) {
             try {
@@ -111,8 +99,8 @@ public class TypeProcessorAttributeReadFromFile {
     }
 
     @Nonnull
-    public static List<AttibuteEntry> readDefinitionsFor(@Nonnull MElement xml) {
-        List<AttibuteEntry> vals  = new ArrayList<AttibuteEntry>();
+    public static List<AttributeEntry> readDefinitionsFor(@Nonnull MElement xml) {
+        List<AttributeEntry> vals  = new ArrayList<AttributeEntry>();
         NodeList            attrs = xml.getElementsByTagName("attr");
 
         if (attrs.getLength() == 0) {
@@ -129,8 +117,8 @@ public class TypeProcessorAttributeReadFromFile {
         return vals;
     }
 
-    private static void readDefinitionsForElementNode(List<AttibuteEntry> vals, Node currentNode) {
-        AttibuteEntry definition = new AttibuteEntry();
+    private static void readDefinitionsForElementNode(List<AttributeEntry> vals, Node currentNode) {
+        AttributeEntry definition = new AttributeEntry();
         if (currentNode.getAttributes() != null) {
             if (currentNode.getAttributes().getNamedItem("field") != null) {
                 definition.subFieldPath = currentNode.getAttributes().getNamedItem("field").getTextContent();
@@ -159,7 +147,7 @@ public class TypeProcessorAttributeReadFromFile {
      * Verifica se há um arquivos com valores de atributos associados a classe informada.
      */
     @Nullable
-    private URL lookForFile(@Nonnull Class<?> typeClass) {
+    private static URL lookForFile(@Nonnull Class<?> typeClass) {
         String   name    = typeClass.getSimpleName();
         Class<?> context = typeClass;
         for (; context.isMemberClass(); context = context.getEnclosingClass()) {
@@ -169,7 +157,7 @@ public class TypeProcessorAttributeReadFromFile {
     }
 
     @Nonnull
-    private String concatNames(@Nonnull Class<?> context, @Nonnull String name) {
+    private static String concatNames(@Nonnull Class<?> context, @Nonnull String name) {
         return context.getEnclosingClass().getSimpleName() + '$' + name;
     }
 
@@ -181,15 +169,15 @@ public class TypeProcessorAttributeReadFromFile {
         public static final FileDefinitions EMPTY = new FileDefinitions(null, Collections.emptyList());
 
         public final URL                 url;
-        public final List<AttibuteEntry> definitions;
+        public final List<AttributeEntry> definitions;
 
-        private FileDefinitions(URL url, List<AttibuteEntry> definitions) {
+        private FileDefinitions(URL url, List<AttributeEntry> definitions) {
             this.url = url;
             this.definitions = definitions;
         }
     }
 
-    static class AttibuteEntry {
+    static class AttributeEntry {
 
         String subFieldPath;
         String attributeName;

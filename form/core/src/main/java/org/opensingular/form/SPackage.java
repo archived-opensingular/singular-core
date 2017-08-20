@@ -30,6 +30,8 @@ public class SPackage extends SScopeBase {
 
     private SDictionary dictionary;
 
+    private String nameSimple;
+
     public SPackage() {
         this(null);
     }
@@ -50,13 +52,19 @@ public class SPackage extends SScopeBase {
                             SPackage.class.getSimpleName() + "() e informe o nome do pacote usando a anotação @" +
                             SInfoPackage.class.getSimpleName());
         }
-        this.name = SFormUtil.validatePackageName(nameResolved);
+        this.nameSimple = SFormUtil.validatePackageName(nameResolved);
+        this.name = nameResolved;
     }
 
     @Override
     @Nonnull
     public String getName() {
         return name;
+    }
+
+    @Nonnull
+    public String getNameSimple() {
+        return nameSimple;
     }
 
     /**
@@ -70,6 +78,12 @@ public class SPackage extends SScopeBase {
     @Nullable
     public SScope getParentScope() {
         return null;
+    }
+
+    @Nonnull
+    @Override
+    public SPackage getPackage() {
+        return this;
     }
 
     @Override

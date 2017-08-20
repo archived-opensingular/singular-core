@@ -27,13 +27,15 @@ import java.util.Objects;
 public class PackageBuilder {
 
     private final SPackage sPackage;
+    private final SDictionary dictionary;
 
     PackageBuilder(SPackage sPackage) {
         this.sPackage = sPackage;
+        dictionary = sPackage.getDictionary();
     }
 
     public SDictionary getDictionary() {
-        return sPackage.getDictionary();
+        return dictionary;
     }
 
     /**
@@ -43,7 +45,7 @@ public class PackageBuilder {
      */
     @Nonnull
     public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
-        return getDictionary().getType(typeClass);
+        return dictionary.getType(typeClass);
     }
 
     /**
@@ -126,7 +128,7 @@ public class PackageBuilder {
 
         SScopeBase scope = (targetType.getPackage() == sPackage) ? targetType : sPackage;
         resolveBind(scope, (Class<SType<?>>) targetTypeClass, atr, attributeType);
-        return createAttributeIntoTypeInternal(targetType, atr.getNameFull(), atr.getNameSimple(), attributeType, atr.isSelfReference());
+        return createAttributeIntoTypeInternal(targetType, atr.getNameSimple(), attributeType, atr.isSelfReference());
     }
 
     public <T extends SType<?>> T createAttributeIntoType(Class<? extends SType<?>> targetTypeClass,
@@ -140,19 +142,17 @@ public class PackageBuilder {
     }
 
     public <T extends SType<?>> T createAttributeIntoType(@Nonnull SType<?> targetType, @Nonnull String attributeSimpleName, @Nonnull T attributeType) {
-        return createAttributeIntoTypeInternal(targetType, sPackage.getName() + "." + attributeSimpleName,
-                attributeSimpleName, attributeType, false);
+        return createAttributeIntoTypeInternal(targetType, attributeSimpleName, attributeType, false);
     }
 
     @Nonnull
-    private <T extends SType<?>> T createAttributeIntoTypeInternal(@Nonnull SType<?> targetType, @Nonnull String attrFullName,
-                                                                   String attrSimpleName, @Nonnull T attributeType,
-                                                                   boolean selfReference) {
-        getDictionary().getTypesInternal().verifyMustNotBePresent(attrFullName, sPackage);
+    private <T extends SType<?>> T createAttributeIntoTypeInternal(@Nonnull SType<?> targetType, String attrSimpleName,
+            @Nonnull T attributeType, boolean selfReference) {
+        sPackage.verifyIfMayAddNewType(attrSimpleName);
         SScopeBase scope = Objects.equals(targetType.getPackage(), sPackage) ? targetType : sPackage;
 
         T attributeDef = scope.extendType(attrSimpleName, attributeType);
-        getDictionary().registeAttribute(attributeDef, targetType, selfReference);
+        getDictionary().registerAttribute(attributeDef, targetType, selfReference);
         return attributeDef;
     }
 
@@ -165,10 +165,10 @@ public class PackageBuilder {
 
     private <T extends SType<?>> T createAttributeType(AtrRef<T, ?, ?> atr, T attributeType) {
         resolveBind(sPackage, null, atr, attributeType);
-        getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull(), sPackage);
+        sPackage.verifyIfMayAddNewType(atr.getNameSimple());
 
         T attributeDef = sPackage.extendType(atr.getNameSimple(), attributeType);
-        getDictionary().registeAttribute(attributeDef);
+        getDictionary().registerAttribute(attributeDef);
         return attributeDef;
     }
 

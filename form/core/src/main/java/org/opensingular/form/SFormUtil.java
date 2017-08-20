@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.ClassInspectionCache;
+import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
@@ -32,7 +34,6 @@ import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.lang.model.SourceVersion;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -49,7 +50,6 @@ import static java.util.stream.Collectors.joining;
 
 public final class SFormUtil {
 
-    private static final Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
     private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
     private SFormUtil() {
@@ -57,13 +57,30 @@ public final class SFormUtil {
 
     public static boolean isNotValidSimpleName(@Nonnull String name) {
         Objects.requireNonNull(name);
-        return !idPattern.matcher(name).matches();
+        if (name.length() == 0 || !isLetter(name.charAt(0))) {
+            return true;
+        }
+        for (int i = name.length() - 1; i != 0; i--) {
+            char c = name.charAt(i);
+            if (!isLetter(c) && !isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private static boolean isLetter(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 
     @Nonnull
     static String validateSimpleName(@Nonnull String name) {
         if (isNotValidSimpleName(name)) {
-            throw new SingularFormException('\'' + name + "' não é um nome válido para tipo ou atributo");
+            throw new SingularFormException('\'' + name + "' não é um nome válido para pacote, tipo ou atributo");
         }
         return name;
     }
@@ -71,14 +88,37 @@ public final class SFormUtil {
     @Nonnull
     static String validatePackageName(@Nonnull String name) {
         Objects.requireNonNull(name);
-        if (!SourceVersion.isName(name)) {
+        int pos = name.lastIndexOf('.');
+        if (pos == -1) {
+            return validateSimpleName(name);
+        } else if (!isValidFullPackageName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para um pacote");
         }
-        return name;
+        return name.substring(pos + 1);
+    }
+
+    private static boolean isValidFullPackageName(String name) {
+        boolean waitingBegin = true;
+        for (int i = 0, max = name.length(); i < max; i++) {
+            char c = name.charAt(i);
+            if (waitingBegin) {
+                if (!isLetter(c)) {
+                    return false;
+                }
+                waitingBegin = false;
+            } else {
+                if (c == '.') {
+                    waitingBegin = true;
+                } else if (!isLetter(c) && !isDigit(c) && c != '$') {
+                    return false;
+                }
+            }
+        }
+        return !waitingBegin; //Can't end after a dot or have length zero
     }
 
     @Nonnull
-    public static String resolveName(@Nullable String simpleName, @Nonnull SType<?> type) {
+    static String resolveName(@Nullable String simpleName, @Nonnull SType<?> type) {
         return simpleName == null ? type.getNameSimple() : simpleName;
     }
 
@@ -198,16 +238,27 @@ public final class SFormUtil {
      */
     @Nonnull
     public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
-        Class<? extends SPackage> packageClass = getTypePackage(typeClass);
-        return getInfoPackageName(packageClass) + '.' + getTypeSimpleName(typeClass);
+        return ClassInspectionCache.getInfo(typeClass, CacheKey.FULL_NAME, SFormUtil::getTypeNameInternal);
     }
 
-    public static String getTypeSimpleName(Class<? extends SType<?>> typeClass) {
-        SInfoType infoType = getInfoType(typeClass);
+    private static String getTypeNameInternal(@Nonnull Class<?> typeClass) {
+        Class<? extends SPackage> packageClass = getTypePackage((Class<? extends SType<?>>) typeClass);
+        return getInfoPackageName(packageClass) + '.' + getTypeSimpleName((Class<? extends SType<?>>) typeClass);
+    }
+
+    @Nonnull
+    public static <T extends SType<?>> String getTypeSimpleName(Class<T> typeClass) {
+        return ClassInspectionCache.getInfo(typeClass, CacheKey.SIMPLE_NAME,
+                SFormUtil::getTypeSimpleNameInternal);
+    }
+
+    private static String getTypeSimpleNameInternal(Class<?> typeClass) {
+        SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
         String    typeName = infoType.name();
         if (StringUtils.isBlank(typeName)) {
             typeName = typeClass.getSimpleName();
         }
+        validateSimpleName(typeName);
         return typeName;
     }
 
@@ -240,13 +291,18 @@ public final class SFormUtil {
     }
 
     @Nullable
-    static SInfoPackage getInfoPackage(@Nonnull Class<? extends SPackage> packageClass) {
+    private static SInfoPackage getInfoPackage(@Nonnull Class<? extends SPackage> packageClass) {
         return packageClass.getAnnotation(SInfoPackage.class);
     }
 
     @Nonnull
     static String getInfoPackageName(@Nonnull Class<? extends SPackage> packageClass) {
-        SInfoPackage info = getInfoPackage(packageClass);
+        return ClassInspectionCache.getInfo(packageClass, CacheKey.FULL_NAME, SFormUtil::getInfoPackageNameInternal);
+    }
+
+    @Nonnull
+    private static String getInfoPackageNameInternal(@Nonnull Class<?> packageClass) {
+        SInfoPackage info = getInfoPackage((Class<? extends SPackage>) packageClass);
         return info != null && !StringUtils.isBlank(info.name()) ? info.name() : packageClass.getName();
     }
 

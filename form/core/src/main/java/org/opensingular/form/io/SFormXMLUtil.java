@@ -270,23 +270,30 @@ public final class SFormXMLUtil {
                 .toXML(instancia);
     }
 
-
-    private static List<SType<?>> collectConfiguredXMLAtrSubtypes(SType<?> type) {
-        List<SType<?>> types = new ArrayList<>();
+    private static List<SType<?>> collectConfiguredXMLAtrSubtypes(SType<?> type, List<SType<?>> types) {
+        List<SType<?>> newList = types;
         if (type.as(AtrXML::new).isKeepNodePredicateConfigured()) {
-            types.add(type);
+            if (newList == null) {
+                newList = new ArrayList<>();
+            }
+            newList.add(type);
         }
         if (type instanceof ICompositeType) {
             for (SType<?> field : ((ICompositeType) type).getContainedTypes()) {
-                types.addAll(collectConfiguredXMLAtrSubtypes(field));
+                if (!field.isRecursiveReference()) {
+                    newList = collectConfiguredXMLAtrSubtypes(field, newList);
+                }
             }
         }
-        return types;
+        return newList;
     }
 
     private static void initATRXmlEnabledFields(SInstance instance) {
         if (instance instanceof ICompositeInstance) {
-            initSubtypesForFurtherEvaluation(instance, collectConfiguredXMLAtrSubtypes(instance.getType()));
+            List<SType<?>> types = collectConfiguredXMLAtrSubtypes(instance.getType(), null);
+            if (types != null) {
+                initSubtypesForFurtherEvaluation(instance, types);
+            }
         }
     }
 

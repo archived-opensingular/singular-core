@@ -10,9 +10,9 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
 @RunWith(Parameterized.class)
-public class TestMFormUtil extends TestCaseForm {
+public class SFormUtilTest extends TestCaseForm {
 
-    public TestMFormUtil(TestFormConfig testFormConfig) {
+    public SFormUtilTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -28,21 +28,24 @@ public class TestMFormUtil extends TestCaseForm {
 
     @Test
     public void testValidacaoNomeSimples() {
-        testarNomeInvalido(" sss ");
-        testarNomeInvalido("sss ");
-        testarNomeInvalido(" ss");
-        testarNomeInvalido("1ss");
-        testarNomeInvalido("*ss");
-        testarNomeInvalido("@ss");
-        testarNomeInvalido("ss.xx");
-        testarNomeInvalido("sã1");
+        assertInvalidName(" sss ");
+        assertInvalidName("sss ");
+        assertInvalidName(" ss");
+        assertInvalidName("1ss");
+        assertInvalidName("*ss");
+        assertInvalidName("@ss");
+        assertInvalidName("ss.xx");
+        assertInvalidName("sã1");
+        assertInvalidName("1AA");
         SFormUtil.validateSimpleName("long");
         SFormUtil.validateSimpleName("int");
         SFormUtil.validateSimpleName("ss");
         SFormUtil.validateSimpleName("s1");
+        SFormUtil.validateSimpleName("_A_A");
+        SFormUtil.validateSimpleName("_A1");
     }
 
-    private static void testarNomeInvalido(String nome) {
+    private static void assertInvalidName(String nome) {
         try {
             SFormUtil.validateSimpleName(nome);
             Assert.fail("O nome deveria ser invalido");

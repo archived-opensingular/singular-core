@@ -16,28 +16,26 @@
 
 package org.opensingular.form.type.core;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.STypeSimple;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.SMultiSelectionByCheckboxView;
 import org.opensingular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.SType;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.type.util.STypeYearMonth;
-import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.view.SViewTextArea;
 
 @SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "plaf.bootstrap")
@@ -56,11 +54,11 @@ public class SPackageBootstrap extends SPackage {
 
     @Override
     protected void onLoadPackage(PackageBuilder pb) {
-        adicionarDefinicaoColuna(pb, ATR_COL_PREFERENCE, null);
-        adicionarDefinicaoColuna(pb, ATR_COL_XS_PREFERENCE, "XS");
-        adicionarDefinicaoColuna(pb, ATR_COL_SM_PREFERENCE, "SM");
-        adicionarDefinicaoColuna(pb, ATR_COL_MD_PREFERENCE, "MD");
-        adicionarDefinicaoColuna(pb, ATR_COL_LG_PREFERENCE, "LG");
+        addAtrColumnPreference(pb, ATR_COL_PREFERENCE, "Largura preferencial");
+        addAtrColumnPreference(pb, ATR_COL_XS_PREFERENCE, "Largura preferencial XS");
+        addAtrColumnPreference(pb, ATR_COL_SM_PREFERENCE, "Largura preferencial SM");
+        addAtrColumnPreference(pb, ATR_COL_MD_PREFERENCE, "Largura preferencial MD");
+        addAtrColumnPreference(pb, ATR_COL_LG_PREFERENCE, "Largura preferencial LG");
 
         pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW);
 
@@ -91,11 +89,8 @@ public class SPackageBootstrap extends SPackage {
         pb.getType(STypeYearMonth.class).setAttributeCalculation(ATR_COL_PREFERENCE, calcsForSingle.orElse(3));
     }
 
-    private <T extends SType<I>, I extends SInstance, V> void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {
-        pb.createAttributeType(atrRef);
-        pb.addAttribute(SType.class, atrRef);
-        pb.getAttribute(atrRef)
-            .asAtr().label(("Largura preferencial " + defaultIfNull(label, "")).trim());
+    private <T extends SType<I>, I extends SInstance, V> void addAtrColumnPreference(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {
+        pb.createAttributeIntoType(SType.class, atrRef).asAtr().label(label);
     }
 
 }

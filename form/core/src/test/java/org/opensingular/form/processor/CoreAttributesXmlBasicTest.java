@@ -1,16 +1,16 @@
 package org.opensingular.form.processor;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile.AttibuteEntry;
+import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile.AttributeEntry;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoreAttributesXmlBasicTest {
 
@@ -87,7 +87,7 @@ public class CoreAttributesXmlBasicTest {
         MParser parser = new MParser();
         InputStream in = this.getClass().getResourceAsStream("basic.xml");
         MElement xml = parser.parse(in, false, false);
-        List<AttibuteEntry> definitions = TypeProcessorAttributeReadFromFile.readDefinitionsFor(xml);
+        List<AttributeEntry> definitions = TypeProcessorAttributeReadFromFile.readDefinitionsFor(xml);
         
         Assert.assertEquals("singular.form.basic.label", definitions.get(0).attributeName);
         Assert.assertEquals("Nome", definitions.get(0).attributeValue);
