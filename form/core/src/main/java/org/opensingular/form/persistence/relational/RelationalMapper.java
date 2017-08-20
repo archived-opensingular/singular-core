@@ -16,34 +16,23 @@
 
 package org.opensingular.form.persistence.relational;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.aspect.AspectRef;
 
 /**
- * Relational table metadata to persist into a Relational DBMS.
+ * Mapper for persisting Form components into a Relational DBMS.
  *
  * @author Edmundo Andrade
  */
-public class RelationalTable {
-	private String name;
-	private List<SType<SInstance>> columns = new ArrayList<>();
+public interface RelationalMapper {
+	public static final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
 
-	public RelationalTable(String name) {
-		this.name = name;
-	}
+	String table(SType<?> field);
 
-	public String getName() {
-		return name;
-	}
+	String column(SType<?> field);
 
-	public List<SType<SInstance>> getColumns() {
-		return columns;
-	}
-
-	public void addColumn(SType<SInstance> columnType) {
-		columns.add(columnType);
-	}
+	List<RelationalData> data(SInstance fieldInstance);
 }

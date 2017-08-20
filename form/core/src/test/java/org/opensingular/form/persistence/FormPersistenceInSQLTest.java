@@ -16,10 +16,10 @@
 
 package org.opensingular.form.persistence;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
+import static org.opensingular.form.persistence.relational.RelationalQuery.select;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,62 +28,36 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.persistence.FormPersistenceInSQLTest.TestPackage.TestEntityA;
-import org.opensingular.form.persistence.relational.RelationalData;
+import org.opensingular.form.persistence.relational.BasicRelationalMapper;
+import org.opensingular.form.persistence.relational.RelationalQuery;
 import org.opensingular.form.type.core.STypeString;
 
 /**
- * @author Edmundo Andrade on 17/08/2017.
+ * @author Edmundo Andrade
  */
 @RunWith(Parameterized.class)
 public class FormPersistenceInSQLTest extends TestCaseForm {
+	private TestEntityA entityTypeA;
+
 	public FormPersistenceInSQLTest(TestFormConfig testFormConfig) {
 		super(testFormConfig);
 	}
 
-	@Test
-	public void select() {
+	@Before
+	public void setUp() {
 		SDictionary dictionary = createTestDictionary();
-		TestEntityA entityTypeA = dictionary.getType(TestEntityA.class);
-		SIComposite entityInstanceA = entityTypeA.newInstance();
-		assertEquals("select name from testPackage.TestEntityA", sqlSelectList(entityInstanceA)[0]);
+		entityTypeA = dictionary.getType(TestEntityA.class);
 	}
 
-	private String[] sqlSelectList(SIComposite entityInstance) {
-		// FormKey key = FormKey.from(entityInstance);
-		// List<RelationalTable> tableRefs = tableReferences(entityInstance);
-		return new String[] { "select " + concatenateColumnNames(entityInstance.getAllFields(), ", ") + " from "
-				+ tableName(entityInstance) };
-	}
-
-	private String concatenateColumnNames(List<SInstance> fields, String separator) {
-		StringJoiner sj = new StringJoiner(separator);
-		fields.forEach((field) -> sj.add(field.getName()));
-		return sj.toString();
-	}
-
-	private String tableName(SIComposite entityInstance) {
-		return entityInstance.getType().getName();
-	}
-
-	public static final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
-
-	public interface RelationalMapper {
-		List<RelationalData> toRelational(SInstance fieldInstance);
-	}
-
-	public static class BasicRelationalMapper implements RelationalMapper {
-		public List<RelationalData> toRelational(SInstance fieldInstance) {
-			List<RelationalData> list = new ArrayList<>();
-			list.add(new RelationalData(fieldInstance.getParent().getName(), null, fieldInstance.getName(), null));
-			return list;
-		}
+	@Test
+	public void query() {
+		RelationalQuery query = select(entityTypeA.getFields()).orderBy(entityTypeA.name);
+		assertEquals("select T1.name from testPackage.TestEntityA T1 order by T1.name", query.toSQL());
 	}
 
 	@SInfoPackage(name = "testPackage")
