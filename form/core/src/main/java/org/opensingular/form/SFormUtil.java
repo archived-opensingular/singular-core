@@ -73,8 +73,8 @@ public final class SFormUtil {
         return c >= '0' && c <= '9';
     }
 
-    private static boolean isLetter(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    static boolean isLetter(char c) {
+        return Character.valueOf(c).toString().matches("[A-Za-z_]");
     }
 
     @Nonnull

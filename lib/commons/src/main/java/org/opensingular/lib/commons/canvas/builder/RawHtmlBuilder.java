@@ -10,7 +10,7 @@ public class RawHtmlBuilder implements HtmlBuilder {
 
     private List<HtmlBuilder> childs = new ArrayList<>();
     private Map<String, String> attribues = new LinkedHashMap<>();
-    private StringBuffer buffer = new StringBuffer();
+    private StringBuilder buffer = new StringBuilder();
 
     public RawHtmlBuilder(String tag) {
         this.tag = tag;

@@ -17,6 +17,18 @@ public class SFormUtilTest extends TestCaseForm {
     }
 
     @Test
+    public void testIsLetter(){
+        assertTrue(SFormUtil.isLetter('A'));
+        assertTrue(SFormUtil.isLetter('a'));
+        assertTrue(SFormUtil.isLetter('d'));
+        assertTrue(SFormUtil.isLetter('D'));
+        assertTrue(SFormUtil.isLetter('_'));
+        assertTrue(SFormUtil.isLetter('F'));
+        assertTrue(SFormUtil.isLetter('G'));
+        assertFalse(SFormUtil.isLetter('1'));
+    }
+
+    @Test
     public void testGenerateUserFriendlyName() {
         assertEquals("Dados pessoais", SFormUtil.generateUserFriendlyName("dadosPessoais"));
         assertEquals("Informacoes de contato", SFormUtil.generateUserFriendlyName("informacoesDeContato"));
@@ -141,4 +153,5 @@ public class SFormUtilTest extends TestCaseForm {
                 + tipoEsperado.getName() + "'");
         }
     }
+
 }

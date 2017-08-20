@@ -8,7 +8,7 @@ import org.opensingular.form.view.SViewTab;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 @SInfoType(spackage = FormTestPackage.class, name = "STypeFormTest")
-public class STypeFormTest extends STypeComposite<SIComposite> {
+public class STypeFormTest extends STypeComposite<SIComposite> {//NOSONAR
 
 
     public final static boolean OBRIGATORIO       = !SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE);

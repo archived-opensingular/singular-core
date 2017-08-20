@@ -19,12 +19,7 @@ package org.opensingular.form.wicket.mapper.composite;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -74,11 +69,14 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
     }
 
     private static boolean isSingleTypeTitleBlank(final Block block, SIComposite currentInstance) {
-        SInstance singleTypeInstance = block.getSingleType(currentInstance).get();
-        String label = singleTypeInstance.asAtr().getLabel();
+        Optional<SInstance> singleTypeInstance = block.getSingleType(currentInstance);
+        String label = null;
+        if (singleTypeInstance.isPresent()) {
+            label = singleTypeInstance.get().asAtr().getLabel();
+        }
         return isBlank(label);
     }
-    
+
     private static class BlocksCompositeViewBuilder extends AbstractCompositeViewBuilder {
 
         BlocksCompositeViewBuilder(WicketBuildContext ctx, AbstractCompositeMapper mapper) {
@@ -157,23 +155,23 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
     private static class PortletPanel extends TemplatePanel {
 
-        private static final String         TITLE_ID       = "title";
-        private static final String         GRID_ID        = "grid";
+        private static final String TITLE_ID = "title";
+        private static final String GRID_ID = "grid";
 
-        private static final String         PORTLET_MARKUP = ""
-            + "<div class='portlet light'>                                     "
-            + "  <div class='portlet-title' wicket:id='" + TITLE_ID + "'></div>"
-            + "  <div class='portlet-body'>                                    "
-            + "    <div wicket:id='" + GRID_ID + "' />                         "
-            + "  </div>                                                        "
-            + "</div>                                                          ";
+        private static final String PORTLET_MARKUP = ""
+                + "<div class='portlet light'>                                     "
+                + "  <div class='portlet-title' wicket:id='" + TITLE_ID + "'></div>"
+                + "  <div class='portlet-body'>                                    "
+                + "    <div wicket:id='" + GRID_ID + "' />                         "
+                + "  </div>                                                        "
+                + "</div>                                                          ";
 
-        private final Block                 block;
-        private final BSGrid                newGrid;
-        private final WicketBuildContext    ctx;
+        private final Block block;
+        private final BSGrid newGrid;
+        private final WicketBuildContext ctx;
         private final BlocksCompositeMapper mapper;
 
-        private boolean                     visible;
+        private boolean visible;
 
         PortletPanel(String id, Block block, WicketBuildContext ctx, BlocksCompositeMapper mapper) {
             super(id, PORTLET_MARKUP);
@@ -248,26 +246,26 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             portletTitle.setVisible(isNotBlank(titleLabelModel.getObject()));
             portletTitle.add(caption);
             caption
-                .appendTag("span", titleLabel.add($b.classAppender("caption-subject")))
-                .add($b.styleAppender("width", "100%", $m.ofValue(Boolean.TRUE)));
+                    .appendTag("span", titleLabel.add($b.classAppender("caption-subject")))
+                    .add($b.styleAppender("width", "100%", $m.ofValue(Boolean.TRUE)));
 
             if (isBlockHandlesTitleFromChild(ctx, block)) {
                 IModel<? extends SInstance> model = IMappingModel.of(ctx.getModel())
-                    .map(it -> block.getSingleType(it).orElse(null));
+                        .map(it -> block.getSingleType(it).orElse(null));
                 IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                    mapper,
-                    RequestCycle.get().find(AjaxRequestTarget.class),
-                    model,
-                    model.getObject(),
-                    ctx,
-                    ctx.getContainer());
+                        mapper,
+                        RequestCycle.get().find(AjaxRequestTarget.class),
+                        model,
+                        model.getObject(),
+                        ctx,
+                        ctx.getContainer());
 
                 SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
-                    caption,
-                    mapper.getInstanceActionsProviders(),
-                    model,
-                    true,
-                    internalContextListProvider);
+                        caption,
+                        mapper.getInstanceActionsProviders(),
+                        model,
+                        true,
+                        internalContextListProvider);
             }
 
             titleLabel.add(new ClassAttributeModifier() {
@@ -299,8 +297,8 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 System.out.println(singleField.asAtr().getLabel());
 
                 label = block.getSingleType(parent)
-                    .map(it -> it.asAtr().getLabel())
-                    .orElse(null);
+                        .map(it -> it.asAtr().getLabel())
+                        .orElse(null);
             }
 
             return Model.of(label);

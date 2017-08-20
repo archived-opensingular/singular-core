@@ -209,9 +209,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     public final SPackage getPackage() {
         if (pkg == null) {
             pkg = getParentScope().getPackage();
-            if (pkg == null) {
-                throw new SingularFormException("Internal Error: Não foi possível encontrar o pacote do tipo", this);
-            }
         }
         return pkg;
     }
@@ -619,7 +616,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     public final boolean hasValidator(InstanceValidator<?> validator) {
-        if (validators != null && validators.contains(validator)) {
+        if (validators != null && validators.stream().map(ValidationEntry::getValidator).anyMatch(validator::equals)) {
             return true;
         } else if (superType != null) {
             return superType.hasValidator(validator);
