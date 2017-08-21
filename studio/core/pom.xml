@@ -8,7 +8,7 @@
 		<artifactId>singular-studio</artifactId>
 		<version>1.6.9-STUDIO-SNAPSHOT</version>
 	</parent>
-	<artifactId>core</artifactId>
+	<artifactId>singular-studio-core</artifactId>
 	<name>[singular :: studio :: core]</name>
 	<packaging>jar</packaging>
 </project>
