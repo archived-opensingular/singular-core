@@ -74,7 +74,7 @@ public final class SFormUtil {
     }
 
     static boolean isLetter(char c) {
-        return Character.valueOf(c).toString().matches("[A-Za-z_]");
+        return Character.toString(c).matches("[A-Za-z_]");
     }
 
     @Nonnull
