@@ -42,7 +42,6 @@ import org.w3c.dom.NamedNodeMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -270,70 +269,58 @@ public final class SFormXMLUtil {
                 .toXML(instancia);
     }
 
-    private static List<SType<?>> collectConfiguredXMLAtrSubtypes(SType<?> type, List<SType<?>> types) {
-        List<SType<?>> newList = types;
+    private static boolean hasKeepNodePredicatedInAnyChildren(@Nonnull SType<?> type) {
         if (type.as(AtrXML::new).isKeepNodePredicateConfigured()) {
-            if (newList == null) {
-                newList = new ArrayList<>();
-            }
-            newList.add(type);
+            return true;
         }
         if (type instanceof ICompositeType) {
             for (SType<?> field : ((ICompositeType) type).getContainedTypes()) {
-                if (!field.isRecursiveReference()) {
-                    newList = collectConfiguredXMLAtrSubtypes(field, newList);
+                if (!field.isRecursiveReference() && hasKeepNodePredicatedInAnyChildren(field)) {
+                    return true;
                 }
             }
         }
-        return newList;
+        return false;
     }
 
-    private static void initATRXmlEnabledFields(SInstance instance) {
-        if (instance instanceof ICompositeInstance) {
-            List<SType<?>> types = collectConfiguredXMLAtrSubtypes(instance.getType(), null);
-            if (types != null) {
-                initSubtypesForFurtherEvaluation(instance, types);
-            }
-        }
-    }
-
-    private static void initSubtypesForFurtherEvaluation(SInstance instance, List<SType<?>> types) {
-        for (SType<?> t : types) {
-            SInstances.streamDescendants(instance, false, t).forEach(si -> si.getChildren());
+    private static void initSubFieldsIfNeeded(@Nonnull SInstance instance) {
+        if (hasKeepNodePredicatedInAnyChildren(instance.getType())) {
+            //Forces all sub fields in all sub composites to be created just by walking through then
+            SInstances.streamDescendants(instance, true).forEach(si -> si.getId());
         }
     }
 
     @Nullable
-    static MElement toXML(MElement pai, String nomePai, @Nonnull SInstance instancia,
+    static MElement toXML(MElement parent, String parentName, @Nonnull SInstance instance,
                           @Nonnull PersistenceBuilderXML builder) {
 
-        MDocument         xmlDocument = (pai == null) ? MDocument.newInstance() : pai.getMDocument();
+        MDocument         xmlDocument = (parent == null) ? MDocument.newInstance() : parent.getMDocument();
         ConfXMLGeneration conf        = new ConfXMLGeneration(builder, xmlDocument);
 
-        initATRXmlEnabledFields(instancia);
+        initSubFieldsIfNeeded(instance);
 
-        MElement xmlResultado = toXML(conf, instancia);
-        if (xmlResultado == null) {
+        MElement xmlResult = toXML(conf, instance);
+        if (xmlResult == null) {
             if (builder.isReturnNullXML()) {
-                return pai;
+                return parent;
             }
-            xmlResultado = conf.createMElement(instancia);
+            xmlResult = conf.createMElement(instance);
         }
-        if (nomePai != null) {
-            MElement novo = xmlDocument.createMElement(nomePai);
-            novo.addElement(xmlResultado);
-            xmlResultado = novo;
+        if (parentName != null) {
+            MElement novo = xmlDocument.createMElement(parentName);
+            novo.addElement(xmlResult);
+            xmlResult = novo;
         }
-        if (pai != null) {
-            pai.addElement(xmlResultado);
-            return pai;
+        if (parent != null) {
+            parent.addElement(xmlResult);
+            return parent;
         }
-        xmlDocument.setRaiz(xmlResultado);
+        xmlDocument.setRaiz(xmlResult);
         if (builder.isPersistId()) {
-            xmlResultado.setAttribute(ATRIBUTO_LAST_ID, Integer.toString(instancia.getDocument().getLastId()));
+            xmlResult.setAttribute(ATRIBUTO_LAST_ID, Integer.toString(instance.getDocument().getLastId()));
         }
 
-        return xmlResultado;
+        return xmlResult;
     }
 
     static MElement parseXml(String xmlString) {
