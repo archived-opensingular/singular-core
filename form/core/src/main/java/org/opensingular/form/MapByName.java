@@ -72,21 +72,16 @@ class MapByName<K> implements Iterable<K> {
     }
 
     @Nonnull
-    final <T extends K> T getOrNewInstance(@Nonnull Class<T> classeAlvo) {
-        T valor = get(classeAlvo);
+    final <T extends K> T getOrNewInstance(@Nonnull Class<T> targetClass) {
+        T valor = get(targetClass);
         if (valor == null) {
-            return newInstance(classeAlvo);
+            try {
+                return targetClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new SingularFormException("Erro instanciando " + targetClass.getName(), e);
+            }
         }
         return valor;
-    }
-
-    @Nonnull
-    static <TT> TT newInstance(@Nonnull Class<TT> classeAlvo) {
-        try {
-            return classeAlvo.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando " + classeAlvo.getName(), e);
-        }
     }
 
     final <T extends K> void verifyMustNotBePresent(Class<T> classeAlvo, Object owner) {

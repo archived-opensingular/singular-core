@@ -42,7 +42,7 @@ public class FormTypeService  {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(name);
             formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
-                    .orElse(SFormUtil.getTypeSimpleName(type.getClass())));
+                    .orElse(type.getNameSimple()));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }

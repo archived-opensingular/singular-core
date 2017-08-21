@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -68,10 +69,12 @@ public class PackageBuilder {
         return sPackage.extendType(name, parentClass);
     }
 
-    public <T extends SType<?>> T createType(String simpleNameNewType, T parentType) {
-        return sPackage.extendType(simpleNameNewType, parentType);
+    @Nonnull
+    public <T extends SType<?>> T createType(@Nullable String simpleNameNewType, @Nonnull T parentType) {
+        return sPackage.extendType(SimpleName.ofNullable(simpleNameNewType), parentType);
     }
 
+    @Nonnull
     public <T extends SType<?>> T createType(@Nonnull Class<T> newTypeClass) {
         return sPackage.registerType(newTypeClass);
     }
@@ -91,7 +94,8 @@ public class PackageBuilder {
         return createListTypeOf(simpleNameNewType, getType(elementsTypeClass));
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(String simpleNameNewType, T elementsType) {
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(@Nonnull String simpleNameNewType, @Nonnull T elementsType) {
         return sPackage.createTypeListOf(simpleNameNewType, elementsType);
     }
 
@@ -142,12 +146,12 @@ public class PackageBuilder {
     }
 
     public <T extends SType<?>> T createAttributeIntoType(@Nonnull SType<?> targetType, @Nonnull String attributeSimpleName, @Nonnull T attributeType) {
-        return createAttributeIntoTypeInternal(targetType, attributeSimpleName, attributeType, false);
+        return createAttributeIntoTypeInternal(targetType, new SimpleName(attributeSimpleName), attributeType, false);
     }
 
     @Nonnull
-    private <T extends SType<?>> T createAttributeIntoTypeInternal(@Nonnull SType<?> targetType, String attrSimpleName,
-            @Nonnull T attributeType, boolean selfReference) {
+    private <T extends SType<?>> T createAttributeIntoTypeInternal(@Nonnull SType<?> targetType,
+            @Nonnull SimpleName attrSimpleName, @Nonnull T attributeType, boolean selfReference) {
         sPackage.verifyIfMayAddNewType(attrSimpleName);
         SScopeBase scope = Objects.equals(targetType.getPackage(), sPackage) ? targetType : sPackage;
 

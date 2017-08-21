@@ -55,7 +55,7 @@ public final class SFormUtil {
     private SFormUtil() {
     }
 
-    public static boolean isNotValidSimpleName(@Nonnull String name) {
+    private static boolean isNotValidSimpleName(@Nonnull String name) {
         Objects.requireNonNull(name);
         if (name.length() == 0 || !isLetter(name.charAt(0))) {
             return true;
@@ -74,7 +74,7 @@ public final class SFormUtil {
     }
 
     static boolean isLetter(char c) {
-        return Character.valueOf(c).toString().matches("[A-Za-z_]");
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';  //NOSONAR
     }
 
     @Nonnull
@@ -118,8 +118,8 @@ public final class SFormUtil {
     }
 
     @Nonnull
-    static String resolveName(@Nullable String simpleName, @Nonnull SType<?> type) {
-        return simpleName == null ? type.getNameSimple() : simpleName;
+    static SimpleName resolveName(@Nullable SimpleName simpleName, @Nonnull SType<?> type) {
+        return simpleName == null ? type.getNameSimpleObj() : simpleName;
     }
 
     static SType<?> resolveFieldType(SType<?> type, PathReader pathReader) {
@@ -247,19 +247,18 @@ public final class SFormUtil {
     }
 
     @Nonnull
-    public static <T extends SType<?>> String getTypeSimpleName(Class<T> typeClass) {
+    public static <T extends SType<?>> SimpleName getTypeSimpleName(Class<T> typeClass) {
         return ClassInspectionCache.getInfo(typeClass, CacheKey.SIMPLE_NAME,
                 SFormUtil::getTypeSimpleNameInternal);
     }
 
-    private static String getTypeSimpleNameInternal(Class<?> typeClass) {
+    private static SimpleName getTypeSimpleNameInternal(Class<?> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
-        String    typeName = infoType.name();
+        String  typeName = infoType.name();
         if (StringUtils.isBlank(typeName)) {
             typeName = typeClass.getSimpleName();
         }
-        validateSimpleName(typeName);
-        return typeName;
+        return new SimpleName(typeName);
     }
 
     public static Optional<String> getTypeLabel(Class<? extends SType> typeClass) {

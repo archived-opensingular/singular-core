@@ -71,7 +71,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     protected long instanceCount;
 
-    private String nameSimple;
+    private SimpleName nameSimple;
     private String nameFull;
     private SDictionary dictionary;
     /**
@@ -112,7 +112,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         if (simpleName == null) {
             this.nameSimple = SFormUtil.getTypeSimpleName(getClass());
         } else {
-            this.nameSimple = SFormUtil.validateSimpleName(simpleName);
+            this.nameSimple = new SimpleName(simpleName);
         }
         this.instanceClass = instanceClass;
     }
@@ -135,11 +135,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     @Nonnull
-    final <S extends SType<?>> S extend(@Nullable String simpleName) {
-        String nameResolved = SFormUtil.resolveName(simpleName, this);
-        nameResolved = SFormUtil.validateSimpleName(nameResolved);
+    final <S extends SType<?>> S extend(@Nullable SimpleName simpleName) {
+        SimpleName nameResolved = SFormUtil.resolveName(simpleName, this);
 
-        S newType = (S) MapByName.newInstance(getClass());
+        S newType;
+        try {
+            newType = (S) getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SingularFormException("Erro instanciando " +getClass().getName(), e);
+        }
         ((SType<I>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
         return newType;
@@ -171,6 +175,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Nonnull
     public String getNameSimple() {
+        return nameSimple.get();
+    }
+
+    @Nonnull
+    final SimpleName getNameSimpleObj() {
         return nameSimple;
     }
 
@@ -975,7 +984,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         String n = nameFull;
         if (n == null) {
             if (scope == null) {
-                n = nameSimple;
+                n = nameSimple == null ? null : nameSimple.get();
             } else {
                 n = scope.getName() + '.' + nameSimple;
             }

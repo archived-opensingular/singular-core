@@ -181,16 +181,18 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     @Nonnull
     public <T extends SType<?>> T addField(@Nullable String fieldSimpleName, @Nonnull T parentType) {
-        String resolvedName = SFormUtil.resolveName(fieldSimpleName, this);
-        checkNameNewField(resolvedName);
-        T field = extendType(resolvedName, parentType);
-        return addInternal(resolvedName, field);
+        SimpleName name = SFormUtil.resolveName(SimpleName.ofNullable(fieldSimpleName), parentType);
+        checkNameNewField(name.get());
+        T field = extendType(name, parentType);
+        return addInternal(name.get(), field);
     }
 
     /**
      * Cria um novo campo lista com o nome informado e sendo o tipo de seus elementos o tipo da classe informada.
      */
-    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(String fieldSimpleName, Class<T> listTypeClass) {
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName,
+            @Nonnull Class<T> listTypeClass) {
         return addFieldListOf(fieldSimpleName, resolveType(listTypeClass));
     }
 
@@ -200,8 +202,8 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull T elementsType) {
         checkNameNewField(fieldSimpleName);
-        STypeList<T, I> novo = createTypeListOf(fieldSimpleName, elementsType);
-        return addInternal(fieldSimpleName, novo);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementsType);
+        return addInternal(fieldSimpleName, newList);
     }
 
     /**

@@ -141,8 +141,8 @@ public final class SingularTestUtil {
      * Executa a task informada pelo tempo informado e verifica quantas repetições foram possíveis por segundo, jogando
      * o resultado para o console.
      */
-    public static void performance(String testName, int durationInSeconds, Runnable task) {
-        int count = 0;
+    public static long performance(String testName, int durationInSeconds, Runnable task) {
+        long count = 0;
         long time = System.currentTimeMillis();
         long timeEnd = time + durationInSeconds * 1000;
         while (System.currentTimeMillis() < timeEnd) {
@@ -156,6 +156,7 @@ public final class SingularTestUtil {
         System.out.println("-------------------------------------------");
         System.out.println("  " + testName + ": T=" + SingularIOUtils.humanReadableMiliSeconds(time) + " R=" + count +
                 "  qtd/seg=" + ConversorToolkit.printNumber(resultPerSecond, 0));
+        return count;
     }
 
     /**

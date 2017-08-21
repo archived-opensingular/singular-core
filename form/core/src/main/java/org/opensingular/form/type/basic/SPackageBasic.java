@@ -22,25 +22,37 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIConsumer;
 import org.opensingular.form.SIList;
+import org.opensingular.form.SIPredicate;
 import org.opensingular.form.SISupplier;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeBehavior;
 import org.opensingular.form.STypeConsumer;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.STypePredicate;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.STypeSupplier;
 import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.type.core.*;
+import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.type.core.SIDate;
+import org.opensingular.form.type.core.SIInteger;
+import org.opensingular.form.type.core.SILong;
+import org.opensingular.form.type.core.SIMapper;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeFormula;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeLong;
+import org.opensingular.form.type.core.STypeMapper;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.STypeAnnotationClassifierList;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.form.SIPredicate;
-import org.opensingular.form.STypeBehavior;
-import org.opensingular.form.STypePredicate;
-import org.opensingular.lib.commons.lambda.ISupplier;
 
 import java.util.Collection;
 import java.util.Date;
@@ -113,9 +125,9 @@ public class SPackageBasic extends SPackage {
 
         pb.createAttributeIntoType(SType.class, ATR_DEFAULT_IF_NULL);
         pb.createAttributeIntoType(SType.class, ATR_MAPPER);
-        pb.createAttributeIntoType(SType.class, ATR_REQUIRED);
+        pb.createAttributeIntoType(SType.class, ATR_REQUIRED).withDefaultValueIfNull(Boolean.FALSE);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED_FUNCTION);
-        pb.createAttributeIntoType(SType.class, ATR_EXISTS);
+        pb.createAttributeIntoType(SType.class, ATR_EXISTS).withDefaultValueIfNull(Boolean.TRUE);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS_FUNCTION);
         pb.createAttributeIntoType(STypeSimple.class, ATR_FORMULA);
         pb.createAttributeIntoType(STypeString.class, ATR_TRIM).withDefaultValueIfNull(Boolean.TRUE);
@@ -126,9 +138,6 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(STypeList.class, ATR_MINIMUM_SIZE);
 
         pb.createAttributeIntoType(STypeDate.class, ATR_MAX_DATE);
-
-        pb.getAttribute(ATR_REQUIRED).withDefaultValueIfNull(Boolean.FALSE);
-        pb.getAttribute(ATR_EXISTS).withDefaultValueIfNull(Boolean.TRUE);
 
         // Cria os tipos de atributos
         pb.createAttributeType(ATR_MAX_LENGTH);

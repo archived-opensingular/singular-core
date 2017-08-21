@@ -121,7 +121,13 @@ public abstract class SScopeBase implements SScope {
     @Nonnull
     final <T extends SType<?>> T registerType(@Nonnull Class<T> typeClass) {
         Objects.requireNonNull(typeClass);
-        T t = registerTypeInternal(MapByName.newInstance(typeClass), typeClass);
+        T t;
+        try {
+            t = typeClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SingularFormException("Erro instanciando " + typeClass.getName(), e);
+        }
+        t = registerTypeInternal(t, typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;
     }
@@ -228,7 +234,7 @@ public abstract class SScopeBase implements SScope {
     }
 
     @Nonnull
-    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull T parentType) {
+    final <T extends SType<?>> T extendType(@Nullable SimpleName simpleNameNewType, @Nonnull T parentType) {
         if (getDictionary() != parentType.getDictionary()) {
             throw new SingularFormException(
                     "O tipo " + parentType.getName() + " foi criado dentro de outro dicionário, que não o atual de " + getName());
@@ -240,19 +246,20 @@ public abstract class SScopeBase implements SScope {
     @Nonnull
     final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull Class<T> parenteTypeClass) {
         T parentType = resolveType(parenteTypeClass);
-        return extendType(simpleNameNewType, parentType);
+        return extendType(SimpleName.ofNullable(simpleNameNewType), parentType);
     }
 
     @SuppressWarnings("unchecked")
     final <I extends SIComposite> STypeList<STypeComposite<I>, I> createListOfNewTypeComposite(String simpleNameNewType,
-            String simpleNameNewTypeComposto) {
+            String simpleNameNewTypeComposite) {
         STypeList<STypeComposite<I>, I> listType = extendType(simpleNameNewType, STypeList.class);
-        listType.setElementsType(simpleNameNewTypeComposto, resolveType(STypeComposite.class));
+        listType.setElementsType(simpleNameNewTypeComposite, resolveType(STypeComposite.class));
         return listType;
     }
 
     @SuppressWarnings("unchecked")
-    final <I extends SInstance, T extends SType<I>> STypeList<T, I> createTypeListOf(String simpleNameNewType, T elementsType) {
+    @Nonnull
+    final <I extends SInstance, T extends SType<I>> STypeList<T, I> createTypeListOf(@Nonnull String simpleNameNewType, @Nonnull T elementsType) {
         Preconditions.checkNotNull(elementsType);
         STypeList<T, I> listType = extendType(simpleNameNewType, STypeList.class);
         listType.setElementsType(elementsType);
@@ -268,17 +275,16 @@ public abstract class SScopeBase implements SScope {
         if(isRecursiveReference()) {
             ((SScopeBase) getParentScope()).register(type);
         } else {
-            String nameSimple = type.getNameSimple();
-            verifyIfMayAddNewType(nameSimple);
+            verifyIfMayAddNewType(type.getNameSimpleObj());
             if (localTypes == null) {
                 localTypes = new LinkedHashMap<>();
             }
-            localTypes.put(nameSimple, type);
+            localTypes.put(type.getNameSimple(), type);
         }
     }
 
-    final void verifyIfMayAddNewType(String simpleName) {
-        if (localTypes != null && localTypes.containsKey(simpleName)) {
+    final void verifyIfMayAddNewType(SimpleName simpleName) {
+        if (localTypes != null && localTypes.containsKey(simpleName.get())) {
             throw new SingularFormException("A definição '" + simpleName + "' já está criada no escopo " + getName());
         }
     }

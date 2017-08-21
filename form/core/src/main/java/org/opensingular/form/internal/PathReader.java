@@ -16,7 +16,6 @@
 
 package org.opensingular.form.internal;
 
-import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SScope;
 import org.opensingular.form.SingularFormException;
@@ -75,9 +74,6 @@ public final class PathReader {
 
             end = findTokenEndOrException(path, inicioCopy);
             token = path.substring(inicioCopy, end);
-            if (SFormUtil.isNotValidSimpleName(token)) {
-                throw newInvalidPathInPosition(path, inicioCopy, "Não é um nome de campo válido");
-            }
         }
     }
 

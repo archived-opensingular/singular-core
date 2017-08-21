@@ -100,13 +100,17 @@ public class SDictionary {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
         }
-        T novo = packages.get(packageClass);
-        if (novo == null) {
-            novo = MapByName.newInstance(packageClass);
-            packages.verifyMustNotBePresent(novo, this);
-            loadInternal(novo);
+        T newPackage = packages.get(packageClass);
+        if (newPackage == null) {
+            try {
+                newPackage = packageClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new SingularFormException("Erro instanciando " + packageClass.getName(), e);
+            }
+            packages.verifyMustNotBePresent(newPackage, this);
+            loadInternal(newPackage);
         }
-        return novo;
+        return newPackage;
     }
 
     /**
@@ -341,7 +345,7 @@ public class SDictionary {
     private int attributesArrayInicialSize = currentAvarageAttributes;
 
     /** Retorna o tamanho inicial para a criação de arrays para referência para atributos. */
-    final int getAttributesArrayInicialSize() {
+    final int getAttributesArrayInitialSize() {
         return attributesArrayInicialSize;
     }
 
