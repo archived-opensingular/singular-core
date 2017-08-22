@@ -5,6 +5,7 @@ import org.opensingular.lib.commons.ui.Icon;
 public abstract class AbstractMenuEntry implements MenuEntry {
     private Icon icon;
     private String name;
+    private MenuEntry parent;
 
     public AbstractMenuEntry(Icon icon, String name) {
         this.icon = icon;
@@ -29,5 +30,15 @@ public abstract class AbstractMenuEntry implements MenuEntry {
     public AbstractMenuEntry setName(String name) {
         this.name = name;
         return this;
+    }
+
+    @Override
+    public MenuEntry getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(MenuEntry parent) {
+        this.parent = parent;
     }
 }

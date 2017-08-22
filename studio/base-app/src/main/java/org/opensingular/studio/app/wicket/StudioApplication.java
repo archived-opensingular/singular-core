@@ -11,12 +11,14 @@ import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.studio.app.wicket.pages.StudioHeader;
-import org.opensingular.studio.app.wicket.pages.WelcomePage;
+import org.opensingular.studio.app.wicket.pages.StudioPage;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 public class StudioApplication extends WebApplication implements SingularAdminApp {
+
+    public static final String STUDIO_ROOT_PATH = "studio";
 
     private final static class OuputMarkupBehavior extends Behavior {
         @Override
@@ -31,7 +33,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return WelcomePage.class;
+        return StudioPage.class;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
         getComponentInitializationListeners().add(comp -> comp.add(new OuputMarkupBehavior()));
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-        mountPage("${path}", WelcomePage.class);
+        mountPage("/"+ STUDIO_ROOT_PATH +"/${path}", StudioPage.class);
     }
 
     @Override

@@ -1,24 +1,23 @@
 package org.opensingular.studio.app.wicket.pages;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.opensingular.lib.wicket.util.menu.AbstractMenuItem;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
-import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
+import org.opensingular.studio.app.menu.StudioMenuItem;
+import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.GroupMenuEntry;
 import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
 import org.opensingular.studio.core.menu.StudioMenu;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public abstract class StudioTemplate extends SingularAdminTemplate {
     @Inject
@@ -43,6 +42,26 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
             }
             menuPath = path.toString();
         }
+    }
+
+    protected StudioMenuItem findCurrentStudioMenuItem() {
+        return findCurrentStudioMenuItem(studioMenu.getChildren());
+    }
+
+    private StudioMenuItem findCurrentStudioMenuItem(List<MenuEntry> entries) {
+        for (MenuEntry entry : entries) {
+            if (entry instanceof StudioMenuItem &&
+                    ((StudioMenuItem) entry)
+                            .getEndpoint()
+                            .replace("/"+ StudioApplication.STUDIO_ROOT_PATH+"/", "")
+                            .equals(menuPath)) {
+                return (StudioMenuItem) entry;
+            }
+            if (entry instanceof GroupMenuEntry) {
+                return findCurrentStudioMenuItem(((GroupMenuEntry) entry).getChildren());
+            }
+        }
+        return null;
     }
 
     @Override

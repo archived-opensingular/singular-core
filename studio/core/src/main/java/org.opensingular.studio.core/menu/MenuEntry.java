@@ -6,4 +6,8 @@ public interface MenuEntry {
     Icon getIcon();
 
     String getName();
+
+    MenuEntry getParent();
+
+    void setParent(MenuEntry parent);
 }

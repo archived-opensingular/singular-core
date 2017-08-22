@@ -19,6 +19,7 @@ public class GroupMenuEntry extends AbstractMenuEntry {
     }
 
     public <T extends MenuEntry> T add(T child){
+        child.setParent(this);
         this.children.add(child);
         return child;
     }

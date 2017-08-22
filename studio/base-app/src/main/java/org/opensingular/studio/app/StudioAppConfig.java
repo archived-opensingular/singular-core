@@ -2,16 +2,21 @@ package org.opensingular.studio.app;
 
 import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.StudioMenu;
-import org.springframework.context.annotation.Bean;
 
-public abstract class StudioAppConfig {
-    @Bean
-    public StudioApplication getWicketApplication() {
-        return new StudioApplication();
-    }
+public interface StudioAppConfig {
+    /**
+     * @return the Wicket Application
+     */
+    StudioApplication getWicketApplication();
 
-    @Bean
-    public StudioMenu menu() {
-        return new StudioMenu();
-    }
+    /**
+     * @return the app menu
+     */
+    StudioMenu getAppMenu();
+
+    /**
+     * Allow register another classes to be registered as spring config
+     * @return the configs
+     */
+    Class<?>[] getSpringAnnotatedConfigs();
 }
