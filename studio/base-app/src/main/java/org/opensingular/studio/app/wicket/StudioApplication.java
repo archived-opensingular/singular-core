@@ -44,6 +44,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
         getComponentInitializationListeners().add(comp -> comp.add(new OuputMarkupBehavior()));
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+        mountPage("${path}", WelcomePage.class);
     }
 
     @Override

@@ -1,0 +1,33 @@
+package org.opensingular.studio.core.menu;
+
+import org.opensingular.lib.commons.ui.Icon;
+
+public abstract class AbstractMenuEntry implements MenuEntry {
+    private Icon icon;
+    private String name;
+
+    public AbstractMenuEntry(Icon icon, String name) {
+        this.icon = icon;
+        this.name = name;
+    }
+
+    @Override
+    public Icon getIcon() {
+        return icon;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public AbstractMenuEntry setIcon(Icon icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    public AbstractMenuEntry setName(String name) {
+        this.name = name;
+        return this;
+    }
+}

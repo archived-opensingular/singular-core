@@ -24,6 +24,11 @@
             <artifactId>singular-form-wicket</artifactId>
             <version>1.6.9-STUDIO-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-studio-core</artifactId>
+            <version>1.6.9-STUDIO-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

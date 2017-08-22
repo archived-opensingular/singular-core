@@ -14,8 +14,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import java.util.EnumSet;
 
-public class StudioWebAppInitializer implements WebApplicationInitializer {
-
+public abstract class StudioWebAppInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext container) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
@@ -26,15 +25,19 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
 
         rootContext.refresh();
 
-        WicketFilter wicketFilter = new WicketFilter(rootContext.getBean(StudioApplication.class));
+        WicketFilter wicketFilter = new WicketFilter(rootContext.getBean(getStudioApplication()));
         wicketFilter.setFilterPath("");
         FilterRegistration.Dynamic filterRegistration = container.addFilter("wicketFilter", wicketFilter);
         filterRegistration.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "*");
     }
 
     @NotNull
+    protected Class<? extends StudioApplication> getStudioApplication() {
+        return StudioApplication.class;
+    }
+
+    @NotNull
     protected Class<? extends StudioAppConfig> getStudioAppConfig() {
         return StudioAppConfig.class;
     }
-
 }
