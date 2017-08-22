@@ -9,7 +9,7 @@ import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.studio.SingularStudioSimpleCRUDPanel;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.studio.app.menu.StudioMenuItem;
+import org.opensingular.studio.app.definition.StudioDefinition;
 
 public class StudioPage extends StudioTemplate {
 
@@ -18,17 +18,17 @@ public class StudioPage extends StudioTemplate {
         super.onInitialize();
         Form<Void> form = new Form<>("form");
         form.setMultiPart(true);
-        StudioMenuItem studioMenuItem = findCurrentStudioMenuItem();
-        if (studioMenuItem == null) {
+        StudioDefinition definition = findCurrentStudioDefinition();
+        if (definition == null) {
             form.add(new WebMarkupContainer("crud"));
         } else {
-            String beanName = studioMenuItem.getRepositoryBeanName();
+            String beanName = definition.getRepositoryBeanName();
             form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud", () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)) {
                 @Override
                 protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
-                    findCurrentStudioMenuItem().configureTable(dataTableBuilder);
+                    findCurrentStudioDefinition().configureDatatableColumns(dataTableBuilder);
                 }
-            }.setCrudTitle(studioMenuItem.getName()));
+            }.setCrudTitle(definition.getTitle()));
         }
         add(form);
     }

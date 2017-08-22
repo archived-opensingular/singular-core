@@ -9,6 +9,7 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
+import org.opensingular.studio.app.definition.StudioDefinition;
 import org.opensingular.studio.app.menu.StudioMenuItem;
 import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.GroupMenuEntry;
@@ -44,8 +45,12 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         }
     }
 
-    protected StudioMenuItem findCurrentStudioMenuItem() {
-        return findCurrentStudioMenuItem(studioMenu.getChildren());
+    protected StudioDefinition findCurrentStudioDefinition() {
+        StudioMenuItem item = findCurrentStudioMenuItem(studioMenu.getChildren());
+        if (item != null) {
+            return item.getStudioDefinition();
+        }
+        return null;
     }
 
     private StudioMenuItem findCurrentStudioMenuItem(List<MenuEntry> entries) {
@@ -53,7 +58,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
             if (entry instanceof StudioMenuItem &&
                     ((StudioMenuItem) entry)
                             .getEndpoint()
-                            .replace("/"+ StudioApplication.STUDIO_ROOT_PATH+"/", "")
+                            .replace("/" + StudioApplication.STUDIO_ROOT_PATH + "/", "")
                             .equals(menuPath)) {
                 return (StudioMenuItem) entry;
             }
@@ -104,7 +109,4 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         throw new RuntimeException("O tipo de menu " + menuEntry.getClass().getName() + " não é suportado.");
     }
 
-    public String getMenuPath() {
-        return menuPath;
-    }
 }

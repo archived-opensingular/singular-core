@@ -2,11 +2,9 @@ package org.opensingular.studio.app.menu;
 
 
 import com.google.common.collect.Lists;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.opensingular.form.SIComposite;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.ui.Icon;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
+import org.opensingular.studio.app.definition.StudioDefinition;
 import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
 
@@ -16,13 +14,13 @@ import java.util.stream.Collectors;
 
 import static org.opensingular.studio.app.wicket.StudioApplication.STUDIO_ROOT_PATH;
 
-public abstract class StudioMenuItem extends ItemMenuEntry {
+public class StudioMenuItem extends ItemMenuEntry {
 
-    private final String repositoryBeanName;
+    private final StudioDefinition studioDefinition;
 
-    public StudioMenuItem(Icon icon, String name, String repositoryBeanName) {
+    public StudioMenuItem(Icon icon, String name, StudioDefinition studioDefinition) {
         super(icon, name, null);
-        this.repositoryBeanName = repositoryBeanName;
+        this.studioDefinition = studioDefinition;
     }
 
     @Override
@@ -38,9 +36,7 @@ public abstract class StudioMenuItem extends ItemMenuEntry {
                 .collect(Collectors.joining("/"));
     }
 
-    public String getRepositoryBeanName() {
-        return repositoryBeanName;
+    public StudioDefinition getStudioDefinition() {
+        return studioDefinition;
     }
-
-    public abstract void configureTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder);
 }
