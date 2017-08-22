@@ -19,7 +19,7 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import org.opensingular.lib.wicket.views.SingularReportPanel;

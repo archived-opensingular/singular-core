@@ -31,7 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
 
 public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {

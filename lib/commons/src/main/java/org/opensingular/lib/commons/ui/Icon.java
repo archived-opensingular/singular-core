@@ -1,4 +1,4 @@
-package org.opensingular.lib.wicket.util.resource;
+package org.opensingular.lib.commons.ui;
 
 import java.io.Serializable;
 

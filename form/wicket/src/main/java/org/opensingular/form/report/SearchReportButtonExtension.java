@@ -17,7 +17,7 @@ import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
