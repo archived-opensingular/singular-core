@@ -16,8 +16,6 @@
 
 package org.opensingular.form.persistence.relational;
 
-import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,29 +24,35 @@ import java.util.StringJoiner;
 import org.opensingular.form.SType;
 
 /**
- * Builder for Relational DBMS queries.
+ * Builder for SQL queries on Relational DBMS.
  *
  * @author Edmundo Andrade
  */
-public class RelationalQuery {
-	public static RelationalQuery select(Collection<SType<?>> fields) {
-		return new RelationalQuery(fields);
-	}
-
+public class RelationalSQLQuery implements RelationalSQL {
 	private Collection<SType<?>> selectedFields;
 	private List<String> selectedTables;
 	private List<RelationalColumn> selectedColumns;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
 
-	public RelationalQuery(Collection<SType<?>> fields) {
+	public RelationalSQLQuery(Collection<SType<?>> fields) {
 		this.selectedFields = fields;
 		this.selectedTables = new ArrayList<String>();
 		this.selectedColumns = new ArrayList<RelationalColumn>();
+		int nextIndex = selectedColumns.size();
 		for (SType<?> field : fields)
 			selectedColumns.add(selectField(field));
+		for (SType<?> field : fields)
+			for (String name : RelationalSQL.keyColumns(field)) {
+				String table = RelationalSQL.tableName(field);
+				RelationalColumn column = new RelationalColumn(table, name);
+				if (!selectedColumns.contains(column)) {
+					selectedColumns.add(nextIndex, column);
+					nextIndex++;
+				}
+			}
 	}
 
-	public RelationalQuery orderBy(SType<?> field) {
+	public RelationalSQLQuery orderBy(SType<?> field) {
 		orderingColumns.add(selectField(field));
 		return this;
 	}
@@ -57,16 +61,17 @@ public class RelationalQuery {
 		return selectedFields;
 	}
 
-	public String toSQL() {
+	public String[] toSQLScript() {
 		String orderPart = "";
 		if (!orderingColumns.isEmpty())
 			orderPart = " order by " + concatenateOrderingColumns(", ");
-		return "select " + concatenateColumnNames(", ") + " from " + concatenateTableNames(", ") + orderPart;
+		return new String[] {
+				"select " + concatenateColumnNames(", ") + " from " + concatenateTableNames(", ") + orderPart };
 	}
 
 	private RelationalColumn selectField(SType<?> field) {
-		String table = tableName(field);
-		String column = columnName(field);
+		String table = RelationalSQL.tableName(field);
+		String column = RelationalSQL.columnName(field);
 		if (!selectedTables.contains(table))
 			selectedTables.add(table);
 		return new RelationalColumn(table, column);
@@ -93,19 +98,5 @@ public class RelationalQuery {
 	private String tableAlias(String table) {
 		int index = selectedTables.indexOf(table) + 1;
 		return "T" + index;
-	}
-
-	private String tableName(SType<?> field) {
-		String table = field.getAspect(ASPECT_RELATIONAL_MAP).get().table(field);
-		if (table == null)
-			field.getName();
-		return table;
-	}
-
-	private String columnName(SType<?> field) {
-		String column = field.getAspect(ASPECT_RELATIONAL_MAP).get().column(field);
-		if (column == null)
-			field.getNameSimple();
-		return column;
 	}
 }

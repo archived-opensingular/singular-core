@@ -17,6 +17,7 @@
 package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.opensingular.form.SInstance;
@@ -34,6 +35,10 @@ public class BasicRelationalMapper implements RelationalMapper {
 
 	public String column(SType<?> field) {
 		return field.getNameSimple();
+	}
+
+	public List<String> keyColumns(SType<?> field) {
+		return Arrays.asList("id");
 	}
 
 	public List<RelationalData> data(SInstance fieldInstance) {

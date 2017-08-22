@@ -17,7 +17,8 @@
 package org.opensingular.form.persistence;
 
 import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
-import static org.opensingular.form.persistence.relational.RelationalQuery.select;
+import static org.opensingular.form.persistence.relational.RelationalSQL.insert;
+import static org.opensingular.form.persistence.relational.RelationalSQL.select;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,19 +33,19 @@ import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.persistence.RelationalQueryTest.TestPackage.TestEntityA;
+import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.TestEntityA;
 import org.opensingular.form.persistence.relational.BasicRelationalMapper;
-import org.opensingular.form.persistence.relational.RelationalQuery;
+import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.type.core.STypeString;
 
 /**
  * @author Edmundo Andrade
  */
 @RunWith(Parameterized.class)
-public class RelationalQueryTest extends TestCaseForm {
+public class RelationalSQLTest extends TestCaseForm {
 	private TestEntityA entityTypeA;
 
-	public RelationalQueryTest(TestFormConfig testFormConfig) {
+	public RelationalSQLTest(TestFormConfig testFormConfig) {
 		super(testFormConfig);
 	}
 
@@ -55,9 +56,25 @@ public class RelationalQueryTest extends TestCaseForm {
 	}
 
 	@Test
-	public void querySelect() {
-		RelationalQuery query = select(entityTypeA.getFields()).orderBy(entityTypeA.name);
-		assertEquals("select T1.name from testPackage.TestEntityA T1 order by T1.name", query.toSQL());
+	public void testSelect() {
+		RelationalSQL query = select(entityTypeA.getFields()).orderBy(entityTypeA.name);
+		assertEquals("select T1.id, T1.name from testPackage.TestEntityA T1 order by T1.name", query.toSQLScript()[0]);
+	}
+
+	@Test
+	public void testInsert() {
+		SIComposite entityA = entityTypeA.newInstance();
+		entityA.setValue("name", "MyName");
+		RelationalSQL insert = insert(entityA);
+		assertEquals("insert into testPackage.TestEntityA (id, name) values (?, ?)", insert.toSQLScript()[0]);
+	}
+
+	@Test
+	public void testDelete() {
+		SIComposite entityA = entityTypeA.newInstance();
+		entityA.setValue("name", "MyName");
+		RelationalSQL delete = RelationalSQL.delete(entityA);
+		assertEquals("delete from testPackage.TestEntityA where id = ?", delete.toSQLScript()[0]);
 	}
 
 	@SInfoPackage(name = "testPackage")
