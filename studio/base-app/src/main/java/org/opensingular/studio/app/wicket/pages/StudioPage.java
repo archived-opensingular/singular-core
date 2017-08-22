@@ -10,8 +10,14 @@ import org.opensingular.form.studio.SingularStudioSimpleCRUDPanel;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.studio.app.definition.StudioDefinition;
+import org.wicketstuff.annotation.mount.MountPath;
 
+import static org.opensingular.studio.app.wicket.pages.StudioPage.STUDIO_ROOT_PATH;
+
+@MountPath("/" + STUDIO_ROOT_PATH + "/${path}")
 public class StudioPage extends StudioTemplate {
+
+    public static final String STUDIO_ROOT_PATH = "studio";
 
     @Override
     protected void onInitialize() {

@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.opensingular.studio.app.wicket.StudioApplication.STUDIO_ROOT_PATH;
+import static org.opensingular.studio.app.wicket.pages.StudioPage.STUDIO_ROOT_PATH;
+
 
 public class StudioMenuItem extends ItemMenuEntry {
 

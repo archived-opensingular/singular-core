@@ -58,7 +58,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
             if (entry instanceof StudioMenuItem &&
                     ((StudioMenuItem) entry)
                             .getEndpoint()
-                            .replace("/" + StudioApplication.STUDIO_ROOT_PATH + "/", "")
+                            .replace("/" + StudioPage.STUDIO_ROOT_PATH + "/", "")
                             .equals(menuPath)) {
                 return (StudioMenuItem) entry;
             }
@@ -109,4 +109,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         throw new RuntimeException("O tipo de menu " + menuEntry.getClass().getName() + " não é suportado.");
     }
 
+    public String getMenuPath() {
+        return menuPath;
+    }
 }
