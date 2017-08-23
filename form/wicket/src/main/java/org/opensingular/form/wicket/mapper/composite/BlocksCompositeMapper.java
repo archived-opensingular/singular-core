@@ -295,9 +295,6 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 label = block.getName();
             else {
                 SInstance parent = ctx.getCurrentInstance();
-                SInstance singleField = block.getSingleType(parent).orElse(null);
-                System.out.println(singleField.asAtr().getLabel());
-
                 label = block.getSingleType(parent)
                     .map(it -> it.asAtr().getLabel())
                     .orElse(null);
