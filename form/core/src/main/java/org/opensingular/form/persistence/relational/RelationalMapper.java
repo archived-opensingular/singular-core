@@ -30,11 +30,11 @@ import org.opensingular.form.aspect.AspectRef;
 public interface RelationalMapper {
 	public static final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
 
-	String table(SType<?> field);
+	String table(SType<?> type);
+
+	List<String> tablePK(SType<?> type);
 
 	String column(SType<?> field);
-
-	List<String> keyColumns(SType<?> field);
 
 	List<RelationalData> data(SInstance fieldInstance);
 }

@@ -20,7 +20,10 @@ import static org.opensingular.form.persistence.relational.RelationalMapper.ASPE
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
 
+import org.opensingular.form.ICompositeType;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 
@@ -40,25 +43,63 @@ public interface RelationalSQL {
 		return new RelationalSQLInsert(instance);
 	}
 
+	public static RelationalSQLUpdate update(SInstance instance) {
+		return new RelationalSQLUpdate(instance);
+	}
+
 	public static RelationalSQLDelete delete(SInstance instance) {
 		return new RelationalSQLDelete(instance);
 	}
 
-	public static String tableName(SType<?> field) {
-		String table = field.getAspect(ASPECT_RELATIONAL_MAP).get().table(field);
-		if (table == null)
-			field.getName();
-		return table;
+	public static String table(SType<?> field) {
+		return aspectRelationalMap(field).table(field);
 	}
 
-	public static String columnName(SType<?> field) {
-		String column = field.getAspect(ASPECT_RELATIONAL_MAP).get().column(field);
-		if (column == null)
-			field.getNameSimple();
-		return column;
+	public static String column(SType<?> field) {
+		return aspectRelationalMap(field).column(field);
 	}
 
-	public static List<String> keyColumns(SType<?> type) {
-		return type.getAspect(ASPECT_RELATIONAL_MAP).get().keyColumns(type);
+	public static List<String> tablePK(SType<?> type) {
+		return aspectRelationalMap(type).tablePK(type);
+	}
+
+	public static RelationalMapper aspectRelationalMap(SType<?> field) {
+		Optional<RelationalMapper> mapper = field.getAspect(ASPECT_RELATIONAL_MAP);
+		if (mapper.isPresent())
+			return mapper.get();
+		return new BasicRelationalMapper();
+	}
+
+	public static void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns, List<String> targetTables) {
+		String tableName = table(type);
+		if (!targetTables.contains(tableName))
+			targetTables.add(tableName);
+		for (String columnName : tablePK(type)) {
+			RelationalColumn column = new RelationalColumn(tableName, columnName);
+			if (!keyColumns.contains(column))
+				keyColumns.add(column);
+		}
+	}
+
+	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
+			List<String> targetTables, List<RelationalColumn> keyColumns) {
+		if (field instanceof ICompositeType)
+			return;
+		String tableName = table(field);
+		if (!targetTables.contains(tableName))
+			targetTables.add(tableName);
+		String columnName = column(field);
+		RelationalColumn column = new RelationalColumn(tableName, columnName);
+		if (!targetColumns.contains(column) && !keyColumns.contains(column))
+			targetColumns.add(column);
+	}
+
+	public static String where(String table, List<RelationalColumn> filterColumns) {
+		StringJoiner sj = new StringJoiner(" and ");
+		filterColumns.forEach(column -> {
+			if (column.getTable().equals(table))
+				sj.add(column.getName() + " = ?");
+		});
+		return sj.toString();
 	}
 }

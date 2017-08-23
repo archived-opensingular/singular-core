@@ -17,7 +17,6 @@
 package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.opensingular.form.SInstance;
@@ -29,16 +28,29 @@ import org.opensingular.form.SType;
  * @author Edmundo Andrade
  */
 public class BasicRelationalMapper implements RelationalMapper {
-	public String table(SType<?> field) {
-		return field.getName().substring(0, field.getName().lastIndexOf('.'));
+	public String table(SType<?> type) {
+		String result = type.as(AtrRelational::new).getTable();
+		if (result == null)
+			result = type.getName().substring(0, type.getName().lastIndexOf('.'));
+		return result;
+	}
+
+	public List<String> tablePK(SType<?> type) {
+		List<String> result = new ArrayList<>();
+		String pk = type.as(AtrRelational::new).getTablePK();
+		if (pk == null)
+			pk = getParentType(type).as(AtrRelational::new).getTablePK();
+		if (pk != null)
+			for (String key : pk.split(","))
+				result.add(key.trim());
+		return result;
 	}
 
 	public String column(SType<?> field) {
-		return field.getNameSimple();
-	}
-
-	public List<String> keyColumns(SType<?> field) {
-		return Arrays.asList("id");
+		String result = field.as(AtrRelational::new).getColumn();
+		if (result == null)
+			result = field.getNameSimple();
+		return result;
 	}
 
 	public List<RelationalData> data(SInstance fieldInstance) {
@@ -46,5 +58,9 @@ public class BasicRelationalMapper implements RelationalMapper {
 		List<RelationalData> list = new ArrayList<>();
 		list.add(new RelationalData(table(field), null, column(field), null));
 		return list;
+	}
+
+	protected SType<?> getParentType(SType<?> type) {
+		return type.getParentScope().getDictionary().getType(type.getParentScope().getName());
 	}
 }

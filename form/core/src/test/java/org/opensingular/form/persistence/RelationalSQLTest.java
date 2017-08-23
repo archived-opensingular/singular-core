@@ -16,7 +16,6 @@
 
 package org.opensingular.form.persistence;
 
-import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
 import static org.opensingular.form.persistence.relational.RelationalSQL.insert;
 import static org.opensingular.form.persistence.relational.RelationalSQL.select;
 
@@ -31,11 +30,13 @@ import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.TestEntityA;
-import org.opensingular.form.persistence.relational.BasicRelationalMapper;
+import org.opensingular.form.persistence.relational.AtrRelational;
 import org.opensingular.form.persistence.relational.RelationalSQL;
+import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
 
 /**
@@ -58,7 +59,8 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Test
 	public void testSelect() {
 		RelationalSQL query = select(entityTypeA.getFields()).orderBy(entityTypeA.name);
-		assertEquals("select T1.id, T1.name from testPackage.TestEntityA T1 order by T1.name", query.toSQLScript()[0]);
+		assertEquals("select T1.id, T1.name, T1.obs from testPackage.TestEntityA T1 order by T1.name",
+				query.toSQLScript()[0]);
 	}
 
 	@Test
@@ -87,13 +89,36 @@ public class RelationalSQLTest extends TestCaseForm {
 		@SInfoType(name = "TestEntityA", spackage = TestPackage.class)
 		public static final class TestEntityA extends STypeComposite<SIComposite> {
 			public STypeString name;
+			public STypeString observation;
+			public STypeList<TestEntityB, SIComposite> itemsB;
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().required(true);
 				asAtr().label("Entity A");
+				as(AtrRelational::new).tablePK("id");
 				name = addFieldString("name");
-				name.setAspect(ASPECT_RELATIONAL_MAP, BasicRelationalMapper::new);
+				observation = addFieldString("observation");
+				observation.as(AtrRelational::new).column("obs");
+				itemsB = addFieldListOf("itemsB", TestEntityB.class);
+			}
+		}
+
+		@SInfoType(name = "TestEntityB", spackage = TestPackage.class)
+		public static final class TestEntityB extends STypeComposite<SIComposite> {
+			public STypeString mnemo;
+			public STypeString description;
+			public STypeMonetary price;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				asAtr().required(true);
+				asAtr().label("Entity B");
+				as(AtrRelational::new).tablePK("entityA, mnemo");
+				mnemo = addFieldString("mnemo");
+				description = addFieldString("description");
+				description.as(AtrRelational::new).column("desc");
+				price = addFieldMonetary("price");
 			}
 		}
 	}

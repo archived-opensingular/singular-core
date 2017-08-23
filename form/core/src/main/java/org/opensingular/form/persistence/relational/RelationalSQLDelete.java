@@ -18,11 +18,9 @@ package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 
 /**
  * Builder for SQL insertions on Relational DBMS.
@@ -31,21 +29,16 @@ import org.opensingular.form.SType;
  */
 public class RelationalSQLDelete implements RelationalSQL {
 	private SInstance instance;
-	private List<String> deleteTables;
-	private List<RelationalColumn> deleteKeyColumns;
+	private List<String> targetTables;
+	private List<RelationalColumn> keyColumns;
 
 	public RelationalSQLDelete(SInstance instance) {
 		this.instance = instance;
-		this.deleteTables = new ArrayList<String>();
-		this.deleteKeyColumns = new ArrayList<RelationalColumn>();
+		this.targetTables = new ArrayList<String>();
+		this.keyColumns = new ArrayList<RelationalColumn>();
 		if (instance instanceof ICompositeInstance)
-			for (SInstance child : ((ICompositeInstance) instance).getChildren()) {
-				SType<?> type = child.getType();
-				String table = RelationalSQL.tableName(type);
-				deleteTables.add(table);
-				RelationalSQL.keyColumns(type).forEach(name -> deleteKeyColumns.add(new RelationalColumn(table, name)));
-				break;
-			}
+			for (SInstance child : ((ICompositeInstance) instance).getChildren())
+				RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
 	}
 
 	public SInstance getInstance() {
@@ -54,17 +47,8 @@ public class RelationalSQLDelete implements RelationalSQL {
 
 	public String[] toSQLScript() {
 		List<String> lines = new ArrayList<>();
-		for (String table : deleteTables)
-			lines.add("delete from " + table + " where " + clauseWhere(table));
+		for (String table : targetTables)
+			lines.add("delete from " + table + " where " + RelationalSQL.where(table, keyColumns));
 		return lines.toArray(new String[lines.size()]);
-	}
-
-	private String clauseWhere(String table) {
-		StringJoiner sj = new StringJoiner(" and ");
-		deleteKeyColumns.forEach((column) -> {
-			if (column.getTable().equals(table))
-				sj.add(column.getName() + " = ?");
-		});
-		return sj.toString();
 	}
 }

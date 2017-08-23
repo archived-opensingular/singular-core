@@ -22,7 +22,11 @@ import org.opensingular.form.SDictionary;
 import org.opensingular.form.SISimple;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SPackage;
+import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeString;
 
 /**
  * Pacote com atributos e tipos para apoio na persistência de Collections de instâncias.
@@ -35,8 +39,18 @@ public class SPackageFormPersistence extends SPackage {
     static final AtrRef<STypeFormKey, SISimple, FormKey> ATR_FORM_KEY = new AtrRef<>(SPackageFormPersistence.class,
             "formKey", STypeFormKey.class, SISimple.class, FormKey.class);
 
+    // Relational mapping attributes
+    public static final AtrRef<STypeString, SIString, String> ATR_TABLE = new AtrRef<>(SPackageFormPersistence.class, "table", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_TABLE_PK = new AtrRef<>(SPackageFormPersistence.class, "tablePK", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_COLUMN = new AtrRef<>(SPackageFormPersistence.class, "column", STypeString.class, SIString.class, String.class);
+
     protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
         pb.createAttributeIntoType(STypeComposite.class, ATR_FORM_KEY);
+
+        // Relational mapping attributes
+        pb.createAttributeIntoType(SType.class, ATR_TABLE);
+        pb.createAttributeIntoType(SType.class, ATR_TABLE_PK);
+        pb.createAttributeIntoType(STypeSimple.class, ATR_COLUMN);
     }
 }

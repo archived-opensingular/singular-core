@@ -18,6 +18,7 @@ package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -29,36 +30,30 @@ import org.opensingular.form.SType;
  * @author Edmundo Andrade
  */
 public class RelationalSQLQuery implements RelationalSQL {
-	private Collection<SType<?>> selectedFields;
-	private List<String> selectedTables;
-	private List<RelationalColumn> selectedColumns;
+	private Collection<SType<?>> targetFields;
+	private List<String> targetTables;
+	private List<RelationalColumn> keyColumns;
+	private List<RelationalColumn> targetColumns;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
 
 	public RelationalSQLQuery(Collection<SType<?>> fields) {
-		this.selectedFields = fields;
-		this.selectedTables = new ArrayList<String>();
-		this.selectedColumns = new ArrayList<RelationalColumn>();
-		int nextIndex = selectedColumns.size();
-		for (SType<?> field : fields)
-			selectedColumns.add(selectField(field));
-		for (SType<?> field : fields)
-			for (String name : RelationalSQL.keyColumns(field)) {
-				String table = RelationalSQL.tableName(field);
-				RelationalColumn column = new RelationalColumn(table, name);
-				if (!selectedColumns.contains(column)) {
-					selectedColumns.add(nextIndex, column);
-					nextIndex++;
-				}
-			}
+		this.targetFields = fields;
+		this.targetTables = new ArrayList<String>();
+		this.keyColumns = new ArrayList<RelationalColumn>();
+		this.targetColumns = new ArrayList<RelationalColumn>();
+		for (SType<?> field : fields) {
+			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
+			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, keyColumns);
+		}
 	}
 
 	public RelationalSQLQuery orderBy(SType<?> field) {
-		orderingColumns.add(selectField(field));
+		RelationalSQL.collectTargetColumn(field, orderingColumns, targetTables, Collections.emptyList());
 		return this;
 	}
 
-	public Collection<SType<?>> getSelectedFields() {
-		return selectedFields;
+	public Collection<SType<?>> getTargetFields() {
+		return targetFields;
 	}
 
 	public String[] toSQLScript() {
@@ -69,34 +64,27 @@ public class RelationalSQLQuery implements RelationalSQL {
 				"select " + concatenateColumnNames(", ") + " from " + concatenateTableNames(", ") + orderPart };
 	}
 
-	private RelationalColumn selectField(SType<?> field) {
-		String table = RelationalSQL.tableName(field);
-		String column = RelationalSQL.columnName(field);
-		if (!selectedTables.contains(table))
-			selectedTables.add(table);
-		return new RelationalColumn(table, column);
-	}
-
 	private String concatenateColumnNames(String separator) {
 		StringJoiner sj = new StringJoiner(separator);
-		selectedColumns.forEach((column) -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
+		keyColumns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
+		targetColumns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
 		return sj.toString();
 	}
 
 	private String concatenateTableNames(String separator) {
 		StringJoiner sj = new StringJoiner(separator);
-		selectedTables.forEach((table) -> sj.add(table + " " + tableAlias(table)));
+		targetTables.forEach(table -> sj.add(table + " " + tableAlias(table)));
 		return sj.toString();
 	}
 
 	private String concatenateOrderingColumns(String separator) {
 		StringJoiner sj = new StringJoiner(separator);
-		orderingColumns.forEach((column) -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
+		orderingColumns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
 		return sj.toString();
 	}
 
 	private String tableAlias(String table) {
-		int index = selectedTables.indexOf(table) + 1;
+		int index = targetTables.indexOf(table) + 1;
 		return "T" + index;
 	}
 }

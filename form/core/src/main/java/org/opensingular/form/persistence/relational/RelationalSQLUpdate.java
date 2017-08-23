@@ -24,23 +24,23 @@ import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
 
 /**
- * Builder for SQL insertions on Relational DBMS.
+ * Builder for SQL updates and other data synchronizations on Relational DBMS.
  *
  * @author Edmundo Andrade
  */
-public class RelationalSQLInsert implements RelationalSQL {
+public class RelationalSQLUpdate implements RelationalSQL {
 	private SInstance instance;
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 
-	public RelationalSQLInsert(SInstance instance) {
+	public RelationalSQLUpdate(SInstance instance) {
 		this.instance = instance;
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
 		if (instance instanceof ICompositeInstance)
-			for (SInstance child : ((ICompositeInstance) instance).getChildren()) {
+			for (SInstance child : ((ICompositeInstance) instance).getAllChildren()) {
 				RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
 				RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns);
 			}
@@ -53,33 +53,16 @@ public class RelationalSQLInsert implements RelationalSQL {
 	public String[] toSQLScript() {
 		List<String> lines = new ArrayList<>();
 		for (String table : targetTables)
-			lines.add("insert into " + table + " (" + concatenateColumnNames(table, ", ") + ") values ("
-					+ concatenateColumnvalues(table, ", ") + ")");
+			lines.add("update " + table + " set " + set(table, targetColumns) + " where "
+					+ RelationalSQL.where(table, keyColumns));
 		return lines.toArray(new String[lines.size()]);
 	}
 
-	private String concatenateColumnNames(String table, String separator) {
-		StringJoiner sj = new StringJoiner(separator);
-		keyColumns.forEach(column -> {
+	private String set(String table, List<RelationalColumn> setColumns) {
+		StringJoiner sj = new StringJoiner(", ");
+		setColumns.forEach(column -> {
 			if (column.getTable().equals(table))
-				sj.add(column.getName());
-		});
-		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table))
-				sj.add(column.getName());
-		});
-		return sj.toString();
-	}
-
-	private String concatenateColumnvalues(String table, String separator) {
-		StringJoiner sj = new StringJoiner(separator);
-		keyColumns.forEach(column -> {
-			if (column.getTable().equals(table))
-				sj.add("?");
-		});
-		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table))
-				sj.add("?");
+				sj.add(column.getName() + " = ?");
 		});
 		return sj.toString();
 	}
