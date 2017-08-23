@@ -24,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoPackage;
@@ -92,12 +91,6 @@ public class RelationalSQLTest extends TestCaseForm {
 
 	@SInfoPackage(name = "testPackage")
 	public static final class TestPackage extends SPackage {
-		@Override
-		protected void onLoadPackage(PackageBuilder pb) {
-			pb.createType(ItemEntity.class);
-			pb.createType(MasterEntity.class);
-		}
-
 		@SInfoType(name = "MasterEntity", spackage = TestPackage.class)
 		public static final class MasterEntity extends STypeComposite<SIComposite> {
 			public STypeString name;
@@ -106,7 +99,6 @@ public class RelationalSQLTest extends TestCaseForm {
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
-				asAtr().required(true);
 				asAtr().label("Master entity");
 				as(AtrRelational::new).tablePK("id");
 				name = addFieldString("name");
@@ -124,7 +116,6 @@ public class RelationalSQLTest extends TestCaseForm {
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
-				asAtr().required(true);
 				asAtr().label("Item entity");
 				as(AtrRelational::new).table("Items").tablePK("masterID, mnemo").references("MasterEntity::masterID");
 				mnemo = addFieldString("mnemo");
