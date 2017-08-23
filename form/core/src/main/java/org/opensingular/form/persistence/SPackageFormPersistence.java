@@ -43,6 +43,7 @@ public class SPackageFormPersistence extends SPackage {
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE = new AtrRef<>(SPackageFormPersistence.class, "table", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE_PK = new AtrRef<>(SPackageFormPersistence.class, "tablePK", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_COLUMN = new AtrRef<>(SPackageFormPersistence.class, "column", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_REFERENCES = new AtrRef<>(SPackageFormPersistence.class, "references", STypeString.class, SIString.class, String.class);
 
     protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
@@ -52,5 +53,6 @@ public class SPackageFormPersistence extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_TABLE);
         pb.createAttributeIntoType(SType.class, ATR_TABLE_PK);
         pb.createAttributeIntoType(STypeSimple.class, ATR_COLUMN);
+        pb.createAttributeIntoType(STypeComposite.class, ATR_REFERENCES);
     }
 }

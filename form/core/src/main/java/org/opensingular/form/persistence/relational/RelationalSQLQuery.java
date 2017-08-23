@@ -36,19 +36,24 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<RelationalColumn> targetColumns;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
 
-	public RelationalSQLQuery(Collection<SType<?>> fields) {
-		this.targetFields = fields;
+	@SafeVarargs
+	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
+		this.targetFields = new ArrayList<>();
+		for (Collection<SType<?>> fieldCollection : fieldCollections)
+			this.targetFields.addAll(fieldCollection);
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
-		for (SType<?> field : fields) {
+		for (SType<?> field : targetFields) {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
-			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, keyColumns);
+			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList());
 		}
 	}
 
-	public RelationalSQLQuery orderBy(SType<?> field) {
-		RelationalSQL.collectTargetColumn(field, orderingColumns, targetTables, Collections.emptyList());
+	public RelationalSQLQuery orderBy(SType<?>... fields) {
+		orderingColumns.clear();
+		for (SType<?> field : fields)
+			RelationalSQL.collectTargetColumn(field, orderingColumns, targetTables, Collections.emptyList());
 		return this;
 	}
 
@@ -66,8 +71,11 @@ public class RelationalSQLQuery implements RelationalSQL {
 
 	private String concatenateColumnNames(String separator) {
 		StringJoiner sj = new StringJoiner(separator);
-		keyColumns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
 		targetColumns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
+		keyColumns.forEach(column -> {
+			if (!targetColumns.contains(column))
+				sj.add(tableAlias(column.getTable()) + "." + column.getName());
+		});
 		return sj.toString();
 	}
 

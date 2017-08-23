@@ -35,8 +35,9 @@ import org.opensingular.form.SType;
 public interface RelationalSQL {
 	String[] toSQLScript();
 
-	public static RelationalSQLQuery select(Collection<SType<?>> fields) {
-		return new RelationalSQLQuery(fields);
+	@SafeVarargs
+	public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {
+		return new RelationalSQLQuery(fieldCollections);
 	}
 
 	public static RelationalSQLInsert insert(SInstance instance) {

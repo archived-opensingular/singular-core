@@ -20,6 +20,7 @@ import static org.opensingular.form.persistence.relational.RelationalSQL.insert;
 import static org.opensingular.form.persistence.relational.RelationalSQL.select;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,7 +34,8 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.TestEntityA;
+import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.ItemEntity;
+import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.MasterEntity;
 import org.opensingular.form.persistence.relational.AtrRelational;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.type.core.STypeMonetary;
@@ -44,7 +46,7 @@ import org.opensingular.form.type.core.STypeString;
  */
 @RunWith(Parameterized.class)
 public class RelationalSQLTest extends TestCaseForm {
-	private TestEntityA entityTypeA;
+	private MasterEntity master;
 
 	public RelationalSQLTest(TestFormConfig testFormConfig) {
 		super(testFormConfig);
@@ -53,59 +55,69 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Before
 	public void setUp() {
 		SDictionary dictionary = createTestDictionary();
-		entityTypeA = dictionary.getType(TestEntityA.class);
+		master = dictionary.getType(MasterEntity.class);
 	}
 
 	@Test
-	public void testSelect() {
-		RelationalSQL query = select(entityTypeA.getFields()).orderBy(entityTypeA.name);
-		assertEquals("select T1.id, T1.name, T1.obs from testPackage.TestEntityA T1 order by T1.name",
+	public void singleSelect() {
+		RelationalSQL query = select(master.getFields()).orderBy(master.name);
+		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", query.toSQLScript()[0]);
+	}
+
+	@Test
+	@Ignore
+	public void joinSelect() {
+		ItemEntity items = master.items.getElementsType();
+		RelationalSQL query = select(master.getFields(), items.getFields()).orderBy(master.name, items.mnemo);
+		assertEquals(
+				"select T1.name, T1.obs, T2.mnemo, T2.desc, T2.price, T1.id, T2.masterID from MasterEntity T1 inner join Items T2 on T2.masterID = T1.id order by T1.name, T2 mnemo",
 				query.toSQLScript()[0]);
 	}
 
 	@Test
 	public void testInsert() {
-		SIComposite entityA = entityTypeA.newInstance();
-		entityA.setValue("name", "MyName");
-		RelationalSQL insert = insert(entityA);
-		assertEquals("insert into testPackage.TestEntityA (id, name) values (?, ?)", insert.toSQLScript()[0]);
+		SIComposite masterInstance = master.newInstance();
+		masterInstance.setValue("name", "MyName");
+		RelationalSQL insert = insert(masterInstance);
+		assertEquals("insert into MasterEntity (id, name) values (?, ?)", insert.toSQLScript()[0]);
 	}
 
 	@Test
 	public void testDelete() {
-		SIComposite entityA = entityTypeA.newInstance();
-		entityA.setValue("name", "MyName");
-		RelationalSQL delete = RelationalSQL.delete(entityA);
-		assertEquals("delete from testPackage.TestEntityA where id = ?", delete.toSQLScript()[0]);
+		SIComposite masterInstance = master.newInstance();
+		masterInstance.setValue("name", "MyName");
+		RelationalSQL delete = RelationalSQL.delete(masterInstance);
+		assertEquals("delete from MasterEntity where id = ?", delete.toSQLScript()[0]);
 	}
 
 	@SInfoPackage(name = "testPackage")
 	public static final class TestPackage extends SPackage {
 		@Override
 		protected void onLoadPackage(PackageBuilder pb) {
-			pb.createType(TestEntityA.class);
+			pb.createType(ItemEntity.class);
+			pb.createType(MasterEntity.class);
 		}
 
-		@SInfoType(name = "TestEntityA", spackage = TestPackage.class)
-		public static final class TestEntityA extends STypeComposite<SIComposite> {
+		@SInfoType(name = "MasterEntity", spackage = TestPackage.class)
+		public static final class MasterEntity extends STypeComposite<SIComposite> {
 			public STypeString name;
 			public STypeString observation;
-			public STypeList<TestEntityB, SIComposite> itemsB;
+			public STypeList<ItemEntity, SIComposite> items;
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().required(true);
-				asAtr().label("Entity A");
+				asAtr().label("Master entity");
 				as(AtrRelational::new).tablePK("id");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
 				observation.as(AtrRelational::new).column("obs");
-				itemsB = addFieldListOf("itemsB", TestEntityB.class);
+				items = addFieldListOf("items", ItemEntity.class);
 			}
 		}
 
-		@SInfoType(name = "TestEntityB", spackage = TestPackage.class)
-		public static final class TestEntityB extends STypeComposite<SIComposite> {
+		@SInfoType(name = "ItemEntity", spackage = TestPackage.class)
+		public static final class ItemEntity extends STypeComposite<SIComposite> {
 			public STypeString mnemo;
 			public STypeString description;
 			public STypeMonetary price;
@@ -113,8 +125,8 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().required(true);
-				asAtr().label("Entity B");
-				as(AtrRelational::new).tablePK("entityA, mnemo");
+				asAtr().label("Item entity");
+				as(AtrRelational::new).table("Items").tablePK("masterID, mnemo").references("MasterEntity::masterID");
 				mnemo = addFieldString("mnemo");
 				description = addFieldString("description");
 				description.as(AtrRelational::new).column("desc");

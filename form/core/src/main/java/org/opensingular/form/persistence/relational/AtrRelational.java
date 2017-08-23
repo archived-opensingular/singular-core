@@ -51,6 +51,15 @@ public class AtrRelational extends STranslatorForAttribute {
 		return getAttributeValue(SPackageFormPersistence.ATR_TABLE_PK);
 	}
 
+	public AtrRelational references(String references) {
+		setAttributeValue(SPackageFormPersistence.ATR_REFERENCES, references);
+		return this;
+	}
+
+	public String getReferences() {
+		return getAttributeValue(SPackageFormPersistence.ATR_REFERENCES);
+	}
+
 	public AtrRelational column(String column) {
 		setAttributeValue(SPackageFormPersistence.ATR_COLUMN, column);
 		return this;

@@ -36,5 +36,7 @@ public interface RelationalMapper {
 
 	String column(SType<?> field);
 
+	String references(SType<?> field);
+
 	List<RelationalData> data(SInstance fieldInstance);
 }
