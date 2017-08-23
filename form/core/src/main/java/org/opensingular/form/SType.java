@@ -964,8 +964,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     @SuppressWarnings("unchecked")
-    public void withSelectionFromSimpleProvider(SimpleProvider<?, I> provider) {
+    public SType<I> withSelectionFromSimpleProvider(SimpleProvider<?, I> provider) {
         this.typelessSelection().selfIdAndDisplay().simpleProvider(provider);
+        return this;
     }
 
     /**

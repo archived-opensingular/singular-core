@@ -16,10 +16,9 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -29,7 +28,6 @@ import java.util.Optional;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -124,17 +122,17 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                     final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form, container);
                     final WebMarkupContainer empty = new WebMarkupContainer("_empty");
 
-                    list
-                            .add(container
-                                    .add(elements
-                                            .add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty()))))
-                                    .add(empty
-                                            .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())))));
-                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
-                    content.getParent()
-                            .add(dependsOnModifier(listaModel));
-                },
-                (f, form) -> buildFooter(f, form, ctx));
+                list
+                    .add(container
+                        .add(elements
+                            .add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty()))))
+                    .add(empty
+                        .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())))));
+                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+                content.getParent()
+                    .add(dependsOnModifier(listaModel));
+            },
+            (f, form) -> buildFooter(f, form, ctx));
 
         return panel;
     }
@@ -168,7 +166,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             JavaScriptHeaderItem javascriptItem = JavaScriptHeaderItem.forReference(cssFile);
 
             response.render(javascriptItem);
-            response.render(OnDomReadyHeaderItem.forScript("appendListItemEvent();"));
+            // response.render(OnDomReadyHeaderItem.forScript("appendListItemEvent();"));
         }
 
         @Override
