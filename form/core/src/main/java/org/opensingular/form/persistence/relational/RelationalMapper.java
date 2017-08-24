@@ -23,7 +23,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.aspect.AspectRef;
 
 /**
- * Mapper for persisting Form components into a Relational DBMS.
+ * Mapper interface for persisting Form components into a Relational DBMS.
  *
  * @author Edmundo Andrade
  */
@@ -34,9 +34,9 @@ public interface RelationalMapper {
 
 	List<String> tablePK(SType<?> type);
 
-	String column(SType<?> field);
+	List<RelationalFK> tableFKs(SType<?> field);
 
-	String references(SType<?> field);
+	String column(SType<?> field);
 
 	List<RelationalData> data(SInstance fieldInstance);
 }

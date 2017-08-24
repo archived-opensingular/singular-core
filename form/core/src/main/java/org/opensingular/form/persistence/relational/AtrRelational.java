@@ -16,9 +16,17 @@
 
 package org.opensingular.form.persistence.relational;
 
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_COLUMN;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_FKS;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
+
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.persistence.SPackageFormPersistence;
 
 /**
  * Decorates an Instance to enable persistence configuration.
@@ -34,38 +42,53 @@ public class AtrRelational extends STranslatorForAttribute {
 	}
 
 	public AtrRelational table(String table) {
-		setAttributeValue(SPackageFormPersistence.ATR_TABLE, table);
+		setAttributeValue(ATR_TABLE, table);
 		return this;
 	}
 
 	public String getTable() {
-		return getAttributeValue(SPackageFormPersistence.ATR_TABLE);
+		return getAttributeValue(ATR_TABLE);
 	}
 
 	public AtrRelational tablePK(String tablePK) {
-		setAttributeValue(SPackageFormPersistence.ATR_TABLE_PK, tablePK);
+		setAttributeValue(ATR_TABLE_PK, tablePK);
 		return this;
 	}
 
 	public String getTablePK() {
-		return getAttributeValue(SPackageFormPersistence.ATR_TABLE_PK);
+		return getAttributeValue(ATR_TABLE_PK);
 	}
 
-	public AtrRelational references(String references) {
-		setAttributeValue(SPackageFormPersistence.ATR_REFERENCES, references);
+	public AtrRelational addTableFK(String keyColumns, String foreignTable, String foreignPK) {
+		return addTableFK(new RelationalFK(keyColumns, foreignTable, foreignPK));
+	}
+
+	public AtrRelational addTableFK(RelationalFK fk) {
+		List<RelationalFK> list = getTableFKs();
+		list.add(fk);
+		StringJoiner sj = new StringJoiner(";");
+		list.forEach(item -> sj.add(item.toStringPersistence()));
+		setAttributeValue(ATR_TABLE_FKS, sj.toString());
 		return this;
 	}
 
-	public String getReferences() {
-		return getAttributeValue(SPackageFormPersistence.ATR_REFERENCES);
+	public List<RelationalFK> getTableFKs() {
+		List<RelationalFK> result = new ArrayList<>();
+		String value = getAttributeValue(ATR_TABLE_FKS);
+		if (value == null)
+			return result;
+		String[] items = value.split(";");
+		for (String item : items)
+			result.add(RelationalFK.fromStringPersistence(item));
+		return result;
 	}
 
 	public AtrRelational column(String column) {
-		setAttributeValue(SPackageFormPersistence.ATR_COLUMN, column);
+		setAttributeValue(ATR_COLUMN, column);
 		return this;
 	}
 
 	public String getColumn() {
-		return getAttributeValue(SPackageFormPersistence.ATR_COLUMN);
+		return getAttributeValue(ATR_COLUMN);
 	}
 }

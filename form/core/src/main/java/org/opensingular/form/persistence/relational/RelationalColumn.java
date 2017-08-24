@@ -16,14 +16,24 @@
 
 package org.opensingular.form.persistence.relational;
 
+import java.util.StringJoiner;
+
 /**
  * Relational metadata for identifying a specific column in a Relational DBMS.
  *
  * @author Edmundo Andrade
  */
 public class RelationalColumn {
+	private static final String SERIALIZATION_SEPARATOR = ":";
 	private String table;
 	private String name;
+
+	public static RelationalColumn fromStringPersistence(String value) {
+		String parts[] = value.split(SERIALIZATION_SEPARATOR);
+		if (parts.length < 2)
+			return new RelationalColumn("", parts[0]);
+		return new RelationalColumn(parts[0], parts[1]);
+	}
 
 	public RelationalColumn(String table, String name) {
 		this.table = table;
@@ -36,6 +46,13 @@ public class RelationalColumn {
 
 	public String getName() {
 		return name;
+	}
+
+	public String toStringPersistence() {
+		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
+		sj.add(table);
+		sj.add(name);
+		return sj.toString();
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import org.opensingular.form.type.core.STypeString;
  * Pacote com atributos e tipos para apoio na persistência de Collections de instâncias.
  *
  * @author Daniel C. Bordin
+ * @author Edmundo Andrade
  */
 @SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "persitence")
 public class SPackageFormPersistence extends SPackage {
@@ -43,16 +44,16 @@ public class SPackageFormPersistence extends SPackage {
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE = new AtrRef<>(SPackageFormPersistence.class, "table", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE_PK = new AtrRef<>(SPackageFormPersistence.class, "tablePK", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_COLUMN = new AtrRef<>(SPackageFormPersistence.class, "column", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeString, SIString, String> ATR_REFERENCES = new AtrRef<>(SPackageFormPersistence.class, "references", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_TABLE_FKS = new AtrRef<>(SPackageFormPersistence.class, "tableFKs",  STypeString.class, SIString.class, String.class);
 
     protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
         pb.createAttributeIntoType(STypeComposite.class, ATR_FORM_KEY);
 
-        // Relational mapping attributes
+        // Relational mapping
         pb.createAttributeIntoType(SType.class, ATR_TABLE);
         pb.createAttributeIntoType(SType.class, ATR_TABLE_PK);
+        pb.createAttributeIntoType(SType.class, ATR_TABLE_FKS);
         pb.createAttributeIntoType(STypeSimple.class, ATR_COLUMN);
-        pb.createAttributeIntoType(STypeComposite.class, ATR_REFERENCES);
     }
 }

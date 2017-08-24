@@ -56,12 +56,16 @@ public interface RelationalSQL {
 		return aspectRelationalMap(field).table(field);
 	}
 
-	public static String column(SType<?> field) {
-		return aspectRelationalMap(field).column(field);
-	}
-
 	public static List<String> tablePK(SType<?> type) {
 		return aspectRelationalMap(type).tablePK(type);
+	}
+
+	public static List<RelationalFK> tableFKs(SType<?> type) {
+		return aspectRelationalMap(type).tableFKs(type);
+	}
+
+	public static String column(SType<?> field) {
+		return aspectRelationalMap(field).column(field);
 	}
 
 	public static RelationalMapper aspectRelationalMap(SType<?> field) {

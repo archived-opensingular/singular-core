@@ -35,6 +35,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
+	private List<RelationalFK> relationships = new ArrayList<RelationalFK>();
 
 	@SafeVarargs
 	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
@@ -47,6 +48,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 		for (SType<?> field : targetFields) {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList());
+			relationships.addAll(RelationalSQL.tableFKs(field));
 		}
 	}
 
@@ -65,8 +67,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 		String orderPart = "";
 		if (!orderingColumns.isEmpty())
 			orderPart = " order by " + concatenateOrderingColumns(", ");
-		return new String[] {
-				"select " + concatenateColumnNames(", ") + " from " + concatenateTableNames(", ") + orderPart };
+		return new String[] { "select " + concatenateColumnNames(", ") + " from " + joinTables() + orderPart };
 	}
 
 	private String concatenateColumnNames(String separator) {
@@ -79,8 +80,8 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return sj.toString();
 	}
 
-	private String concatenateTableNames(String separator) {
-		StringJoiner sj = new StringJoiner(separator);
+	private String joinTables() {
+		StringJoiner sj = new StringJoiner(" left join ");
 		targetTables.forEach(table -> sj.add(table + " " + tableAlias(table)));
 		return sj.toString();
 	}

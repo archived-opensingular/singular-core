@@ -50,17 +50,14 @@ public class BasicRelationalMapper implements RelationalMapper {
 		return result;
 	}
 
+	public List<RelationalFK> tableFKs(SType<?> field) {
+		return field.as(AtrRelational::new).getTableFKs();
+	}
+
 	public String column(SType<?> field) {
 		String result = field.as(AtrRelational::new).getColumn();
 		if (result == null)
 			result = field.getNameSimple();
-		return result;
-	}
-
-	public String references(SType<?> field) {
-		String result = field.as(AtrRelational::new).getReferences();
-		if (result == null)
-			result = getParentType(field).as(AtrRelational::new).getReferences();
 		return result;
 	}
 
