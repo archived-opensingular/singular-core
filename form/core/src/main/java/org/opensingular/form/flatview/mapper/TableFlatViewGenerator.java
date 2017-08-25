@@ -5,6 +5,7 @@ import org.opensingular.form.*;
 import org.opensingular.form.flatview.AbstractFlatViewGenerator;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
+import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 import org.opensingular.lib.commons.canvas.EmptyDocumentCanvas;
 import org.opensingular.lib.commons.canvas.FormItem;
@@ -27,9 +28,10 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
 
         SIList<?> siList = context.getInstanceAs(SIList.class);
         SType<?> elementsType = siList.getElementsType();
+        boolean renderCompositeFieldsAsColumns = elementsType.isComposite() && isRenderCompositeFieldAsColumns(siList);
 
         List<String> headerColumns = new ArrayList<>();
-        if (elementsType instanceof STypeComposite) {
+        if (renderCompositeFieldsAsColumns) {
             for (SType<?> e : ((STypeComposite<?>) elementsType).getFields()) {
                 if (e.asAtr().isVisible()) {
                     headerColumns.add(e.asAtr().getLabel());
@@ -54,7 +56,7 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         TableBodyCanvas tableBody = tableCanvas.getTableBody();
         for (SInstance child : siList) {
             TableRowDocumentCanvasAdapter row = new TableRowDocumentCanvasAdapter(tableBody.addRow());
-            if (child.getType().isComposite()) {
+            if (renderCompositeFieldsAsColumns) {
                 for (SInstance compositeField : ((SIComposite) child).getAllFields()) {
                     callListItemDoWrite(row, compositeField);
                 }
@@ -62,6 +64,15 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
                 callListItemDoWrite(row, child);
             }
         }
+    }
+
+    private boolean isRenderCompositeFieldAsColumns(SIList<?> siList) {
+        SViewListByTable view = (SViewListByTable) siList.getType().getView();
+        boolean renderCompositeFieldsAsColumns = false;
+        if (view != null) {
+            renderCompositeFieldsAsColumns = view.isRenderCompositeFieldsAsColumns();
+        }
+        return renderCompositeFieldsAsColumns;
     }
 
     private void callListItemDoWrite(TableRowDocumentCanvasAdapter row, SInstance field) {
@@ -80,7 +91,7 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         @Override
         public void addFormItem(FormItem formItem) {
             String value;
-            if(StringUtils.isBlank(formItem.getValue())){
+            if (StringUtils.isBlank(formItem.getValue())) {
                 value = "-";
             } else {
                 value = formItem.getValue();
