@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.type.core;
 
-public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.view.SViewTextArea;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
-    private boolean renderCompositeFieldsAsColumns = true;
+@SInfoType(name = "Password", spackage = SPackageCore.class)
+public class STypePassword extends STypeString {
 
-    public boolean isRenderCompositeFieldsAsColumns() {
-        return renderCompositeFieldsAsColumns;
+    @Override
+    protected String toStringPersistence(String originalValue) {
+        return StringUtils.EMPTY;
     }
 
-    public SViewListByTable setRenderCompositeFieldsAsColumns(boolean renderCompositeFieldsAsColumns) {
-        this.renderCompositeFieldsAsColumns = renderCompositeFieldsAsColumns;
-        return this;
-    }
 }
