@@ -26,8 +26,7 @@ public class StudioAppConfigProvider {
         if (config == null) {
             List<Class<? extends StudioAppConfig>> configs = findAllInstantiableConfigs();
             if (configs.size() == 0) {
-                config = new AbstractStudioAppConfig() {
-                };
+                throw new RuntimeException("É obrigatorio implementar a classe " + StudioAppConfig.class);
             }
             if (configs.size() > 1) {
                 throw new RuntimeException("Não é permitido possuir mais de uma implementação de " + StudioAppConfig.class);

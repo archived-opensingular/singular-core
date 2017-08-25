@@ -1,7 +1,13 @@
 package org.opensingular.studio.app;
 
+import org.opensingular.form.context.ServiceRegistry;
+import org.opensingular.form.context.SingularFormConfig;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.StudioMenu;
+
+import java.util.List;
 
 public interface StudioAppConfig {
     /**
@@ -18,5 +24,13 @@ public interface StudioAppConfig {
      * Allow register another classes to be registered as spring config
      * @return the configs
      */
-    Class<?>[] getSpringAnnotatedConfigs();
+    List<Class<?>> getSpringAnnotatedConfigs();
+
+    SingularSingletonStrategy getSingularSingletonStrategy();
+
+    SingularFormConfig getSingularFormConfig();
+
+    SDocumentFactory getSDocumentFactory();
+
+    ServiceRegistry getServiceRegistry();
 }
