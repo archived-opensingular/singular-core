@@ -35,6 +35,7 @@ import org.opensingular.form.type.core.STypeHTML;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
@@ -76,6 +77,7 @@ import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
 import org.opensingular.form.wicket.mapper.MoneyMapper;
 import org.opensingular.form.wicket.mapper.NumberMapper;
 import org.opensingular.form.wicket.mapper.PanelListMapper;
+import org.opensingular.form.wicket.mapper.PasswordMapper;
 import org.opensingular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.RichTextMapper;
 import org.opensingular.form.wicket.mapper.StringMapper;
@@ -234,7 +236,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new)
                 .register(STypeCNPJ.class,                                              CNPJMapper::new)
                 .register(STypeCPF.class,                                               CPFMapper::new)
-                .register(STypeHTML.class,            SViewByPortletRichText.class,     PortletRichTextMapper::new);
+                .register(STypeHTML.class,            SViewByPortletRichText.class,     PortletRichTextMapper::new)
+                .register(STypePassword.class,                                          PasswordMapper::new);
         //@formatter:on
     }
 }
