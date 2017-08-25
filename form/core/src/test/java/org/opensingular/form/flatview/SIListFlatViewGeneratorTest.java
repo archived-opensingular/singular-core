@@ -46,7 +46,7 @@ public class SIListFlatViewGeneratorTest {
     }
 
     @Test
-    public void shouldPrintListCountUsingListLabelWhenChildHasLabel() throws Exception {
+    public void shouldPrintListCountUsingChildLabelWhenChildHasLabel() throws Exception {
         STypeList<STypeComposite<SIComposite>, SIComposite> myList = myComposite.addFieldListOfComposite("myList", "myCompositeElement");
         myList.asAtr().label("My List");
         myList.getElementsType().asAtr().label("My Composite Element");
@@ -77,4 +77,20 @@ public class SIListFlatViewGeneratorTest {
         mockDocumentCanvas.assertTitle("My List (2 de 3)");
         mockDocumentCanvas.assertTitle("My List (3 de 3)");
     }
+
+    @Test
+    public void shouldPrintListCountUsingChildNameWhenHasNoLabel() throws Exception {
+        STypeList<STypeComposite<SIComposite>, SIComposite> myList = myComposite.addFieldListOfComposite("myList", "myCompositeElement");
+        myList.getElementsType().addField("compositeElementFieldOne", STypeString.class);
+        SIList<SIComposite> iMyList = myList.newInstance();
+        iMyList.addNew(i -> i.getField("compositeElementFieldOne").setValue("A"));
+        iMyList.addNew(i -> i.getField("compositeElementFieldOne").setValue("B"));
+        iMyList.addNew(i -> i.getField("compositeElementFieldOne").setValue("C"));
+        SIListFlatViewGenerator spiedListFlatViewGen = Mockito.spy(listFlatViewGenerator);
+        spiedListFlatViewGen.doWriteOnCanvas(mockDocumentCanvas, new FlatViewContext(iMyList));
+        mockDocumentCanvas.assertTitle("myCompositeElement (1 de 3)");
+        mockDocumentCanvas.assertTitle("myCompositeElement (2 de 3)");
+        mockDocumentCanvas.assertTitle("myCompositeElement (3 de 3)");
+    }
+
 }
