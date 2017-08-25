@@ -20,7 +20,12 @@ public class DefaulSpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http    .headers()
+                .frameOptions()
+                .sameOrigin()
+                .and()
+                .csrf().disable()
+                .authorizeRequests()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -28,6 +33,7 @@ public class DefaulSpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/");
+
     }
 
     @Override
@@ -40,7 +46,7 @@ public class DefaulSpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
             @Override
             protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-                if(StringUtils.isNotBlank(username)) {
+                if (StringUtils.isNotBlank(username)) {
                     return new User(username, authentication.getCredentials().toString(), Collections.emptyList());
                 }
                 throw new BadCredentialsException("Não foi possivel autenticar o usuario informado");

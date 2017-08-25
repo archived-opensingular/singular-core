@@ -92,7 +92,7 @@
                    placeholder="Senha"
                    id="password" tabindex="2"/>
         </div>
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <#--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>-->
         <div class="form-actions">
             <button id="btnsubss" type="submit" class="btn uppercase">Login</button>
         </div>
