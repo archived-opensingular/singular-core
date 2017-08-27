@@ -47,7 +47,7 @@
             .addScript("/global/plugins/jquery-validation/js/jquery.validate.min.js")
             .addScript("/global/scripts/app.js")
             .addScript("/layout4/scripts/layout.js")
-            .setFavicon("/resources/singular/img/favicon.png")
+//            .setFavicon("/resources/singular/img/favicon.png")
             .apply();
 </script>
 
