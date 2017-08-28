@@ -16,10 +16,27 @@
 
 package org.opensingular.studio.app.wicket.pages;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class StudioHeader extends Panel {
+
     public StudioHeader(String id) {
         super(id);
+        addUsername();
     }
+
+    private void addUsername() {
+        String username = "";
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal instanceof UserDetails){
+            username = ((UserDetails)principal).getUsername();
+        }
+        add(new Label("username", username));
+    }
+
+
+
 }

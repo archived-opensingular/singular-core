@@ -16,6 +16,14 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -38,6 +46,7 @@ import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
+import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -48,6 +57,7 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
@@ -55,15 +65,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -193,8 +194,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             Collection<SType<?>> fields = compositeElementsType.getFields();
             int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
-            for (SType<?> tCampo : fields) {
-
+            IConsumer<SType<?>> columnCallback = tCampo -> {
                 final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
                 final IModel<String> headerModel = $m.ofValue(tCampo.asAtr().getLabel());
                 final BSTDataCell cell = row.newTHeaderCell(headerModel);
@@ -215,6 +215,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                         return oldClasses;
                     }
                 });
+            };
+
+            if (view.isRenderCompositeFieldsAsColumns()) {
+                for (SType<?> tCampo : fields)
+                    columnCallback.accept(tCampo);
+            } else {
+                columnCallback.accept(compositeElementsType);
             }
         }
 
@@ -272,16 +279,16 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 appendInserirButton(this, form, item, actionColumn);
             }
 
-            if (instance instanceof SIComposite) {
+            if ((instance instanceof SIComposite) && viewListByTable.isRenderCompositeFieldsAsColumns()) {
                 final SIComposite ci = (SIComposite) instance;
                 final STypeComposite<?> ct = ci.getType();
 
                 for (SType<?> ft : ct.getFields()) {
                     IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    ctx.createChild(row.newCol(), fm).build();
+                    ctx.createChild(row.newCol(), fm).setHint(HIDE_LABEL, true).build();
                 }
             } else {
-                ctx.createChild(row.newCol(), itemModel).build();
+                ctx.createChild(row.newCol(), itemModel).setHint(HIDE_LABEL, true).build();
             }
 
             if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {

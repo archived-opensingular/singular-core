@@ -5,15 +5,15 @@ import org.jetbrains.annotations.NotNull;
 import org.opensingular.studio.app.StudioAppConfig;
 import org.opensingular.studio.app.spring.StudioAppConfigProvider;
 import org.opensingular.studio.app.spring.StudioSpringConfiguration;
+import org.opensingular.studio.app.spring.StudioWebConfiguration;
 import org.opensingular.studio.app.wicket.StudioApplication;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.util.EnumSet;
 
 public class StudioWebAppInitializer implements WebApplicationInitializer {
@@ -28,6 +28,14 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext container) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = createContext();
         container.addListener(new ContextLoaderListener(rootContext));
+        rootContext.scan("org.opensingular.studio.app");
+        rootContext.register(StudioWebConfiguration.class);
+        rootContext.setServletContext(container);
+        addSpringMVCServlet(container, rootContext);
+        studioAppConfig.getSpringAnnotatedConfigs().forEach(rootContext::register);
+        addSpringSecurityFilter(container, rootContext);
+        rootContext.register(StudioSpringConfiguration.class);
+        rootContext.refresh();
         addWicketFilter(container, rootContext);
     }
 
@@ -40,12 +48,19 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
 
     @NotNull
     private AnnotationConfigWebApplicationContext createContext() {
-        AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
-        rootContext.scan("org.opensingular.studio");
-        rootContext.register(studioAppConfig.getSpringAnnotatedConfigs());
-        rootContext.register(StudioSpringConfiguration.class);
-        rootContext.refresh();
-        return rootContext;
+        return new AnnotationConfigWebApplicationContext();
     }
 
+    protected void addSpringMVCServlet(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
+        ServletRegistration.Dynamic dispatcher = ctx
+                .addServlet("Spring MVC dispatcher servlet", new DispatcherServlet(applicationContext));
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("/*");
+    }
+
+    protected void addSpringSecurityFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
+        ctx
+                .addFilter("springSecurityFilterChain", DelegatingFilterProxy.class)
+                .addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
+    }
 }

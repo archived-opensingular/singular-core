@@ -11,7 +11,7 @@
 
     <artifactId>singular-studio-base-app</artifactId>
     <name>[singular :: studio :: base-app]</name>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
