@@ -1,12 +1,9 @@
 <#import "/spring.ftl" as spring>
 <!DOCTYPE html>
-<!--[if IE 8]>
-<html lang="en" class="ie8 no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd"> <![endif]-->
-<!--[if IE 9]>
-<html lang="en" class="ie9 no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd"> <![endif]-->
+<!--[if IE 8]><html lang="en" class="ie8 no-js"><![endif]-->
+<!--[if IE 9]><html lang="en" class="ie9 no-js"><![endif]-->
 <!--[if !IE]><!-->
-<html class="no-js"
-      lang="en">
+<html class="no-js" lang="en">
 <head>
     <meta charset="utf-8">
     <title>
@@ -47,7 +44,7 @@
             .addScript("/global/plugins/jquery-validation/js/jquery.validate.min.js")
             .addScript("/global/scripts/app.js")
             .addScript("/layout4/scripts/layout.js")
-//            .setFavicon("/resources/singular/img/favicon.png")
+            //            .setFavicon("/resources/singular/img/favicon.png")
             .apply();
 </script>
 
@@ -60,11 +57,7 @@
              src="/singular-static/resources/singular/img/logo_singular.png">
     </a>
 </div>
-
-
 <div class="content">
-
-
     <form action="/login" method="POST" class="login-form">
         <h3 class="form-title">Login</h3>
 
@@ -92,7 +85,6 @@
                    placeholder="Senha"
                    id="password" tabindex="2"/>
         </div>
-        <#--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>-->
         <div class="form-actions">
             <button id="btnsubss" type="submit" class="btn uppercase">Login</button>
         </div>
@@ -101,7 +93,7 @@
 
 </div>
 <div class="copyright">
-    2016 ©
+    2017 ©
     <a target="_blank" id="ownerLink7" href="http://www.opensingular.org"
        title="Soluções Inteligentes para criação de petição e análise.">
         Singular.
@@ -111,7 +103,6 @@
 
 <script>
     /*<![CDATA[*/
-
     jQuery(document).ready(function () {
         App.init(); // init metronic core components
         Layout.init(); // init current layout
