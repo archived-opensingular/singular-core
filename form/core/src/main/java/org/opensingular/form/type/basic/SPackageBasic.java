@@ -34,13 +34,11 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.STypePredicate;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.STypeSupplier;
-import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.type.core.SIBoolean;
 import org.opensingular.form.type.core.SIDate;
 import org.opensingular.form.type.core.SIInteger;
 import org.opensingular.form.type.core.SILong;
-import org.opensingular.form.type.core.SIMapper;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
@@ -48,7 +46,6 @@ import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeFormula;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
-import org.opensingular.form.type.core.STypeMapper;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.STypeAnnotationClassifierList;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
@@ -104,8 +101,6 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeString, SIString, String>                     ATR_ALLOWED_FILE_TYPES    = new AtrRef<>(SPackageBasic.class, "allowedFileTypes"      , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_UPPER_CASE_TEXT       = new AtrRef<>(SPackageBasic.class, "uppperCaseText"        , STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeDate, SIDate, Date>                           ATR_MAX_DATE              = new AtrRef<>(SPackageBasic.class, "maxDate"               , STypeDate.class, SIDate.class, Date.class);
-    public static final AtrRef<STypeMapper, SIMapper, UIComponentMapper>          ATR_MAPPER                = new AtrRef<>(SPackageBasic.class, "mapper"                , STypeMapper.class, SIMapper.class, UIComponentMapper.class);
-
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<AtrBasic.DelayedDependsOnResolver>>>
             ATR_DEPENDS_ON_FUNCTION = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);
@@ -121,10 +116,8 @@ public class SPackageBasic extends SPackage {
         pb.createType(STypeConsumer.class);
         pb.createType(STypePhraseBreak.class);
         pb.createType(STypeAnnotationClassifierList.class);
-        pb.createType(STypeMapper.class);
 
         pb.createAttributeIntoType(SType.class, ATR_DEFAULT_IF_NULL);
-        pb.createAttributeIntoType(SType.class, ATR_MAPPER);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED).withDefaultValueIfNull(Boolean.FALSE);
         pb.createAttributeIntoType(SType.class, ATR_REQUIRED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_EXISTS).withDefaultValueIfNull(Boolean.TRUE);

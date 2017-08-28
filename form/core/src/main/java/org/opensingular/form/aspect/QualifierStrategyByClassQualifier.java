@@ -16,6 +16,7 @@
 
 package org.opensingular.form.aspect;
 
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 
 import javax.annotation.Nonnull;
@@ -31,10 +32,20 @@ import java.util.Objects;
 public abstract class QualifierStrategyByClassQualifier<T extends Class<?>> implements QualifierStrategy<T> {
 
     @Nullable
+    protected T extractQualifier(@Nonnull SInstance instance) {
+        return extractQualifier(instance.getType());
+    }
+
+    @Nullable
     protected abstract T extractQualifier(@Nonnull SType<?> type);
 
     @Override
-    public QualifierMatcher<T> getMatcherFor(@Nonnull SType<?> type) {
+    public final QualifierMatcher<T> getMatcherFor(@Nonnull SInstance instance) {
+        return new QualifierMatcherByClassQualifier<T>(extractQualifier(instance));
+    }
+
+    @Override
+    public final QualifierMatcher<T> getMatcherFor(@Nonnull SType<?> type) {
         return new QualifierMatcherByClassQualifier<T>(extractQualifier(type));
     }
 

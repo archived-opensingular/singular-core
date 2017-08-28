@@ -16,16 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -44,9 +34,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
@@ -58,6 +46,16 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -121,7 +119,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             + "    </ul>");
 
                     final WebMarkupContainer container = new WebMarkupContainer("_u");
-                    final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form, container);
+                    final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx, view, form, container);
                     final WebMarkupContainer empty = new WebMarkupContainer("_empty");
 
                     list
@@ -144,17 +142,14 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         private final SViewListByForm view;
         private final Form<?> form;
         private final WicketBuildContext ctx;
-        private final UIBuilderWicket wicketBuilder;
 
         private PanelElementsView(String id,
                                   IModel<SIList<SInstance>> model,
-                                  UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
                                   SViewListByForm view,
                                   Form<?> form,
                                   WebMarkupContainer parentContainer) {
             super(id, model, parentContainer);
-            this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
             this.view = view;
             this.form = form;
@@ -173,16 +168,15 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
         @Override
         protected void populateItem(Item<SInstance> item) {
-            final BSGrid grid = new BSGrid("_r");
-            final ViewMode viewMode = ctx.getViewMode();
+            BSGrid grid = new BSGrid("_r");
 
-            buildHeader(item, grid, viewMode);
-            buildBody(item, grid, viewMode);
+            buildHeader(item, grid);
+            buildBody(item, grid);
 
             item.add(grid);
         }
 
-        private void buildHeader(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
+        private void buildHeader(Item<SInstance> item, BSGrid grid) {
             final BSRow header = grid.newRow();
             header.add($b.classAppender("list-item-header"));
             final BSCol title = header.newCol(11).newGrid().newColInRow();
@@ -203,22 +197,22 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
             header.add($b.classAppender("list-icons"));
 
-            if ((view != null) && (view.isInsertEnabled()) && viewMode.isEdition()) {
+            if ((view != null) && (view.isInsertEnabled()) && ctx.getViewMode().isEdition()) {
                 appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
-            if ((view != null) && view.isDeleteEnabled() && viewMode.isEdition()) {
+            if ((view != null) && view.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
                 appendRemoverIconButton(this, form, item, btnCell).add($b.classAppender("pull-right"));
             }
 
         }
 
-        private void buildBody(Item<SInstance> item, BSGrid grid, ViewMode viewMode) {
+        private void buildBody(Item<SInstance> item, BSGrid grid) {
             final BSRow body = grid.newRow();
             body.add($b.classAppender("list-item-body"));
-            wicketBuilder.build(ctx.createChild(body.newCol(12), item.getModel()), viewMode);
+            ctx.createChild(body.newCol(12), item.getModel()).build();
         }
     }
 

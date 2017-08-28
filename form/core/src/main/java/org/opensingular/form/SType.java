@@ -20,7 +20,6 @@ import org.opensingular.form.aspect.AspectEntry;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -887,11 +886,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                 (superType != null && superType.hasValidationInternal());
     }
 
-    public <T extends UIComponentMapper> SType<I> withCustomMapper(T mapper) {
-        setAttributeValue(SPackageBasic.ATR_MAPPER, mapper);
-        return this;
-    }
-
     /**
      * Looks for the best match implementation of the aspect being request.
      * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
@@ -915,12 +909,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * type configuration into {@link SType#onLoadType(TypeBuilder)}.
      * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
      */
-    public <T> void setAspect(@Nonnull AspectRef<T> aspectRef, @Nonnull Supplier<T> factory) {
+    public <T> SType<I> setAspect(@Nonnull AspectRef<T> aspectRef, @Nonnull Supplier<T> factory) {
         Objects.requireNonNull(aspectRef);
         Objects.requireNonNull(factory);
         Integer index = getDictionary().getMasterAspectRegistry().getIndex(aspectRef);
         AspectEntry<T,Object> entry = new AspectEntry<>(null, factory);
         aspects = ArrUtil.arraySet(aspects, index, entry, AspectEntry.class, 1);
+        return this;
     }
 
     /**
@@ -932,10 +927,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     public <T> void setAspectFixImplementation(@Nonnull AspectRef<T> aspectRef, @Nonnull T implementation) {
         setAspect(aspectRef, (Supplier<T>) () -> implementation);
-    }
-
-    public UIComponentMapper getComponentMapper() {
-        return this.getAttributeValue(SPackageBasic.ATR_MAPPER);
     }
 
     /**

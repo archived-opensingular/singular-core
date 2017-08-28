@@ -16,18 +16,21 @@
 
 package org.opensingular.form.wicket;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
-
-import java.io.Serializable;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 
+import java.io.Serializable;
+
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+
 @FunctionalInterface
-public interface IWicketComponentMapper extends UIComponentMapper {
+public interface IWicketComponentMapper extends Serializable {
+
+    public static final AspectRef<IWicketComponentMapper> ASPECT_WICKET_MAPPER = new AspectRef<>(
+            IWicketComponentMapper.class, IWicketComponentMapperRegistry.class);
 
     public static final HintKey<Boolean> HIDE_LABEL = () -> false;
 

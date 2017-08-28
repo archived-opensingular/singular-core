@@ -16,16 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -44,10 +34,8 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
-import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
-import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
@@ -60,6 +48,17 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class AbstractCompositeMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
@@ -120,12 +119,11 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             return getInstance().getType();
         }
 
-        protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row, final SInstanceFieldModel<SInstance> mCampo) {
-            final SInstance iCampo = mCampo.getObject();
-            final ViewMode viewMode = ctx.getViewMode();
-            final BSCol col = row.newCol();
-            configureColspan(ctx, iCampo, col);
-            wicketBuilder.build(ctx.createChild(col, mCampo), viewMode);
+        protected void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField) {
+            SInstance iField = mField.getObject();
+            BSCol col = row.newCol();
+            configureColspan(ctx, iField, col);
+            ctx.createChild(col, mField).build();
         }
 
         protected void configureColspan(WicketBuildContext ctx, final SInstance fieldInstance, BSCol col) {
@@ -258,7 +256,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                     rowColTotal = 0;
                 }
 
-                buildField(ctx.getUiBuilderWicket(), row, instanceModel);
+                buildField(row, instanceModel);
             }
         }
 

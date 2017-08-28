@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.*;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.StyleAttributeModifier;
@@ -37,7 +32,6 @@ import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.view.Block;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
@@ -49,6 +43,19 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
@@ -141,15 +148,14 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             return target;
         }
 
-        private void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mCampo, Block block) {
-            final SInstance iCampo = mCampo.getObject();
-            final ViewMode viewMode = ctx.getViewMode();
-            final BSCol col = row.newCol();
-            configureColspan(ctx, iCampo, col);
+        private void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField, Block block) {
+            SInstance iField = mField.getObject();
+            BSCol col = row.newCol();
+            configureColspan(ctx, iField, col);
 
-            WicketBuildContext childCtx = ctx.createChild(col, mCampo);
+            WicketBuildContext childCtx = ctx.createChild(col, mField);
             childCtx.setHint(AbstractCompositeMapper.HIDE_LABEL, isBlockHandlesTitleFromChild(ctx, block));
-            ctx.getUiBuilderWicket().build(childCtx, viewMode);
+            childCtx.build();
         }
     }
 

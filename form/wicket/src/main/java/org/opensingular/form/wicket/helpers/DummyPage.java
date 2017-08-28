@@ -32,8 +32,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.TypeLoader;
-import org.opensingular.form.wicket.SingularFormContextWicket;
-import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.component.SingularValidationButton;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -140,12 +138,6 @@ class MockSDocumentFactory extends SDocumentFactory {
 
     private final MockServiceRegistry defaultServiceRegistry = new MockServiceRegistry();
 
-    private final SingularFormContextWicket singularFormContextWicket = new Context();
-
-    {
-        defaultServiceRegistry.registerBean(SingularFormContextWicket.class, singularFormContextWicket);
-    }
-
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {
         return new RefMockDocumentFactory(this);
@@ -153,13 +145,6 @@ class MockSDocumentFactory extends SDocumentFactory {
 
     @Override
     protected void setupDocument(SDocument document) {
-    }
-
-    private static class Context implements SingularFormContextWicket, Serializable {
-        @Override
-        public UIBuilderWicket getUIBuilder() {
-            return new UIBuilderWicket();
-        }
     }
 }
 
