@@ -27,6 +27,7 @@ import java.util.StringJoiner;
 
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.STranslatorForAttribute;
+import org.opensingular.form.SType;
 
 /**
  * Decorates an Instance to enable persistence configuration.
@@ -59,8 +60,8 @@ public class AtrRelational extends STranslatorForAttribute {
 		return getAttributeValue(ATR_TABLE_PK);
 	}
 
-	public AtrRelational addTableFK(String keyColumns, String foreignTable, String foreignPK) {
-		return addTableFK(new RelationalFK(keyColumns, foreignTable, foreignPK));
+	public AtrRelational addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
+		return addTableFK(new RelationalFK(keyColumns, getDictionary().getType(typeClass)));
 	}
 
 	public AtrRelational addTableFK(RelationalFK fk) {
@@ -79,7 +80,7 @@ public class AtrRelational extends STranslatorForAttribute {
 			return result;
 		String[] items = value.split(";");
 		for (String item : items)
-			result.add(RelationalFK.fromStringPersistence(item));
+			result.add(RelationalFK.fromStringPersistence(item, getDictionary()));
 		return result;
 	}
 

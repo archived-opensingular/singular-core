@@ -19,7 +19,9 @@ package org.opensingular.form.persistence.relational;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import org.opensingular.form.SType;
@@ -35,7 +37,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
-	private List<RelationalFK> relationships = new ArrayList<RelationalFK>();
+	private Map<String, String> joinMap = new HashMap<String, String>();
 
 	@SafeVarargs
 	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
@@ -45,11 +47,13 @@ public class RelationalSQLQuery implements RelationalSQL {
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
+		List<RelationalFK> relationships = new ArrayList<RelationalFK>();
 		for (SType<?> field : targetFields) {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList());
-			relationships.addAll(RelationalSQL.tableFKs(field));
+			RelationalSQL.collectRelationships(field, relationships);
 		}
+		joinMap = createJoinMap(relationships);
 	}
 
 	public RelationalSQLQuery orderBy(SType<?>... fields) {
@@ -82,7 +86,24 @@ public class RelationalSQLQuery implements RelationalSQL {
 
 	private String joinTables() {
 		StringJoiner sj = new StringJoiner(" left join ");
-		targetTables.forEach(table -> sj.add(table + " " + tableAlias(table)));
+		List<String> joinedTables = new ArrayList<>();
+		for (String table : targetTables) {
+			sj.add(table + " " + tableAlias(table));
+			if (!joinedTables.isEmpty())
+				sj.add(onClause(table, joinedTables));
+			joinedTables.add(table);
+		}
+		return sj.toString();
+	}
+
+	private String onClause(String table, List<String> joinedTables) {
+		String tableAlias = tableAlias(table);
+		StringJoiner sj = new StringJoiner(" ");
+		sj.add("on");
+		for (RelationalColumn keyColumn : keyColumns) {
+			if (keyColumn.getTable().equals(table))
+				sj.add(tableAlias + "." + keyColumn + " = ");
+		}
 		return sj.toString();
 	}
 
@@ -95,5 +116,14 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private String tableAlias(String table) {
 		int index = targetTables.indexOf(table) + 1;
 		return "T" + index;
+	}
+
+	private Map<String, String> createJoinMap(List<RelationalFK> relationships) {
+		for (RelationalFK relationship : relationships) {
+			System.out.println(relationship.getForeignType().getName() + " table "
+					+ RelationalSQL.table(relationship.getForeignType()) + " pk "
+					+ RelationalSQL.tablePK(relationship.getForeignType()));
+		}
+		return null;
 	}
 }

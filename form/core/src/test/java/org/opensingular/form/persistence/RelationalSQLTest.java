@@ -117,8 +117,8 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Item entity");
-				as(AtrRelational::new).table("Items").tablePK("masterID, mnemo").addTableFK("masterID", "MasterEntity",
-						"id");
+				as(AtrRelational::new).table("Items").tablePK("masterID, mnemo").addTableFK("masterID",
+						MasterEntity.class);
 				mnemo = addFieldString("mnemo");
 				description = addFieldString("description");
 				description.as(AtrRelational::new).column("desc");

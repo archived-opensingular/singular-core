@@ -107,4 +107,10 @@ public interface RelationalSQL {
 		});
 		return sj.toString();
 	}
+
+	public static void collectRelationships(SType<?> field, List<RelationalFK> relationships) {
+		if (field instanceof ICompositeType)
+			((ICompositeType) field).getContainedTypes()
+					.forEach(item -> relationships.addAll(RelationalSQL.tableFKs(item.getSuperType())));
+	}
 }

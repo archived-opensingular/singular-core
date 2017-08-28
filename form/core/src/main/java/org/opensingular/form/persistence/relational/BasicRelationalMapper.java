@@ -30,7 +30,7 @@ import org.opensingular.form.SType;
 public class BasicRelationalMapper implements RelationalMapper {
 	public String table(SType<?> type) {
 		String result = type.as(AtrRelational::new).getTable();
-		if (result == null) {
+		if (result == null && hasParentType(type)) {
 			SType<?> parentType = getParentType(type);
 			result = parentType.as(AtrRelational::new).getTable();
 			if (result == null)
@@ -42,7 +42,7 @@ public class BasicRelationalMapper implements RelationalMapper {
 	public List<String> tablePK(SType<?> type) {
 		List<String> result = new ArrayList<>();
 		String pk = type.as(AtrRelational::new).getTablePK();
-		if (pk == null)
+		if (pk == null && hasParentType(type))
 			pk = getParentType(type).as(AtrRelational::new).getTablePK();
 		if (pk != null)
 			for (String key : pk.split(","))
@@ -68,7 +68,11 @@ public class BasicRelationalMapper implements RelationalMapper {
 		return list;
 	}
 
+	protected boolean hasParentType(SType<?> type) {
+		return !type.getParentScope().equals(type.getPackage());
+	}
+
 	protected SType<?> getParentType(SType<?> type) {
-		return type.getParentScope().getDictionary().getType(type.getParentScope().getName());
+		return type.getDictionary().getType(type.getParentScope().getName());
 	}
 }

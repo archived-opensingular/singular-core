@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SType;
+
 /**
  * Relational metadata for identifying a foreign key in a Relational DBMS.
  *
@@ -29,12 +32,11 @@ import java.util.regex.Pattern;
 public class RelationalFK {
 	private static final String SERIALIZATION_SEPARATOR = "|";
 	private List<RelationalColumn> keyColumns;
-	private String foreignTable;
-	private List<RelationalColumn> foreignPK;
+	private SType<?> foreignType;
 
-	public static RelationalFK fromStringPersistence(String value) {
+	public static RelationalFK fromStringPersistence(String value, SDictionary dictionary) {
 		String parts[] = value.split(Pattern.quote(SERIALIZATION_SEPARATOR));
-		return new RelationalFK(parseColumns(parts[0]), parts[1], parseColumns(parts[2]));
+		return new RelationalFK(parseColumns(parts[0]), dictionary.getType(parts[1]));
 	}
 
 	private static List<RelationalColumn> parseColumns(String value) {
@@ -45,33 +47,27 @@ public class RelationalFK {
 		return columns;
 	}
 
-	public RelationalFK(String keyColumns, String foreignTable, String foreignPK) {
-		this(parseColumns(keyColumns), foreignTable, parseColumns(foreignPK));
+	public RelationalFK(String keyColumns, SType<?> foreignType) {
+		this(parseColumns(keyColumns), foreignType);
 	}
 
-	public RelationalFK(List<RelationalColumn> keyColumns, String foreignTable, List<RelationalColumn> foreignPK) {
+	public RelationalFK(List<RelationalColumn> keyColumns, SType<?> foreignType) {
 		this.keyColumns = keyColumns;
-		this.foreignTable = foreignTable;
-		this.foreignPK = foreignPK;
+		this.foreignType = foreignType;
 	}
 
 	public List<RelationalColumn> getKeyColumns() {
 		return keyColumns;
 	}
 
-	public String getForeignTable() {
-		return foreignTable;
-	}
-
-	public List<RelationalColumn> getForeignPK() {
-		return foreignPK;
+	public SType<?> getForeignType() {
+		return foreignType;
 	}
 
 	public String toStringPersistence() {
 		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
 		sj.add(toStringPersistence(getKeyColumns()));
-		sj.add(getForeignTable());
-		sj.add(toStringPersistence(getForeignPK()));
+		sj.add(getForeignType().getName());
 		return sj.toString();
 	}
 
@@ -85,8 +81,7 @@ public class RelationalFK {
 	public boolean equals(Object obj) {
 		if (obj instanceof RelationalFK)
 			return ((RelationalFK) obj).getKeyColumns().equals(getKeyColumns())
-					&& ((RelationalFK) obj).getForeignTable().equals(getForeignTable())
-					&& ((RelationalFK) obj).getForeignPK().equals(getForeignPK());
+					&& ((RelationalFK) obj).getForeignType().equals(getForeignType());
 		return super.equals(obj);
 	}
 }
