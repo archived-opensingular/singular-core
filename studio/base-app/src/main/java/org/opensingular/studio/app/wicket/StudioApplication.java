@@ -3,9 +3,12 @@ package org.opensingular.studio.app.wicket;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.Session;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.resource.loader.ClassStringResourceLoader;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
@@ -46,9 +49,15 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
     }
 
     @Override
+    public Session newSession(Request request, Response response) {
+        Session session = super.newSession(request, response);
+        session.setLocale(new Locale("pt", "BR"));
+        return session;
+    }
+
+    @Override
     protected void init() {
         super.init();
-        Locale.setDefault(new Locale("pt", "BR"));
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
