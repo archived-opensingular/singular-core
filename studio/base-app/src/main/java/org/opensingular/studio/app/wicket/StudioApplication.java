@@ -16,6 +16,7 @@ import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.studio.app.AbstractStudioAppConfig;
+import org.opensingular.studio.app.wicket.pages.StudioFooter;
 import org.opensingular.studio.app.wicket.pages.StudioHeader;
 import org.opensingular.studio.app.wicket.pages.StudioPage;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
@@ -74,5 +75,10 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
                                            boolean withMenu,
                                            SingularAdminTemplate adminTemplate) {
         return new StudioHeader(id);
+    }
+
+    @Override
+    public MarkupContainer buildPageFooter(String id) {
+        return new StudioFooter(id);
     }
 }
