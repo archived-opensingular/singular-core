@@ -25,6 +25,7 @@ import org.opensingular.form.type.core.STypeDateTime;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.util.STypeEMail;
@@ -375,6 +376,13 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     public STypeMonetary addFieldMonetary(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeMonetary.class);
+    }
+
+    /**
+     * Cria um novo campo do tipo {@link STypePassword} com o nome informado.
+     */
+    public STypePassword addFieldPassword(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypePassword.class);
     }
 
     public SSelectionBuilder selection() {
