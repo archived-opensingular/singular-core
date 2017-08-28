@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class AbstractStudioAppConfig implements StudioAppConfig {
     @Override
     public StudioApplication getWicketApplication() {
-        return new StudioApplication();
+        return new StudioApplication(this);
     }
 
     @Override

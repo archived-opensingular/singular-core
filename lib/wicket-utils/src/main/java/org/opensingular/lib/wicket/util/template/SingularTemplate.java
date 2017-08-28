@@ -161,7 +161,7 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     protected IModel<String> getPageTitleModel(){
-        return new StringResourceModel("label.page.title.local");
+        return new StringResourceModel("label.page.title.local").setDefaultValue("");
     }
 
     protected void initSkins() {

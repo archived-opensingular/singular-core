@@ -2,6 +2,7 @@ package org.opensingular.studio.app.wicket.pages;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.StringValue;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.wicket.util.menu.AbstractMenuItem;
@@ -9,9 +10,9 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.studio.app.definition.StudioDefinition;
 import org.opensingular.studio.app.menu.StudioMenuItem;
-import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.GroupMenuEntry;
 import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
@@ -111,5 +112,16 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
 
     public String getMenuPath() {
         return menuPath;
+    }
+
+    @Override
+    protected IModel<String> getPageTitleModel() {
+        return Shortcuts.$m.get(() -> {
+            StudioDefinition studioDefinition = findCurrentStudioDefinition();
+            if (studioDefinition != null) {
+                return Model.of(findCurrentStudioDefinition().getTitle()).getObject();
+            }
+            return super.getPageTitleModel().getObject();
+        });
     }
 }
