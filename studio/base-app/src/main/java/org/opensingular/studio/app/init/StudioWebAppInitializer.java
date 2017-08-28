@@ -27,16 +27,14 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext container) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = createContext();
+        rootContext.setServletContext(container);
         container.addListener(new ContextLoaderListener(rootContext));
         rootContext.scan("org.opensingular.studio.app");
-        rootContext.register(StudioWebConfiguration.class);
-        rootContext.setServletContext(container);
-        addSpringMVCServlet(container, rootContext);
         studioAppConfig.getSpringAnnotatedConfigs().forEach(rootContext::register);
-        addSpringSecurityFilter(container, rootContext);
-        rootContext.register(StudioSpringConfiguration.class);
         rootContext.refresh();
+        addSpringMVCServlet(container, rootContext);
         addWicketFilter(container, rootContext);
+        addSpringSecurityFilter(container, rootContext);
     }
 
     private void addWicketFilter(ServletContext container, AnnotationConfigWebApplicationContext rootContext) {
