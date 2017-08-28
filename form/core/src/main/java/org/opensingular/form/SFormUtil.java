@@ -109,12 +109,16 @@ public final class SFormUtil {
             } else {
                 if (c == '.') {
                     waitingBegin = true;
-                } else if (!isLetter(c) && !isDigit(c) && c != '$') {
+                } else if (!isLetter(c) && !isDigit(c) && !isSpecialCaracter(c)) {
                     return false;
                 }
             }
         }
         return !waitingBegin; //Can't end after a dot or have length zero
+    }
+
+    private static boolean isSpecialCaracter(char c) {
+        return c == '$';
     }
 
     @Nonnull

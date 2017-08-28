@@ -26,7 +26,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.context.SFormConfig;
-import org.opensingular.form.document.MockServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
@@ -135,8 +134,6 @@ public class DummyPage extends WebPage {
 }
 
 class MockSDocumentFactory extends SDocumentFactory {
-
-    private final MockServiceRegistry defaultServiceRegistry = new MockServiceRegistry();
 
     @Override
     protected RefSDocumentFactory createDocumentFactoryRef() {

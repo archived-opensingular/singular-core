@@ -40,7 +40,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         } else {
             StringBuilder path = new StringBuilder(pathStringValue.toString());
             for (int i = 0; i < getPageParameters().getIndexedCount(); i++) {
-                path.append("/").append(getPageParameters().get(i));
+                path.append('/').append(getPageParameters().get(i));
             }
             menuPath = path.toString();
         }

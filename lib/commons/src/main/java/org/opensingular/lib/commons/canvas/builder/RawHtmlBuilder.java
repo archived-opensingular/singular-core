@@ -17,18 +17,18 @@ public class RawHtmlBuilder implements HtmlBuilder {
     }
 
     private void startTag() {
-        buffer.append("<").append(tag);
+        buffer.append('<').append(tag);
         for (Map.Entry<String, String> attr : attribues.entrySet()) {
-            buffer.append(" ");
+            buffer.append(' ');
             buffer.append(attr.getKey());
-            buffer.append("=");
-            buffer.append("'").append(attr.getValue()).append("'");
+            buffer.append('=');
+            buffer.append('\'').append(attr.getValue()).append('\'');
         }
-        buffer.append(">");
+        buffer.append('>');
     }
 
     private void endTag() {
-        buffer.append("</").append(tag).append(">");
+        buffer.append("</").append(tag).append('>');
     }
 
     public RawHtmlBuilder newChild(String tag) {
