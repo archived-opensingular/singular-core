@@ -22,7 +22,7 @@ public abstract class AbstractStudioAppConfig implements StudioAppConfig {
     public List<Class<?>> getSpringAnnotatedConfigs() {
         List<Class<?>> springConfigs = new ArrayList<>();
         springConfigs.add(getSpringConfig());
-        springConfigs.addAll(getSpringSecurityConfig());
+        springConfigs.add(getSpringSecurityConfig());
         return springConfigs;
     }
 
@@ -43,10 +43,8 @@ public abstract class AbstractStudioAppConfig implements StudioAppConfig {
 
     public abstract Class<?> getSpringConfig();
 
-    public List<Class<?>> getSpringSecurityConfig(){
-        List<Class<?>> configs = new ArrayList<>();
-        configs.add(DefaulSpringSecurityConfig.class);
-        return configs;
+    public Class<?> getSpringSecurityConfig(){
+        return DefaulSpringSecurityConfig.class;
     }
 
 }

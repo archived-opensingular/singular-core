@@ -8,7 +8,9 @@ import org.opensingular.studio.app.StudioAppConfig;
 import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.StudioMenu;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
+@ComponentScan("org.opensingular.lib.support.spring.util")
 public class StudioSpringConfiguration implements Loggable {
     private final StudioAppConfig studioAppConfig;
 
