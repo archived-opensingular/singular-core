@@ -16,53 +16,25 @@
 
 package org.opensingular.form.internal.freemarker;
 
+import freemarker.template.*;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.*;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.*;
+import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.commons.context.SingularContext;
+import org.opensingular.lib.commons.context.SingularSingletonStrategy;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SISimple;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.type.core.SIBoolean;
-import org.opensingular.form.type.core.SIDate;
-import org.opensingular.form.type.core.SIDateTime;
-import org.opensingular.form.type.core.SINumber;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.SITime;
-import org.opensingular.lib.commons.base.SingularProperties;
-
-import freemarker.template.Configuration;
-import freemarker.template.ObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateBooleanModel;
-import freemarker.template.TemplateCollectionModel;
-import freemarker.template.TemplateDateModel;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateHashModel;
-import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateModelIterator;
-import freemarker.template.TemplateNumberModel;
-import freemarker.template.TemplateScalarModel;
-import freemarker.template.TemplateSequenceModel;
 
 /**
  * Integra o Singular Form com o Freemarker
@@ -74,26 +46,38 @@ import freemarker.template.TemplateSequenceModel;
  */
 public final class FormFreemarkerUtil {
 
-    private static Configuration cfgIgnoreError;
-    private static Configuration cfgRethrowError;
+    private Configuration cfgIgnoreError;
+    private Configuration cfgRethrowError;
+
+    private Consumer<Configuration> configurationConsumer = null;
 
     private FormFreemarkerUtil() {
     }
 
-    public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
+    public static FormFreemarkerUtil get() {
+        return ((SingularSingletonStrategy) SingularContext.get()).singletonize(FormFreemarkerUtil.class, FormFreemarkerUtil::new);
+    }
+
+    public static FormFreemarkerUtil get(Consumer<Configuration> configurationConsumer) {
+        FormFreemarkerUtil formFreemarkerUtil = new FormFreemarkerUtil();
+        formFreemarkerUtil.configurationConsumer = configurationConsumer;
+        return formFreemarkerUtil;
+    }
+
+    public SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
         return context -> merge(context.instance(), stringTemplate);
     }
 
-    public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate,  boolean escapeContentHtml, boolean ignoreError ) {
+    public SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate, boolean escapeContentHtml, boolean ignoreError) {
         return context -> merge(context.instance(), stringTemplate, escapeContentHtml, ignoreError);
     }
-    
+
     /**
      * Gera uma string resultante do merge do template com os dados contídos no
      * documento informado. É o mesmo que merge(document.getRoot(),
      * templateString).
      */
-    public static String merge(SDocument document, String templateString) {
+    public String merge(SDocument document, String templateString) {
         return merge(document.getRoot(), templateString);
     }
 
@@ -101,7 +85,7 @@ public final class FormFreemarkerUtil {
      * Gera uma string resultante do merge do template com os dados contídos na
      * instancia informada.
      */
-    public static String merge(SInstance dados, String templateString) {
+    public String merge(SInstance dados, String templateString) {
         return internalMerge(dados, templateString, false, false);
     }
 
@@ -109,12 +93,15 @@ public final class FormFreemarkerUtil {
      * Gera uma string resultante do merge do template com os dados contídos na
      * instancia informada podendo ignorar os erros.
      */
-    public static String merge(SInstance dados, String templateString, boolean escapeContentHtml, boolean ignoreError) {
+    public String merge(SInstance dados, String templateString, boolean escapeContentHtml, boolean ignoreError) {
         return internalMerge(dados, templateString, escapeContentHtml, ignoreError);
     }
 
-    private static String internalMerge(SInstance dados, String templateString, boolean escapeContentHtml, boolean ignoreError) {
-        Template template = parseTemplate(templateString, ignoreError);
+    private String internalMerge(SInstance dados, String templateString, boolean escapeContentHtml, boolean ignoreError) {
+        return merge(dados, escapeContentHtml, parseTemplate(templateString, ignoreError));
+    }
+
+    public String merge(SInstance dados, boolean escapeContentHtml, Template template) {
         StringWriter out = new StringWriter();
         try {
             template.process(dados, out, new FormObjectWrapper(escapeContentHtml));
@@ -124,36 +111,35 @@ public final class FormFreemarkerUtil {
         return out.toString();
     }
 
-    
-    private static Template parseTemplate(String template, boolean ignoreError) {
+    private Template parseTemplate(String template, boolean ignoreError) {
         try {
             TemplateExceptionHandler result;
             String ignoreProperty = SingularProperties.get().getProperty(SingularProperties.FREEMARKER_IGNORE_ERROR);
-            if(ignoreProperty != null){
-                if("true".equalsIgnoreCase(ignoreProperty)){
+            if (ignoreProperty != null) {
+                if ("true".equalsIgnoreCase(ignoreProperty)) {
                     result = TemplateExceptionHandler.IGNORE_HANDLER;
-                }else{
+                } else {
                     result = TemplateExceptionHandler.RETHROW_HANDLER;
                 }
-            }else{
-                if(ignoreError){
+            } else {
+                if (ignoreError) {
                     result = TemplateExceptionHandler.IGNORE_HANDLER;
-                }else{
+                } else {
                     result = TemplateExceptionHandler.RETHROW_HANDLER;
                 }
-                
+
             }
-            return new Template("templateStringParameter", template,  getConfiguration(result));
+            return new Template("templateStringParameter", template, getConfiguration(result));
         } catch (IOException e) {
             throw new SingularFormException("Erro fazendo parse do template: " + template, e);
         }
     }
 
-    private static synchronized Configuration getConfiguration(TemplateExceptionHandler exceptionHandler) {
-        
+    private Configuration getConfiguration(TemplateExceptionHandler exceptionHandler) {
+
         Configuration c = null;
         if (exceptionHandler != null) {
-            if (exceptionHandler == exceptionHandler.IGNORE_HANDLER) {
+            if (exceptionHandler == TemplateExceptionHandler.IGNORE_HANDLER) {
                 if (cfgIgnoreError == null) {
                     cfgIgnoreError = newConfiguration(exceptionHandler);
                 }
@@ -168,15 +154,15 @@ public final class FormFreemarkerUtil {
         return c;
     }
 
-    private static Configuration newConfiguration(TemplateExceptionHandler exceptionHandler) {
+    private Configuration newConfiguration(TemplateExceptionHandler exceptionHandler) {
         Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
         novo.setDefaultEncoding(StandardCharsets.UTF_8.name());
         novo.setLocale(new Locale("pt", "BR"));
         novo.setTemplateExceptionHandler(exceptionHandler);
         return novo;
     }
-    
-    private static TemplateModel toTemplateModel(Object obj, boolean escapeContentHtml) {
+
+    private TemplateModel toTemplateModel(Object obj, boolean escapeContentHtml) {
         if (obj == null) {
             return null;
         } else if (obj instanceof SISimple) {
@@ -193,11 +179,11 @@ public final class FormFreemarkerUtil {
         throw new SingularFormException(msg);
     }
 
-    private static TemplateModel toTemplateModelSimple(SISimple obj, boolean escapeContentHtml) {
-        if(obj != null && obj.getValue() == null){ // && !(obj instanceof SIString)
+    private TemplateModel toTemplateModelSimple(SISimple obj, boolean escapeContentHtml) {
+        if (obj != null && obj.getValue() == null) { // && !(obj instanceof SIString)
             return null;//nullModel
         }
-        
+
         if (obj instanceof SIString) {
             return new SSimpleTemplateModel(obj, escapeContentHtml);
         } else if (obj instanceof SINumber) {
@@ -214,21 +200,21 @@ public final class FormFreemarkerUtil {
         return new SSimpleTemplateModel(obj, escapeContentHtml);
     }
 
-    private static class FormObjectWrapper implements ObjectWrapper {
+    private class FormObjectWrapper implements ObjectWrapper {
 
         private boolean escapeContentHtml;
-        
+
         public FormObjectWrapper(boolean escapeContentHtml) {
             this.escapeContentHtml = escapeContentHtml;
         }
-        
+
         @Override
         public TemplateModel wrap(Object obj) throws TemplateModelException {
             return toTemplateModel(obj, escapeContentHtml);
         }
     }
 
-    private static abstract class SInstanceMethodTemplate<INSTANCE extends SInstance> implements TemplateMethodModelEx {
+    private abstract class SInstanceMethodTemplate<INSTANCE extends SInstance> implements TemplateMethodModelEx {
         private final INSTANCE instance;
         private final String methodName;
 
@@ -249,7 +235,7 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SInstanceZeroArgumentMethodTemplate<INSTANCE extends SInstance> extends SInstanceMethodTemplate<INSTANCE> {
+    private class SInstanceZeroArgumentMethodTemplate<INSTANCE extends SInstance> extends SInstanceMethodTemplate<INSTANCE> {
 
         private final Function<INSTANCE, Object> function;
 
@@ -265,11 +251,11 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static abstract class SInstanceTemplateModel<INSTANCE extends SInstance> implements TemplateScalarModel, TemplateHashModel {
+    private abstract class SInstanceTemplateModel<INSTANCE extends SInstance> implements TemplateScalarModel, TemplateHashModel {
         private final INSTANCE instance;
         private boolean invertedPriority;
         protected boolean escapeContentHtml;
-        
+
         public SInstanceTemplateModel(INSTANCE instance) {
             this.instance = instance;
         }
@@ -294,7 +280,7 @@ public final class FormFreemarkerUtil {
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
             if ("toStringDisplayDefault".equals(key)) {
-                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, i -> i.toStringDisplayDefault());
+                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, SInstance::toStringDisplayDefault);
             } else if ("value".equals(key) || "getValue".equals(key)) {
                 return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, i -> getValue());
             } else if ("_inst".equals(key)) {
@@ -314,7 +300,7 @@ public final class FormFreemarkerUtil {
                 newSelf.invertedPriority = true;
                 return newSelf;
             } else if ("toStringDisplay".equals(key)) {
-                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, i -> i.toStringDisplay());
+                return new SInstanceZeroArgumentMethodTemplate<>(getInstance(), key, SInstance::toStringDisplay);
             }
             return null;
         }
@@ -325,10 +311,10 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SSimpleTemplateModel<INSTANCE extends SISimple<?>> extends SInstanceTemplateModel<INSTANCE>
+    private class SSimpleTemplateModel<INSTANCE extends SISimple<?>> extends SInstanceTemplateModel<INSTANCE>
             implements TemplateScalarModel {
 
-        
+
         public SSimpleTemplateModel(INSTANCE instance) {
             super(instance, false);
         }
@@ -339,21 +325,21 @@ public final class FormFreemarkerUtil {
 
         @Override
         public String getAsString() throws TemplateModelException {
-            if(escapeContentHtml){
+            if (escapeContentHtml) {
                 return StringUtils.defaultString(StringEscapeUtils.escapeHtml4(getInstance().toStringDisplayDefault()));
-            }else{
+            } else {
                 return StringUtils.defaultString(getInstance().toStringDisplayDefault());
             }
         }
     }
 
-    private static class SNumberTemplateModel<INSTANCE extends SINumber<?>> extends SSimpleTemplateModel<INSTANCE>
+    private class SNumberTemplateModel<INSTANCE extends SINumber<?>> extends SSimpleTemplateModel<INSTANCE>
             implements TemplateNumberModel {
 
         public SNumberTemplateModel(INSTANCE instance) {
             super(instance, false);
         }
-        
+
         public SNumberTemplateModel(INSTANCE instance, boolean escapeContentHtml) {
             super(instance, escapeContentHtml);
         }
@@ -365,12 +351,12 @@ public final class FormFreemarkerUtil {
 
     }
 
-    private static class SIBooleanTemplateModel extends SSimpleTemplateModel<SIBoolean> implements TemplateBooleanModel {
+    private class SIBooleanTemplateModel extends SSimpleTemplateModel<SIBoolean> implements TemplateBooleanModel {
 
         public SIBooleanTemplateModel(SIBoolean instance) {
             super(instance, false);
         }
-        
+
         public SIBooleanTemplateModel(SIBoolean instance, boolean escapeContentHtml) {
             super(instance, escapeContentHtml);
         }
@@ -382,12 +368,12 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SIDateTemplateModel extends SSimpleTemplateModel<SIDate> implements TemplateDateModel {
+    private class SIDateTemplateModel extends SSimpleTemplateModel<SIDate> implements TemplateDateModel {
 
         public SIDateTemplateModel(SIDate instance) {
             super(instance, false);
         }
-        
+
         public SIDateTemplateModel(SIDate instance, boolean escapeContentHtml) {
             super(instance, escapeContentHtml);
         }
@@ -403,12 +389,12 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SIDateTimeTemplateModel extends SSimpleTemplateModel<SIDateTime> implements TemplateDateModel {
+    private class SIDateTimeTemplateModel extends SSimpleTemplateModel<SIDateTime> implements TemplateDateModel {
 
         public SIDateTimeTemplateModel(SIDateTime instance) {
             super(instance, false);
         }
-        
+
         public SIDateTimeTemplateModel(SIDateTime instance, boolean escapeContentHtml) {
             super(instance, escapeContentHtml);
         }
@@ -425,7 +411,7 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SITimeTemplateModel extends SSimpleTemplateModel<SITime> implements TemplateDateModel {
+    private class SITimeTemplateModel extends SSimpleTemplateModel<SITime> implements TemplateDateModel {
 
         public SITimeTemplateModel(SITime instance) {
             super(instance, false);
@@ -446,9 +432,9 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SListTemplateModel extends SInstanceTemplateModel<SIList<?>> implements TemplateSequenceModel {
+    private class SListTemplateModel extends SInstanceTemplateModel<SIList<?>> implements TemplateSequenceModel {
 
-        
+
         public SListTemplateModel(SIList<?> list) {
             super(list, false);
         }
@@ -473,12 +459,12 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SICompositeTemplateModel extends SInstanceTemplateModel<SIComposite> {
+    private class SICompositeTemplateModel extends SInstanceTemplateModel<SIComposite> {
 
         public SICompositeTemplateModel(SIComposite composite) {
             super(composite, false);
         }
-        
+
         public SICompositeTemplateModel(SIComposite composite, boolean escapeContentHtml) {
             super(composite, escapeContentHtml);
         }
@@ -520,7 +506,7 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SInstanceCollectionTemplateModel implements TemplateCollectionModel {
+    private class SInstanceCollectionTemplateModel implements TemplateCollectionModel {
         private final Collection<SInstance> collection;
         private boolean escapeContentHtml;
 

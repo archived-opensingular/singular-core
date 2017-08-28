@@ -311,7 +311,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic displayString(String displayStringTemplate) {
-        return displayString(FormFreemarkerUtil.createInstanceCalculation(displayStringTemplate, false, true));
+        return displayString(FormFreemarkerUtil.get().createInstanceCalculation(displayStringTemplate, false, true));
     }
 
     public AtrBasic displayString(SimpleValueCalculation<String> valueCalculation) {
