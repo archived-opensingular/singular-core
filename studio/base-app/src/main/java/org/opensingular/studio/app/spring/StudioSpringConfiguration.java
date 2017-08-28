@@ -1,7 +1,6 @@
 package org.opensingular.studio.app.spring;
 
 import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.SingularFormConfig;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.util.Loggable;
@@ -30,11 +29,6 @@ public class StudioSpringConfiguration implements Loggable {
     @Bean
     public SingularSingletonStrategy singularSingletonStrategy() {
         return studioAppConfig.getSingularSingletonStrategy();
-    }
-
-    @Bean
-    public SingularFormConfig singularFormConfig() {
-        return studioAppConfig.getSingularFormConfig();
     }
 
     @Bean

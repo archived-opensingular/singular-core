@@ -1,11 +1,9 @@
 package org.opensingular.studio.app;
 
 import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.SingularFormConfig;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.spring.SpringSDocumentFactoryEmpty;
 import org.opensingular.form.spring.SpringServiceRegistry;
-import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.context.singleton.SpringBoundedSingletonStrategy;
 import org.opensingular.studio.app.spring.DefaulSpringSecurityConfig;
@@ -31,11 +29,6 @@ public abstract class AbstractStudioAppConfig implements StudioAppConfig {
     @Override
     public SingularSingletonStrategy getSingularSingletonStrategy() {
         return new SpringBoundedSingletonStrategy();
-    }
-
-    @Override
-    public SingularFormConfig getSingularFormConfig() {
-        return new SingularFormConfigWicketImpl();
     }
 
     @Override

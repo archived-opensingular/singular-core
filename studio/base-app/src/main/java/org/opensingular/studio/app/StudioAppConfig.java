@@ -1,7 +1,6 @@
 package org.opensingular.studio.app;
 
 import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.SingularFormConfig;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.studio.app.wicket.StudioApplication;
@@ -27,8 +26,6 @@ public interface StudioAppConfig {
     List<Class<?>> getSpringAnnotatedConfigs();
 
     SingularSingletonStrategy getSingularSingletonStrategy();
-
-    SingularFormConfig getSingularFormConfig();
 
     SDocumentFactory getSDocumentFactory();
 
