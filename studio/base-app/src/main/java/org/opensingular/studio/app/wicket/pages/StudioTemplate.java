@@ -11,7 +11,6 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.studio.app.definition.StudioDefinition;
 import org.opensingular.studio.app.menu.StudioMenuItem;
-import org.opensingular.studio.app.wicket.StudioApplication;
 import org.opensingular.studio.core.menu.GroupMenuEntry;
 import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
@@ -39,7 +38,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         } else {
             StringBuilder path = new StringBuilder(pathStringValue.toString());
             for (int i = 0; i < getPageParameters().getIndexedCount(); i++) {
-                path.append("/").append(getPageParameters().get(i));
+                path.append('/').append(getPageParameters().get(i));
             }
             menuPath = path.toString();
         }

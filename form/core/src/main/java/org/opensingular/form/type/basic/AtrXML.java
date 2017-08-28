@@ -37,7 +37,7 @@ public class AtrXML extends STranslatorForAttribute {
     }
 
     public Predicate<SInstance> getKeepNodePredicate() {
-        return isKeepNodePredicateConfigured() ? getAttributeValue(SPackagePersistence.ATR_XML) : si -> Boolean.FALSE ;
+        return isKeepNodePredicateConfigured() ? getAttributeValue(SPackagePersistence.ATR_XML) : si -> false;
     }
 
     public boolean isKeepNodePredicateConfigured() {
