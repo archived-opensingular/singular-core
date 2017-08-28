@@ -33,6 +33,7 @@ import org.opensingular.form.type.core.STypeHTML;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
@@ -72,6 +73,7 @@ import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
 import org.opensingular.form.wicket.mapper.MoneyMapper;
 import org.opensingular.form.wicket.mapper.NumberMapper;
 import org.opensingular.form.wicket.mapper.PanelListMapper;
+import org.opensingular.form.wicket.mapper.PasswordMapper;
 import org.opensingular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.RichTextMapper;
 import org.opensingular.form.wicket.mapper.StringMapper;
@@ -175,6 +177,7 @@ public class IWicketComponentMapperRegistry
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
         add(STypeHTML.class,            SViewByPortletRichText.class,     PortletRichTextMapper::new);
+        add(STypePassword.class,                                          PasswordMapper::new);
         //@formatter:on
     }
 }
