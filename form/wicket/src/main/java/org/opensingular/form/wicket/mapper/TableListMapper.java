@@ -46,7 +46,6 @@ import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -193,7 +192,9 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
 
             Collection<SType<?>> fields = compositeElementsType.getFields();
-            int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
+            int sumWidthPref = (view.isRenderCompositeFieldsAsColumns())
+                ? fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum()
+                : compositeElementsType.asAtrBootstrap().getColPreference(1);
 
             IConsumer<SType<?>> columnCallback = tCampo -> {
                 final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
