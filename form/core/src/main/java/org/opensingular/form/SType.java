@@ -36,14 +36,8 @@ import org.opensingular.lib.commons.util.Loggable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -88,15 +82,19 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private SView view;
 
-    /** List os aspectes implementations registered locally to the type. */
-    private AspectEntry<?,?>[] aspects;
+    /**
+     * List os aspectes implementations registered locally to the type.
+     */
+    private AspectEntry<?, ?>[] aspects;
 
     /**
      * Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}.
      */
     private boolean callingOnLoadType;
 
-    /** It's the package that owns this type. */
+    /**
+     * It's the package that owns this type.
+     */
     private SPackage pkg;
 
     protected SType() {
@@ -141,7 +139,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         try {
             newType = (S) getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando " +getClass().getName(), e);
+            throw new SingularFormException("Erro instanciando " + getClass().getName(), e);
         }
         ((SType<I>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
@@ -158,7 +156,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     @SuppressWarnings("unchecked")
     final void resolveSuperType(SDictionary dictionary) {
         if (superType == null && getClass() != SType.class) {
-            Class<SType> c = (Class<SType>) Objects.requireNonNull(getClass().getSuperclass());
+            Class<? extends SType> c = getClass();
+            do {
+                c = (Class<SType>) c.getSuperclass();
+            } while (Modifier.isAbstract(c.getModifiers()));
             superType = dictionary.getType(c);
         }
     }
@@ -372,13 +373,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Override
     public final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
-            @Nullable SimpleValueCalculation<V> value) {
+                                                  @Nullable SimpleValueCalculation<V> value) {
         getAttributesMap().setAttributeCalculation(atr, value);
     }
 
     @Override
     public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> valueCalculation) {
+                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
         getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
     }
 
@@ -410,7 +411,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
-    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    /**
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
+     */
     @Nullable
     final SInstance getAttributeDirectly(@Nonnull AttrInternalRef ref) {
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref);
@@ -819,7 +822,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private void debugAttribute(Appendable appendable, SInstance attr) {
         try {
-            if (! attr.getAttributeInstanceInfo().getRef().isResolved()) {
+            if (!attr.getAttributeInstanceInfo().getRef().isResolved()) {
                 appendable.append('?');
             }
             appendable.append(suppressPackage(attr.getAttributeInstanceInfo().getName(), true)).append("=")
@@ -900,7 +903,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * only for internal use.
      */
     @Nullable
-    final AspectEntry<?,?> getAspectDirect(int index) {
+    final AspectEntry<?, ?> getAspectDirect(int index) {
         return ArrUtil.arrayGet(aspects, index);
     }
 
@@ -913,7 +916,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         Objects.requireNonNull(aspectRef);
         Objects.requireNonNull(factory);
         Integer index = getDictionary().getMasterAspectRegistry().getIndex(aspectRef);
-        AspectEntry<T,Object> entry = new AspectEntry<>(null, factory);
+        AspectEntry<T, Object> entry = new AspectEntry<>(null, factory);
         aspects = ArrUtil.arraySet(aspects, index, entry, AspectEntry.class, 1);
         return this;
     }
@@ -933,6 +936,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * Lambda para inicialização da {@link SInstance} desse {@link SType}
      * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.
      * Quando a {@link SInstance} persistence é carregada o listener não é executado novamente.
+     *
      * @param initListener
      * @return
      */
