@@ -16,9 +16,6 @@
 
 package org.opensingular.form.wicket;
 
-import java.util.Deque;
-import java.util.LinkedList;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
@@ -38,6 +35,7 @@ import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachmentImage;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
@@ -47,9 +45,12 @@ import org.opensingular.form.view.SMultiSelectionByCheckboxView;
 import org.opensingular.form.view.SMultiSelectionByPicklistView;
 import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAttachmentImage;
+import org.opensingular.form.view.SViewAttachmentImageTooltip;
 import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewBooleanByRadio;
+import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewBreadcrumb;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewByPortletRichText;
@@ -61,7 +62,6 @@ import org.opensingular.form.view.SViewReadOnly;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.form.view.ViewMapperRegistry;
@@ -85,6 +85,8 @@ import org.opensingular.form.wicket.mapper.TelefoneNacionalMapper;
 import org.opensingular.form.wicket.mapper.TextAreaMapper;
 import org.opensingular.form.wicket.mapper.TimeMapper;
 import org.opensingular.form.wicket.mapper.YearMonthMapper;
+import org.opensingular.form.wicket.mapper.attachment.image.AttachmentImageMapper;
+import org.opensingular.form.wicket.mapper.attachment.image.AttachmentImageMapperToolTip;
 import org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper;
 import org.opensingular.form.wicket.mapper.attachment.single.AttachmentMapper;
 import org.opensingular.form.wicket.mapper.composite.BlocksCompositeMapper;
@@ -105,6 +107,9 @@ import org.opensingular.form.wicket.mapper.selection.RadioMapper;
 import org.opensingular.form.wicket.mapper.selection.SelectMapper;
 import org.opensingular.form.wicket.panel.BreadPanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -194,7 +199,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeSimple.class,     SViewSelectionByRadio.class,           RadioMapper::new)
                 .register(STypeSimple.class,     SViewSelectionBySelect.class,          SelectMapper::new)
                 .register(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new)
-                .register(STypeBoolean.class,     SViewSelectionBySelect.class,         BooleanSelectMapper::new)
+                .register(STypeBoolean.class,    SViewSelectionBySelect.class,          BooleanSelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanSwitch.class,              BooleanSwitchMapper::new)
                 .register(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new)
@@ -209,6 +214,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeDecimal.class,                                           DecimalMapper::new)
                 .register(STypeMonetary.class,                                          MoneyMapper::new)
                 .register(STypeAttachment.class,                                        AttachmentMapper::new)
+                .register(STypeAttachmentImage.class, SViewAttachmentImage.class,       AttachmentImageMapper::new)
+                .register(STypeAttachmentImage.class, SViewAttachmentImageTooltip.class,AttachmentImageMapperToolTip::new)
                 .register(STypeLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new)
                 .register(STypeComposite.class,                                         DefaultCompositeMapper::new)
                 .register(STypeComposite.class,   SViewTab.class,                       TabMapper::new)
