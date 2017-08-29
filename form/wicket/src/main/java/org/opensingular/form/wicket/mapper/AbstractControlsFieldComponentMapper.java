@@ -54,7 +54,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
     final static HintKey<Boolean>           NO_DECORATION            = new HintKey<Boolean>() {
                                                                          @Override
                                                                          public Boolean getDefaultValue() {
-                                                                             return false;
+                                                                             return Boolean.FALSE;
                                                                          }
                                                                          @Override
                                                                          public boolean isInheritable() {
