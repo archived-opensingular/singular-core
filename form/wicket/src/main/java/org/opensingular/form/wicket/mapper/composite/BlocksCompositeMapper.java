@@ -74,7 +74,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
     }
 
     private static boolean isSingleTypeTitleBlank(final Block block, SIComposite currentInstance) {
-        SInstance singleTypeInstance = block.getSingleType(currentInstance).get();
+        SInstance singleTypeInstance = block.getSingleType(currentInstance).orElse(null);
         String label = singleTypeInstance.asAtr().getLabel();
         return isBlank(label);
     }

@@ -29,7 +29,7 @@ import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 @FunctionalInterface
 public interface IWicketComponentMapper extends UIComponentMapper {
 
-    public static final HintKey<Boolean> HIDE_LABEL = () -> false;
+    public static final HintKey<Boolean> HIDE_LABEL = () -> Boolean.FALSE;
 
     void buildView(WicketBuildContext ctx);
 

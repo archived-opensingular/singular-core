@@ -293,13 +293,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                     final IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
                     wicketBuilder.build(
                         ctx.createChild(row.newCol(), fm)
-                            .setHint(HIDE_LABEL, true),
+                            .setHint(HIDE_LABEL, Boolean.TRUE),
                         viewMode);
                 }
             } else {
                 wicketBuilder.build(
                     ctx.createChild(row.newCol(), itemModel)
-                        .setHint(HIDE_LABEL, true),
+                        .setHint(HIDE_LABEL, Boolean.TRUE),
                     viewMode);
             }
 
