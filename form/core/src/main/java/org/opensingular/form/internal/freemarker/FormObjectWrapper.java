@@ -34,7 +34,7 @@ public class FormObjectWrapper implements ObjectWrapper, Loggable {
         } else if (obj instanceof SIList) {
             return new SListTemplateModel((SIList<?>) obj, this, escapeContentHtml);
         } else if (obj instanceof Map) {
-            return new SimpleHash((Map) obj, fallBackWrapper);
+            return new SimpleHash((Map) obj, this);
         }
         if (obj instanceof SInstance) {
             String msg = "A classe " + obj.getClass().getName() + " não é suportada para mapeamento no template";
