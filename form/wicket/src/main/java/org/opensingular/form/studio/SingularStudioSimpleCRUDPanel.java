@@ -3,6 +3,7 @@ package org.opensingular.form.studio;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -50,7 +51,7 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
     private final WebMarkupContainer container = new WebMarkupContainer("container");
 
     private IModel<String> crudTitle = new Model<>();
-    private IModel<Icon>   crudIcon  = new Model<>();
+    private IModel<Icon> crudIcon = new Model<>();
 
     public SingularStudioSimpleCRUDPanel(String id, FormRespository<TYPE, INSTANCE> formPersistence) {
         this(id, () -> formPersistence);
@@ -67,6 +68,10 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
         showListContent(null);
     }
 
+    public static final FormKey getFormKey(SInstance ins) {
+        return FormKey.from(ins);
+    }
+
     protected FormRespository<TYPE, INSTANCE> getFormPersistence() {
         return this.formPersistence.get();
     }
@@ -78,8 +83,10 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
     }
 
     private void onDelete(AjaxRequestTarget target, IModel<INSTANCE> model) {
-        getFormPersistence().delete(getFormKey(model.getObject()));
-        showListContent(target);
+        RemoveAjaxBehaviour removeAjaxAction = new RemoveAjaxBehaviour(model);
+        add(removeAjaxAction);
+        target.appendJavaScript("bootbox.confirm('Tem certeza que deseja excluir?', " +
+                "function(isOk){if(isOk){Wicket.Ajax.get({u:'" + removeAjaxAction.getCallbackUrl() + "'});}});");
     }
 
     private void onSave(AjaxRequestTarget target, IModel<INSTANCE> instanceModel) {
@@ -87,6 +94,7 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
         getFormPersistence().insertOrUpdate(instance, null);
         instanceModel.setObject(getFormPersistence().createInstance());
         showListContent(target);
+        new ToastrHelper(SingularStudioSimpleCRUDPanel.this).addToastrMessage(ToastrType.INFO, "Item salvo com sucesso.");
     }
 
     private void onSaveCanceled(AjaxRequestTarget target) {
@@ -111,10 +119,6 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
         replaceContent(target, newEditContent(ID_CONTENT, key));
     }
 
-    public static final FormKey getFormKey(SInstance ins) {
-        return FormKey.from(ins);
-    }
-
     protected Component newCreateContent(String id) {
         return new FormFragment(id, getFormPersistence().createInstance());
     }
@@ -125,6 +129,16 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
 
     protected Component newListContent(String id) {
         return new ListFragment(id);
+    }
+
+    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudTitle(String crudTitle) {
+        this.crudTitle.setObject(crudTitle);
+        return this;
+    }
+
+    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudIcon(Icon crudIcon) {
+        this.crudIcon.setObject(crudIcon);
+        return this;
     }
 
     private class FormFragment extends Fragment {
@@ -184,7 +198,7 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
                     Set<String> classes = new HashSet<>(oldClasses);
-                    if(crudIcon.getObject() != null) {
+                    if (crudIcon.getObject() != null) {
                         classes.add(crudIcon.getObject().getCssClass());
                     }
                     return classes;
@@ -215,18 +229,23 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
 
         private BSActionColumn<INSTANCE, String> appendActions(BSActionColumn<INSTANCE, String> col) {
             return col
-                    .appendAction($m.ofValue("edit"), DefaultIcons.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit)
-                    .appendAction($m.ofValue("delete"), DefaultIcons.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
+                    .appendAction($m.ofValue("Editar"), DefaultIcons.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit)
+                    .appendAction($m.ofValue("Deletar"), DefaultIcons.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
         }
     }
 
-    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudTitle(String crudTitle) {
-        this.crudTitle.setObject(crudTitle);
-        return this;
-    }
+    private class RemoveAjaxBehaviour extends AbstractDefaultAjaxBehavior {
+        private final IModel<INSTANCE> model;
 
-    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudIcon(Icon crudIcon) {
-        this.crudIcon.setObject(crudIcon);
-        return this;
+        private RemoveAjaxBehaviour(IModel<INSTANCE> model) {
+            this.model = model;
+        }
+
+        @Override
+        protected void respond(AjaxRequestTarget ajaxRequestTarget) {
+            getFormPersistence().delete(getFormKey(model.getObject()));
+            showListContent(ajaxRequestTarget);
+            new ToastrHelper(SingularStudioSimpleCRUDPanel.this).addToastrMessage(ToastrType.INFO, "Item excluido com sucesso.");
+        }
     }
 }
