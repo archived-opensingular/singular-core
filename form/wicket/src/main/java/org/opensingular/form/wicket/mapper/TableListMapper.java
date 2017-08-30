@@ -192,9 +192,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
 
             Collection<SType<?>> fields = compositeElementsType.getFields();
-            int sumWidthPref = (view.isRenderCompositeFieldsAsColumns())
-                ? fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum()
-                : compositeElementsType.asAtrBootstrap().getColPreference(1);
+            int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
             IConsumer<SType<?>> columnCallback = tCampo -> {
                 final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
@@ -286,17 +284,11 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 final STypeComposite<?> ct = ci.getType();
 
                 for (SType<?> ft : ct.getFields()) {
-                    final IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    wicketBuilder.build(
-                        ctx.createChild(row.newCol(), fm)
-                            .setHint(HIDE_LABEL, Boolean.TRUE),
-                        viewMode);
+                    IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
+                    ctx.createChild(row.newCol(), fm).setHint(HIDE_LABEL, Boolean.TRUE).build();
                 }
             } else {
-                wicketBuilder.build(
-                    ctx.createChild(row.newCol(), itemModel)
-                        .setHint(HIDE_LABEL, Boolean.TRUE),
-                    viewMode);
+                ctx.createChild(row.newCol(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
             if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
