@@ -16,19 +16,19 @@
 
 package org.opensingular.form.validation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class InstanceValidationContext {
 
@@ -90,12 +90,12 @@ public class InstanceValidationContext {
                 validatable.error(new ValidationErrorImpl(instance.getId(), ValidationErrorLevel.ERROR, "Campo obrigatório"));
                 return;
             }
-            final SType<I> tipo = (SType<I>) instance.getType();
-            for (InstanceValidator<I> validator : tipo.getValidators()) {
-                if (containsInvalidChild && validator.executeOnlyIfChildrenValid())
+            final SType<I> type = (SType<I>) instance.getType();
+            for (ValidationEntry<I> entry : type.getValidators()) {
+                if (containsInvalidChild && entry.getValidator().executeOnlyIfChildrenValid())
                     continue;
-                validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
-                validator.validate(validatable);
+                validatable.setDefaultLevel(entry.getErrorLevel());
+                entry.getValidator().validate(validatable);
             }
         }
     }

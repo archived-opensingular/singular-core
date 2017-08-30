@@ -2172,11 +2172,12 @@ Theme Panel
     border-bottom: 1px solid #dfdfdf !important; }
   .list-table-body td button {
     border: 0;
-    padding: 0;
-    background: none; }
+    padding: 0; }
   .list-table-body .singular-remove-btn {
     top: 5px;
     position: relative; }
+  .list-table-body tbody > tr > td {
+    padding: 3px; }
 
 .list-table-empty {
   display: block;
@@ -2216,7 +2217,7 @@ Theme Panel
     .list-by-form .list-group-item .list-item-header:after {
       clear: both; }
   .list-by-form .list-group-item .list-item-body {
-    background-color: #FDFDFD;
+    background-color: #f2f2f266;
     padding-top: 20px; }
 
 .list-by-form .has-error input {
@@ -2268,8 +2269,7 @@ Theme Panel
   white-space: normal !important; }
 
 .has-error input {
-  padding-right: 5px !important;
-  background: none !important; }
+  padding-right: 5px !important; }
 
 .fileinput-filename {
   position: absolute;

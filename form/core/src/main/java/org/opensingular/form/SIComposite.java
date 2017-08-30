@@ -70,6 +70,7 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
      *
      * @return instancias dos campos
      */
+    @Nonnull
     public List<SInstance> getAllFields() {
         for (SType<?> field : getType().getFields())
             getField(field.getNameSimple());

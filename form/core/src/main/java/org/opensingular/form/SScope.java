@@ -26,6 +26,9 @@ public interface SScope {
     public String getName();
 
     @Nonnull
+    public String getNameSimple();
+
+    @Nonnull
     public Optional<SType<?>> getLocalTypeOptional(@Nonnull String simpleName);
 
     @Nonnull
@@ -35,16 +38,7 @@ public interface SScope {
     public SScope getParentScope();
 
     @Nonnull
-    public default SPackage getPackage() {
-        SScope atual = this;
-        while (atual != null && !(atual instanceof SPackage)) {
-            atual = atual.getParentScope();
-        }
-        if (atual == null) {
-            throw new SingularFormException("Internal Error: Não foi possível encontrar o pacote do tipo", this);
-        }
-        return (SPackage) atual;
-    }
+    public SPackage getPackage();
 
     @Nonnull
     public SDictionary getDictionary();

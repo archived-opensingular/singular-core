@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.6.9-SNAPSHOT</version>
+    <version>1.6.9-STUDIO-SNAPSHOT</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -41,10 +41,11 @@
     <modules>
         <module>flow</module>
         <module>form</module>
-		<module>flow-form</module>
+	<module>flow-form</module>
         <module>lib</module>
         <module>resources</module>
         <module>ws</module>
+        <module>studio</module>
     </modules>
 
     <build>

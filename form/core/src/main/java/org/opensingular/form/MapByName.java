@@ -39,8 +39,8 @@ class MapByName<K> implements Iterable<K> {
     private final Map<String, K>             byName   = new LinkedHashMap<>();
     private final Map<Class<? extends K>, K> byClass = new HashMap<>();
 
-    MapByName(Function<K, String> mapeadorNome) {
-        this.nameMapper = mapeadorNome;
+    MapByName(Function<K, String> nameMapper) {
+        this.nameMapper = nameMapper;
     }
 
     @SuppressWarnings("unchecked")
@@ -72,41 +72,36 @@ class MapByName<K> implements Iterable<K> {
     }
 
     @Nonnull
-    final <T extends K> T getOrNewInstance(@Nonnull Class<T> classeAlvo) {
-        T valor = get(classeAlvo);
+    final <T extends K> T getOrNewInstance(@Nonnull Class<T> targetClass) {
+        T valor = get(targetClass);
         if (valor == null) {
-            return newInstance(classeAlvo);
+            try {
+                return targetClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new SingularFormException("Erro instanciando " + targetClass.getName(), e);
+            }
         }
         return valor;
-    }
-
-    @Nonnull
-    static <TT> TT newInstance(@Nonnull Class<TT> classeAlvo) {
-        try {
-            return classeAlvo.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando " + classeAlvo.getName(), e);
-        }
     }
 
     final <T extends K> void verifyMustNotBePresent(Class<T> classeAlvo, Object owner) {
         T valor = get(classeAlvo);
         if (valor != null) {
-            throw new SingularFormException(erroMsg("A definição '" + getNome(valor) + "' já está carregada", owner));
+            throw new SingularFormException(errorMsg("A definição '" + getNome(valor) + "' já está carregada", owner));
         }
     }
 
-    final void verifyMustNotBePresent(K alvo, Object owner) {
-        verifyMustNotBePresent(getNome(alvo), owner);
+    final void verifyMustNotBePresent(K newMember, Object owner) {
+        verifyMustNotBePresent(getNome(newMember), owner);
     }
 
     final void verifyMustNotBePresent(@Nonnull String fullName, Object owner) {
         if (byName.containsKey(fullName)) {
-            throw new SingularFormException(erroMsg("A definição '" + fullName + "' já está criada", owner));
+            throw new SingularFormException(errorMsg("A definição '" + fullName + "' já está criada", owner));
         }
     }
 
-    private String erroMsg(String msg, Object owner) {
+    private String errorMsg(String msg, Object owner) {
         if (owner instanceof  SDictionary) {
             return msg + " no dicionário";
         }

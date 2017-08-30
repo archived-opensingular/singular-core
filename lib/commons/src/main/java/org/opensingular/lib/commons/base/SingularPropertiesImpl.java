@@ -52,7 +52,8 @@ public final class SingularPropertiesImpl implements SingularProperties {
     private Supplier<Properties> singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
 
     public static SingularPropertiesImpl get() {
-        return ((SingularSingletonStrategy) SingularContext.get()).singletonize(SingularProperties.class, SingularPropertiesImpl::new);
+        return (SingularPropertiesImpl) ((SingularSingletonStrategy) SingularContext.get()).singletonize(
+                SingularProperties.class, SingularPropertiesImpl::new);
     }
 
     private static File findConfDir() {

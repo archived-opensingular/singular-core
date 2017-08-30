@@ -93,14 +93,23 @@ public class ViewResolver {
         return instance.getDictionary().getViewResolver().resolveInternal(instance);
     }
 
-    /** Busca encontrar a view mais pertinente para a instância informada. */
-    private @Nonnull SView resolveInternal(SInstance instance) {
-        //Verifica se há uma view explicitamente definida
-        for(SType type = instance.getType(); type != null; type = type.getSuperType()) {
-            SView view = type.getView();
+
+    public static SView resolveView(SType type){
+        for(SType i = type; i != null; i = i.getSuperType()) {
+            SView view = i.getView();
             if (view != null) {
                 return view;
             }
+        }
+        return null;
+    }
+
+    /** Busca encontrar a view mais pertinente para a instância informada. */
+    private @Nonnull SView resolveInternal(SInstance instance) {
+        //Verifica se há uma view explicitamente definida
+        SView view = resolveView(instance.getType());
+        if(view != null){
+            return view;
         }
         //Senão, tenta decidir qual seria a melhor view
         Class<?> classType = instance.getType().getClass();

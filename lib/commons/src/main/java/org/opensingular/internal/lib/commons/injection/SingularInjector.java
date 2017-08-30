@@ -17,6 +17,7 @@
 package org.opensingular.internal.lib.commons.injection;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
  * Injeta em um objeto os beans e valores no campos que forem marcados com @{@link javax.inject.Inject}. Também leva em
@@ -30,6 +31,11 @@ public interface SingularInjector {
      * Injects the specified object.
      */
     public void inject(@Nonnull Object object);
+
+    /** Injects in all objects of the list. */
+    default void injectAll(@Nonnull Collection<?> objects) {
+        objects.forEach(o -> inject(o));
+    }
 
     /**
      * Retorna um injetor que não possui nenhum bean disponível e que dispara uma exception se encontrar um @Inject que
