@@ -19,8 +19,9 @@ package org.opensingular.form.persistence.relational;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensingular.form.ICompositeInstance;
-import org.opensingular.form.SInstance;
+import org.opensingular.form.ICompositeType;
+import org.opensingular.form.SType;
+import org.opensingular.form.persistence.FormKey;
 
 /**
  * Builder for SQL insertions on Relational DBMS.
@@ -28,21 +29,14 @@ import org.opensingular.form.SInstance;
  * @author Edmundo Andrade
  */
 public class RelationalSQLDelete implements RelationalSQL {
-	private SInstance instance;
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 
-	public RelationalSQLDelete(SInstance instance) {
-		this.instance = instance;
+	public RelationalSQLDelete(ICompositeType type, FormKey formKey) {
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
-		if (instance instanceof ICompositeInstance)
-			for (SInstance child : ((ICompositeInstance) instance).getChildren())
-				RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
-	}
-
-	public SInstance getInstance() {
-		return instance;
+		for (SType<?> child : type.getContainedTypes())
+			RelationalSQL.collectKeyColumns(child, keyColumns, targetTables);
 	}
 
 	public String[] toSQLScript() {

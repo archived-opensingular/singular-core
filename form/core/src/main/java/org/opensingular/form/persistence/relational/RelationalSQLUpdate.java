@@ -29,24 +29,23 @@ import org.opensingular.form.SInstance;
  * @author Edmundo Andrade
  */
 public class RelationalSQLUpdate implements RelationalSQL {
-	private SInstance instance;
+	private ICompositeInstance instance;
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 
-	public RelationalSQLUpdate(SInstance instance) {
+	public RelationalSQLUpdate(ICompositeInstance instance) {
 		this.instance = instance;
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
-		if (instance instanceof ICompositeInstance)
-			for (SInstance child : ((ICompositeInstance) instance).getAllChildren()) {
-				RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
-				RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns);
-			}
+		for (SInstance child : instance.getAllChildren()) {
+			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
+			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns);
+		}
 	}
 
-	public SInstance getInstance() {
+	public ICompositeInstance getInstance() {
 		return instance;
 	}
 

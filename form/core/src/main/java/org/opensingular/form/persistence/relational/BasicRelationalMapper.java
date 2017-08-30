@@ -30,11 +30,14 @@ import org.opensingular.form.SType;
 public class BasicRelationalMapper implements RelationalMapper {
 	public String table(SType<?> type) {
 		String result = type.as(AtrRelational::new).getTable();
-		if (result == null && hasParentType(type)) {
-			SType<?> parentType = getParentType(type);
-			result = parentType.as(AtrRelational::new).getTable();
-			if (result == null)
-				result = parentType.getNameSimple();
+		if (result == null) {
+			if (hasParentType(type)) {
+				SType<?> parentType = getParentType(type);
+				result = parentType.as(AtrRelational::new).getTable();
+				if (result == null)
+					result = parentType.getNameSimple();
+			} else
+				result = type.getNameSimple();
 		}
 		return result;
 	}

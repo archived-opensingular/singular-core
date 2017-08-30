@@ -61,7 +61,7 @@ public class AtrRelational extends STranslatorForAttribute {
 	}
 
 	public AtrRelational addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
-		return addTableFK(new RelationalFK(keyColumns, getDictionary().getType(typeClass)));
+		return addTableFK(new RelationalFK(getTable(), keyColumns, getDictionary().getType(typeClass)));
 	}
 
 	public AtrRelational addTableFK(RelationalFK fk) {

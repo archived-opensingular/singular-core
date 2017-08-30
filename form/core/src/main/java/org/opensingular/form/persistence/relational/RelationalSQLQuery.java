@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 
 /**
  * Builder for SQL queries on Relational DBMS.
@@ -37,7 +38,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
-	private Map<String, String> joinMap = new HashMap<String, String>();
+	private Map<String, RelationalFK> joinMap;
 
 	@SafeVarargs
 	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
@@ -88,9 +89,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 		StringJoiner sj = new StringJoiner(" left join ");
 		List<String> joinedTables = new ArrayList<>();
 		for (String table : targetTables) {
-			sj.add(table + " " + tableAlias(table));
-			if (!joinedTables.isEmpty())
-				sj.add(onClause(table, joinedTables));
+			sj.add(onClause(table, joinedTables));
 			joinedTables.add(table);
 		}
 		return sj.toString();
@@ -98,13 +97,35 @@ public class RelationalSQLQuery implements RelationalSQL {
 
 	private String onClause(String table, List<String> joinedTables) {
 		String tableAlias = tableAlias(table);
-		StringJoiner sj = new StringJoiner(" ");
-		sj.add("on");
-		for (RelationalColumn keyColumn : keyColumns) {
-			if (keyColumn.getTable().equals(table))
-				sj.add(tableAlias + "." + keyColumn + " = ");
+		String result = table + " " + tableAlias;
+		if (joinedTables.isEmpty())
+			return result;
+		RelationalFK relationship = locateRelationship(table, joinedTables);
+		if (relationship == null)
+			throw new SingularFormException(
+					"Relational mapping should provide foreign key for relevant relationships with table '" + table
+							+ "'.");
+		String foreignTable = RelationalSQL.table(relationship.getForeignType());
+		List<String> foreignColumns = RelationalSQL.tablePK(relationship.getForeignType());
+		if (relationship.getKeyColumns().size() != foreignColumns.size())
+			throw new SingularFormException(
+					"Relational mapping should provide same-size foreign key for the relationship between table '"
+							+ table + "' and '" + foreignTable + "'.");
+		StringJoiner sj = new StringJoiner(" and ");
+		for (int i = 0; i < foreignColumns.size(); i++)
+			sj.add(tableAlias + "." + relationship.getKeyColumns().get(i).getName() + " = " + tableAlias(foreignTable)
+					+ "." + foreignColumns.get(i));
+		return result + " on " + sj.toString();
+	}
+
+	private RelationalFK locateRelationship(String table, List<String> joinedTables) {
+		RelationalFK result = null;
+		for (String joinedTable : joinedTables) {
+			result = joinMap.get(table + ">" + joinedTable);
+			if (result != null)
+				break;
 		}
-		return sj.toString();
+		return result;
 	}
 
 	private String concatenateOrderingColumns(String separator) {
@@ -118,12 +139,11 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return "T" + index;
 	}
 
-	private Map<String, String> createJoinMap(List<RelationalFK> relationships) {
-		for (RelationalFK relationship : relationships) {
-			System.out.println(relationship.getForeignType().getName() + " table "
-					+ RelationalSQL.table(relationship.getForeignType()) + " pk "
-					+ RelationalSQL.tablePK(relationship.getForeignType()));
-		}
-		return null;
+	private Map<String, RelationalFK> createJoinMap(List<RelationalFK> relationships) {
+		Map<String, RelationalFK> result = new HashMap<>();
+		for (RelationalFK relationship : relationships)
+			result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()),
+					relationship);
+		return result;
 	}
 }

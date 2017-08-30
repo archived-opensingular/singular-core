@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 
+import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.ICompositeType;
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.persistence.FormKey;
 
 /**
  * Interface for relational SQL builders.
@@ -40,16 +41,16 @@ public interface RelationalSQL {
 		return new RelationalSQLQuery(fieldCollections);
 	}
 
-	public static RelationalSQLInsert insert(SInstance instance) {
+	public static RelationalSQLInsert insert(ICompositeInstance instance) {
 		return new RelationalSQLInsert(instance);
 	}
 
-	public static RelationalSQLUpdate update(SInstance instance) {
+	public static RelationalSQLUpdate update(ICompositeInstance instance) {
 		return new RelationalSQLUpdate(instance);
 	}
 
-	public static RelationalSQLDelete delete(SInstance instance) {
-		return new RelationalSQLDelete(instance);
+	public static RelationalSQLDelete delete(ICompositeType type, FormKey formKey) {
+		return new RelationalSQLDelete(type, formKey);
 	}
 
 	public static String table(SType<?> field) {
@@ -68,8 +69,8 @@ public interface RelationalSQL {
 		return aspectRelationalMap(field).column(field);
 	}
 
-	public static RelationalMapper aspectRelationalMap(SType<?> field) {
-		Optional<RelationalMapper> mapper = field.getAspect(ASPECT_RELATIONAL_MAP);
+	public static RelationalMapper aspectRelationalMap(SType<?> type) {
+		Optional<RelationalMapper> mapper = type.getAspect(ASPECT_RELATIONAL_MAP);
 		if (mapper.isPresent())
 			return mapper.get();
 		return new BasicRelationalMapper();

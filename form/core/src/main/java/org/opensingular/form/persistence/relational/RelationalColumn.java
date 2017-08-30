@@ -28,10 +28,10 @@ public class RelationalColumn {
 	private String table;
 	private String name;
 
-	public static RelationalColumn fromStringPersistence(String value) {
+	public static RelationalColumn fromStringPersistence(String value, String defaultTable) {
 		String parts[] = value.split(SERIALIZATION_SEPARATOR);
 		if (parts.length < 2)
-			return new RelationalColumn("", parts[0]);
+			return new RelationalColumn(defaultTable, parts[0]);
 		return new RelationalColumn(parts[0], parts[1]);
 	}
 

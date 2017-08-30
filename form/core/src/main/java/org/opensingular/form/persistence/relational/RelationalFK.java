@@ -31,29 +31,35 @@ import org.opensingular.form.SType;
  */
 public class RelationalFK {
 	private static final String SERIALIZATION_SEPARATOR = "|";
+	private String table;
 	private List<RelationalColumn> keyColumns;
 	private SType<?> foreignType;
 
 	public static RelationalFK fromStringPersistence(String value, SDictionary dictionary) {
 		String parts[] = value.split(Pattern.quote(SERIALIZATION_SEPARATOR));
-		return new RelationalFK(parseColumns(parts[0]), dictionary.getType(parts[1]));
+		return new RelationalFK(parts[0], parseColumns(parts[1], ""), dictionary.getType(parts[2]));
 	}
 
-	private static List<RelationalColumn> parseColumns(String value) {
+	private static List<RelationalColumn> parseColumns(String value, String defaultTable) {
 		List<RelationalColumn> columns = new ArrayList<>();
 		String parts[] = value.split(",");
 		for (String part : parts)
-			columns.add(RelationalColumn.fromStringPersistence(part));
+			columns.add(RelationalColumn.fromStringPersistence(part, defaultTable));
 		return columns;
 	}
 
-	public RelationalFK(String keyColumns, SType<?> foreignType) {
-		this(parseColumns(keyColumns), foreignType);
+	public RelationalFK(String table, String keyColumns, SType<?> foreignType) {
+		this(table, parseColumns(keyColumns, table), foreignType);
 	}
 
-	public RelationalFK(List<RelationalColumn> keyColumns, SType<?> foreignType) {
+	public RelationalFK(String table, List<RelationalColumn> keyColumns, SType<?> foreignType) {
+		this.table = table;
 		this.keyColumns = keyColumns;
 		this.foreignType = foreignType;
+	}
+
+	public String getTable() {
+		return table;
 	}
 
 	public List<RelationalColumn> getKeyColumns() {
@@ -66,6 +72,7 @@ public class RelationalFK {
 
 	public String toStringPersistence() {
 		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
+		sj.add(getTable());
 		sj.add(toStringPersistence(getKeyColumns()));
 		sj.add(getForeignType().getName());
 		return sj.toString();
@@ -80,7 +87,8 @@ public class RelationalFK {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RelationalFK)
-			return ((RelationalFK) obj).getKeyColumns().equals(getKeyColumns())
+			return ((RelationalFK) obj).getTable().equals(getTable())
+					&& ((RelationalFK) obj).getKeyColumns().equals(getKeyColumns())
 					&& ((RelationalFK) obj).getForeignType().equals(getForeignType());
 		return super.equals(obj);
 	}
