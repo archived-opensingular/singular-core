@@ -43,7 +43,6 @@ public class BlocksCompositeMapperTest {
         STypeComposite<SIComposite> experiencia = testForm.addFieldComposite("experiencia");
         STypeString                 empresa     = experiencia.addFieldString("empresa", true);
         STypeString                 cargo       = experiencia.addFieldString("cargo", true);
-        experiencia.asAtr().label("Experiencias");
         experiencia.asAtrAnnotation().setAnnotated();
 
 
