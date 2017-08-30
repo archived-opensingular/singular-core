@@ -33,8 +33,6 @@ import java.util.function.Function;
  */
 public class ClassInspectionCache {
 
-    public enum CacheKey {HAS_ON_LOAD_TYPE_METHOD, PUBLIC_INFO, SIMPLE_NAME, FULL_NAME, FILE_DEFINITIONS}
-
     private static Map<Class<?>, Object[]> classInfoCache = new HashMap<>();
 
     /**
@@ -55,9 +53,11 @@ public class ClassInspectionCache {
         return CacheBuilder.newBuilder().softValues().weakKeys().build(new CacheLoader<Class<?>, Object[]>() {
             @Override
             public Object[] load(Class<?> aClass) {
-                return new Object[CacheKey.values().length];
+                return new Object[CacheKey.values().length];//NOSONAR
             }
         });
     }
+
+    public enum CacheKey {HAS_ON_LOAD_TYPE_METHOD, PUBLIC_INFO, SIMPLE_NAME, FULL_NAME, FILE_DEFINITIONS}
 
 }
