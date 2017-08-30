@@ -192,7 +192,9 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
 
             Collection<SType<?>> fields = compositeElementsType.getFields();
-            int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
+            int sumWidthPref = (view.isRenderCompositeFieldsAsColumns())
+                ? fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum()
+                : compositeElementsType.asAtrBootstrap().getColPreference(1);
 
             IConsumer<SType<?>> columnCallback = tCampo -> {
                 final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);

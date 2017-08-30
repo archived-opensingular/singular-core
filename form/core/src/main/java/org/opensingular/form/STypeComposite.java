@@ -27,6 +27,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.view.SView;
@@ -62,6 +63,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         super(instanceClass);
     }
 
+    @Override
     protected void extendSubReference() {
         if (getSuperType().isComposite()) {
             Map<String, SType<?>> fieldsSuper = ((STypeComposite<?>) getSuperType()).fieldsLocal;
@@ -313,6 +315,20 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     public STypeDate addFieldDate(String fieldSimpleName, boolean required) {
         return addField(fieldSimpleName, STypeDate.class, required);
+    }
+    
+    /**
+     * Cria um novo campo do tipo {@link STypeTime} com o nome informado.
+     */
+    public STypeTime addFieldTime(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeTime.class);
+    }
+    
+    /**
+     * Cria um novo campo do tipo {@link STypeTime} com o nome informado.
+     */
+    public STypeTime addFieldTime(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeTime.class, required);
     }
 
     /**
