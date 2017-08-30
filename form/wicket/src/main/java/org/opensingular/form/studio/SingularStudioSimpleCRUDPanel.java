@@ -21,14 +21,15 @@ import org.opensingular.form.SType;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.wicket.component.SingularSaveButton;
+import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 
 import java.util.HashSet;
@@ -39,40 +40,61 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 /**
- * Created by ronaldtm on 16/03/17.
+ * SingularStudioSimpleCRUDPanel permite renderizar um SType com todos os controles de crud
+ *
+ * @param <STYPE>    O SType a ser renderizado
+ * @param <INSTANCE> O tipo de instancia do SType
+ * @author ronaldtm
+ * @author danilo.mesquita
  */
-public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>, INSTANCE extends SIComposite>
+public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE>, INSTANCE extends SIComposite>
         extends Panel {
 
     private static final String ID_CONTENT = "content";
 
-    private final ISupplier<FormRespository<TYPE, INSTANCE>> formPersistence;
+    private final ISupplier<FormRespository<STYPE, INSTANCE>> formPersistence;
 
     private final WebMarkupContainer container = new WebMarkupContainer("container");
+
+    private final ISupplier<StudioCRUDPermissionStrategy> studioCRUDPermissionStrategySupplier;
 
     private IModel<String> crudTitle = new Model<>();
     private IModel<Icon> crudIcon = new Model<>();
 
-    public SingularStudioSimpleCRUDPanel(String id, FormRespository<TYPE, INSTANCE> formPersistence) {
+    public SingularStudioSimpleCRUDPanel(String id,
+                                         FormRespository<STYPE, INSTANCE> formPersistence,
+                                         ISupplier<StudioCRUDPermissionStrategy> studioCRUDPermissionStrategySupplier) {
+        this(id, () -> formPersistence, studioCRUDPermissionStrategySupplier);
+    }
+
+    public SingularStudioSimpleCRUDPanel(String id,
+                                         FormRespository<STYPE, INSTANCE> formPersistence) {
         this(id, () -> formPersistence);
     }
 
-    public SingularStudioSimpleCRUDPanel(String id, ISupplier<FormRespository<TYPE, INSTANCE>> formPersistence) {
+    public SingularStudioSimpleCRUDPanel(String id,
+                                         ISupplier<FormRespository<STYPE, INSTANCE>> formPersistence) {
+        this(id, formPersistence, () -> StudioCRUDPermissionStrategy.ALL);
+    }
+
+    public SingularStudioSimpleCRUDPanel(String id,
+                                         ISupplier<FormRespository<STYPE, INSTANCE>> formPersistence,
+                                         ISupplier<StudioCRUDPermissionStrategy> studioCRUDPermissionStrategySupplier) {
         super(id);
         this.formPersistence = formPersistence;
-
+        this.studioCRUDPermissionStrategySupplier = studioCRUDPermissionStrategySupplier;
         add(container
                 .setOutputMarkupId(true)
                 .setOutputMarkupPlaceholderTag(true));
-
         showListContent(null);
     }
 
-    public static final FormKey getFormKey(SInstance ins) {
+
+    public static FormKey getFormKey(SInstance ins) {
         return FormKey.from(ins);
     }
 
-    protected FormRespository<TYPE, INSTANCE> getFormPersistence() {
+    protected FormRespository<STYPE, INSTANCE> getFormPersistence() {
         return this.formPersistence.get();
     }
 
@@ -87,6 +109,10 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
         add(removeAjaxAction);
         target.appendJavaScript("bootbox.confirm('Tem certeza que deseja excluir?', " +
                 "function(isOk){if(isOk){Wicket.Ajax.get({u:'" + removeAjaxAction.getCallbackUrl() + "'});}});");
+    }
+
+    private void onView(AjaxRequestTarget target, IModel<INSTANCE> model) {
+        showViewContent(target, getFormKey(model.getObject()));
     }
 
     private void onSave(AjaxRequestTarget target, IModel<INSTANCE> instanceModel) {
@@ -119,49 +145,44 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
         replaceContent(target, newEditContent(ID_CONTENT, key));
     }
 
+    protected final void showViewContent(AjaxRequestTarget target, FormKey key) {
+        replaceContent(target, newViewContent(ID_CONTENT, key));
+    }
+
     protected Component newCreateContent(String id) {
-        return new FormFragment(id, getFormPersistence().createInstance());
+        return new FormFragment(id, getFormPersistence().createInstance(), ViewMode.EDIT);
     }
 
     protected Component newEditContent(String id, FormKey key) {
-        return new FormFragment(id, getFormPersistence().load(key));
+        return new FormFragment(id, getFormPersistence().load(key), ViewMode.EDIT);
+    }
+
+    protected Component newViewContent(String id, FormKey key) {
+        return new FormFragment(id, getFormPersistence().load(key), ViewMode.READ_ONLY);
     }
 
     protected Component newListContent(String id) {
         return new ListFragment(id);
     }
 
-    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudTitle(String crudTitle) {
+    public SingularStudioSimpleCRUDPanel<STYPE, INSTANCE> setCrudTitle(String crudTitle) {
         this.crudTitle.setObject(crudTitle);
         return this;
     }
 
-    public SingularStudioSimpleCRUDPanel<TYPE, INSTANCE> setCrudIcon(Icon crudIcon) {
+    public SingularStudioSimpleCRUDPanel<STYPE, INSTANCE> setCrudIcon(Icon crudIcon) {
         this.crudIcon.setObject(crudIcon);
         return this;
     }
 
     private class FormFragment extends Fragment {
-        public FormFragment(String id, INSTANCE instance) {
+        public FormFragment(String id, INSTANCE instance, ViewMode viewMode) {
             super(id, "FormFragment", SingularStudioSimpleCRUDPanel.this);
-
             Form<?> form = new Form<>("form");
             SingularFormPanel content = new SingularFormPanel(ID_CONTENT, instance);
-
-            add(form
-                    .add(content)
-                    .add(new SingularSaveButton("save", content.getInstanceModel()) {
-                        @Override
-                        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                            onSave(target, (IModel<INSTANCE>) instanceModel);
-                        }
-
-                        @Override
-                        protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                            super.onValidationError(target, form, instanceModel);
-                            new ToastrHelper(content).addToastrMessage(ToastrType.ERROR, "Existem correções a serem feitas no formulário.");
-                        }
-                    })
+            content.setViewMode(viewMode);
+            add(form.add(content)
+                    .add(new CRUDSaveButton(content.getInstanceModel()))
                     .add(new ActionAjaxLink<Void>("cancel") {
                         @Override
                         protected void onAction(AjaxRequestTarget target) {
@@ -218,19 +239,31 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
             table.add($b.classAppender("worklist"));
 
             add(table);
-
-            add(new ActionAjaxLink<Void>("create") {
-                @Override
-                protected void onAction(AjaxRequestTarget target) {
-                    showCreateContent(target);
-                }
-            });
+            StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
+            if (studioCRUDPermissionStrategy.canCreate()) {
+                add(new ActionAjaxLink<Void>("create") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target) {
+                        showCreateContent(target);
+                    }
+                });
+            } else {
+                add(new WebMarkupContainer("create").setVisible(false));
+            }
         }
 
         private BSActionColumn<INSTANCE, String> appendActions(BSActionColumn<INSTANCE, String> col) {
-            return col
-                    .appendAction($m.ofValue("Editar"), DefaultIcons.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit)
-                    .appendAction($m.ofValue("Deletar"), DefaultIcons.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
+            StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
+            if (studioCRUDPermissionStrategy.canEdit()) {
+                col.appendAction($m.ofValue("Editar"), DefaultIcons.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit);
+            }
+            if (studioCRUDPermissionStrategy.canRemove()) {
+                col.appendAction($m.ofValue("Deletar"), DefaultIcons.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
+            }
+            if (studioCRUDPermissionStrategy.canView()) {
+                col.appendAction($m.ofValue("Visualizar"), DefaultIcons.EYE, SingularStudioSimpleCRUDPanel.this::onView);
+            }
+            return col;
         }
     }
 
@@ -246,6 +279,29 @@ public abstract class SingularStudioSimpleCRUDPanel<TYPE extends SType<INSTANCE>
             getFormPersistence().delete(getFormKey(model.getObject()));
             showListContent(ajaxRequestTarget);
             new ToastrHelper(SingularStudioSimpleCRUDPanel.this).addToastrMessage(ToastrType.INFO, "Item excluido com sucesso.");
+        }
+    }
+
+    private class CRUDSaveButton extends SingularSaveButton {
+        public CRUDSaveButton(IModel<? extends SInstance> currentInstance) {
+            super("save", currentInstance);
+        }
+
+        @Override
+        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+            onSave(target, (IModel<INSTANCE>) instanceModel);
+        }
+
+        @Override
+        protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+            super.onValidationError(target, form, instanceModel);
+            new ToastrHelper(SingularStudioSimpleCRUDPanel.this).addToastrMessage(ToastrType.ERROR, "Existem correções a serem feitas no formulário.");
+        }
+
+        @Override
+        public boolean isVisible() {
+            StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
+            return studioCRUDPermissionStrategy.canCreate() || studioCRUDPermissionStrategy.canEdit();
         }
     }
 }
