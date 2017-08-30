@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
+import javax.persistence.EntityManager;
 
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.ICompositeType;
@@ -38,9 +39,11 @@ import org.opensingular.form.persistence.SingularFormNotFoundException;
  */
 public class FormRepositoryJPA<TYPE extends SType<INSTANCE>, INSTANCE extends SInstance>
 		implements FormRespository<TYPE, INSTANCE> {
+	private EntityManager entityManager;
 	private ICompositeType type;
 
-	public FormRepositoryJPA(ICompositeType type) {
+	public FormRepositoryJPA(EntityManager entityManager, ICompositeType type) {
+		this.entityManager = entityManager;
 		this.type = type;
 	}
 
