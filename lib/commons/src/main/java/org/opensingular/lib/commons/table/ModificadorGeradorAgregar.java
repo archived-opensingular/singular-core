@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
 import java.util.Collection;
 import java.util.HashMap;

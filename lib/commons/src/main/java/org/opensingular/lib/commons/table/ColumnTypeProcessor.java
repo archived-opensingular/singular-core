@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.table;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.base.AbstractInstant;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,19 @@ import java.util.Objects;
  * @author Daniel C. Bordin on 22/04/2017.
  */
 public interface ColumnTypeProcessor {
+
+    public static final ColumnTypeProcessor BOOLEAN = new ColumnTypeProcessorTypeBoolean();
+    public static final ColumnTypeProcessor ACTION = new ColumnTypeProcessorTypeAction();
+    public static final ColumnTypeProcessor DATE = new ColumnTypeProcessorTypeDateBased("short");
+    public static final ColumnTypeProcessor DATE_HOUR = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm:ss");
+    public static final ColumnTypeProcessor DATE_HOUR_SHORT = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm");
+    public static final ColumnTypeProcessor DAY = new ColumnTypeProcessorTypeDateBased("dd");
+    public static final ColumnTypeProcessor RAW = new ColumnTypeProcessorTypeRaw();
+    public static final ColumnTypeProcessor STRING = new ColumnTypeProcessorTypeString();
+    public static final ColumnTypeProcessor NUMBER = new ColumnTypeProcessorTypeNumber();
+    public static final ColumnTypeProcessor INTEGER = new ColumnTypeProcessorTypeInteger();
+    public static final ColumnTypeProcessor PERCENT = new ColumnTypeProcessorTypePercent();
+    public static final ColumnTypeProcessor HOUR = new ColumnTypeProcessorTypeHour();
 
     /**
      * Verifica se a celula em questão possui algum valor para ser exibido de acordo com as definições do procesador.
@@ -55,20 +69,6 @@ public interface ColumnTypeProcessor {
     }
 
     void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, @Nullable Object value);
-
-
-    public static final ColumnTypeProcessor BOOLEAN = new ColumnTypeProcessorTypeBoolean();
-    public static final ColumnTypeProcessor ACTION = new ColumnTypeProcessorTypeAction();
-    public static final ColumnTypeProcessor DATE = new ColumnTypeProcessorTypeDateBased("short");
-    public static final ColumnTypeProcessor DATE_HOUR = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm:ss");
-    public static final ColumnTypeProcessor DATE_HOUR_SHORT = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm");
-    public static final ColumnTypeProcessor DAY = new ColumnTypeProcessorTypeDateBased("dd");
-    public static final ColumnTypeProcessor RAW = new ColumnTypeProcessorTypeRaw();
-    public static final ColumnTypeProcessor STRING = new ColumnTypeProcessorTypeString();
-    public static final ColumnTypeProcessor NUMBER = new ColumnTypeProcessorTypeNumber();
-    public static final ColumnTypeProcessor INTEGER = new ColumnTypeProcessorTypeInteger();
-    public static final ColumnTypeProcessor PERCENT = new ColumnTypeProcessorTypePercent();
-    public static final ColumnTypeProcessor HOUR = new ColumnTypeProcessorTypeHour();
 
     public default Column.Alignment getDefaultAlignment() {
         return Column.Alignment.LEFT;
@@ -94,13 +94,13 @@ public interface ColumnTypeProcessor {
         private String content;
         private boolean defined;
 
+        public String getContent() {
+            return content;
+        }
+
         public void setContent(String content) {
             this.content = content;
             this.defined = true;
-        }
-
-        public String getContent() {
-            return content;
         }
 
         public boolean isDefined() {
