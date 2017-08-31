@@ -48,7 +48,7 @@ public class StudioAppConfigProvider {
                         .collect(Collectors.toList());
     }
 
-    private class StudioAppConfigProviderException extends RuntimeException {
+    private static class StudioAppConfigProviderException extends RuntimeException {
         public StudioAppConfigProviderException(String s) {
             super(s);
         }
