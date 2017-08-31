@@ -45,7 +45,7 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
     }
 
     @NotNull
-    private AnnotationConfigWebApplicationContext createContext() {
+    AnnotationConfigWebApplicationContext createContext() {
         return new AnnotationConfigWebApplicationContext();
     }
 

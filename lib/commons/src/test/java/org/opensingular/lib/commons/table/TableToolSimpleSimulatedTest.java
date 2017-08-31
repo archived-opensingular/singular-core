@@ -21,7 +21,7 @@ import org.junit.Test;
 /**
  * @author Daniel C. Bordin on 18/04/2017.
  */
-public class TableToolSimpleTestSimulated extends TableToolSimpleTestBase {
+public class TableToolSimpleSimulatedTest extends TableToolSimpleBaseTest {
 
 
     @Test

@@ -16,8 +16,6 @@ import org.opensingular.lib.commons.canvas.table.TableRowCanvas;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-
 /**
  * Show list of composites in a table
  */
@@ -32,11 +30,7 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
 
         List<String> headerColumns = new ArrayList<>();
         if (renderCompositeFieldsAsColumns) {
-            for (SType<?> e : ((STypeComposite<?>) elementsType).getFields()) {
-                if (e.asAtr().isVisible()) {
-                    headerColumns.add(e.asAtr().getLabel());
-                }
-            }
+            doRenderCompositeFieldAsColumns((STypeComposite<?>) elementsType, headerColumns);
         } else {
             String label = elementsType.asAtr().getLabel();
             if (label != null) {
@@ -47,21 +41,37 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         TableCanvas tableCanvas = canvas.addTable();
 
         if (!headerColumns.isEmpty()) {
-            TableRowCanvas tableHeaderRow = tableCanvas.getTableHeader().addRow();
-            for (String column : headerColumns) {
-                tableHeaderRow.addColumn(column);
-            }
+            writeHeaders(headerColumns, tableCanvas);
         }
 
         TableBodyCanvas tableBody = tableCanvas.getTableBody();
         for (SInstance child : siList) {
-            TableRowDocumentCanvasAdapter row = new TableRowDocumentCanvasAdapter(tableBody.addRow());
-            if (renderCompositeFieldsAsColumns) {
-                for (SInstance compositeField : ((SIComposite) child).getAllFields()) {
-                    callListItemDoWrite(row, compositeField);
-                }
-            } else {
-                callListItemDoWrite(row, child);
+            writeChild(renderCompositeFieldsAsColumns, tableBody, child);
+        }
+    }
+
+    private void writeHeaders(List<String> headerColumns, TableCanvas tableCanvas) {
+        TableRowCanvas tableHeaderRow = tableCanvas.getTableHeader().addRow();
+        for (String column : headerColumns) {
+            tableHeaderRow.addColumn(column);
+        }
+    }
+
+    private void writeChild(boolean renderCompositeFieldsAsColumns, TableBodyCanvas tableBody, SInstance child) {
+        TableRowDocumentCanvasAdapter row = new TableRowDocumentCanvasAdapter(tableBody.addRow());
+        if (renderCompositeFieldsAsColumns) {
+            for (SInstance compositeField : ((SIComposite) child).getAllFields()) {
+                callListItemDoWrite(row, compositeField);
+            }
+        } else {
+            callListItemDoWrite(row, child);
+        }
+    }
+
+    private void doRenderCompositeFieldAsColumns(STypeComposite<?> elementsType, List<String> headerColumns) {
+        for (SType<?> e : elementsType.getFields()) {
+            if (e.asAtr().isVisible()) {
+                headerColumns.add(e.asAtr().getLabel());
             }
         }
     }

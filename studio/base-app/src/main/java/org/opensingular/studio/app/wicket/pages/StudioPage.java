@@ -19,20 +19,24 @@ public class StudioPage extends StudioTemplate {
 
     public static final String STUDIO_ROOT_PATH = "studio";
 
+    private StudioDefinition definition;
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
         Form<Void> form = new Form<>("form");
         form.setMultiPart(true);
-        StudioDefinition definition = findCurrentStudioDefinition();
+        definition = findCurrentStudioDefinition();
         if (definition == null) {
             form.add(new WebMarkupContainer("crud"));
         } else {
             String beanName = definition.getRepositoryBeanName();
-            form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud", () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)) {
+            form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
+                    , () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)
+                    , definition::getPermissionStrategy) {
                 @Override
                 protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
-                    findCurrentStudioDefinition().configureDatatableColumns(dataTableBuilder);
+                    definition.configureDatatableColumns(dataTableBuilder);
                 }
             }.setCrudTitle(definition.getTitle()));
         }

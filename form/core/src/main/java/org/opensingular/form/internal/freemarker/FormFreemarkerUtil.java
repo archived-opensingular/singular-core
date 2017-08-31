@@ -44,6 +44,9 @@ import java.util.function.Consumer;
  */
 public final class FormFreemarkerUtil {
 
+    public static final String TRUE = "TRUE";
+    public static final String FALSE = "FALSE";
+
     private Configuration cfgIgnoreError;
     private Configuration cfgRethrowError;
 
@@ -112,16 +115,24 @@ public final class FormFreemarkerUtil {
     private Template parseTemplate(String template, boolean ignoreError) {
         try {
             TemplateExceptionHandler exceptionHandler;
-            SingularProperties singularProperties = SingularProperties.get();
-            if (singularProperties.isTrue(SingularProperties.FREEMARKER_IGNORE_ERROR)) {
-                exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
-            } else if (singularProperties.isFalse(SingularProperties.FREEMARKER_IGNORE_ERROR)) {
-                exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
+            String property = SingularProperties.get().getProperty(SingularProperties.FREEMARKER_IGNORE_ERROR);
+            if (TRUE.equalsIgnoreCase(property) || FALSE.equalsIgnoreCase(property)) {
+                switch (property.toUpperCase()) {
+                    case TRUE:
+                        exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
+                        break;
+                    case FALSE:
+                        exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
+                        break;
+                    default:
+                        exceptionHandler = null;
+                }
             } else if (ignoreError) {
                 exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
             } else {
                 exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
             }
+
             return new Template("templateStringParameter", template, getConfiguration(exceptionHandler));
         } catch (IOException e) {
             throw new SingularFormException("Erro fazendo parse do template: " + template, e);

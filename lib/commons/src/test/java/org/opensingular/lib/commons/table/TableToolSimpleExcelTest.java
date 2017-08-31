@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class TableToolSimpleTestExcel extends TableToolSimpleTestBase {
+public class TableToolSimpleExcelTest extends TableToolSimpleBaseTest {
 
     private TableOutputExcel tableOutputExcel;
     private ViewOutputExcel viewOutputExcel;

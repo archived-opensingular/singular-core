@@ -107,7 +107,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
             ItemMenuEntry item = (ItemMenuEntry) menuEntry;
             return new MetronicMenuItem(item.getIcon(), item.getName(), item.getEndpoint());
         }
-        throw new RuntimeException("O tipo de menu " + menuEntry.getClass().getName() + " não é suportado.");
+        throw new StudioTemplateException("O tipo de menu " + menuEntry.getClass().getName() + " não é suportado.");
     }
 
     public String getMenuPath() {
@@ -123,5 +123,11 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
             }
             return super.getPageTitleModel().getObject();
         });
+    }
+
+    private static class StudioTemplateException extends RuntimeException {
+        public StudioTemplateException(String s) {
+            super(s);
+        }
     }
 }
