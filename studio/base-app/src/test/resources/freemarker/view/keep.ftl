@@ -1,0 +1,1 @@
+<#--Keep this file, is used in StudioWebAppinitializerTest-->
