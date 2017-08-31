@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author Daniel C. Bordin on 21/07/2017.
  */
-public abstract class TableToolSimpleTestBase {
+public abstract class TableToolSimpleBaseTest {
 
     protected static boolean OPEN_GENERATED_FILE = false;
 

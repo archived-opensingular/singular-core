@@ -36,19 +36,13 @@ import java.io.PrintStream;
 /**
  * @author Daniel C. Bordin on 21/07/2017.
  */
-public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
+public class TableToolSimpleFormatsTest extends TableToolSimpleBaseTest {
 
     private static TempFileProvider tmpProvider;
 
     @BeforeClass
     public static void createTmpProvider() {
-        tmpProvider = TempFileProvider.createForUseInTryClause(TableToolSimpleTestFormats.class);
-    }
-
-    public void cleanTmpProvider2() {
-        if (! OPEN_GENERATED_FILE) {
-            tmpProvider.deleteOrException();
-        }
+        tmpProvider = TempFileProvider.createForUseInTryClause(TableToolSimpleFormatsTest.class);
     }
 
     @AfterClass
@@ -59,6 +53,11 @@ public class TableToolSimpleTestFormats extends TableToolSimpleTestBase {
         }
     }
 
+    public void cleanTmpProvider2() {
+        if (!OPEN_GENERATED_FILE) {
+            tmpProvider.deleteOrException();
+        }
+    }
 
     private void generateFormats(TableTool table) {
         generateFormats(table, "bootstrap.min.css");
