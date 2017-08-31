@@ -17,11 +17,14 @@
 package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.persistence.FormKey;
 
 /**
  * Builder for SQL updates and other data synchronizations on Relational DBMS.
@@ -33,36 +36,52 @@ public class RelationalSQLUpdate implements RelationalSQL {
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
+	private Map<String, String> mapColumnToField;
+	private Map<String, Object> mapColumnToValue;
 
 	public RelationalSQLUpdate(ICompositeInstance instance) {
 		this.instance = instance;
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
+		this.mapColumnToField = new HashMap<>();
 		for (SInstance child : instance.getAllChildren()) {
 			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
-			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns);
+			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns,
+					mapColumnToField);
 		}
+		mapColumnToValue = ((FormKeyRelational) FormKey.from((SInstance) instance)).getValue();
 	}
 
 	public ICompositeInstance getInstance() {
 		return instance;
 	}
 
-	public String[] toSQLScript() {
-		List<String> lines = new ArrayList<>();
-		for (String table : targetTables)
-			lines.add("update " + table + " set " + set(table, targetColumns) + " where "
-					+ RelationalSQL.where(table, keyColumns));
-		return lines.toArray(new String[lines.size()]);
+	public RelationalSQLCommmand[] toSQLScript() {
+		List<RelationalSQLCommmand> lines = new ArrayList<>();
+		for (String table : targetTables) {
+			List<Object> params = new ArrayList<>();
+			lines.add(new RelationalSQLCommmand("update " + table + " set " + set(table, targetColumns, params)
+					+ " where " + RelationalSQL.where(table, keyColumns, mapColumnToValue, params), params));
+		}
+		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}
 
-	private String set(String table, List<RelationalColumn> setColumns) {
+	private String set(String table, List<RelationalColumn> setColumns, List<Object> params) {
 		StringJoiner sj = new StringJoiner(", ");
 		setColumns.forEach(column -> {
-			if (column.getTable().equals(table))
+			if (column.getTable().equals(table)) {
 				sj.add(column.getName() + " = ?");
+				params.add(columnValue(column));
+			}
 		});
 		return sj.toString();
+	}
+
+	private Object columnValue(RelationalColumn column) {
+		String fieldName = mapColumnToField.get(column.getName());
+		if (fieldName == null)
+			return null;
+		return instance.getValue(fieldName);
 	}
 }

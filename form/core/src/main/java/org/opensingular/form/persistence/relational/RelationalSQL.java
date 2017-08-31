@@ -20,6 +20,7 @@ import static org.opensingular.form.persistence.relational.RelationalMapper.ASPE
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 
@@ -34,7 +35,7 @@ import org.opensingular.form.persistence.FormKey;
  * @author Edmundo Andrade
  */
 public interface RelationalSQL {
-	String[] toSQLScript();
+	RelationalSQLCommmand[] toSQLScript();
 
 	@SafeVarargs
 	public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {
@@ -88,23 +89,27 @@ public interface RelationalSQL {
 	}
 
 	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
-			List<String> targetTables, List<RelationalColumn> keyColumns) {
+			List<String> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
 		if (field instanceof ICompositeType)
 			return;
 		String tableName = table(field);
 		if (!targetTables.contains(tableName))
 			targetTables.add(tableName);
 		String columnName = column(field);
+		mapColumnToField.put(columnName, field.getNameSimple());
 		RelationalColumn column = new RelationalColumn(tableName, columnName);
 		if (!targetColumns.contains(column) && !keyColumns.contains(column))
 			targetColumns.add(column);
 	}
 
-	public static String where(String table, List<RelationalColumn> filterColumns) {
+	public static String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
+			List<Object> params) {
 		StringJoiner sj = new StringJoiner(" and ");
 		filterColumns.forEach(column -> {
-			if (column.getTable().equals(table))
+			if (column.getTable().equals(table)) {
 				sj.add(column.getName() + " = ?");
+				params.add(mapColumnToValue.get(column.getName()));
+			}
 		});
 		return sj.toString();
 	}

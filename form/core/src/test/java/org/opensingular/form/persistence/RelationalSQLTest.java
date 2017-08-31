@@ -61,7 +61,8 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Test
 	public void singleSelect() {
 		RelationalSQL query = select(master.getFields()).orderBy(master.name);
-		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", query.toSQLScript()[0]);
+		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name",
+				query.toSQLScript()[0].getCommand());
 	}
 
 	@Test
@@ -70,7 +71,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL query = select(master.getFields(), items.getFields()).orderBy(master.name, items.mnemo);
 		assertEquals(
 				"select T1.name, T1.obs, T2.mnemo, T2.desc, T2.price, T1.id, T2.masterID from MasterEntity T1 left join Items T2 on T2.masterID = T1.id order by T1.name, T2.mnemo",
-				query.toSQLScript()[0]);
+				query.toSQLScript()[0].getCommand());
 	}
 
 	@Test
@@ -78,13 +79,13 @@ public class RelationalSQLTest extends TestCaseForm {
 		SIComposite masterInstance = master.newInstance();
 		masterInstance.setValue("name", "MyName");
 		RelationalSQL insert = insert(masterInstance);
-		assertEquals("insert into MasterEntity (id, name) values (?, ?)", insert.toSQLScript()[0]);
+		assertEquals("insert into MasterEntity (id, name) values (?, ?)", insert.toSQLScript()[0].getCommand());
 	}
 
 	@Test
 	public void testDelete() {
 		RelationalSQL delete = delete(master, new FormKeyRelational("id$42"));
-		assertEquals("delete from MasterEntity where id = ?", delete.toSQLScript()[0]);
+		assertEquals("delete from MasterEntity where id = ?", delete.toSQLScript()[0].getCommand());
 	}
 
 	@SInfoPackage(name = "testPackage")

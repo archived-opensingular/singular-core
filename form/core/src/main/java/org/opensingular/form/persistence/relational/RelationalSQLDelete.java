@@ -18,6 +18,7 @@ package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.opensingular.form.ICompositeType;
 import org.opensingular.form.SType;
@@ -31,18 +32,23 @@ import org.opensingular.form.persistence.FormKey;
 public class RelationalSQLDelete implements RelationalSQL {
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
+	private Map<String, Object> mapColumnToValue;
 
 	public RelationalSQLDelete(ICompositeType type, FormKey formKey) {
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		for (SType<?> child : type.getContainedTypes())
 			RelationalSQL.collectKeyColumns(child, keyColumns, targetTables);
+		mapColumnToValue = ((FormKeyRelational) formKey).getValue();
 	}
 
-	public String[] toSQLScript() {
-		List<String> lines = new ArrayList<>();
-		for (String table : targetTables)
-			lines.add("delete from " + table + " where " + RelationalSQL.where(table, keyColumns));
-		return lines.toArray(new String[lines.size()]);
+	public RelationalSQLCommmand[] toSQLScript() {
+		List<RelationalSQLCommmand> lines = new ArrayList<>();
+		for (String table : targetTables) {
+			List<Object> params = new ArrayList<>();
+			lines.add(new RelationalSQLCommmand("delete from " + table + " where "
+					+ RelationalSQL.where(table, keyColumns, mapColumnToValue, params), params));
+		}
+		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}
 }

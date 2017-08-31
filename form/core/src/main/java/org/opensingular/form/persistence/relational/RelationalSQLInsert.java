@@ -17,7 +17,9 @@
 package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import org.opensingular.form.ICompositeInstance;
@@ -33,15 +35,18 @@ public class RelationalSQLInsert implements RelationalSQL {
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
+	private Map<String, String> mapColumnToField;
 
 	public RelationalSQLInsert(ICompositeInstance instance) {
 		this.instance = instance;
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
+		this.mapColumnToField = new HashMap<>();
 		for (SInstance child : instance.getChildren()) {
 			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
-			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns);
+			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns,
+					mapColumnToField);
 		}
 	}
 
@@ -49,12 +54,14 @@ public class RelationalSQLInsert implements RelationalSQL {
 		return instance;
 	}
 
-	public String[] toSQLScript() {
-		List<String> lines = new ArrayList<>();
-		for (String table : targetTables)
-			lines.add("insert into " + table + " (" + concatenateColumnNames(table, ", ") + ") values ("
-					+ concatenateColumnvalues(table, ", ") + ")");
-		return lines.toArray(new String[lines.size()]);
+	public RelationalSQLCommmand[] toSQLScript() {
+		List<RelationalSQLCommmand> lines = new ArrayList<>();
+		for (String table : targetTables) {
+			List<Object> params = new ArrayList<>();
+			lines.add(new RelationalSQLCommmand("insert into " + table + " (" + concatenateColumnNames(table, ", ")
+					+ ") values (" + concatenateColumnValues(table, ", ", params) + ")", params));
+		}
+		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}
 
 	private String concatenateColumnNames(String table, String separator) {
@@ -70,16 +77,28 @@ public class RelationalSQLInsert implements RelationalSQL {
 		return sj.toString();
 	}
 
-	private String concatenateColumnvalues(String table, String separator) {
+	private String concatenateColumnValues(String table, String separator, List<Object> params) {
 		StringJoiner sj = new StringJoiner(separator);
 		keyColumns.forEach(column -> {
-			if (column.getTable().equals(table))
+			if (column.getTable().equals(table)) {
 				sj.add("?");
+				System.out.println(column.getName());
+				params.add(columnValue(column));
+			}
 		});
 		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table))
+			if (column.getTable().equals(table)) {
 				sj.add("?");
+				params.add(columnValue(column));
+			}
 		});
 		return sj.toString();
+	}
+
+	private Object columnValue(RelationalColumn column) {
+		String fieldName = mapColumnToField.get(column.getName());
+		if (fieldName == null)
+			return null;
+		return instance.getValue(fieldName);
 	}
 }

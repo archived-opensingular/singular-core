@@ -37,6 +37,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
+	private Map<String, String> mapColumnToField;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
 	private Map<String, RelationalFK> joinMap;
 
@@ -48,10 +49,12 @@ public class RelationalSQLQuery implements RelationalSQL {
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
+		this.mapColumnToField = new HashMap<>();
 		List<RelationalFK> relationships = new ArrayList<RelationalFK>();
 		for (SType<?> field : targetFields) {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
-			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList());
+			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList(),
+					mapColumnToField);
 			RelationalSQL.collectRelationships(field, relationships);
 		}
 		joinMap = createJoinMap(relationships);
@@ -60,7 +63,8 @@ public class RelationalSQLQuery implements RelationalSQL {
 	public RelationalSQLQuery orderBy(SType<?>... fields) {
 		orderingColumns.clear();
 		for (SType<?> field : fields)
-			RelationalSQL.collectTargetColumn(field, orderingColumns, targetTables, Collections.emptyList());
+			RelationalSQL.collectTargetColumn(field, orderingColumns, targetTables, Collections.emptyList(),
+					mapColumnToField);
 		return this;
 	}
 
@@ -68,11 +72,13 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return targetFields;
 	}
 
-	public String[] toSQLScript() {
+	public RelationalSQLCommmand[] toSQLScript() {
 		String orderPart = "";
 		if (!orderingColumns.isEmpty())
 			orderPart = " order by " + concatenateOrderingColumns(", ");
-		return new String[] { "select " + concatenateColumnNames(", ") + " from " + joinTables() + orderPart };
+		List<Object> params = new ArrayList<>();
+		return new RelationalSQLCommmand[] { new RelationalSQLCommmand(
+				"select " + concatenateColumnNames(", ") + " from " + joinTables() + orderPart, params) };
 	}
 
 	private String concatenateColumnNames(String separator) {
