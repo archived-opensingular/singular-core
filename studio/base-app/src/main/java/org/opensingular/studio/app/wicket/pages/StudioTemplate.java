@@ -125,7 +125,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         });
     }
 
-    private class StudioTemplateException extends RuntimeException {
+    private static class StudioTemplateException extends RuntimeException {
         public StudioTemplateException(String s) {
             super(s);
         }

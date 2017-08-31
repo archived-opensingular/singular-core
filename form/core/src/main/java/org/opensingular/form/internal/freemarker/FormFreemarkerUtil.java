@@ -114,7 +114,7 @@ public final class FormFreemarkerUtil {
 
     private Template parseTemplate(String template, boolean ignoreError) {
         try {
-            TemplateExceptionHandler exceptionHandler = null;
+            TemplateExceptionHandler exceptionHandler;
             String property = SingularProperties.get().getProperty(SingularProperties.FREEMARKER_IGNORE_ERROR);
             if (TRUE.equalsIgnoreCase(property) || FALSE.equalsIgnoreCase(property)) {
                 switch (property.toUpperCase()) {
@@ -124,6 +124,8 @@ public final class FormFreemarkerUtil {
                     case FALSE:
                         exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
                         break;
+                    default:
+                        exceptionHandler = null;
                 }
             } else if (ignoreError) {
                 exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
