@@ -3,7 +3,6 @@ package org.opensingular.studio.app.spring;
 import org.opensingular.lib.commons.context.SingularContext;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.scan.SingularClassPathScanner;
-import org.opensingular.studio.app.AbstractStudioAppConfig;
 import org.opensingular.studio.app.StudioAppConfig;
 
 import java.lang.reflect.Modifier;
@@ -25,17 +24,17 @@ public class StudioAppConfigProvider {
     public StudioAppConfig retrieve() {
         if (config == null) {
             List<Class<? extends StudioAppConfig>> configs = findAllInstantiableConfigs();
-            if (configs.size() == 0) {
-                throw new RuntimeException("É obrigatorio implementar a classe " + StudioAppConfig.class);
+            if (configs.isEmpty()) {
+                throw new StudioAppConfigProviderException("É obrigatorio implementar a classe " + StudioAppConfig.class);
             }
             if (configs.size() > 1) {
-                throw new RuntimeException("Não é permitido possuir mais de uma implementação de " + StudioAppConfig.class);
+                throw new StudioAppConfigProviderException("Não é permitido possuir mais de uma implementação de " + StudioAppConfig.class);
             }
             Class<? extends StudioAppConfig> configClass = configs.get(0);
             try {
                 config = configClass.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
-                throw new RuntimeException("Não foi possivel criar uma nova instancia de " + configClass.getName(), ex);
+                throw new StudioAppConfigProviderException("Não foi possivel criar uma nova instancia de " + configClass.getName(), ex);
             }
         }
         return config;
@@ -47,6 +46,16 @@ public class StudioAppConfigProvider {
                         .stream()
                         .filter(config -> !(Modifier.isAbstract(config.getModifiers()) || config.isInterface() || config.isAnonymousClass()))
                         .collect(Collectors.toList());
+    }
+
+    private class StudioAppConfigProviderException extends RuntimeException {
+        public StudioAppConfigProviderException(String s) {
+            super(s);
+        }
+
+        public StudioAppConfigProviderException(String s, Throwable throwable) {
+            super(s, throwable);
+        }
     }
 
 }

@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
  */
 public class ModificadorGeradorAgregar extends ModificadorGerador {
 
-    private final Map<Column, TipoAgregacaoCampo> colunaTipoAgregacao = new HashMap<>();
-    private final Map<Column, Object> colunaCalculoExterno = new HashMap<>();
+    private final HashMap<Column, TipoAgregacaoCampo> colunaTipoAgregacao = new HashMap<>();
+    private final HashMap<Column, Object> colunaCalculoExterno = new HashMap<>();
 
     ModificadorGeradorAgregar(TableTool tableTool) {
         super(tableTool);

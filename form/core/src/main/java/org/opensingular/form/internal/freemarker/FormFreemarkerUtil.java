@@ -113,11 +113,7 @@ public final class FormFreemarkerUtil {
         try {
             TemplateExceptionHandler exceptionHandler;
             SingularProperties singularProperties = SingularProperties.get();
-            if (singularProperties.isTrue(SingularProperties.FREEMARKER_IGNORE_ERROR)) {
-                exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
-            } else if (singularProperties.isFalse(SingularProperties.FREEMARKER_IGNORE_ERROR)) {
-                exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
-            } else if (ignoreError) {
+            if (singularProperties.isTrue(SingularProperties.FREEMARKER_IGNORE_ERROR) || ignoreError) {
                 exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
             } else {
                 exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
