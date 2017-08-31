@@ -23,11 +23,13 @@ import org.opensingular.form.document.TypeLoader;
 
 import java.io.Serializable;
 
-/** FormConfig para implementação de JUnit. */
+/**
+ * FormConfig para implementação de JUnit.
+ */
 public class MockFormConfig implements SFormConfig<String>, Serializable {
 
-    private final RefSDocumentFactory documentFactory = new MockSDocumentFactory().getDocumentFactoryRef();
-    private final MockTypeLoader       mockTypeLoader  = new MockTypeLoader();
+    private final RefSDocumentFactory documentFactory = new DummyPage.MockSDocumentFactory().getDocumentFactoryRef();
+    private final DummyPage.MockTypeLoader mockTypeLoader = new DummyPage.MockTypeLoader();
 
     @Override
     public SDocumentFactory getDocumentFactory() {

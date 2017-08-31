@@ -17,7 +17,6 @@ public class SpringFormPersistenceInMemory<TYPE extends SType<INSTANCE>, INSTANC
         extends FormPersistenceInMemory<TYPE, INSTANCE> {
     private final Class<? extends SType<?>> type;
 
-    @Inject
     private SDocumentFactory documentFactory;
 
     public SpringFormPersistenceInMemory(Class<? extends SType<?>> type) {
@@ -27,5 +26,10 @@ public class SpringFormPersistenceInMemory<TYPE extends SType<INSTANCE>, INSTANC
     @Override
     public INSTANCE createInstance() {
         return (INSTANCE) documentFactory.createInstance(RefType.of(type));
+    }
+
+    @Inject
+    public void setDocumentFactory(SDocumentFactory documentFactory) {
+        this.documentFactory = documentFactory;
     }
 }

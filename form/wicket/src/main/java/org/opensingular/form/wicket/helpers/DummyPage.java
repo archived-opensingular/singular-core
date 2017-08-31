@@ -52,14 +52,11 @@ import java.util.Optional;
 public class DummyPage extends WebPage {
 
     final public transient SFormConfig<String> mockFormConfig = new MockFormConfig();
-    protected           IConsumer<STypeComposite>     typeBuilder;
-    protected           IFunction<RefType, SIComposite> instanceCreator;
     private final List<IConsumer<SIComposite>> instancePopulators = new ArrayList<>();
-
-    private SingularFormWicket<?> form = new SingularFormWicket<>("form");
-
     private final SingularFormPanel singularFormPanel = new SingularFormPanel("singularFormPanel");
-
+    protected IConsumer<STypeComposite> typeBuilder;
+    protected IFunction<RefType, SIComposite> instanceCreator;
+    private SingularFormWicket<?> form = new SingularFormWicket<>("form");
     private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn", singularFormPanel.getInstanceModel()) {
         @Override
         protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
@@ -80,7 +77,7 @@ public class DummyPage extends WebPage {
         }
         if (instanceCreator != null) {
             currentInstance = instanceCreator.apply(refType);
-        } else{
+        } else {
             SDocumentFactory factory = mockFormConfig.getDocumentFactory();
             currentInstance = (SIComposite) factory.createInstance(refType);
         }
@@ -120,65 +117,66 @@ public class DummyPage extends WebPage {
         this.instanceCreator = instanceCreator;
     }
 
-    public void setTypeBuilder(IConsumer<STypeComposite> typeBuilder) {
-        this.typeBuilder = typeBuilder;
-    }
-
     final IConsumer<STypeComposite> getTypeBuilder() {
         return typeBuilder;
+    }
+
+    public void setTypeBuilder(IConsumer<STypeComposite> typeBuilder) {
+        this.typeBuilder = typeBuilder;
     }
 
     public final void addInstancePopulator(IConsumer<SIComposite> populator) {
         instancePopulators.add(populator);
     }
-}
 
-class MockSDocumentFactory extends SDocumentFactory {
 
-    @Override
-    protected RefSDocumentFactory createDocumentFactoryRef() {
-        return new RefMockDocumentFactory(this);
+    public static class MockSDocumentFactory extends SDocumentFactory {
+
+        @Override
+        protected RefSDocumentFactory createDocumentFactoryRef() {
+            return new RefMockDocumentFactory(this);
+        }
+
+        @Override
+        protected void setupDocument(SDocument document) {
+        }
     }
 
-    @Override
-    protected void setupDocument(SDocument document) {
-    }
-}
+    public static class RefMockDocumentFactory extends RefSDocumentFactory {
 
-class RefMockDocumentFactory extends RefSDocumentFactory {
+        public RefMockDocumentFactory(MockSDocumentFactory factory) {
+            super(factory);
+        }
 
-    public RefMockDocumentFactory(MockSDocumentFactory factory) {
-        super(factory);
-    }
-
-    @Nonnull
-    @Override
-    protected SDocumentFactory retrieve() {
-        return new MockSDocumentFactory();
-    }
-}
-
-class MockTypeLoader extends TypeLoader<String> implements Serializable {
-
-    transient private final SDictionary dictionary;
-
-    {
-        dictionary = SDictionary.create();
+        @Nonnull
+        @Override
+        protected SDocumentFactory retrieve() {
+            return new MockSDocumentFactory();
+        }
     }
 
-    @Override
-    protected Optional<RefType> loadRefTypeImpl(String typeId) {
-        return Optional.of(RefType.of(() -> loadTypeImpl2(typeId)));
-    }
+    public static class MockTypeLoader extends TypeLoader<String> implements Serializable {
 
-    @Override
-    protected Optional<SType<?>> loadTypeImpl(String typeId) {
-        return Optional.of(loadTypeImpl2(typeId));
-    }
+        transient private final SDictionary dictionary;
 
-    @Nonnull
-    private SType<?> loadTypeImpl2(String typeId) {
-        return dictionary.getTypeOptional(typeId).orElseGet(() -> (SType<?>) dictionary.createNewPackage(typeId)
-                .createCompositeType("mockRoot"));
+        {
+            dictionary = SDictionary.create();
+        }
+
+        @Override
+        protected Optional<RefType> loadRefTypeImpl(String typeId) {
+            return Optional.of(RefType.of(() -> loadTypeImpl2(typeId)));
+        }
+
+        @Override
+        protected Optional<SType<?>> loadTypeImpl(String typeId) {
+            return Optional.of(loadTypeImpl2(typeId));
+        }
+
+        @Nonnull
+        private SType<?> loadTypeImpl2(String typeId) {
+            return dictionary.getTypeOptional(typeId).orElseGet(() -> (SType<?>) dictionary.createNewPackage(typeId)
+                    .createCompositeType("mockRoot"));
+        }
     }
 }
