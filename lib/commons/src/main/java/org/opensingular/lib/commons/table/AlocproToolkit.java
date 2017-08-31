@@ -32,19 +32,6 @@ import java.util.regex.Pattern;
 
 final class AlocproToolkit {
 
-    private static final char[] ALL_CHARS = new char[62];
-    private static final Random RANDOM = new SecureRandom();
-    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" + "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
-
-    static {
-        for (int i = 48, j = 0; i < 123; i++) {
-            if (Character.isLetterOrDigit(i)) {
-                ALL_CHARS[j] = (char) i;
-                j++;
-            }
-        }
-    }
-
     private AlocproToolkit() {
     }
 
@@ -220,6 +207,19 @@ final class AlocproToolkit {
         }
     }
 
+
+    private static final char[] ALL_CHARS = new char[62];
+    private static final Random RANDOM = new SecureRandom();
+
+    static {
+        for (int i = 48, j = 0; i < 123; i++) {
+            if (Character.isLetterOrDigit(i)) {
+                ALL_CHARS[j] = (char) i;
+                j++;
+            }
+        }
+    }
+
     public static String gerarSenha(final int tamanho) {
         final char[] result = new char[tamanho];
         for (int i = 0; i < tamanho; i++) {
@@ -262,6 +262,8 @@ final class AlocproToolkit {
         }
         return cs;
     }
+
+    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" + "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
 
     private static String converterURL(String original) {
         Matcher matcher = PATTERN_URL.matcher(original);
