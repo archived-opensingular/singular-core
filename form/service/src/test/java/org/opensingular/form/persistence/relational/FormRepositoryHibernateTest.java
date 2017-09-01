@@ -26,6 +26,7 @@ import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.persistence.relational.FormRepositoryHibernateTest.TestPackage.Form;
 import org.opensingular.form.type.core.STypeString;
 import org.springframework.test.annotation.DirtiesContext;
@@ -41,7 +42,7 @@ public class FormRepositoryHibernateTest {
 	@Inject
 	protected SessionFactory sessionFactory;
 	private Form form;
-	private FormRepositoryHibernate<Form, SIComposite> formRepository;
+	private FormRespository<Form, SIComposite> formRepository;
 
 	@Before
 	public void setUp() {
@@ -56,6 +57,7 @@ public class FormRepositoryHibernateTest {
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
 				String sql = "CREATE TABLE DBSINGULAR.FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS VARCHAR(250), PRIMARY KEY (CODE))";
+				System.out.println(sql);
 				Statement statement = connection.createStatement();
 				statement.executeUpdate(sql);
 			}

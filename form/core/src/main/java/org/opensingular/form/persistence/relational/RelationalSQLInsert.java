@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 
 /**
@@ -31,13 +31,13 @@ import org.opensingular.form.SInstance;
  * @author Edmundo Andrade
  */
 public class RelationalSQLInsert implements RelationalSQL {
-	private ICompositeInstance instance;
+	private SIComposite instance;
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
 
-	public RelationalSQLInsert(ICompositeInstance instance) {
+	public RelationalSQLInsert(SIComposite instance) {
 		this.instance = instance;
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
@@ -50,7 +50,7 @@ public class RelationalSQLInsert implements RelationalSQL {
 		}
 	}
 
-	public ICompositeInstance getInstance() {
+	public SIComposite getInstance() {
 		return instance;
 	}
 
@@ -59,7 +59,7 @@ public class RelationalSQLInsert implements RelationalSQL {
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
 			lines.add(new RelationalSQLCommmand("insert into " + table + " (" + concatenateColumnNames(table, ", ")
-					+ ") values (" + concatenateColumnValues(table, ", ", params) + ")", params));
+					+ ") values (" + concatenateColumnValues(table, ", ", params) + ")", params, instance));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}

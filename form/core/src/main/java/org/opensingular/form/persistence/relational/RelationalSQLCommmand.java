@@ -18,6 +18,8 @@ package org.opensingular.form.persistence.relational;
 
 import java.util.List;
 
+import org.opensingular.form.SIComposite;
+
 /**
  * Relational SQL command, including its parameters.
  *
@@ -26,10 +28,12 @@ import java.util.List;
 public class RelationalSQLCommmand {
 	private String command;
 	private List<Object> parameters;
+	private SIComposite instance;
 
-	public RelationalSQLCommmand(String command, List<Object> parameters) {
+	public RelationalSQLCommmand(String command, List<Object> parameters, SIComposite instance) {
 		this.command = command;
 		this.parameters = parameters;
+		this.instance = instance;
 	}
 
 	public String getCommand() {
@@ -38,5 +42,9 @@ public class RelationalSQLCommmand {
 
 	public List<Object> getParameters() {
 		return parameters;
+	}
+
+	public SIComposite getInstance() {
+		return instance;
 	}
 }

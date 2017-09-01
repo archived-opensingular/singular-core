@@ -78,7 +78,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 			orderPart = " order by " + concatenateOrderingColumns(", ");
 		List<Object> params = new ArrayList<>();
 		return new RelationalSQLCommmand[] { new RelationalSQLCommmand(
-				"select " + concatenateColumnNames(", ") + " from " + joinTables() + orderPart, params) };
+				"select " + concatenateColumnNames(", ") + " from " + joinTables() + orderPart, params, null) };
 	}
 
 	private String concatenateColumnNames(String separator) {

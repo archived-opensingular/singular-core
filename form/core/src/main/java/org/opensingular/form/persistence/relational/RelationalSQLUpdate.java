@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.persistence.FormKey;
 
@@ -32,14 +32,14 @@ import org.opensingular.form.persistence.FormKey;
  * @author Edmundo Andrade
  */
 public class RelationalSQLUpdate implements RelationalSQL {
-	private ICompositeInstance instance;
+	private SIComposite instance;
 	private List<String> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
 	private Map<String, Object> mapColumnToValue;
 
-	public RelationalSQLUpdate(ICompositeInstance instance) {
+	public RelationalSQLUpdate(SIComposite instance) {
 		this.instance = instance;
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
@@ -53,7 +53,7 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		mapColumnToValue = ((FormKeyRelational) FormKey.from((SInstance) instance)).getValue();
 	}
 
-	public ICompositeInstance getInstance() {
+	public SIComposite getInstance() {
 		return instance;
 	}
 
@@ -62,7 +62,7 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
 			lines.add(new RelationalSQLCommmand("update " + table + " set " + set(table, targetColumns, params)
-					+ " where " + RelationalSQL.where(table, keyColumns, mapColumnToValue, params), params));
+					+ " where " + RelationalSQL.where(table, keyColumns, mapColumnToValue, params), params, instance));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}

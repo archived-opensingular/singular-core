@@ -63,11 +63,10 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 
 	@Nonnull
 	public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		HashMap<String, Object> key = new HashMap<>();
-		List<String> keyColumns = RelationalSQL.tablePK(createType());
-		RelationalSQL insert = RelationalSQL.insert(instance);
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
+				List<String> keyColumns = RelationalSQL.tablePK(createType());
+				RelationalSQL insert = RelationalSQL.insert(instance);
 				for (RelationalSQLCommmand command : insert.toSQLScript()) {
 					String sql = command.getCommand();
 					for (Object parameterValue : command.getParameters())
@@ -76,7 +75,8 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 					Statement statement = connection.createStatement();
 					statement.executeUpdate(sql, keyColumns.toArray(new String[keyColumns.size()]));
 					try (ResultSet rs = statement.getGeneratedKeys()) {
-						if (rs.next() && key.isEmpty()) {
+						if (rs.next()) {
+							HashMap<String, Object> key = new HashMap<>();
 							int keyIndex = 1;
 							for (String keyColumn : keyColumns) {
 								int keyValue = rs.getInt(keyIndex);
@@ -84,15 +84,14 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 								System.out.print(" [" + keyColumn + ": " + keyValue + "]");
 								keyIndex++;
 							}
+							System.out.println();
+							FormKey.set(command.getInstance(), new FormKeyRelational(key));
 						}
 					}
-					System.out.println();
 				}
 			}
 		});
-		FormKey formKey = new FormKeyRelational(key);
-		FormKey.set(instance, formKey);
-		return formKey;
+		return FormKey.from(instance);
 	}
 
 	public void delete(@Nonnull FormKey key) {

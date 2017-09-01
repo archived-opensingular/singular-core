@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.ICompositeType;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
 import org.opensingular.form.persistence.FormKey;
 
@@ -42,11 +42,11 @@ public interface RelationalSQL {
 		return new RelationalSQLQuery(fieldCollections);
 	}
 
-	public static RelationalSQLInsert insert(ICompositeInstance instance) {
+	public static RelationalSQLInsert insert(SIComposite instance) {
 		return new RelationalSQLInsert(instance);
 	}
 
-	public static RelationalSQLUpdate update(ICompositeInstance instance) {
+	public static RelationalSQLUpdate update(SIComposite instance) {
 		return new RelationalSQLUpdate(instance);
 	}
 
