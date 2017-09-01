@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.persistence.FormKey;
 
 /**
  * Builder for SQL queries on Relational DBMS.
@@ -40,6 +42,8 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private Map<String, String> mapColumnToField;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
 	private Map<String, RelationalFK> joinMap;
+	private STypeComposite<?> keyFormType;
+	private Map<String, Object> keyFormColumnMap;
 
 	@SafeVarargs
 	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
@@ -68,17 +72,28 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return this;
 	}
 
+	public RelationalSQLQuery where(STypeComposite<?> type, FormKey formKey) {
+		keyFormType = type;
+		keyFormColumnMap = ((FormKeyRelational) formKey).getValue();
+		return this;
+	}
+
 	public Collection<SType<?>> getTargetFields() {
 		return targetFields;
 	}
 
 	public RelationalSQLCommmand[] toSQLScript() {
+		List<Object> params = new ArrayList<>();
+		String wherePart = "";
+		if (keyFormType != null)
+			wherePart += " where " + RelationalSQL.where(RelationalSQL.table(keyFormType), keyColumns, keyFormColumnMap,
+					targetTables, params);
 		String orderPart = "";
 		if (!orderingColumns.isEmpty())
 			orderPart = " order by " + concatenateOrderingColumns(", ");
-		List<Object> params = new ArrayList<>();
 		return new RelationalSQLCommmand[] { new RelationalSQLCommmand(
-				"select " + concatenateColumnNames(", ") + " from " + joinTables() + orderPart, params, null) };
+				"select " + concatenateColumnNames(", ") + " from " + joinTables() + wherePart + orderPart, params,
+				null) };
 	}
 
 	private String concatenateColumnNames(String separator) {
@@ -140,16 +155,15 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return sj.toString();
 	}
 
-	private String tableAlias(String table) {
-		int index = targetTables.indexOf(table) + 1;
-		return "T" + index;
-	}
-
 	private Map<String, RelationalFK> createJoinMap(List<RelationalFK> relationships) {
 		Map<String, RelationalFK> result = new HashMap<>();
 		for (RelationalFK relationship : relationships)
 			result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()),
 					relationship);
 		return result;
+	}
+
+	private String tableAlias(String table) {
+		return RelationalSQL.tableAlias(table, targetTables);
 	}
 }

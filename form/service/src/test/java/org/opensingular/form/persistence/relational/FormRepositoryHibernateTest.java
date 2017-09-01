@@ -55,7 +55,6 @@ public class FormRepositoryHibernateTest {
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
 				String sql = "CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS VARCHAR(250), PRIMARY KEY (CODE))";
-				System.out.println(sql);
 				Statement statement = connection.createStatement();
 				statement.executeUpdate(sql);
 			}
@@ -78,6 +77,14 @@ public class FormRepositoryHibernateTest {
 				}
 			}
 		});
+		//
+		SIComposite loaded = formRepository.load(insertedKey);
+		// assertEquals("My form", loaded.getValue("name"));
+		assertNull(loaded.getValue("observation"));
+		//
+		for (SIComposite instance : formRepository.loadAll()) {
+			System.out.println(instance.getName());
+		}
 		//
 		formRepository.delete(insertedKey);
 		//

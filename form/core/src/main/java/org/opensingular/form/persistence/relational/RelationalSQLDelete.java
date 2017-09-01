@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.opensingular.form.ICompositeType;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.persistence.FormKey;
 
 /**
@@ -34,7 +34,7 @@ public class RelationalSQLDelete implements RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private Map<String, Object> mapColumnToValue;
 
-	public RelationalSQLDelete(ICompositeType type, FormKey formKey) {
+	public RelationalSQLDelete(STypeComposite<?> type, FormKey formKey) {
 		this.targetTables = new ArrayList<String>();
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		for (SType<?> child : type.getContainedTypes())
@@ -46,9 +46,15 @@ public class RelationalSQLDelete implements RelationalSQL {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
-			lines.add(new RelationalSQLCommmand("delete from " + table + " where "
-					+ RelationalSQL.where(table, keyColumns, mapColumnToValue, params), params, null));
+			lines.add(new RelationalSQLCommmand(
+					"delete from " + table + " " + tableAlias(table) + " where "
+							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
+					params, null));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
+	}
+
+	private String tableAlias(String table) {
+		return RelationalSQL.tableAlias(table, targetTables);
 	}
 }

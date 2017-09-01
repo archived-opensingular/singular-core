@@ -61,8 +61,10 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
-			lines.add(new RelationalSQLCommmand("update " + table + " set " + set(table, targetColumns, params)
-					+ " where " + RelationalSQL.where(table, keyColumns, mapColumnToValue, params), params, instance));
+			lines.add(new RelationalSQLCommmand(
+					"update " + table + " set " + set(table, targetColumns, params) + " where "
+							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
+					params, instance));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}

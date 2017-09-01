@@ -27,6 +27,7 @@ import java.util.StringJoiner;
 import org.opensingular.form.ICompositeType;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.persistence.FormKey;
 
 /**
@@ -50,7 +51,7 @@ public interface RelationalSQL {
 		return new RelationalSQLUpdate(instance);
 	}
 
-	public static RelationalSQLDelete delete(ICompositeType type, FormKey formKey) {
+	public static RelationalSQLDelete delete(STypeComposite<?> type, FormKey formKey) {
 		return new RelationalSQLDelete(type, formKey);
 	}
 
@@ -103,15 +104,20 @@ public interface RelationalSQL {
 	}
 
 	public static String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
-			List<Object> params) {
+			List<String> targetTables, List<Object> params) {
 		StringJoiner sj = new StringJoiner(" and ");
 		filterColumns.forEach(column -> {
 			if (column.getTable().equals(table)) {
-				sj.add(column.getName() + " = ?");
+				sj.add(tableAlias(table, targetTables) + "." + column.getName() + " = ?");
 				params.add(columnValue(column, mapColumnToValue));
 			}
 		});
 		return sj.toString();
+	}
+
+	public static String tableAlias(String table, List<String> targetTables) {
+		int index = targetTables.indexOf(table) + 1;
+		return "T" + index;
 	}
 
 	public static Object columnValue(RelationalColumn column, Map<String, Object> mapColumnToValue) {

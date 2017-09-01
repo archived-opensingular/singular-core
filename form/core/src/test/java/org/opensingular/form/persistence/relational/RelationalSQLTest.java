@@ -60,12 +60,25 @@ public class RelationalSQLTest extends TestCaseForm {
 	}
 
 	@Test
-	public void singleSelect() {
+	public void selectOrdered() {
 		RelationalSQL query = select(master.getFields()).orderBy(master.name);
 		RelationalSQLCommmand[] script = query.toSQLScript();
 		assertEquals(1, script.length);
 		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", script[0].getCommand());
 		assertEquals(0, script[0].getParameters().size());
+		assertNull(script[0].getInstance());
+	}
+
+	@Test
+	public void selectByKey() {
+		HashMap<String, Object> keyMap = new HashMap<>();
+		keyMap.put("id", 42);
+		RelationalSQL query = select(master.getFields()).where(master, new FormKeyRelational(keyMap));
+		RelationalSQLCommmand[] script = query.toSQLScript();
+		assertEquals(1, script.length);
+		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 where T1.id = ?", script[0].getCommand());
+		assertEquals(1, script[0].getParameters().size());
+		assertEquals(42, script[0].getParameters().get(0));
 		assertNull(script[0].getInstance());
 	}
 
@@ -100,7 +113,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL delete = delete(master, masterKey(42));
 		RelationalSQLCommmand[] script = delete.toSQLScript();
 		assertEquals(1, script.length);
-		assertEquals("delete from MasterEntity where id = ?", script[0].getCommand());
+		assertEquals("delete from MasterEntity T1 where T1.id = ?", script[0].getCommand());
 		assertEquals(1, script[0].getParameters().size());
 		assertEquals(42, script[0].getParameters().get(0));
 		assertNull(script[0].getInstance());
