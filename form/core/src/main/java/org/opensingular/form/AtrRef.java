@@ -19,7 +19,6 @@ package org.opensingular.form;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
-
 import java.util.Objects;
 
 @SuppressWarnings("rawtypes")
@@ -27,7 +26,7 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final Class<? extends SPackage> packageClass;
 
-    private final String                   nameSimple;
+    private final SimpleName               nameSimple;
 
     private final Class<T>                 typeClass;
 
@@ -52,7 +51,7 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
             Class<I> instanceClass, Class<V> valueClass) {
         this.packageClass = SFormUtil.getPackageClassOrException(scopeClass);
         this.nameScope = SFormUtil.getScopeNameOrException(scopeClass);
-        this.nameSimple = SFormUtil.validateSimpleName(nameSimple);
+        this.nameSimple = new SimpleName(nameSimple);
         this.nameFull = this.nameScope + "." + this.nameSimple;
         this.typeClass = typeClass;
         this.instanceClass = instanceClass;
@@ -64,7 +63,7 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
         }
     }
 
-    public String getNameSimple() {
+    public SimpleName getNameSimple() {
         return nameSimple;
     }
 

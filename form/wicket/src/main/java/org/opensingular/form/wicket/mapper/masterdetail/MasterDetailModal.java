@@ -24,7 +24,6 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -45,7 +44,6 @@ class MasterDetailModal extends BFModalWindow {
 
     protected final IModel<String>               listaLabel;
     protected final WicketBuildContext           ctx;
-    protected final UIBuilderWicket              wicketBuilder;
     protected final Component                    table;
     protected final ViewMode                     viewMode;
     protected       IModel<SInstance>            currentInstance;
@@ -66,7 +64,6 @@ class MasterDetailModal extends BFModalWindow {
                       BSContainer<?> containerExterno) {
         super(id, model, true, false);
 
-        this.wicketBuilder = ctx.getUiBuilderWicket();
         this.listaLabel = listaLabel;
         this.ctx = ctx;
         this.table = ctx.getContainer();
@@ -151,7 +148,7 @@ class MasterDetailModal extends BFModalWindow {
 
         setTitleText($m.get(() -> (prefix + " " + listaLabel.getObject()).trim()));
 
-        final BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
+        BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
         ViewMode             viewModeModal = viewMode;
 
         setBody(modalBody);
@@ -160,9 +157,9 @@ class MasterDetailModal extends BFModalWindow {
             viewModeModal = ViewMode.READ_ONLY;
         }
 
-        final WicketBuildContext context = ctx.createChild(modalBody, containerExterno, true, currentInstance);
+        WicketBuildContext context = ctx.createChild(modalBody, containerExterno, currentInstance);
 
-        wicketBuilder.build(context, viewModeModal);
+        context.build(viewModeModal);
 
         WicketFormProcessing.onFormPrepare(modalBody, currentInstance, false);
 

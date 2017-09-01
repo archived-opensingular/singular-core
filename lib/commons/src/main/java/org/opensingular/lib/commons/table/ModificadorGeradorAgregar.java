@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,8 +31,8 @@ import java.util.stream.Collectors;
  */
 public class ModificadorGeradorAgregar extends ModificadorGerador {
 
-    private final Map<Column, TipoAgregacaoCampo> colunaTipoAgregacao = new HashMap<>();
-    private final transient Map<Column, Object> colunaCalculoExterno = new HashMap<>();
+    private final HashMap<Column, TipoAgregacaoCampo> colunaTipoAgregacao = new HashMap<>();
+    private final HashMap<Column, Object> colunaCalculoExterno = new HashMap<>();
 
     ModificadorGeradorAgregar(TableTool tableTool) {
         super(tableTool);

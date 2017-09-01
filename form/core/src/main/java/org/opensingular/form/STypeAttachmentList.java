@@ -33,12 +33,12 @@ public class STypeAttachmentList extends STypeList<STypeAttachment, SIAttachment
             final StringBuilder displayString = new StringBuilder();
             SInstance instance = context.instance();
             if (instance instanceof SIList) {
-                ((SIList<?>) instance).getChildren()
+                ((SIList<?>) instance)
                         .stream()
                         .map(i -> (SIAttachment) i)
                         .map(SIAttachment::toStringDisplayDefault)
                         .forEach(name -> {
-                            if (!displayString.toString().isEmpty()) {
+                            if (displayString.length() != 0) {
                                 displayString.append(", ");
                             }
                             displayString.append(name);

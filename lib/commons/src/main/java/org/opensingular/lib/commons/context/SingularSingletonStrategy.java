@@ -1,6 +1,8 @@
 package org.opensingular.lib.commons.context;
 
-import org.opensingular.lib.commons.lambda.ISupplier;
+import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public interface SingularSingletonStrategy {
 
@@ -14,7 +16,7 @@ public interface SingularSingletonStrategy {
      * @param <T>
      * @return
      */
-    <T> void put(T thisInstance);
+    <T> void put(@Nonnull T thisInstance);
 
 
     /**
@@ -80,12 +82,8 @@ public interface SingularSingletonStrategy {
      * @param <T>
      * @return
      */
-    default <T> T singletonize(String nameKey, ISupplier<T> singletonFactory) {
-        if (!exists(nameKey)) {
-            put(nameKey, singletonFactory.get());
-        }
-        return get(nameKey);
-    }
+    @Nonnull
+    <T> T singletonize(@Nonnull String nameKey, @Nonnull Supplier<T> singletonFactory);
 
     /**
      * 
@@ -96,12 +94,19 @@ public interface SingularSingletonStrategy {
      * @param <T>
      * @return
      */
-    @SuppressWarnings("unchecked")
-    default <T> T singletonize(Class<? super T> classKey, ISupplier<T> singletonFactory) {
-        if (!exists(classKey)) {
-            put(classKey, singletonFactory.get());
-        }
-        return (T)get(classKey);
-    }
+    @Nonnull
+    <T> T singletonize(@Nonnull Class<T> classKey, @Nonnull Supplier<T> singletonFactory);
 
+    /**
+     * Returns all registered sigletons indexed by class or name string
+     * @return
+     */
+    @Nonnull
+    Map<Object, Object> getEntries();
+
+    /**
+     * keeps all entries passed by parameter inside its own storage
+     * @param entries
+     */
+    void putEntries(@Nonnull SingularSingletonStrategy source);
 }

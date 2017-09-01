@@ -60,10 +60,11 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private Integer id;
 
-    /**
-     * Mapa de bits de flags. Veja {@link InstanceFlags}
-     */
-    private int flags;
+    /** Indica que a instância está no meio de uma exclusão. */
+    private boolean removingInstance;
+
+    /** Se true, indica que o atributo é temporário e deve ser convertido para o tipo correto mais tarde. */
+    private boolean attributeShouldMigrate;
 
     /**
      * Informações encontradas na persitência, mas sem correspondência no tipo na instância atual.
@@ -149,7 +150,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
      */
     final void setAttributeShouldMigrate() {
-        setFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE, true);
+        attributeShouldMigrate = true;
     }
 
     /**
@@ -157,7 +158,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
      */
     final boolean isAttributeShouldMigrate() {
-        return getFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE);
+        return attributeShouldMigrate;
     }
 
     /**
@@ -200,7 +201,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public final void init() {
         //Não deve chamar o init se estiver no modo de leitura do XML
-        if (getDocument().getLastId() != -1) {
+        if (!getDocument().isRestoreMode()) {
             ((SType) getType()).init(() -> this);
         }
     }
@@ -745,9 +746,9 @@ public abstract class SInstance implements SAttributeEnabled {
      * Signals this Component that it is removed from the Component hierarchy.
      */
     final void internalOnRemove() {
-        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, true);
+        removingInstance = true;
         onRemove();
-        if (getFlag(InstanceFlags.REMOVENDO_INSTANCIA)) {
+        if (removingInstance) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                     + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()", this);
         }
@@ -774,19 +775,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * </p>
      */
     protected void onRemove() {
-        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, false);
-    }
-
-    final void setFlag(InstanceFlags flag, boolean value) {
-        if (value) {
-            flags |= flag.bit();
-        } else {
-            flags &= ~flag.bit();
-        }
-    }
-
-    final boolean getFlag(InstanceFlags flag) {
-        return (flags & flag.bit()) != 0;
+        removingInstance = false;
     }
 
     public boolean hasValidationErrors() {

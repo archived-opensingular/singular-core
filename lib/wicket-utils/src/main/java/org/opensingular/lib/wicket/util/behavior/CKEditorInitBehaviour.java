@@ -25,8 +25,10 @@ public class CKEditorInitBehaviour extends InitScriptBehaviour {
     static {
         CONFIG = ""
                 + "{"
+                + " allowedContent : true, "
                 + " skin : 'office2013', "
                 + " language : 'pt-br', "
+                + " width : '215mm', "
                 + " toolbar : [ "
                 + "     { name: 'document', items: [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print'] },"
                 + "     { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },"

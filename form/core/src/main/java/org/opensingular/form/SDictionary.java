@@ -35,7 +35,8 @@ public class SDictionary {
 
     private final MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
 
-    private final MapByName<SType<?>> types = new MapByName<>(t -> t.getName());
+    private final Map<Class<? extends SType<?>>, SType<?>> typeByClass = new HashMap<>();
+    private final Map<String, SType<?>> typeCacheByFullName = new HashMap<>();
 
     private final Map<String, AttrInternalRef> attributes = new HashMap<>(currentAvarageAttributes);
 
@@ -82,9 +83,9 @@ public class SDictionary {
     }
 
     public static SDictionary create() {
-        SDictionary dicionario = new SDictionary();
-        dicionario.loadPackage(SPackageCore.class);
-        return dicionario;
+        SDictionary dictionary = new SDictionary();
+        dictionary.loadPackage(SPackageCore.class);
+        return dictionary;
     }
 
     /**
@@ -99,13 +100,17 @@ public class SDictionary {
         if (packageClass == null){
             throw new SingularFormException("Classe pacote não pode ser nula");
         }
-        T novo = packages.get(packageClass);
-        if (novo == null) {
-            novo = MapByName.newInstance(packageClass);
-            packages.verifyMustNotBePresent(novo, this);
-            carregarInterno(novo);
+        T newPackage = packages.get(packageClass);
+        if (newPackage == null) {
+            try {
+                newPackage = packageClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new SingularFormException("Erro instanciando " + packageClass.getName(), e);
+            }
+            packages.verifyMustNotBePresent(newPackage, this);
+            loadInternal(newPackage);
         }
-        return novo;
+        return newPackage;
     }
 
     /**
@@ -136,22 +141,23 @@ public class SDictionary {
     @Nonnull
     public <T extends SType<?>> T getType(@Nonnull Class<T> typeClass) {
         Objects.requireNonNull(typeClass);
-        T typeRef = types.get(typeClass);
+        SType<?> typeRef = typeByClass.get(typeClass);
         if (typeRef == null) {
             Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
             SPackage typePackage = loadPackage(classPacote);
-            typeRef = types.get(typeClass);
+            typeRef = typeByClass.get(typeClass);
             if (typeRef == null) {
                 //O tipo é de carga lazy e não se auto registrou no pacote, então regista agora
-                typeRef = registeLazyTypeIntoPackage(typePackage, typeClass);
+                typeRef = registerLazyTypeIntoPackage(typePackage, typeClass);
             }
         }
-        return typeRef;
+        return typeClass.cast(typeRef);
     }
 
     /** Adiciona o tipo informado no pacote. */
     @Nonnull
-    private <T extends SType<?>> T registeLazyTypeIntoPackage(@Nonnull SPackage typePackage, @Nonnull Class<T> typeClass) {
+    private <T extends SType<?>> T registerLazyTypeIntoPackage(@Nonnull SPackage typePackage,
+            @Nonnull Class<T> typeClass) {
         Objects.requireNonNull(typePackage);
         Objects.requireNonNull(typeClass);
         return typePackage.registerType(typeClass);
@@ -163,38 +169,52 @@ public class SDictionary {
     }
 
     public Optional<SType<?>> getTypeOptional(String pathFullName) {
-        SType<?> t = types.get(pathFullName);
-        if (t == null) {
+        Optional<SType<?>> t = findTypeByFullName(pathFullName);
+        if (!t.isPresent()) {
             // Verifica se é um tipo dos pacotes com carga automática do
             // singular
             Class<? extends SPackage> singularPackage = SFormUtil.getSingularPackageForType(pathFullName);
             if (singularPackage != null) {
                 loadPackage(singularPackage);
-                t = types.get(pathFullName);
+                t = findTypeByFullName(pathFullName);
             }
         }
-        return Optional.ofNullable(t);
+        return t;
+    }
+
+    @Nonnull
+    private Optional<SType<?>> findTypeByFullName(String pathFullName) {
+        SType<?> t = typeCacheByFullName.get(pathFullName);
+        if (t != null) {
+            return Optional.of(t);
+        }
+        int pos = pathFullName.lastIndexOf('.');
+        while (pos != -1) {
+            String candidatePackage = pathFullName.substring(0, pos);
+            SPackage p = packages.get(candidatePackage);
+            if (p != null) {
+                Optional<SType<?>> tt = p.getLocalTypeOptional(pathFullName.substring(pos + 1));
+                if (tt.isPresent()) {
+                    typeCacheByFullName.put(pathFullName, tt.get());
+                }
+                return tt;
+            }
+            pos = pathFullName.lastIndexOf('.', pos-1);
+        }
+        return Optional.empty();
     }
 
     public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> classeTipo) {
         return getType(classeTipo).newInstance();
     }
 
-    final MapByName<SType<?>> getTypesInternal() {
-        return types;
-    }
-
     @SuppressWarnings("unchecked")
-    final <T extends SType<?>> void registeType(@Nonnull SScope scope, @Nonnull T newType,
+    final <T extends SType<?>> void registerType(@Nonnull SScope scope, @Nonnull T newType,
             @Nullable Class<T> classForRegister) {
         if (classForRegister != null) {
             Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
             SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
-            SPackage pacoteDestino = findPackage(scope);
-            if (pacoteDestino == null) {
-                throw new SingularFormException("O pacote de destino para carregar o tipo " +
-                        newType.getNameSimple() + " não pode ser nulo.");
-            }
+            SPackage pacoteDestino = scope.getPackage();
             if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
                 throw new SingularFormException(
                         "Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '" +
@@ -205,23 +225,14 @@ public class SDictionary {
         newType.setScope(scope);
         newType.resolveSuperType(this);
         newType.setTypeId(++idCount);
-        types.verifyMustNotBePresent(newType, this);
         ((SScopeBase) scope).register(newType);
-        types.add(newType, (Class<SType<?>>) classForRegister);
+        typeByClass.put(classForRegister, newType);
     }
 
-    private static SPackage findPackage(SScope currentScope) {
-        SScope scope = currentScope;
-        while (scope != null && !(scope instanceof SPackage)) {
-            scope = scope.getParentScope();
-        }
-        return (SPackage) scope;
-    }
-
-    private void carregarInterno(SPackage newPackage) {
-        PackageBuilder pb = new PackageBuilder(newPackage);
+    private void loadInternal(SPackage newPackage) {
         newPackage.setDictionary(this);
         packages.add(newPackage);
+        PackageBuilder pb = new PackageBuilder(newPackage);
         newPackage.onLoadPackage(pb);
     }
 
@@ -246,7 +257,7 @@ public class SDictionary {
      * Registra que existem processadores pendentes de execução para o tipo, os quais deverão ser executados depois de
      * concluir a execução do onLoadType da classe.
      */
-    final void addTypeProcessorForLatterExecutuion(SType<?> type, Runnable runnable) {
+    final void addTypeProcessorForLatterExecution(SType<?> type, Runnable runnable) {
         if(pendingTypeProcessorExecution == null) {
             pendingTypeProcessorExecution = ArrayListMultimap.create();
         }
@@ -257,8 +268,8 @@ public class SDictionary {
      * Registra um atributo que pode ser associado a vários {@link SType} diferentes.
      */
     @Nonnull
-    final AttrInternalRef registeAttribute(@Nonnull SType<?> attr) {
-        AttrInternalRef ref = registeAttribute(attr.getName());
+    final AttrInternalRef registerAttribute(@Nonnull SType<?> attr) {
+        AttrInternalRef ref = registerAttribute(attr.getName());
         ref.resolve(attr);
         return ref;
     }
@@ -269,8 +280,8 @@ public class SDictionary {
      * associado).
      */
     @Nonnull
-    final AttrInternalRef registeAttribute(@Nonnull SType<?> attr, @Nonnull SType<?> owner, boolean selfReference) {
-        AttrInternalRef ref = registeAttribute(attr.getName());
+    final AttrInternalRef registerAttribute(@Nonnull SType<?> attr, @Nonnull SType<?> owner, boolean selfReference) {
+        AttrInternalRef ref = registerAttribute(attr.getName());
         ref.resolve(attr, owner, selfReference);
         owner.addAttribute(attr);
         return ref;
@@ -284,7 +295,7 @@ public class SDictionary {
     final AttrInternalRef getAttribureRefereceOrCreateLazy(@Nonnull String attributeName) {
         AttrInternalRef ref = getAttributeReference(attributeName);
         if (ref == null) {
-            ref = registeAttribute(attributeName);
+            ref = registerAttribute(attributeName);
         }
         return ref;
     }
@@ -294,7 +305,7 @@ public class SDictionary {
      * retorna esse em vez de criar um novo.
      */
     @Nonnull
-    private AttrInternalRef registeAttribute(@Nonnull String attributeName) {
+    private AttrInternalRef registerAttribute(@Nonnull String attributeName) {
         AttrInternalRef ref = new AttrInternalRef(this, attributeName, attributes.size());
         AttrInternalRef previusValue = attributes.putIfAbsent(ref.getName(), ref);
         if (previusValue == null) {
@@ -334,7 +345,7 @@ public class SDictionary {
     private int attributesArrayInicialSize = currentAvarageAttributes;
 
     /** Retorna o tamanho inicial para a criação de arrays para referência para atributos. */
-    final int getAttributesArrayInicialSize() {
+    final int getAttributesArrayInitialSize() {
         return attributesArrayInicialSize;
     }
 

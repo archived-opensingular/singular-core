@@ -68,6 +68,7 @@ public interface SIDateTimeModel {
             if (rawTime != null && rawTime.matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
 
                 final Calendar c = new GregorianCalendar();
+                c.clear();
                 final String[] date = rawTime.split("/");
                 final int day = Integer.parseInt(date[0]);
                 final int month = Integer.parseInt(date[1]);
@@ -82,9 +83,10 @@ public interface SIDateTimeModel {
                 c.set(Calendar.YEAR, year);
 
                 model.setObject(c.getTime());
+            } else {
+                model.setObject(null);
             }
         }
-
     }
 
     class TimeModel extends AbstractDateTimeModel {
@@ -107,6 +109,7 @@ public interface SIDateTimeModel {
             if (rawTime != null && rawTime.matches("[0-9]{1,2}:[0-9]{1,2}")) {
 
                 final Calendar c = new GregorianCalendar();
+                c.clear();
                 final String[] hourMinute = rawTime.split(":");
                 final int hour = Integer.parseInt(hourMinute[0]);
                 final int minute = Integer.parseInt(hourMinute[1]);
@@ -119,6 +122,8 @@ public interface SIDateTimeModel {
                 c.set(Calendar.MINUTE, minute);
 
                 model.setObject(c.getTime());
+            } else {
+                model.setObject(null);
             }
         }
     }

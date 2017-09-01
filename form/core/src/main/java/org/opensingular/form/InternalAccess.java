@@ -1,5 +1,6 @@
 package org.opensingular.form;
 
+import org.opensingular.form.aspect.AspectEntry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.internal.lib.commons.xml.MElement;
 
@@ -56,7 +57,7 @@ public final class InternalAccess {
 
     /** @see {@link SType#getAspectDirect(int)} */
     @Nullable
-    public final Object getAspectDirect(@Nonnull SType target, int index) {
+    public final AspectEntry<?,?> getAspectDirect(@Nonnull SType target, int index) {
         return target.getAspectDirect(index);
     }
 }

@@ -13,13 +13,13 @@ public class MigrationEnabledSingularSingletonStrategyTest {
 
         //Default config
                 ((SingularSingletonStrategy) SingularContext.get()).singletonize("nada", () -> "nada");
-        Assert.assertTrue(SingularContext.get() instanceof MigrationEnabledSingularSingletonStrategy);
+        Assert.assertTrue(SingularContext.get() instanceof SingularSingletonStrategy);
 
         //Another config
         InstanceBoundedSingletonStrategy another = new InstanceBoundedSingletonStrategy();
         another.put("nada2", "nada2");
-        Assert.assertTrue(another instanceof MigrationEnabledSingularSingletonStrategy);
-        another.putEntries(((MigrationEnabledSingularSingletonStrategy) SingularContext.get()).getEntries());
+        Assert.assertTrue(another instanceof SingularSingletonStrategy);
+        another.putEntries(((SingularSingletonStrategy) SingularContext.get()));
 
         //reconfig
         SingularContextSetup.reset();

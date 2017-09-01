@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -46,9 +38,7 @@ import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
-import org.opensingular.form.wicket.UIBuilderWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
@@ -66,6 +56,15 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -193,7 +192,9 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
 
             Collection<SType<?>> fields = compositeElementsType.getFields();
-            int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
+            int sumWidthPref = (view.isRenderCompositeFieldsAsColumns())
+                ? fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum()
+                : compositeElementsType.asAtrBootstrap().getColPreference(1);
 
             IConsumer<SType<?>> columnCallback = tCampo -> {
                 final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
@@ -244,17 +245,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         private final WicketBuildContext ctx;
         private final SView              view;
         private final Form<?>            form;
-        private final ViewMode           viewMode;
-        private final UIBuilderWicket    wicketBuilder;
 
         private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form, WebMarkupContainer parentContainer) {
             super(id, model, parentContainer);
             super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
-            this.wicketBuilder = ctx.getUiBuilderWicket();
             this.ctx = ctx;
             this.view = ctx.getView();
             this.form = form;
-            this.viewMode = ctx.getViewMode();
         }
 
         @Override
@@ -278,7 +275,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final SViewListByTable viewListByTable = (SViewListByTable) view;
 
-            if (viewListByTable.isInsertEnabled()) {
+            if (viewListByTable.isInsertEnabled() && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendInserirButton(this, form, item, actionColumn);
@@ -289,20 +286,14 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 final STypeComposite<?> ct = ci.getType();
 
                 for (SType<?> ft : ct.getFields()) {
-                    final IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    wicketBuilder.build(
-                        ctx.createChild(row.newCol(), fm)
-                            .setHint(HIDE_LABEL, true),
-                        viewMode);
+                    IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
+                    ctx.createChild(row.newCol(), fm).setHint(HIDE_LABEL, Boolean.TRUE).build();
                 }
             } else {
-                wicketBuilder.build(
-                    ctx.createChild(row.newCol(), itemModel)
-                        .setHint(HIDE_LABEL, true),
-                    viewMode);
+                ctx.createChild(row.newCol(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
-            if (viewListByTable.isDeleteEnabled() && viewMode.isEdition()) {
+            if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendRemoverButton(this, form, item, actionColumn);
