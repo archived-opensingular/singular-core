@@ -29,11 +29,11 @@ import org.opensingular.form.SType;
  */
 public class BasicRelationalMapper implements RelationalMapper {
 	public String table(SType<?> type) {
-		String result = type.as(AtrRelational::new).getTable();
+		String result = type.as(AtrSQL::new).getTable();
 		if (result == null) {
 			if (hasParentType(type)) {
 				SType<?> parentType = getParentType(type);
-				result = parentType.as(AtrRelational::new).getTable();
+				result = parentType.as(AtrSQL::new).getTable();
 				if (result == null)
 					result = parentType.getNameSimple();
 			} else
@@ -44,9 +44,9 @@ public class BasicRelationalMapper implements RelationalMapper {
 
 	public List<String> tablePK(SType<?> type) {
 		List<String> result = new ArrayList<>();
-		String pk = type.as(AtrRelational::new).getTablePK();
+		String pk = type.as(AtrSQL::new).getTablePK();
 		if (pk == null && hasParentType(type))
-			pk = getParentType(type).as(AtrRelational::new).getTablePK();
+			pk = getParentType(type).as(AtrSQL::new).getTablePK();
 		if (pk != null)
 			for (String key : pk.split(","))
 				result.add(key.trim());
@@ -54,11 +54,11 @@ public class BasicRelationalMapper implements RelationalMapper {
 	}
 
 	public List<RelationalFK> tableFKs(SType<?> field) {
-		return field.as(AtrRelational::new).getTableFKs();
+		return field.as(AtrSQL::new).getTableFKs();
 	}
 
 	public String column(SType<?> field) {
-		String result = field.as(AtrRelational::new).getColumn();
+		String result = field.as(AtrSQL::new).getColumn();
 		if (result == null)
 			result = field.getNameSimple();
 		return result;

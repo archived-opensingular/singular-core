@@ -123,10 +123,10 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Master entity");
-				as(AtrRelational::new).defineColumn("id", Types.INTEGER).tablePK("id");
+				asSQL().defineColumn("id", Types.INTEGER).tablePK("id");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
-				observation.as(AtrRelational::new).column("obs");
+				observation.asSQL().column("obs");
 				items = addFieldListOf("items", ItemEntity.class);
 			}
 		}
@@ -140,11 +140,10 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Item entity");
-				as(AtrRelational::new).table("Items").tablePK("masterID, mnemo").addTableFK("masterID",
-						MasterEntity.class);
+				asSQL().table("Items").tablePK("masterID, mnemo").addTableFK("masterID", MasterEntity.class);
 				mnemo = addFieldString("mnemo");
 				description = addFieldString("description");
-				description.as(AtrRelational::new).column("desc");
+				description.asSQL().column("desc");
 				price = addFieldMonetary("price");
 			}
 		}

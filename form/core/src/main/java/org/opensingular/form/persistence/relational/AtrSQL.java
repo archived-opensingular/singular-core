@@ -35,15 +35,15 @@ import org.opensingular.form.SType;
  *
  * @author Edmundo Andrade
  */
-public class AtrRelational extends STranslatorForAttribute {
-	public AtrRelational() {
+public class AtrSQL extends STranslatorForAttribute {
+	public AtrSQL() {
 	}
 
-	public AtrRelational(SAttributeEnabled target) {
+	public AtrSQL(SAttributeEnabled target) {
 		super(target);
 	}
 
-	public AtrRelational table(String table) {
+	public AtrSQL table(String table) {
 		setAttributeValue(ATR_TABLE, table);
 		return this;
 	}
@@ -52,7 +52,7 @@ public class AtrRelational extends STranslatorForAttribute {
 		return getAttributeValue(ATR_TABLE);
 	}
 
-	public AtrRelational tablePK(String tablePK) {
+	public AtrSQL tablePK(String tablePK) {
 		setAttributeValue(ATR_TABLE_PK, tablePK);
 		return this;
 	}
@@ -61,11 +61,11 @@ public class AtrRelational extends STranslatorForAttribute {
 		return getAttributeValue(ATR_TABLE_PK);
 	}
 
-	public AtrRelational addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
+	public AtrSQL addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
 		return addTableFK(new RelationalFK(getTable(), keyColumns, getDictionary().getType(typeClass)));
 	}
 
-	private AtrRelational addTableFK(RelationalFK fk) {
+	private AtrSQL addTableFK(RelationalFK fk) {
 		List<RelationalFK> list = getTableFKs();
 		list.add(fk);
 		StringJoiner sj = new StringJoiner(";");
@@ -85,7 +85,7 @@ public class AtrRelational extends STranslatorForAttribute {
 		return result;
 	}
 
-	public AtrRelational column(String column) {
+	public AtrSQL column(String column) {
 		setAttributeValue(ATR_COLUMN, column);
 		return this;
 	}
@@ -94,11 +94,11 @@ public class AtrRelational extends STranslatorForAttribute {
 		return getAttributeValue(ATR_COLUMN);
 	}
 
-	public AtrRelational defineColumn(String column, Integer sqlType) {
+	public AtrSQL defineColumn(String column, Integer sqlType) {
 		return defineColumn(new ColumnDefinition(getTable(), column, sqlType));
 	}
 
-	private AtrRelational defineColumn(ColumnDefinition def) {
+	private AtrSQL defineColumn(ColumnDefinition def) {
 		List<ColumnDefinition> list = getColumnDefinitions();
 		list.add(def);
 		StringJoiner sj = new StringJoiner(";");

@@ -18,13 +18,13 @@ import org.hibernate.jdbc.Work;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.persistence.relational.FormRepositoryHibernateTest.TestPackage.Form;
@@ -35,20 +35,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:applicationContext.xml")
+@ContextConfiguration("classpath:relational/applicationContext.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Rollback(value = true)
 public class FormRepositoryHibernateTest {
 	@Inject
 	protected SessionFactory sessionFactory;
-	private Form form;
+	@Inject
+	private SDocumentFactory documentFactory;
 	private FormRespository<Form, SIComposite> formRepository;
 
 	@Before
 	public void setUp() {
-		SDictionary dictionary = SDictionary.create();
-		form = dictionary.getType(Form.class);
-		SDocumentFactory documentFactory = SDocumentFactory.empty();
 		formRepository = new FormRepositoryHibernate<>(sessionFactory, documentFactory, Form.class);
 	}
 
@@ -56,21 +54,21 @@ public class FormRepositoryHibernateTest {
 	public void insertAndDeleteForGeneratedKey() {
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
-				String sql = "CREATE TABLE DBSINGULAR.FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS VARCHAR(250), PRIMARY KEY (CODE))";
+				String sql = "CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS VARCHAR(250), PRIMARY KEY (CODE))";
 				System.out.println(sql);
 				Statement statement = connection.createStatement();
 				statement.executeUpdate(sql);
 			}
 		});
 		//
-		SIComposite formInstance = form.newInstance();
+		SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
 		formInstance.setValue("name", "My form");
 		FormKeyRelational insertedKey = (FormKeyRelational) formRepository.insert(formInstance, null);
 		int code = (int) insertedKey.getColumnValue("CODE");
 		//
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
-				String sql = "SELECT NAME, OBS FROM DBSINGULAR.FORM WHERE CODE = ?";
+				String sql = "SELECT NAME, OBS FROM FORM WHERE CODE = ?";
 				PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setInt(1, code);
 				try (ResultSet rs = statement.executeQuery()) {
@@ -85,7 +83,7 @@ public class FormRepositoryHibernateTest {
 		//
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
-				String sql = "SELECT COUNT(*) FROM DBSINGULAR.FORM WHERE CODE = ?";
+				String sql = "SELECT COUNT(*) FROM FORM WHERE CODE = ?";
 				PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setInt(1, code);
 				try (ResultSet rs = statement.executeQuery()) {
@@ -106,10 +104,10 @@ public class FormRepositoryHibernateTest {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Formulary");
-				as(AtrRelational::new).table("DBSINGULAR.FORM").defineColumn("CODE", Types.INTEGER).tablePK("CODE");
+				asSQL().table("FORM").defineColumn("CODE", Types.INTEGER).tablePK("CODE");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
-				observation.as(AtrRelational::new).column("OBS");
+				observation.asSQL().column("OBS");
 			}
 		}
 	}
