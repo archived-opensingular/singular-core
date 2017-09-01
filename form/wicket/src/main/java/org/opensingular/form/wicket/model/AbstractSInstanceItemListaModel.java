@@ -43,8 +43,9 @@ public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     @Override
     public I getObject() {
         SIList<I> iLista = getRootTarget();
-        if (iLista == null || getIndex() < 0 || getIndex() >= iLista.size())
+        if (iLista == null || getIndex() < 0 || getIndex() >= iLista.size()) {
             return null;
+        }
         return (I) iLista.get(getIndex());
     }
 
