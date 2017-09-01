@@ -120,7 +120,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
      */
     private String getDownloadURL(String id, String filename) {
         AttachmentShareHandler sharedResourceHandler = new AttachmentShareHandler(id, (WebApplication) component.getApplication());
-        final AttachmentResource resource = new AttachmentResource(id, filename, contentDisposition, model.getObject().getDocument());
+        final AttachmentResource resource = new AttachmentResource(id, filename, contentDisposition, () -> model.getObject().getDocument());
         return sharedResourceHandler.share(resource);
     }
 

@@ -5,6 +5,7 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,18 +17,18 @@ public class AttachmentResource extends AbstractResource implements Loggable {
     private final String attachmentKey;
     private final String filename;
     private final ContentDisposition contentDisposition;
-    private final SDocument sDocument;
+    private final ISupplier<SDocument> sDocumentSupplier;
 
-    private AttachmentShareHandler attachmentSharedHandler;
+    private transient AttachmentShareHandler attachmentSharedHandler;
 
     public AttachmentResource(String attachmentKey,
                               String filename,
                               ContentDisposition contentDisposition,
-                              SDocument sDocument) {
+                              ISupplier<SDocument> sDocumentSupplier) {
         this.attachmentKey = attachmentKey;
         this.filename = filename;
         this.contentDisposition = contentDisposition;
-        this.sDocument = sDocument;
+        this.sDocumentSupplier = sDocumentSupplier;
     }
 
     private IAttachmentRef findAttachmentRef() {
@@ -43,6 +44,7 @@ public class AttachmentResource extends AbstractResource implements Loggable {
 
     private List<IAttachmentPersistenceHandler<?>> getHandlers() {
         List<IAttachmentPersistenceHandler<?>> services = new ArrayList<>();
+        SDocument sDocument = sDocumentSupplier.get();
         if (sDocument.isAttachmentPersistenceTemporaryHandlerSupported()) {
             services.add(sDocument.getAttachmentPersistenceTemporaryHandler());
         }
