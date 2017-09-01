@@ -67,11 +67,11 @@ public class RelationalSQLInsert implements RelationalSQL {
 	private String concatenateColumnNames(String table, String separator) {
 		StringJoiner sj = new StringJoiner(separator);
 		keyColumns.forEach(column -> {
-			if (column.getTable().equals(table))
+			if (column.getTable().equals(table) && columnValue(column) != null)
 				sj.add(column.getName());
 		});
 		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table))
+			if (column.getTable().equals(table) && columnValue(column) != null)
 				sj.add(column.getName());
 		});
 		return sj.toString();
@@ -80,14 +80,13 @@ public class RelationalSQLInsert implements RelationalSQL {
 	private String concatenateColumnValues(String table, String separator, List<Object> params) {
 		StringJoiner sj = new StringJoiner(separator);
 		keyColumns.forEach(column -> {
-			if (column.getTable().equals(table)) {
+			if (column.getTable().equals(table) && columnValue(column) != null) {
 				sj.add("?");
-				System.out.println(column.getName());
 				params.add(columnValue(column));
 			}
 		});
 		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table)) {
+			if (column.getTable().equals(table) && columnValue(column) != null) {
 				sj.add("?");
 				params.add(columnValue(column));
 			}

@@ -108,10 +108,14 @@ public interface RelationalSQL {
 		filterColumns.forEach(column -> {
 			if (column.getTable().equals(table)) {
 				sj.add(column.getName() + " = ?");
-				params.add(mapColumnToValue.get(column.getName()));
+				params.add(columnValue(column, mapColumnToValue));
 			}
 		});
 		return sj.toString();
+	}
+
+	public static Object columnValue(RelationalColumn column, Map<String, Object> mapColumnToValue) {
+		return mapColumnToValue.get(column.getName());
 	}
 
 	public static void collectRelationships(SType<?> field, List<RelationalFK> relationships) {

@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence.relational;
 
+import java.sql.Types;
 import java.util.HashMap;
 
 import javax.annotation.Nonnull;
@@ -39,13 +40,21 @@ public class FormKeyRelational extends AbstractFormKey<HashMap<String, Object>> 
 		super(keyValue);
 	}
 
+	public Object getColumnValue(String column) {
+		return getValue().get(column);
+	}
+
 	@Override
 	protected HashMap<String, Object> parseValuePersistenceString(String persistenceString) {
 		HashMap<String, Object> result = new HashMap<>();
 		String[] pairs = persistenceString.split(SERIALIZATION_SEPARATOR);
 		for (String pair : pairs) {
-			String[] parts = pair.split("\\$", 2);
-			result.put(parts[0], parts[1]);
+			String[] parts = pair.split("\\$", 3);
+			int sqlType = Integer.parseInt(parts[1]);
+			if (sqlType == Types.INTEGER)
+				result.put(parts[0], Integer.parseInt(parts[2]));
+			else
+				result.put(parts[0], parts[2]);
 		}
 		return result;
 	}

@@ -1,17 +1,33 @@
 package org.opensingular.form.persistence.relational;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.Work;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.persistence.relational.FormRepositoryHibernateTest.TestPackage.Form;
+import org.opensingular.form.type.core.STypeString;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,49 +40,75 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FormRepositoryHibernateTest {
 	@Inject
 	protected SessionFactory sessionFactory;
+	private Form form;
+	private FormRepositoryHibernate<Form, SIComposite> formRepository;
+
+	@Before
+	public void setUp() {
+		SDictionary dictionary = SDictionary.create();
+		form = dictionary.getType(Form.class);
+		SDocumentFactory documentFactory = SDocumentFactory.empty();
+		formRepository = new FormRepositoryHibernate<>(sessionFactory, documentFactory, Form.class);
+	}
 
 	@Test
-	public void insertAndSelect() {
+	public void insertAndDeleteForGeneratedKey() {
 		sessionFactory.openSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
-				String sql = "INSERT INTO DBSINGULAR.TB_TIPO_FORMULARIO (CO_TIPO_FORMULARIO, SG_TIPO_FORMULARIO, NO_LABEL_FORMULARIO, NU_VERSAO_CACHE) VALUES (?, ?, ?, ?)";
+				String sql = "CREATE TABLE DBSINGULAR.FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS VARCHAR(250), PRIMARY KEY (CODE))";
+				Statement statement = connection.createStatement();
+				statement.executeUpdate(sql);
+			}
+		});
+		//
+		SIComposite formInstance = form.newInstance();
+		formInstance.setValue("name", "My form");
+		FormKeyRelational insertedKey = (FormKeyRelational) formRepository.insert(formInstance, null);
+		int code = (int) insertedKey.getColumnValue("CODE");
+		//
+		sessionFactory.openSession().doWork(new Work() {
+			public void execute(Connection connection) throws SQLException {
+				String sql = "SELECT NAME, OBS FROM DBSINGULAR.FORM WHERE CODE = ?";
 				PreparedStatement statement = connection.prepareStatement(sql);
-				statement.setInt(1, 1);
-				statement.setString(2, "F1");
-				statement.setString(3, "FORM 1");
-				statement.setInt(4, 1);
-				int rows = statement.executeUpdate();
-				System.out.println("> " + rows + " inserted");
-				//
-				sql = "SELECT CO_TIPO_FORMULARIO, SG_TIPO_FORMULARIO, NO_LABEL_FORMULARIO, NU_VERSAO_CACHE FROM DBSINGULAR.TB_TIPO_FORMULARIO";
-				statement = connection.prepareStatement(sql);
-				ResultSet rs = statement.executeQuery();
-				while (rs.next())
-					System.out.println("selected: " + rs.getInt("CO_TIPO_FORMULARIO") + " | "
-							+ rs.getString("SG_TIPO_FORMULARIO") + " | " + rs.getString("NO_LABEL_FORMULARIO") + " | "
-							+ rs.getInt("NU_VERSAO_CACHE"));
-				rs.close();
+				statement.setInt(1, code);
+				try (ResultSet rs = statement.executeQuery()) {
+					assertTrue(rs.next());
+					assertEquals("My form", rs.getString("NAME"));
+					assertNull(rs.getString("OBS"));
+				}
+			}
+		});
+		//
+		formRepository.delete(insertedKey);
+		//
+		sessionFactory.openSession().doWork(new Work() {
+			public void execute(Connection connection) throws SQLException {
+				String sql = "SELECT COUNT(*) FROM DBSINGULAR.FORM WHERE CODE = ?";
+				PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, code);
+				try (ResultSet rs = statement.executeQuery()) {
+					assertTrue(rs.next());
+					assertEquals(0, rs.getInt(1));
+				}
 			}
 		});
 	}
 
-	@Test
-	public void insertWithGeneratedValue() {
-		sessionFactory.openSession().doWork(new Work() {
-			public void execute(Connection connection) throws SQLException {
-				String sql = "CREATE TABLE DBSINGULAR.TEST (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, PRIMARY KEY (CODE))";
-				Statement statement = connection.createStatement();
-				statement.executeUpdate(sql);
-				System.out.println("> table created");
-				//
-				sql = "INSERT INTO DBSINGULAR.TEST (NAME) VALUES ('My name')";
-				statement = connection.createStatement();
-				statement.executeUpdate(sql, new String[] { "CODE" });
-				ResultSet rs = statement.getGeneratedKeys();
-				if (rs.next())
-					System.out.println("> inserted: #" + rs.getInt(1));
-				rs.close();
+	@SInfoPackage(name = "testPackage")
+	public static final class TestPackage extends SPackage {
+		@SInfoType(name = "Form", spackage = TestPackage.class)
+		public static final class Form extends STypeComposite<SIComposite> {
+			public STypeString name;
+			public STypeString observation;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				asAtr().label("Formulary");
+				as(AtrRelational::new).table("DBSINGULAR.FORM").defineColumn("CODE", Types.INTEGER).tablePK("CODE");
+				name = addFieldString("name");
+				observation = addFieldString("observation");
+				observation.as(AtrRelational::new).column("OBS");
 			}
-		});
+		}
 	}
 }

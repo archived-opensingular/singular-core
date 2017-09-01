@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.persistence;
+package org.opensingular.form.persistence.relational;
 
 import static org.opensingular.form.persistence.relational.RelationalSQL.delete;
 import static org.opensingular.form.persistence.relational.RelationalSQL.insert;
 import static org.opensingular.form.persistence.relational.RelationalSQL.select;
+
+import java.sql.Types;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,11 +36,13 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.ItemEntity;
-import org.opensingular.form.persistence.RelationalSQLTest.TestPackage.MasterEntity;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.relational.AtrRelational;
 import org.opensingular.form.persistence.relational.FormKeyRelational;
 import org.opensingular.form.persistence.relational.RelationalSQL;
+import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
+import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.ItemEntity;
+import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.MasterEntity;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
 
@@ -61,31 +66,50 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Test
 	public void singleSelect() {
 		RelationalSQL query = select(master.getFields()).orderBy(master.name);
-		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name",
-				query.toSQLScript()[0].getCommand());
+		RelationalSQLCommmand[] script = query.toSQLScript();
+		assertEquals(1, script.length);
+		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", script[0].getCommand());
+		assertEquals(0, script[0].getParameters().size());
 	}
 
 	@Test
 	public void joinSelect() {
 		ItemEntity items = master.items.getElementsType();
 		RelationalSQL query = select(master.getFields(), items.getFields()).orderBy(master.name, items.mnemo);
+		RelationalSQLCommmand[] script = query.toSQLScript();
+		assertEquals(1, script.length);
 		assertEquals(
 				"select T1.name, T1.obs, T2.mnemo, T2.desc, T2.price, T1.id, T2.masterID from MasterEntity T1 left join Items T2 on T2.masterID = T1.id order by T1.name, T2.mnemo",
-				query.toSQLScript()[0].getCommand());
+				script[0].getCommand());
+		assertEquals(0, script[0].getParameters().size());
 	}
 
 	@Test
 	public void testInsert() {
 		SIComposite masterInstance = master.newInstance();
-		masterInstance.setValue("name", "MyName");
+		masterInstance.setValue("name", "My name");
 		RelationalSQL insert = insert(masterInstance);
-		assertEquals("insert into MasterEntity (id, name) values (?, ?)", insert.toSQLScript()[0].getCommand());
+		RelationalSQLCommmand[] script = insert.toSQLScript();
+		assertEquals(1, script.length);
+		assertEquals("insert into MasterEntity (name) values (?)", script[0].getCommand());
+		assertEquals(1, script[0].getParameters().size());
+		assertEquals("My name", script[0].getParameters().get(0));
 	}
 
 	@Test
 	public void testDelete() {
-		RelationalSQL delete = delete(master, new FormKeyRelational("id$42"));
-		assertEquals("delete from MasterEntity where id = ?", delete.toSQLScript()[0].getCommand());
+		RelationalSQL delete = delete(master, masterKey(42));
+		RelationalSQLCommmand[] script = delete.toSQLScript();
+		assertEquals(1, script.length);
+		assertEquals("delete from MasterEntity where id = ?", script[0].getCommand());
+		assertEquals(1, script[0].getParameters().size());
+		assertEquals(42, script[0].getParameters().get(0));
+	}
+
+	private FormKey masterKey(int id) {
+		HashMap<String, Object> key = new HashMap<>();
+		key.put("id", id);
+		return new FormKeyRelational(key);
 	}
 
 	@SInfoPackage(name = "testPackage")
@@ -99,7 +123,7 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Master entity");
-				as(AtrRelational::new).tablePK("id");
+				as(AtrRelational::new).defineColumn("id", Types.INTEGER).tablePK("id");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
 				observation.as(AtrRelational::new).column("obs");

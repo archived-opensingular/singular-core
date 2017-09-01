@@ -18,6 +18,7 @@ package org.opensingular.form.persistence.relational;
 
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_COLUMN;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_COLUMN_DEFS;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_FKS;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
 
@@ -64,7 +65,7 @@ public class AtrRelational extends STranslatorForAttribute {
 		return addTableFK(new RelationalFK(getTable(), keyColumns, getDictionary().getType(typeClass)));
 	}
 
-	public AtrRelational addTableFK(RelationalFK fk) {
+	private AtrRelational addTableFK(RelationalFK fk) {
 		List<RelationalFK> list = getTableFKs();
 		list.add(fk);
 		StringJoiner sj = new StringJoiner(";");
@@ -91,5 +92,29 @@ public class AtrRelational extends STranslatorForAttribute {
 
 	public String getColumn() {
 		return getAttributeValue(ATR_COLUMN);
+	}
+
+	public AtrRelational defineColumn(String column, Integer sqlType) {
+		return defineColumn(new ColumnDefinition(getTable(), column, sqlType));
+	}
+
+	private AtrRelational defineColumn(ColumnDefinition def) {
+		List<ColumnDefinition> list = getColumnDefinitions();
+		list.add(def);
+		StringJoiner sj = new StringJoiner(";");
+		list.forEach(item -> sj.add(item.toStringPersistence()));
+		setAttributeValue(ATR_TABLE_COLUMN_DEFS, sj.toString());
+		return this;
+	}
+
+	public List<ColumnDefinition> getColumnDefinitions() {
+		List<ColumnDefinition> result = new ArrayList<>();
+		String value = getAttributeValue(ATR_TABLE_COLUMN_DEFS);
+		if (value == null)
+			return result;
+		String[] items = value.split(";");
+		for (String item : items)
+			result.add(ColumnDefinition.fromStringPersistence(item));
+		return result;
 	}
 }
