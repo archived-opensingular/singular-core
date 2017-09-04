@@ -29,7 +29,7 @@ import java.util.LinkedList;
 /**
  * Utility class for constructing a Wicket Componente for a {@link SInstance}.
  */
-final class UIBuilderWicket {
+public final class UIBuilderWicket {
 
     private UIBuilderWicket() {}
 
@@ -40,7 +40,7 @@ final class UIBuilderWicket {
         ctx.init(viewMode);
 
         // onBuildContextInitialized
-        listeners.stream().forEach(it -> it.onBuildContextInitialized(ctx));
+        listeners.forEach(it -> it.onBuildContextInitialized(ctx));
 
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
@@ -51,7 +51,7 @@ final class UIBuilderWicket {
         }
 
         // onMapperResolved
-        listeners.stream().forEach(it -> it.onMapperResolved(ctx, mapper));
+        listeners.forEach(it -> it.onMapperResolved(ctx, mapper));
 
         // decorateContext
         WicketBuildContext childCtx = ctx;
@@ -79,12 +79,12 @@ final class UIBuilderWicket {
 
         // onBeforeBuild
         final WicketBuildContext finalCtx = childCtx;
-        listeners.stream().forEach(it -> it.onBeforeBuild(finalCtx, mapper));
+        listeners.forEach(it -> it.onBeforeBuild(finalCtx, mapper));
 
         mapper.buildView(finalCtx);
 
         // onAfterBuild
-        listeners.stream().forEach(it -> it.onAfterBuild(finalCtx, mapper));
+        listeners.forEach(it -> it.onAfterBuild(finalCtx, mapper));
     }
 
     @Nonnull
