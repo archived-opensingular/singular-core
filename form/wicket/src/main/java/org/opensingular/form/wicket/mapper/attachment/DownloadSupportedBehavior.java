@@ -32,11 +32,16 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 
@@ -118,10 +123,30 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
      * @param filename
      * @return
      */
-    private String getDownloadURL(String id, String filename) {
-        AttachmentShareHandler sharedResourceHandler = new AttachmentShareHandler(id, (WebApplication) component.getApplication());
-        final AttachmentResource resource = new AttachmentResource(id, filename, contentDisposition, () -> model.getObject().getDocument());
-        return sharedResourceHandler.share(resource);
+    private String getDownloadURL(String attachmentKey, String filename) {
+        final AttachmentResource resource = new AttachmentResource(filename, contentDisposition, findAttachmentRef(attachmentKey));
+        final AttachmentShareHandler shareHandler = new AttachmentShareHandler(attachmentKey, (WebApplication) component.getApplication());
+        return shareHandler.share(resource);
     }
 
+    public IAttachmentRef findAttachmentRef(String attachmentKey) {
+        IAttachmentRef ref = null;
+        for (IAttachmentPersistenceHandler<?> service : getHandlers()) {
+            ref = service.getAttachment(attachmentKey);
+            if (ref != null) {
+                break;
+            }
+        }
+        return ref;
+    }
+
+    private List<IAttachmentPersistenceHandler<?>> getHandlers() {
+        List<IAttachmentPersistenceHandler<?>> services = new ArrayList<>();
+        SDocument sDocument = model.getObject().getDocument();
+        if (sDocument.isAttachmentPersistenceTemporaryHandlerSupported()) {
+            services.add(sDocument.getAttachmentPersistenceTemporaryHandler());
+        }
+        sDocument.getAttachmentPersistencePermanentHandler().ifPresent(services::add);
+        return services;
+    }
 }
