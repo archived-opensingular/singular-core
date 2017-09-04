@@ -16,12 +16,10 @@
 
 package org.opensingular.lib.commons.table;
 
-import com.google.common.base.MoreObjects;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Column implements Serializable {
 
@@ -33,39 +31,39 @@ public class Column implements Serializable {
 
     private ColumnType type;
 
-    private ColumnTypeProcessor processor;
+    private transient ColumnTypeProcessor processor;
 
     private int index;
 
     private String superTitle;
 
-    private String titulo_;
+    private String title;
 
-    private Alignment alinhamento_;
+    private Alignment alignment;
 
-    private String width_;
+    private String width;
 
-    private boolean small_;
+    private boolean small;
 
-    private boolean strong_;
+    private boolean strong;
 
     private boolean visible = true;
 
-    private Integer qtdDigitos_;
+    private Integer fractionDigits;
 
     private boolean showZero;
 
-    private boolean calcularPercentualPai_;
+    private boolean showAsPercentageOfParent;
 
-    private Number valorReferenciaPercentual_;
+    private Number valueForPercentageCalculation;
 
-    private boolean totalizar = true;
+    private boolean totalize = true;
 
     private Double total;
 
-    private boolean possuiSeparador;
+    private boolean hasSeparator;
 
-    private int nivelDados = 0;
+    private int dataLevel = 0;
 
     private Decorator decoratorTitleAndValue = new Decorator();
 
@@ -73,11 +71,11 @@ public class Column implements Serializable {
 
     private Decorator decoratorValues = decoratorTitleAndValue.newDerivedDecorator();
 
-    public Column(ColumnType tipo) {
-        setTipo(tipo);
+    public Column(@Nonnull ColumnType type) {
+        setType(type);
     }
 
-    public ColumnType getTipo() {
+    public ColumnType getType() {
         return type;
     }
 
@@ -96,23 +94,24 @@ public class Column implements Serializable {
         return decoratorValues;
     }
 
-    public boolean isTotalizar() {
-        return totalizar;
+    public boolean isTotalize() {
+        return totalize;
     }
 
-    public Column setTotalizar(boolean totalizar) {
-        this.totalizar = totalizar;
+    public Column setTotalize(boolean totalize) {
+        this.totalize = totalize;
         return this;
     }
 
     public void addTotal(Number number) {
+        Number n = number;
         if (number == null) {
-            number = 0.0;
+            n = 0.0;
         }
         if (total == null) {
-            total = number.doubleValue();
+            total = n.doubleValue();
         } else {
-            total += number.doubleValue();
+            total += n.doubleValue();
         }
     }
 
@@ -124,114 +123,95 @@ public class Column implements Serializable {
         return total;
     }
 
-    public void setTitle(String titulo) {
-        titulo_ = titulo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
-        return titulo_;
+        return title;
     }
 
-    public boolean isVisivel() {
+    public boolean isVisible() {
         return visible;
     }
 
-    public Column setAlinhamento(Alignment alignment) {
-        alinhamento_ = alignment;
+    public Column setAlignment(Alignment alignment) {
+        this.alignment = alignment;
         return this;
     }
 
-    public boolean isPossuiSeparador() {
-        return possuiSeparador;
+    public boolean hasSeparator() {
+        return hasSeparator;
     }
 
-    public Column setPossuiSeparador(boolean possuiSeparador) {
-        this.possuiSeparador = possuiSeparador;
+    public Column setHasSeparator(boolean hasSeparator) {
+        this.hasSeparator = hasSeparator;
         return this;
     }
 
     public Column setAlignmentLeft() {
-        alinhamento_ = Alignment.LEFT;
+        alignment = Alignment.LEFT;
         return this;
     }
 
     public Column setAlignmentCenter() {
-        alinhamento_ = Alignment.CENTER;
+        alignment = Alignment.CENTER;
         return this;
     }
 
     public Column setAlignmentRight() {
-        alinhamento_ = Alignment.RIGHT;
+        alignment = Alignment.RIGHT;
         return this;
     }
 
     public Column setWidth(String w) {
-        width_ = w;
+        this.width = w;
         return this;
     }
 
     public String getWidth() {
-        return width_;
+        return width;
     }
 
     public Column setSmall(boolean v) {
-        small_ = v;
+        this.small = v;
         return this;
     }
 
     public boolean isSmall() {
-        return small_;
+        return small;
     }
 
     public Column setStrong(boolean strong) {
-        strong_ = strong;
+        this.strong = strong;
         return this;
     }
 
     public boolean isStrong() {
-        return strong_;
+        return strong;
     }
 
-    public Column setQtdDigitos(Integer qtd) {
-        qtdDigitos_ = qtd;
+    public Column setFractionDigits(Integer qtd) {
+        fractionDigits = qtd;
         return this;
     }
 
-    public Integer getQtdDigitos() {
-        return qtdDigitos_;
+    public Integer getFractionDigits() {
+        return fractionDigits;
     }
 
-    int getQtdDigitos(int defaultNumberOfDigits) {
-        if (qtdDigitos_ != null) {
-            return qtdDigitos_;
-        }
-        return defaultNumberOfDigits;
+    int getFractionDigits(int defaultNumberOfDigits) {
+        return fractionDigits != null ? fractionDigits : defaultNumberOfDigits;
     }
 
     public Alignment getAlignment() {
-        if (alinhamento_ != null) {
-            return alinhamento_;
+        if (alignment != null) {
+            return alignment;
         }
-        switch (type) {
-            case DATE:
-            case DAY:
-            case PERIODO:
-            case DATEHOURSHORT:
-            case BOOLEAN:
-            case DATEHOUR:
-                return Alignment.CENTER;
-            case HOUR:
-            case INTEGER:
-            case NUMBER:
-            case MONEY:
-            case PERCENT:
-                return Alignment.RIGHT;
-            default:
-                return Alignment.LEFT;
-        }
+        return getProcessor().getDefaultAlignment();
     }
 
-    public boolean isTipoAcao() {
+    public boolean isTypeAction() {
         return ColumnType.ACTION == type;
     }
 
@@ -260,29 +240,29 @@ public class Column implements Serializable {
     /**
      * Indica se o valor a ser exibido � um percentual do valor raiz da coluna.
      */
-    public final boolean isCalcularPercentualPai() {
-        return calcularPercentualPai_;
+    public final boolean isShowAsPercentageOfParent() {
+        return showAsPercentageOfParent;
     }
 
     /**
      * Indica se o valor a ser exibido � um percentual do valor raiz da coluna.
      */
-    public final Column setCalcularPercentualPai(boolean calcularPercentualPai) {
-        calcularPercentualPai_ = calcularPercentualPai;
+    public final Column setShowAsPercentageOfParent(boolean showAsPercentageOfParent) {
+        this.showAsPercentageOfParent = showAsPercentageOfParent;
         return this;
     }
 
-    final Number getValorReferenciaPercentual() {
-        return valorReferenciaPercentual_;
+    final Number getValueForPercentageCalculation() {
+        return valueForPercentageCalculation;
     }
 
-    final void setValorReferenciaPercentual(Number valorReferenciaPercentual) {
-        valorReferenciaPercentual_ = valorReferenciaPercentual;
+    final void setValueForPercentageCalculation(Number valueForPercentageCalculation) {
+        this.valueForPercentageCalculation = valueForPercentageCalculation;
     }
 
-    public void setTipo(ColumnType tipo_) {
-        this.type = tipo_;
-        this.processor = tipo_.getProcessor();
+    public void setType(@Nonnull ColumnType type) {
+        this.type = type;
+        this.processor = type.getProcessor();
     }
 
     @Nonnull
@@ -302,12 +282,12 @@ public class Column implements Serializable {
         return showZero;
     }
 
-    public void setNivelDados(int valor) {
-        nivelDados = valor;
+    public void setDataLevel(int valor) {
+        dataLevel = valor;
     }
 
-    public final int getNivelDados() {
-        return nivelDados;
+    public final int getDataLevel() {
+        return dataLevel;
     }
 
     public final int getIndex() {
@@ -318,47 +298,20 @@ public class Column implements Serializable {
         this.index = index;
     }
 
-    public int compare(InfoCelula c1, InfoCelula c2) {
-        if (c1 != null && c1.getValue() == null) {
-            c1 = null;
-        }
-        if (c2 != null && c2.getValue() == null) {
-            c2 = null;
-        }
-        if (c1 == c2) {
+    public int compare(InfoCelula infoCelula1, InfoCelula infoCelula2) {
+        Object v1 = normalizeToNull(infoCelula1);
+        Object v2 = normalizeToNull(infoCelula2);
+        if (v1 == v2) {
             return 0;
-        } else if (c1 == null) {
+        } else if (v1 == null) {
             return -1;
-        } else if (c2 == null) {
+        } else if (v2 == null) {
             return 1;
         }
-        switch (type) {
-            case STRING:
-            case HTML:
-                if (c1.getValorReal() == null || c2.getValorReal() == null) {
-                    return Objects.toString(c1.getValue()).compareToIgnoreCase(Objects.toString(c2.getValue()));
-                }
-            case MONEY:
-            case NUMBER:
-            case INTEGER:
-            case PERCENT:
-            case HOUR:
-                Object valorReal1 = MoreObjects.<Object>firstNonNull(c1.getValorReal(), c1.getValue());
-                Object valorReal2 = MoreObjects.<Object>firstNonNull(c2.getValorReal(), c2.getValue());
-                if (valorReal1 instanceof Number && valorReal2 instanceof Number) {
-                    if (valorReal1 instanceof Integer && valorReal2 instanceof Integer) {
-                        return ((Integer) valorReal1).intValue() - ((Integer) valorReal2).intValue();
-                    }
-                    double db1 = ((Number) valorReal1).doubleValue();
-                    double db2 = ((Number) valorReal2).doubleValue();
-                    return Double.compare(db1, db2);
-                }
-            default:
-                if (c1.getValue() instanceof Comparable<?> && c1.getValue().getClass().isAssignableFrom(
-                        c2.getValue().getClass())) {
-                    return ((Comparable<?>) c1.getValue()).compareTo(c2.getValue());
-                }
-                throw new RuntimeException("Comparador para coluna do tipo " + type + " n�o implementado");
-        }
+        return getProcessor().compare(v1, v2);
+    }
+
+    private Object normalizeToNull(InfoCelula c) {
+        return c == null ? null : c.getValorReal() != null ? c.getValorReal() : c.getValue();
     }
 }

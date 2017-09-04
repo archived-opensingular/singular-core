@@ -18,6 +18,7 @@ package org.opensingular.lib.wicket.util.resource;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
+import org.opensingular.lib.commons.ui.Icon;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;

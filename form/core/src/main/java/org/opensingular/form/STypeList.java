@@ -99,7 +99,8 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return setElementsType(null, resolveType(elementsTypeClass));
     }
 
-    protected final E setElementsType(E elementsType) {
+    @Nonnull
+    protected final E setElementsType(@Nonnull E elementsType) {
         return setElementsType(null, elementsType);
     }
 
@@ -107,11 +108,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return setElementsType(simpleNameNewType, resolveType(elementsTypeClass));
     }
 
+    @Nonnull
     protected final E setElementsType(@Nullable String simpleNameNewType, @Nonnull E elementsType) {
         if (this.elementsType != null) {
             throw new SingularFormException("O tipo da lista já está definido", this);
         }
-        this.elementsType = extendType(simpleNameNewType, elementsType);
+        this.elementsType = extendType(SimpleName.ofNullable(simpleNameNewType), elementsType);
         return this.elementsType;
     }
 

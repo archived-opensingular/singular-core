@@ -16,42 +16,58 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.apache.wicket.markup.head.JavaScriptHeaderItem.*;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.PackageResourceReference;
-
-import java.util.Arrays;
-
-import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
+import org.json.JSONObject;
 
 public class SingularEventsHandlers extends Behavior {
 
-    private final FUNCTION[] functions;
+    public static final String            OPTS_ORIGINAL_PROCESS_EVENT  = "originalProcessEvent";
+    public static final String            OPTS_ORIGINAL_VALIDATE_EVENT = "originalValidateEvent";
+
+    private final FUNCTION[]              functions;
+    private final HashMap<String, Object> options                      = new HashMap<>();
 
     public SingularEventsHandlers(FUNCTION... functions) {
         this.functions = functions;
     }
 
+    public SingularEventsHandlers setOption(String key, Object value) {
+        this.options.put(key, value);
+        return this;
+    }
+
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
         super.renderHead(component, response);
+
         response.render(forReference(new PackageResourceReference(SingularEventsHandlers.class, "SingularEventsHandlers.js")));
         Arrays
-                .stream(functions)
-                .forEach( f -> response.render(OnDomReadyHeaderItem.forScript(f.getScript(component))));
+            .stream(functions)
+            .forEach(f -> response.render(OnDomReadyHeaderItem.forScript(f.getScript(component, options))));
     }
 
     public enum FUNCTION {
 
         ADD_TEXT_FIELD_HANDLERS {
             @Override
-            String getScript(Component component) {
-                return "window.SEH.addTextFieldHandlers('"+component.getMarkupId(true)+"');";
+            String getScript(Component component, Map<String, Object> options) {
+                JSONObject jsonOpts = new JSONObject();
+                options.entrySet().forEach(it -> jsonOpts.put(it.getKey(), it.getValue()));
+
+                return "window.SEH.addTextFieldHandlers('" + component.getMarkupId(true) + "', " + jsonOpts + ");";
             }
         };
 
-        abstract String getScript(Component component);
+        abstract String getScript(Component component, Map<String, Object> options);
     }
 }

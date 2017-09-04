@@ -56,7 +56,7 @@ public class TableToolColumTypeTest {
 
     @Test
     public void testNumber_setPrecision() {
-        TableTool table = createTableWithNumber(c -> c.setQtdDigitos(3));
+        TableTool table = createTableWithNumber(c -> c.setFractionDigits(3));
         TableOutputSimulated output = generate(table, p -> {
             p.insertLine(1.2345, 1.2345, 1.2345, 1.2345, 1.2345);
         });
@@ -112,8 +112,8 @@ public class TableToolColumTypeTest {
     }
 
     @NotNull
-    private TableOutputSimulated generate(TableTool table, Consumer<PopulatorTable> populatorCode) {
-        PopulatorTable p = new PopulatorTable(table);
+    private TableOutputSimulated generate(TableTool table, Consumer<TablePopulator> populatorCode) {
+        TablePopulator p = new TablePopulator(table);
         populatorCode.accept(p);
 
         TableOutputSimulated output = new TableOutputSimulated();

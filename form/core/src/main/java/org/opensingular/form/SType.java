@@ -16,36 +16,30 @@
 
 package org.opensingular.form;
 
-import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.aspect.AspectEntry;
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.context.UIComponentMapper;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.validation.InstanceValidator;
+import org.opensingular.form.validation.ValidationEntry;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.internal.form.util.ArrUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,7 +64,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     protected long instanceCount;
 
-    private String nameSimple;
+    private SimpleName nameSimple;
     private String nameFull;
     private SDictionary dictionary;
     /**
@@ -78,7 +72,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     private int typeId;
     private SScope scope;
-    private Map<InstanceValidator<I>, ValidationErrorLevel> instanceValidators;
+    private List<ValidationEntry<I>> validators;
     private Set<SType<?>> dependentTypes;
     private AttrInternalRef attrInternalRef;
     /**
@@ -89,9 +83,19 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     private SView view;
 
     /**
+     * List os aspectes implementations registered locally to the type.
+     */
+    private AspectEntry<?, ?>[] aspects;
+
+    /**
      * Indica se o tipo está no meio da execução do seu método {@link #onLoadType(TypeBuilder)}.
      */
     private boolean callingOnLoadType;
+
+    /**
+     * It's the package that owns this type.
+     */
+    private SPackage pkg;
 
     protected SType() {
         this(null, null);
@@ -102,14 +106,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     protected SType(@Nullable String simpleName, @Nullable Class<? extends I> instanceClass) {
-        String resolvedName = simpleName;
         if (simpleName == null) {
-            resolvedName = getInfoType().name();
-            if (StringUtils.isEmpty(resolvedName)) {
-                resolvedName = getClass().getSimpleName();
-            }
+            this.nameSimple = SFormUtil.getTypeSimpleName(getClass());
+        } else {
+            this.nameSimple = new SimpleName(simpleName);
         }
-        this.nameSimple = SFormUtil.validateSimpleName(resolvedName);
         this.instanceClass = instanceClass;
     }
 
@@ -130,16 +131,16 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         // Esse método será implementado nas classes derevidas se precisarem
     }
 
-    final SInfoType getInfoType() {
-        return SFormUtil.getInfoType((Class<? extends SType<?>>) getClass());
-    }
-
     @Nonnull
-    final <S extends SType<?>> S extend(@Nullable String simpleName) {
-        String nameResolved = SFormUtil.resolveName(simpleName, this);
-        nameResolved = SFormUtil.validateSimpleName(nameResolved);
+    final <S extends SType<?>> S extend(@Nullable SimpleName simpleName) {
+        SimpleName nameResolved = SFormUtil.resolveName(simpleName, this);
 
-        S newType = (S) MapByName.newInstance(getClass());
+        S newType;
+        try {
+            newType = (S) getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SingularFormException("Erro instanciando " + getClass().getName(), e);
+        }
         ((SType<I>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
         return newType;
@@ -155,17 +156,30 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     @SuppressWarnings("unchecked")
     final void resolveSuperType(SDictionary dictionary) {
         if (superType == null && getClass() != SType.class) {
-            Class<SType> c = (Class<SType>) Objects.requireNonNull(getClass().getSuperclass());
+            Class<? extends SType> c = getClass();
+            do {
+                c = (Class<SType>) c.getSuperclass();
+            } while (Modifier.isAbstract(c.getModifiers()));
             superType = dictionary.getType(c);
         }
     }
 
     @Override
+    @Nonnull
     public String getName() {
+        if (nameFull == null) {
+            this.nameFull = getParentScope().getName() + '.' + nameSimple;
+        }
         return nameFull;
     }
 
+    @Nonnull
     public String getNameSimple() {
+        return nameSimple.get();
+    }
+
+    @Nonnull
+    final SimpleName getNameSimpleObj() {
         return nameSimple;
     }
 
@@ -184,9 +198,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return (Class<I>) instanceClass;
     }
 
-    final void setScope(SScope packageScope) {
-        this.scope = packageScope;
-        this.nameFull = packageScope.getName() + '.' + nameSimple;
+    final void setScope(SScope scope) {
+        this.scope = scope;
     }
 
     @Override
@@ -198,6 +211,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                     "dê override no método onLoadType() e mova as chamada de configuração para ele.", this);
         }
         return scope;
+    }
+
+    @Nonnull
+    @Override
+    public final SPackage getPackage() {
+        if (pkg == null) {
+            pkg = getParentScope().getPackage();
+        }
+        return pkg;
     }
 
     @Override
@@ -351,13 +373,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Override
     public final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
-            @Nullable SimpleValueCalculation<V> value) {
+                                                  @Nullable SimpleValueCalculation<V> value) {
         getAttributesMap().setAttributeCalculation(atr, value);
     }
 
     @Override
     public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> valueCalculation) {
+                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
         getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
     }
 
@@ -389,7 +411,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
-    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
+    /**
+     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual.
+     */
     @Nullable
     final SInstance getAttributeDirectly(@Nonnull AttrInternalRef ref) {
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref);
@@ -590,42 +614,37 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return STypes.listAscendants(this, true).stream().anyMatch(SType::dependsOnAnyType);
     }
 
-    public SType<I> addInstanceValidator(InstanceValidator<I> validador) {
-        return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
+    public SType<I> addInstanceValidator(InstanceValidator<I> validator) {
+        return addInstanceValidator(ValidationErrorLevel.ERROR, validator);
     }
 
     public SType<I> addInstanceValidator(ValidationErrorLevel level, InstanceValidator<I> validator) {
-        if (instanceValidators == null) {
-            instanceValidators = new LinkedHashMap<>();
+        if (validators == null) {
+            validators = new ArrayList<>(2);
         }
-        instanceValidators.put(validator, level);
+        validators.add(new ValidationEntry(validator, level));
         return this;
     }
 
-    public Collection<InstanceValidator<I>> getValidators() {
-        Collection<InstanceValidator<I>> list =
-                superType == null ? Collections.emptyList() : superType.getValidators();
-        if (instanceValidators != null && !instanceValidators.isEmpty()) {
+    public final boolean hasValidator(InstanceValidator<?> validator) {
+        if (validators != null && validators.stream().map(ValidationEntry::getValidator).anyMatch(validator::equals)) {
+            return true;
+        } else if (superType != null) {
+            return superType.hasValidator(validator);
+        }
+        return false;
+    }
+
+    public final List<ValidationEntry<I>> getValidators() {
+        List<ValidationEntry<I>> list = superType == null ? Collections.emptyList() : superType.getValidators();
+        if (validators != null && !validators.isEmpty()) {
             if (list.isEmpty()) {
-                list = instanceValidators.keySet();
+                list = new ArrayList<>(validators);
             } else {
-                if (!(list instanceof ArrayList)) {
-                    ArrayList<InstanceValidator<I>> list2 = new ArrayList<>(list.size() + instanceValidators.size());
-                    list2.addAll(list);
-                    list = list2;
-                }
-                list.addAll(instanceValidators.keySet());
+                list.addAll(validators);
             }
         }
         return list;
-    }
-
-    public ValidationErrorLevel getValidatorErrorLevel(InstanceValidator<I> validator) {
-        ValidationErrorLevel level = instanceValidators == null ? null : instanceValidators.get(validator);
-        if (level == null && superType != null) {
-            level = superType.getValidatorErrorLevel(validator);
-        }
-        return level;
     }
 
     @SuppressWarnings("unchecked")
@@ -803,7 +822,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     private void debugAttribute(Appendable appendable, SInstance attr) {
         try {
-            if (! attr.getAttributeInstanceInfo().getRef().isResolved()) {
+            if (!attr.getAttributeInstanceInfo().getRef().isResolved()) {
                 appendable.append('?');
             }
             appendable.append(suppressPackage(attr.getAttributeInstanceInfo().getName(), true)).append("=")
@@ -866,28 +885,58 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     private boolean hasValidationInternal() {
-        return (instanceValidators != null && !instanceValidators.isEmpty()) ||
+        return (validators != null && !validators.isEmpty()) ||
                 (superType != null && superType.hasValidationInternal());
     }
 
-    public <T extends UIComponentMapper> SType<I> withCustomMapper(T mapper) {
-        this.asAtr().setAttributeValue(SPackageBasic.ATR_MAPPER, mapper);
+    /**
+     * Looks for the best match implementation of the aspect being request.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    @Nonnull
+    public <T> Optional<T> getAspect(@Nonnull AspectRef<T> aspectRef) {
+        return getDictionary().getMasterAspectRegistry().getAspect(this, aspectRef);
+    }
+
+    /**
+     * Returns, if available, the associated implementation of the aspect registered in the local map os aspects. It's
+     * only for internal use.
+     */
+    @Nullable
+    final AspectEntry<?, ?> getAspectDirect(int index) {
+        return ArrUtil.arrayGet(aspects, index);
+    }
+
+    /**
+     * Binds locally a specific implementation factory for the aspect. This method should be typically called during the
+     * type configuration into {@link SType#onLoadType(TypeBuilder)}.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    public <T> SType<I> setAspect(@Nonnull AspectRef<T> aspectRef, @Nonnull Supplier<T> factory) {
+        Objects.requireNonNull(aspectRef);
+        Objects.requireNonNull(factory);
+        Integer index = getDictionary().getMasterAspectRegistry().getIndex(aspectRef);
+        AspectEntry<T, Object> entry = new AspectEntry<>(null, factory);
+        aspects = ArrUtil.arraySet(aspects, index, entry, AspectEntry.class, 1);
         return this;
     }
 
-    public UIComponentMapper getComponentMapper() {
-        return this.asAtr().getAttributeValue(SPackageBasic.ATR_MAPPER);
-    }
-
-    @SuppressWarnings("unchecked")
-    public IConsumer<SInstance> getUpdateListener() {
-        return asAtr().getAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER);
+    /**
+     * Binds locally a specific implementation factory for the aspect. It's the same of
+     * {@link SType#setAspect(AspectRef, Supplier)}, but set a instantiated implementation. This method should be
+     * typically called during the
+     * type configuration into {@link SType#onLoadType(TypeBuilder)}.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    public <T> void setAspectFixImplementation(@Nonnull AspectRef<T> aspectRef, @Nonnull T implementation) {
+        setAspect(aspectRef, (Supplier<T>) () -> implementation);
     }
 
     /**
      * Lambda para inicialização da {@link SInstance} desse {@link SType}
      * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.
      * Quando a {@link SInstance} persistence é carregada o listener não é executado novamente.
+     *
      * @param initListener
      * @return
      */
@@ -909,6 +958,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.typelessSelection().selfIdAndDisplay().provider(providerName);
     }
 
+    @SuppressWarnings("unchecked")
+    public SType<I> withSelectionFromSimpleProvider(SimpleProvider<?, I> provider) {
+        this.typelessSelection().selfIdAndDisplay().simpleProvider(provider);
+        return this;
+    }
+
     /**
      * Retorna um identificador único do tipo dentro de um mesmo dicionário.
      */
@@ -922,7 +977,15 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Override
     public String toString() {
-        return nameFull + '(' + getClass().getSimpleName() + '@' + typeId + ')';
+        String n = nameFull;
+        if (n == null) {
+            if (scope == null) {
+                n = nameSimple == null ? null : nameSimple.get();
+            } else {
+                n = scope.getName() + '.' + nameSimple;
+            }
+        }
+        return n + '(' + getClass().getSimpleName() + '@' + typeId + ')';
     }
 
     final boolean isCallingOnLoadType() {

@@ -26,20 +26,16 @@ import javax.annotation.Nullable;
  */
 public class OutputCellContext {
 
-    @Nonnull
     private final OutputTableContext outputTableContext;
 
-    @Nonnull
     private final InfoCelula cell;
 
     private Object value;
 
-    @Nonnull
     private DecoratorCell tempDecorator;
 
     private int level;
 
-    @Nonnull
     private ColumnTypeProcessor columnProcessor;
 
     private boolean columnWithSeparator;

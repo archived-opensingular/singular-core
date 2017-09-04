@@ -16,6 +16,22 @@
 
 package org.opensingular.form.type.basic;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STranslatorForAttribute;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypes;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.enums.PhraseBreak;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,28 +41,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.opensingular.form.SAttributeEnabled;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.SType;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
 
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class AtrBasic extends STranslatorForAttribute {
 
+    private static final String DEPENDSON_NULL_PARAM_MSG = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
-    public AtrBasic() {
-    }
+    public AtrBasic() {}
 
     public AtrBasic(SAttributeEnabled target) {
         super(target);
@@ -81,10 +87,6 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-//    public AtrBasic editSize(Integer value) {
-//        setAttributeValue(SPackageBasic.ATR_EDIT_SIZE, value);
-//        return this;
-//    }
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -98,9 +100,9 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
-                Stream.of(value)
-                        .flatMap(it -> Stream.<String>of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-                        .collect(joining(",")));
+            Stream.of(value)
+                .flatMap(it -> Stream.<String> of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                .collect(joining(",")));
         return this;
     }
 
@@ -134,22 +136,63 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic dependsOn(Supplier<Collection<SType<?>>> value) {
-        Supplier<Collection<SType<?>>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
+    public AtrBasic dependsOn(Supplier<Collection<DelayedDependsOnResolver>> value) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, value);
+        Supplier<Collection<DelayedDependsOnResolver>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
-            Set<SType<?>> union = new LinkedHashSet<>(previous.get());
+            Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
             union.addAll(value.get());
             return union;
         });
         return this;
     }
 
-    public Supplier<Collection<SType<?>>> dependsOn() {
+    public AtrBasic dependsOn(Class<? extends SType<?>> typeClass) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, typeClass);
+        return dependsOn(typeClass, stype -> stype);
+    }
+
+    public <T extends SType<?>> AtrBasic dependsOn(Class<T> typeClass, IFunction<T, ? extends SType> typefinder) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, typefinder);
+        Supplier<Collection<DelayedDependsOnResolver>> previous = ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
+        setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
+            Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
+            union.add((root, current) -> {
+                    final List<SType<?>> dependentTypes = new ArrayList<SType<?>>();
+                    STypes.visitAll(root, stype -> {
+                        if (typeClass.isAssignableFrom(stype.getClass())) {
+                            dependentTypes.add(typefinder.apply((T) stype));
+                        }
+                    });
+                return dependentTypes;
+            });
+            return union;
+        });
+        return this;
+    }
+
+    public Supplier<Collection<DelayedDependsOnResolver>> dependsOn() {
         return ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
     }
 
     public AtrBasic dependsOn(SType<?>... tipos) {
-        return dependsOn(() -> Arrays.asList(tipos));
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, tipos);
+        return dependsOn(() -> Arrays.asList(tipos).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
+    }
+
+    private void assertNoNull(String msg, Object ...o){
+        boolean paramNull = o == null;
+        if (!paramNull){
+            for (Object item : o){
+                paramNull |= item==null;
+                if (paramNull){
+                    break;
+                }
+            }
+        }
+        if (paramNull){
+            throw new SingularFormException(msg);
+        }
     }
 
     public AtrBasic required() {
@@ -182,7 +225,7 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic replaceExists(IFunction<Predicate<SInstance>, Predicate<SInstance>> replacementFunction) {
         Predicate<SInstance> currentExists = getAttributeValue(SPackageBasic.ATR_EXISTS_FUNCTION);
-        if(currentExists == null){
+        if (currentExists == null) {
             currentExists = (i) -> Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EXISTS));
         }
         return exists(replacementFunction.apply(currentExists));
@@ -231,9 +274,9 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_SUBTITLE);
     }
 
-//    public Integer getEditSize() {
-//        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
-//    }
+    //    public Integer getEditSize() {
+    //        return getAttributeValue(SPackageBasic.ATR_EDIT_SIZE);
+    //    }
 
     public Integer getMaxLength() {
         return getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
@@ -245,8 +288,9 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public List<String> getAllowedFileTypes() {
         return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES)).map(in -> Arrays.asList(defaultString(
-                getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
-                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX))).orElse(Collections.emptyList());
+            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                .split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+            .orElse(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
@@ -267,7 +311,7 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     public AtrBasic displayString(String displayStringTemplate) {
-        return displayString(FormFreemarkerUtil.createInstanceCalculation(displayStringTemplate, false, true));
+        return displayString(FormFreemarkerUtil.get().createInstanceCalculation(displayStringTemplate, false, true));
     }
 
     public AtrBasic displayString(SimpleValueCalculation<String> valueCalculation) {
@@ -277,6 +321,24 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public String getDisplayString() {
         return getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
+    }
+
+    public AtrBasic help(String val) {
+        setAttributeValue(SPackageBasic.ATR_HELP, val);
+        return this;
+    }
+
+    public String getHelp() {
+        return getAttributeValue(SPackageBasic.ATR_HELP);
+    }
+
+    public AtrBasic instruction(String val) {
+        setAttributeValue(SPackageBasic.ATR_INSTRUCTION, val);
+        return this;
+    }
+
+    public String getInstruction() {
+        return getAttributeValue(SPackageBasic.ATR_INSTRUCTION);
     }
 
     public PhraseBreak phraseBreak() {
@@ -295,6 +357,12 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public Boolean isUpperCaseText() {
         return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
+    }
+
+
+    public interface DelayedDependsOnResolver {
+
+        public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);
     }
 
 }

@@ -18,4 +18,14 @@ package org.opensingular.form.view;
 
 public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
 
+    private boolean renderCompositeFieldsAsColumns = true;
+
+    public boolean isRenderCompositeFieldsAsColumns() {
+        return renderCompositeFieldsAsColumns;
+    }
+
+    public SViewListByTable setRenderCompositeFieldsAsColumns(boolean renderCompositeFieldsAsColumns) {
+        this.renderCompositeFieldsAsColumns = renderCompositeFieldsAsColumns;
+        return this;
+    }
 }

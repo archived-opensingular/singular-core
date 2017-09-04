@@ -1,5 +1,6 @@
 package org.opensingular.form;
 
+import org.opensingular.form.aspect.AspectEntry;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.internal.lib.commons.xml.MElement;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 /**
  * PARA USO INTERNO DA API APENAS. Dá acesso a estrutura internas do form. Os métodos aqui disponibilizados não deve ser
- * utilizados fora do core do form, pois poderão ser removidos ou ter seu comportamento no futuro.
+ * utilizados fora do core do form, pois poderão ser removidos ou ter seu comportamento alterado no futuro.
  *
  * @author Daniel C. Bordin
  */
@@ -52,5 +53,11 @@ public final class InternalAccess {
     /** @see {@link SType#newInstance(boolean, SDocument)}  */
     public SInstance newInstance(@Nonnull SType target, boolean executeInstanceInitListeners,@Nonnull SDocument owner) {
         return target.newInstance(executeInstanceInitListeners, owner);
+    }
+
+    /** @see {@link SType#getAspectDirect(int)} */
+    @Nullable
+    public final AspectEntry<?,?> getAspectDirect(@Nonnull SType target, int index) {
+        return target.getAspectDirect(index);
     }
 }

@@ -43,6 +43,7 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_FORMULARIO (
    XML_CONTEUDO         VARCHAR(MAX)         NOT NULL,
    CO_AUTOR_INCLUSAO    INT                  NULL,
    NU_VERSAO_CACHE      INT                  NULL, -- deve ser no null apos implementação
+  ST_INDEXADO          CHAR(1)              NULL,
    CONSTRAINT PK_TB_VERSAO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO)
 );
 

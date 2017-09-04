@@ -16,30 +16,34 @@
 
 package org.opensingular.lib.wicket.util.util;
 
-
-import org.opensingular.lib.wicket.util.lambda.ILambdasMixin;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.feedback.FeedbackCollector;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.visit.IVisit;
+import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.FeedbackCollector;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.lambda.ILambdasMixin;
 
 public final class WicketUtils {
 
-    public static final IBehaviorsMixin $b = new IBehaviorsMixin() {};
-    public static final IModelsMixin $m = new IModelsMixin() {};
+    public static final IBehaviorsMixin  $b = new IBehaviorsMixin() {};
+    public static final IModelsMixin     $m = new IModelsMixin() {};
     public static final IValidatorsMixin $v = new IValidatorsMixin() {};
-    public static final ILambdasMixin $L = new ILambdasMixin() {};
+    public static final ILambdasMixin    $L = new ILambdasMixin() {};
 
     private WicketUtils() {}
 
@@ -69,10 +73,10 @@ public final class WicketUtils {
 
     public static void clearMessagesForComponent(Component component) {
         new FeedbackCollector(component.getPage())
-                .collect(message -> Objects.equals(message.getReporter(), component)).stream()
-                .forEach(it -> it.markRendered());
+            .collect(message -> Objects.equals(message.getReporter(), component)).stream()
+            .forEach(it -> it.markRendered());
     }
-    
+
     /**
      * Retorna uma lista de parent containers, ordenados do filho para o pai.
      * @param child
@@ -83,6 +87,22 @@ public final class WicketUtils {
         return listParents(component).stream()
             .filter(it -> parentClass.isAssignableFrom(it.getClass()))
             .map(it -> (C) it)
+            .findFirst();
+    }
+
+    /**
+     * Retorna o pai mais alto na hierarquia, que é do tipo parentClass.
+     * @param child
+     * @return 
+     */
+    @SuppressWarnings("unchecked")
+    public static <C extends MarkupContainer> Optional<C> findTopmostParent(Component component, Class<C> parentClass) {
+        List<C> list = listParents(component).stream()
+            .filter(it -> parentClass.isAssignableFrom(it.getClass()))
+            .map(it -> (C) it)
+            .collect(toList());
+        Collections.reverse(list);
+        return list.stream()
             .findFirst();
     }
 
@@ -141,6 +161,10 @@ public final class WicketUtils {
     public static boolean nullOrEmpty(Object obj) {
         if (obj == null)
             return true;
+        if (obj instanceof ISupplier<?>)
+            return nullOrEmpty(((ISupplier<?>) obj).get());
+        if (obj instanceof Supplier<?>)
+            return nullOrEmpty(((Supplier<?>) obj).get());
         if (obj instanceof IModel<?>)
             return nullOrEmpty(((IModel<?>) obj).getObject());
         if (obj instanceof String)
@@ -156,12 +180,12 @@ public final class WicketUtils {
 
     public static Optional<String> findPageRelativePath(MarkupContainer container, String childId) {
         return WicketUtils.findFirstChild(container, Component.class,
-                it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
+            it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
     }
 
     public static Optional<String> findContainerRelativePath(MarkupContainer container, String childId) {
         return WicketUtils.findFirstChild(container, Component.class, it -> it.getId().equals(childId))
-                .map(it -> it.getPageRelativePath())
-                .map(it -> it.substring(container.getPageRelativePath().length() + 1));
+            .map(it -> it.getPageRelativePath())
+            .map(it -> it.substring(container.getPageRelativePath().length() + 1));
     }
 }

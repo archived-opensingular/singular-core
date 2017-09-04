@@ -27,7 +27,7 @@ public class ModificadorGeradorFiltrar extends ModificadorGerador {
     
     private static final long serialVersionUID = 1L;
     
-    private Map<Column, Predicate<InfoCelula>> predicados = Maps.newHashMap();
+    private transient Map<Column, Predicate<InfoCelula>> predicados = Maps.newHashMap();
 
     public ModificadorGeradorFiltrar(TableTool table) {
         super(table);

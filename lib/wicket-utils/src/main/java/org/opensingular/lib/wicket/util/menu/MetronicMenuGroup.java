@@ -16,7 +16,7 @@
 
 package org.opensingular.lib.wicket.util.menu;
 
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -77,18 +77,29 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         add(menuGroup);
     }
 
+    public MetronicMenuGroup setOpen() {
+        subMenu.add($b.attr("style", "display: block;"));
+        menuGroup.add($b.classAppender("open"));
+        arrow.add($b.classAppender("open"));
+        return this;
+    }
+
+    public MetronicMenuGroup setActive() {
+        setOpen();
+        menuGroup.add($b.classAppender("active"));
+        return this;
+    }
+
     @Override
     protected boolean configureActiveItem() {
         for (AbstractMenuItem i : itens) {
             if (i.configureActiveItem()) {
-                subMenu.add($b.attr("style", "display: block;"));
-                menuGroup.add($b.classAppender("active"));
-                menuGroup.add($b.classAppender("open"));
-                arrow.add($b.classAppender("open"));
+                setActive();
                 return true;
             }
         }
         return false;
     }
+
 
 }

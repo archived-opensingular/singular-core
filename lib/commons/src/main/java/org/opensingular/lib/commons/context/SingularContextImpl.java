@@ -3,10 +3,9 @@ package org.opensingular.lib.commons.context;
 
 import org.opensingular.lib.commons.context.singleton.ThreadBoundedSingletonStrategy;
 
-import java.util.Collections;
-import java.util.Map;
+import javax.annotation.Nonnull;
 
-class SingularContextImpl implements SingularContext, SingularContextSetup, SingularSingletonStrategy, MigrationEnabledSingularSingletonStrategy {
+class SingularContextImpl extends DelegationSingletonStrategy implements SingularContext, SingularContextSetup  {
 
     private static SingularSingletonStrategy strategy;
 
@@ -15,31 +14,23 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
     }
 
     private SingularContextImpl(SingularSingletonStrategy strategy) {
-        if (isConfigured()) {
+        if (SingularContextImpl.strategy != null) {
             throw new SingularContextAlreadyConfiguredException();
         } else {
-            setSingularSingletonStrategy(strategy);
+            SingularContextImpl.strategy = strategy;
         }
         strategy.put(SingularContext.class, this);
     }
 
     synchronized static boolean isConfigured() {
-        return getSingularSingletonStrategy() != null;
-    }
-
-    private static SingularSingletonStrategy getSingularSingletonStrategy() {
-        return strategy;
-    }
-
-    private static void setSingularSingletonStrategy(SingularSingletonStrategy strategy) {
-        SingularContextImpl.strategy = strategy;
+        return strategy != null;
     }
 
     static synchronized SingularContext get() {
         if (!isConfigured()) {
             setup();
         }
-        return getSingularSingletonStrategy().get(SingularContext.class);
+        return strategy.get(SingularContext.class);
     }
 
     synchronized static void setup(SingularSingletonStrategy singularSingletonStrategy) {
@@ -51,62 +42,16 @@ class SingularContextImpl implements SingularContext, SingularContextSetup, Sing
     }
 
     synchronized static void reset() {
-        SingularSingletonStrategy strategy = getSingularSingletonStrategy();
-        if (strategy instanceof ResetEnabledSingularSingletonStrategy) {
-            ((ResetEnabledSingularSingletonStrategy) strategy).reset();
+        SingularSingletonStrategy strategy2 = strategy;
+        if (strategy2 instanceof ResetEnabledSingularSingletonStrategy) {
+            ((ResetEnabledSingularSingletonStrategy) strategy2).reset();
         }
-        SingularContextImpl.setSingularSingletonStrategy(null);
+        SingularContextImpl.strategy = null;
     }
 
+    @Nonnull
     @Override
-    public <T> void put(T thisInstance) {
-        getSingularSingletonStrategy().put(thisInstance);
-    }
-
-    @Override
-    public <T> void put(Class<? super T> instanceClazz, T thisInstance) {
-        getSingularSingletonStrategy().put(instanceClazz, thisInstance);
-    }
-
-    @Override
-    public <T> void put(String nameKey, T thisInstance) {
-        getSingularSingletonStrategy().put(nameKey, thisInstance);
-    }
-
-    @Override
-    public <T> boolean exists(Class<T> classKey) {
-        return getSingularSingletonStrategy().exists(classKey);
-    }
-
-    @Override
-    public boolean exists(String nameKey) {
-        return getSingularSingletonStrategy().exists(nameKey);
-    }
-
-    @Override
-    public <T> T get(Class<T> singletonClass) throws SingularSingletonNotFoundException {
-        return getSingularSingletonStrategy().get(singletonClass);
-    }
-
-    @Override
-    public <T> T get(String name) throws SingularSingletonNotFoundException {
-        return getSingularSingletonStrategy().get(name);
-    }
-
-    @Override
-    public synchronized Map<Object, Object> getEntries() {
-        if (isConfigured() && getSingularSingletonStrategy() instanceof MigrationEnabledSingularSingletonStrategy) {
-            return ((MigrationEnabledSingularSingletonStrategy) getSingularSingletonStrategy()).getEntries();
-        } else {
-            return Collections.emptyMap();
-        }
-
-    }
-
-    @Override
-    public synchronized void putEntries(Map<Object, Object> entries) {
-        if (isConfigured() && getSingularSingletonStrategy() instanceof MigrationEnabledSingularSingletonStrategy) {
-            ((MigrationEnabledSingularSingletonStrategy) getSingularSingletonStrategy()).putEntries(entries);
-        }
+    protected SingularSingletonStrategy getStrategyImpl() {
+        return SingularContextImpl.strategy;
     }
 }

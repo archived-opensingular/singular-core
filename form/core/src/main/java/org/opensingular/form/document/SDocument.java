@@ -32,12 +32,14 @@ import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 import org.opensingular.form.validation.ValidationError;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,6 +68,8 @@ public class SDocument {
     public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
+    private boolean restoreMode = false;
+
     private SInstance root;
 
     private int lastId = 0;
@@ -84,6 +88,30 @@ public class SDocument {
 
     public SDocument() {
         registry = new DelegatingLocalServiceRegistry(ServiceRegistryLocator.locate());
+    }
+
+    /**
+     * Prevents initialization listeners from running
+     * and disables internal id increment.
+     */
+    public void initRestoreMode(){
+        this.restoreMode = true;
+    }
+
+    /**
+     * Signal that the restore mode has ended.
+     * Id generation and init listeners are enabled again
+     */
+    public void finishRestoreMode(){
+        this.restoreMode = false;
+    }
+
+    /**
+     * check if the document is currently under restore mode.
+     * @return
+     */
+    public boolean isRestoreMode(){
+        return this.restoreMode;
     }
 
     /**
@@ -190,10 +218,12 @@ public class SDocument {
         this.root = Objects.requireNonNull(root);
         STypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
             // init dependencies
-            final Supplier<Collection<SType<?>>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<AtrBasic.DelayedDependsOnResolver>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
-                for (SType<?> dependency : func.get()) {
-                    dependency.addDependentType(tipo);
+                for (AtrBasic.DelayedDependsOnResolver resolver : func.get()) {
+                    for (SType s : resolver.resolve(getRoot().getType(), tipo)){
+                        s.addDependentType(tipo);
+                    }
                 }
             }
         });

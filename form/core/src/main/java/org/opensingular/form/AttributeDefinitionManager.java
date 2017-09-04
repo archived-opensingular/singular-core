@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import org.opensingular.internal.form.util.ArrUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -45,23 +47,23 @@ final class AttributeDefinitionManager implements Iterable<SType<?>> {
             throw new SingularFormException(
                     "Já existe um atributo '" + ref.getName() + "' definido em " + targetOwner.getName());
         }
-        attributes = AtrUtil.arraySet(attributes, ref.getIndex(), attributeDef, SType.class, ref.getMax());
+        attributes = ArrUtil.arraySet(attributes, ref.getIndex(), attributeDef, SType.class, ref.getMax());
     }
 
     @Nullable
     public SType<?> get(@Nonnull AttrInternalRef ref) {
-        return AtrUtil.arrayGet(attributes, ref.getIndex());
+        return ArrUtil.arrayGet(attributes, ref.getIndex());
     }
 
     @Nonnull
     public Collection<SType<?>> getAttributes() {
-        return AtrUtil.arrayAsCollection(attributes);
+        return ArrUtil.arrayAsCollection(attributes);
     }
 
     @Override
     @Nonnull
     public Iterator<SType<?>> iterator() {
-        return AtrUtil.arrayAsIterator(attributes);
+        return ArrUtil.arrayAsIterator(attributes);
     }
 
     @Nullable

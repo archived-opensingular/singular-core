@@ -25,8 +25,10 @@
                     <span wicket:id="title" class="caption-subject bold uppercase"></span>
                 </div>
                 <div class="actions">
-                    <a href="javascript:" wicket:id="search" class="btn btn-circle btn-default">
-                        <i class="fa fa-search"></i> Pesquisar </a>
+                    <span wicket:id="plugin-buttons">
+                        <a wicket:id="plugin-button" class="btn btn-circle btn-default">
+                            <i wicket:id="button-icon"></i> <span wicket:id="button-label"></span> </a>
+                    </span>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-default " href="javascript:" data-toggle="dropdown"
                            wicket:id="export" aria-expanded="false">
@@ -45,9 +47,7 @@
                 <div wicket:id="table"></div>
             </div>
         </div>
-        <div wicket:id="search-modal">
-            <wicket:child/>
-        </div>
+        <div wicket:id="plugin-container-view"></div>
     </form>
 </wicket:panel>
 </body>

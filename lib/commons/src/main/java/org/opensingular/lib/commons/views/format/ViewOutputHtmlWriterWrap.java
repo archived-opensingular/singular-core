@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.commons.views.format;
 
+import org.opensingular.lib.commons.base.SingularException;
+
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
@@ -45,6 +47,6 @@ public class ViewOutputHtmlWriterWrap extends ViewOutputHtml {
 
     @Override
     public void addImagem(String nome, byte[] dados) throws IOException {
-        throw new RuntimeException("Implementar");
+        throw new SingularException("Implementar");
     }
 }

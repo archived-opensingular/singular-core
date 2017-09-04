@@ -49,6 +49,27 @@ button {
 .annotation-toggle-container hr, .annotation-toggle-container.open hr {
   margin: 10px 0; }
 
+.annotation-toggle-container .annotation-icon, .annotation-toggle-container.open .annotation-icon {
+  display: inline-block;
+  height: 22px;
+  width: 22px;
+  padding-top: 2px;
+  border: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  background-size: 14px; }
+
+.annotation-toggle-container .annotation-icon.annotation-icon-empty, .annotation-toggle-container.open .annotation-icon.annotation-icon-empty {
+  background-image: url("../img/add-comment.svg"); }
+
+.annotation-toggle-container .annotation-icon.annotation-icon-approved, .annotation-toggle-container.open .annotation-icon.annotation-icon-approved {
+  background-image: url("../img/accepted-comment.svg");
+  color: #5AB879; }
+
+.annotation-toggle-container .annotation-icon.annotation-icon-rejected, .annotation-toggle-container.open .annotation-icon.annotation-icon-rejected {
+  background-image: url("../img/rejected-comment.svg"); }
+
 .annotation-toggle-container .btn-info, .annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-default, .annotation-toggle-container.open .btn-info, .annotation-toggle-container.open .btn-danger, .annotation-toggle-container.open .btn-default {
   height: 30px;
   width: 30px;
@@ -75,6 +96,10 @@ button {
 
 .annotation-toggle-container .btn-default, .annotation-toggle-container .btn-default:focus, .annotation-toggle-container.open .btn-default, .annotation-toggle-container.open .btn-default:focus {
   background-image: url("../img/add-comment.svg"); }
+
+.actions-lg .annotation-icon {
+  background-size: 20px;
+  margin-top: 7px; }
 
 .annotation-title {
   display: inline;
@@ -1706,6 +1731,28 @@ Theme Panel
 .confirm-btn {
   background-color: #40BAA7; }
 
+.singular-form-action-preview .singular-form-action-preview-title {
+  display: inline-block;
+  font-weight: 600; }
+
+.singular-form-action-preview .singular-form-action-preview-actions {
+  float: right;
+  margin-right: 10px; }
+  .singular-form-action-preview .singular-form-action-preview-actions .singular-form-action-preview-action {
+    display: inline-block;
+    color: #acb1c2;
+    margin-left: 10px; }
+  .singular-form-action-preview .singular-form-action-preview-actions .singular-form-action-preview-action:hover {
+    color: #65697C; }
+
+.decorator-actions.align-right .singular-form-action-preview {
+  right: 0;
+  left: auto;
+  float: right !important; }
+
+.singular-form-action-bar .singular-form-action {
+  display: inline-block; }
+
 .upload-fileinput {
   width: 0.1px;
   height: 0.1px;
@@ -2125,11 +2172,12 @@ Theme Panel
     border-bottom: 1px solid #dfdfdf !important; }
   .list-table-body td button {
     border: 0;
-    padding: 0;
-    background: none; }
+    padding: 0; }
   .list-table-body .singular-remove-btn {
     top: 5px;
     position: relative; }
+  .list-table-body tbody > tr > td {
+    padding: 3px; }
 
 .list-table-empty {
   display: block;
@@ -2169,7 +2217,7 @@ Theme Panel
     .list-by-form .list-group-item .list-item-header:after {
       clear: both; }
   .list-by-form .list-group-item .list-item-body {
-    background-color: #FDFDFD;
+    background-color: #f2f2f266;
     padding-top: 20px; }
 
 .list-by-form .has-error input {
@@ -2221,8 +2269,7 @@ Theme Panel
   white-space: normal !important; }
 
 .has-error input {
-  padding-right: 5px !important;
-  background: none !important; }
+  padding-right: 5px !important; }
 
 .fileinput-filename {
   position: absolute;

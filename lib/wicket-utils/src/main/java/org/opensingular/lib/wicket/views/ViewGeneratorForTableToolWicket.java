@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.wicket.views;
 
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.table.ViewGeneratorForTableTool;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
@@ -37,6 +38,6 @@ public class ViewGeneratorForTableToolWicket extends ViewGeneratorForTableTool<V
 
     @Override
     public void generate(@Nonnull TableTool tableTool, @Nonnull ViewOutputHtml viewOutputHtml) {
-        throw new RuntimeException("Unssuported");
+        throw new SingularException("Unssuported");
     }
 }

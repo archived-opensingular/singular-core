@@ -16,10 +16,20 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
@@ -35,73 +45,140 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
+import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-
 public abstract class AbstractListMapper implements IWicketComponentMapper {
 
+    protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
+        if (currentType.isList() && list.isEmpty()) {
+            final STypeList<?, ?> tl = (STypeList<?, ?>) currentType;
+            if (tl.getMinimumSize() != null) {
+                for (int i = 0; i < tl.getMinimumSize(); i++) {
+                    list.addNew();
+                }
+            } else if (tl.isRequired()) {
+                list.addNew();
+            }
+        }
+    }
+
     protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mLista, final Form<?> form,
-                                               final BSContainer<?> cell, boolean footer) {
+        final BSContainer<?> cell, boolean footer) {
         AddButton btn = new AddButton("_add", form, mLista);
         cell.newTemplateTag(t -> ""
-                + "<button"
-                + " wicket:id='_add'"
-                + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
-                + " style='" + MapperCommons.BUTTON_STYLE + ";"
-                + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-                + "</button>"
-        ).add(btn);
+            + "<button"
+            + " wicket:id='_add'"
+            + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
+            + " style='" + MapperCommons.BUTTON_STYLE + ";"
+            + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
+            + "</button>").add(btn);
 
         return btn;
     }
 
     protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
-        InserirButton btn = new InserirButton("_inserir_", elementsView, form, elementsView.getModel(), item);
+        InserirButton btn = new InserirButton("_inserir_", elementsView, form, item);
         cell
-                .newTemplateTag(tp -> ""
-                        + "<button"
-                        + " wicket:id='_inserir_'"
-                        + " class='btn btn-success btn-sm'"
-                        + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-                        + "</button>")
-                .add(btn);
+            .newTemplateTag(tp -> ""
+                + "<button"
+                + " wicket:id='_inserir_'"
+                + " class='btn btn-success btn-sm'"
+                + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
+                + "</button>")
+            .add(btn);
         return btn;
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
         cell
-                .newTemplateTag(tp -> ""
-                        + "<button wicket:id='_remover_' class='singular-remove-btn'>"
-                        + "     <i "
-                        + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
-                        + "</button>")
-                .add(btn);
+            .newTemplateTag(tp -> ""
+                + "<button wicket:id='_remover_' class='singular-remove-btn'>"
+                + "     <i "
+                + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
+                + "</button>")
+            .add(btn);
         return btn;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static void buildFooter(BSContainer<?> footer,
+        Form<?> form,
+        WicketBuildContext ctx) {
+        Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
+        buildFooter(footer, ctx, createAddButton);
+    }
+
+    public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
+        if (canAddItems(ctx)) {
+            final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
+            template.add((Component) createAddButton.create());
+        } else {
+            footer.setVisible(false);
+        }
+        personalizeCSS(footer);
+    }
+
+    public static boolean canAddItems(WicketBuildContext ctx) {
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
+            && ctx.getViewMode().isEdition();
+    }
+
+    protected static String createButtonMarkup(WicketBuildContext ctx) {
+        String label = defineLabel(ctx);
+
+        return String.format("<button wicket:id=\"_add\" class=\"btn btn-add\" type=\"button\" title=\"%s\"><i class=\"fa fa-plus\"></i>%s</button>", label, label);
+    }
+
+    protected static void personalizeCSS(BSContainer<?> footer) {
+        footer.add(new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                oldClasses.remove("text-right");
+                return oldClasses;
+            }
+        });
+    }
+
+    public static String defineLabel(WicketBuildContext ctx) {
+        SType<?> type = ctx.getCurrentInstance().getType();
+        AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
+        return view.label().orElse(
+            Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
+                .map((x) -> {
+                    String[] parts = x.trim().split(" ");
+                    return "Adicionar " + parts[0];
+                })
+                .orElse("Adicionar item"));
     }
 
     protected static abstract class ElementsView extends RefreshingView<SInstance> {
 
-        public ElementsView(String id, IModel<SIList<SInstance>> model) {
+        private final WebMarkupContainer        parentContainer;
+        private IFunction<Component, Component> renderedChildFunction = c -> c;
+
+        public ElementsView(String id, IModel<SIList<SInstance>> model, WebMarkupContainer parentContainer) {
             super(id, model);
+            this.parentContainer = parentContainer;
             setItemReuseStrategy(new PathInstanceItemReuseStrategy());
+        }
+
+        public ElementsView setRenderedChildFunction(IFunction<Component, Component> renderedChildFunction) {
+            this.renderedChildFunction = renderedChildFunction;
+            return this;
         }
 
         @Override
         protected Iterator<IModel<SInstance>> getItemModels() {
-            List<IModel<SInstance>> list  = new ArrayList<>();
-            SIList<SInstance>       sList = getModelObject();
+            List<IModel<SInstance>> list = new ArrayList<>();
+            SIList<SInstance> sList = getModelObject();
             for (int i = 0; i < sList.size(); i++)
                 list.add(new SInstanceListItemModel<>(getDefaultModel(), i));
             return list.iterator();
@@ -126,37 +203,100 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 return item;
             };
         }
+
+        public void insertItem(AjaxRequestTarget target, int index) {
+
+            SInstance newInstance = getModelObject().addNewAt(index);
+
+            //update current children model indexes
+            for (Component child : this) {
+                IModel<?> childModel = child.getDefaultModel();
+                if (childModel instanceof SInstanceListItemModel<?>) {
+                    SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
+                    if (itemModel.getIndex() >= index) {
+                        itemModel.setIndex(itemModel.getIndex() + 1);
+                    }
+                }
+            }
+
+            this.onPopulate();
+
+            findChildByInstance(newInstance).ifPresent(item -> {
+                Component child = renderedChildFunction.apply(item);
+                target.prependJavaScript(getInsertPreScript(index, "\"<div id='" + child.getMarkupId() + "'></div>\""));
+                target.add(child.add(new FadeInOnceBehavior()));
+            });
+        }
+
+        public void removeItem(AjaxRequestTarget target, Item<SInstance> item) {
+            final SInstance instance = item.getModelObject();
+            final SIList<SInstance> list = getModelObject();
+            final int index = list.indexOf(instance);
+
+            list.remove(instance);
+
+            //update current children model indexes
+            for (Component child : this) {
+                IModel<?> childModel = child.getDefaultModel();
+                if (childModel instanceof SInstanceListItemModel<?>) {
+                    SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
+                    if (itemModel.getIndex() >= index) {
+                        itemModel.setIndex(itemModel.getIndex() - 1);
+                    }
+                }
+            }
+
+            Component child = renderedChildFunction.apply(item);
+            target.appendJavaScript(JQuery.$(child).append(".fadeOut(200,function(){$(this).remove();});"));
+            remove(item);
+        }
+
+        private CharSequence getInsertPreScript(int index, String emptyMarkupString) {
+            final StringBuilder $parent = JQuery.$(parentContainer);
+            if (index == 0)
+                return $parent.append(".prepend(").append(emptyMarkupString).append(");");
+
+            Optional<Component> sibling = findChildByInstance(getModelObject().get(index - 1));
+            if (sibling.isPresent())
+                return $parent
+                    .append(".find('#").append(renderedChildFunction.apply(sibling.get()).getMarkupId()).append("')")
+                    .append(".after(").append(emptyMarkupString).append(");");
+
+            return $parent.append(".append(").append(emptyMarkupString).append(");");
+        }
+
+        private Optional<Component> findChildByInstance(SInstance instance) {
+            return findChildByInstance(this, instance);
+        }
+        private Optional<Component> findChildByInstance(Iterable<Component> container, SInstance instance) {
+            final SIList<SInstance> instances = this.getModelObject();
+            int index = instances.indexOf(instance);
+            if (index >= 0) {
+                for (Component child : container) {
+                    SInstance childInstance = (SInstance) child.getDefaultModelObject();
+                    if (Objects.equals(instance.getPathFull(), childInstance.getPathFull()))
+                        return Optional.of(child);
+                }
+            }
+            return Optional.empty();
+        }
     }
 
     protected static class InserirButton extends ActionAjaxButton {
-        private final IModel<SIList<SInstance>> modelLista;
-        private final Item<SInstance>           item;
-        private final ElementsView              elementsView;
+        private final Item<SInstance> item;
+        private final ElementsView    elementsView;
 
-        protected InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<SIList<SInstance>> mLista, Item<SInstance> item) {
+        protected InserirButton(String id, ElementsView elementsView, Form<?> form, Item<SInstance> item) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
-            this.modelLista = mLista;
             this.item = item;
             add($b.attr("title", "Nova Linha"));
         }
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            final int         index = item.getIndex();
-            SIList<SInstance> lista = modelLista.getObject();
-            lista.addNewAt(index);
-            List<SInstanceListItemModel<?>> itemModels = new ArrayList<>();
-            for (Component child : elementsView) {
-                IModel<?> childModel = child.getDefaultModel();
-                if (childModel instanceof SInstanceListItemModel<?>)
-                    itemModels.add((SInstanceListItemModel<?>) childModel);
-            }
-            for (SInstanceListItemModel<?> itemModel : itemModels)
-                if (itemModel.getIndex() >= index)
-                    itemModel.setIndex(itemModel.getIndex() + 1);
-            target.add(form);
+            elementsView.insertItem(target, item.getIndex());
             target.focusComponent(this);
         }
     }
@@ -175,21 +315,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            final int         index = item.getIndex();
-            SIList<SInstance> lista = elementsView.getModelObject();
-            lista.remove(index);
-            List<SInstanceListItemModel<?>> itemModels = new ArrayList<>();
-            for (Component child : elementsView) {
-                IModel<?> childModel = child.getDefaultModel();
-                if (childModel instanceof SInstanceListItemModel<?>)
-                    itemModels.add((SInstanceListItemModel<?>) childModel);
-            }
-            for (SInstanceListItemModel<?> itemModel : itemModels)
-                if (itemModel.getIndex() > index)
-                    itemModel.setIndex(itemModel.getIndex() - 1);
-                else if (itemModel.getIndex() == index)
-                    itemModel.setIndex(Integer.MAX_VALUE);
-            target.add(form);
+            elementsView.removeItem(target, item);
+            if (elementsView.getModelObject().isEmpty())
+                target.add(form);
         }
     }
 
@@ -216,70 +344,5 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             }
         }
 
-    }
-
-    protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
-        if (currentType.isList() && list.isEmpty()) {
-            final STypeList<?, ?> tl = (STypeList<?, ?>) currentType;
-            if (tl.getMinimumSize() != null) {
-                for (int i = 0; i < tl.getMinimumSize(); i++) {
-                    list.addNew();
-                }
-            } else if (tl.isRequired()) {
-                list.addNew();
-            }
-        }
-    }
-
-
-    protected static void buildFooter(BSContainer<?> footer,
-                                      Form<?> form,
-                                      WicketBuildContext ctx) {
-        Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
-        buildFooter(footer, ctx, createAddButton);
-    }
-
-    public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
-        if (canAddItems(ctx)) {
-            final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
-            template.add((Component) createAddButton.create());
-        } else {
-            footer.setVisible(false);
-        }
-        personalizeCSS(footer);
-    }
-
-    public static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
-                && ctx.getViewMode().isEdition();
-    }
-
-
-    protected static String createButtonMarkup(WicketBuildContext ctx) {
-        String label = defineLabel(ctx);
-
-        return String.format("<button wicket:id=\"_add\" class=\"btn btn-add\" type=\"button\" title=\"%s\"><i class=\"fa fa-plus\"></i>%s</button>", label, label);
-    }
-
-    protected static void personalizeCSS(BSContainer<?> footer) {
-        footer.add(new ClassAttributeModifier() {
-            protected Set<String> update(Set<String> oldClasses) {
-                oldClasses.remove("text-right");
-                return oldClasses;
-            }
-        });
-    }
-
-    public static String defineLabel(WicketBuildContext ctx) {
-        SType<?>                         type = ctx.getCurrentInstance().getType();
-        AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
-        return view.label().orElse(
-                Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
-                        .map((x) -> {
-                            String[] parts = x.trim().split(" ");
-                            return "Adicionar " + parts[0];
-                        })
-                        .orElse("Adicionar item")
-        );
     }
 }

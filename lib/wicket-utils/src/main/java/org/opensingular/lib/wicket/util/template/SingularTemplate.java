@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -74,7 +75,6 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css"),
                 skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css"),
                 skinnableResource("/global/plugins/typeahead/typeahead.css"),
-                skinnableResource("/global/css/typhography.css"),
                 skinnableResource("/layout4/css/custom.css"),
                 skinnableResource("/css/custom.css"),
                 skinnableResource("/layout4/css/themes/default.css"),
@@ -134,11 +134,6 @@ public abstract class SingularTemplate extends WebPage {
         initSkins();
     }
 
-    public SingularTemplate(IModel<?> model) {
-        super(model);
-        initSkins();
-    }
-
     public SingularTemplate(PageParameters parameters) {
         super(parameters);
         initSkins();
@@ -154,8 +149,7 @@ public abstract class SingularTemplate extends WebPage {
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
-
-        add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
+        add(new Label("pageTitle", getPageTitleModel()));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
         add(new KeepSessionAliveBehaviour());
     }
@@ -166,8 +160,8 @@ public abstract class SingularTemplate extends WebPage {
         getJavaScriptsUrls().forEach(response::render);
     }
 
-    protected String getPageTitleLocalKey() {
-        return "label.page.title.local";
+    protected IModel<String> getPageTitleModel(){
+        return new StringResourceModel("label.page.title.local").setDefaultValue("");
     }
 
     protected void initSkins() {

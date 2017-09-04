@@ -1,12 +1,12 @@
 package org.opensingular.lib.commons.context.singleton;
 
-import org.opensingular.lib.commons.context.MigrationEnabledSingularSingletonStrategy;
 import org.opensingular.lib.commons.context.SingularSingletonNotFoundException;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
-import org.opensingular.lib.commons.lambda.ISupplier;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Simple strategy meant to be used where static variable singletons
@@ -15,20 +15,20 @@ import java.util.Map;
  * In other cases is preferable to use the {@link ThreadBoundedSingletonStrategy}
  * which bounds singletons to the execution thread.
  */
-public class InstanceBoundedSingletonStrategy implements MigrationEnabledSingularSingletonStrategy {
+public class InstanceBoundedSingletonStrategy implements SingularSingletonStrategy {
 
-    private Map<Object, Object> map = new HashMap<>(0);
+    private final Map<Object, Object> map = new HashMap<>(0);
 
 
     @Override
-    public synchronized <T> void put(T thisInstance) {
+    public synchronized <T> void put(@Nonnull T thisInstance) {
         if (thisInstance != null) {
             map.put(thisInstance.getClass(), thisInstance);
         }
     }
 
     @Override
-    public <T> void put(Class<? super T> instanceClazz, T thisInstance) {
+    public synchronized <T> void put(Class<? super T> instanceClazz, T thisInstance) {
         if (thisInstance != null) {
             map.put(instanceClazz, thisInstance);
         }
@@ -70,22 +70,23 @@ public class InstanceBoundedSingletonStrategy implements MigrationEnabledSingula
     }
 
     @Override
-    public synchronized <T> T singletonize(String nameKey, ISupplier<T> singletonFactory) {
-        return MigrationEnabledSingularSingletonStrategy.super.singletonize(nameKey, singletonFactory);
+    public synchronized <T> T singletonize(@Nonnull String nameKey, @Nonnull Supplier<T> singletonFactory) {
+        return (T) map.computeIfAbsent(nameKey, k -> singletonFactory.get());
     }
 
     @Override
-    public synchronized <T> T singletonize(Class<? super T> classKey, ISupplier<T> singletonFactory) {
-        return MigrationEnabledSingularSingletonStrategy.super.singletonize(classKey, singletonFactory);
+    public synchronized <T> T singletonize(@Nonnull Class<T> classKey, @Nonnull Supplier<T> singletonFactory) {
+        Object v = map.computeIfAbsent(classKey, k -> singletonFactory.get());
+        return classKey.cast(v);
     }
 
     @Override
-    public Map<Object, Object> getEntries() {
+    public synchronized Map<Object, Object> getEntries() {
         return map;
     }
 
     @Override
-    public void putEntries(Map<Object, Object> entries) {
-        map.putAll(entries);
+    public synchronized void putEntries(@Nonnull SingularSingletonStrategy source) {
+        map.putAll(source.getEntries());
     }
 }

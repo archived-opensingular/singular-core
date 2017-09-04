@@ -31,7 +31,6 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-
         this.asAtr()
                 .label("Estado")
                 .displayString("${nome!} - ${sigla!}")
