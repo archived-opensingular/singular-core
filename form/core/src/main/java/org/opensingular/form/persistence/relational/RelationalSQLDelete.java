@@ -49,7 +49,7 @@ public class RelationalSQLDelete implements RelationalSQL {
 			lines.add(new RelationalSQLCommmand(
 					"delete from " + table + " " + tableAlias(table) + " where "
 							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
-					params, null));
+					params, null, null));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}

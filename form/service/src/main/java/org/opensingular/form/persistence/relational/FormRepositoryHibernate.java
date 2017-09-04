@@ -119,17 +119,17 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 				INSTANCE firstInstance = null;
 				RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(createType(), key);
 				for (RelationalSQLCommmand command : query.toSQLScript()) {
-					executeSelectCommand(command, connection);
-					INSTANCE instance = createInstance();
-					// TODO povoar dados da instancia em memoria a partir do banco de dados
-					if (firstInstance == null)
+					for (INSTANCE instance : executeSelectCommand(command, connection)) {
 						firstInstance = instance;
+						break;
+					}
 				}
 				return firstInstance;
 			}
 		});
-		if (instance == null)
+		if (instance == null) {
 			throw new SingularFormNotFoundException(key);
+		}
 		return instance;
 	}
 
@@ -202,17 +202,16 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 			public void execute(Connection connection) throws SQLException {
 				RelationalSQL query = RelationalSQL.select(createType().getContainedTypes());
 				for (RelationalSQLCommmand command : query.toSQLScript()) {
-					executeSelectCommand(command, connection);
-					INSTANCE instance = createInstance();
-					// TODO povoar dados da instancia em memoria a partir do banco de dados
-					result.add(instance);
+					result.addAll(executeSelectCommand(command, connection));
 				}
 			}
 		});
 		return result;
 	}
 
-	protected void executeSelectCommand(RelationalSQLCommmand command, Connection connection) throws SQLException {
+	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command, Connection connection)
+			throws SQLException {
+		List<INSTANCE> result = new ArrayList<>();
 		String sql = command.getCommand();
 		System.out.println(sql);
 		PreparedStatement statement = connection.prepareStatement(sql);
@@ -225,9 +224,37 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 		System.out.println();
 		try (ResultSet rs = statement.executeQuery()) {
 			while (rs.next()) {
-				System.out.println(" > " + rs.getString(1));
+				INSTANCE instance = createInstance();
+				List<String> pk = RelationalSQL.tablePK(instance.getType());
+				FormKey.set(instance, tupleKey(rs, pk));
+				RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command, pk));
+				result.add(instance);
 			}
 		}
+		return result;
+	}
+
+	protected FormKey tupleKey(ResultSet rs, List<String> pk) throws SQLException {
+		HashMap<String, Object> key = new HashMap<>();
+		for (String keyColumn : pk) {
+			key.put(keyColumn, rs.getInt(keyColumn));
+		}
+		return new FormKeyRelational(key);
+	}
+
+	protected List<RelationalData> tuple(ResultSet rs, RelationalSQLCommmand command, List<String> pk)
+			throws SQLException {
+		List<RelationalData> tuple = new ArrayList<>();
+		int index = 1;
+		for (RelationalColumn column : command.getSelectedColumns()) {
+			List<Object> tupleKey = new ArrayList<>();
+			for (String keyColumn : pk) {
+				tupleKey.add(rs.getObject(keyColumn));
+			}
+			tuple.add(new RelationalData(column.getTable(), tupleKey, column.getName(), rs.getObject(index)));
+			index++;
+		}
+		return tuple;
 	}
 
 	protected String toSqlConstant(Object parameterValue) {

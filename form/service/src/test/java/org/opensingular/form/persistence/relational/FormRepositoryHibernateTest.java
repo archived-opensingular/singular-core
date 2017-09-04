@@ -26,6 +26,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.persistence.relational.FormRepositoryHibernateTest.TestPackage.Form;
 import org.opensingular.form.type.core.STypeString;
@@ -79,12 +80,11 @@ public class FormRepositoryHibernateTest {
 		});
 		//
 		SIComposite loaded = formRepository.load(insertedKey);
-		// assertEquals("My form", loaded.getValue("name"));
+		assertEquals("My form", loaded.getValue("name"));
 		assertNull(loaded.getValue("observation"));
+		assertEquals(insertedKey, FormKey.from(loaded));
 		//
-		for (SIComposite instance : formRepository.loadAll()) {
-			System.out.println(instance.getName());
-		}
+		assertEquals(1, formRepository.loadAll().size());
 		//
 		formRepository.delete(insertedKey);
 		//

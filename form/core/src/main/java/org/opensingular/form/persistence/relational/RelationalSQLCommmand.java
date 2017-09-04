@@ -29,11 +29,14 @@ public class RelationalSQLCommmand {
 	private String command;
 	private List<Object> parameters;
 	private SIComposite instance;
+	private List<RelationalColumn> selectedColumns;
 
-	public RelationalSQLCommmand(String command, List<Object> parameters, SIComposite instance) {
+	public RelationalSQLCommmand(String command, List<Object> parameters, SIComposite instance,
+			List<RelationalColumn> selectedColumns) {
 		this.command = command;
 		this.parameters = parameters;
 		this.instance = instance;
+		this.selectedColumns = selectedColumns;
 	}
 
 	public String getCommand() {
@@ -46,5 +49,9 @@ public class RelationalSQLCommmand {
 
 	public SIComposite getInstance() {
 		return instance;
+	}
+
+	public List<RelationalColumn> getSelectedColumns() {
+		return selectedColumns;
 	}
 }

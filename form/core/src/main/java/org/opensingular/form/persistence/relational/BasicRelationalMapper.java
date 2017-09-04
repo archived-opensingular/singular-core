@@ -19,8 +19,10 @@ package org.opensingular.form.persistence.relational;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
 
 /**
  * Basic implementation of a Relational Mapper.
@@ -29,11 +31,11 @@ import org.opensingular.form.SType;
  */
 public class BasicRelationalMapper implements RelationalMapper {
 	public String table(SType<?> type) {
-		String result = type.as(AtrSQL::new).getTable();
+		String result = type.asSQL().getTable();
 		if (result == null) {
 			if (hasParentType(type)) {
 				SType<?> parentType = getParentType(type);
-				result = parentType.as(AtrSQL::new).getTable();
+				result = parentType.asSQL().getTable();
 				if (result == null)
 					result = parentType.getNameSimple();
 			} else
@@ -44,9 +46,9 @@ public class BasicRelationalMapper implements RelationalMapper {
 
 	public List<String> tablePK(SType<?> type) {
 		List<String> result = new ArrayList<>();
-		String pk = type.as(AtrSQL::new).getTablePK();
+		String pk = type.asSQL().getTablePK();
 		if (pk == null && hasParentType(type))
-			pk = getParentType(type).as(AtrSQL::new).getTablePK();
+			pk = getParentType(type).asSQL().getTablePK();
 		if (pk != null)
 			for (String key : pk.split(","))
 				result.add(key.trim());
@@ -54,21 +56,25 @@ public class BasicRelationalMapper implements RelationalMapper {
 	}
 
 	public List<RelationalFK> tableFKs(SType<?> field) {
-		return field.as(AtrSQL::new).getTableFKs();
+		return field.asSQL().getTableFKs();
 	}
 
 	public String column(SType<?> field) {
-		String result = field.as(AtrSQL::new).getColumn();
-		if (result == null)
+		String result = field.asSQL().getColumn();
+		if (result == null) {
 			result = field.getNameSimple();
+		}
 		return result;
 	}
 
-	public List<RelationalData> data(SInstance fieldInstance) {
-		SType<?> field = fieldInstance.getType();
-		List<RelationalData> list = new ArrayList<>();
-		list.add(new RelationalData(table(field), null, column(field), null));
-		return list;
+	public PersistenceStrategy persistenceStrategy(SType<?> field) {
+		PersistenceStrategy result = PersistenceStrategy.COLUMN;
+		if (field instanceof STypeComposite) {
+			result = PersistenceStrategy.TABLE;
+		} else if (field instanceof STypeList) {
+			result = PersistenceStrategy.ONE_TO_MANY;
+		}
+		return result;
 	}
 
 	protected boolean hasParentType(SType<?> type) {

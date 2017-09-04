@@ -29,6 +29,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
 
 /**
  * Interface for relational SQL builders.
@@ -71,36 +72,46 @@ public interface RelationalSQL {
 		return aspectRelationalMap(field).column(field);
 	}
 
+	public static PersistenceStrategy persistenceStrategy(SType<?> field) {
+		return aspectRelationalMap(field).persistenceStrategy(field);
+	}
+
 	public static RelationalMapper aspectRelationalMap(SType<?> type) {
 		Optional<RelationalMapper> mapper = type.getAspect(ASPECT_RELATIONAL_MAP);
-		if (mapper.isPresent())
+		if (mapper.isPresent()) {
 			return mapper.get();
+		}
 		return new BasicRelationalMapper();
 	}
 
 	public static void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns, List<String> targetTables) {
 		String tableName = table(type);
-		if (!targetTables.contains(tableName))
+		if (!targetTables.contains(tableName)) {
 			targetTables.add(tableName);
+		}
 		for (String columnName : tablePK(type)) {
 			RelationalColumn column = new RelationalColumn(tableName, columnName);
-			if (!keyColumns.contains(column))
+			if (!keyColumns.contains(column)) {
 				keyColumns.add(column);
+			}
 		}
 	}
 
 	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
 			List<String> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
-		if (field instanceof ICompositeType)
+		if (field instanceof ICompositeType) {
 			return;
+		}
 		String tableName = table(field);
-		if (!targetTables.contains(tableName))
+		if (!targetTables.contains(tableName)) {
 			targetTables.add(tableName);
+		}
 		String columnName = column(field);
 		mapColumnToField.put(columnName, field.getNameSimple());
 		RelationalColumn column = new RelationalColumn(tableName, columnName);
-		if (!targetColumns.contains(column) && !keyColumns.contains(column))
+		if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
 			targetColumns.add(column);
+		}
 	}
 
 	public static String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
@@ -125,8 +136,9 @@ public interface RelationalSQL {
 	}
 
 	public static void collectRelationships(SType<?> field, List<RelationalFK> relationships) {
-		if (field instanceof ICompositeType)
+		if (field instanceof ICompositeType) {
 			((ICompositeType) field).getContainedTypes()
 					.forEach(item -> relationships.addAll(RelationalSQL.tableFKs(item.getSuperType())));
+		}
 	}
 }

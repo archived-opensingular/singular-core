@@ -59,7 +59,7 @@ public class RelationalSQLInsert implements RelationalSQL {
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
 			lines.add(new RelationalSQLCommmand("insert into " + table + " (" + concatenateColumnNames(table, ", ")
-					+ ") values (" + concatenateColumnValues(table, ", ", params) + ")", params, instance));
+					+ ") values (" + concatenateColumnValues(table, ", ", params) + ")", params, instance, null));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}

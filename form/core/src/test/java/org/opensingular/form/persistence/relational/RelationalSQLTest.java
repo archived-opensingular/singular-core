@@ -109,6 +109,22 @@ public class RelationalSQLTest extends TestCaseForm {
 	}
 
 	@Test
+	public void testUpdate() {
+		SIComposite masterInstance = master.newInstance();
+		masterInstance.setValue("name", "My name");
+		FormKey.set(masterInstance, masterKey(4242));
+		RelationalSQL update = RelationalSQL.update(masterInstance);
+		RelationalSQLCommmand[] script = update.toSQLScript();
+		assertEquals(1, script.length);
+		assertEquals("update MasterEntity T1 set T1.name = ?, T1.obs = ? where T1.id = ?", script[0].getCommand());
+		assertEquals(3, script[0].getParameters().size());
+		assertEquals("My name", script[0].getParameters().get(0));
+		assertNull(script[0].getParameters().get(1));
+		assertEquals(4242, script[0].getParameters().get(2));
+		assertEquals(masterInstance, script[0].getInstance());
+	}
+
+	@Test
 	public void testDelete() {
 		RelationalSQL delete = delete(master, masterKey(42));
 		RelationalSQLCommmand[] script = delete.toSQLScript();

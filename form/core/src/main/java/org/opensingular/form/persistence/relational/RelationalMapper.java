@@ -18,9 +18,9 @@ package org.opensingular.form.persistence.relational;
 
 import java.util.List;
 
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
 
 /**
  * Mapper interface for persisting Form components into a Relational DBMS.
@@ -38,5 +38,5 @@ public interface RelationalMapper {
 
 	String column(SType<?> field);
 
-	List<RelationalData> data(SInstance fieldInstance);
+	PersistenceStrategy persistenceStrategy(SType<?> type);
 }

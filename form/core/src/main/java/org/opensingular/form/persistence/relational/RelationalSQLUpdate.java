@@ -62,9 +62,10 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
 			lines.add(new RelationalSQLCommmand(
-					"update " + table + " set " + set(table, targetColumns, params) + " where "
+					"update " + table + " " + tableAlias(table) + " set " + set(table, targetColumns, params)
+							+ " where "
 							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
-					params, instance));
+					params, instance, null));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}
@@ -73,7 +74,7 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		StringJoiner sj = new StringJoiner(", ");
 		setColumns.forEach(column -> {
 			if (column.getTable().equals(table)) {
-				sj.add(column.getName() + " = ?");
+				sj.add(tableAlias(table) + "." + column.getName() + " = ?");
 				params.add(columnValue(column));
 			}
 		});
@@ -85,5 +86,9 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		if (fieldName == null)
 			return null;
 		return instance.getValue(fieldName);
+	}
+
+	private String tableAlias(String table) {
+		return RelationalSQL.tableAlias(table, targetTables);
 	}
 }

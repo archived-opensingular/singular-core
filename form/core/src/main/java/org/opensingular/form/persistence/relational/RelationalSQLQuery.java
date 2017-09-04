@@ -91,18 +91,24 @@ public class RelationalSQLQuery implements RelationalSQL {
 		String orderPart = "";
 		if (!orderingColumns.isEmpty())
 			orderPart = " order by " + concatenateOrderingColumns(", ");
+		List<RelationalColumn> selected = selectedColumns();
 		return new RelationalSQLCommmand[] { new RelationalSQLCommmand(
-				"select " + concatenateColumnNames(", ") + " from " + joinTables() + wherePart + orderPart, params,
-				null) };
+				"select " + concatenateColumnNames(selected, ", ") + " from " + joinTables() + wherePart + orderPart,
+				params, null, selected) };
 	}
 
-	private String concatenateColumnNames(String separator) {
-		StringJoiner sj = new StringJoiner(separator);
-		targetColumns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
+	private List<RelationalColumn> selectedColumns() {
+		List<RelationalColumn> result = new ArrayList<>(targetColumns);
 		keyColumns.forEach(column -> {
 			if (!targetColumns.contains(column))
-				sj.add(tableAlias(column.getTable()) + "." + column.getName());
+				result.add(column);
 		});
+		return result;
+	}
+
+	private String concatenateColumnNames(List<RelationalColumn> columns, String separator) {
+		StringJoiner sj = new StringJoiner(separator);
+		columns.forEach(column -> sj.add(tableAlias(column.getTable()) + "." + column.getName()));
 		return sj.toString();
 	}
 

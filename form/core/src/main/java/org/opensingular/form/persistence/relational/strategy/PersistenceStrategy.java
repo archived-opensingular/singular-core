@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence.relational.strategy;
+
+import java.util.List;
+
+import org.opensingular.form.SInstance;
+import org.opensingular.form.persistence.relational.RelationalData;
 
 /**
- * Strategy specification for automatic generation of a column's value.
- * 
- * Useful to generate/capture the value of a column in database insertions.
+ * Strategy for saving/loading SInstance data.
  *
  * @author Edmundo Andrade
  */
-public class ColumnGenerationStrategy {
-	// public static final ColumnGenerationStrategy NONE = new
-	// ColumnGenerationStrategy(value -> value);
+public interface PersistenceStrategy {
+	public static final PersistenceStrategy TABLE = new PersistenceStrategyTable();
+	public static final PersistenceStrategy COLUMN = new PersistenceStrategyColumn();
+	public static final PersistenceStrategy ONE_TO_MANY = new PersistenceStrategyOneToMany();
+
+	void save(SInstance instance, List<RelationalData> toList);
+
+	void load(SInstance instance, List<RelationalData> fromList);
 }
