@@ -43,6 +43,7 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
 
         FormComponent<?> comp = new PasswordTextField(model.getObject().getName(),
                 new SInstanceValueModel<>(model)).setLabel(labelModel);
+        comp.setRequired(false);
 
         formGroup.appendInputPassword(comp);
 
