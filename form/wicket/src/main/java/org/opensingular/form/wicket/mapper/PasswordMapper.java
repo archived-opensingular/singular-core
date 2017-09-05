@@ -41,8 +41,10 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        FormComponent<?> comp = new PasswordTextField(model.getObject().getName(),
-                new SInstanceValueModel<>(model)).setLabel(labelModel);
+        PasswordTextField comp = new PasswordTextField(model.getObject().getName(), new SInstanceValueModel<>(model));
+        comp.setRequired(false);/* let singular form handle this validation */
+        comp.setLabel(labelModel);
+
 
         formGroup.appendInputPassword(comp);
 
