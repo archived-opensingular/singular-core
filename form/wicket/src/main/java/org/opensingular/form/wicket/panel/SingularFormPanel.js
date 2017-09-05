@@ -17,6 +17,33 @@
 jQuery(document).ready(function () {
     "use strict";
 
+    /**
+     * Solução temporaria para configuração da direção das anotações, o componente deve ser
+     * refatorado de modo que não seja necessarios hacks
+     */
+    function configureDynamicAnnotations() {
+        $('.singular-form-action-preview').each(function () {
+                var preview = $(this),
+                    parent = preview.parent()[0];
+                if (typeof parent === 'undefined') {
+                    return;
+                }
+                var parentOffsetLeft = $(parent).offset().left;
+                if (parentOffsetLeft < ($(window).width() - parentOffsetLeft)) {
+                    preview.css('right', 'auto');
+                    preview.css('left', '0');
+                } else {
+                    preview.css('right', '0');
+                    preview.css('left', 'auto');
+                }
+            }
+        );
+    }
+
+    $(window).resize(configureDynamicAnnotations);
+    $(window).ready(configureDynamicAnnotations);
+    Wicket.Event.subscribe("/ajax/call/complete", configureDynamicAnnotations);
+
     function align(selector) {
         var fieldsByTopPosition = {};
 
