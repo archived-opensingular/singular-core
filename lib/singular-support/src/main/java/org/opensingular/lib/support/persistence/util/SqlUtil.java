@@ -15,11 +15,11 @@
  */
 package org.opensingular.lib.support.persistence.util;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
 
@@ -30,33 +30,45 @@ public class SqlUtil {
 
     private static final List<String> CRUD_OPERATIONS = Arrays.asList("SELECT", "UPDATE", "DELETE", "INSERT");
 
-    private SqlUtil() {}
+    private SqlUtil() {
+    }
 
     /**
      * Replaces the default Singular database schema name with
      * the name configured through {@value SingularProperties#CUSTOM_SCHEMA_NAME} singular property
-     * @param sql - an sql query
-     * @return
-     *  return the {@param sql} with the schema name replaced
      *
+     * @param sql - an sql query
+     * @return return the {@param sql} with the schema name replaced
      */
-    public static String replaceSchemaName(String sql) {
-        if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
-            String customSchema = SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME);
-            return sql.replaceAll(Constants.SCHEMA, customSchema);
-        } else {
-            return sql;
-        }
+    public static String replaceInSQL(String sql, String current, String replacement) {
+        return sql.replaceAll(current, replacement);
+
     }
+
 
     /**
      * Test if the given {@param schemaName} is the current singular database schema
+     *
      * @param schemaName
-     * @return
-     *  true if {@param schemaName} is the current singular schema, false otherwise
+     * @return true if {@param schemaName} is the current singular schema, false otherwise
      */
-    public static boolean isSingularSchema(String schemaName){
-        return replaceSchemaName(Constants.SCHEMA).equals(schemaName);
+    public static boolean isSingularSchema(String schemaName) {
+        return replaceSingularSchemaName(Constants.SCHEMA).equals(schemaName);
+    }
+
+    /**
+     * Replaces default singular schema name using the configured replacement
+     *
+     * @param sql
+     * @return
+     */
+    public static String replaceSingularSchemaName(String sql) {
+        if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
+            String customSchema = SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME);
+            return SqlUtil.replaceInSQL(sql, Constants.SCHEMA, customSchema);
+        } else {
+            return sql;
+        }
     }
 
     public static boolean hasCompleteCrud(List<String> vals) {

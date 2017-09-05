@@ -22,7 +22,6 @@ import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Faz a injeção de bean nos campos marcados como @{@link javax.inject.Inject} conforme a lógica de {@link
@@ -42,23 +41,20 @@ public class TypeProcessorBeanInjector {
      * Método chamado logo após o registro do tipo. Nesse caso verificará se precisa injetar algum bean.
      */
     public <T extends SType<?>> void onRegisterTypeByClass(@Nonnull T type, @Nonnull Class<T> typeClass) {
-        SingularInjector injector = findInjectorFor(type);
-        if (injector == null) {
-            SingularInjector.getEmptyInjector().inject(type);
-        } else {
-            injector.inject(type);
-        }
+        //TODO (by Daniel) Potential point of optimization by avoiding looking for the Injector for classes that
+        // don't have a injection, which are vast majority of cases.
+        findInjectorFor(type).inject(type);
     }
 
     /**
      * Localiza o injetor para o tipo informado.
      */
-    @Nullable
+    @Nonnull
     private SingularInjector findInjectorFor(@Nonnull SType<?> type) {
         ServiceRegistry registry = ServiceRegistryLocator.locate();
         if (registry != null) {
             return registry.lookupSingularInjector();
         }
-        return null;
+        return SingularInjector.getEmptyInjector();
     }
 }

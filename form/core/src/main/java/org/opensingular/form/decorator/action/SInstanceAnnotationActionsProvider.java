@@ -104,11 +104,11 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
 
     private static SIcon resolveIcon(SInstance instance) {
         if (isApproved(instance))
-            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_APPROVED).setColors("#7f7", "#fff");
+            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_APPROVED).setColors("#7f7", "transparent");
         else if (isRejected(instance))
-            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REJECTED).setColors("#f77", "#fff");
+            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REJECTED).setColors("#f77", "transparent");
         else
-            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EMPTY).setColors("#aaa", "#fff");
+            return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EMPTY).setColors("#aaa", "transparent");
     }
 
     private static boolean isEmpty(SInstance instance) {

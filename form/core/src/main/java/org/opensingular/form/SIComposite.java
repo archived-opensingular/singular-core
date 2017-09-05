@@ -55,11 +55,8 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
         return fields == null || fields.stream().allMatch(SInstance::isEmptyOfData);
     }
 
-    /**
-     * Retorna apenas os campos do tipo que já foram instanciados.
-     *
-     * @return instancias dos campos
-     */
+    /** Return only the already initialized fields. */
+    @Nonnull
     public List<SInstance> getFields() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
     }
@@ -69,6 +66,7 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
      *
      * @return instancias dos campos
      */
+    @Nonnull
     public List<SInstance> getAllFields() {
         for (SType<?> field : getType().getFields())
             getField(field.getNameSimple());

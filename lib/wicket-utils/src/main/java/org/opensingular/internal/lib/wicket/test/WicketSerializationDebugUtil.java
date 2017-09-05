@@ -72,9 +72,9 @@ public class WicketSerializationDebugUtil {
         application.getComponentOnAfterRenderListeners().add(debugger);
         application.getRequestCycleListeners().add(new DebugSerializationRequestCycleListeners(debugger));
         //Ativa a pilha de serialização detalhada
-        if (!"true".equals(System.getProperty("sun.io.serialization.extendedDebugInfo"))) {
-            System.setProperty("sun.io.serialization.extendedDebugInfo", "true");
-        }
+//        if (!"true".equals(System.getProperty("sun.io.serialization.extendedDebugInfo"))) {
+//            System.setProperty("sun.io.serialization.extendedDebugInfo", "true");
+//        }
     }
 
     /** Apenas para implementação de JUnit. */

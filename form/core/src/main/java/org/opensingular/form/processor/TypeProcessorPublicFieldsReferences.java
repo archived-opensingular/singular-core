@@ -16,11 +16,12 @@
 
 package org.opensingular.form.processor;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import org.opensingular.form.*;
+import org.opensingular.form.SScope;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -39,9 +40,6 @@ import java.util.Map;
 public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegister {
 
     public final static TypeProcessorPublicFieldsReferences INSTANCE = new TypeProcessorPublicFieldsReferences();
-
-    /** Guarda informações da classe em cache para poupar processamento. */
-    private static LoadingCache<Class<?>, CompositePublicInfo> classInfoCache;
 
     @Override
     public void processTypePreOnLoadTypeCall(SType<?> type) {
@@ -286,17 +284,9 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                 ref.getName() + ";";
     }
 
-    private synchronized static CompositePublicInfo getPublicInfo(Class<?> typeClass) {
-        if (classInfoCache == null) {
-            classInfoCache = CacheBuilder.newBuilder().weakValues().build(
-                    new CacheLoader<Class<?>, CompositePublicInfo>() {
-                        @Override
-                        public CompositePublicInfo load(Class<?> aClass) {
-                            return readPublicFields(aClass);
-                        }
-                    });
-        }
-        return classInfoCache.getUnchecked(typeClass);
+    private static CompositePublicInfo getPublicInfo(Class<?> typeClass) {
+        return ClassInspectionCache.getInfo(typeClass, ClassInspectionCache.CacheKey.PUBLIC_INFO,
+                TypeProcessorPublicFieldsReferences::readPublicFields);
     }
 
     private static CompositePublicInfo readPublicFields(Class<?> aClass) {

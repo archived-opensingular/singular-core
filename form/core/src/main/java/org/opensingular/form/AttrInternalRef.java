@@ -89,7 +89,7 @@ final class AttrInternalRef {
 
     /** A quantidade total de atributo definidos até o momento no dicionário. */
     final int getMax() {
-        return dictionary.getAttributesArrayInicialSize();
+        return dictionary.getAttributesArrayInitialSize();
     }
 
     /** Verifica se o atributo ja teve o seu tipo associado (registrado) no dicionário. */

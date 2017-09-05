@@ -68,6 +68,8 @@ public class SDocument {
     public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
+    private boolean restoreMode = false;
+
     private SInstance root;
 
     private int lastId = 0;
@@ -86,6 +88,30 @@ public class SDocument {
 
     public SDocument() {
         registry = new DelegatingLocalServiceRegistry(ServiceRegistryLocator.locate());
+    }
+
+    /**
+     * Prevents initialization listeners from running
+     * and disables internal id increment.
+     */
+    public void initRestoreMode(){
+        this.restoreMode = true;
+    }
+
+    /**
+     * Signal that the restore mode has ended.
+     * Id generation and init listeners are enabled again
+     */
+    public void finishRestoreMode(){
+        this.restoreMode = false;
+    }
+
+    /**
+     * check if the document is currently under restore mode.
+     * @return
+     */
+    public boolean isRestoreMode(){
+        return this.restoreMode;
     }
 
     /**

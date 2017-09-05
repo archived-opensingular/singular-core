@@ -25,6 +25,7 @@ import org.opensingular.form.type.core.STypeDateTime;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
@@ -146,7 +147,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
             if (fieldsLocal == null) {
                 if (getSuperType().isComposite()) {
                     // Busca reaproveitar, pois muitas extensões são locais e
-                    // não acrescentam campso
+                    // não acrescentam campos
                     fieldsConsolidated = ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
                 } else {
                     fieldsConsolidated = new FieldMapOfRecordType();
@@ -183,16 +184,18 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     @Nonnull
     public <T extends SType<?>> T addField(@Nullable String fieldSimpleName, @Nonnull T parentType) {
-        String resolvedName = SFormUtil.resolveName(fieldSimpleName, this);
-        checkNameNewField(resolvedName);
-        T field = extendType(resolvedName, parentType);
-        return addInternal(resolvedName, field);
+        SimpleName name = SFormUtil.resolveName(SimpleName.ofNullable(fieldSimpleName), parentType);
+        checkNameNewField(name.get());
+        T field = extendType(name, parentType);
+        return addInternal(name.get(), field);
     }
 
     /**
      * Cria um novo campo lista com o nome informado e sendo o tipo de seus elementos o tipo da classe informada.
      */
-    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(String fieldSimpleName, Class<T> listTypeClass) {
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName,
+            @Nonnull Class<T> listTypeClass) {
         return addFieldListOf(fieldSimpleName, resolveType(listTypeClass));
     }
 
@@ -202,8 +205,8 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull T elementsType) {
         checkNameNewField(fieldSimpleName);
-        STypeList<T, I> novo = createTypeListOf(fieldSimpleName, elementsType);
-        return addInternal(fieldSimpleName, novo);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementsType);
+        return addInternal(fieldSimpleName, newList);
     }
 
     /**
@@ -391,6 +394,13 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldSimpleName, STypeMonetary.class);
     }
 
+    /**
+     * Cria um novo campo do tipo {@link STypePassword} com o nome informado.
+     */
+    public STypePassword addFieldPassword(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypePassword.class);
+    }
+
     public SSelectionBuilder selection() {
         this.setView(SViewSelectionBySelect::new);
         return new SSelectionBuilder(this);
@@ -446,7 +456,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         }
 
         public List<SType<?>> getFields() {
-            return (fields == null) ? Collections.emptyList() : garantirLista();
+            return (fields == null) ? Collections.emptyList() : ensureList();
         }
 
         public SType<?> get(String fieldName) {
@@ -461,15 +471,15 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
         public void addAll(FieldMapOfRecordType toBeAdded) {
             if (!toBeAdded.isEmpty()) {
-                toBeAdded.fields.values().forEach(fr -> addInterno(fr.getField()));
+                toBeAdded.fields.values().forEach(fr -> addInternal(fr.getField()));
             }
         }
 
         public void addAll(Map<String, SType<?>> toBeAdded) {
-            toBeAdded.values().forEach(f -> addInterno(f));
+            toBeAdded.values().forEach(f -> addInternal(f));
         }
 
-        private void addInterno(SType<?> field) {
+        private void addInternal(SType<?> field) {
             if (fields == null) {
                 fields = new LinkedHashMap<>();
             }
@@ -478,7 +488,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
         public int findIndex(String fieldName) {
             if (fields != null) {
-                garantirLista();
+                ensureList();
                 FieldRef fr = fields.get(fieldName);
                 if (fr != null) {
                     return fr.getIndex();
@@ -489,12 +499,12 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
         public SType<?> getByIndex(int fieldIndex) {
             if (fields != null) {
-                return garantirLista().get(fieldIndex);
+                return ensureList().get(fieldIndex);
             }
             throw new SingularFormException("Indice do campo incorreto: " + fieldIndex, this);
         }
 
-        private List<SType<?>> garantirLista() {
+        private List<SType<?>> ensureList() {
             if (fieldsList == null) {
                 int index = 0;
                 fieldsList = new ArrayList<>(fields.size());

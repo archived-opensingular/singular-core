@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.TestSType.MyPackageA.MyTypeA;
+import org.opensingular.form.TestSType.MyPackageA.MyTypeB;
+import org.opensingular.form.TestSType.MyPackageA.MyTypeBB;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeDecimal;
@@ -50,10 +52,27 @@ public class TestSType extends TestCaseForm {
         Assert.assertEquals(type.getNameSimple(), MyTypeA.class.getSimpleName());
     }
 
+    @Test
+    public void testConstructorWithAnnotatedName() {
+        MyTypeB type = new MyTypeB();
+        Assert.assertEquals(type.getNameSimple(), "TypeB");
+
+        MyTypeBB typeBB = new MyTypeBB();
+        Assert.assertEquals(typeBB.getNameSimple(), "TypeBB");
+    }
+
     @SInfoPackage(name = "xx")
     public static class MyPackageA extends SPackage {
         @SInfoType(spackage = MyPackageA.class)
         public static class MyTypeA extends STypeDecimal {
+        }
+
+        @SInfoType(name = "TypeB", spackage = MyPackageA.class)
+        public static class MyTypeB extends STypeDecimal {
+        }
+
+        @SInfoType(name = "TypeBB", spackage = MyPackageA.class)
+        public static class MyTypeBB extends MyTypeB {
         }
     }
 

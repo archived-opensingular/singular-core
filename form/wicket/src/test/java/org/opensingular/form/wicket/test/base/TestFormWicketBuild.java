@@ -9,14 +9,16 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.curriculo.SPackageCurriculo;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
-import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -32,12 +34,11 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.findContainerRel
 public class TestFormWicketBuild  {
 
     WicketTester tester;
-    protected SDictionary dicionario;
-    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
+    protected SDictionary dictionary;
 
     @Before
-    public void setUpDicionario() {
-        dicionario = SDictionary.create();
+    public void setUpDictionary() {
+        dictionary = SDictionary.create();
     }
 
     @Before
@@ -60,7 +61,7 @@ public class TestFormWicketBuild  {
         TestPanel testPanel     = buildTestPanel(rootContainer);
 
         SIString instancia = (SIString) createIntance(() -> {
-            PackageBuilder pb = dicionario.createNewPackage("teste");
+            PackageBuilder pb = dictionary.createNewPackage("teste");
             STypeString tipoCidade = pb.createType("cidade", STypeString.class);
             tipoCidade.asAtr().label("Cidade")/*.editSize(30)*/;
             return tipoCidade;
@@ -69,7 +70,7 @@ public class TestFormWicketBuild  {
         IModel<SIString> mCidade = new SInstanceRootModel<SIString>(instancia);
         mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
-        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDIT);
+        ctx.build(ViewMode.EDIT);
 
         tester.startComponentInPage(testPanel);
         Assertions.assertThat(mCidade.getObject().getValue()).isEqualTo("Brasilia");
@@ -87,8 +88,8 @@ public class TestFormWicketBuild  {
         TestPanel testPanel = buildTestPanel(rootContainer);
 
         SIComposite instancia = (SIComposite) createIntance(() -> {
-            dicionario.loadPackage(SPackageCurriculo.class);
-            return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
+            dictionary.loadPackage(SPackageCurriculo.class);
+            return dictionary.getType(SPackageCurriculo.TIPO_CURRICULO);
         });
 
         IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instancia);

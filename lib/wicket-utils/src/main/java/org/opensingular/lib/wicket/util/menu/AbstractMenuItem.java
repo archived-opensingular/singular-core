@@ -17,7 +17,7 @@
 package org.opensingular.lib.wicket.util.menu;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 
 public abstract class AbstractMenuItem extends Panel {
 

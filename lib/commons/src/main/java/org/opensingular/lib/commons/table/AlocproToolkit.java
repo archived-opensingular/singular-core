@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;

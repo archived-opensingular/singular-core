@@ -123,29 +123,15 @@ public class AspectRef<ASPECT> {
 
     private final Class<? extends SingleAspectRegistry<ASPECT, ?>> registryClass;
 
-    private final QualifierStrategy qualifierStrategy;
-
     /** Create a new aspect of the appointed class and <b>without</b> a default registration of implementations. */
     public AspectRef(@Nonnull Class<ASPECT> aspectClass) {
-        this(aspectClass, null, null);
+        this(aspectClass, null);
     }
 
     /** Create a new aspect of the appointed class and <b>with</b> a default registration of implementations. */
     public AspectRef(@Nonnull Class<ASPECT> aspectClass,
             @Nullable Class<? extends SingleAspectRegistry<ASPECT, ?>> registryClass) {
-        this(aspectClass, registryClass, null);
-    }
-
-    /**
-     * Create a new aspect of the appointed class and <b>with</b> a default registration of implementations and with
-     * filter strategy to choose between different available implementations for the same {@link
-     * org.opensingular.form.SType}.
-     */
-    public AspectRef(@Nonnull Class<ASPECT> aspectClass,
-            @Nullable Class<? extends SingleAspectRegistry<ASPECT, ?>> registryClass,
-            @Nullable QualifierStrategy qualifierStrategy) {
         this.aspectClass = aspectClass;
-        this.qualifierStrategy = qualifierStrategy != null ? qualifierStrategy : QualifierStrategy.NO_QUALIFIER;
         this.registryClass = registryClass;
     }
 
@@ -153,12 +139,6 @@ public class AspectRef<ASPECT> {
     @Nonnull
     public Class<ASPECT> getAspectClass() {
         return aspectClass;
-    }
-
-    /** Implements the logic for choosing between different implementations that may apply to specific case. */
-    @Nonnull
-    public QualifierStrategy getQualifierStrategy() {
-        return qualifierStrategy;
     }
 
     /**

@@ -18,8 +18,10 @@ package org.opensingular.form;
 
 import com.google.common.base.Preconditions;
 import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.processor.TypeProcessorBeanInjector;
+import org.opensingular.form.processor.ClassInspectionCache;
+import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
 import org.opensingular.form.processor.TypeProcessorAttributeReadFromFile;
+import org.opensingular.form.processor.TypeProcessorBeanInjector;
 import org.opensingular.form.processor.TypeProcessorPublicFieldsReferences;
 
 import javax.annotation.Nonnull;
@@ -119,14 +121,20 @@ public abstract class SScopeBase implements SScope {
     @Nonnull
     final <T extends SType<?>> T registerType(@Nonnull Class<T> typeClass) {
         Objects.requireNonNull(typeClass);
-        T t = registerType(MapByName.newInstance(typeClass), typeClass);
+        T t;
+        try {
+            t = typeClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SingularFormException("Erro instanciando " + typeClass.getName(), e);
+        }
+        t = registerTypeInternal(t, typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;
     }
 
     @Nonnull
-    final <T extends SType<?>> T registerType(@Nonnull T newType, @Nullable Class<T> typeClass) {
-        getDictionary().registeType(this, newType, typeClass);
+    final <T extends SType<?>> T registerTypeInternal(@Nonnull T newType, @Nullable Class<T> typeClass) {
+        getDictionary().registerType(this, newType, typeClass);
         /*
         (by Daniel Bordin) O If abaixo impede que o onLoadType seja chamado mais de uma vezes caso o novo tipo seja
         apenas uma extensão da classe já carregada anteriormente, ou seja, impede que o mesmo onLoadType seja
@@ -151,7 +159,7 @@ public abstract class SScopeBase implements SScope {
                 if(isSuperTypeCallingOnLoadType(newType)) {
                     //Não pode rodar os processadores em quanto nao tiver terminado o onLoadType do tipo pai
                     newType.setCallingOnLoadType(true);
-                    getDictionary().addTypeProcessorForLatterExecutuion(superType, () -> {
+                    getDictionary().addTypeProcessorForLatterExecution(superType, () -> {
                         TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, false);
                         getDictionary().runPendingTypeProcessorExecution(newType);
                         newType.setCallingOnLoadType(false);
@@ -178,17 +186,32 @@ public abstract class SScopeBase implements SScope {
         }
         Class<?> c = newType.getClass();
         while (true) {
-            try {
-                c.getDeclaredMethod("onLoadType", TypeBuilder.class);
+            if (cachedHasDeclaredMethodOnClass(c)) {
                 break; //Então deve chamar onLoadType, pois há uma implementação específica para a classe
-            } catch (NoSuchMethodException e) {
-                c = c.getSuperclass();
-                if (c == newType.getSuperType().getClass()) {
-                    return; //Não é necessário chamar onLoadType, pois já foi chamado no tipo pai
-                }
+            }
+            c = c.getSuperclass();
+            if (c == newType.getSuperType().getClass()) {
+                return; //Não é necessário chamar onLoadType, pois já foi chamado no tipo pai
             }
         }
         newType.onLoadType(new TypeBuilder(newType));
+    }
+
+    @Nonnull
+    private static boolean cachedHasDeclaredMethodOnClass(@Nonnull Class<?> typeClass) {
+        return ClassInspectionCache.getInfo(typeClass, CacheKey.HAS_ON_LOAD_TYPE_METHOD,
+                SScopeBase::hasDeclaredMethodOnClass);
+    }
+
+    @Nonnull
+    private static Boolean hasDeclaredMethodOnClass(@Nonnull Class<?> typeClass) {
+        try {
+            //This call is expensive and must have its result cached
+            typeClass.getDeclaredMethod("onLoadType", TypeBuilder.class);
+            return Boolean.TRUE;
+        } catch (NoSuchMethodException e) {
+            return Boolean.FALSE;
+        }
     }
 
     /** Verificar se o tipo super já terminiu a chamada do onLoadType ou se está no meio da execução do mesmo. */
@@ -201,7 +224,7 @@ public abstract class SScopeBase implements SScope {
      * indicar true somente para a referência interna dentro da referência circular, ou seja, o tipo (ou classe) que
      * contêm o campo não será marcado como referência circular, somente o campo em si.
      */
-    private  boolean isRecursiveReference(@Nonnull SType<?> type) {
+    private boolean isRecursiveReference(@Nonnull SType<?> type) {
         for(SScope parent = type.getParentScope(); parent instanceof SType; parent = parent.getParentScope()) {
             if(parent == type || parent == type.getSuperType()) {
                 return true;
@@ -211,31 +234,32 @@ public abstract class SScopeBase implements SScope {
     }
 
     @Nonnull
-    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull T parentType) {
+    final <T extends SType<?>> T extendType(@Nullable SimpleName simpleNameNewType, @Nonnull T parentType) {
         if (getDictionary() != parentType.getDictionary()) {
             throw new SingularFormException(
                     "O tipo " + parentType.getName() + " foi criado dentro de outro dicionário, que não o atual de " + getName());
         }
         T newType = parentType.extend(simpleNameNewType);
-        return registerType(newType, null);
+        return registerTypeInternal(newType, null);
     }
 
     @Nonnull
     final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull Class<T> parenteTypeClass) {
         T parentType = resolveType(parenteTypeClass);
-        return extendType(simpleNameNewType, parentType);
+        return extendType(SimpleName.ofNullable(simpleNameNewType), parentType);
     }
 
     @SuppressWarnings("unchecked")
     final <I extends SIComposite> STypeList<STypeComposite<I>, I> createListOfNewTypeComposite(String simpleNameNewType,
-            String simpleNameNewTypeComposto) {
+            String simpleNameNewTypeComposite) {
         STypeList<STypeComposite<I>, I> listType = extendType(simpleNameNewType, STypeList.class);
-        listType.setElementsType(simpleNameNewTypeComposto, resolveType(STypeComposite.class));
+        listType.setElementsType(simpleNameNewTypeComposite, resolveType(STypeComposite.class));
         return listType;
     }
 
     @SuppressWarnings("unchecked")
-    final <I extends SInstance, T extends SType<I>> STypeList<T, I> createTypeListOf(String simpleNameNewType, T elementsType) {
+    @Nonnull
+    final <I extends SInstance, T extends SType<I>> STypeList<T, I> createTypeListOf(@Nonnull String simpleNameNewType, @Nonnull T elementsType) {
         Preconditions.checkNotNull(elementsType);
         STypeList<T, I> listType = extendType(simpleNameNewType, STypeList.class);
         listType.setElementsType(elementsType);
@@ -251,16 +275,17 @@ public abstract class SScopeBase implements SScope {
         if(isRecursiveReference()) {
             ((SScopeBase) getParentScope()).register(type);
         } else {
-            String nameSimple = type.getNameSimple();
+            verifyIfMayAddNewType(type.getNameSimpleObj());
             if (localTypes == null) {
                 localTypes = new LinkedHashMap<>();
-            } else {
-                if (localTypes.containsKey(nameSimple)) {
-                    throw new SingularFormException(
-                            "A definição '" + nameSimple + "' já está criada no escopo " + getName());
-                }
             }
-            localTypes.put(nameSimple, type);
+            localTypes.put(type.getNameSimple(), type);
+        }
+    }
+
+    final void verifyIfMayAddNewType(SimpleName simpleName) {
+        if (localTypes != null && localTypes.containsKey(simpleName.get())) {
+            throw new SingularFormException("A definição '" + simpleName + "' já está criada no escopo " + getName());
         }
     }
 
