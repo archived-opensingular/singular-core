@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,6 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.jdbc.ReturningWork;
-import org.hibernate.jdbc.Work;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
@@ -39,12 +38,14 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.persistence.SingularFormNotFoundException;
+import org.springframework.stereotype.Repository;
 
 /**
  * JPA-based persistent repository.
  *
  * @author Edmundo Andrade
  */
+@Repository
 public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INSTANCE extends SIComposite>
 		implements FormRespository<TYPE, INSTANCE> {
 	private final SessionFactory sessionFactory;
@@ -65,26 +66,18 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 
 	@Nonnull
 	public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		sessionFactory.openSession().doWork(new Work() {
-			public void execute(Connection connection) throws SQLException {
-				RelationalSQL insert = RelationalSQL.insert(instance);
-				for (RelationalSQLCommmand command : insert.toSQLScript()) {
-					executeInsertCommand(command, connection);
-				}
-			}
-		});
+		RelationalSQLCommmand[] insertScript = RelationalSQL.insert(instance).toSQLScript();
+		for (RelationalSQLCommmand command : insertScript) {
+			executeInsertCommand(command);
+		}
 		return FormKey.from(instance);
 	}
 
 	public void delete(@Nonnull FormKey key) {
-		sessionFactory.openSession().doWork(new Work() {
-			public void execute(Connection connection) throws SQLException {
-				RelationalSQL delete = RelationalSQL.delete(createType(), key);
-				for (RelationalSQLCommmand command : delete.toSQLScript()) {
-					executeDeleteCommand(command, connection);
-				}
-			}
-		});
+		RelationalSQLCommmand[] deleteScript = RelationalSQL.delete(createType(), key).toSQLScript();
+		for (RelationalSQLCommmand command : deleteScript) {
+			dbExec(command.getCommand(), command.getParameters());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -114,23 +107,18 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 
 	@Nonnull
 	public INSTANCE load(@Nonnull FormKey key) {
-		INSTANCE instance = sessionFactory.openSession().doReturningWork(new ReturningWork<INSTANCE>() {
-			public INSTANCE execute(Connection connection) throws SQLException {
-				INSTANCE firstInstance = null;
-				RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(createType(), key);
-				for (RelationalSQLCommmand command : query.toSQLScript()) {
-					for (INSTANCE instance : executeSelectCommand(command, connection)) {
-						firstInstance = instance;
-						break;
-					}
-				}
-				return firstInstance;
+		INSTANCE firstInstance = null;
+		RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(createType(), key);
+		for (RelationalSQLCommmand command : query.toSQLScript()) {
+			for (INSTANCE instance : executeSelectCommand(command)) {
+				firstInstance = instance;
+				break;
 			}
-		});
-		if (instance == null) {
+		}
+		if (firstInstance == null) {
 			throw new SingularFormNotFoundException(key);
 		}
-		return instance;
+		return firstInstance;
 	}
 
 	@Nonnull
@@ -157,87 +145,105 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 		return (INSTANCE) documentFactory.createInstance(RefType.of(type));
 	}
 
-	protected void executeInsertCommand(RelationalSQLCommmand command, Connection connection) throws SQLException {
-		List<String> generatedColumns = RelationalSQL.tablePK(command.getInstance().getType());
-		String sql = command.getCommand();
-		for (Object parameterValue : command.getParameters())
-			sql = sql.replaceFirst("\\?", toSqlConstant(parameterValue));
-		System.out.println(sql);
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(sql, generatedColumns.toArray(new String[generatedColumns.size()]));
-		try (ResultSet rs = statement.getGeneratedKeys()) {
-			if (rs.next()) {
-				HashMap<String, Object> key = new HashMap<>();
-				int keyIndex = 1;
-				for (String keyColumn : generatedColumns) {
-					int keyValue = rs.getInt(keyIndex);
-					key.put(keyColumn, keyValue);
-					System.out.print(" [" + keyColumn + ": " + keyValue + "]");
-					keyIndex++;
-				}
-				System.out.println();
-				FormKey.set(command.getInstance(), new FormKeyRelational(key));
-			}
-		}
+	public int exec(String sql) {
+		return dbExec(sql, Collections.emptyList());
 	}
 
-	protected void executeDeleteCommand(RelationalSQLCommmand command, Connection connection) throws SQLException {
-		String sql = command.getCommand();
+	public int dbExec(String sql, List<Object> params) {
+		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
+			if (params.isEmpty())
+				return connection.createStatement().executeUpdate(sql);
+			return prepareStatement(connection, sql, params).executeUpdate();
+		});
+	}
+
+	public int dbExecReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
+			ResultSetTupleHandler<?> tupleHandler) {
+		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
+			String newSQL = sql;
+			for (Object param : params) {
+				newSQL = newSQL.replaceFirst("\\?", toSqlConstant(param));
+			}
+			System.out.println(sql);
+			Statement statement = connection.createStatement();
+			int result = statement.executeUpdate(newSQL, generatedColumns.toArray(new String[generatedColumns.size()]));
+			try (ResultSet rs = statement.getGeneratedKeys()) {
+				while (rs.next()) {
+					tupleHandler.tuple(rs);
+				}
+			}
+			return result;
+		});
+	}
+
+	public List<Object[]> dbQuery(String sql, List<Object> params) {
+		return dbQuery(sql, params, rs -> {
+			Object[] tuple = new Object[rs.getMetaData().getColumnCount()];
+			for (int i = 0; i < tuple.length; i++) {
+				tuple[i] = rs.getObject(i + 1);
+			}
+			return tuple;
+		});
+	}
+
+	public <T> List<T> dbQuery(String sql, List<Object> params, ResultSetTupleHandler<T> tupleHandler) {
+		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
+			List<T> result = new ArrayList<>();
+			try (ResultSet rs = prepareStatement(connection, sql, params).executeQuery()) {
+				while (rs.next()) {
+					result.add(tupleHandler.tuple(rs));
+				}
+			}
+			return result;
+		});
+	}
+
+	protected PreparedStatement prepareStatement(Connection connection, String sql, List<Object> params)
+			throws SQLException {
 		System.out.println(sql);
 		PreparedStatement statement = connection.prepareStatement(sql);
-		int paramIndex = 1;
-		for (Object parameterValue : command.getParameters()) {
-			statement.setObject(paramIndex, parameterValue);
-			System.out.print(" [" + parameterValue + "]");
-			paramIndex++;
+		for (int i = 0; i < params.size(); i++) {
+			statement.setObject(i + 1, params.get(i));
 		}
-		System.out.println();
-		statement.executeUpdate();
+		return statement;
 	}
 
 	@Nonnull
 	protected List<INSTANCE> loadAllInternal(Long first, Long max) {
 		List<INSTANCE> result = new ArrayList<>();
-		sessionFactory.openSession().doWork(new Work() {
-			public void execute(Connection connection) throws SQLException {
-				RelationalSQL query = RelationalSQL.select(createType().getContainedTypes());
-				for (RelationalSQLCommmand command : query.toSQLScript()) {
-					result.addAll(executeSelectCommand(command, connection));
-				}
-			}
-		});
+		RelationalSQL query = RelationalSQL.select(createType().getContainedTypes());
+		for (RelationalSQLCommmand command : query.toSQLScript()) {
+			result.addAll(executeSelectCommand(command));
+		}
 		return result;
 	}
 
-	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command, Connection connection)
-			throws SQLException {
-		List<INSTANCE> result = new ArrayList<>();
-		String sql = command.getCommand();
-		System.out.println(sql);
-		PreparedStatement statement = connection.prepareStatement(sql);
-		int paramIndex = 1;
-		for (Object parameterValue : command.getParameters()) {
-			statement.setObject(paramIndex, parameterValue);
-			System.out.print(" [" + parameterValue + "]");
-			paramIndex++;
-		}
-		System.out.println();
-		try (ResultSet rs = statement.executeQuery()) {
-			while (rs.next()) {
-				INSTANCE instance = createInstance();
-				List<String> pk = RelationalSQL.tablePK(instance.getType());
-				FormKey.set(instance, tupleKey(rs, pk));
-				RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command, pk));
-				result.add(instance);
+	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command) {
+		return dbQuery(command.getCommand(), command.getParameters(), rs -> {
+			INSTANCE instance = createInstance();
+			List<String> pk = RelationalSQL.tablePK(instance.getType());
+			FormKey.set(instance, tupleKey(rs, pk));
+			RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command, pk));
+			return instance;
+		});
+	}
+
+	protected int executeInsertCommand(RelationalSQLCommmand command) {
+		List<String> generatedColumns = RelationalSQL.tablePK(command.getInstance().getType());
+		return dbExecReturningGenerated(command.getCommand(), command.getParameters(), generatedColumns, rs -> {
+			HashMap<String, Object> key = new HashMap<>();
+			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+				key.put(generatedColumns.get(i), rs.getObject(i + 1));
 			}
-		}
-		return result;
+			FormKey.set(command.getInstance(), new FormKeyRelational(key));
+			return key;
+		});
 	}
 
 	protected FormKey tupleKey(ResultSet rs, List<String> pk) throws SQLException {
 		HashMap<String, Object> key = new HashMap<>();
 		for (String keyColumn : pk) {
-			key.put(keyColumn, rs.getInt(keyColumn));
+			key.put(keyColumn, rs.getObject(keyColumn));
 		}
 		return new FormKeyRelational(key);
 	}
@@ -257,7 +263,7 @@ public class FormRepositoryHibernate<TYPE extends STypeComposite<INSTANCE>, INST
 		return tuple;
 	}
 
-	protected String toSqlConstant(Object parameterValue) {
+	private String toSqlConstant(Object parameterValue) {
 		if (parameterValue == null) {
 			return "NULL";
 		} else if (parameterValue instanceof String) {
