@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.sql.Types;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -50,7 +51,7 @@ public class FormRepositoryHibernateTest {
 		FormKey insertedKey = db.insert(formInstance, null);
 		//
 		Object code = ((FormKeyRelational) insertedKey).getColumnValue("CODE");
-		assertEquals("My form", db.dbQuery("SELECT NAME FROM FORM WHERE CODE = ?", asList(code)).get(0)[0]);
+		assertEquals("My form", db.query("SELECT NAME FROM FORM WHERE CODE = ?", asList(code)).get(0)[0]);
 		//
 		SIComposite loaded = db.load(insertedKey);
 		assertEquals("My form", loaded.getValue("name"));
@@ -73,27 +74,30 @@ public class FormRepositoryHibernateTest {
 		//
 		SIComposite master = (SIComposite) documentFactory.createInstance(RefType.of(Master.class));
 		master.setValue("name", "Master X");
-		// addDetail("Item 1", master);
-		// addDetail("Item 2", master);
-		// addDetail("Item 3", master);
+		addDetail("Item 1", master);
+		addDetail("Item 2", master);
+		addDetail("Item 3", master);
 		FormKey insertedKey = db.insert(master, null);
+		assertEquals("{ID=1}", insertedKey.toStringPersistence());
 		//
-		// Object code = ((FormKeyRelational) insertedKey).getColumnValue("CODE");
-		// List<Object[]> tuples = db.dbQuery("SELECT ITEM FROM DETAIL WHERE MASTER =
-		// ?", asList(code));
-		// assertEquals("Item 1", tuples.get(0)[0]);
-		// assertEquals("Item 2", tuples.get(1)[0]);
-		// assertEquals("Item 3", tuples.get(2)[0]);
+		Object code = ((FormKeyRelational) insertedKey).getColumnValue("ID");
+		List<Object[]> tuples = db.query("SELECT ITEM FROM DETAIL WHERE MASTER = ?", asList(code));
+		assertEquals(3, tuples.size());
+		assertEquals("Item 1", tuples.get(0)[0]);
+		assertEquals("Item 2", tuples.get(1)[0]);
+		assertEquals("Item 3", tuples.get(2)[0]);
 		//
-		// SIComposite loaded = db.load(insertedKey);
-		// assertEquals("Master X", loaded.getValue("name"));
-		// assertEquals(insertedKey, FormKey.from(loaded));
+		SIComposite loaded = db.load(insertedKey);
+		assertEquals("Master X", loaded.getValue("name"));
+		assertEquals(insertedKey, FormKey.from(loaded));
+		// List<SInstance> details = loaded.getValue("details");
+		// assertEquals(3, details.size());
 		//
 		assertEquals(1, db.loadAll().size());
 		//
-		db.delete(insertedKey);
+		// db.delete(insertedKey);
 		//
-		assertEquals(0, db.loadAll().size());
+		// assertEquals(0, db.loadAll().size());
 	}
 
 	private SIComposite addDetail(String item, SIComposite master) {

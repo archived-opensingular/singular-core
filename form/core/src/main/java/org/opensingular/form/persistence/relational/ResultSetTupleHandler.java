@@ -20,7 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * ResultSet handler interface for processing the query results.
+ * ResultSet handler interface for processing database query results.
  *
  * @author Edmundo Andrade
  */
