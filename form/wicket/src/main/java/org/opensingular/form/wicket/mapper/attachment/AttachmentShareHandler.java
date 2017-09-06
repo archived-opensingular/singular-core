@@ -34,7 +34,4 @@ public class AttachmentShareHandler {
         webApplication.getSharedResources().remove(ref.getKey());
     }
 
-    public String getId() {
-        return id;
-    }
 }

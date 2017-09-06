@@ -2,71 +2,40 @@ package org.opensingular.form.wicket.mapper.attachment;
 
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AttachmentResource extends AbstractResource implements Loggable {
-
-    private final String attachmentKey;
     private final String filename;
     private final ContentDisposition contentDisposition;
-    private final ISupplier<SDocument> sDocumentSupplier;
+    private final IAttachmentRef attachmentRef;
 
     private transient AttachmentShareHandler attachmentSharedHandler;
 
-    public AttachmentResource(String attachmentKey,
-                              String filename,
+    public AttachmentResource(String filename,
                               ContentDisposition contentDisposition,
-                              ISupplier<SDocument> sDocumentSupplier) {
-        this.attachmentKey = attachmentKey;
+                              IAttachmentRef attachmentRef) {
         this.filename = filename;
         this.contentDisposition = contentDisposition;
-        this.sDocumentSupplier = sDocumentSupplier;
-    }
-
-    private IAttachmentRef findAttachmentRef() {
-        IAttachmentRef ref = null;
-        for (IAttachmentPersistenceHandler<?> service : getHandlers()) {
-            ref = service.getAttachment(attachmentKey);
-            if (ref != null) {
-                break;
-            }
-        }
-        return ref;
-    }
-
-    private List<IAttachmentPersistenceHandler<?>> getHandlers() {
-        List<IAttachmentPersistenceHandler<?>> services = new ArrayList<>();
-        SDocument sDocument = sDocumentSupplier.get();
-        if (sDocument.isAttachmentPersistenceTemporaryHandlerSupported()) {
-            services.add(sDocument.getAttachmentPersistenceTemporaryHandler());
-        }
-        sDocument.getAttachmentPersistencePermanentHandler().ifPresent(services::add);
-        return services;
+        this.attachmentRef = attachmentRef;
     }
 
     @Override
     protected ResourceResponse newResourceResponse(Attributes attributes) {
-        IAttachmentRef fileRef = findAttachmentRef();
         ResourceResponse resourceResponse = new ResourceResponse();
-        if (fileRef == null) {
+        if (attachmentRef == null) {
             return resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
         }
-        if (fileRef.getSize() > 0) {
-            resourceResponse.setContentLength(fileRef.getSize());
+        if (attachmentRef.getSize() > 0) {
+            resourceResponse.setContentLength(attachmentRef.getSize());
         }
         resourceResponse.setFileName(filename);
         try {
             resourceResponse.setContentDisposition(contentDisposition);
-            resourceResponse.setContentType(fileRef.getContentType());
-            resourceResponse.setWriteCallback(new AttachmentResourceWriteCallback(resourceResponse, fileRef, attachmentSharedHandler));
+            resourceResponse.setContentType(attachmentRef.getContentType());
+            resourceResponse.setWriteCallback(new AttachmentResourceWriteCallback(resourceResponse, attachmentRef, attachmentSharedHandler));
         } catch (Exception e) {
             getLogger().error("Erro ao recuperar arquivo.", e);
             resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
