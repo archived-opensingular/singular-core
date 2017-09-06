@@ -24,6 +24,7 @@ import java.util.StringJoiner;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 
 /**
  * Builder for SQL insertions on Relational DBMS.
@@ -36,6 +37,7 @@ public class RelationalSQLInsert implements RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
+	private List<RelationalFK> masterRelationships;
 
 	public RelationalSQLInsert(SIComposite instance) {
 		this.instance = instance;
@@ -43,11 +45,13 @@ public class RelationalSQLInsert implements RelationalSQL {
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
 		this.mapColumnToField = new HashMap<>();
+		this.masterRelationships = new ArrayList<RelationalFK>();
 		for (SInstance child : instance.getChildren()) {
 			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns,
 					mapColumnToField);
 		}
+		RelationalSQL.collectMasterRelationships(instance.getType(), masterRelationships);
 	}
 
 	public SIComposite getInstance() {
@@ -58,46 +62,63 @@ public class RelationalSQLInsert implements RelationalSQL {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
-			lines.add(new RelationalSQLCommmand("insert into " + table + " (" + concatenateColumnNames(table, ", ")
-					+ ") values (" + concatenateColumnValues(table, ", ", params) + ")", params, instance, null));
+			List<RelationalColumn> inserted = insertedColumns(table);
+			lines.add(
+					new RelationalSQLCommmand(
+							"insert into " + table + " (" + concatenateColumnNames(inserted, ", ") + ") values ("
+									+ concatenateColumnValues(inserted, ", ", params) + ")",
+							params, instance, inserted));
 		}
 		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
 	}
 
-	private String concatenateColumnNames(String table, String separator) {
-		StringJoiner sj = new StringJoiner(separator);
+	private List<RelationalColumn> insertedColumns(String table) {
+		List<RelationalColumn> result = new ArrayList<>();
 		keyColumns.forEach(column -> {
-			if (column.getTable().equals(table) && columnValue(column) != null)
-				sj.add(column.getName());
+			if (column.getTable().equals(table) && columnValue(column) != null) {
+				result.add(column);
+			}
 		});
 		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table) && columnValue(column) != null)
-				sj.add(column.getName());
+			if (column.getTable().equals(table) && columnValue(column) != null) {
+				result.add(column);
+			}
 		});
+		if (instance.getParent() != null) {
+			SType<?> containerType = instance.getParent().getParent().getType();
+			masterRelationships.forEach(fk -> {
+				if (fk.getForeignType().equals(containerType)) {
+					for (RelationalColumn keyColumn : fk.getKeyColumns()) {
+						if (!result.contains(keyColumn)) {
+							result.add(keyColumn);
+						}
+					}
+				}
+			});
+		}
+		return result;
+	}
+
+	private String concatenateColumnNames(List<RelationalColumn> columns, String separator) {
+		StringJoiner sj = new StringJoiner(separator);
+		columns.forEach(column -> sj.add(column.getName()));
 		return sj.toString();
 	}
 
-	private String concatenateColumnValues(String table, String separator, List<Object> params) {
+	private String concatenateColumnValues(List<RelationalColumn> columns, String separator, List<Object> params) {
 		StringJoiner sj = new StringJoiner(separator);
-		keyColumns.forEach(column -> {
-			if (column.getTable().equals(table) && columnValue(column) != null) {
-				sj.add("?");
-				params.add(columnValue(column));
-			}
-		});
-		targetColumns.forEach(column -> {
-			if (column.getTable().equals(table) && columnValue(column) != null) {
-				sj.add("?");
-				params.add(columnValue(column));
-			}
+		columns.forEach(column -> {
+			sj.add("?");
+			params.add(columnValue(column));
 		});
 		return sj.toString();
 	}
 
 	private Object columnValue(RelationalColumn column) {
 		String fieldName = mapColumnToField.get(column.getName());
-		if (fieldName == null)
+		if (fieldName == null) {
 			return null;
+		}
 		return instance.getValue(fieldName);
 	}
 }

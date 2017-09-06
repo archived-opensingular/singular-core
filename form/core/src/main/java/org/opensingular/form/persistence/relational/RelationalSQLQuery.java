@@ -40,6 +40,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
+	private List<RelationalFK> masterRelationships;
 	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
 	private Map<String, RelationalFK> joinMap;
 	private STypeComposite<?> keyFormType;
@@ -54,12 +55,14 @@ public class RelationalSQLQuery implements RelationalSQL {
 		this.keyColumns = new ArrayList<RelationalColumn>();
 		this.targetColumns = new ArrayList<RelationalColumn>();
 		this.mapColumnToField = new HashMap<>();
+		this.masterRelationships = new ArrayList<RelationalFK>();
 		List<RelationalFK> relationships = new ArrayList<RelationalFK>();
 		for (SType<?> field : targetFields) {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList(),
 					mapColumnToField);
 			RelationalSQL.collectRelationships(field, relationships);
+			RelationalSQL.collectMasterRelationships(field, masterRelationships);
 		}
 		joinMap = createJoinMap(relationships);
 	}
@@ -102,6 +105,13 @@ public class RelationalSQLQuery implements RelationalSQL {
 		keyColumns.forEach(column -> {
 			if (!targetColumns.contains(column))
 				result.add(column);
+		});
+		masterRelationships.forEach(fk -> {
+			for (RelationalColumn keyColumn : fk.getKeyColumns()) {
+				if (!result.contains(keyColumn)) {
+					result.add(keyColumn);
+				}
+			}
 		});
 		return result;
 	}

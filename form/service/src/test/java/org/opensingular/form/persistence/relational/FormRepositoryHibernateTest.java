@@ -16,6 +16,7 @@ import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
@@ -72,17 +73,31 @@ public class FormRepositoryHibernateTest {
 		//
 		SIComposite master = (SIComposite) documentFactory.createInstance(RefType.of(Master.class));
 		master.setValue("name", "Master X");
+		// addDetail("Item 1", master);
+		// addDetail("Item 2", master);
+		// addDetail("Item 3", master);
 		FormKey insertedKey = db.insert(master, null);
 		//
-		SIComposite loaded = db.load(insertedKey);
-		assertEquals("Master X", loaded.getValue("name"));
-		assertEquals(insertedKey, FormKey.from(loaded));
+		// Object code = ((FormKeyRelational) insertedKey).getColumnValue("CODE");
+		// List<Object[]> tuples = db.dbQuery("SELECT ITEM FROM DETAIL WHERE MASTER =
+		// ?", asList(code));
+		// assertEquals("Item 1", tuples.get(0)[0]);
+		// assertEquals("Item 2", tuples.get(1)[0]);
+		// assertEquals("Item 3", tuples.get(2)[0]);
+		//
+		// SIComposite loaded = db.load(insertedKey);
+		// assertEquals("Master X", loaded.getValue("name"));
+		// assertEquals(insertedKey, FormKey.from(loaded));
 		//
 		assertEquals(1, db.loadAll().size());
 		//
 		db.delete(insertedKey);
 		//
 		assertEquals(0, db.loadAll().size());
+	}
+
+	private SIComposite addDetail(String item, SIComposite master) {
+		return master.getFieldList("details", SIComposite.class).addNew(instance -> instance.setValue("item", item));
 	}
 
 	@SInfoPackage(name = "testPackage")
@@ -105,12 +120,27 @@ public class FormRepositoryHibernateTest {
 		@SInfoType(name = "Master", spackage = TestPackage.class)
 		public static final class Master extends STypeComposite<SIComposite> {
 			public STypeString name;
+			public STypeList<Detail, SIComposite> details;
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Master entity");
 				asSQL().defineColumn("ID", Types.INTEGER).tablePK("ID");
 				name = addFieldString("name");
+				details = addFieldListOf("details", Detail.class);
+			}
+		}
+
+		@SInfoType(name = "Detail", spackage = TestPackage.class)
+		public static final class Detail extends STypeComposite<SIComposite> {
+			public STypeString item;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				item = addFieldString("item");
+				asAtr().label("Detail entity");
+				asSQL().defineColumn("ID", Types.INTEGER).tablePK("ID");
+				asSQL().addTableFK("MASTER", Master.class);
 			}
 		}
 	}

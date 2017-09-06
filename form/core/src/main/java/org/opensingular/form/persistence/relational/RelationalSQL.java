@@ -141,4 +141,8 @@ public interface RelationalSQL {
 					.forEach(item -> relationships.addAll(RelationalSQL.tableFKs(item.getSuperType())));
 		}
 	}
+
+	public static void collectMasterRelationships(SType<?> type, List<RelationalFK> relationships) {
+		relationships.addAll(RelationalSQL.tableFKs(type));
+	}
 }

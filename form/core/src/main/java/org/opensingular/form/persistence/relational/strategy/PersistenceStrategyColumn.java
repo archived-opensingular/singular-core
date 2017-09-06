@@ -16,14 +16,10 @@
 
 package org.opensingular.form.persistence.relational.strategy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.relational.FormKeyRelational;
 import org.opensingular.form.persistence.relational.RelationalData;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 
@@ -36,30 +32,22 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
 	public void save(SInstance instance, List<RelationalData> toList) {
 		SType<?> field = instance.getType();
 		String tableName = RelationalSQL.table(field);
-		List<Object> tupleKey = tupleKey(instance);
+		SInstance tupleKeyRef = instance.getParent();
 		String fieldName = RelationalSQL.column(field);
 		Object fieldValue = instance.getValue();
-		toList.add(new RelationalData(tableName, tupleKey, fieldName, fieldValue));
+		toList.add(new RelationalData(tableName, tupleKeyRef, fieldName, fieldValue));
 	}
 
 	public void load(SInstance instance, List<RelationalData> fromList) {
 		SType<?> field = instance.getType();
 		String tableName = RelationalSQL.table(field);
-		List<Object> tupleKey = tupleKey(instance);
+		SInstance tupleKeyRef = instance.getParent();
 		String fieldName = RelationalSQL.column(field);
 		for (RelationalData data : fromList) {
-			if (data.getTableName().equals(tableName) && data.getTupleKey().equals(tupleKey)
+			if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
 					&& data.getFieldName().equals(fieldName)) {
 				instance.setValue(data.getFieldValue());
 			}
 		}
-	}
-
-	protected List<Object> tupleKey(SInstance instance) {
-		List<Object> result = new ArrayList<>();
-		HashMap<String, Object> map = ((FormKeyRelational) FormKey.from(instance)).getValue();
-		List<String> pk = RelationalSQL.tablePK(instance.getType());
-		pk.stream().forEach(keyColumn -> result.add(map.get(keyColumn)));
-		return result;
 	}
 }

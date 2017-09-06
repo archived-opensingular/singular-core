@@ -16,7 +16,7 @@
 
 package org.opensingular.form.persistence.relational;
 
-import java.util.List;
+import org.opensingular.form.SInstance;
 
 /**
  * Relational data to persist into a Relational DBMS.
@@ -25,13 +25,13 @@ import java.util.List;
  */
 public class RelationalData {
 	private String tableName;
-	private List<Object> tupleKey;
+	private SInstance tupleKeyRef;
 	private String fieldName;
 	private Object fieldValue;
 
-	public RelationalData(String tableName, List<Object> tupleKey, String fieldName, Object fieldValue) {
+	public RelationalData(String tableName, SInstance tupleKeyRef, String fieldName, Object fieldValue) {
 		this.tableName = tableName;
-		this.tupleKey = tupleKey;
+		this.tupleKeyRef = tupleKeyRef;
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
 	}
@@ -40,8 +40,8 @@ public class RelationalData {
 		return tableName;
 	}
 
-	public List<Object> getTupleKey() {
-		return tupleKey;
+	public SInstance getTupleKeyRef() {
+		return tupleKeyRef;
 	}
 
 	public String getFieldName() {
