@@ -24,8 +24,8 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDB;
-import org.opensingular.form.persistence.relational.RelationalDatabaseHibernateTest.TestPackage.Form;
-import org.opensingular.form.persistence.relational.RelationalDatabaseHibernateTest.TestPackage.Master;
+import org.opensingular.form.persistence.relational.FormPersistenceInRelationalDBTest.TestPackage.Form;
+import org.opensingular.form.persistence.relational.FormPersistenceInRelationalDBTest.TestPackage.Master;
 import org.opensingular.form.type.core.STypeString;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration("classpath:relational/applicationContext.xml")
 @Rollback
 @Transactional
-public class RelationalDatabaseHibernateTest {
+public class FormPersistenceInRelationalDBTest {
 	@Inject
 	protected SessionFactory sessionFactory;
 	@Inject
