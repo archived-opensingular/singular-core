@@ -37,7 +37,7 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
  * @author Edmundo Andrade
  */
 public interface RelationalSQL {
-	RelationalSQLCommmand[] toSQLScript();
+	List<RelationalSQLCommmand> toSQLScript();
 
 	@SafeVarargs
 	public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {

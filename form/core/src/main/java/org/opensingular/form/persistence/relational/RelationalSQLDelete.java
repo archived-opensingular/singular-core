@@ -42,7 +42,7 @@ public class RelationalSQLDelete implements RelationalSQL {
 		mapColumnToValue = ((FormKeyRelational) formKey).getValue();
 	}
 
-	public RelationalSQLCommmand[] toSQLScript() {
+	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
@@ -51,7 +51,7 @@ public class RelationalSQLDelete implements RelationalSQL {
 							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
 					params, null, null));
 		}
-		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
+		return lines;
 	}
 
 	private String tableAlias(String table) {

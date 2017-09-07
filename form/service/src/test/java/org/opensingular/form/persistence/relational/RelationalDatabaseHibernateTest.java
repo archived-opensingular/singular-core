@@ -10,6 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
@@ -22,8 +23,9 @@ import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.relational.FormRepositoryHibernateTest.TestPackage.Form;
-import org.opensingular.form.persistence.relational.FormRepositoryHibernateTest.TestPackage.Master;
+import org.opensingular.form.persistence.FormPersistenceInRelationalDB;
+import org.opensingular.form.persistence.relational.RelationalDatabaseHibernateTest.TestPackage.Form;
+import org.opensingular.form.persistence.relational.RelationalDatabaseHibernateTest.TestPackage.Master;
 import org.opensingular.form.type.core.STypeString;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,41 +36,46 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration("classpath:relational/applicationContext.xml")
 @Rollback
 @Transactional
-public class FormRepositoryHibernateTest {
+public class RelationalDatabaseHibernateTest {
 	@Inject
 	protected SessionFactory sessionFactory;
 	@Inject
 	private SDocumentFactory documentFactory;
+	private RelationalDatabase db;
+	private FormPersistenceInRelationalDB<Form, SIComposite> repoForm;
+	private FormPersistenceInRelationalDB<Master, SIComposite> repoMaster;
+
+	@Before
+	public void setUp() {
+		db = new RelationalDatabaseHibernate(sessionFactory);
+		repoForm = new FormPersistenceInRelationalDB<>(db, documentFactory, Form.class);
+		repoMaster = new FormPersistenceInRelationalDB<>(db, documentFactory, Master.class);
+	}
 
 	@Test
 	public void basicPersistenceWithGeneratedKey() {
-		FormRepositoryHibernate<Form, SIComposite> db = new FormRepositoryHibernate<>(sessionFactory, documentFactory,
-				Form.class);
 		db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS CLOB, PRIMARY KEY (CODE))");
 		//
 		SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
 		formInstance.setValue("name", "My form");
-		FormKey insertedKey = db.insert(formInstance, null);
+		FormKey insertedKey = repoForm.insert(formInstance, null);
+		assertEquals("{CODE=1}", insertedKey.toStringPersistence());
+		assertEquals(1, repoForm.loadAll().size());
 		//
 		Object code = ((FormKeyRelational) insertedKey).getColumnValue("CODE");
 		assertEquals("My form", db.query("SELECT NAME FROM FORM WHERE CODE = ?", asList(code)).get(0)[0]);
 		//
-		SIComposite loaded = db.load(insertedKey);
+		SIComposite loaded = repoForm.load(insertedKey);
 		assertEquals("My form", loaded.getValue("name"));
 		assertNull(loaded.getValue("observation"));
 		assertEquals(insertedKey, FormKey.from(loaded));
 		//
-		assertEquals(1, db.loadAll().size());
-		//
-		db.delete(insertedKey);
-		//
-		assertEquals(0, db.loadAll().size());
+		repoForm.delete(insertedKey);
+		assertEquals(0, repoForm.loadAll().size());
 	}
 
 	@Test
 	public void masterDetailPersistenceWithGeneratedKey() {
-		FormRepositoryHibernate<Master, SIComposite> db = new FormRepositoryHibernate<>(sessionFactory, documentFactory,
-				Master.class);
 		db.exec("CREATE TABLE MASTER (ID INT IDENTITY, NAME VARCHAR(200) NOT NULL, PRIMARY KEY (ID))");
 		db.exec("CREATE TABLE DETAIL (ID INT IDENTITY, MASTER INT NOT NULL, ITEM VARCHAR(80) NOT NULL, PRIMARY KEY (ID), FOREIGN KEY (MASTER) REFERENCES MASTER(ID))");
 		//
@@ -77,8 +84,9 @@ public class FormRepositoryHibernateTest {
 		addDetail("Item 1", master);
 		addDetail("Item 2", master);
 		addDetail("Item 3", master);
-		FormKey insertedKey = db.insert(master, null);
+		FormKey insertedKey = repoMaster.insert(master, null);
 		assertEquals("{ID=1}", insertedKey.toStringPersistence());
+		assertEquals(1, repoMaster.loadAll().size());
 		//
 		Object code = ((FormKeyRelational) insertedKey).getColumnValue("ID");
 		List<Object[]> tuples = db.query("SELECT ITEM FROM DETAIL WHERE MASTER = ?", asList(code));
@@ -87,17 +95,14 @@ public class FormRepositoryHibernateTest {
 		assertEquals("Item 2", tuples.get(1)[0]);
 		assertEquals("Item 3", tuples.get(2)[0]);
 		//
-		SIComposite loaded = db.load(insertedKey);
+		SIComposite loaded = repoMaster.load(insertedKey);
 		assertEquals("Master X", loaded.getValue("name"));
 		assertEquals(insertedKey, FormKey.from(loaded));
 		// List<SInstance> details = loaded.getValue("details");
 		// assertEquals(3, details.size());
 		//
-		assertEquals(1, db.loadAll().size());
-		//
-		// db.delete(insertedKey);
-		//
-		// assertEquals(0, db.loadAll().size());
+		// repoMaster.delete(insertedKey);
+		// assertEquals(0, repoMaster.loadAll().size());
 	}
 
 	private SIComposite addDetail(String item, SIComposite master) {

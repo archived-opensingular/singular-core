@@ -58,7 +58,7 @@ public class RelationalSQLInsert implements RelationalSQL {
 		return instance;
 	}
 
-	public RelationalSQLCommmand[] toSQLScript() {
+	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
@@ -69,7 +69,7 @@ public class RelationalSQLInsert implements RelationalSQL {
 									+ concatenateColumnValues(inserted, ", ", params) + ")",
 							params, instance, inserted));
 		}
-		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
+		return lines;
 	}
 
 	private List<RelationalColumn> insertedColumns(String table) {

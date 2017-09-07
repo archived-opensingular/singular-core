@@ -20,10 +20,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * ResultSet handler interface for processing database query results.
+ * Tuple handler interface for processing database query results
  *
  * @author Edmundo Andrade
  */
-public interface ResultSetTupleHandler<T> {
+public interface RelationalTupleHandler<T> {
 	T tuple(ResultSet resultSet) throws SQLException;
 }

@@ -57,7 +57,7 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		return instance;
 	}
 
-	public RelationalSQLCommmand[] toSQLScript() {
+	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (String table : targetTables) {
 			List<Object> params = new ArrayList<>();
@@ -67,7 +67,7 @@ public class RelationalSQLUpdate implements RelationalSQL {
 							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
 					params, instance, null));
 		}
-		return lines.toArray(new RelationalSQLCommmand[lines.size()]);
+		return lines;
 	}
 
 	private String set(String table, List<RelationalColumn> setColumns, List<Object> params) {

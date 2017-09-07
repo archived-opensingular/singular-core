@@ -22,6 +22,7 @@ import static org.opensingular.form.persistence.relational.RelationalSQL.select;
 
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,11 +63,11 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Test
 	public void selectOrdered() {
 		RelationalSQL query = select(master.getFields()).orderBy(master.name);
-		RelationalSQLCommmand[] script = query.toSQLScript();
-		assertEquals(1, script.length);
-		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", script[0].getCommand());
-		assertEquals(0, script[0].getParameters().size());
-		assertNull(script[0].getInstance());
+		List<RelationalSQLCommmand> script = query.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", script.get(0).getCommand());
+		assertEquals(0, script.get(0).getParameters().size());
+		assertNull(script.get(0).getInstance());
 	}
 
 	@Test
@@ -74,25 +75,25 @@ public class RelationalSQLTest extends TestCaseForm {
 		HashMap<String, Object> keyMap = new HashMap<>();
 		keyMap.put("id", 42);
 		RelationalSQL query = select(master.getFields()).where(master, new FormKeyRelational(keyMap));
-		RelationalSQLCommmand[] script = query.toSQLScript();
-		assertEquals(1, script.length);
-		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 where T1.id = ?", script[0].getCommand());
-		assertEquals(1, script[0].getParameters().size());
-		assertEquals(42, script[0].getParameters().get(0));
-		assertNull(script[0].getInstance());
+		List<RelationalSQLCommmand> script = query.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 where T1.id = ?", script.get(0).getCommand());
+		assertEquals(1, script.get(0).getParameters().size());
+		assertEquals(42, script.get(0).getParameters().get(0));
+		assertNull(script.get(0).getInstance());
 	}
 
 	@Test
 	public void joinSelect() {
 		ItemEntity items = master.items.getElementsType();
 		RelationalSQL query = select(master.getFields(), items.getFields()).orderBy(master.name, items.mnemo);
-		RelationalSQLCommmand[] script = query.toSQLScript();
-		assertEquals(1, script.length);
+		List<RelationalSQLCommmand> script = query.toSQLScript();
+		assertEquals(1, script.size());
 		assertEquals(
 				"select T1.name, T1.obs, T2.mnemo, T2.desc, T2.price, T1.id, T2.masterID from MasterEntity T1 left join Items T2 on T2.masterID = T1.id order by T1.name, T2.mnemo",
-				script[0].getCommand());
-		assertEquals(0, script[0].getParameters().size());
-		assertNull(script[0].getInstance());
+				script.get(0).getCommand());
+		assertEquals(0, script.get(0).getParameters().size());
+		assertNull(script.get(0).getInstance());
 	}
 
 	@Test
@@ -100,39 +101,39 @@ public class RelationalSQLTest extends TestCaseForm {
 		SIComposite masterInstance = master.newInstance();
 		masterInstance.setValue("name", "My name");
 		RelationalSQL insert = insert(masterInstance);
-		RelationalSQLCommmand[] script = insert.toSQLScript();
-		assertEquals(1, script.length);
-		assertEquals("insert into MasterEntity (name) values (?)", script[0].getCommand());
-		assertEquals(1, script[0].getParameters().size());
-		assertEquals("My name", script[0].getParameters().get(0));
-		assertEquals(masterInstance, script[0].getInstance());
+		List<RelationalSQLCommmand> script = insert.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("insert into MasterEntity (name) values (?)", script.get(0).getCommand());
+		assertEquals(1, script.get(0).getParameters().size());
+		assertEquals("My name", script.get(0).getParameters().get(0));
+		assertEquals(masterInstance, script.get(0).getInstance());
 	}
 
 	@Test
 	public void testUpdate() {
 		SIComposite masterInstance = master.newInstance();
 		masterInstance.setValue("name", "My name");
-		FormKey.set(masterInstance, masterKey(4242));
+		FormKey.setOnInstance(masterInstance, masterKey(4242));
 		RelationalSQL update = RelationalSQL.update(masterInstance);
-		RelationalSQLCommmand[] script = update.toSQLScript();
-		assertEquals(1, script.length);
-		assertEquals("update MasterEntity T1 set T1.name = ?, T1.obs = ? where T1.id = ?", script[0].getCommand());
-		assertEquals(3, script[0].getParameters().size());
-		assertEquals("My name", script[0].getParameters().get(0));
-		assertNull(script[0].getParameters().get(1));
-		assertEquals(4242, script[0].getParameters().get(2));
-		assertEquals(masterInstance, script[0].getInstance());
+		List<RelationalSQLCommmand> script = update.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("update MasterEntity T1 set T1.name = ?, T1.obs = ? where T1.id = ?", script.get(0).getCommand());
+		assertEquals(3, script.get(0).getParameters().size());
+		assertEquals("My name", script.get(0).getParameters().get(0));
+		assertNull(script.get(0).getParameters().get(1));
+		assertEquals(4242, script.get(0).getParameters().get(2));
+		assertEquals(masterInstance, script.get(0).getInstance());
 	}
 
 	@Test
 	public void testDelete() {
 		RelationalSQL delete = delete(master, masterKey(42));
-		RelationalSQLCommmand[] script = delete.toSQLScript();
-		assertEquals(1, script.length);
-		assertEquals("delete from MasterEntity T1 where T1.id = ?", script[0].getCommand());
-		assertEquals(1, script[0].getParameters().size());
-		assertEquals(42, script[0].getParameters().get(0));
-		assertNull(script[0].getInstance());
+		List<RelationalSQLCommmand> script = delete.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("delete from MasterEntity T1 where T1.id = ?", script.get(0).getCommand());
+		assertEquals(1, script.get(0).getParameters().size());
+		assertEquals(42, script.get(0).getParameters().get(0));
+		assertNull(script.get(0).getInstance());
 	}
 
 	private FormKey masterKey(int id) {

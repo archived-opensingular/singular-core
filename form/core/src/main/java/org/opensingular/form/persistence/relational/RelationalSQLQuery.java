@@ -17,6 +17,7 @@
 package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,7 +86,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return targetFields;
 	}
 
-	public RelationalSQLCommmand[] toSQLScript() {
+	public List<RelationalSQLCommmand> toSQLScript() {
 		List<Object> params = new ArrayList<>();
 		String wherePart = "";
 		if (keyFormType != null)
@@ -95,9 +96,9 @@ public class RelationalSQLQuery implements RelationalSQL {
 		if (!orderingColumns.isEmpty())
 			orderPart = " order by " + concatenateOrderingColumns(", ");
 		List<RelationalColumn> selected = selectedColumns();
-		return new RelationalSQLCommmand[] { new RelationalSQLCommmand(
+		return Arrays.asList(new RelationalSQLCommmand(
 				"select " + concatenateColumnNames(selected, ", ") + " from " + joinTables() + wherePart + orderPart,
-				params, null, selected) };
+				params, null, selected));
 	}
 
 	private List<RelationalColumn> selectedColumns() {
