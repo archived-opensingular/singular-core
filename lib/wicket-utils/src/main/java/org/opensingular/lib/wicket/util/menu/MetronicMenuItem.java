@@ -23,8 +23,8 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.component.IRequestablePage;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.lib.commons.ui.Icon;
 
@@ -135,7 +135,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
 
     protected boolean isActive() {
         Pattern onlyLetters = Pattern.compile("[^a-zA-Z0-9]");
-        String contextPath = RequestCycle.get().getRequest().getContextPath();
+        String contextPath = WebApplication.get().getServletContext().getContextPath();
         if (!contextPath.endsWith("/")) {
             contextPath += "/";
         }
