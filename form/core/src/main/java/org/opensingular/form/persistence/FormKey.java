@@ -73,6 +73,16 @@ public interface FormKey extends Serializable {
     }
 
 	/**
+	 * Returns the persistence key assigned to a given SInstance. This key is
+	 * assigned by the persistence mechanism after loading/saving an instance.
+	 */
+    @Nonnull
+    public static FormKey fromInstance(@Nonnull SInstance instance) {
+        Objects.requireNonNull(instance);
+        return instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
+    }
+
+	/**
 	 * Assigns a persistence key to the root of a given SInstance. Advised caution
 	 * in calling this method as the persistence mechanism will be affected
 	 * accordingly.

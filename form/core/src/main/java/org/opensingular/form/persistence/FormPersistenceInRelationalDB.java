@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -78,17 +79,17 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 				executeInsertCommand(command);
 			}
 		}
-		return FormKey.from(instance);
+		return FormKey.fromInstance(instance);
 	}
 
 	public void delete(@Nonnull FormKey key) {
-		INSTANCE instance = load(key);
-		for (SInstance field : instance.getAllChildren()) {
+		INSTANCE mainInstance = load(key);
+		for (SInstance field : mainInstance.getAllChildren()) {
 			if (field.getType().isList()) {
-				for (SInstance item : field.getChildren()) {
-					System.out.println(item.getType().getName()+ " | "+item.getValue("item") + " | " + FormKey.from(item).toStringPersistence());
-					db.execScript(
-							RelationalSQL.delete((STypeComposite) item.getType(), FormKey.from(item)).toSQLScript());
+				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
+						SIComposite.class);
+				for (SIComposite item : listInstance.getChildren()) {
+					db.execScript(RelationalSQL.delete(item.getType(), FormKey.fromInstance(item)).toSQLScript());
 				}
 			}
 		}
@@ -126,20 +127,19 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		TYPE mainType = createType();
 		RelationalSQL query = RelationalSQL.select(mainType.getContainedTypes()).where(mainType, key);
 		for (RelationalSQLCommmand command : query.toSQLScript()) {
-			for (INSTANCE instance : executeSelectCommand(command, mainType)) {
+			for (INSTANCE instance : executeSelectCommand(command)) {
 				mainInstance = instance;
 				break;
 			}
 		}
-		for (SType<?> list : mainType.getContainedTypes()) {
-			if (list.isList()) {
-				for (SType<?> detail : list.getLocalTypes()) {
+		for (SType<?> field : mainType.getContainedTypes()) {
+			if (field.isList()) {
+				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
+				for (SType<?> detail : field.getLocalTypes()) {
 					STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
 					query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
 					for (RelationalSQLCommmand command : query.toSQLScript()) {
-						for (INSTANCE instance : executeSelectCommand(command, (TYPE) detailType)) {
-							mainInstance.getFieldList(list.getNameSimple(), SIComposite.class).addElement(instance);
-						}
+						executeSelectCommandIntoSIList(command, listInstance);
 					}
 				}
 			}
@@ -180,16 +180,28 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		TYPE currentType = createType();
 		RelationalSQL query = RelationalSQL.select(currentType.getContainedTypes());
 		for (RelationalSQLCommmand command : query.toSQLScript()) {
-			result.addAll(executeSelectCommand(command, currentType));
+			result.addAll(executeSelectCommand(command));
 		}
 		return result;
 	}
 
-	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command, TYPE currentType) {
+	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command) {
 		return db.query(command.getSQL(), command.getParameters(), rs -> {
-			INSTANCE instance = (INSTANCE) documentFactory.createInstance(RefType.of(() -> currentType));
+			INSTANCE instance = createInstance();
 			command.setInstance(instance);
 			FormKey.setOnInstance(instance, tupleKey(rs, RelationalSQL.tablePK(instance.getType())));
+			RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command));
+			return instance;
+		});
+	}
+
+	protected List<SIComposite> executeSelectCommandIntoSIList(RelationalSQLCommmand command,
+			SIList<SIComposite> listInstance) {
+		return db.query(command.getSQL(), command.getParameters(), rs -> {
+			SIComposite instance = listInstance.addNew();
+			command.setInstance(instance);
+			List<String> pk = RelationalSQL.tablePK(RelationalSQL.tableContext(instance.getType()));
+			FormKey.setOnInstance(instance, tupleKey(rs, pk));
 			RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command));
 			return instance;
 		});
@@ -232,7 +244,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 			return;
 		}
 		SInstance container = instance.getParent().getParent();
-		FormKeyRelational containerKey = (FormKeyRelational) FormKey.from(container);
+		FormKeyRelational containerKey = (FormKeyRelational) FormKey.fromInstance(container);
 		List<String> containerPK = RelationalSQL.tablePK(container.getType());
 		for (RelationalFK fk : RelationalSQL.tableFKs(instance.getType())) {
 			if (fk.getForeignType().equals(container.getType())) {

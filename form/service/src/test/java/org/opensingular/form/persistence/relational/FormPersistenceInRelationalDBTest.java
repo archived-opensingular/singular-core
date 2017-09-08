@@ -69,7 +69,7 @@ public class FormPersistenceInRelationalDBTest {
 		SIComposite loaded = repoForm.load(insertedKey);
 		assertEquals("My form", loaded.getValue("name"));
 		assertNull(loaded.getValue("observation"));
-		assertEquals(insertedKey, FormKey.from(loaded));
+		assertEquals(insertedKey, FormKey.fromInstance(loaded));
 		//
 		repoForm.delete(insertedKey);
 		assertEquals(0, repoForm.loadAll().size());
@@ -98,12 +98,12 @@ public class FormPersistenceInRelationalDBTest {
 		//
 		SIComposite loaded = repoMaster.load(insertedKey);
 		assertEquals("Master X", loaded.getValue("name"));
-		assertEquals(insertedKey, FormKey.from(loaded));
+		assertEquals(insertedKey, FormKey.fromInstance(loaded));
 		List<SInstance> details = loaded.getValue("details");
 		assertEquals(3, details.size());
 		//
-		// repoMaster.delete(insertedKey);
-		// assertEquals(0, repoMaster.loadAll().size());
+		repoMaster.delete(insertedKey);
+		assertEquals(0, repoMaster.loadAll().size());
 	}
 
 	private SIComposite addDetail(String item, SIComposite master) {
