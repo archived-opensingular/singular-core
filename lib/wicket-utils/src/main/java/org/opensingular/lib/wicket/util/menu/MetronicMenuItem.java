@@ -139,7 +139,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
         if (!contextPath.endsWith("/")) {
             contextPath += "/";
         }
-        String url = onlyLetters.matcher(contextPath + getRequest().getUrl().toString()).replaceAll("");
+        String url = onlyLetters.matcher(contextPath + getRequest().getUrl()).replaceAll("");
         String thisUrl = onlyLetters.matcher(menuItemUrl).replaceAll("");
         return url.endsWith(thisUrl);
     }
