@@ -49,17 +49,6 @@ button {
 .annotation-toggle-container hr, .annotation-toggle-container.open hr {
   margin: 10px 0; }
 
-.annotation-toggle-container .annotation-icon, .annotation-toggle-container.open .annotation-icon {
-  display: inline-block;
-  height: 22px;
-  width: 22px;
-  padding-top: 2px;
-  border: 0;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  background-size: 14px; }
-
 .annotation-toggle-container .btn-info, .annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-default, .annotation-toggle-container.open .btn-info, .annotation-toggle-container.open .btn-danger, .annotation-toggle-container.open .btn-default {
   height: 30px;
   width: 30px;
@@ -87,10 +76,16 @@ button {
 .annotation-toggle-container .btn-default, .annotation-toggle-container .btn-default:focus, .annotation-toggle-container.open .btn-default, .annotation-toggle-container.open .btn-default:focus {
   background-image: url("../img/add-comment.svg"); }
 
-.tab-header-icon.annotation-icon {
-  background-size: 1em;
+.annotation-icon {
+  display: inline-block;
+  height: 1em;
   width: 1em;
-  height: 1em; }
+  border: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  background-size: 1em;
+  background-position-y: .05em; }
 
 .annotation-icon.annotation-icon-empty {
   background-image: url("../img/add-comment.svg"); }
@@ -103,8 +98,7 @@ button {
   background-image: url("../img/rejected-comment.svg"); }
 
 .actions-lg .annotation-icon {
-  background-size: 20px;
-  margin-top: 7px; }
+  font-size: 2em; }
 
 .annotation-title {
   display: inline;
