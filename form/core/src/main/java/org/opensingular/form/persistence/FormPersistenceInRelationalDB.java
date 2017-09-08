@@ -169,8 +169,9 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		return loadAllInternal(null, null);
 	}
 
+	//TODO Edmundo, implementar um count que não utilize loadAllInternal
 	public long countAll() {
-		return 0;
+		return loadAll().size();
 	}
 
 	@SuppressWarnings("unchecked")

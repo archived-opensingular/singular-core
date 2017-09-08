@@ -27,11 +27,14 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
+import javax.transaction.Transactional;
+
 /**
  * Hibernate-based interaction with relational database managers.
  *
  * @author Edmundo Andrade
  */
+@Transactional
 public class RelationalDatabaseHibernate implements RelationalDatabase {
 	private SessionFactory sessionFactory;
 
