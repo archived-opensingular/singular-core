@@ -24,6 +24,7 @@ import java.util.StringJoiner;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.persistence.FormKey;
 
 /**
@@ -33,7 +34,7 @@ import org.opensingular.form.persistence.FormKey;
  */
 public class RelationalSQLUpdate implements RelationalSQL {
 	private SIComposite instance;
-	private List<String> targetTables;
+	private List<SType<?>> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
@@ -41,9 +42,9 @@ public class RelationalSQLUpdate implements RelationalSQL {
 
 	public RelationalSQLUpdate(SIComposite instance) {
 		this.instance = instance;
-		this.targetTables = new ArrayList<String>();
-		this.keyColumns = new ArrayList<RelationalColumn>();
-		this.targetColumns = new ArrayList<RelationalColumn>();
+		this.targetTables = new ArrayList<>();
+		this.keyColumns = new ArrayList<>();
+		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
 		for (SInstance child : instance.getAllChildren()) {
 			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
@@ -59,13 +60,15 @@ public class RelationalSQLUpdate implements RelationalSQL {
 
 	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
-		for (String table : targetTables) {
+		for (SType<?> tableContext : targetTables) {
+			String tableName = RelationalSQL.table(tableContext);
 			List<Object> params = new ArrayList<>();
-			lines.add(new RelationalSQLCommmand(
-					"update " + table + " " + tableAlias(table) + " set " + set(table, targetColumns, params)
-							+ " where "
-							+ RelationalSQL.where(table, keyColumns, mapColumnToValue, targetTables, params),
-					params, instance, null));
+			lines.add(
+					new RelationalSQLCommmand(
+							"update " + tableName + " " + tableAlias(tableName) + " set "
+									+ set(tableName, targetColumns, params) + " where " + RelationalSQL.where(tableName,
+											keyColumns, mapColumnToValue, targetTables, params),
+							params, instance, null));
 		}
 		return lines;
 	}

@@ -33,25 +33,22 @@ import org.opensingular.form.SType;
  */
 public class RelationalSQLInsert implements RelationalSQL {
 	private SIComposite instance;
-	private List<String> targetTables;
+	private List<SType<?>> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
-	private List<RelationalFK> masterRelationships;
 
 	public RelationalSQLInsert(SIComposite instance) {
 		this.instance = instance;
-		this.targetTables = new ArrayList<String>();
-		this.keyColumns = new ArrayList<RelationalColumn>();
-		this.targetColumns = new ArrayList<RelationalColumn>();
+		this.targetTables = new ArrayList<>();
+		this.keyColumns = new ArrayList<>();
+		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
-		this.masterRelationships = new ArrayList<RelationalFK>();
 		for (SInstance child : instance.getChildren()) {
 			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns,
 					mapColumnToField);
 		}
-		RelationalSQL.collectMasterRelationships(instance.getType(), masterRelationships);
 	}
 
 	public SIComposite getInstance() {
@@ -60,12 +57,13 @@ public class RelationalSQLInsert implements RelationalSQL {
 
 	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
-		for (String table : targetTables) {
+		for (SType<?> tableContext : targetTables) {
+			String tableName = RelationalSQL.table(tableContext);
 			List<Object> params = new ArrayList<>();
-			List<RelationalColumn> inserted = insertedColumns(table);
+			List<RelationalColumn> inserted = insertedColumns(tableName);
 			lines.add(
 					new RelationalSQLCommmand(
-							"insert into " + table + " (" + concatenateColumnNames(inserted, ", ") + ") values ("
+							"insert into " + tableName + " (" + concatenateColumnNames(inserted, ", ") + ") values ("
 									+ concatenateColumnValues(inserted, ", ", params) + ")",
 							params, instance, inserted));
 		}
@@ -86,15 +84,17 @@ public class RelationalSQLInsert implements RelationalSQL {
 		});
 		if (instance.getParent() != null) {
 			SType<?> containerType = instance.getParent().getParent().getType();
-			masterRelationships.forEach(fk -> {
-				if (fk.getForeignType().equals(containerType)) {
-					for (RelationalColumn keyColumn : fk.getKeyColumns()) {
-						if (!result.contains(keyColumn)) {
-							result.add(keyColumn);
+			for (SType<?> tableContext : targetTables) {
+				for (RelationalFK relationship : RelationalSQL.tableFKs(tableContext)) {
+					if (relationship.getForeignType().equals(containerType)) {
+						for (RelationalColumn keyColumn : relationship.getKeyColumns()) {
+							if (!result.contains(keyColumn)) {
+								result.add(keyColumn);
+							}
 						}
 					}
 				}
-			});
+			}
 		}
 		return result;
 	}

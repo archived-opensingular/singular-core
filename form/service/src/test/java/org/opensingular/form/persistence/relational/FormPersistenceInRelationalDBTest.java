@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -98,8 +99,8 @@ public class FormPersistenceInRelationalDBTest {
 		SIComposite loaded = repoMaster.load(insertedKey);
 		assertEquals("Master X", loaded.getValue("name"));
 		assertEquals(insertedKey, FormKey.from(loaded));
-		// List<SInstance> details = loaded.getValue("details");
-		// assertEquals(3, details.size());
+		List<SInstance> details = loaded.getValue("details");
+		assertEquals(3, details.size());
 		//
 		// repoMaster.delete(insertedKey);
 		// assertEquals(0, repoMaster.loadAll().size());

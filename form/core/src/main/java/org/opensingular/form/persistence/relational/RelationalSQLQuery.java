@@ -37,35 +37,29 @@ import org.opensingular.form.persistence.FormKey;
  */
 public class RelationalSQLQuery implements RelationalSQL {
 	private Collection<SType<?>> targetFields;
-	private List<String> targetTables;
+	private List<SType<?>> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
-	private List<RelationalFK> masterRelationships;
-	private List<RelationalColumn> orderingColumns = new ArrayList<RelationalColumn>();
-	private Map<String, RelationalFK> joinMap;
+	private List<RelationalColumn> orderingColumns = new ArrayList<>();
 	private STypeComposite<?> keyFormType;
 	private Map<String, Object> keyFormColumnMap;
+	private List<RelationalColumn> keyFormColumns;
 
 	@SafeVarargs
 	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
 		this.targetFields = new ArrayList<>();
 		for (Collection<SType<?>> fieldCollection : fieldCollections)
 			this.targetFields.addAll(fieldCollection);
-		this.targetTables = new ArrayList<String>();
-		this.keyColumns = new ArrayList<RelationalColumn>();
-		this.targetColumns = new ArrayList<RelationalColumn>();
+		this.targetTables = new ArrayList<>();
+		this.keyColumns = new ArrayList<>();
+		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
-		this.masterRelationships = new ArrayList<RelationalFK>();
-		List<RelationalFK> relationships = new ArrayList<RelationalFK>();
 		for (SType<?> field : targetFields) {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList(),
 					mapColumnToField);
-			RelationalSQL.collectRelationships(field, relationships);
-			RelationalSQL.collectMasterRelationships(field, masterRelationships);
 		}
-		joinMap = createJoinMap(relationships);
 	}
 
 	public RelationalSQLQuery orderBy(SType<?>... fields) {
@@ -79,6 +73,8 @@ public class RelationalSQLQuery implements RelationalSQL {
 	public RelationalSQLQuery where(STypeComposite<?> type, FormKey formKey) {
 		keyFormType = type;
 		keyFormColumnMap = ((FormKeyRelational) formKey).getValue();
+		keyFormColumns = new ArrayList<>();
+		RelationalSQL.collectKeyColumns(keyFormType, keyFormColumns, targetTables);
 		return this;
 	}
 
@@ -87,31 +83,28 @@ public class RelationalSQLQuery implements RelationalSQL {
 	}
 
 	public List<RelationalSQLCommmand> toSQLScript() {
+		Map<String, RelationalFK> joinMap = createJoinMap();
+		reorderTargetTables(joinMap);
 		List<Object> params = new ArrayList<>();
 		String wherePart = "";
-		if (keyFormType != null)
-			wherePart += " where " + RelationalSQL.where(RelationalSQL.table(keyFormType), keyColumns, keyFormColumnMap,
-					targetTables, params);
+		if (keyFormType != null) {
+			wherePart += " where " + RelationalSQL.where(RelationalSQL.table(keyFormType), keyFormColumns,
+					keyFormColumnMap, targetTables, params);
+		}
 		String orderPart = "";
-		if (!orderingColumns.isEmpty())
+		if (!orderingColumns.isEmpty()) {
 			orderPart = " order by " + concatenateOrderingColumns(", ");
+		}
 		List<RelationalColumn> selected = selectedColumns();
-		return Arrays.asList(new RelationalSQLCommmand(
-				"select " + concatenateColumnNames(selected, ", ") + " from " + joinTables() + wherePart + orderPart,
-				params, null, selected));
+		return Arrays.asList(new RelationalSQLCommmand("select " + concatenateColumnNames(selected, ", ") + " from "
+				+ joinTables(joinMap) + wherePart + orderPart, params, null, selected));
 	}
 
 	private List<RelationalColumn> selectedColumns() {
 		List<RelationalColumn> result = new ArrayList<>(targetColumns);
 		keyColumns.forEach(column -> {
-			if (!targetColumns.contains(column))
+			if (!targetColumns.contains(column)) {
 				result.add(column);
-		});
-		masterRelationships.forEach(fk -> {
-			for (RelationalColumn keyColumn : fk.getKeyColumns()) {
-				if (!result.contains(keyColumn)) {
-					result.add(keyColumn);
-				}
 			}
 		});
 		return result;
@@ -123,45 +116,49 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return sj.toString();
 	}
 
-	private String joinTables() {
+	private String joinTables(Map<String, RelationalFK> joinMap) {
 		StringJoiner sj = new StringJoiner(" left join ");
 		List<String> joinedTables = new ArrayList<>();
-		for (String table : targetTables) {
-			sj.add(onClause(table, joinedTables));
-			joinedTables.add(table);
+		for (SType<?> tableContext : targetTables) {
+			sj.add(onClause(tableContext, joinedTables, joinMap));
+			joinedTables.add(RelationalSQL.table(tableContext));
 		}
 		return sj.toString();
 	}
 
-	private String onClause(String table, List<String> joinedTables) {
+	private String onClause(SType<?> tableContext, List<String> joinedTables, Map<String, RelationalFK> joinMap) {
+		String table = RelationalSQL.table(tableContext);
 		String tableAlias = tableAlias(table);
 		String result = table + " " + tableAlias;
 		if (joinedTables.isEmpty())
 			return result;
-		RelationalFK relationship = locateRelationship(table, joinedTables);
+		RelationalFK relationship = locateRelationship(table, joinedTables, joinMap);
 		if (relationship == null)
 			throw new SingularFormException(
 					"Relational mapping should provide foreign key for relevant relationships with table '" + table
 							+ "'.");
-		String foreignTable = RelationalSQL.table(relationship.getForeignType());
-		List<String> foreignColumns = RelationalSQL.tablePK(relationship.getForeignType());
-		if (relationship.getKeyColumns().size() != foreignColumns.size())
+		String leftTable = relationship.getTable();
+		List<RelationalColumn> leftColumns = relationship.getKeyColumns();
+		List<String> rightColumns = RelationalSQL.tablePK(tableContext);
+		if (leftColumns.size() != rightColumns.size())
 			throw new SingularFormException(
-					"Relational mapping should provide same-size foreign key for the relationship between table '"
-							+ table + "' and '" + foreignTable + "'.");
+					"Relational mapping should provide compatible-size foreign key for the relationship between table '"
+							+ leftTable + "' and '" + table + "'.");
 		StringJoiner sj = new StringJoiner(" and ");
-		for (int i = 0; i < foreignColumns.size(); i++)
-			sj.add(tableAlias + "." + relationship.getKeyColumns().get(i).getName() + " = " + tableAlias(foreignTable)
-					+ "." + foreignColumns.get(i));
+		for (int i = 0; i < leftColumns.size(); i++)
+			sj.add(tableAlias(leftTable) + "." + leftColumns.get(i).getName() + " = " + tableAlias + "."
+					+ rightColumns.get(i));
 		return result + " on " + sj.toString();
 	}
 
-	private RelationalFK locateRelationship(String table, List<String> joinedTables) {
+	private RelationalFK locateRelationship(String table, List<String> joinedTables,
+			Map<String, RelationalFK> joinMap) {
 		RelationalFK result = null;
 		for (String joinedTable : joinedTables) {
-			result = joinMap.get(table + ">" + joinedTable);
-			if (result != null)
+			result = joinMap.get(joinedTable + ">" + table);
+			if (result != null) {
 				break;
+			}
 		}
 		return result;
 	}
@@ -172,12 +169,32 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return sj.toString();
 	}
 
-	private Map<String, RelationalFK> createJoinMap(List<RelationalFK> relationships) {
+	private Map<String, RelationalFK> createJoinMap() {
 		Map<String, RelationalFK> result = new HashMap<>();
-		for (RelationalFK relationship : relationships)
-			result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()),
-					relationship);
+		for (SType<?> tableContext : targetTables) {
+			for (RelationalFK relationship : RelationalSQL.tableFKs(tableContext)) {
+				result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()),
+						relationship);
+			}
+		}
 		return result;
+	}
+
+	private void reorderTargetTables(Map<String, RelationalFK> joinMap) {
+		for (int i = 0; i < targetTables.size() - 1; i++) {
+			String tableLeft = RelationalSQL.table(targetTables.get(i));
+			for (int j = i + 1; j < targetTables.size(); j++) {
+				String tableRight = RelationalSQL.table(targetTables.get(j));
+				if (joinMap.containsKey(tableRight + ">" + tableLeft)) {
+					SType<?> newRight = targetTables.get(i);
+					SType<?> newLeft = targetTables.get(j);
+					targetTables.set(i, newLeft);
+					targetTables.set(j, newRight);
+					i--;
+					break;
+				}
+			}
+		}
 	}
 
 	private String tableAlias(String table) {

@@ -23,6 +23,7 @@ import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABL
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -62,11 +63,12 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public AtrSQL addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
-		return addTableFK(new RelationalFK(getTable(), keyColumns, getDictionary().getType(typeClass)));
+		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getTipo()));
+		return addTableFK(new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass)));
 	}
 
 	private AtrSQL addTableFK(RelationalFK fk) {
-		List<RelationalFK> list = getTableFKs();
+		List<RelationalFK> list = new ArrayList<>(getTableFKs());
 		list.add(fk);
 		StringJoiner sj = new StringJoiner(";");
 		list.forEach(item -> sj.add(item.toStringPersistence()));
@@ -75,13 +77,14 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public List<RelationalFK> getTableFKs() {
-		List<RelationalFK> result = new ArrayList<>();
 		String value = getAttributeValue(ATR_TABLE_FKS);
-		if (value == null)
-			return result;
-		String[] items = value.split(";");
-		for (String item : items)
+		if (value == null) {
+			return Collections.emptyList();
+		}
+		List<RelationalFK> result = new ArrayList<>();
+		for (String item : value.split(";")) {
 			result.add(RelationalFK.fromStringPersistence(item, getDictionary()));
+		}
 		return result;
 	}
 
@@ -99,7 +102,7 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	private AtrSQL defineColumn(ColumnDefinition def) {
-		List<ColumnDefinition> list = getColumnDefinitions();
+		List<ColumnDefinition> list = new ArrayList<>(getColumnDefinitions());
 		list.add(def);
 		StringJoiner sj = new StringJoiner(";");
 		list.forEach(item -> sj.add(item.toStringPersistence()));
@@ -108,13 +111,14 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public List<ColumnDefinition> getColumnDefinitions() {
-		List<ColumnDefinition> result = new ArrayList<>();
 		String value = getAttributeValue(ATR_TABLE_COLUMN_DEFS);
-		if (value == null)
-			return result;
-		String[] items = value.split(";");
-		for (String item : items)
+		if (value == null) {
+			return Collections.emptyList();
+		}
+		List<ColumnDefinition> result = new ArrayList<>();
+		for (String item : value.split(";")) {
 			result.add(ColumnDefinition.fromStringPersistence(item));
+		}
 		return result;
 	}
 }

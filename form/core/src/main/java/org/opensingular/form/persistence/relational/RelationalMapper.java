@@ -30,6 +30,8 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
 public interface RelationalMapper {
 	public static final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
 
+	SType<?> tableContext(SType<?> type);
+
 	String table(SType<?> type);
 
 	List<String> tablePK(SType<?> type);

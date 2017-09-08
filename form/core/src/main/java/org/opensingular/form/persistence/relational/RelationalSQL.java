@@ -56,6 +56,10 @@ public interface RelationalSQL {
 		return new RelationalSQLDelete(type, formKey);
 	}
 
+	public static SType<?> tableContext(SType<?> type) {
+		return aspectRelationalMap(type).tableContext(type);
+	}
+
 	public static String table(SType<?> field) {
 		return aspectRelationalMap(field).table(field);
 	}
@@ -84,27 +88,33 @@ public interface RelationalSQL {
 		return new BasicRelationalMapper();
 	}
 
-	public static void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns, List<String> targetTables) {
-		String tableName = table(type);
-		if (!targetTables.contains(tableName)) {
-			targetTables.add(tableName);
+	public static void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns,
+			List<SType<?>> targetTables) {
+		SType<?> tableContext = tableContext(type);
+		String tableName = table(tableContext);
+		if (!targetTables.contains(tableContext)) {
+			targetTables.add(tableContext);
 		}
-		for (String columnName : tablePK(type)) {
-			RelationalColumn column = new RelationalColumn(tableName, columnName);
-			if (!keyColumns.contains(column)) {
-				keyColumns.add(column);
+		List<String> pk = tablePK(tableContext);
+		if (pk != null) {
+			for (String columnName : pk) {
+				RelationalColumn column = new RelationalColumn(tableName, columnName);
+				if (!keyColumns.contains(column)) {
+					keyColumns.add(column);
+				}
 			}
 		}
 	}
 
 	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
-			List<String> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
+			List<SType<?>> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
 		if (field instanceof ICompositeType) {
 			return;
 		}
-		String tableName = table(field);
-		if (!targetTables.contains(tableName)) {
-			targetTables.add(tableName);
+		SType<?> tableContext = tableContext(field);
+		String tableName = table(tableContext);
+		if (!targetTables.contains(tableContext)) {
+			targetTables.add(tableContext);
 		}
 		String columnName = column(field);
 		mapColumnToField.put(columnName, field.getNameSimple());
@@ -115,7 +125,7 @@ public interface RelationalSQL {
 	}
 
 	public static String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
-			List<String> targetTables, List<Object> params) {
+			List<SType<?>> targetTables, List<Object> params) {
 		StringJoiner sj = new StringJoiner(" and ");
 		filterColumns.forEach(column -> {
 			if (column.getTable().equals(table)) {
@@ -126,23 +136,18 @@ public interface RelationalSQL {
 		return sj.toString();
 	}
 
-	public static String tableAlias(String table, List<String> targetTables) {
-		int index = targetTables.indexOf(table) + 1;
-		return "T" + index;
+	public static String tableAlias(String table, List<SType<?>> targetTables) {
+		int index = 1;
+		for (SType<?> tableContext : targetTables) {
+			if (table.equals(table(tableContext))) {
+				return "T" + index;
+			}
+			index++;
+		}
+		return null;
 	}
 
 	public static Object columnValue(RelationalColumn column, Map<String, Object> mapColumnToValue) {
 		return mapColumnToValue.get(column.getName());
-	}
-
-	public static void collectRelationships(SType<?> field, List<RelationalFK> relationships) {
-		if (field instanceof ICompositeType) {
-			((ICompositeType) field).getContainedTypes()
-					.forEach(item -> relationships.addAll(RelationalSQL.tableFKs(item.getSuperType())));
-		}
-	}
-
-	public static void collectMasterRelationships(SType<?> type, List<RelationalFK> relationships) {
-		relationships.addAll(RelationalSQL.tableFKs(type));
 	}
 }

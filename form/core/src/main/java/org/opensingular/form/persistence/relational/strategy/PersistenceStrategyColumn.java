@@ -40,7 +40,7 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
 
 	public void load(SInstance instance, List<RelationalData> fromList) {
 		SType<?> field = instance.getType();
-		String tableName = RelationalSQL.table(field);
+		String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
 		SInstance tupleKeyRef = instance.getParent();
 		String fieldName = RelationalSQL.column(field);
 		for (RelationalData data : fromList) {

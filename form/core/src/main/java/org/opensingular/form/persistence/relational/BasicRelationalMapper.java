@@ -30,28 +30,31 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
  * @author Edmundo Andrade
  */
 public class BasicRelationalMapper implements RelationalMapper {
+	public SType<?> tableContext(SType<?> type) {
+		SType<?> result = type;
+		while (table(result) == null && hasParentType(result)) {
+			result = getParentType(result);
+		}
+		return result;
+	}
+
 	public String table(SType<?> type) {
 		String result = type.asSQL().getTable();
-		if (result == null) {
-			if (hasParentType(type)) {
-				SType<?> parentType = getParentType(type);
-				result = parentType.asSQL().getTable();
-				if (result == null)
-					result = parentType.getNameSimple();
-			} else
-				result = type.getNameSimple();
+		if (result == null && !hasParentType(type)) {
+			result = type.getNameSimple();
 		}
 		return result;
 	}
 
 	public List<String> tablePK(SType<?> type) {
-		List<String> result = new ArrayList<>();
 		String pk = type.asSQL().getTablePK();
-		if (pk == null && hasParentType(type))
-			pk = getParentType(type).asSQL().getTablePK();
-		if (pk != null)
-			for (String key : pk.split(","))
-				result.add(key.trim());
+		if (pk == null) {
+			return null;
+		}
+		List<String> result = new ArrayList<>();
+		for (String key : pk.split(",")) {
+			result.add(key.trim());
+		}
 		return result;
 	}
 
@@ -78,7 +81,7 @@ public class BasicRelationalMapper implements RelationalMapper {
 	}
 
 	protected boolean hasParentType(SType<?> type) {
-		return !type.getParentScope().equals(type.getPackage());
+		return !type.isComposite() && !type.getParentScope().equals(type.getPackage());
 	}
 
 	protected SType<?> getParentType(SType<?> type) {

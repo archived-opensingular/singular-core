@@ -72,7 +72,7 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 	public int execScript(Collection<? extends RelationalSQLCommmand> script) {
 		int result = 0;
 		for (RelationalSQLCommmand command : script) {
-			result += exec(command.getCommand(), command.getParameters());
+			result += exec(command.getSQL(), command.getParameters());
 		}
 		return result;
 	}

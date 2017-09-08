@@ -39,7 +39,7 @@ public class RelationalSQLCommmand {
 		this.columns = columns;
 	}
 
-	public String getCommand() {
+	public String getSQL() {
 		return command;
 	}
 

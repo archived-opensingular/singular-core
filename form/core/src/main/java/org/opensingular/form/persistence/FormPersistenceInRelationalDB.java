@@ -86,6 +86,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		for (SInstance field : instance.getAllChildren()) {
 			if (field.getType().isList()) {
 				for (SInstance item : field.getChildren()) {
+					System.out.println(item.getType().getName()+ " | "+item.getValue("item") + " | " + FormKey.from(item).toStringPersistence());
 					db.execScript(
 							RelationalSQL.delete((STypeComposite) item.getType(), FormKey.from(item)).toSQLScript());
 				}
@@ -121,31 +122,32 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	@Nonnull
 	public INSTANCE load(@Nonnull FormKey key) {
-		INSTANCE firstInstance = null;
-		TYPE currentType = createType();
-		RelationalSQL query = RelationalSQL.select(currentType.getContainedTypes()).where(currentType, key);
+		INSTANCE mainInstance = null;
+		TYPE mainType = createType();
+		RelationalSQL query = RelationalSQL.select(mainType.getContainedTypes()).where(mainType, key);
 		for (RelationalSQLCommmand command : query.toSQLScript()) {
-			for (INSTANCE instance : executeSelectCommand(command, currentType)) {
-				firstInstance = instance;
+			for (INSTANCE instance : executeSelectCommand(command, mainType)) {
+				mainInstance = instance;
 				break;
 			}
 		}
-		for (SType<?> list : currentType.getContainedTypes()) {
+		for (SType<?> list : mainType.getContainedTypes()) {
 			if (list.isList()) {
 				for (SType<?> detail : list.getLocalTypes()) {
-					STypeComposite<?> detailCurrentType = (STypeComposite<?>) detail.getSuperType();
-					query = RelationalSQL.select(currentType.getContainedTypes()).where(currentType, key);
+					STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
+					query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
 					for (RelationalSQLCommmand command : query.toSQLScript()) {
-						for (INSTANCE instance : executeSelectCommand(command, (TYPE) detailCurrentType)) {
+						for (INSTANCE instance : executeSelectCommand(command, (TYPE) detailType)) {
+							mainInstance.getFieldList(list.getNameSimple(), SIComposite.class).addElement(instance);
 						}
 					}
 				}
 			}
 		}
-		if (firstInstance == null) {
+		if (mainInstance == null) {
 			throw new SingularFormNotFoundException(key);
 		}
-		return firstInstance;
+		return mainInstance;
 	}
 
 	@Nonnull
@@ -184,7 +186,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	}
 
 	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command, TYPE currentType) {
-		return db.query(command.getCommand(), command.getParameters(), rs -> {
+		return db.query(command.getSQL(), command.getParameters(), rs -> {
 			INSTANCE instance = (INSTANCE) documentFactory.createInstance(RefType.of(() -> currentType));
 			command.setInstance(instance);
 			FormKey.setOnInstance(instance, tupleKey(rs, RelationalSQL.tablePK(instance.getType())));
@@ -195,7 +197,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	protected int executeInsertCommand(RelationalSQLCommmand command) {
 		List<String> generatedColumns = RelationalSQL.tablePK(command.getInstance().getType());
-		return db.execReturningGenerated(command.getCommand(), command.getParameters(), generatedColumns, rs -> {
+		return db.execReturningGenerated(command.getSQL(), command.getParameters(), generatedColumns, rs -> {
 			HashMap<String, Object> key = new HashMap<>();
 			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
 				key.put(generatedColumns.get(i), rs.getObject(i + 1));
