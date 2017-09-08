@@ -117,7 +117,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     public boolean isPersistent(@Nonnull INSTANCE instance) {
-        return FormKey.fromInstance(instance) != null;
+        return FormKey.containsKey(instance);
     }
 
     @Nonnull

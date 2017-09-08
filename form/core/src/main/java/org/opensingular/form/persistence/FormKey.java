@@ -113,4 +113,10 @@ public interface FormKey extends Serializable {
         Objects.requireNonNull(instance);
         setOnInstance(instance.getRoot(), formKey);
     }
+
+    static boolean containsKey(@Nonnull SInstance instance) {
+        Objects.requireNonNull(instance);
+        return instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY) != null;
+    }
+
 }
