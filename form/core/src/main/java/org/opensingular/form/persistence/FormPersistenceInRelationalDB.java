@@ -106,14 +106,18 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
 	}
 
-	// TODO
 	@Nonnull
 	public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		return null;
+		if (isPersistent(instance)) {
+			update(instance, inclusionActor);
+		} else {
+			insert(instance, inclusionActor);
+		}
+		return FormKey.fromInstance(instance);
 	}
 
 	public boolean isPersistent(@Nonnull INSTANCE instance) {
-		return false;
+		return FormKey.fromInstance(instance) != null;
 	}
 
 	@Nonnull
