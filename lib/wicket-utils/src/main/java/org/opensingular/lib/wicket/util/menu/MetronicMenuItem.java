@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.component.IRequestablePage;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.lib.commons.ui.Icon;
 
@@ -33,13 +34,13 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class MetronicMenuItem extends AbstractMenuItem {
 
-    private WebMarkupContainer                menuItem;
-    private IRequestablePage                  page;
-    private PageParameters                    parameters;
+    private WebMarkupContainer menuItem;
+    private IRequestablePage page;
+    private PageParameters parameters;
     private Class<? extends IRequestablePage> responsePageClass;
-    private String                            menuItemUrl;
-    private String                            href;
-    private String                            target;
+    private String menuItemUrl;
+    private String href;
+    private String target;
     private WebMarkupContainer helper = new WebMarkupContainer("helper");
 
     public MetronicMenuItem(Icon icon, String title, Class<? extends IRequestablePage> responsePageClass,
@@ -134,8 +135,12 @@ public class MetronicMenuItem extends AbstractMenuItem {
 
     protected boolean isActive() {
         Pattern onlyLetters = Pattern.compile("[^a-zA-Z0-9]");
-        String  url         = onlyLetters.matcher(getRequest().getUrl().toString()).replaceAll("");
-        String  thisUrl     = onlyLetters.matcher(menuItemUrl).replaceAll("");
+        String contextPath = RequestCycle.get().getRequest().getContextPath();
+        if (!contextPath.endsWith("/")) {
+            contextPath += "/";
+        }
+        String url = onlyLetters.matcher(contextPath + getRequest().getUrl().toString()).replaceAll("");
+        String thisUrl = onlyLetters.matcher(menuItemUrl).replaceAll("");
         return url.endsWith(thisUrl);
     }
 

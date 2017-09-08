@@ -17,19 +17,9 @@ public abstract class AbstractMenuEntry implements MenuEntry {
         return icon;
     }
 
-    public AbstractMenuEntry setIcon(Icon icon) {
-        this.icon = icon;
-        return this;
-    }
-
     @Override
     public String getName() {
         return name;
-    }
-
-    public AbstractMenuEntry setName(String name) {
-        this.name = name;
-        return this;
     }
 
     @Override

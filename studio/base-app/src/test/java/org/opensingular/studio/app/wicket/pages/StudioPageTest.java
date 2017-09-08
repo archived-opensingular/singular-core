@@ -58,14 +58,14 @@ public class StudioPageTest extends WicketTestCase {
 
     @Test
     public void testRender() throws Exception {
-        applicationContextMock.putBean(new StudioMenu());
+        applicationContextMock.putBean(new StudioMenu(null));
         tester.startPage(StudioPage.class);
         tester.assertRenderedPage(StudioPage.class);
     }
 
     @Test
     public void testRenderMenu() throws Exception {
-        StudioMenu menu = new StudioMenu();
+        StudioMenu menu = new StudioMenu(null);
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group"));
         group.add(new StudioMenuItem(DefaultIcons.WRENCH, "Mock", null));
         applicationContextMock.putBean(menu);
@@ -76,7 +76,7 @@ public class StudioPageTest extends WicketTestCase {
 
     @Test
     public void testPathParamLookup() throws Exception {
-        applicationContextMock.putBean(new StudioMenu());
+        applicationContextMock.putBean(new StudioMenu(null));
         tester.executeUrl("./" + STUDIO_ROOT_PATH + "/foo/bar");
         StudioPage lastRenderedPage = (StudioPage) tester.getLastRenderedPage();
         assertEquals("foo/bar", lastRenderedPage.getMenuPath());
@@ -84,7 +84,7 @@ public class StudioPageTest extends WicketTestCase {
 
     @Test
     public void testAcessMenu() throws Exception {
-        StudioMenu menu = new StudioMenu();
+        StudioMenu menu = new StudioMenu(null);
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group"));
         StudioMenuItem mockMenuItem = group.add(new StudioMenuItem(DefaultIcons.WRENCH, "Mock", null));
         applicationContextMock.putBean(menu);
@@ -113,7 +113,7 @@ public class StudioPageTest extends WicketTestCase {
             }
         };
 
-        StudioMenu menu = new StudioMenu();
+        StudioMenu menu = new StudioMenu(null);
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group"));
         StudioMenuItem mockMenuItem = group.add(new StudioMenuItem(DefaultIcons.WRENCH, "Mock", definition));
 
