@@ -13,8 +13,4 @@ public class ItemMenuEntry extends AbstractMenuEntry {
     public String getEndpoint() {
         return endpoint;
     }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
 }

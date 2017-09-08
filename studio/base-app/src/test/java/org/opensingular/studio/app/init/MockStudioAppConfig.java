@@ -11,7 +11,7 @@ import org.opensingular.studio.core.menu.StudioMenu;
 public class MockStudioAppConfig extends AbstractStudioAppConfig {
     @Override
     public StudioMenu getAppMenu() {
-        StudioMenu studioMenu = new StudioMenu();
+        StudioMenu studioMenu = new StudioMenu(null);
         GroupMenuEntry mockGroup1 = studioMenu.add(new GroupMenuEntry(null, "Mock Group 1"));
         GroupMenuEntry mockGroup2 = studioMenu.add(new GroupMenuEntry(null, "Mock Group 2"));
         GroupMenuEntry mockGroup1_1 = mockGroup1.add(new GroupMenuEntry(null, "Mock Group 1 -> 1"));

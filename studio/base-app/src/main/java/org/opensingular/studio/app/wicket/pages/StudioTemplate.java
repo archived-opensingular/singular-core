@@ -59,8 +59,7 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
             if (entry instanceof StudioMenuItem &&
                     ((StudioMenuItem) entry)
                             .getEndpoint()
-                            .replace("/" + StudioPage.STUDIO_ROOT_PATH + "/", "")
-                            .equals(menuPath)) {
+                            .endsWith(menuPath)) {
                 return (StudioMenuItem) entry;
             }
             if (entry instanceof GroupMenuEntry) {
