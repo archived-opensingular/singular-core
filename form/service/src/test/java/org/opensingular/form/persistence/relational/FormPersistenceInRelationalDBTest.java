@@ -42,13 +42,13 @@ public class FormPersistenceInRelationalDBTest {
 	protected SessionFactory sessionFactory;
 	@Inject
 	private SDocumentFactory documentFactory;
+	@Inject
 	private RelationalDatabase db;
 	private FormPersistenceInRelationalDB<Form, SIComposite> repoForm;
 	private FormPersistenceInRelationalDB<Master, SIComposite> repoMaster;
 
 	@Before
 	public void setUp() {
-		db = new RelationalDatabaseHibernate(sessionFactory);
 		repoForm = new FormPersistenceInRelationalDB<>(db, documentFactory, Form.class);
 		repoMaster = new FormPersistenceInRelationalDB<>(db, documentFactory, Master.class);
 	}

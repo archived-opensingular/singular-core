@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-service</artifactId>
-            <version>1.6.9-STUDIO-SNAPSHOT</version>
+            <version>1.6.9-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>

@@ -20,6 +20,9 @@
 	</bean>
 
 	<bean id="documentFactory" class="org.opensingular.form.document.SDocumentFactoryEmpty" />
+	<bean id="relationalDatabaseHibernate" class="org.opensingular.form.persistence.relational.RelationalDatabaseHibernate">
+		<constructor-arg index="0" ref="sessionFactory" />	
+	</bean>
 
 	<!-- HIBERNATE CONFIGURATION -->
 	<bean id="sessionFactory"
