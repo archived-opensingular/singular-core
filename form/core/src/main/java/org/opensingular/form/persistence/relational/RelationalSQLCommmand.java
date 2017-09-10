@@ -30,6 +30,8 @@ public class RelationalSQLCommmand {
 	private List<Object> parameters;
 	private SIComposite instance;
 	private List<RelationalColumn> columns;
+	private Long limitOffset;
+	private Long limitRows;
 
 	public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
 			List<RelationalColumn> columns) {
@@ -37,6 +39,13 @@ public class RelationalSQLCommmand {
 		this.parameters = parameters;
 		this.instance = instance;
 		this.columns = columns;
+	}
+
+	public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
+			List<RelationalColumn> columns, Long limitOffset, Long limitRows) {
+		this(sql, parameters, instance, columns);
+		this.limitOffset = limitOffset;
+		this.limitRows = limitRows;
 	}
 
 	public String getSQL() {
@@ -57,5 +66,13 @@ public class RelationalSQLCommmand {
 
 	public List<RelationalColumn> getColumns() {
 		return columns;
+	}
+
+	public Long getLimitOffset() {
+		return limitOffset;
+	}
+
+	public Long getLimitRows() {
+		return limitRows;
 	}
 }

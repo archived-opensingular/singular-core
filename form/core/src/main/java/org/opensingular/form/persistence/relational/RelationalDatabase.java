@@ -37,4 +37,9 @@ public interface RelationalDatabase {
 	List<Object[]> query(String sql, List<Object> params);
 
 	<T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler);
+
+	List<Object[]> query(String sql, List<Object> params, Long limitOffset, Long limitRows);
+
+	<T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
+			RelationalTupleHandler<T> tupleHandler);
 }

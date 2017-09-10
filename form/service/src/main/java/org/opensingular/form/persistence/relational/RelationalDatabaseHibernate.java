@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.SessionFactory;
-
 import javax.transaction.Transactional;
 
+import org.hibernate.SessionFactory;
+
 /**
- * Hibernate-based interaction with relational database managers.
+ * Hibernate-based interaction with a relational database manager.
  *
  * @author Edmundo Andrade
  */
@@ -50,7 +50,7 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 
 	public int exec(String sql, List<Object> params) {
 		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
-			return prepareStatement(connection, sql, params).executeUpdate();
+			return prepareStatement(connection, sql, params, null, null).executeUpdate();
 		});
 	}
 
@@ -81,7 +81,15 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 	}
 
 	public List<Object[]> query(String sql, List<Object> params) {
-		return query(sql, params, rs -> {
+		return query(sql, params, null, null);
+	}
+
+	public <T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler) {
+		return query(sql, params, null, null, tupleHandler);
+	}
+
+	public List<Object[]> query(String sql, List<Object> params, Long limitOffset, Long limitRows) {
+		return query(sql, params, limitOffset, limitRows, rs -> {
 			Object[] tuple = new Object[rs.getMetaData().getColumnCount()];
 			for (int i = 0; i < tuple.length; i++) {
 				tuple[i] = rs.getObject(i + 1);
@@ -90,25 +98,40 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 		});
 	}
 
-	public <T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler) {
+	public <T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
+			RelationalTupleHandler<T> tupleHandler) {
 		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
 			List<T> result = new ArrayList<>();
-			try (ResultSet rs = prepareStatement(connection, sql, params).executeQuery()) {
-				while (rs.next()) {
-					result.add(tupleHandler.tuple(rs));
+			try (ResultSet rs = prepareStatement(connection, sql, params, limitOffset, limitRows).executeQuery()) {
+				long rowMin = 0;
+				long rowMax = Long.MAX_VALUE;
+				if (queryLimited(limitOffset, limitRows)) {
+					rowMin = limitOffset;
+					rowMax = limitOffset + limitRows - 1;
+				}
+				long row = 0;
+				while (rs.next() && row <= rowMax) {
+					if (row >= rowMin) {
+						result.add(tupleHandler.tuple(rs));
+					}
+					row++;
 				}
 			}
 			return result;
 		});
 	}
 
-	private PreparedStatement prepareStatement(Connection connection, String sql, List<Object> params)
-			throws SQLException {
+	private PreparedStatement prepareStatement(Connection connection, String sql, List<Object> params, Long limitOffset,
+			Long limitRows) throws SQLException {
 		PreparedStatement statement = connection.prepareStatement(sql);
 		for (int i = 0; i < params.size(); i++) {
 			statement.setObject(i + 1, params.get(i));
 		}
 		return statement;
+	}
+
+	private boolean queryLimited(Long limitOffset, Long limitRows) {
+		return limitOffset != null && limitRows != null;
 	}
 
 	private String toSqlConstant(Object parameterValue) {

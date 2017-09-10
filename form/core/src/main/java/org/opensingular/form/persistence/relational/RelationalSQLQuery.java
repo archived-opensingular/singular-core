@@ -50,6 +50,8 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private STypeComposite<?> keyFormType;
 	private Map<String, Object> keyFormColumnMap;
 	private List<RelationalColumn> keyFormColumns;
+	private Long limitOffset;
+	private Long limitRows;
 
 	@SafeVarargs
 	public RelationalSQLQuery(RelationalSQLAggregator aggregator, Collection<SType<?>>... fieldCollections) {
@@ -82,6 +84,12 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return this;
 	}
 
+	public RelationalSQLQuery limit(Long limitOffset, Long limitRows) {
+		this.limitOffset = limitOffset;
+		this.limitRows = limitRows;
+		return this;
+	}
+
 	public Collection<SType<?>> getTargetFields() {
 		return targetFields;
 	}
@@ -102,7 +110,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 		List<RelationalColumn> selected = selectedColumns();
 		String sql = "select " + selectPart(concatenateColumnNames(selected, ", ")) + " from " + joinTables(joinMap)
 				+ wherePart + orderPart;
-		return Arrays.asList(new RelationalSQLCommmand(sql, params, null, selected));
+		return Arrays.asList(new RelationalSQLCommmand(sql, params, null, selected, limitOffset, limitRows));
 	}
 
 	private String selectPart(String columnsSequence) {

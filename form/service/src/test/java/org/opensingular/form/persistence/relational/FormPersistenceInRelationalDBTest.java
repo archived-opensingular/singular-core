@@ -57,24 +57,39 @@ public class FormPersistenceInRelationalDBTest {
 	public void basicPersistenceWithGeneratedKey() {
 		db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS CLOB, PRIMARY KEY (CODE))");
 		//
-		SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
-		formInstance.setValue("name", "My form");
-		FormKey insertedKey = repoForm.insert(formInstance, null);
-		assertEquals("{CODE=1}", insertedKey.toStringPersistence());
+		FormKey firtsKey = repoForm.insert(createFormInstance("My form"), null);
+		assertEquals("{CODE=1}", firtsKey.toStringPersistence());
 		assertEquals(1, repoForm.countAll());
 		assertEquals(1, repoForm.loadAll().size());
 		//
-		Object code = ((FormKeyRelational) insertedKey).getColumnValue("CODE");
+		Object code = ((FormKeyRelational) firtsKey).getColumnValue("CODE");
 		assertEquals("My form", db.query("SELECT NAME FROM FORM WHERE CODE = ?", asList(code)).get(0)[0]);
 		//
-		SIComposite loaded = repoForm.load(insertedKey);
+		SIComposite loaded = repoForm.load(firtsKey);
 		assertEquals("My form", loaded.getValue("name"));
 		assertNull(loaded.getValue("observation"));
-		assertEquals(insertedKey, FormKey.fromInstance(loaded));
+		assertEquals(firtsKey, FormKey.fromInstance(loaded));
 		//
-		repoForm.delete(insertedKey);
-		assertEquals(0, repoForm.countAll());
-		assertEquals(0, repoForm.loadAll().size());
+		repoForm.insert(createFormInstance("Second form"), null);
+		repoForm.insert(createFormInstance("Third form"), null);
+		assertEquals(3, repoForm.countAll());
+		List<SIComposite> page1 = repoForm.loadAll(0, 2);
+		assertEquals(2, page1.size());
+		assertEquals("{CODE=1}", FormKey.fromInstance(page1.get(0)).toStringPersistence());
+		assertEquals("{CODE=2}", FormKey.fromInstance(page1.get(1)).toStringPersistence());
+		List<SIComposite> page2 = repoForm.loadAll(2, 2);
+		assertEquals(1, page2.size());
+		assertEquals("{CODE=3}", FormKey.fromInstance(page2.get(0)).toStringPersistence());
+		//
+		repoForm.delete(firtsKey);
+		assertEquals(2, repoForm.countAll());
+		assertEquals(2, repoForm.loadAll().size());
+	}
+
+	private SIComposite createFormInstance(String name) {
+		SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
+		formInstance.setValue("name", name);
+		return formInstance;
 	}
 
 	@Test
