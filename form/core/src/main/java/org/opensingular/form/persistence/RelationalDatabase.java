@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence;
 
 import java.util.Collection;
 import java.util.List;
+
+import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
+import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 
 /**
  * Interface for relational database managers.

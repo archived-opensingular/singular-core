@@ -37,7 +37,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
-import org.opensingular.form.persistence.relational.RelationalDatabase;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
 

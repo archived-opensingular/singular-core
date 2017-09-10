@@ -35,7 +35,6 @@ import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBTest.TestPackage.Form;
-import org.opensingular.form.persistence.relational.RelationalDatabase;
 import org.opensingular.form.type.core.STypeString;
 
 /**

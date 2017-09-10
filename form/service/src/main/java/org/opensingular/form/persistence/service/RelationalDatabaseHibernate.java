@@ -29,7 +29,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
-import org.opensingular.form.persistence.relational.RelationalDatabase;
+import org.opensingular.form.persistence.RelationalDatabase;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
 import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 

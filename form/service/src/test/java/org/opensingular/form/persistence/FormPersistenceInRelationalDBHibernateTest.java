@@ -25,7 +25,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Form;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Master;
-import org.opensingular.form.persistence.relational.RelationalDatabase;
 import org.opensingular.form.type.core.STypeString;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
