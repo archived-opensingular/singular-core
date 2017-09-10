@@ -22,7 +22,6 @@ import static org.opensingular.form.persistence.relational.RelationalSQL.select;
 import static org.opensingular.form.persistence.relational.RelationalSQL.selectCount;
 import static org.opensingular.form.persistence.relational.RelationalSQL.selectDistinct;
 
-import java.sql.Types;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -217,11 +216,12 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Master entity");
-				asSQL().defineColumn("id", Types.INTEGER).tablePK("id");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
-				observation.asSQL().column("obs");
 				items = addFieldListOf("items", ItemEntity.class);
+				// relational mapping
+				asSQL().tablePK("id");
+				observation.asSQL().column("obs");
 			}
 		}
 
@@ -235,12 +235,14 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Item entity");
-				asSQL().table("Items").tablePK("masterID, mnemo").addTableFK("masterID", MasterEntity.class);
 				mnemo = addFieldString("mnemo");
 				description = addFieldString("description");
-				description.asSQL().column("desc");
 				price = addFieldMonetary("price");
 				details = addFieldListOf("details", ItemDetailEntity.class);
+				// relational mapping
+				asSQL().table("Items").tablePK("masterID, mnemo");
+				asSQL().addTableFK("masterID", MasterEntity.class);
+				description.asSQL().column("desc");
 			}
 		}
 
@@ -251,8 +253,10 @@ public class RelationalSQLTest extends TestCaseForm {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Item Detail entity");
-				asSQL().tablePK("id").addTableFK("itemID", ItemEntity.class);
 				title = addFieldString("title");
+				// relational mapping
+				asSQL().tablePK("id");
+				asSQL().addTableFK("itemID", ItemEntity.class);
 			}
 		}
 	}

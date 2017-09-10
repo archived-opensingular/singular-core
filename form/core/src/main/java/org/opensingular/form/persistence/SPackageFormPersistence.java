@@ -34,7 +34,7 @@ import org.opensingular.form.type.core.STypeString;
  * @author Daniel C. Bordin
  * @author Edmundo Andrade
  */
-@SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "persitence")
+@SInfoPackage(name = SDictionary.SINGULAR_PACKAGES_PREFIX + "persistence")
 public class SPackageFormPersistence extends SPackage {
 
     static final AtrRef<STypeFormKey, SISimple, FormKey> ATR_FORM_KEY = new AtrRef<>(SPackageFormPersistence.class,
@@ -44,7 +44,6 @@ public class SPackageFormPersistence extends SPackage {
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE = new AtrRef<>(SPackageFormPersistence.class, "table", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE_PK = new AtrRef<>(SPackageFormPersistence.class, "tablePK", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE_FKS = new AtrRef<>(SPackageFormPersistence.class, "tableFKs",  STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeString, SIString, String> ATR_TABLE_COLUMN_DEFS = new AtrRef<>(SPackageFormPersistence.class, "tableColumnDefs", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_COLUMN = new AtrRef<>(SPackageFormPersistence.class, "column", STypeString.class, SIString.class, String.class);
 
     protected void onLoadPackage(PackageBuilder pb) {
@@ -55,7 +54,6 @@ public class SPackageFormPersistence extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_TABLE);
         pb.createAttributeIntoType(SType.class, ATR_TABLE_PK);
         pb.createAttributeIntoType(SType.class, ATR_TABLE_FKS);
-        pb.createAttributeIntoType(SType.class, ATR_TABLE_COLUMN_DEFS);
         pb.createAttributeIntoType(STypeSimple.class, ATR_COLUMN);
     }
 }

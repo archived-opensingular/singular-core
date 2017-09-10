@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,8 +80,9 @@ public class FormPersistenceInRelationalDBTest {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Formulary");
-				asSQL().table("FORM").defineColumn("CODE", Types.INTEGER).tablePK("CODE");
 				name = addFieldString("name");
+				// relational mapping
+				asSQL().table("FORM").tablePK("CODE");
 			}
 		}
 	}

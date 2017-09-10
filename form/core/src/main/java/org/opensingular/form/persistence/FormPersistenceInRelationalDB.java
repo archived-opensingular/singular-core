@@ -237,15 +237,18 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	}
 
 	protected int executeInsertCommand(RelationalSQLCommmand command) {
-		List<String> generatedColumns = RelationalSQL.tablePK(command.getInstance().getType());
-		return db.execReturningGenerated(command.getSQL(), command.getParameters(), generatedColumns, rs -> {
-			HashMap<String, Object> key = new LinkedHashMap<>();
+		List<String> pk = RelationalSQL.tablePK(RelationalSQL.tableContext(command.getInstance().getType()));
+		HashMap<String, Object> key = new LinkedHashMap<>();
+		pk.forEach(columnName -> key.put(columnName, parameterValue(columnName, command)));
+		List<String> generatedColumns = serverSideGeneratedPKColumns(pk, command);
+		int result = db.execReturningGenerated(command.getSQL(), command.getParameters(), generatedColumns, rs -> {
 			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
 				key.put(generatedColumns.get(i), rs.getObject(i + 1));
 			}
-			FormKey.setOnInstance(command.getInstance(), new FormKeyRelational(key));
-			return key;
+			return null;
 		});
+		FormKey.setOnInstance(command.getInstance(), new FormKeyRelational(key));
+		return result;
 	}
 
 	protected FormKey tupleKey(ResultSet rs, List<String> pk) throws SQLException {
@@ -265,5 +268,28 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 			index++;
 		}
 		return tuple;
+	}
+
+	protected List<String> serverSideGeneratedPKColumns(List<String> pk, RelationalSQLCommmand command) {
+		List<String> result = new ArrayList<>();
+		pk.forEach(columnName -> {
+			if (parameterValue(columnName, command) == null) {
+				result.add(columnName);
+			}
+		});
+		return result;
+	}
+
+	private Object parameterValue(String columnName, RelationalSQLCommmand command) {
+		Object result = null;
+		int paramIndex = 0;
+		for (RelationalColumn column : command.getColumns()) {
+			if (column.getName().equals(columnName)) {
+				result = command.getParameters().get(paramIndex);
+				break;
+			}
+			paramIndex++;
+		}
+		return result;
 	}
 }

@@ -60,6 +60,9 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 
 	public int execReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
 			RelationalTupleHandler<?> tupleHandler) {
+		if (generatedColumns.isEmpty()) {
+			return exec(sql, params);
+		}
 		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
 			String newSQL = sql;
 			for (Object param : params) {

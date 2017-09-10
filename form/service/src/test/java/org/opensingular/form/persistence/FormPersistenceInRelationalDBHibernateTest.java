@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.sql.Types;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -140,9 +139,10 @@ public class FormPersistenceInRelationalDBHibernateTest {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Formulary");
-				asSQL().table("FORM").defineColumn("CODE", Types.INTEGER).tablePK("CODE");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
+				// relational mapping
+				asSQL().table("FORM").tablePK("CODE");
 				observation.asSQL().column("OBS");
 			}
 		}
@@ -155,9 +155,10 @@ public class FormPersistenceInRelationalDBHibernateTest {
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Master entity");
-				asSQL().defineColumn("ID", Types.INTEGER).tablePK("ID");
 				name = addFieldString("name");
 				details = addFieldListOf("details", Detail.class);
+				// relational mapping
+				asSQL().tablePK("ID");
 			}
 		}
 
@@ -169,7 +170,8 @@ public class FormPersistenceInRelationalDBHibernateTest {
 			protected void onLoadType(TypeBuilder tb) {
 				item = addFieldString("item");
 				asAtr().label("Detail entity");
-				asSQL().defineColumn("ID", Types.INTEGER).tablePK("ID");
+				// relational mapping
+				asSQL().tablePK("ID");
 				asSQL().addTableFK("MASTER", Master.class);
 			}
 		}
