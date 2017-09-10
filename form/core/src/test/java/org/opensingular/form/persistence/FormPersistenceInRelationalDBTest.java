@@ -55,14 +55,15 @@ public class FormPersistenceInRelationalDBTest {
 		FormKey key = repo.keyFromObject("CODE$Integer$1");
 		assertEquals("CODE$Integer$1", key.toStringPersistence());
 		HashMap<String, Object> internalMap = ((FormKeyRelational) key).getValue();
+		assertEquals(1, internalMap.size());
 		assertEquals(1, internalMap.get("CODE"));
 		assertEquals("CODE$Integer$1", repo.keyFromObject(internalMap).toStringPersistence());
 	}
 
 	@Test
 	public void countAll() {
-		when(db.query("select count(*) from FORM T1", emptyList())).thenReturn(querySingleResult(0L));
-		assertEquals(0, repo.countAll());
+		when(db.query("select count(*) from FORM T1", emptyList())).thenReturn(querySingleResult(42L));
+		assertEquals(42L, repo.countAll());
 	}
 
 	private List<Object[]> querySingleResult(Object value) {

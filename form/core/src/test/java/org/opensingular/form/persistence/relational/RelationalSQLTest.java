@@ -25,6 +25,7 @@ import static org.opensingular.form.persistence.relational.RelationalSQL.selectD
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -76,7 +77,7 @@ public class RelationalSQLTest extends TestCaseForm {
 
 	@Test
 	public void selectByKey() {
-		RelationalSQL query = select(master.getFields()).where(master, new FormKeyRelational("id$Integer$42"));
+		RelationalSQL query = select(master.getFields()).where(master, masterKey(42));
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
 		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 where T1.id = ?", script.get(0).getSQL());
@@ -192,7 +193,7 @@ public class RelationalSQLTest extends TestCaseForm {
 	}
 
 	private FormKey masterKey(int id) {
-		HashMap<String, Object> key = new HashMap<>();
+		HashMap<String, Object> key = new LinkedHashMap<>();
 		key.put("id", id);
 		return new FormKeyRelational(key);
 	}

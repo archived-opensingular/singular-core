@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -238,7 +239,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	protected int executeInsertCommand(RelationalSQLCommmand command) {
 		List<String> generatedColumns = RelationalSQL.tablePK(command.getInstance().getType());
 		return db.execReturningGenerated(command.getSQL(), command.getParameters(), generatedColumns, rs -> {
-			HashMap<String, Object> key = new HashMap<>();
+			HashMap<String, Object> key = new LinkedHashMap<>();
 			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
 				key.put(generatedColumns.get(i), rs.getObject(i + 1));
 			}
@@ -248,7 +249,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	}
 
 	protected FormKey tupleKey(ResultSet rs, List<String> pk) throws SQLException {
-		HashMap<String, Object> key = new HashMap<>();
+		HashMap<String, Object> key = new LinkedHashMap<>();
 		for (String keyColumn : pk) {
 			key.put(keyColumn, rs.getObject(keyColumn));
 		}
