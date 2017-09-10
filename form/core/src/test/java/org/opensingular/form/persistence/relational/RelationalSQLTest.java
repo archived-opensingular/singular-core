@@ -19,6 +19,8 @@ package org.opensingular.form.persistence.relational;
 import static org.opensingular.form.persistence.relational.RelationalSQL.delete;
 import static org.opensingular.form.persistence.relational.RelationalSQL.insert;
 import static org.opensingular.form.persistence.relational.RelationalSQL.select;
+import static org.opensingular.form.persistence.relational.RelationalSQL.selectCount;
+import static org.opensingular.form.persistence.relational.RelationalSQL.selectDistinct;
 
 import java.sql.Types;
 import java.util.Arrays;
@@ -85,6 +87,26 @@ public class RelationalSQLTest extends TestCaseForm {
 	}
 
 	@Test
+	public void selectWithAggregatorCount() {
+		RelationalSQL query = selectCount(master);
+		List<RelationalSQLCommmand> script = query.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("select count(*) from MasterEntity T1", script.get(0).getSQL());
+		assertEquals(0, script.get(0).getParameters().size());
+		assertNull(script.get(0).getInstance());
+	}
+
+	@Test
+	public void selectWithAggregatorDistinct() {
+		RelationalSQL query = selectDistinct(Arrays.asList(master.name));
+		List<RelationalSQLCommmand> script = query.toSQLScript();
+		assertEquals(1, script.size());
+		assertEquals("select distinct T1.name from MasterEntity T1", script.get(0).getSQL());
+		assertEquals(0, script.get(0).getParameters().size());
+		assertNull(script.get(0).getInstance());
+	}
+
+	@Test
 	public void joinSelect() {
 		ItemEntity items = master.items.getElementsType();
 		RelationalSQL query = select(Arrays.asList(master.name, master.observation), items.getFields())
@@ -131,7 +153,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		assertEquals("insert into Items (mnemo, masterID) values (?, ?)", script.get(0).getSQL());
 		assertEquals(2, script.get(0).getParameters().size());
 		assertEquals("My mnemo", script.get(0).getParameters().get(0));
-		// assertEquals(33, script.get(0).getParameters().get(1));
+		assertEquals(33, script.get(0).getParameters().get(1));
 		assertEquals(itemInstance, script.get(0).getInstance());
 		//
 		SIComposite itemDetailInstance = addItemDetail("My title", itemInstance);

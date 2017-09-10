@@ -61,6 +61,7 @@ public class FormPersistenceInRelationalDBTest {
 		formInstance.setValue("name", "My form");
 		FormKey insertedKey = repoForm.insert(formInstance, null);
 		assertEquals("{CODE=1}", insertedKey.toStringPersistence());
+		assertEquals(1, repoForm.countAll());
 		assertEquals(1, repoForm.loadAll().size());
 		//
 		Object code = ((FormKeyRelational) insertedKey).getColumnValue("CODE");
@@ -72,6 +73,7 @@ public class FormPersistenceInRelationalDBTest {
 		assertEquals(insertedKey, FormKey.fromInstance(loaded));
 		//
 		repoForm.delete(insertedKey);
+		assertEquals(0, repoForm.countAll());
 		assertEquals(0, repoForm.loadAll().size());
 	}
 
@@ -87,6 +89,7 @@ public class FormPersistenceInRelationalDBTest {
 		addDetail("Item 3", master);
 		FormKey insertedKey = repoMaster.insert(master, null);
 		assertEquals("{ID=1}", insertedKey.toStringPersistence());
+		assertEquals(1, repoMaster.countAll());
 		assertEquals(1, repoMaster.loadAll().size());
 		//
 		Object code = ((FormKeyRelational) insertedKey).getColumnValue("ID");
@@ -103,6 +106,7 @@ public class FormPersistenceInRelationalDBTest {
 		assertEquals(3, details.size());
 		//
 		repoMaster.delete(insertedKey);
+		assertEquals(0, repoMaster.countAll());
 		assertEquals(0, repoMaster.loadAll().size());
 	}
 

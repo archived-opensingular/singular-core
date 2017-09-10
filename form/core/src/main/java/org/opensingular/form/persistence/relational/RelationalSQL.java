@@ -17,7 +17,11 @@
 package org.opensingular.form.persistence.relational;
 
 import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.COUNT;
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.NONE;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +45,16 @@ public interface RelationalSQL {
 
 	@SafeVarargs
 	public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {
-		return new RelationalSQLQuery(fieldCollections);
+		return new RelationalSQLQuery(NONE, fieldCollections);
+	}
+
+	public static RelationalSQLQuery selectCount(SType<?> type) {
+		return new RelationalSQLQuery(COUNT, Arrays.asList(type));
+	}
+
+	@SafeVarargs
+	public static RelationalSQLQuery selectDistinct(Collection<SType<?>>... fieldCollections) {
+		return new RelationalSQLQuery(DISTINCT, fieldCollections);
 	}
 
 	public static RelationalSQLInsert insert(SIComposite instance) {

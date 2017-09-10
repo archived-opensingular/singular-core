@@ -16,6 +16,10 @@
 
 package org.opensingular.form.persistence.relational;
 
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.COUNT;
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.NONE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,8 +40,9 @@ import org.opensingular.form.persistence.FormKey;
  * @author Edmundo Andrade
  */
 public class RelationalSQLQuery implements RelationalSQL {
-	private Collection<SType<?>> targetFields;
-	private List<SType<?>> targetTables;
+	private RelationalSQLAggregator aggregator;
+	private List<SType<?>> targetTables = new ArrayList<>();
+	private Collection<SType<?>> targetFields = new ArrayList<>();;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
 	private Map<String, String> mapColumnToField;
@@ -47,11 +52,10 @@ public class RelationalSQLQuery implements RelationalSQL {
 	private List<RelationalColumn> keyFormColumns;
 
 	@SafeVarargs
-	public RelationalSQLQuery(Collection<SType<?>>... fieldCollections) {
-		this.targetFields = new ArrayList<>();
+	public RelationalSQLQuery(RelationalSQLAggregator aggregator, Collection<SType<?>>... fieldCollections) {
+		this.aggregator = aggregator;
 		for (Collection<SType<?>> fieldCollection : fieldCollections)
 			this.targetFields.addAll(fieldCollection);
-		this.targetTables = new ArrayList<>();
 		this.keyColumns = new ArrayList<>();
 		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
@@ -96,14 +100,26 @@ public class RelationalSQLQuery implements RelationalSQL {
 			orderPart = " order by " + concatenateOrderingColumns(", ");
 		}
 		List<RelationalColumn> selected = selectedColumns();
-		return Arrays.asList(new RelationalSQLCommmand("select " + concatenateColumnNames(selected, ", ") + " from "
-				+ joinTables(joinMap) + wherePart + orderPart, params, null, selected));
+		String sql = "select " + selectPart(concatenateColumnNames(selected, ", ")) + " from " + joinTables(joinMap)
+				+ wherePart + orderPart;
+		return Arrays.asList(new RelationalSQLCommmand(sql, params, null, selected));
+	}
+
+	private String selectPart(String columnsSequence) {
+		String result;
+		if (aggregator.equals(COUNT))
+			result = "count(*)";
+		else if (aggregator.equals(DISTINCT))
+			result = "distinct " + columnsSequence;
+		else
+			result = columnsSequence;
+		return result;
 	}
 
 	private List<RelationalColumn> selectedColumns() {
 		List<RelationalColumn> result = new ArrayList<>(targetColumns);
 		keyColumns.forEach(column -> {
-			if (!targetColumns.contains(column)) {
+			if (aggregator.equals(NONE) && !targetColumns.contains(column)) {
 				result.add(column);
 			}
 		});

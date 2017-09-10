@@ -26,21 +26,21 @@ import org.opensingular.form.SIComposite;
  * @author Edmundo Andrade
  */
 public class RelationalSQLCommmand {
-	private String command;
+	private String sql;
 	private List<Object> parameters;
 	private SIComposite instance;
 	private List<RelationalColumn> columns;
 
-	public RelationalSQLCommmand(String command, List<Object> parameters, SIComposite instance,
+	public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
 			List<RelationalColumn> columns) {
-		this.command = command;
+		this.sql = sql;
 		this.parameters = parameters;
 		this.instance = instance;
 		this.columns = columns;
 	}
 
 	public String getSQL() {
-		return command;
+		return sql;
 	}
 
 	public List<Object> getParameters() {
