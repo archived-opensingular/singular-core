@@ -6,7 +6,7 @@ import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
 import org.opensingular.form.persistence.relational.RelationalDatabase;
-import org.opensingular.form.persistence.relational.RelationalDatabaseHibernate;
+import org.opensingular.form.persistence.service.RelationalDatabaseHibernate;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.context.annotation.Bean;

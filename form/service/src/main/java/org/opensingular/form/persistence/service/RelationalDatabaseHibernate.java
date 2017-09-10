@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,10 +24,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
+import org.opensingular.form.persistence.relational.RelationalDatabase;
+import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
+import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 
 /**
  * Hibernate-based interaction with a relational database manager.
@@ -103,12 +107,8 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 		return sessionFactory.getCurrentSession().doReturningWork(connection -> {
 			List<T> result = new ArrayList<>();
 			try (ResultSet rs = prepareStatement(connection, sql, params, limitOffset, limitRows).executeQuery()) {
-				long rowMin = 0;
-				long rowMax = Long.MAX_VALUE;
-				if (queryLimited(limitOffset, limitRows)) {
-					rowMin = limitOffset;
-					rowMax = limitOffset + limitRows - 1;
-				}
+				long rowMin = Optional.ofNullable(limitOffset).orElse(0L);
+				long rowMax = rowMin - 1 + Optional.ofNullable(limitRows).orElse(Long.MAX_VALUE - rowMin);
 				long row = 0;
 				while (rs.next() && row <= rowMax) {
 					if (row >= rowMin) {
@@ -128,10 +128,6 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 			statement.setObject(i + 1, params.get(i));
 		}
 		return statement;
-	}
-
-	private boolean queryLimited(Long limitOffset, Long limitRows) {
-		return limitOffset != null && limitRows != null;
 	}
 
 	private String toSqlConstant(Object parameterValue) {

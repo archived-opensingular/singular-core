@@ -26,6 +26,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyRelational;
 
 /**
  * Builder for SQL updates and other data synchronizations on Relational DBMS.

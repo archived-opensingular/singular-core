@@ -1,4 +1,4 @@
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -23,21 +23,23 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormPersistenceInRelationalDB;
-import org.opensingular.form.persistence.relational.FormPersistenceInRelationalDBTest.TestPackage.Form;
-import org.opensingular.form.persistence.relational.FormPersistenceInRelationalDBTest.TestPackage.Master;
+import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Form;
+import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Master;
+import org.opensingular.form.persistence.relational.RelationalDatabase;
 import org.opensingular.form.type.core.STypeString;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author Edmundo Andrade
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:relational/applicationContext.xml")
 @Rollback
 @Transactional
-public class FormPersistenceInRelationalDBTest {
+public class FormPersistenceInRelationalDBHibernateTest {
 	@Inject
 	protected SessionFactory sessionFactory;
 	@Inject
@@ -58,7 +60,7 @@ public class FormPersistenceInRelationalDBTest {
 		db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS CLOB, PRIMARY KEY (CODE))");
 		//
 		FormKey firtsKey = repoForm.insert(createFormInstance("My form"), null);
-		assertEquals("{CODE=1}", firtsKey.toStringPersistence());
+		assertEquals("CODE$Integer$1", firtsKey.toStringPersistence());
 		assertEquals(1, repoForm.countAll());
 		assertEquals(1, repoForm.loadAll().size());
 		//
@@ -75,11 +77,11 @@ public class FormPersistenceInRelationalDBTest {
 		assertEquals(3, repoForm.countAll());
 		List<SIComposite> page1 = repoForm.loadAll(0, 2);
 		assertEquals(2, page1.size());
-		assertEquals("{CODE=1}", FormKey.fromInstance(page1.get(0)).toStringPersistence());
-		assertEquals("{CODE=2}", FormKey.fromInstance(page1.get(1)).toStringPersistence());
+		assertEquals("CODE$Integer$1", FormKey.fromInstance(page1.get(0)).toStringPersistence());
+		assertEquals("CODE$Integer$2", FormKey.fromInstance(page1.get(1)).toStringPersistence());
 		List<SIComposite> page2 = repoForm.loadAll(2, 2);
 		assertEquals(1, page2.size());
-		assertEquals("{CODE=3}", FormKey.fromInstance(page2.get(0)).toStringPersistence());
+		assertEquals("CODE$Integer$3", FormKey.fromInstance(page2.get(0)).toStringPersistence());
 		//
 		repoForm.delete(firtsKey);
 		assertEquals(2, repoForm.countAll());
@@ -103,7 +105,7 @@ public class FormPersistenceInRelationalDBTest {
 		addDetail("Item 2", master);
 		addDetail("Item 3", master);
 		FormKey insertedKey = repoMaster.insert(master, null);
-		assertEquals("{ID=1}", insertedKey.toStringPersistence());
+		assertEquals("ID$Integer$1", insertedKey.toStringPersistence());
 		assertEquals(1, repoMaster.countAll());
 		assertEquals(1, repoMaster.loadAll().size());
 		//

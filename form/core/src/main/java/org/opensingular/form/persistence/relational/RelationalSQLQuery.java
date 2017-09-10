@@ -33,6 +33,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyRelational;
 
 /**
  * Builder for SQL queries on Relational DBMS.

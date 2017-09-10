@@ -23,6 +23,7 @@ import java.util.Map;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyRelational;
 
 /**
  * Builder for SQL insertions on Relational DBMS.

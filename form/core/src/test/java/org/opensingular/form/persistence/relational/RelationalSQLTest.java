@@ -41,6 +41,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyRelational;
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.ItemEntity;
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.MasterEntity;
 import org.opensingular.form.type.core.STypeMonetary;
@@ -75,9 +76,7 @@ public class RelationalSQLTest extends TestCaseForm {
 
 	@Test
 	public void selectByKey() {
-		HashMap<String, Object> keyMap = new HashMap<>();
-		keyMap.put("id", 42);
-		RelationalSQL query = select(master.getFields()).where(master, new FormKeyRelational(keyMap));
+		RelationalSQL query = select(master.getFields()).where(master, new FormKeyRelational("id$Integer$42"));
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
 		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 where T1.id = ?", script.get(0).getSQL());

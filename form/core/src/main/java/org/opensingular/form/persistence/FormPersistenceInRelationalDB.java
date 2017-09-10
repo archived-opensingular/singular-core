@@ -32,9 +32,9 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
-import org.opensingular.form.persistence.relational.FormKeyRelational;
 import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
 import org.opensingular.form.persistence.relational.RelationalDatabase;
@@ -51,6 +51,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	protected RelationalDatabase db;
 	private final SDocumentFactory documentFactory;
 	private final Class<TYPE> type;
+	private FormKeyManager<FormKeyRelational> formKeyManager;
 
 	public FormPersistenceInRelationalDB(RelationalDatabase db, SDocumentFactory documentFactory, Class<TYPE> type) {
 		this.db = db;
@@ -58,10 +59,9 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		this.type = type;
 	}
 
-	// TODO Conversar com Daniel
 	@Nonnull
 	public FormKey keyFromObject(@Nonnull Object objectValueToBeConverted) {
-		return null;
+		return getFormKeyManager().keyFromObject(objectValueToBeConverted);
 	}
 
 	@Nonnull
@@ -103,6 +103,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	// TODO
 	public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
+		throw new SingularFormException("Method not implemented.");
 	}
 
 	@Nonnull
@@ -121,7 +122,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	@Nonnull
 	public FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
-		return null;
+		throw new SingularFormException("Method not implemented.");
 	}
 
 	@Nonnull
@@ -160,6 +161,19 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	@SuppressWarnings("unchecked")
 	public INSTANCE createInstance() {
 		return (INSTANCE) documentFactory.createInstance(RefType.of(type));
+	}
+
+	@Nonnull
+	public FormKeyManager<FormKeyRelational> getFormKeyManager() {
+		if (formKeyManager == null) {
+			formKeyManager = new FormKeyManager<>(FormKeyRelational.class, e -> addInfo(e));
+		}
+		return formKeyManager;
+	}
+
+	@Nonnull
+	protected SingularFormPersistenceException addInfo(@Nonnull SingularFormPersistenceException exception) {
+		return exception.add("persistence", toString());
 	}
 
 	@Nullable
