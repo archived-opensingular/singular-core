@@ -31,27 +31,23 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 
     public SingularAdminTemplate() {
-        super();
+        this(null);
     }
 
     public SingularAdminTemplate(PageParameters parameters) {
         super(parameters);
+        addPageBody();
+        addHeader();
+        addPageContent();
+        addPageContentTitle();
+        addPageContentSubtitle();
+        addFooter();
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        buildPage();
-    }
-
-    private void buildPage() {
-        addPageBody();
-        addHeader();
         addPageMenu();
-        addPageContent();
-        addPageContentTitle();
-        addPageContentSubtitle();
-        addFooter();
     }
 
     @Override

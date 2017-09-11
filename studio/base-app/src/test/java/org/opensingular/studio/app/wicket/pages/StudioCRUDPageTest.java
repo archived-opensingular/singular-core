@@ -21,6 +21,7 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.studio.app.definition.StudioDefinition;
 import org.opensingular.studio.app.menu.*;
+import org.opensingular.studio.app.util.StudioWicketUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 public class StudioCRUDPageTest extends WicketTestCase {
@@ -65,7 +66,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
         group.add(new ItemMenuEntry("Mock", new HTTPEndpointMenuView("/")));
         applicationContextMock.putBean(menu);
-        tester.executeUrl(group.getEndpoint());
+        tester.executeUrl("." + group.getEndpoint());
         tester.assertComponent("app-body:menu:itens:0:menu-item", MetronicMenuGroup.class);
         tester.assertComponent("app-body:menu:itens:0:menu-item:menu-group:sub-menu:itens:0:menu-item", MetronicMenuItem.class);
     }
@@ -73,7 +74,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
     @Test
     public void testPathParamLookup() throws Exception {
         applicationContextMock.putBean(new StudioMenu(null));
-        tester.executeUrl(StudioCRUDPage.getPageEndpoint("foo/bar"));
+        tester.executeUrl("." + StudioWicketUtils.getMergedPathIntoURL(StudioCRUDPage.class, "foo/bar"));
         StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("foo/bar", lastRenderedPage.getMenuPath());
     }
@@ -85,7 +86,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
         ItemMenuEntry mockMenuItem = group.add(new ItemMenuEntry("Mock", new StudioMenuView(studioDefinition)));
         applicationContextMock.putBean(menu);
-        tester.executeUrl(mockMenuItem.getEndpoint());
+        tester.executeUrl("." +mockMenuItem.getEndpoint());
         tester.assertRenderedPage(StudioCRUDPage.class);
         StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("group/mock", lastRenderedPage.getMenuPath());

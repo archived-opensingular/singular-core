@@ -48,6 +48,7 @@ public class StudioPortalPage extends StudioTemplate {
                 anchor.add(new Label("label", entry.getName()));
                 listItem.add(anchor);
             }
+
         };
         add(listView);
     }
