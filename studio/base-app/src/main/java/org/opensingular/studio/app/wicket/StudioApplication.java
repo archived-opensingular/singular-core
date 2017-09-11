@@ -33,16 +33,6 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         this.appConfig = appConfig;
     }
 
-    private final static class OuputMarkupBehavior extends Behavior {
-        @Override
-        public void onConfigure(Component comp) {
-            if (!comp.getRenderBodyOnly()) {
-                comp
-                        .setOutputMarkupId(true)
-                        .setOutputMarkupPlaceholderTag(true);
-            }
-        }
-    }
 
     @Override
     public Class<? extends Page> getHomePage() {
@@ -63,7 +53,6 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
         setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
-        getComponentInitializationListeners().add(comp -> comp.add(new OuputMarkupBehavior()));
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         new AnnotatedMountScanner().scanPackage("org.opensingular.studio.app").mount(this);
         List<IStringResourceLoader> stringResourceLoaders = getResourceSettings().getStringResourceLoaders();
