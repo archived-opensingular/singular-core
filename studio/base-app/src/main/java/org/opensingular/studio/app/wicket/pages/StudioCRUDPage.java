@@ -78,7 +78,12 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
             while (currentMenuEntry instanceof ItemMenuEntry) {
                 currentMenuEntry = currentMenuEntry.getParent();
             }
-            metronicMenu.addItem(buildMenu(currentMenuEntry));
+            AbstractMenuItem menu = buildMenu(currentMenuEntry);
+            if(menu instanceof MetronicMenuGroup){
+                MetronicMenuGroup metronicMenuGroup = (MetronicMenuGroup) menu;
+                metronicMenuGroup.setOpen();
+            }
+            metronicMenu.addItem(menu);
         }
         return metronicMenu;
     }

@@ -65,7 +65,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
     public void testRenderMenu() throws Exception {
         StudioMenu menu = new StudioMenu(null);
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
-        group.add(new ItemMenuEntry("Mock", new SimpleUrlMenuView("/")));
+        group.add(new ItemMenuEntry("Mock", new HTTPEndpointMenuView("/")));
         applicationContextMock.putBean(menu);
         tester.executeUrl(group.getEndpoint());
         tester.assertComponent("app-body:menu:itens:0:menu-item", MetronicMenuGroup.class);

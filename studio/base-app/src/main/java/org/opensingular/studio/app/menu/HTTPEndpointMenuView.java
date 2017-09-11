@@ -2,10 +2,10 @@ package org.opensingular.studio.app.menu;
 
 import org.opensingular.studio.core.menu.MenuView;
 
-public class SimpleUrlMenuView implements MenuView {
+public class HTTPEndpointMenuView implements MenuView {
     private final String url;
 
-    public SimpleUrlMenuView(String url) {
+    public HTTPEndpointMenuView(String url) {
         this.url = url;
     }
 

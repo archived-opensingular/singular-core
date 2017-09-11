@@ -5,8 +5,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.studio.app.menu.GroupMenuEntry;
-import org.opensingular.studio.core.menu.MenuEntry;
 import org.opensingular.studio.app.menu.StudioMenu;
+import org.opensingular.studio.core.menu.MenuEntry;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -43,7 +43,10 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
                 return entry;
             }
             if (entry instanceof GroupMenuEntry) {
-                return findCurrentMenuEntry(((GroupMenuEntry) entry).getChildren());
+                MenuEntry foundedEntry = findCurrentMenuEntry(((GroupMenuEntry) entry).getChildren());
+                if (foundedEntry != null) {
+                    return foundedEntry;
+                }
             }
         }
         return null;
