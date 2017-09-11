@@ -1,5 +1,6 @@
 package org.opensingular.studio.app.wicket.pages;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -55,12 +56,14 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
     }
 
     private StudioMenuItem findCurrentStudioMenuItem(List<MenuEntry> entries) {
+        if (StringUtils.isBlank(menuPath)) {
+            return null;
+        }
         for (MenuEntry entry : entries) {
             if (entry instanceof StudioMenuItem &&
                     ((StudioMenuItem) entry)
                             .getEndpoint()
-                            .replace("/" + StudioPage.STUDIO_ROOT_PATH + "/", "")
-                            .equals(menuPath)) {
+                            .endsWith(menuPath)) {
                 return (StudioMenuItem) entry;
             }
             if (entry instanceof GroupMenuEntry) {
