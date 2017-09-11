@@ -4,7 +4,7 @@ import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.studio.app.wicket.StudioApplication;
-import org.opensingular.studio.core.menu.StudioMenu;
+import org.opensingular.studio.app.menu.StudioMenu;
 
 import java.util.List;
 

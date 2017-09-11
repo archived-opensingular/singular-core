@@ -6,10 +6,12 @@ public abstract class AbstractMenuEntry implements MenuEntry {
     private Icon icon;
     private String name;
     private MenuEntry parent;
+    private MenuView view;
 
-    public AbstractMenuEntry(Icon icon, String name) {
+    public AbstractMenuEntry(Icon icon, String name, MenuView view) {
         this.icon = icon;
         this.name = name;
+        this.view = view;
     }
 
     @Override
@@ -17,19 +19,9 @@ public abstract class AbstractMenuEntry implements MenuEntry {
         return icon;
     }
 
-    public AbstractMenuEntry setIcon(Icon icon) {
-        this.icon = icon;
-        return this;
-    }
-
     @Override
     public String getName() {
         return name;
-    }
-
-    public AbstractMenuEntry setName(String name) {
-        this.name = name;
-        return this;
     }
 
     @Override
@@ -40,5 +32,10 @@ public abstract class AbstractMenuEntry implements MenuEntry {
     @Override
     public void setParent(MenuEntry parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public MenuView getView() {
+        return view;
     }
 }

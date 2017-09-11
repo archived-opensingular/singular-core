@@ -18,7 +18,7 @@ import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.studio.app.AbstractStudioAppConfig;
 import org.opensingular.studio.app.wicket.pages.StudioFooter;
 import org.opensingular.studio.app.wicket.pages.StudioHeader;
-import org.opensingular.studio.app.wicket.pages.StudioPage;
+import org.opensingular.studio.app.wicket.pages.StudioPortalPage;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import java.nio.charset.StandardCharsets;
@@ -46,7 +46,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return StudioPage.class;
+        return StudioPortalPage.class;
     }
 
     @Override
