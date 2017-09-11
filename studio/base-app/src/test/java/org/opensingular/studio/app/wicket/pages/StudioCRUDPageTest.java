@@ -23,8 +23,6 @@ import org.opensingular.studio.app.definition.StudioDefinition;
 import org.opensingular.studio.app.menu.*;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import static org.opensingular.studio.app.wicket.pages.StudioCRUDPage.STUDIO_ROOT_PATH;
-
 public class StudioCRUDPageTest extends WicketTestCase {
 
     private ApplicationContextMock applicationContextMock;
@@ -75,7 +73,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
     @Test
     public void testPathParamLookup() throws Exception {
         applicationContextMock.putBean(new StudioMenu(null));
-        tester.executeUrl("./" + STUDIO_ROOT_PATH + "/foo/bar");
+        tester.executeUrl(StudioCRUDPage.getPageEndpoint("foo/bar"));
         StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("foo/bar", lastRenderedPage.getMenuPath());
     }

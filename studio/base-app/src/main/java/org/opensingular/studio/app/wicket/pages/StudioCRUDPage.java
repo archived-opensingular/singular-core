@@ -28,12 +28,8 @@ import org.opensingular.studio.app.menu.StudioMenuView;
 import org.opensingular.studio.core.menu.MenuEntry;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import static org.opensingular.studio.app.wicket.pages.StudioCRUDPage.STUDIO_ROOT_PATH;
-
-@MountPath("/" + STUDIO_ROOT_PATH + "/${path}")
+@MountPath("/studio/${path}")
 public class StudioCRUDPage extends StudioTemplate implements Loggable {
-    public static final String STUDIO_ROOT_PATH = "studio";
-
     private StudioDefinition definition;
 
     @Override
@@ -42,27 +38,35 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
         Form<Void> form = new Form<>("form");
         form.setMultiPart(true);
         MenuEntry entry = findCurrentMenuEntry();
-        if (entry != null && entry.getView() instanceof StudioMenuView) {
-            StudioMenuView view = (StudioMenuView) entry.getView();
-            definition = view.getStudioDefinition();
-            String beanName = definition.getRepositoryBeanName();
-            if (ApplicationContextProvider.get().containsBean(beanName)) {
-                form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
-                        , () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)
-                        , definition::getPermissionStrategy) {
-                    @Override
-                    protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
-                        definition.configureDatatableColumns(dataTableBuilder);
-                    }
-                }.setCrudTitle(definition.getTitle()));
-            } else {
-                getLogger().warn("Não foi encontrado o bean {}", beanName);
-                addEmptyContent(form);
-            }
+        if (isStudioItem(entry)) {
+            addCrudContent(form, entry);
         } else {
             addEmptyContent(form);
         }
         add(form);
+    }
+
+    private void addCrudContent(Form<Void> form, MenuEntry entry) {
+        StudioMenuView view = (StudioMenuView) entry.getView();
+        definition = view.getStudioDefinition();
+        String beanName = definition.getRepositoryBeanName();
+        if (ApplicationContextProvider.get().containsBean(beanName)) {
+            form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
+                    , () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)
+                    , definition::getPermissionStrategy) {
+                @Override
+                protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
+                    definition.configureDatatableColumns(dataTableBuilder);
+                }
+            }.setCrudTitle(definition.getTitle()));
+        } else {
+            getLogger().warn("Não foi encontrado o bean {}", beanName);
+            addEmptyContent(form);
+        }
+    }
+
+    private boolean isStudioItem(MenuEntry entry) {
+        return entry != null && entry.getView() instanceof StudioMenuView;
     }
 
     private void addEmptyContent(Form<Void> form) {
@@ -79,7 +83,7 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
                 currentMenuEntry = currentMenuEntry.getParent();
             }
             AbstractMenuItem menu = buildMenu(currentMenuEntry);
-            if(menu instanceof MetronicMenuGroup){
+            if (menu instanceof MetronicMenuGroup) {
                 MetronicMenuGroup metronicMenuGroup = (MetronicMenuGroup) menu;
                 metronicMenuGroup.setOpen();
             }
@@ -118,7 +122,6 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
             return super.getPageTitleModel().getObject();
         });
     }
-
 
     public static String getPageEndpoint(String pathParameter) {
         String[] paths = pathParameter.split("/");
