@@ -75,7 +75,6 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css"),
                 skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css"),
                 skinnableResource("/global/plugins/typeahead/typeahead.css"),
-                skinnableResource("/global/css/typhography.css"),
                 skinnableResource("/layout4/css/custom.css"),
                 skinnableResource("/css/custom.css"),
                 skinnableResource("/layout4/css/themes/default.css"),
@@ -162,7 +161,7 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     protected IModel<String> getPageTitleModel(){
-        return new StringResourceModel("label.page.title.local");
+        return new StringResourceModel("label.page.title.local").setDefaultValue("");
     }
 
     protected void initSkins() {

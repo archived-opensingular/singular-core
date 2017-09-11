@@ -43,15 +43,23 @@ public class SingleAspectRegistry<T, QUALIFIER> {
 
     private final AspectRef<T> aspectRef;
 
-    private final QualifierStrategy qualifierStrategy;
+    /** Implements the logic for choosing between different implementations that may apply to specific case. */
+    private final QualifierStrategy<QUALIFIER> qualifierStrategy;
 
     private final Map<Class<? extends SType>, List<AspectEntry<T, QUALIFIER>>> registry = new HashMap<>();
 
     private Integer index;
 
+    /** Creates a new registry for the indicated aspect and without a qualifier strategy. */
     public SingleAspectRegistry(@Nonnull AspectRef<T> aspectRef) {
+        this(aspectRef, null);
+    }
+
+    /** Creates a new registry for the indicated aspect and with a qualifier strategy. */
+    public SingleAspectRegistry(@Nonnull AspectRef<T> aspectRef,
+            @Nullable QualifierStrategy<QUALIFIER> qualifierStrategy) {
         this.aspectRef = Objects.requireNonNull(aspectRef);
-        this.qualifierStrategy = aspectRef.getQualifierStrategy();
+        this.qualifierStrategy = qualifierStrategy;
     }
 
     /**
@@ -69,7 +77,16 @@ public class SingleAspectRegistry<T, QUALIFIER> {
      */
     public SingleAspectRegistry<T, QUALIFIER> addFixImplementation(@Nonnull Class<? extends SType> type,
             @Nonnull T implementation) {
-        return add(type, () -> implementation);
+        return addFixImplementation(type, null, implementation);
+    }
+
+    /**
+     * Registers for a {@link SType} and specific qualifier, a instantiated implementation of the aspect with the
+     * default {@link AspectEntry#DEFAULT_ENTRY_PRIORITY}.
+     */
+    public SingleAspectRegistry<T, QUALIFIER> addFixImplementation(@Nonnull Class<? extends SType> type,
+            @Nullable QUALIFIER qualifier, @Nonnull T implementation) {
+        return add(type, qualifier, () -> implementation);
     }
 
     /**
@@ -106,7 +123,8 @@ public class SingleAspectRegistry<T, QUALIFIER> {
      */
     @Nonnull
     public Optional<T> findAspect(@Nonnull SInstance instance) {
-        return findAspect(instance.getType(), qualifierStrategy.getMatcherFor(instance.getType()));
+        return findAspect(instance.getType(),
+                qualifierStrategy == null ? null : qualifierStrategy.getMatcherFor(instance));
     }
 
     /**
@@ -115,63 +133,86 @@ public class SingleAspectRegistry<T, QUALIFIER> {
      */
     @Nonnull
     public Optional<T> findAspect(@Nonnull SType<?> type) {
-        return findAspect(type, qualifierStrategy.getMatcherFor(type));
+        return findAspect(type, qualifierStrategy == null ? null : qualifierStrategy.getMatcherFor(type));
     }
 
-    private Optional<T> findAspect(@Nonnull SType<?> type, @Nonnull QualifierMatcher matcher) {
+    private Optional<T> findAspect(@Nonnull SType<?> type, @Nullable QualifierMatcher<QUALIFIER> matcher) {
         Objects.requireNonNull(type);
-        T result = findAspectOnTypeTree(type, matcher);
-        if (result == null && !matcher.isAny()) {
-            result = findAspectOnTypeTree(type, QualifierMatcher.ANY);
-        }
+        T result = findAspectOnTypeTree(type, matcher != null ? matcher : QualifierMatcher.nullMatcher());
         return Optional.ofNullable(result);
     }
 
     @Nullable
-    private T findAspectOnTypeTree(@Nonnull SType<?> type, @Nonnull QualifierMatcher matcher) {
-        for (SType<?> current = type; current != null; current = current.getSuperType()) {
-            Object result = InternalAccess.INTERNAL.getAspectDirect(current, getIndex());
-            if (result == null && !isNextSuperTypeOfTheSameClass(current)) {
-                result = lookupOnMap(current, matcher);
+    private T findAspectOnTypeTree(@Nonnull SType<?> type, @Nonnull QualifierMatcher<QUALIFIER> matcher) {
+        AspectEntry<T, QUALIFIER> currentEntry = null;
+        for (SType<?> currentType = type; currentType != null; currentType = currentType.getSuperType()) {
+            AspectEntry<?, ?> entry = InternalAccess.INTERNAL.getAspectDirect(currentType, getIndex());
+            if (entry != null) {
+                return safeConvert(entry);
+            } else if (isNextSuperTypeOfTheSameClass(currentType)) {
+                continue;
             }
-            if (result != null) {
-                if (!aspectRef.getAspectClass().isInstance(result)) {
-                    throw new SingularFormException(
-                            "Was expected to find a object of " + aspectRef.getAspectClass().getName() +
-                                    " but was found a object of the class " + result.getClass().getName());
-                }
-                return aspectRef.getAspectClass().cast(result);
+            currentEntry = lookupOnMap(currentType, matcher, currentEntry);
+            if (currentEntry != null && matcher.isTheBestPossibleMatch(currentEntry)) {
+                return safeConvert(currentEntry);
             }
+        }
+        return safeConvert(currentEntry);
+    }
+
+    @Nullable
+    private T safeConvert(@Nullable AspectEntry<?, ?> entry) {
+        if (entry == null) {
+            return null;
+        }
+        Object value = entry.getFactory().get();
+        if (value != null) {
+            if (!aspectRef.getAspectClass().isInstance(value)) {
+                throw new SingularFormException(
+                        "Was expected to find a object of " + aspectRef.getAspectClass().getName() +
+                                " but was found a object of the class " + value.getClass().getName());
+            }
+            return aspectRef.getAspectClass().cast(value);
         }
         return null;
     }
 
     @Nullable
-    private T lookupOnMap(@Nonnull SType<?> current, @Nonnull QualifierMatcher matcher) {
-        List<AspectEntry<T, QUALIFIER>> list = registry.get(current.getClass());
-        if (list == null) {
-            return null;
-        }
-        AspectEntry<T, QUALIFIER> currentEntry = null;
-        for (AspectEntry<T, QUALIFIER> entry : list) {
-            if (matcher.isMatch(entry)) {
-                currentEntry = selectBestMatch(matcher, currentEntry, entry);
+    private AspectEntry<T, QUALIFIER> lookupOnMap(@Nonnull SType<?> type, @Nonnull QualifierMatcher<QUALIFIER> matcher,
+            @Nullable AspectEntry<T, QUALIFIER> currentResult) {
+        AspectEntry<T, QUALIFIER> currentEntry = currentResult;
+        List<AspectEntry<T, QUALIFIER>> list = registry.get(type.getClass());
+        if (list != null) {
+            for (AspectEntry<T, QUALIFIER> entry : list) {
+                if (matcher.isMatch(entry)) {
+                    currentEntry = selectBestMatch(matcher, currentEntry, entry);
+                }
             }
         }
-        return currentEntry == null ? null : currentEntry.getFactory().get();
+        return currentEntry;
     }
 
     private boolean isNextSuperTypeOfTheSameClass(SType<?> type) {
         return type.getSuperType() != null && type.getClass() == type.getSuperType().getClass();
     }
 
-    private AspectEntry<T, QUALIFIER> selectBestMatch(QualifierMatcher matcher, AspectEntry<T, QUALIFIER> currentResult,
-            AspectEntry<T, QUALIFIER> newEntry) {
+    private AspectEntry<T, QUALIFIER> selectBestMatch(QualifierMatcher<QUALIFIER> matcher,
+            @Nullable AspectEntry<T, QUALIFIER> currentResult, @Nonnull AspectEntry<T, QUALIFIER> newEntry) {
         if (currentResult == null) {
             return newEntry;
         }
-        int relevancy = matcher.compare(currentResult, newEntry);
-        if (relevancy > 0 || (relevancy == 0 && newEntry.getPriority() > currentResult.getPriority())) {
+        int relevancy;
+        if (currentResult.getQualifier() == null) {
+            relevancy = newEntry.getQualifier() == null ? 0 : 1;
+        } else if (newEntry.getQualifier() == null) {
+            relevancy = currentResult.getQualifier() == null ? 0 : -1;
+        } else {
+            relevancy = matcher.compare(currentResult, newEntry);
+            if (relevancy == 0) {
+                relevancy = newEntry.getPriority() - currentResult.getPriority();
+            }
+        }
+        if (relevancy > 0) {
             return newEntry;
         }
         return currentResult;

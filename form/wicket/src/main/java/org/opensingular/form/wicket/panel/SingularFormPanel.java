@@ -16,17 +16,6 @@
 
 package org.opensingular.form.wicket.panel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -37,12 +26,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.SInstanceAnnotationActionsProvider;
 import org.opensingular.form.decorator.action.SInstanceHelpActionsProvider;
@@ -51,8 +37,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.wicket.IWicketBuildListener;
-import org.opensingular.form.wicket.SingularFormConfigWicketImpl;
-import org.opensingular.form.wicket.SingularFormContextWicket;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.WicketBuildListeners;
 import org.opensingular.form.wicket.enums.AnnotationMode;
@@ -63,6 +47,16 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos.
@@ -276,21 +270,7 @@ public class SingularFormPanel extends Panel {
         ctx.addListeners(getBuildListeners());
         addOrReplace(ctx.createFeedbackPanel("feedback", this).setShowBox(true));
 
-        SingularFormContextWicket formContext = resolveFormConfigWicket();
-        formContext.getUIBuilder().build(ctx, getViewMode());
-    }
-
-    private SingularFormContextWicket resolveFormConfigWicket() {
-        SingularFormContextWicket formContextWicket = null;
-        ServiceRegistry registry = ServiceRegistryLocator.locate();
-        if (registry != null) {
-            formContextWicket = registry.lookupService(SingularFormContextWicket.class).orElse(null);
-        }
-
-        if (formContextWicket == null) {
-            return (new SingularFormConfigWicketImpl()).createContext();
-        }
-        return formContextWicket;
+        ctx.build(getViewMode());
     }
 
     @Override

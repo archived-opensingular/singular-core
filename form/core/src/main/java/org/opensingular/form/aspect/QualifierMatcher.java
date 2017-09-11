@@ -29,49 +29,48 @@ import java.util.Comparator;
  * @author Daniel C. Bordin on 10/08/2017.
  * @see AspectEntry#getQualifier()
  */
-public interface QualifierMatcher extends Comparator<AspectEntry<?, ?>> {
-
-    /** A dummy matcher that answer true for any aspect entry. */
-    @Nonnull
-    public static final QualifierMatcher ANY = new QualifierMatcher() {
-
-        @Override
-        public boolean isMatch(@Nonnull AspectEntry<?, ?> aspectEntry) {
-            return true;
-        }
-
-        @Override
-        public boolean isAny() {
-            return true;
-        }
-    };
+public interface QualifierMatcher<QUALIFIER> extends Comparator<AspectEntry<?, QUALIFIER>> {
 
     /**
-     * Verifies if the {@link org.opensingular.form.aspect.AspectEntry} is valid selection.
+     * Verifies if the {@link org.opensingular.form.aspect.AspectEntry} is valid selection, even if it isn't the best
+     * possible match.
      *
      * @see AspectEntry#getQualifier()
      */
-    boolean isMatch(@Nonnull AspectEntry<?, ?> aspectEntry);
-
-    /** Indicates that this matcher is dummy filter that answer true for everything. */
-    default boolean isAny() {
-        return false;
-    }
+    boolean isMatch(@Nonnull AspectEntry<?, QUALIFIER> entry);
 
     /**
-     * Verify between the two entries witch is a better match. If result is:
+     * Verifies if the entry fits exactly the search criteria and the search should stop with this entry.
+     *
+     * @return If true, it's the best possible match and the search should stop. If false, the search should will keep
+     * looking in the parent {@link org.opensingular.form.SType} for a better match.
+     */
+    public boolean isTheBestPossibleMatch(@Nonnull AspectEntry<?, QUALIFIER> entry);
+
+    /**
+     * Verify between the two entries, already verified by {@link #isMatch(AspectEntry)}, witch is a better match. If
+     * result is:
      * <ul>
      * <li>negative, than the first one is more relevant</li>
      * <li>zero, than both are equivalent</li>
      * <li>positive, than the second one is more relevant</li>
      * </ul>
-     * <p>Usually this method should consider the {@link
-     * AspectEntry#getQualifier()}. By default, this methods considers the two entries equivalent.</p>
+     * <p>Usually this method should consider the {@link AspectEntry#getQualifier()}.</p>
+     * <p>By default, this methods considers the entry without a qualifier as less importante, otherwise considers
+     * the two entries equivalent.</p>
      *
      * @see AspectEntry#getQualifier()
      */
     @Override
-    default int compare(AspectEntry<?, ?> o1, AspectEntry<?, ?> o2) {
+    default int compare(AspectEntry<?, QUALIFIER> entry1, AspectEntry<?, QUALIFIER> entry2) {
         return 0;
+    }
+
+    /**
+     * Returns a matcher that accepts a entry that has a null qualifier and has preference for the first entry found for
+     * a type.
+     */
+    public static <T> QualifierMatcher<T> nullMatcher() {
+        return (QualifierMatcher<T>) QualifierMatcherNullQualifier.NULL;
     }
 }

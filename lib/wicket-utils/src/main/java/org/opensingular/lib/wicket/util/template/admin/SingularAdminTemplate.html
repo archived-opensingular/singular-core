@@ -17,14 +17,19 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
 <wicket:extend>
+    <style rel="stylesheet">
+        .zero-padding {
+            padding: 0 !important;
+        }
+    </style>
     <div wicket:id="app-body">
         <div wicket:id="app-header"></div>
         <div class="clearfix"></div>
         <div class="page-container">
             <div wicket:id="menu"></div>
             <div class="page-content-wrapper">
-                <div class="page-content">
-                    <div wicket:id="page-content" class="page-head">
+                <div wicket:id="page-content" class="page-content">
+                    <div class="page-head">
                         <div class="page-title">
                             <h1>
                                 <span wicket:id="content-title"></span>

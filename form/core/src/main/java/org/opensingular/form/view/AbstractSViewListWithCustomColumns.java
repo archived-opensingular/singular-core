@@ -69,7 +69,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @see FormFreemarkerUtil
      */
     public final SELF col(SType<?> type, String customLabel, String freeMarkerTemplateString) {
-        return col(type, customLabel, instance -> FormFreemarkerUtil.merge(instance, freeMarkerTemplateString, false, true));
+        return col(type, customLabel, instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true));
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @see FormFreemarkerUtil
      */
     public final SELF col(String customLabel, String freeMarkerTemplateString) {
-        return col(customLabel, instance -> FormFreemarkerUtil.merge(instance, freeMarkerTemplateString, false, true));
+        return col(customLabel, instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true));
     }
 
     /**

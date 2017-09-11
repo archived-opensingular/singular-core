@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.wicket.util.resource;
 
+import org.opensingular.lib.commons.ui.Icon;
+
 public enum DefaultIcons implements Icon {
 
     //@formatter:off

@@ -15,7 +15,6 @@
  */
 package org.opensingular.form.wicket.mapper.attachment;
 
-import org.apache.tika.io.IOUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -29,22 +28,19 @@ import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
@@ -60,8 +56,7 @@ import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
  */
 public class DownloadSupportedBehavior extends Behavior implements IResourceListener, Loggable {
 
-    private static final String DOWNLOAD_PATH = "/download";
-    private Component                   component;
+    private Component component;
     private IModel<? extends SInstance> model;
     private ContentDisposition contentDisposition;
 
@@ -72,15 +67,6 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
 
     public DownloadSupportedBehavior(IModel<? extends SInstance> model) {
         this(model, ContentDisposition.INLINE);
-    }
-
-    private List<IAttachmentPersistenceHandler<?>> getHandlers() {
-        List<IAttachmentPersistenceHandler<?>> services = new ArrayList<>();
-        if (model.getObject().getDocument().isAttachmentPersistenceTemporaryHandlerSupported()) {
-            services.add(model.getObject().getDocument().getAttachmentPersistenceTemporaryHandler());
-        }
-        model.getObject().getDocument().getAttachmentPersistencePermanentHandler().ifPresent(h -> services.add(h));
-        return services;
     }
 
     @Override
@@ -105,22 +91,11 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
 
     }
 
-    private IAttachmentRef findAttachmentRef(String id) {
-        IAttachmentRef ref = null;
-        for (IAttachmentPersistenceHandler<?> service : getHandlers()) {
-            ref = service.getAttachment(id);
-            if (ref != null) {
-                break;
-            }
-        }
-        return ref;
-    }
-
     private void handleRequest() throws IOException {
-        WebRequest         request    = (WebRequest) RequestCycle.get().getRequest();
+        WebRequest request = (WebRequest) RequestCycle.get().getRequest();
         IRequestParameters parameters = request.getRequestParameters();
-        StringValue        id         = parameters.getParameterValue("fileId");
-        StringValue        name       = parameters.getParameterValue("fileName");
+        StringValue id = parameters.getParameterValue("fileId");
+        StringValue name = parameters.getParameterValue("fileName");
         writeResponse(getDownloadURL(id.toString(), name.toString()));
     }
 
@@ -148,51 +123,30 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
      * @param filename
      * @return
      */
-    private String getDownloadURL(String id, String filename) {
-        String                  url = DOWNLOAD_PATH + "/" + id + "/" + new Date().getTime();
-        SharedResourceReference ref = new SharedResourceReference(String.valueOf(id));
-        AbstractResource resource = new AbstractResource() {
-            @Override
-            protected ResourceResponse newResourceResponse(Attributes attributes) {
-                IAttachmentRef fileRef = findAttachmentRef(id);
-                if (fileRef == null) {
-                    return new ResourceResponse().setStatusCode(HttpServletResponse.SC_NOT_FOUND);
-                }
-                ResourceResponse resourceResponse = new ResourceResponse();
-                if (fileRef.getSize() > 0) {
-                    resourceResponse.setContentLength(fileRef.getSize());
-                }
-                resourceResponse.setFileName(filename);
-                try {
-                    resourceResponse.setContentDisposition(contentDisposition);
-                    resourceResponse.setContentType(fileRef.getContentType());
-                    resourceResponse.setWriteCallback(new WriteCallback() {
-                        @Override
-                        public void writeData(Attributes attributes) throws IOException {
-                            try (InputStream inputStream = fileRef.getContentAsInputStream()) {
-                                IOUtils.copy(inputStream, attributes.getResponse().getOutputStream());
-                                /*Desregistrando recurso compartilhado*/
-                                WebApplication.get().unmount(url);
-                                WebApplication.get().getSharedResources().remove(ref.getKey());
-                            } catch (Exception e) {
-                                getLogger().error("Erro ao recuperar arquivo.", e);
-                                ((WebResponse) attributes.getResponse()).setStatus(HttpServletResponse.SC_NOT_FOUND);
-                                resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    getLogger().error("Erro ao recuperar arquivo.", e);
-                    resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
-                }
-                return resourceResponse;
+    private String getDownloadURL(String attachmentKey, String filename) {
+        final AttachmentResource resource = new AttachmentResource(filename, contentDisposition, findAttachmentRef(attachmentKey));
+        final AttachmentShareHandler shareHandler = new AttachmentShareHandler(attachmentKey, (WebApplication) component.getApplication());
+        return shareHandler.share(resource);
+    }
+
+    public IAttachmentRef findAttachmentRef(String attachmentKey) {
+        IAttachmentRef ref = null;
+        for (IAttachmentPersistenceHandler<?> service : getHandlers()) {
+            ref = service.getAttachment(attachmentKey);
+            if (ref != null) {
+                break;
             }
-        };
-        /*registrando recurso compartilhado*/
-        WebApplication.get().getSharedResources().add(String.valueOf(id), resource);
-        WebApplication.get().mountResource(url, ref);
-        String path = WebApplication.get().getServletContext().getContextPath() + "/" + WebApplication.get().getWicketFilter().getFilterPath() + url;
-        path = path.replaceAll("\\*", "").replaceAll("//", "/");
-        return path;
+        }
+        return ref;
+    }
+
+    private List<IAttachmentPersistenceHandler<?>> getHandlers() {
+        List<IAttachmentPersistenceHandler<?>> services = new ArrayList<>();
+        SDocument sDocument = model.getObject().getDocument();
+        if (sDocument.isAttachmentPersistenceTemporaryHandlerSupported()) {
+            services.add(sDocument.getAttachmentPersistenceTemporaryHandler());
+        }
+        sDocument.getAttachmentPersistencePermanentHandler().ifPresent(services::add);
+        return services;
     }
 }

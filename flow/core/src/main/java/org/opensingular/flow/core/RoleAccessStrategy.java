@@ -121,7 +121,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
     @Override
     public SUser getAutomaticAllocatedUser(FlowInstance instancia, TaskInstance tarefa) {
-        IEntityRoleInstance role = instancia.getRoleUserByAbbreviation(executionRole.getName());
+        IEntityRoleInstance role = instancia.getRoleUserByAbbreviation(executionRole.getAbbreviation());
         return role != null ? role.getUser() : null;
     }
 }

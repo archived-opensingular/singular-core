@@ -19,7 +19,7 @@ package org.opensingular.form.wicket;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 
 import java.io.Serializable;
@@ -27,8 +27,12 @@ import java.io.Serializable;
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 @FunctionalInterface
-public interface IWicketComponentMapper extends UIComponentMapper {
+public interface IWicketComponentMapper extends Serializable {
 
+    public static final AspectRef<IWicketComponentMapper> ASPECT_WICKET_MAPPER = new AspectRef<>(
+            IWicketComponentMapper.class, IWicketComponentMapperRegistry.class);
+
+    public static final HintKey<Boolean> HIDE_LABEL = () -> Boolean.FALSE;
 
     void buildView(WicketBuildContext ctx);
 
@@ -37,7 +41,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
         adjustJSEvents(ctx, component);
         new AjaxUpdateListenersFactory().getBehaviorsForm(component, model, listener).forEach(component::add);
     }
-    
+
     default void adjustJSEvents(Component comp) {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
@@ -50,7 +54,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
     interface HintKey<T> extends Serializable {
         T getDefaultValue();
         default boolean isInheritable() {
-            return true;
+            return false;
         }
     }
 

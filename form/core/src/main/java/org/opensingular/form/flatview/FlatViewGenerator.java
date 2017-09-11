@@ -17,6 +17,8 @@
 package org.opensingular.form.flatview;
 
 import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.lib.commons.canvas.DocumentCanvas;
+
 
 /**
  * Represents the capability of generating a flat representation (usually a html) of a {@link
@@ -26,9 +28,12 @@ import org.opensingular.form.aspect.AspectRef;
  */
 public interface FlatViewGenerator {
 
-    public static final AspectRef<FlatViewGenerator> ASPECT_FLAT_VIEW_GENERATOR = new AspectRef<>(
-            FlatViewGenerator.class, FlatViewGeneratorRegistry.class);
+    AspectRef<FlatViewGenerator> ASPECT_FLAT_VIEW_GENERATOR = new AspectRef<>(FlatViewGenerator.class, FlatViewGeneratorRegistry.class);
 
-    //Redefinir esse método
-    public void buildSomethingWithSometring(Object xpto);
+    /**
+     * Write content to the supplied canvas
+     * @param canvas the canvas
+     * @param context the context
+     */
+    void writeOnCanvas(DocumentCanvas canvas, FlatViewContext context);
 }

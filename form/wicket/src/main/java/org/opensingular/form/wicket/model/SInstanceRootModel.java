@@ -51,8 +51,11 @@ public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
         if (instanceRef == null) {
             return null;
         }
-        instanceRef.get().attachEventCollector();
-        return instanceRef.get();
+        I instance = instanceRef.get();
+        if(instance != null) {
+            instance.attachEventCollector();
+        }
+        return instance;
     }
 
     @SuppressWarnings("unchecked")

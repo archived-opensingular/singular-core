@@ -1,6 +1,7 @@
 package org.opensingular.lib.wicket.util.template.admin;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -17,21 +18,17 @@ import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 public abstract class SingularAdminTemplate extends SingularTemplate {
-    private List<String> initializerJavascripts = Collections.singletonList("App.init();");
-
     protected MarkupContainer pageBody;
     protected MarkupContainer pageHeader;
     protected MarkupContainer pageFooter;
     protected MarkupContainer pageMenu;
     protected MarkupContainer pageContent;
+    private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 
     public SingularAdminTemplate() {
         super();
@@ -87,6 +84,17 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
 
     private void addPageContent() {
         pageContent = new WebMarkupContainer("page-content");
+        pageContent.add(new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> set) {
+                if (isWithMenu()) {
+                    set.remove("zero-padding");
+                } else {
+                    set.add("zero-padding");
+                }
+                return set;
+            }
+        });
         pageBody.add(pageContent);
     }
 
