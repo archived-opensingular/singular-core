@@ -32,11 +32,15 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
 
     public SingularAdminTemplate() {
         super();
-        buildPage();
     }
 
     public SingularAdminTemplate(PageParameters parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
         buildPage();
     }
 

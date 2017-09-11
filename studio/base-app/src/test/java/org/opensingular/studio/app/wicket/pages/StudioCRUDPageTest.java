@@ -20,14 +20,10 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.app.menu.StudioMenuItem;
-import org.opensingular.studio.core.menu.GroupMenuEntry;
-import org.opensingular.studio.core.menu.StudioMenu;
+import org.opensingular.studio.app.menu.*;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import static org.opensingular.studio.app.wicket.pages.StudioPage.STUDIO_ROOT_PATH;
-
-public class StudioPageTest extends WicketTestCase {
+public class StudioCRUDPageTest extends WicketTestCase {
 
     private ApplicationContextMock applicationContextMock;
 
@@ -52,24 +48,24 @@ public class StudioPageTest extends WicketTestCase {
         @Override
         protected void init() {
             super.init();
-            new AnnotatedMountScanner().scanPackage("org.opensingular.studio.app").mount(this);
+            new AnnotatedMountScanner().scanPackage("org.opensingular.studio.app.wicket.pages").mount(this);
         }
     }
 
     @Test
     public void testRender() throws Exception {
         applicationContextMock.putBean(new StudioMenu(null));
-        tester.startPage(StudioPage.class);
-        tester.assertRenderedPage(StudioPage.class);
+        tester.startPage(StudioCRUDPage.class);
+        tester.assertRenderedPage(StudioCRUDPage.class);
     }
 
     @Test
     public void testRenderMenu() throws Exception {
         StudioMenu menu = new StudioMenu(null);
-        GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group"));
-        group.add(new StudioMenuItem(DefaultIcons.WRENCH, "Mock", null));
+        GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
+        group.add(new ItemMenuEntry("Mock", new HTTPEndpointMenuView("/")));
         applicationContextMock.putBean(menu);
-        tester.startPage(StudioPage.class);
+        tester.executeUrl(group.getEndpoint());
         tester.assertComponent("app-body:menu:itens:0:menu-item", MetronicMenuGroup.class);
         tester.assertComponent("app-body:menu:itens:0:menu-item:menu-group:sub-menu:itens:0:menu-item", MetronicMenuItem.class);
     }
@@ -77,20 +73,21 @@ public class StudioPageTest extends WicketTestCase {
     @Test
     public void testPathParamLookup() throws Exception {
         applicationContextMock.putBean(new StudioMenu(null));
-        tester.executeUrl("./" + STUDIO_ROOT_PATH + "/foo/bar");
-        StudioPage lastRenderedPage = (StudioPage) tester.getLastRenderedPage();
+        tester.executeUrl(StudioCRUDPage.getPageEndpoint("foo/bar"));
+        StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("foo/bar", lastRenderedPage.getMenuPath());
     }
 
     @Test
     public void testAcessMenu() throws Exception {
         StudioMenu menu = new StudioMenu(null);
-        GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group"));
-        StudioMenuItem mockMenuItem = group.add(new StudioMenuItem(DefaultIcons.WRENCH, "Mock", null));
+        StudioDefinition studioDefinition = Mockito.mock(StudioDefinition.class);
+        GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
+        ItemMenuEntry mockMenuItem = group.add(new ItemMenuEntry("Mock", new StudioMenuView(studioDefinition)));
         applicationContextMock.putBean(menu);
-        tester.executeUrl("." + mockMenuItem.getEndpoint());
-        tester.assertRenderedPage(StudioPage.class);
-        StudioPage lastRenderedPage = (StudioPage) tester.getLastRenderedPage();
+        tester.executeUrl(mockMenuItem.getEndpoint());
+        tester.assertRenderedPage(StudioCRUDPage.class);
+        StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("group/mock", lastRenderedPage.getMenuPath());
     }
 
@@ -115,13 +112,13 @@ public class StudioPageTest extends WicketTestCase {
 
         StudioMenu menu = new StudioMenu(null);
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group"));
-        StudioMenuItem mockMenuItem = group.add(new StudioMenuItem(DefaultIcons.WRENCH, "Mock", definition));
+        ItemMenuEntry mockMenuItem = group.add(new ItemMenuEntry(DefaultIcons.WRENCH, "Mock", new StudioMenuView(definition)));
 
         applicationContextMock.putBean(menu);
         applicationContextMock.putBean("mockRepository", Mockito.mock(FormRespository.class));
 
         tester.executeUrl("." + mockMenuItem.getEndpoint());
-        tester.assertRenderedPage(StudioPage.class);
+        tester.assertRenderedPage(StudioCRUDPage.class);
 
         tester.assertComponent("form:crud", SingularStudioSimpleCRUDPanel.class);
     }

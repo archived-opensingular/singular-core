@@ -1,23 +1,12 @@
 package org.opensingular.studio.app.wicket.pages;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.StringValue;
-import org.jetbrains.annotations.NotNull;
-import org.opensingular.lib.wicket.util.menu.AbstractMenuItem;
-import org.opensingular.lib.wicket.util.menu.MetronicMenu;
-import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
-import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
-import org.opensingular.lib.wicket.util.util.Shortcuts;
-import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.app.menu.StudioMenuItem;
-import org.opensingular.studio.core.menu.GroupMenuEntry;
-import org.opensingular.studio.core.menu.ItemMenuEntry;
+import org.opensingular.studio.app.menu.GroupMenuEntry;
+import org.opensingular.studio.app.menu.StudioMenu;
 import org.opensingular.studio.core.menu.MenuEntry;
-import org.opensingular.studio.core.menu.StudioMenu;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -27,12 +16,6 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
     private StudioMenu studioMenu;
 
     private String menuPath;
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        resolveMenuPath();
-    }
 
     private void resolveMenuPath() {
         StringValue pathStringValue = getPageParameters().get("path");
@@ -47,27 +30,23 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         }
     }
 
-    protected StudioDefinition findCurrentStudioDefinition() {
-        StudioMenuItem item = findCurrentStudioMenuItem(studioMenu.getChildren());
-        if (item != null) {
-            return item.getStudioDefinition();
-        }
-        return null;
+    protected MenuEntry findCurrentMenuEntry() {
+        return findCurrentMenuEntry(getStudioMenu().getChildren());
     }
 
-    private StudioMenuItem findCurrentStudioMenuItem(List<MenuEntry> entries) {
-        if (StringUtils.isBlank(menuPath)) {
+    private MenuEntry findCurrentMenuEntry(List<MenuEntry> entries) {
+        if (StringUtils.isBlank(getMenuPath())) {
             return null;
         }
         for (MenuEntry entry : entries) {
-            if (entry instanceof StudioMenuItem &&
-                    ((StudioMenuItem) entry)
-                            .getEndpoint()
-                            .endsWith(menuPath)) {
-                return (StudioMenuItem) entry;
+            if (entry.getMenuPath().endsWith(getMenuPath())) {
+                return entry;
             }
             if (entry instanceof GroupMenuEntry) {
-                return findCurrentStudioMenuItem(((GroupMenuEntry) entry).getChildren());
+                MenuEntry foundedEntry = findCurrentMenuEntry(((GroupMenuEntry) entry).getChildren());
+                if (foundedEntry != null) {
+                    return foundedEntry;
+                }
             }
         }
         return null;
@@ -83,54 +62,20 @@ public abstract class StudioTemplate extends SingularAdminTemplate {
         return null;
     }
 
-    @Override
-    protected boolean isWithMenu() {
-        return true;
-    }
-
-    @NotNull
-    @Override
-    protected WebMarkupContainer buildPageMenu(String id) {
-        MetronicMenu metronicMenu = new MetronicMenu(id);
-        for (MenuEntry menuEntry : studioMenu.getChildren()) {
-            metronicMenu.addItem(buildMenu(menuEntry));
+    protected String getMenuPath() {
+        if (menuPath == null) {
+            resolveMenuPath();
         }
-        return metronicMenu;
-    }
-
-    private AbstractMenuItem buildMenu(MenuEntry menuEntry) {
-        if (menuEntry instanceof GroupMenuEntry) {
-            GroupMenuEntry group = (GroupMenuEntry) menuEntry;
-            MetronicMenuGroup metronicMenuGroup = new MetronicMenuGroup(menuEntry.getIcon(), menuEntry.getName());
-            for (MenuEntry child : group.getChildren()) {
-                metronicMenuGroup.addItem(buildMenu(child));
-            }
-            return metronicMenuGroup;
-        } else if (menuEntry instanceof ItemMenuEntry) {
-            ItemMenuEntry item = (ItemMenuEntry) menuEntry;
-            return new MetronicMenuItem(item.getIcon(), item.getName(), item.getEndpoint());
-        }
-        throw new StudioTemplateException("O tipo de menu " + menuEntry.getClass().getName() + " não é suportado.");
-    }
-
-    public String getMenuPath() {
         return menuPath;
     }
 
-    @Override
-    protected IModel<String> getPageTitleModel() {
-        return Shortcuts.$m.get(() -> {
-            StudioDefinition studioDefinition = findCurrentStudioDefinition();
-            if (studioDefinition != null) {
-                return Model.of(findCurrentStudioDefinition().getTitle()).getObject();
-            }
-            return super.getPageTitleModel().getObject();
-        });
-    }
-
-    private static class StudioTemplateException extends RuntimeException {
+    protected static class StudioTemplateException extends RuntimeException {
         public StudioTemplateException(String s) {
             super(s);
         }
+    }
+
+    protected StudioMenu getStudioMenu() {
+        return studioMenu;
     }
 }
