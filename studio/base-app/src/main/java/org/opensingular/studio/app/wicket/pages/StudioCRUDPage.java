@@ -1,13 +1,11 @@
 package org.opensingular.studio.app.wicket.pages;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
@@ -35,7 +33,7 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        Form<Void> form = new Form<>("form");
+        Form<Void> form = newStatelessIfEmptyForm();
         form.setMultiPart(true);
         MenuEntry entry = findCurrentMenuEntry();
         if (isStudioItem(entry)) {
@@ -44,6 +42,21 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
             addEmptyContent(form);
         }
         add(form);
+    }
+
+    @NotNull
+    private Form<Void> newStatelessIfEmptyForm() {
+        return new Form<Void>("form") {
+            @Override
+            protected boolean getStatelessHint() {
+                Component statefullComp = visitChildren(Component.class, (c, v) -> {
+                    if (!c.isStateless()) {
+                        v.stop(c);
+                    }
+                });
+                return statefullComp == null;
+            }
+        };
     }
 
     private void addCrudContent(Form<Void> form, MenuEntry entry) {
