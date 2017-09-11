@@ -14,7 +14,7 @@ public class PortalMenuView implements MenuView {
         if (paths.length > 0) {
             path.append((String) RequestCycle.get().urlFor(StudioPortalPage.class, new PageParameters().add("path", paths[0])));
             for (int i = 1; i < paths.length; i++) {
-                path.append("/").append(paths[i]);
+                path.append('/').append(paths[i]);
             }
         }
         return WebApplication.get().getServletContext().getContextPath() + path.toString();
