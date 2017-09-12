@@ -10,7 +10,7 @@ import org.opensingular.studio.app.menu.StudioMenu;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan("org.opensingular.lib.support.spring.util")
+@ComponentScan({"org.opensingular.lib.support.spring.util", "org.opensingular.studio.app"})
 public class StudioSpringConfiguration implements Loggable {
     private final StudioAppConfig studioAppConfig;
 
@@ -42,5 +42,4 @@ public class StudioSpringConfiguration implements Loggable {
     public ServiceRegistry serviceRegistry() {
         return studioAppConfig.getServiceRegistry();
     }
-
 }

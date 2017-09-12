@@ -182,7 +182,7 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
             SingularFormPanel content = new SingularFormPanel(ID_CONTENT, instance);
             content.setViewMode(viewMode);
             add(form.add(content)
-                    .add(new CRUDSaveButton(content.getInstanceModel()))
+                    .add(new CRUDSaveButton(content))
                     .add(new ActionAjaxLink<Void>("cancel") {
                         @Override
                         protected void onAction(AjaxRequestTarget target) {
@@ -283,8 +283,12 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
     }
 
     private class CRUDSaveButton extends SingularSaveButton {
-        public CRUDSaveButton(IModel<? extends SInstance> currentInstance) {
-            super("save", currentInstance);
+
+        private SingularFormPanel content;
+
+        public CRUDSaveButton(SingularFormPanel content) {
+            super("save", content.getInstanceModel());
+            this.content = content;
         }
 
         @Override
@@ -300,8 +304,12 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
 
         @Override
         public boolean isVisible() {
-            StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
-            return studioCRUDPermissionStrategy.canCreate() || studioCRUDPermissionStrategy.canEdit();
+            if (content.getViewMode().isVisualization()) {
+                return false;
+            } else {
+                StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
+                return studioCRUDPermissionStrategy.canCreate() || studioCRUDPermissionStrategy.canEdit();
+            }
         }
     }
 }
