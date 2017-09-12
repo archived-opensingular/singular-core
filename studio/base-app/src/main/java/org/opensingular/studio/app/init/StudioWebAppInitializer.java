@@ -2,8 +2,8 @@ package org.opensingular.studio.app.init;
 
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.jetbrains.annotations.NotNull;
-import org.opensingular.studio.core.config.StudioAppConfig;
-import org.opensingular.studio.core.config.StudioAppConfigProvider;
+import org.opensingular.studio.app.config.StudioAppConfig;
+import org.opensingular.studio.core.config.StudioConfigProvider;
 import org.opensingular.studio.core.wicket.StudioApplication;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -16,10 +16,10 @@ import java.util.EnumSet;
 
 public class StudioWebAppInitializer implements WebApplicationInitializer {
 
-    private StudioAppConfig studioAppConfig;
+    private StudioAppConfig studioConfig;
 
     public StudioWebAppInitializer() {
-        studioAppConfig = StudioAppConfigProvider.get().retrieve();
+        studioConfig = (StudioAppConfig) StudioConfigProvider.get().retrieve();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
     private void configureContext(ServletContext container, AnnotationConfigWebApplicationContext rootContext) {
         rootContext.setServletContext(container);
         container.addListener(new ContextLoaderListener(rootContext));
-        studioAppConfig.getSpringAnnotatedConfigs().forEach(rootContext::register);
+        studioConfig.getSpringAnnotatedConfigs().forEach(rootContext::register);
         rootContext.refresh();
     }
 

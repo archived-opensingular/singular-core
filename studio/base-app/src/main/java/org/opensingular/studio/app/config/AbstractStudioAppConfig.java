@@ -11,7 +11,6 @@ import org.opensingular.studio.app.spring.StudioPersistenceConfiguration;
 import org.opensingular.studio.app.spring.StudioSpringConfiguration;
 import org.opensingular.studio.app.spring.StudioWebConfiguration;
 import org.opensingular.studio.core.wicket.StudioApplication;
-import org.opensingular.studio.core.config.StudioAppConfig;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractStudioAppConfig implements StudioAppConfig {
+
     @Override
     public StudioApplication getWicketApplication() {
         return new StudioApplication(this);
