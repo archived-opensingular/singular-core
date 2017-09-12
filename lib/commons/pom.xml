@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>1.6.9CM-SNAPSHOT</version>
+        <version>1.6.9SUPERAPP-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-commons</artifactId>
