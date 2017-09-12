@@ -16,10 +16,8 @@
 
 package org.opensingular.form.persistence;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
 import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 
 /**
@@ -34,8 +32,6 @@ public interface RelationalDatabase {
 
 	int execReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
 			RelationalTupleHandler<?> tupleHandler);
-
-	int execScript(Collection<? extends RelationalSQLCommmand> script);
 
 	List<Object[]> query(String sql, List<Object> params);
 

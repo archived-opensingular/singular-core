@@ -70,6 +70,11 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		assertNull(loaded.getValue("observation"));
 		assertEquals(firtsKey, FormKey.fromInstance(loaded));
 		//
+		loaded.setValue("name", "My document");
+		repoForm.update(loaded, null);
+		loaded = repoForm.load(firtsKey);
+		assertEquals("My document", loaded.getValue("name"));
+		//
 		repoForm.insert(createFormInstance("Second form"), null);
 		repoForm.insert(createFormInstance("Third form"), null);
 		assertEquals(3, repoForm.countAll());
