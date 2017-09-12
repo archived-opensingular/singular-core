@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -19,11 +19,11 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
-import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.app.menu.GroupMenuEntry;
-import org.opensingular.studio.app.menu.ItemMenuEntry;
-import org.opensingular.studio.app.menu.StudioMenuView;
+import org.opensingular.studio.core.definition.StudioDefinition;
+import org.opensingular.studio.core.menu.GroupMenuEntry;
+import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
+import org.opensingular.studio.core.menu.StudioMenuView;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("/studio/${path}")

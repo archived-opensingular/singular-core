@@ -1,10 +1,7 @@
-package org.opensingular.studio.app.menu;
+package org.opensingular.studio.core.menu;
 
 import org.opensingular.lib.commons.ui.Icon;
-import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.core.menu.AbstractMenuEntry;
-import org.opensingular.studio.core.menu.MenuEntry;
-import org.opensingular.studio.core.menu.MenuView;
+import org.opensingular.studio.core.definition.StudioDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;

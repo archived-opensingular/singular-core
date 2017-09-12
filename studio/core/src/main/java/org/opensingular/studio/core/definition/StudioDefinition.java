@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.definition;
+package org.opensingular.studio.core.definition;
 
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;

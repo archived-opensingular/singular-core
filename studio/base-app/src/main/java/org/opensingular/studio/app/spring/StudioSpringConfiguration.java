@@ -4,9 +4,10 @@ import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.studio.app.StudioAppConfig;
-import org.opensingular.studio.app.wicket.StudioApplication;
-import org.opensingular.studio.app.menu.StudioMenu;
+import org.opensingular.studio.core.config.StudioAppConfig;
+import org.opensingular.studio.core.config.StudioAppConfigProvider;
+import org.opensingular.studio.core.wicket.StudioApplication;
+import org.opensingular.studio.core.menu.StudioMenu;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
