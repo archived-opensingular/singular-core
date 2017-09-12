@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
 
 import org.apache.wicket.RestartResponseException;
@@ -8,7 +8,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.opensingular.lib.wicket.util.resource.IconeView;
-import org.opensingular.studio.app.menu.GroupMenuEntry;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
+import org.opensingular.studio.core.menu.GroupMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
 import org.wicketstuff.annotation.mount.MountPath;
 
@@ -44,7 +45,7 @@ public class StudioPortalPage extends StudioTemplate {
                         tag.put("href", entry.getEndpoint());
                     }
                 };
-                anchor.add(new IconeView("icon", $m.ofValue(entry.getIcon()), null, null));
+                anchor.add(new IconeView("icon", WicketUtils.$m.ofValue(entry.getIcon()), null, null));
                 anchor.add(new Label("label", entry.getName()));
                 listItem.add(anchor);
             }

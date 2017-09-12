@@ -1,12 +1,12 @@
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
-import org.opensingular.studio.app.menu.GroupMenuEntry;
-import org.opensingular.studio.app.menu.StudioMenu;
+import org.opensingular.studio.core.menu.GroupMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
+import org.opensingular.studio.core.menu.StudioMenu;
 
 import javax.inject.Inject;
 import java.util.List;

@@ -1,9 +1,9 @@
 package org.opensingular.studio.app.init;
 
-import org.opensingular.studio.app.AbstractStudioAppConfig;
-import org.opensingular.studio.app.menu.GroupMenuEntry;
-import org.opensingular.studio.app.menu.ItemMenuEntry;
-import org.opensingular.studio.app.menu.StudioMenu;
+import org.opensingular.studio.app.config.AbstractStudioAppConfig;
+import org.opensingular.studio.core.menu.GroupMenuEntry;
+import org.opensingular.studio.core.menu.ItemMenuEntry;
+import org.opensingular.studio.core.menu.StudioMenu;
 
 /**
  * Keep this file, is used in StudioWebAppinitializerTest

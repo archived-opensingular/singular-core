@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -23,7 +23,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.opensingular.studio.app.util.StudioWicketUtils;
+import org.opensingular.studio.core.util.StudioWicketUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 

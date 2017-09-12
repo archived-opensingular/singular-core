@@ -1,8 +1,6 @@
-package org.opensingular.studio.app.menu;
+package org.opensingular.studio.core.menu;
 
 import org.opensingular.lib.commons.ui.Icon;
-import org.opensingular.studio.core.menu.MenuEntry;
-import org.opensingular.studio.core.menu.MenuView;
 
 import java.util.*;
 import java.util.function.Consumer;

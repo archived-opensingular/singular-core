@@ -1,9 +1,9 @@
-package org.opensingular.studio.app.menu;
+package org.opensingular.studio.core.menu;
 
 import org.junit.Test;
 import org.opensingular.lib.commons.ui.Icon;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class StudioMenuTest {
 

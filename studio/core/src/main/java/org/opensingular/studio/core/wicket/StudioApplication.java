@@ -1,10 +1,8 @@
-package org.opensingular.studio.app.wicket;
+package org.opensingular.studio.core.wicket;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
@@ -15,10 +13,10 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
-import org.opensingular.studio.app.AbstractStudioAppConfig;
-import org.opensingular.studio.app.wicket.pages.StudioFooter;
-import org.opensingular.studio.app.wicket.pages.StudioHeader;
-import org.opensingular.studio.app.wicket.pages.StudioPortalPage;
+import org.opensingular.studio.core.config.StudioAppConfig;
+import org.opensingular.studio.core.view.StudioFooter;
+import org.opensingular.studio.core.view.StudioHeader;
+import org.opensingular.studio.core.view.StudioPortalPage;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import java.nio.charset.StandardCharsets;
@@ -26,13 +24,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class StudioApplication extends WebApplication implements SingularAdminApp {
+    private final StudioAppConfig appConfig;
 
-    private final AbstractStudioAppConfig appConfig;
-
-    public StudioApplication(AbstractStudioAppConfig appConfig) {
+    public StudioApplication(StudioAppConfig appConfig) {
         this.appConfig = appConfig;
     }
-
 
     @Override
     public Class<? extends Page> getHomePage() {
@@ -54,7 +50,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
         setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-        new AnnotatedMountScanner().scanPackage("org.opensingular.studio.app").mount(this);
+        new AnnotatedMountScanner().scanPackage("org.opensingular.studio").mount(this);
         List<IStringResourceLoader> stringResourceLoaders = getResourceSettings().getStringResourceLoaders();
         stringResourceLoaders.add(0, new ClassStringResourceLoader(appConfig.getClass()));
     }
