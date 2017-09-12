@@ -1,9 +1,8 @@
-package org.opensingular.studio.app.spring;
+package org.opensingular.studio.core.config;
 
 import org.opensingular.lib.commons.context.SingularContext;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.scan.SingularClassPathScanner;
-import org.opensingular.studio.app.StudioAppConfig;
 
 import java.lang.reflect.Modifier;
 import java.util.List;

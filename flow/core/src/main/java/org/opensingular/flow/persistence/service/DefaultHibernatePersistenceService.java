@@ -42,6 +42,7 @@ import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -176,7 +177,7 @@ public class DefaultHibernatePersistenceService extends
 
     @Override
     public List<? extends SUser> retrieveUsersByCod(Collection<Integer> cods) {
-        throw new UnsupportedOperationException("Método não implementado");
+        return Collections.emptyList();
     }
 
 }

@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.definition;
+package org.opensingular.studio.core.definition;
 
 
 import org.opensingular.form.persistence.FormRespository;

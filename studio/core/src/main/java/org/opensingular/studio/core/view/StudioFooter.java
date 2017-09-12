@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
 import org.apache.wicket.markup.html.panel.Panel;
 
