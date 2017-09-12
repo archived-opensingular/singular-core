@@ -17,13 +17,11 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
         getRootHtmlBuilder()
                 .newChild("link")
                 .putAttribute("rel", "stylesheet")
-                .putAttribute("href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
-                .putAttribute("integrity", "sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u")
+                .putAttribute("href", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.min.css")
                 .putAttribute("crossorigin", "anonymous");
         getRootHtmlBuilder()
                 .newChild("script")
-                .putAttribute("src", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
-                .putAttribute("integrity", "sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa")
+                .putAttribute("src", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.min.js")
                 .putAttribute("crossorigin", "anonymous");
         setcurrentHtmlBuilder(getRootHtmlBuilder().newChild("div").putAttribute("class", "container"));
 
