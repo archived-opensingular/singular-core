@@ -19,10 +19,6 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
                 .putAttribute("rel", "stylesheet")
                 .putAttribute("href", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.min.css")
                 .putAttribute("crossorigin", "anonymous");
-        getRootHtmlBuilder()
-                .newChild("script")
-                .putAttribute("src", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.min.js")
-                .putAttribute("crossorigin", "anonymous");
         setcurrentHtmlBuilder(getRootHtmlBuilder().newChild("div").putAttribute("class", "container"));
 
     }
