@@ -1,22 +1,34 @@
 package org.opensingular.studio.core.definition;
 
 
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.studio.StudioCRUDPermissionStrategy;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 
 public interface StudioDefinition extends Serializable {
 
-    String getRepositoryBeanName();
+    Class<? extends FormRespository> getRepositoryClass();
 
-    void configureDatatableColumns(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder);
+    void configureStudioDataTable(StudioDataTable studioDataTable);
 
     String getTitle();
 
     default StudioCRUDPermissionStrategy getPermissionStrategy() {
         return StudioCRUDPermissionStrategy.ALL;
     }
+
+    class StudioDataTable {
+        private LinkedHashMap<String, String> columns = new LinkedHashMap<>();
+
+        public void add(String columnName, String path) {
+            columns.put(columnName, path);
+        }
+
+        public LinkedHashMap<String, String> getColumns() {
+            return columns;
+        }
+    }
+
 }
