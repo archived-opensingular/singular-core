@@ -101,9 +101,22 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		return (TYPE) RefType.of(type).get();
 	}
 
-	// TODO
 	public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		throw new SingularFormException("Method not implemented.");
+		for (SInstance field : instance.getAllChildren()) {
+			if (field.getType().isList()) {
+				SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
+						SIComposite.class);
+				for (SIComposite item : listInstance.getChildren()) {
+					// TODO Synchronize inserts/updates
+					// item.insertOrUpdate(item, inclusionActor);
+				}
+				// TODO Synchronize deletions
+				// item.delete((FormKey.fromInstance(item));
+			}
+		}
+		if (db.execScript(RelationalSQL.update(instance).toSQLScript()) == 0) {
+			throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
+		}
 	}
 
 	@Nonnull

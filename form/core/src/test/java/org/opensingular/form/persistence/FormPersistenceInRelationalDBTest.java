@@ -17,36 +17,52 @@
 package org.opensingular.form.persistence;
 
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBTest.TestPackage.Form;
+import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
+import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 import org.opensingular.form.type.core.STypeString;
 
 /**
  * @author Edmundo Andrade
  */
-public class FormPersistenceInRelationalDBTest {
+@RunWith(Parameterized.class)
+public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 	private RelationalDatabase db;
 	private FormRespository<Form, SIComposite> repo;
+	private Form form;
+
+	public FormPersistenceInRelationalDBTest(TestFormConfig testFormConfig) {
+		super(testFormConfig);
+	}
 
 	@Before
 	public void setUp() {
-		db = mock(RelationalDatabase.class);
+		db = mockDB();
 		repo = new FormPersistenceInRelationalDB<>(db, null, Form.class);
+		SDictionary dictionary = createTestDictionary();
+		form = dictionary.getType(Form.class);
 	}
 
 	@Test
@@ -65,10 +81,68 @@ public class FormPersistenceInRelationalDBTest {
 		assertEquals(42L, repo.countAll());
 	}
 
+	@Test
+	public void update() {
+		SIComposite formInstance = form.newInstance();
+		formInstance.setValue("name", "My form name");
+		FormKey.setOnInstance(formInstance, formKey(4242));
+		when(db.exec("update FORM T1 set T1.name = ? where T1.CODE = ?", Arrays.asList("My form name", 4242)))
+				.thenReturn(1);
+		repo.update(formInstance, null);
+	}
+
 	private List<Object[]> querySingleResult(Object value) {
 		List<Object[]> result = new ArrayList<>();
 		result.add(new Object[] { value });
 		return result;
+	}
+
+	private FormKey formKey(int id) {
+		HashMap<String, Object> key = new LinkedHashMap<>();
+		key.put("CODE", id);
+		return new FormKeyRelational(key);
+	}
+
+	private RelationalDatabase mockDB() {
+		return spy(new RelationalDatabase() {
+			public int exec(String sql) {
+				return 0;
+			}
+
+			public int exec(String sql, List<Object> params) {
+				return 0;
+			}
+
+			public int execReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
+					RelationalTupleHandler<?> tupleHandler) {
+				return 0;
+			}
+
+			public int execScript(Collection<? extends RelationalSQLCommmand> script) {
+				int result = 0;
+				for (RelationalSQLCommmand command : script) {
+					result += exec(command.getSQL(), command.getParameters());
+				}
+				return result;
+			}
+
+			public List<Object[]> query(String sql, List<Object> params) {
+				return null;
+			}
+
+			public <T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler) {
+				return null;
+			}
+
+			public List<Object[]> query(String sql, List<Object> params, Long limitOffset, Long limitRows) {
+				return null;
+			}
+
+			public <T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
+					RelationalTupleHandler<T> tupleHandler) {
+				return null;
+			}
+		});
 	}
 
 	@SInfoPackage(name = "testPackage")
