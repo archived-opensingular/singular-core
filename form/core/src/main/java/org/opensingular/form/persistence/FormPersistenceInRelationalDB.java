@@ -19,6 +19,7 @@ package org.opensingular.form.persistence;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -88,11 +89,11 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
 						SIComposite.class);
 				for (SIComposite item : listInstance.getChildren()) {
-					db.execScript(RelationalSQL.delete(item.getType(), FormKey.fromInstance(item)).toSQLScript());
+					execScript(RelationalSQL.delete(item.getType(), FormKey.fromInstance(item)).toSQLScript());
 				}
 			}
 		}
-		db.execScript(RelationalSQL.delete(createType(), key).toSQLScript());
+		execScript(RelationalSQL.delete(createType(), key).toSQLScript());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -114,7 +115,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 				// item.delete((FormKey.fromInstance(item));
 			}
 		}
-		if (db.execScript(RelationalSQL.update(instance).toSQLScript()) == 0) {
+		if (execScript(RelationalSQL.update(instance).toSQLScript()) == 0) {
 			throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
 		}
 	}
@@ -281,6 +282,14 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 			index++;
 		}
 		return tuple;
+	}
+
+	protected int execScript(Collection<? extends RelationalSQLCommmand> script) {
+		int result = 0;
+		for (RelationalSQLCommmand command : script) {
+			result += db.exec(command.getSQL(), command.getParameters());
+		}
+		return result;
 	}
 
 	protected List<String> serverSideGeneratedPKColumns(List<String> pk, RelationalSQLCommmand command) {

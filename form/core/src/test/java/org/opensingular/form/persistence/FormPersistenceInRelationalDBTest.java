@@ -17,12 +17,11 @@
 package org.opensingular.form.persistence;
 
 import static java.util.Collections.emptyList;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,8 +39,6 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBTest.TestPackage.Form;
-import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
-import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 import org.opensingular.form.type.core.STypeString;
 
 /**
@@ -59,7 +56,7 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 
 	@Before
 	public void setUp() {
-		db = mockDB();
+		db = mock(RelationalDatabase.class);
 		repo = new FormPersistenceInRelationalDB<>(db, null, Form.class);
 		SDictionary dictionary = createTestDictionary();
 		form = dictionary.getType(Form.class);
@@ -101,48 +98,6 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 		HashMap<String, Object> key = new LinkedHashMap<>();
 		key.put("CODE", id);
 		return new FormKeyRelational(key);
-	}
-
-	private RelationalDatabase mockDB() {
-		return spy(new RelationalDatabase() {
-			public int exec(String sql) {
-				return 0;
-			}
-
-			public int exec(String sql, List<Object> params) {
-				return 0;
-			}
-
-			public int execReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
-					RelationalTupleHandler<?> tupleHandler) {
-				return 0;
-			}
-
-			public int execScript(Collection<? extends RelationalSQLCommmand> script) {
-				int result = 0;
-				for (RelationalSQLCommmand command : script) {
-					result += exec(command.getSQL(), command.getParameters());
-				}
-				return result;
-			}
-
-			public List<Object[]> query(String sql, List<Object> params) {
-				return null;
-			}
-
-			public <T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler) {
-				return null;
-			}
-
-			public List<Object[]> query(String sql, List<Object> params, Long limitOffset, Long limitRows) {
-				return null;
-			}
-
-			public <T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
-					RelationalTupleHandler<T> tupleHandler) {
-				return null;
-			}
-		});
 	}
 
 	@SInfoPackage(name = "testPackage")

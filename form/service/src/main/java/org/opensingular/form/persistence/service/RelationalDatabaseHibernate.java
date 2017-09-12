@@ -22,7 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +29,6 @@ import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
 import org.opensingular.form.persistence.RelationalDatabase;
-import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
 import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 
 /**
@@ -77,14 +75,6 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 			}
 			return result;
 		});
-	}
-
-	public int execScript(Collection<? extends RelationalSQLCommmand> script) {
-		int result = 0;
-		for (RelationalSQLCommmand command : script) {
-			result += exec(command.getSQL(), command.getParameters());
-		}
-		return result;
 	}
 
 	public List<Object[]> query(String sql, List<Object> params) {
