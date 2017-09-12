@@ -62,20 +62,19 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
     private void addCrudContent(Form<Void> form, MenuEntry entry) {
         StudioMenuView view = (StudioMenuView) entry.getView();
         definition = view.getStudioDefinition();
-        String beanName = definition.getRepositoryBeanName();
-        if (ApplicationContextProvider.get().containsBean(beanName)) {
-            form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
-                    , () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)
-                    , definition::getPermissionStrategy) {
-                @Override
-                protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
-                    definition.configureDatatableColumns(dataTableBuilder);
-                }
-            }.setCrudTitle(definition.getTitle()));
-        } else {
-            getLogger().warn("Não foi encontrado o bean {}", beanName);
-            addEmptyContent(form);
-        }
+        Class<? extends FormRespository> repositoryClass = definition.getRepositoryClass();
+        form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
+                , () -> ApplicationContextProvider.get().getBean(repositoryClass)
+                , definition::getPermissionStrategy) {
+            @Override
+            protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
+                StudioDefinition.StudioDataTable studioDataTable = new StudioDefinition.StudioDataTable();
+                definition.configureStudioDataTable(studioDataTable);
+                studioDataTable.getColumns().forEach((columnName, columnValuePath) -> {
+                    dataTableBuilder.appendPropertyColumn(Model.of(columnName), ins -> ins.getValue(columnValuePath));
+                });
+            }
+        }.setCrudTitle(definition.getTitle()));
     }
 
     private boolean isStudioItem(MenuEntry entry) {

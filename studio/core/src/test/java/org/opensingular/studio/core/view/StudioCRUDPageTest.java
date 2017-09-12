@@ -94,14 +94,16 @@ public class StudioCRUDPageTest extends WicketTestCase {
 
     @Test
     public void testAcessMenuWithDefinition() throws Exception {
+        FormRespository formRespository = Mockito.mock(FormRespository.class);
         StudioDefinition definition = new StudioDefinition() {
+
             @Override
-            public String getRepositoryBeanName() {
-                return "mockRepository";
+            public Class<? extends FormRespository> getRepositoryClass() {
+                return formRespository.getClass();
             }
 
             @Override
-            public void configureDatatableColumns(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
+            public void configureStudioDataTable(StudioDataTable studioDataTable) {
 
             }
 
@@ -116,11 +118,12 @@ public class StudioCRUDPageTest extends WicketTestCase {
         ItemMenuEntry mockMenuItem = group.add(new ItemMenuEntry(DefaultIcons.WRENCH, "Mock", new StudioMenuView(definition)));
 
         applicationContextMock.putBean(menu);
-        applicationContextMock.putBean("mockRepository", Mockito.mock(FormRespository.class));
+        applicationContextMock.putBean(formRespository);
 
         tester.executeUrl("." + mockMenuItem.getEndpoint());
         tester.assertRenderedPage(StudioCRUDPage.class);
 
         tester.assertComponent("form:crud", SingularStudioSimpleCRUDPanel.class);
     }
+
 }
