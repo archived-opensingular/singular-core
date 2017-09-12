@@ -2,11 +2,9 @@ package org.opensingular.studio.app.init;
 
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.jetbrains.annotations.NotNull;
-import org.opensingular.studio.app.StudioAppConfig;
-import org.opensingular.studio.app.spring.StudioAppConfigProvider;
-import org.opensingular.studio.app.spring.StudioSpringConfiguration;
-import org.opensingular.studio.app.spring.StudioWebConfiguration;
-import org.opensingular.studio.app.wicket.StudioApplication;
+import org.opensingular.studio.core.config.StudioAppConfig;
+import org.opensingular.studio.core.config.StudioAppConfigProvider;
+import org.opensingular.studio.core.wicket.StudioApplication;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;

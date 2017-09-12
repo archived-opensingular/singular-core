@@ -1,4 +1,4 @@
-package org.opensingular.studio.app;
+package org.opensingular.studio.app.config;
 
 import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.SDocumentFactory;
@@ -10,7 +10,8 @@ import org.opensingular.studio.app.spring.DefaulSpringSecurityConfig;
 import org.opensingular.studio.app.spring.StudioPersistenceConfiguration;
 import org.opensingular.studio.app.spring.StudioSpringConfiguration;
 import org.opensingular.studio.app.spring.StudioWebConfiguration;
-import org.opensingular.studio.app.wicket.StudioApplication;
+import org.opensingular.studio.core.wicket.StudioApplication;
+import org.opensingular.studio.core.config.StudioAppConfig;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 

@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.util;
+package org.opensingular.studio.core.util;
 
 import net.vidageek.mirror.dsl.Mirror;
 import org.apache.wicket.WicketRuntimeException;
