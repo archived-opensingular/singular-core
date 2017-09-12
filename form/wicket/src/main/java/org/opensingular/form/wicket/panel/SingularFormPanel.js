@@ -56,31 +56,30 @@ jQuery(document).ready(function () {
                     
                     //redimensionar labels
                     field.children().each(function(){  
-                    	let label = $(this).closest( $("label"));
-                    	if(label.height() != null && label.height() != 0){
+                    	var label = $(this).closest( $("label"));
+                    	if(label.height() !== null && label.height() !== 0){
                     		removeStyle(label);
                     	}
-                    })
+                    });
 
                     field.children().each(function(){  
-                    	let label = $(this).closest( $("label"));
- 
-                    	if(label.height() != null && label.height() != 0){
+                    	var label = $(this).closest( $("label"));
+                    	if(label.height() !== null && label.height() !== 0){
                             if (maxLabelHeight < label.height()) {
                             	maxLabelHeight = label.height();
                             }
                         }
-                    })
+                    });
                    
                     field.children().each(function(){  
-                    	let label = $(this).closest( $("label"));
-                    	if(label.height() != null && label.height() != 0){
+                    	var label = $(this).closest( $("label"));
+                    	if(label.height() !== null && label.height() !== 0){
                     		applyStyle(label, maxLabelHeight ); 
                     	}
-                    	if(i == (fieldsList.length-1)){
+                    	if(i === (fieldsList.length-1)){
                     		maxLabelHeight = 0;                    		
                     	}
-                    })
+                    });
                     //redimensionar labels - fim
                 }
 

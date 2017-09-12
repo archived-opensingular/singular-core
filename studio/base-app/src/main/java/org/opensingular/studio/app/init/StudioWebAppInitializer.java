@@ -27,14 +27,17 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext container) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = createContext();
-        rootContext.setServletContext(container);
-        container.addListener(new ContextLoaderListener(rootContext));
-        rootContext.scan("org.opensingular.studio.app");
-        studioAppConfig.getSpringAnnotatedConfigs().forEach(rootContext::register);
-        rootContext.refresh();
+        configureContext(container, rootContext);
         addSpringMVCServlet(container, rootContext);
         addWicketFilter(container, rootContext);
         addSpringSecurityFilter(container, rootContext);
+    }
+
+    private void configureContext(ServletContext container, AnnotationConfigWebApplicationContext rootContext) {
+        rootContext.setServletContext(container);
+        container.addListener(new ContextLoaderListener(rootContext));
+        studioAppConfig.getSpringAnnotatedConfigs().forEach(rootContext::register);
+        rootContext.refresh();
     }
 
     private void addWicketFilter(ServletContext container, AnnotationConfigWebApplicationContext rootContext) {
@@ -45,18 +48,18 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
     }
 
     @NotNull
-    AnnotationConfigWebApplicationContext createContext() {
+    private AnnotationConfigWebApplicationContext createContext() {
         return new AnnotationConfigWebApplicationContext();
     }
 
-    protected void addSpringMVCServlet(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
+    private void addSpringMVCServlet(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         ServletRegistration.Dynamic dispatcher = ctx
                 .addServlet("Spring MVC dispatcher servlet", new DispatcherServlet(applicationContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/*");
     }
 
-    protected void addSpringSecurityFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
+    private void addSpringSecurityFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         ctx
                 .addFilter("springSecurityFilterChain", DelegatingFilterProxy.class)
                 .addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
