@@ -62,19 +62,23 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
     private void addCrudContent(Form<Void> form, MenuEntry entry) {
         StudioMenuView view = (StudioMenuView) entry.getView();
         definition = view.getStudioDefinition();
-        Class<? extends FormRespository> repositoryClass = definition.getRepositoryClass();
-        form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
-                , () -> ApplicationContextProvider.get().getBean(repositoryClass)
-                , definition::getPermissionStrategy) {
-            @Override
-            protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
-                StudioDefinition.StudioDataTable studioDataTable = new StudioDefinition.StudioDataTable();
-                definition.configureStudioDataTable(studioDataTable);
-                studioDataTable.getColumns().forEach((columnName, columnValuePath) -> {
-                    dataTableBuilder.appendPropertyColumn(Model.of(columnName), ins -> ins.getValue(columnValuePath));
-                });
-            }
-        }.setCrudTitle(definition.getTitle()));
+        FormRespository respository = definition.getRepository();
+        if (respository != null) {
+            form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
+                    , definition::getRepository
+                    , definition::getPermissionStrategy) {
+                @Override
+                protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
+                    StudioDefinition.StudioDataTable studioDataTable = new StudioDefinition.StudioDataTable();
+                    definition.configureStudioDataTable(studioDataTable);
+                    studioDataTable.getColumns().forEach((columnName, columnValuePath) -> {
+                        dataTableBuilder.appendPropertyColumn(Model.of(columnName), ins -> ins.getValue(columnValuePath));
+                    });
+                }
+            }.setCrudTitle(definition.getTitle()));
+        } else {
+            addEmptyContent(form);
+        }
     }
 
     private boolean isStudioItem(MenuEntry entry) {
