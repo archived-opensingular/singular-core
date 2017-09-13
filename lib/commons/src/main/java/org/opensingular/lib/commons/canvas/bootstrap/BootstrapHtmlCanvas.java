@@ -10,9 +10,9 @@ import org.opensingular.lib.commons.canvas.table.TableCanvas;
 
 import java.util.List;
 
-public class BoostrapHtmlCanvas extends HtmlCanvas {
+public class BootstrapHtmlCanvas extends HtmlCanvas {
 
-    public BoostrapHtmlCanvas(boolean showTitleLevel) {
+    public BootstrapHtmlCanvas(boolean showTitleLevel) {
         super(showTitleLevel);
         getRootHtmlBuilder()
                 .newChild("link")
@@ -23,13 +23,13 @@ public class BoostrapHtmlCanvas extends HtmlCanvas {
 
     }
 
-    public BoostrapHtmlCanvas(RawHtmlBuilder rawHtmlBuilder, boolean showTitleLevel) {
+    public BootstrapHtmlCanvas(RawHtmlBuilder rawHtmlBuilder, boolean showTitleLevel) {
         super(rawHtmlBuilder, showTitleLevel);
     }
 
     @Override
     protected @NotNull HtmlCanvas newHtmlChildCanvas(RawHtmlBuilder child, boolean showTitleLevel) {
-        return new BoostrapHtmlCanvas(child, showTitleLevel);
+        return new BootstrapHtmlCanvas(child, showTitleLevel);
     }
 
 

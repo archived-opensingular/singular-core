@@ -33,7 +33,7 @@ import java.util.ArrayList;
 /**
  * Classe DropdownButtonPanel
  * <p>
- * Constroi um dropdown do boostrap com os links informados
+ * Constroi um dropdown do bootstrap com os links informados
  */
 public class DropDownButtonPanel extends Panel {
 
