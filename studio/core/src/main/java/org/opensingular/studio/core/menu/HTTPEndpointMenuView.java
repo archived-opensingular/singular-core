@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.menu;
+package org.opensingular.studio.core.menu;
 
 import org.opensingular.studio.core.menu.MenuView;
 

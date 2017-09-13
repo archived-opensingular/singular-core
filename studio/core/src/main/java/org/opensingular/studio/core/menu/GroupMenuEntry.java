@@ -1,9 +1,7 @@
-package org.opensingular.studio.app.menu;
+package org.opensingular.studio.core.menu;
 
 import org.opensingular.lib.commons.ui.Icon;
-import org.opensingular.studio.core.menu.AbstractMenuEntry;
-import org.opensingular.studio.core.menu.MenuEntry;
-import org.opensingular.studio.core.menu.MenuView;
+import org.opensingular.studio.core.definition.StudioDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,5 +28,23 @@ public class GroupMenuEntry extends AbstractMenuEntry {
         this.children.add(child);
         return child;
     }
-    
+
+    public static class Builder {
+        private GroupMenuEntry groupEntry;
+
+        public Builder(GroupMenuEntry groupEntry) {
+            this.groupEntry = groupEntry;
+        }
+
+        public Builder addStudioItem(String name, StudioDefinition definition) {
+            groupEntry.add(new ItemMenuEntry(name, new StudioMenuView(definition)));
+            return this;
+        }
+
+        public Builder addHTTPEndpoint(Icon ico, String name, String endpoint) {
+            groupEntry.add(new ItemMenuEntry(ico, name, new HTTPEndpointMenuView(endpoint)));
+            return this;
+        }
+    }
+
 }

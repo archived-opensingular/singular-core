@@ -1,13 +1,11 @@
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
@@ -21,11 +19,11 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
-import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.app.menu.GroupMenuEntry;
-import org.opensingular.studio.app.menu.ItemMenuEntry;
-import org.opensingular.studio.app.menu.StudioMenuView;
+import org.opensingular.studio.core.definition.StudioDefinition;
+import org.opensingular.studio.core.menu.GroupMenuEntry;
+import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
+import org.opensingular.studio.core.menu.StudioMenuView;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("/studio/${path}")
@@ -35,7 +33,7 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        Form<Void> form = new Form<>("form");
+        Form<Void> form = newStatelessIfEmptyForm();
         form.setMultiPart(true);
         MenuEntry entry = findCurrentMenuEntry();
         if (isStudioItem(entry)) {
@@ -46,23 +44,37 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
         add(form);
     }
 
+    @NotNull
+    private Form<Void> newStatelessIfEmptyForm() {
+        return new Form<Void>("form") {
+            @Override
+            protected boolean getStatelessHint() {
+                Component statefullComp = visitChildren(Component.class, (c, v) -> {
+                    if (!c.isStateless()) {
+                        v.stop(c);
+                    }
+                });
+                return statefullComp == null;
+            }
+        };
+    }
+
     private void addCrudContent(Form<Void> form, MenuEntry entry) {
         StudioMenuView view = (StudioMenuView) entry.getView();
         definition = view.getStudioDefinition();
-        String beanName = definition.getRepositoryBeanName();
-        if (ApplicationContextProvider.get().containsBean(beanName)) {
-            form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
-                    , () -> (FormRespository) ApplicationContextProvider.get().getBean(beanName)
-                    , definition::getPermissionStrategy) {
-                @Override
-                protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
-                    definition.configureDatatableColumns(dataTableBuilder);
-                }
-            }.setCrudTitle(definition.getTitle()));
-        } else {
-            getLogger().warn("Não foi encontrado o bean {}", beanName);
-            addEmptyContent(form);
-        }
+        Class<? extends FormRespository> repositoryClass = definition.getRepositoryClass();
+        form.add(new SingularStudioSimpleCRUDPanel<STypeComposite<SIComposite>, SIComposite>("crud"
+                , () -> ApplicationContextProvider.get().getBean(repositoryClass)
+                , definition::getPermissionStrategy) {
+            @Override
+            protected void buildListTable(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
+                StudioDefinition.StudioDataTable studioDataTable = new StudioDefinition.StudioDataTable();
+                definition.configureStudioDataTable(studioDataTable);
+                studioDataTable.getColumns().forEach((columnName, columnValuePath) -> {
+                    dataTableBuilder.appendPropertyColumn(Model.of(columnName), ins -> ins.getValue(columnValuePath));
+                });
+            }
+        }.setCrudTitle(definition.getTitle()));
     }
 
     private boolean isStudioItem(MenuEntry entry) {
@@ -123,15 +135,4 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
         });
     }
 
-    public static String getPageEndpoint(String pathParameter) {
-        String[] paths = pathParameter.split("/");
-        StringBuilder path = new StringBuilder();
-        if (paths.length > 0) {
-            path.append((String) RequestCycle.get().urlFor(StudioCRUDPage.class, new PageParameters().add("path", paths[0])));
-            for (int i = 1; i < paths.length; i++) {
-                path.append('/').append(paths[i]);
-            }
-        }
-        return WebApplication.get().getServletContext().getContextPath() + path.toString();
-    }
 }

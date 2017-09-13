@@ -1,4 +1,4 @@
-package org.opensingular.studio.app.wicket.pages;
+package org.opensingular.studio.core.view;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.mock.MockApplication;
@@ -19,8 +19,9 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
-import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.app.menu.*;
+import org.opensingular.studio.core.definition.StudioDefinition;
+import org.opensingular.studio.core.menu.*;
+import org.opensingular.studio.core.util.StudioWicketUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 public class StudioCRUDPageTest extends WicketTestCase {
@@ -48,7 +49,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
         @Override
         protected void init() {
             super.init();
-            new AnnotatedMountScanner().scanPackage("org.opensingular.studio.app.wicket.pages").mount(this);
+            new AnnotatedMountScanner().scanPackage("org.opensingular.studio").mount(this);
         }
     }
 
@@ -65,7 +66,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
         group.add(new ItemMenuEntry("Mock", new HTTPEndpointMenuView("/")));
         applicationContextMock.putBean(menu);
-        tester.executeUrl(group.getEndpoint());
+        tester.executeUrl("." + group.getEndpoint());
         tester.assertComponent("app-body:menu:itens:0:menu-item", MetronicMenuGroup.class);
         tester.assertComponent("app-body:menu:itens:0:menu-item:menu-group:sub-menu:itens:0:menu-item", MetronicMenuItem.class);
     }
@@ -73,7 +74,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
     @Test
     public void testPathParamLookup() throws Exception {
         applicationContextMock.putBean(new StudioMenu(null));
-        tester.executeUrl(StudioCRUDPage.getPageEndpoint("foo/bar"));
+        tester.executeUrl("." + StudioWicketUtils.getMergedPathIntoURL(StudioCRUDPage.class, "foo/bar"));
         StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("foo/bar", lastRenderedPage.getMenuPath());
     }
@@ -85,7 +86,7 @@ public class StudioCRUDPageTest extends WicketTestCase {
         GroupMenuEntry group = menu.add(new GroupMenuEntry(DefaultIcons.CHECK, "Group", new SidebarMenuView()));
         ItemMenuEntry mockMenuItem = group.add(new ItemMenuEntry("Mock", new StudioMenuView(studioDefinition)));
         applicationContextMock.putBean(menu);
-        tester.executeUrl(mockMenuItem.getEndpoint());
+        tester.executeUrl("." + mockMenuItem.getEndpoint());
         tester.assertRenderedPage(StudioCRUDPage.class);
         StudioCRUDPage lastRenderedPage = (StudioCRUDPage) tester.getLastRenderedPage();
         assertEquals("group/mock", lastRenderedPage.getMenuPath());
@@ -93,14 +94,16 @@ public class StudioCRUDPageTest extends WicketTestCase {
 
     @Test
     public void testAcessMenuWithDefinition() throws Exception {
+        FormRespository formRespository = Mockito.mock(FormRespository.class);
         StudioDefinition definition = new StudioDefinition() {
+
             @Override
-            public String getRepositoryBeanName() {
-                return "mockRepository";
+            public Class<? extends FormRespository> getRepositoryClass() {
+                return formRespository.getClass();
             }
 
             @Override
-            public void configureDatatableColumns(BSDataTableBuilder<SIComposite, String, IColumn<SIComposite, String>> dataTableBuilder) {
+            public void configureStudioDataTable(StudioDataTable studioDataTable) {
 
             }
 
@@ -115,11 +118,12 @@ public class StudioCRUDPageTest extends WicketTestCase {
         ItemMenuEntry mockMenuItem = group.add(new ItemMenuEntry(DefaultIcons.WRENCH, "Mock", new StudioMenuView(definition)));
 
         applicationContextMock.putBean(menu);
-        applicationContextMock.putBean("mockRepository", Mockito.mock(FormRespository.class));
+        applicationContextMock.putBean(formRespository);
 
         tester.executeUrl("." + mockMenuItem.getEndpoint());
         tester.assertRenderedPage(StudioCRUDPage.class);
 
         tester.assertComponent("form:crud", SingularStudioSimpleCRUDPanel.class);
     }
+
 }

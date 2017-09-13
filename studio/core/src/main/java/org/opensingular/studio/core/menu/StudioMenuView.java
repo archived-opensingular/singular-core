@@ -1,8 +1,8 @@
-package org.opensingular.studio.app.menu;
+package org.opensingular.studio.core.menu;
 
-import org.opensingular.studio.app.definition.StudioDefinition;
-import org.opensingular.studio.app.wicket.pages.StudioCRUDPage;
-import org.opensingular.studio.core.menu.MenuView;
+import org.opensingular.studio.core.definition.StudioDefinition;
+import org.opensingular.studio.core.util.StudioWicketUtils;
+import org.opensingular.studio.core.view.StudioCRUDPage;
 
 public class StudioMenuView implements MenuView {
     private final StudioDefinition studioDefinition;
@@ -13,7 +13,7 @@ public class StudioMenuView implements MenuView {
 
     @Override
     public String getEndpoint(String menuPath) {
-        return StudioCRUDPage.getPageEndpoint(menuPath);
+        return StudioWicketUtils.getMergedPathIntoURL(StudioCRUDPage.class, menuPath);
     }
 
     public StudioDefinition getStudioDefinition() {
