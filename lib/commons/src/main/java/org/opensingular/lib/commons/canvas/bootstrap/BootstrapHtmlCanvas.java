@@ -10,32 +10,26 @@ import org.opensingular.lib.commons.canvas.table.TableCanvas;
 
 import java.util.List;
 
-public class BoostrapHtmlCanvas extends HtmlCanvas {
+public class BootstrapHtmlCanvas extends HtmlCanvas {
 
-    public BoostrapHtmlCanvas(boolean showTitleLevel) {
+    public BootstrapHtmlCanvas(boolean showTitleLevel) {
         super(showTitleLevel);
         getRootHtmlBuilder()
                 .newChild("link")
                 .putAttribute("rel", "stylesheet")
-                .putAttribute("href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
-                .putAttribute("integrity", "sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u")
-                .putAttribute("crossorigin", "anonymous");
-        getRootHtmlBuilder()
-                .newChild("script")
-                .putAttribute("src", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
-                .putAttribute("integrity", "sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa")
+                .putAttribute("href", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.min.css")
                 .putAttribute("crossorigin", "anonymous");
         setcurrentHtmlBuilder(getRootHtmlBuilder().newChild("div").putAttribute("class", "container"));
 
     }
 
-    public BoostrapHtmlCanvas(RawHtmlBuilder rawHtmlBuilder, boolean showTitleLevel) {
+    public BootstrapHtmlCanvas(RawHtmlBuilder rawHtmlBuilder, boolean showTitleLevel) {
         super(rawHtmlBuilder, showTitleLevel);
     }
 
     @Override
     protected @NotNull HtmlCanvas newHtmlChildCanvas(RawHtmlBuilder child, boolean showTitleLevel) {
-        return new BoostrapHtmlCanvas(child, showTitleLevel);
+        return new BootstrapHtmlCanvas(child, showTitleLevel);
     }
 
 

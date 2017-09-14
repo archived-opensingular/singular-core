@@ -39,7 +39,7 @@ public class StudioMenu {
         }
 
         public Builder addHTTPEndpoint(Icon icon, String name, String endpoint) {
-            ItemMenuEntry i = studioMenu.add(new ItemMenuEntry(icon, name, new HTTPEndpointMenuView(endpoint)));
+            studioMenu.add(new ItemMenuEntry(icon, name, new HTTPEndpointMenuView(endpoint)));
             return this;
         }
 
