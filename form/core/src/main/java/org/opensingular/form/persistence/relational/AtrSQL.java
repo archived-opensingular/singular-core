@@ -20,11 +20,13 @@ import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_COLU
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_FKS;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
+import static org.opensingular.form.persistence.relational.RelationalColumnConverter.ASPECT_RELATIONAL_CONV;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.function.Supplier;
 
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.STranslatorForAttribute;
@@ -94,5 +96,10 @@ public class AtrSQL extends STranslatorForAttribute {
 
 	public String getColumn() {
 		return getAttributeValue(ATR_COLUMN);
+	}
+
+	public AtrSQL columnConverter(Supplier<RelationalColumnConverter> converter) {
+		getTipo().setAspect(ASPECT_RELATIONAL_CONV, converter);
+		return this;
 	}
 }

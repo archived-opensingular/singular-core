@@ -87,9 +87,10 @@ public class RelationalSQLUpdate implements RelationalSQL {
 
 	private Object columnValue(RelationalColumn column) {
 		String fieldName = mapColumnToField.get(column.getName());
-		if (fieldName == null)
+		if (fieldName == null) {
 			return null;
-		return instance.getValue(fieldName);
+		}
+		return RelationalSQL.fieldValue(instance, fieldName);
 	}
 
 	private String tableAlias(String table) {

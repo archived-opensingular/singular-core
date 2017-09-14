@@ -132,6 +132,6 @@ public class RelationalSQLInsert implements RelationalSQL {
 		if (fieldName == null) {
 			return containerKeyColumns.get(column.getName());
 		}
-		return instance.getValue(fieldName);
+		return RelationalSQL.fieldValue(instance, fieldName);
 	}
 }

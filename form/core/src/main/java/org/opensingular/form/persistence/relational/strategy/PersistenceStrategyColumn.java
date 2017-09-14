@@ -34,7 +34,7 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
 		String tableName = RelationalSQL.table(field);
 		SInstance tupleKeyRef = instance.getParent();
 		String fieldName = RelationalSQL.column(field);
-		Object fieldValue = instance.getValue();
+		Object fieldValue = RelationalSQL.fieldValue(instance);
 		toList.add(new RelationalData(tableName, tupleKeyRef, fieldName, fieldValue));
 	}
 
@@ -46,7 +46,7 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
 		for (RelationalData data : fromList) {
 			if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
 					&& data.getFieldName().equals(fieldName)) {
-				instance.setValue(data.getFieldValue());
+				RelationalSQL.setFieldValue(instance, data.getFieldValue());
 			}
 		}
 	}

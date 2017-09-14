@@ -22,6 +22,7 @@ import static org.opensingular.form.persistence.relational.RelationalSQL.select;
 import static org.opensingular.form.persistence.relational.RelationalSQL.selectCount;
 import static org.opensingular.form.persistence.relational.RelationalSQL.selectDistinct;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -40,12 +41,14 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.document.SDocument;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyRelational;
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.ItemEntity;
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.MasterEntity;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.ref.STypeRef;
 
 /**
  * @author Edmundo Andrade
@@ -69,7 +72,8 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL query = select(master.getFields()).orderBy(master.name);
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 order by T1.name", script.get(0).getSQL());
+		assertEquals("select T1.name, T1.category, T1.obs, T1.id from MasterEntity T1 order by T1.name",
+				script.get(0).getSQL());
 		assertEquals(0, script.get(0).getParameters().size());
 		assertNull(script.get(0).getInstance());
 	}
@@ -79,7 +83,8 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL query = select(master.getFields()).where(master, masterKey(42));
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("select T1.name, T1.obs, T1.id from MasterEntity T1 where T1.id = ?", script.get(0).getSQL());
+		assertEquals("select T1.name, T1.category, T1.obs, T1.id from MasterEntity T1 where T1.id = ?",
+				script.get(0).getSQL());
 		assertEquals(1, script.get(0).getParameters().size());
 		assertEquals(42, script.get(0).getParameters().get(0));
 		assertNull(script.get(0).getInstance());
@@ -136,13 +141,16 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Test
 	public void testInsert() {
 		SIComposite masterInstance = master.newInstance();
-		masterInstance.setValue("name", "My name");
+		masterInstance.setValue(master.name, "My name");
+		masterInstance.getField(master.category).setValue(master.category.key, "id$Integer$2");
+		masterInstance.getField(master.category).setValue(master.category.display, "Category 2");
 		RelationalSQL insert = insert(masterInstance);
 		List<RelationalSQLCommmand> script = insert.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("insert into MasterEntity (name) values (?)", script.get(0).getSQL());
-		assertEquals(1, script.get(0).getParameters().size());
+		assertEquals("insert into MasterEntity (name, category) values (?, ?)", script.get(0).getSQL());
+		assertEquals(2, script.get(0).getParameters().size());
 		assertEquals("My name", script.get(0).getParameters().get(0));
+		assertEquals(2, script.get(0).getParameters().get(1));
 		assertEquals(masterInstance, script.get(0).getInstance());
 		//
 		FormKey.setOnInstance(masterInstance, masterKey(33));
@@ -167,16 +175,18 @@ public class RelationalSQLTest extends TestCaseForm {
 	@Test
 	public void testUpdate() {
 		SIComposite masterInstance = master.newInstance();
-		masterInstance.setValue("name", "My name");
+		masterInstance.setValue(master.name, "My name");
 		FormKey.setOnInstance(masterInstance, masterKey(4242));
 		RelationalSQL update = RelationalSQL.update(masterInstance);
 		List<RelationalSQLCommmand> script = update.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("update MasterEntity T1 set T1.name = ?, T1.obs = ? where T1.id = ?", script.get(0).getSQL());
-		assertEquals(3, script.get(0).getParameters().size());
+		assertEquals("update MasterEntity T1 set T1.name = ?, T1.category = ?, T1.obs = ? where T1.id = ?",
+				script.get(0).getSQL());
+		assertEquals(4, script.get(0).getParameters().size());
 		assertEquals("My name", script.get(0).getParameters().get(0));
 		assertNull(script.get(0).getParameters().get(1));
-		assertEquals(4242, script.get(0).getParameters().get(2));
+		assertNull(script.get(0).getParameters().get(2));
+		assertEquals(4242, script.get(0).getParameters().get(3));
 		assertEquals(masterInstance, script.get(0).getInstance());
 	}
 
@@ -207,9 +217,48 @@ public class RelationalSQLTest extends TestCaseForm {
 
 	@SInfoPackage(name = "testPackage")
 	public static final class TestPackage extends SPackage {
+		@SInfoType(name = "CategoryEntity", spackage = TestPackage.class)
+		public static final class CategoryEntity extends STypeComposite<SIComposite> {
+			public STypeString name;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				asAtr().label("Category entity");
+				name = addFieldString("name");
+				// relational mapping
+				asSQL().table("Category").tablePK("id");
+			}
+		}
+
+		@SInfoType(name = "CategoryRef", spackage = TestPackage.class)
+		public static class CategoryRef extends STypeRef<SIComposite> {
+			@Override
+			protected String getKeyValue(SIComposite instance) {
+				return FormKey.fromInstance(instance).toStringPersistence();
+			}
+
+			@Override
+			protected String getDisplayValue(SIComposite instance) {
+				return instance.getValue(CategoryEntity.class, c -> c.name);
+			}
+
+			@Override
+			protected List<SIComposite> loadValues(SDocument document) {
+				List<SIComposite> result = new ArrayList<>();
+				for (int i = 1; i <= 3; i++) {
+					SIComposite instance = document.getRoot().getDictionary().newInstance(CategoryEntity.class);
+					instance.setValue("name", "Category " + i);
+					FormKey.setOnInstance(instance, new FormKeyRelational("id$Integer$" + i));
+					result.add(instance);
+				}
+				return result;
+			}
+		}
+
 		@SInfoType(name = "MasterEntity", spackage = TestPackage.class)
 		public static final class MasterEntity extends STypeComposite<SIComposite> {
 			public STypeString name;
+			public CategoryRef category;
 			public STypeString observation;
 			public STypeList<ItemEntity, SIComposite> items;
 
@@ -217,10 +266,12 @@ public class RelationalSQLTest extends TestCaseForm {
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Master entity");
 				name = addFieldString("name");
+				category = addField("category", CategoryRef.class);
 				observation = addFieldString("observation");
 				items = addFieldListOf("items", ItemEntity.class);
 				// relational mapping
 				asSQL().tablePK("id");
+				asSQL().addTableFK("category", CategoryEntity.class);
 				observation.asSQL().column("obs");
 			}
 		}

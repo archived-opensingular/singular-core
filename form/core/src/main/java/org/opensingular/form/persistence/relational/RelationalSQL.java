@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence.relational;
 
+import static org.opensingular.form.persistence.relational.RelationalColumnConverter.ASPECT_RELATIONAL_CONV;
 import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.COUNT;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
@@ -23,6 +24,7 @@ import static org.opensingular.form.persistence.relational.RelationalSQLAggregat
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,10 +32,13 @@ import java.util.StringJoiner;
 
 import org.opensingular.form.ICompositeType;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyRelational;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
+import org.opensingular.form.type.ref.STypeRef;
 
 /**
  * Interface for relational SQL builders.
@@ -93,12 +98,18 @@ public interface RelationalSQL {
 		return aspectRelationalMap(field).persistenceStrategy(field);
 	}
 
+	static BasicRelationalMapper singletonBasicRelationalMapper = new BasicRelationalMapper();
+
 	public static RelationalMapper aspectRelationalMap(SType<?> type) {
 		Optional<RelationalMapper> mapper = type.getAspect(ASPECT_RELATIONAL_MAP);
 		if (mapper.isPresent()) {
 			return mapper.get();
 		}
-		return new BasicRelationalMapper();
+		return singletonBasicRelationalMapper;
+	}
+
+	public static Optional<RelationalColumnConverter> aspectRelationalColumnConverter(SType<?> type) {
+		return type.getAspect(ASPECT_RELATIONAL_CONV);
 	}
 
 	public static void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns,
@@ -121,7 +132,7 @@ public interface RelationalSQL {
 
 	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
 			List<SType<?>> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
-		if (field instanceof ICompositeType) {
+		if (field instanceof ICompositeType && !(field instanceof STypeRef)) {
 			return;
 		}
 		SType<?> tableContext = tableContext(field);
@@ -162,5 +173,45 @@ public interface RelationalSQL {
 
 	public static Object columnValue(RelationalColumn column, Map<String, Object> mapColumnToValue) {
 		return mapColumnToValue.get(column.getName());
+	}
+
+	public static Object fieldValue(SIComposite instance, String fieldName) {
+		return fieldValue(instance.getField(fieldName));
+	}
+
+	public static Object fieldValue(SInstance instance) {
+		if (instance.getType() instanceof STypeRef) {
+			Object key = instance.getValue("key");
+			if (key == null) {
+				return null;
+			}
+			return FormKeyRelational.convertToKey(key).getValue().values().iterator().next();
+		}
+		Object result = instance.getValue();
+		Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
+		if (converter.isPresent()) {
+			result = converter.get().toRelationalColumn(result);
+		}
+		return result;
+	}
+
+	public static void setFieldValue(SInstance instance, Object value) {
+		if (instance.getType() instanceof STypeRef) {
+			String key = null;
+			if (value != null) {
+				HashMap<String, Object> keyValue = new HashMap<String, Object>();
+				keyValue.put(column(instance.getType()), value);
+				key = FormKeyRelational.convertToKey(keyValue).toStringPersistence();
+			}
+			instance.getField("key").setValue(key);
+			instance.getField("display").setValue(key);
+			return;
+		}
+		Object result = value;
+		Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
+		if (converter.isPresent()) {
+			result = converter.get().fromRelationalColumn(result);
+		}
+		instance.setValue(result);
 	}
 }

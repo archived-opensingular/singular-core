@@ -126,6 +126,8 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 	private String toSqlConstant(Object parameterValue) {
 		if (parameterValue == null) {
 			return "NULL";
+		} else if (parameterValue instanceof Character) {
+			return toSqlConstant(String.valueOf(parameterValue));
 		} else if (parameterValue instanceof String) {
 			return "'" + ((String) parameterValue).replace("'", "''") + "'";
 		}

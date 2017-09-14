@@ -24,7 +24,6 @@ import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeSimple;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 
@@ -54,6 +53,6 @@ public class SPackageFormPersistence extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_TABLE);
         pb.createAttributeIntoType(SType.class, ATR_TABLE_PK);
         pb.createAttributeIntoType(SType.class, ATR_TABLE_FKS);
-        pb.createAttributeIntoType(STypeSimple.class, ATR_COLUMN);
+        pb.createAttributeIntoType(SType.class, ATR_COLUMN);
     }
 }

@@ -23,6 +23,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
+import org.opensingular.form.type.ref.STypeRef;
 
 /**
  * Basic implementation of a Relational Mapper.
@@ -72,7 +73,7 @@ public class BasicRelationalMapper implements RelationalMapper {
 
 	public PersistenceStrategy persistenceStrategy(SType<?> field) {
 		PersistenceStrategy result = PersistenceStrategy.COLUMN;
-		if (field instanceof STypeComposite) {
+		if (field instanceof STypeComposite && !(field instanceof STypeRef)) {
 			result = PersistenceStrategy.TABLE;
 		} else if (field instanceof STypeList) {
 			result = PersistenceStrategy.ONE_TO_MANY;
@@ -81,7 +82,7 @@ public class BasicRelationalMapper implements RelationalMapper {
 	}
 
 	protected boolean hasParentType(SType<?> type) {
-		return !type.isComposite() && !type.getParentScope().equals(type.getPackage());
+		return type instanceof STypeRef || !type.isComposite() && !type.getParentScope().equals(type.getPackage());
 	}
 
 	protected SType<?> getParentType(SType<?> type) {
