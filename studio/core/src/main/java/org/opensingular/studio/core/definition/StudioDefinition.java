@@ -3,6 +3,7 @@ package org.opensingular.studio.core.definition;
 
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.studio.StudioCRUDPermissionStrategy;
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -17,6 +18,10 @@ public interface StudioDefinition extends Serializable {
 
     default StudioCRUDPermissionStrategy getPermissionStrategy() {
         return StudioCRUDPermissionStrategy.ALL;
+    }
+
+    default FormRespository getRepository(){
+        return ApplicationContextProvider.get().getBean(getRepositoryClass());
     }
 
     class StudioDataTable {
