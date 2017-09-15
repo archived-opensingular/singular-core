@@ -23,15 +23,17 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.single.AttachmentMapper;
+import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class AttachmentImageMapperToolTip extends AttachmentMapper {
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")//TODO implementar
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final ImageUploadPanel container = new ImageUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDIT, true);
+        final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDIT);
+        container.setShowPreview(true);
         formGroup.appendDiv(container);
         return container.getUploadField();
     }

@@ -17,13 +17,27 @@
 
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
+<wicket:head>
+<style>
+    /*TODO migrar para singular-static*/
+    .singular-upload-preview {
+        margin-top: 2px;
+        border-radius: 4px;
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #d5d9e3;
+    }
+    .singular-upload-preview > img {
+        max-height: 200px;
+    }
+</style>
+</wicket:head>
 <wicket:panel >
     <style>
         .file-trash-button-hidden{
             display: none;
         }
     </style>
-
     <div class="input-group">
         <div class="form-control" >
             <i class="fa fa-file"></i>
@@ -49,6 +63,9 @@
                     <i class="fa fa-remove"></i>
                 </span>
             </span>
+    </div>
+    <div class="singular-upload-preview" wicket:id="preview">
+        <img wicket:id="imagePreview" />
     </div>
 </wicket:panel>
 </body>
