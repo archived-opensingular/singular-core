@@ -38,6 +38,8 @@ public interface RelationalMapper {
 
 	List<RelationalFK> tableFKs(SType<?> field);
 
+	String tableRefColumn(SType<?> field);
+
 	String column(SType<?> field);
 
 	PersistenceStrategy persistenceStrategy(SType<?> type);

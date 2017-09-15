@@ -35,6 +35,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyRelational;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
@@ -90,6 +91,10 @@ public interface RelationalSQL {
 		return aspectRelationalMap(type).tableFKs(type);
 	}
 
+	public static String tableRefColumn(SType<?> type) {
+		return aspectRelationalMap(type).tableRefColumn(type);
+	}
+
 	public static String column(SType<?> field) {
 		return aspectRelationalMap(field).column(field);
 	}
@@ -132,7 +137,7 @@ public interface RelationalSQL {
 
 	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
 			List<SType<?>> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
-		if (field instanceof ICompositeType && !(field instanceof STypeRef)) {
+		if (!isCompositeRef(field) && field instanceof ICompositeType) {
 			return;
 		}
 		SType<?> tableContext = tableContext(field);
@@ -146,6 +151,39 @@ public interface RelationalSQL {
 		if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
 			targetColumns.add(column);
 		}
+	}
+
+	public static void collectTargetRefColumn(SType<?> field, List<RelationalColumn> targetColumns,
+			List<SType<?>> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
+		if (!isCompositeRef(field)) {
+			return;
+		}
+		SType<?> tableRefContext = tableContext(tableRef(field));
+		String tableRefName = table(tableRefContext);
+		if (!targetTables.contains(tableRefContext)) {
+			targetTables.add(tableRefContext);
+		}
+		String columnRefName = tableRefColumn(tableRefContext);
+		if (columnRefName == null) {
+			throw new SingularFormException("Relational mapping should define tableRefColumn for the table '"
+					+ tableRefName + "' in order to support type '" + field.getNameSimple() + "'.");
+		}
+		mapColumnToField.put(columnRefName, field.getNameSimple());
+		RelationalColumn columnRef = new RelationalColumn(tableRefName, columnRefName);
+		if (!targetColumns.contains(columnRef) && !keyColumns.contains(columnRef)) {
+			targetColumns.add(columnRef);
+		}
+	}
+
+	public static SType<?> tableRef(SType<?> field) {
+		SType<?> tableContext = tableContext(field);
+		String columnName = column(field);
+		for (RelationalFK fk : tableFKs(tableContext)) {
+			if (fk.getKeyColumns().size() == 1 && fk.getKeyColumns().get(0).getName().equalsIgnoreCase(columnName)) {
+				return fk.getForeignType();
+			}
+		}
+		return null;
 	}
 
 	public static String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
@@ -180,7 +218,7 @@ public interface RelationalSQL {
 	}
 
 	public static Object fieldValue(SInstance instance) {
-		if (instance.getType() instanceof STypeRef) {
+		if (isCompositeRef(instance.getType())) {
 			Object key = instance.getValue("key");
 			if (key == null) {
 				return null;
@@ -195,16 +233,23 @@ public interface RelationalSQL {
 		return result;
 	}
 
-	public static void setFieldValue(SInstance instance, Object value) {
-		if (instance.getType() instanceof STypeRef) {
-			String key = null;
-			if (value != null) {
-				HashMap<String, Object> keyValue = new HashMap<String, Object>();
-				keyValue.put(column(instance.getType()), value);
-				key = FormKeyRelational.convertToKey(keyValue).toStringPersistence();
-			}
-			instance.getField("key").setValue(key);
-			instance.getField("display").setValue(key);
+	public static void setFieldValue(SInstance instance, List<RelationalData> fromList) {
+		SType<?> field = instance.getType();
+		String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
+		SInstance tupleKeyRef = instance.getParent();
+		String fieldName = RelationalSQL.column(field);
+		Object value = getFieldValue(tableName, tupleKeyRef, fieldName, fromList);
+		if (value == null) {
+			return;
+		}
+		if (isCompositeRef(instance.getType())) {
+			SType<?> tableRefContext = tableContext(tableRef(field));
+			String tableRefName = table(tableRefContext);
+			String columnRefName = tableRefColumn(tableRefContext);
+			HashMap<String, Object> keyValue = new HashMap<String, Object>();
+			keyValue.put(column(instance.getType()), value);
+			instance.getField("key").setValue(FormKeyRelational.convertToKey(keyValue).toStringPersistence());
+			instance.getField("display").setValue(getFieldValue(tableRefName, tupleKeyRef, columnRefName, fromList));
 			return;
 		}
 		Object result = value;
@@ -213,5 +258,20 @@ public interface RelationalSQL {
 			result = converter.get().fromRelationalColumn(result);
 		}
 		instance.setValue(result);
+	}
+
+	static Object getFieldValue(String tableName, SInstance tupleKeyRef, String fieldName,
+			List<RelationalData> fromList) {
+		for (RelationalData data : fromList) {
+			if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
+					&& data.getFieldName().equals(fieldName)) {
+				return data.getFieldValue();
+			}
+		}
+		return null;
+	}
+
+	public static boolean isCompositeRef(SType<?> field) {
+		return field instanceof STypeRef;
 	}
 }

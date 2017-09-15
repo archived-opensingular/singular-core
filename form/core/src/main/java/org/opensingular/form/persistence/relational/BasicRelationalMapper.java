@@ -63,6 +63,10 @@ public class BasicRelationalMapper implements RelationalMapper {
 		return field.asSQL().getTableFKs();
 	}
 
+	public String tableRefColumn(SType<?> field) {
+		return field.asSQL().getTableRefColumn();
+	}
+
 	public String column(SType<?> field) {
 		String result = field.asSQL().getColumn();
 		if (result == null) {

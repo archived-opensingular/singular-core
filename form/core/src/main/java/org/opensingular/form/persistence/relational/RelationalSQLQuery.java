@@ -66,6 +66,8 @@ public class RelationalSQLQuery implements RelationalSQL {
 			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
 			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList(),
 					mapColumnToField);
+			RelationalSQL.collectTargetRefColumn(field, targetColumns, targetTables, Collections.emptyList(),
+					mapColumnToField);
 		}
 	}
 

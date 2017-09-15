@@ -20,6 +20,7 @@ import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_COLU
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_FKS;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_REF_COLUMN;
 import static org.opensingular.form.persistence.relational.RelationalColumnConverter.ASPECT_RELATIONAL_CONV;
 
 import java.util.ArrayList;
@@ -87,6 +88,15 @@ public class AtrSQL extends STranslatorForAttribute {
 			result.add(RelationalFK.fromStringPersistence(item, getDictionary()));
 		}
 		return result;
+	}
+
+	public AtrSQL tableRefColumn(String tableRefColumn) {
+		setAttributeValue(ATR_TABLE_REF_COLUMN, tableRefColumn);
+		return this;
+	}
+
+	public String getTableRefColumn() {
+		return getAttributeValue(ATR_TABLE_REF_COLUMN);
 	}
 
 	public AtrSQL column(String column) {

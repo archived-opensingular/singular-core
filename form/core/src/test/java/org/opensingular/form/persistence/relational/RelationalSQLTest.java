@@ -72,7 +72,8 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL query = select(master.getFields()).orderBy(master.name);
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("select T1.name, T1.category, T1.obs, T1.id from MasterEntity T1 order by T1.name",
+		assertEquals(
+				"select T1.name, T1.category, T2.name, T1.obs, T1.id from MasterEntity T1 left join Category T2 on T1.category = T2.id order by T1.name",
 				script.get(0).getSQL());
 		assertEquals(0, script.get(0).getParameters().size());
 		assertNull(script.get(0).getInstance());
@@ -83,7 +84,8 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL query = select(master.getFields()).where(master, masterKey(42));
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("select T1.name, T1.category, T1.obs, T1.id from MasterEntity T1 where T1.id = ?",
+		assertEquals(
+				"select T1.name, T1.category, T2.name, T1.obs, T1.id from MasterEntity T1 left join Category T2 on T1.category = T2.id where T1.id = ?",
 				script.get(0).getSQL());
 		assertEquals(1, script.get(0).getParameters().size());
 		assertEquals(42, script.get(0).getParameters().get(0));
@@ -226,7 +228,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				asAtr().label("Category entity");
 				name = addFieldString("name");
 				// relational mapping
-				asSQL().table("Category").tablePK("id");
+				asSQL().table("Category").tablePK("id").tableRefColumn("name");
 			}
 		}
 
