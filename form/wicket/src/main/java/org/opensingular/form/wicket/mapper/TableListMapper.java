@@ -187,7 +187,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
             final BSTRow row = tableHeader.newRow();
 
-            if (view.isInsertEnabled()) {
+            if (view.isInsertEnabled() && isEdition) {
                 row.newTHeaderCell($m.ofValue(""));
             }
 
