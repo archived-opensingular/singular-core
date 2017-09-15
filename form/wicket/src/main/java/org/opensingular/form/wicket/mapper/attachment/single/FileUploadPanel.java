@@ -183,8 +183,7 @@ public class FileUploadPanel extends Panel implements Loggable {
                 target.add(preview);
             }
         };
-        preview.add(previewCallBack);
-
+        this.add(previewCallBack);
     }
 
     @Override
