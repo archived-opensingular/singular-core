@@ -57,6 +57,13 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @Override
+    protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        Component c  = super.appendReadOnlyInput(ctx, formGroup, labelModel);
+        formGroup.setVisible(false);
+        return c;
+    }
+
+    @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         return StringUtils.EMPTY;
     }
