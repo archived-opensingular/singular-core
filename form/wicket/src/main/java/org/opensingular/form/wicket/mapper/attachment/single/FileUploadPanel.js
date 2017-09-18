@@ -126,11 +126,16 @@
 	                            		params.download_url,
 	                            		dataSInstance.fileId,
 	                            		dataSInstance.name,
-	                            		function(url) { $link.attr('href', url); }
+	                            		function(url) {
+	                            		    $link.attr('href', url);
+	                            		    if(params.preview_update_callback) {
+                                                Wicket.Ajax.post({u: params.preview_update_callback});
+                                            }
+	                            		}
 	                        		);
                                     if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
                                         $link.attr('target', '_blank');
-                                    }
+                                    };
 	                                $('#' + params.files_id).empty().append($link);
 	                                $('#' + params.progress_bar_id).hide();
 	
