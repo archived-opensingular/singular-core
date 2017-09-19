@@ -1,20 +1,15 @@
 package org.opensingular.studio.core.menu;
 
 import org.opensingular.lib.commons.ui.Icon;
+import org.opensingular.studio.core.menu.AbstractMenuEntry;
+import org.opensingular.studio.core.menu.MenuView;
 
 public class ItemMenuEntry extends AbstractMenuEntry {
-    private String endpoint;
-
-    public ItemMenuEntry(Icon icon, String name, String endpoint) {
-        super(icon, name);
-        this.endpoint = endpoint;
+    public ItemMenuEntry(Icon icon, String name, MenuView view) {
+        super(icon, name, view);
     }
 
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
+    public ItemMenuEntry(String name, MenuView view) {
+        super(null, name, view);
     }
 }

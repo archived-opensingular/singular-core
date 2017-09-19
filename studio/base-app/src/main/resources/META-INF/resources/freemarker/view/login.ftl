@@ -57,8 +57,9 @@
              src="/singular-static/resources/singular/img/logo_singular.png">
     </a>
 </div>
+
 <div class="content">
-    <form action="/login" method="POST" class="login-form">
+    <form action="<@spring.url '/login'/>" method="POST" class="login-form">
         <h3 class="form-title">Login</h3>
 
     <#if RequestParameters.error??>
