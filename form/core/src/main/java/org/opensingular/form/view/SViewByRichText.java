@@ -16,5 +16,5 @@
 
 package org.opensingular.form.view;
 
-public class SViewByPortletRichText extends SView {
+public class SViewByRichText extends SView {
 }
