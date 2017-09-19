@@ -19,14 +19,15 @@ package org.opensingular.form.wicket.mapper.attachment;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
-import org.apache.wicket.core.util.string.JavaScriptUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 import org.apache.wicket.model.Model;
 import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.util.Arrays;
@@ -39,7 +40,7 @@ import java.util.regex.Pattern;
  * Classe de link para utilização em conjunto dom {@link DownloadSupportedBehavior}
  * para disponibilizar links de download de um único uso.
  */
-public class DownloadLink extends Link<Void> {
+public class DownloadLink extends WebMarkupContainer {
 
 
     private static final String      FILE_REGEX_PATTERN   = ".*\\.(.*)";
@@ -64,12 +65,25 @@ public class DownloadLink extends Link<Void> {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        add(new Behavior() {
+            @Override
+            public void onComponentTag(Component component, ComponentTag tag) {
+                super.onComponentTag(component, tag);
+                if(!model.getObject().isEmptyOfData()) {
+                    tag.getAttributes().put("href", downloadSupportedBehaviour.getDownloadURL(model.getObject().getFileId(), model.getObject().getFileName()));
+                }
+            }
+        });
     }
 
-    public void configureBody() {
-        this.setBody($m.property(model, "fileName"));
+    @Override
+    public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
+        super.onComponentTagBody(markupStream, openTag);
+        String fileName = model.getObject().getFileName();
+        if(fileName != null){
+            getResponse().write(fileName);
+        }
     }
-
     @Override
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
@@ -78,22 +92,9 @@ public class DownloadLink extends Link<Void> {
         }
     }
 
-    private static String jsStringOrNull(String s) {
-        return (s == null) ? "null" : "'" + JavaScriptUtils.escapeQuotes(s) + "'";
-    }
-
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        this.add($b.attr("onclick",
-                (IReadOnlyModel<String>) () -> "DownloadSupportedBehavior.ajaxDownload(" +
-                        jsStringOrNull(downloadSupportedBehaviour.getUrl()) + "," +
-                        jsStringOrNull(model.getObject().getFileId()) + "," +
-                        jsStringOrNull(model.getObject().getFileName()) + "," +
-                        openInNewTabIfIsBrowserFriendly.getObject() +
-                        ");" +
-                        "return false;"));
-        configureBody();
         add(WicketUtils.$b.attr("title", $m.ofValue(model.getObject().getFileName())));
         if (openInNewTabIfIsBrowserFriendly.getObject()
                 && isContentTypeBrowserFriendly(model.getObject().getFileName())) {
@@ -104,10 +105,6 @@ public class DownloadLink extends Link<Void> {
 
     protected boolean isFileAssigned() {
         return (model.getObject() != null) && (model.getObject().getFileId() != null);
-    }
-
-    @Override
-    public void onClick() {
     }
 
     private boolean isContentTypeBrowserFriendly(String filename) {
