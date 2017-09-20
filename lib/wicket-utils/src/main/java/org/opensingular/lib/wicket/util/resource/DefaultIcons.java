@@ -106,7 +106,8 @@ public enum DefaultIcons implements Icon {
     WARNING("fa fa-warning"),
     TASKS("fa fa-tasks"),
     SEARCH("fa fa-search"),
-    SITEMAP("fa fa-sitemap")
+    SITEMAP("fa fa-sitemap"),
+    FOLDER_OPEN("fa fa-folder-open-o")
     ;
 
     private final String cssClass;

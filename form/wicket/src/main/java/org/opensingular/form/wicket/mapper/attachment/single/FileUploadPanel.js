@@ -133,6 +133,7 @@
                                             }
 	                            		}
 	                        		);
+                                    $link.attr('title', dataSInstance.name);
                                     if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
                                         $link.attr('target', '_blank');
                                     };
