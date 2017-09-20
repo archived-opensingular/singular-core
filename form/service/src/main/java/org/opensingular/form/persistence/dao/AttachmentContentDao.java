@@ -16,17 +16,23 @@
 
 package org.opensingular.form.persistence.dao;
 
+import org.apache.commons.io.IOUtils;
 import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.io.TempFileInputStream;
+import org.opensingular.lib.commons.util.TempFileUtils;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 import javax.annotation.Nonnull;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Optional;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
 
 @SuppressWarnings({"serial", "unchecked"})
 @Transactional(Transactional.TxType.MANDATORY)
@@ -60,13 +66,21 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
     }
 
     protected T createContent(InputStream in, long length, String hashSha1) {
-        DeflaterInputStream inZip      = new DeflaterInputStream(in, new Deflater(Deflater.BEST_COMPRESSION));
-        T                   fileEntity = createInstance();
-        fileEntity.setContent(getSession().getLobHelper().createBlob(inZip, length));
-        fileEntity.setHashSha1(hashSha1);
-        fileEntity.setSize(length);
-        fileEntity.setInclusionDate(new Date());
-        return fileEntity;
+        try {
+            File f = File.createTempFile(this.getClass().getName(), hashSha1);
+            DeflaterInputStream inZip = new DeflaterInputStream(in, new Deflater(Deflater.BEST_COMPRESSION));
+            try (FileOutputStream fos = new FileOutputStream(f)){
+                IOUtils.copy(inZip, fos);
+            }
+            T fileEntity = createInstance();
+            fileEntity.setContent(getSession().getLobHelper().createBlob(new TempFileInputStream(f), f.length()));
+            fileEntity.setHashSha1(hashSha1);
+            fileEntity.setSize(length);
+            fileEntity.setInclusionDate(new Date());
+            return fileEntity;
+        } catch (Exception e){
+            throw SingularException.rethrow(e.getMessage(), e);
+        }
     }
 
     protected T createInstance() {
