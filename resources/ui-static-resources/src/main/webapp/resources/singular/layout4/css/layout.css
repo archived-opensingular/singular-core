@@ -49,27 +49,6 @@ button {
 .annotation-toggle-container hr, .annotation-toggle-container.open hr {
   margin: 10px 0; }
 
-.annotation-toggle-container .annotation-icon, .annotation-toggle-container.open .annotation-icon {
-  display: inline-block;
-  height: 22px;
-  width: 22px;
-  padding-top: 2px;
-  border: 0;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
-  background-size: 14px; }
-
-.annotation-toggle-container .annotation-icon.annotation-icon-empty, .annotation-toggle-container.open .annotation-icon.annotation-icon-empty {
-  background-image: url("../img/add-comment.svg"); }
-
-.annotation-toggle-container .annotation-icon.annotation-icon-approved, .annotation-toggle-container.open .annotation-icon.annotation-icon-approved {
-  background-image: url("../img/accepted-comment.svg");
-  color: #5AB879; }
-
-.annotation-toggle-container .annotation-icon.annotation-icon-rejected, .annotation-toggle-container.open .annotation-icon.annotation-icon-rejected {
-  background-image: url("../img/rejected-comment.svg"); }
-
 .annotation-toggle-container .btn-info, .annotation-toggle-container .btn-danger, .annotation-toggle-container .btn-default, .annotation-toggle-container.open .btn-info, .annotation-toggle-container.open .btn-danger, .annotation-toggle-container.open .btn-default {
   height: 30px;
   width: 30px;
@@ -97,9 +76,29 @@ button {
 .annotation-toggle-container .btn-default, .annotation-toggle-container .btn-default:focus, .annotation-toggle-container.open .btn-default, .annotation-toggle-container.open .btn-default:focus {
   background-image: url("../img/add-comment.svg"); }
 
+.annotation-icon {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  border: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  background-size: 1em;
+  background-position-y: .05em; }
+
+.annotation-icon.annotation-icon-empty {
+  background-image: url("../img/add-comment.svg"); }
+
+.annotation-icon.annotation-icon-approved {
+  background-image: url("../img/accepted-comment.svg");
+  color: #5AB879; }
+
+.annotation-icon.annotation-icon-rejected {
+  background-image: url("../img/rejected-comment.svg"); }
+
 .actions-lg .annotation-icon {
-  background-size: 20px;
-  margin-top: 7px; }
+  font-size: 2em; }
 
 .annotation-title {
   display: inline;
@@ -2188,10 +2187,9 @@ Theme Panel
   height: 40px; }
   .list-table-empty .list-table-empty-message {
     text-align: center;
-    line-height: 8px;
-    height: 8px;
     font-size: 14px;
-    padding-top: 15px; }
+    padding: 10px;
+    margin: 0; }
   .list-table-empty .list-table-empty-link {
     text-decoration: underline;
     color: #65697C; }
@@ -2217,7 +2215,7 @@ Theme Panel
     .list-by-form .list-group-item .list-item-header:after {
       clear: both; }
   .list-by-form .list-group-item .list-item-body {
-    background-color: #f2f2f266;
+    background-color: #f2f2f2;
     padding-top: 20px; }
 
 .list-by-form .has-error input {
