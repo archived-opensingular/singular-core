@@ -43,11 +43,11 @@ import java.util.regex.Pattern;
 public class DownloadLink extends WebMarkupContainer {
 
 
-    private static final String      FILE_REGEX_PATTERN   = ".*\\.(.*)";
+    private static final String FILE_REGEX_PATTERN = ".*\\.(.*)";
     private static final Set<String> SUPPORTED_EXTENSIONS = new LinkedHashSet<>(Arrays.asList("pdf", "jpg", "gif", "png"));
 
-    private IModel<SIAttachment>      model;
-    private IModel<Boolean>           openInNewTabIfIsBrowserFriendly;
+    private IModel<SIAttachment> model;
+    private IModel<Boolean> openInNewTabIfIsBrowserFriendly;
     private DownloadSupportedBehavior downloadSupportedBehaviour;
 
     public DownloadLink(String id, IModel<SIAttachment> model, DownloadSupportedBehavior downloadSupportedBehaviour) {
@@ -69,7 +69,7 @@ public class DownloadLink extends WebMarkupContainer {
             @Override
             public void onComponentTag(Component component, ComponentTag tag) {
                 super.onComponentTag(component, tag);
-                if(!model.getObject().isEmptyOfData()) {
+                if (!model.getObject().isEmptyOfData()) {
                     tag.getAttributes().put("href", downloadSupportedBehaviour.getDownloadURL(model.getObject().getFileId(), model.getObject().getFileName()));
                 }
             }
@@ -80,15 +80,9 @@ public class DownloadLink extends WebMarkupContainer {
     public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
         super.onComponentTagBody(markupStream, openTag);
         String fileName = model.getObject().getFileName();
-        if(fileName != null){
+        if (fileName != null) {
             getResponse().write(fileName);
-        }
-    }
-    @Override
-    protected void onComponentTag(ComponentTag tag) {
-        super.onComponentTag(tag);
-        if ($m.property(model, "fileName") != null) {
-            tag.getAttributes().put("title", $m.property(model, "fileName"));
+            openTag.getAttributes().put("title", fileName);
         }
     }
 
