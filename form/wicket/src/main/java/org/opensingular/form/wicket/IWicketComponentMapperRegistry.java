@@ -63,7 +63,7 @@ public class IWicketComponentMapperRegistry
         @Override
         protected Class<? extends SView> extractQualifier(@Nonnull SInstance instance) {
             SView view = ViewResolver.resolve(instance);
-            return view.getClass();
+            return view == null ? null : view.getClass();
         }
 
         @Nullable
