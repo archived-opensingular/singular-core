@@ -29,10 +29,10 @@ import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTIO
 @FunctionalInterface
 public interface IWicketComponentMapper extends Serializable {
 
-    public static final AspectRef<IWicketComponentMapper> ASPECT_WICKET_MAPPER = new AspectRef<>(
+    AspectRef<IWicketComponentMapper> ASPECT_WICKET_MAPPER = new AspectRef<>(
             IWicketComponentMapper.class, IWicketComponentMapperRegistry.class);
 
-    public static final HintKey<Boolean> HIDE_LABEL = () -> Boolean.FALSE;
+    HintKey<Boolean> HIDE_LABEL = () -> Boolean.FALSE;
 
     void buildView(WicketBuildContext ctx);
 

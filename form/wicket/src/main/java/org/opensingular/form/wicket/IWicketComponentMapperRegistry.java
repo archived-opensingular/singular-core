@@ -16,27 +16,11 @@
 
 package org.opensingular.form.wicket;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeAttachmentList;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.STypeSimple;
+import org.opensingular.form.*;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.aspect.QualifierStrategyByClassQualifier;
 import org.opensingular.form.aspect.SingleAspectRegistry;
-import org.opensingular.form.type.core.STypeBoolean;
-import org.opensingular.form.type.core.STypeDate;
-import org.opensingular.form.type.core.STypeDateTime;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeHTML;
-import org.opensingular.form.type.core.STypeHiddenString;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeLong;
-import org.opensingular.form.type.core.STypeMonetary;
-import org.opensingular.form.type.core.STypePassword;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.type.core.STypeTime;
+import org.opensingular.form.type.core.*;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachmentImage;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
@@ -44,51 +28,8 @@ import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeYearMonth;
-import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.view.SMultiSelectionByPicklistView;
-import org.opensingular.form.view.SMultiSelectionBySelectView;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewAttachmentImage;
-import org.opensingular.form.view.SViewAttachmentImageTooltip;
-import org.opensingular.form.view.SViewAttachmentList;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.view.SViewBooleanByRadio;
-import org.opensingular.form.view.SViewBooleanSwitch;
-import org.opensingular.form.view.SViewBreadcrumb;
-import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewByRichText;
-import org.opensingular.form.view.SViewDateTime;
-import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.view.SViewReadOnly;
-import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.view.SViewSelectionByRadio;
-import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.form.view.SViewTab;
-import org.opensingular.form.view.SViewTextArea;
-import org.opensingular.form.view.ViewResolver;
-import org.opensingular.form.wicket.mapper.BooleanMapper;
-import org.opensingular.form.wicket.mapper.DateMapper;
-import org.opensingular.form.wicket.mapper.DateTimeMapper;
-import org.opensingular.form.wicket.mapper.DecimalMapper;
-import org.opensingular.form.wicket.mapper.InputHiddenMapper;
-import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
-import org.opensingular.form.wicket.mapper.MoneyMapper;
-import org.opensingular.form.wicket.mapper.NumberMapper;
-import org.opensingular.form.wicket.mapper.PanelListMapper;
-import org.opensingular.form.wicket.mapper.PasswordMapper;
-import org.opensingular.form.wicket.mapper.ReadOnlyControlsFieldComponentMapper;
-import org.opensingular.form.wicket.mapper.RichTextMapper;
-import org.opensingular.form.wicket.mapper.StringMapper;
-import org.opensingular.form.wicket.mapper.TabMapper;
-import org.opensingular.form.wicket.mapper.TableListMapper;
-import org.opensingular.form.wicket.mapper.TelefoneNacionalMapper;
-import org.opensingular.form.wicket.mapper.TextAreaMapper;
-import org.opensingular.form.wicket.mapper.TimeMapper;
-import org.opensingular.form.wicket.mapper.YearMonthMapper;
-import org.opensingular.form.wicket.mapper.attachment.image.AttachmentImageMapper;
-import org.opensingular.form.wicket.mapper.attachment.image.AttachmentImageMapperToolTip;
+import org.opensingular.form.view.*;
+import org.opensingular.form.wicket.mapper.*;
 import org.opensingular.form.wicket.mapper.attachment.list.AttachmentListMapper;
 import org.opensingular.form.wicket.mapper.attachment.single.AttachmentMapper;
 import org.opensingular.form.wicket.mapper.composite.BlocksCompositeMapper;
@@ -99,15 +40,7 @@ import org.opensingular.form.wicket.mapper.maps.LatitudeLongitudeMapper;
 import org.opensingular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
 import org.opensingular.form.wicket.mapper.richtext.PortletRichTextMapper;
 import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
-import org.opensingular.form.wicket.mapper.selection.AutocompleteMapper;
-import org.opensingular.form.wicket.mapper.selection.BooleanRadioMapper;
-import org.opensingular.form.wicket.mapper.selection.BooleanSelectMapper;
-import org.opensingular.form.wicket.mapper.selection.BooleanSwitchMapper;
-import org.opensingular.form.wicket.mapper.selection.MultipleCheckMapper;
-import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
-import org.opensingular.form.wicket.mapper.selection.RadioMapper;
-import org.opensingular.form.wicket.mapper.selection.SelectMapper;
+import org.opensingular.form.wicket.mapper.selection.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -128,7 +61,7 @@ public class IWicketComponentMapperRegistry
         @Override
         protected Class<? extends SView> extractQualifier(@Nonnull SInstance instance) {
             SView view = ViewResolver.resolve(instance);
-            return view == null ? null : view.getClass();
+            return view.getClass();
         }
 
         @Nullable
@@ -181,14 +114,13 @@ public class IWicketComponentMapperRegistry
         add(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new);
         add(STypeTime.class,                                              TimeMapper::new);
         add(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
-        add(STypeHTML.class,                                              PortletRichTextMapper::new);
-        add(STypeHTML.class,            SViewByRichText.class,            RichTextMapper::new);
+        add(STypeHTML.class,                                              RichTextMapper::new);
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
+        add(STypeHTML.class,            SViewByPortletRichText.class,     PortletRichTextMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
         add(STypeHiddenString.class,                                      InputHiddenMapper::new);
-
         //@formatter:on
     }
 }
