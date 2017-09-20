@@ -21,9 +21,6 @@ public class TestLeitorPath extends TestCaseForm {
         assertPathException("a..b", "inválido na posição 2");
         assertPathException("a.b..", "inválido na posição 4");
 
-        assertPathException("a%%", "0 : Não é um nome de campo válido");
-        assertPathException(" a", "0 : Não é um nome de campo válido");
-
         assertPath("[0]", 0);
         assertPath("[0100]", 100);
         assertPath("[0][1]", 0, 1);

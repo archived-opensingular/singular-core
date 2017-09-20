@@ -158,7 +158,7 @@ public class FreemarkerErrorHandlerWithPropertyFalseTest extends TestCaseForm {
      */
     private static AbstractAssert<StringAssert, String> assertMerge(SIComposite composite, String path, String templateString) {
         SInstance instance = path == null ? composite : composite.getField(path);
-        return Assertions.assertThat(FormFreemarkerUtil.merge(instance, templateString));
+        return Assertions.assertThat(FormFreemarkerUtil.get().merge(instance, templateString));
     }
 
     /**
@@ -170,7 +170,7 @@ public class FreemarkerErrorHandlerWithPropertyFalseTest extends TestCaseForm {
      */
     private static AbstractAssert<StringAssert, String> assertMergeLikeDisplay(SIComposite composite, String path, String templateString) {
         SInstance instance = path == null ? composite : composite.getField(path);
-        return Assertions.assertThat(FormFreemarkerUtil.merge(instance, templateString, false, true));
+        return Assertions.assertThat(FormFreemarkerUtil.get().merge(instance, templateString, false, true));
     }
 
    

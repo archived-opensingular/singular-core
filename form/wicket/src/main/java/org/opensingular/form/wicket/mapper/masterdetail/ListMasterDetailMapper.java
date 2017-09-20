@@ -16,24 +16,33 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
-import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
-
 @SuppressWarnings("serial")
-public class ListMasterDetailMapper implements IWicketComponentMapper {
+public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanceActionCapable {
+
+    private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
+
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
+    }
 
     private void checkView(SView view, IModel<SIList<SInstance>> model) {
         if (!(view instanceof SViewListByMasterDetail)) {
@@ -43,6 +52,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<SIList<SInstance>> model = (IModel<SIList<SInstance>>) ctx.getModel();
@@ -61,7 +71,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         externalAtual.appendTag("div", true, null, modal);
 
-        ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view));
+        ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders));
 
         modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));
 

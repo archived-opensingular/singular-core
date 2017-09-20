@@ -100,7 +100,7 @@ public class TableOutputHtml extends TableOutput {
     public void generateTableStart(OutputTableContext ctx, TableTool tableTool) {
         println();
         print("<table id='"+tableid+"' cellpadding='0' cellspacing='0'");
-        if (tableTool.isCorLinhaAlternada()) {
+        if (tableTool.isStrippedLines()) {
             printAtributo("class", "T_t table table-bordered table-condensed table-hover table-striped");
         } else {
             printAtributo("class", "T_t table table-bordered table-condensed table-hover");
@@ -133,7 +133,7 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateBodyBlockStart(@Nonnull OutputTableContext ctx) {
         if (ctx.getTableTool().isSimpleTable()) {
-            if (ctx.getTableTool().isCorLinhaAlternada()) {
+            if (ctx.getTableTool().isStrippedLines()) {
                 println("<tbody class=\"T_content_simple T_striped\">");
             } else {
                 println("<tbody class=\"T_content_simple\">");
@@ -200,7 +200,7 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateTiltleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
+    public void generateTitleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
             boolean columnWithSeparator) {
         PrintWriter out = getOut();
         out.print("   <th");
@@ -210,6 +210,32 @@ public class TableOutputHtml extends TableOutput {
         if (rowSpan > 1) {
             printAtributo("rowspan", Integer.toString(rowSpan));
         }
+        generateTitleCellClassAttribute(column, asSubTitle, columnWithSeparator, out);
+        decorate(column.getDecoratorTitle());
+
+        out.print(">");
+        if (column.getTitle() == null) {
+            out.print("&nbsp;");
+        } else {
+            if (column.isSmall()) {
+                out.print("<small>");
+            }
+            if (column.isStrong()) {
+                out.print("<strong>");
+            }
+            out.print(column.getTitle());
+            if (column.isStrong()) {
+                out.print("</strong>");
+            }
+            if (column.isSmall()) {
+                out.print("</small>");
+            }
+        }
+        out.println("</th>");
+    }
+
+    private void generateTitleCellClassAttribute(Column column, boolean asSubTitle, boolean columnWithSeparator,
+            PrintWriter out) {
         if (asSubTitle) {
             switch (column.getAlignment()) {
                 case CENTER:
@@ -235,27 +261,6 @@ public class TableOutputHtml extends TableOutput {
                     break;
             }
         }
-        decorate(column.getDecoratorTitle());
-
-        out.print(">");
-        if (column.getTitle() == null) {
-            out.print("&nbsp;");
-        } else {
-            if (column.isSmall()) {
-                out.print("<small>");
-            }
-            if (column.isStrong()) {
-                out.print("<strong>");
-            }
-            out.print(column.getTitle());
-            if (column.isStrong()) {
-                out.print("</strong>");
-            }
-            if (column.isSmall()) {
-                out.print("</small>");
-            }
-        }
-        out.println("</th>");
     }
 
     private void printClass(PrintWriter out, String style, boolean columnWithSeparator) {
@@ -392,6 +397,20 @@ public class TableOutputHtml extends TableOutput {
             out.println("</td>");
             return;
         }
+        cellTagsOpen(ctx, cell, column, out);
+        if (ctx.isActionCell()) {
+            out.print(gerarAcoes(getVOut(), ctx.getCell()));
+        } else {
+            String s = ctx.generateFormatDisplayString();
+            if (s != null) {
+                out.print(s);
+            }
+        }
+        cellTagsClose(ctx, cell, column, out);
+        out.println("</td>");
+    }
+
+    private void cellTagsOpen(@Nonnull OutputCellContext ctx, InfoCelula cell, Column column, PrintWriter out) {
         if (column.isSmall()) {
             out.print("<small>");
         }
@@ -401,18 +420,12 @@ public class TableOutputHtml extends TableOutput {
         if (!ctx.getColumnProcessor().shouldBePrinted()) {
             out.print("<span class=\"naoImprime\">");
         }
-
         if (cell.getLink() != null) {
             generateLink(cell, out);
         }
-        if (ctx.isActionCell()) {
-            out.print(gerarAcoes(getVOut(), ctx.getCell()));
-        } else {
-            String s = ctx.generateFormatDisplayString();
-            if (s != null) {
-                out.print(s);
-            }
-        }
+    }
+
+    private void cellTagsClose(@Nonnull OutputCellContext ctx, InfoCelula cell, Column column, PrintWriter out) {
         if (cell.getLink() != null) {
             out.print("</a>");
         }
@@ -425,7 +438,6 @@ public class TableOutputHtml extends TableOutput {
         if (column.isSmall()) {
             out.print("</small>");
         }
-        out.println("</td>");
     }
 
     private void generateLink(InfoCelula cell, PrintWriter out) {
@@ -505,39 +517,48 @@ public class TableOutputHtml extends TableOutput {
         StringBuilder builder = new StringBuilder();
         printAtributo("class", decorator.getCssClass());
         if (!decorator.getStyles().isEmpty()) {
-            int indexStyle = builder.indexOf("style=\"");
-            if (indexStyle == -1) {
-                builder.append(" style=\"");
-                for (Map.Entry<String, String> style : decorator.getStyles().entrySet()) {
-                    builder.append(style.getKey()).append(':').append(style.getValue()).append(';');
-                }
-                builder.append('"');
-            } else {
-                for (Map.Entry<String, String> style : decorator.getStyles().entrySet()) {
-                    builder.insert(indexStyle + 7, style.getKey().concat(":").concat(stringValue(style)).concat(";"));
-                }
-            }
+            addDecoratorStyles(decorator, builder);
         }
         if (!decorator.getAttributes().isEmpty()) {
-            for (Map.Entry<String, String> att : decorator.getAttributes().entrySet()) {
-                if (att.getKey().equalsIgnoreCase("class")) {
-                    int indexClass = builder.indexOf("class=\"");
-                    if (indexClass > -1) {
-                        indexClass = builder.substring(indexClass + 7).indexOf('"') + indexClass + 7;
-                        builder.insert(indexClass, " ".concat(stringValue(att)));
-                        continue;
-                    }
-                } else if (att.getKey().equalsIgnoreCase("style")) {
-                    int indexStyle = builder.indexOf("style=\"");
-                    if (indexStyle > -1) {
-                        builder.insert(indexStyle + 7, " ".concat(stringValue(att)).concat(";"));
-                    }
-                }
-                builder.append(' ').append(att.getKey()).append("=\"").append(att.getValue()).append('"');
-            }
+            addDecoratorAttributes(decorator, builder);
         }
         if (builder.length() != 0) {
             print(builder.toString());
+        }
+    }
+
+    private void addDecoratorStyles(@Nonnull Decorator decorator, StringBuilder builder) {
+        int indexStyle = builder.indexOf("style=\"");
+        if (indexStyle == -1) {
+            builder.append(" style=\"");
+            for (Map.Entry<String, String> style : decorator.getStyles().entrySet()) {
+                builder.append(style.getKey()).append(':').append(style.getValue()).append(';');
+            }
+            builder.append('"');
+        } else {
+            for (Map.Entry<String, String> style : decorator.getStyles().entrySet()) {
+                builder.insert(indexStyle + 7, style.getKey().concat(":").concat(stringValue(style)).concat(";"));
+            }
+        }
+    }
+
+    private void addDecoratorAttributes(@Nonnull Decorator decorator, StringBuilder builder) {
+        for (Map.Entry<String, String> att : decorator.getAttributes().entrySet()) {
+            if ("class".equalsIgnoreCase(att.getKey())) {
+                int indexClass = builder.indexOf("class=\"");
+                if (indexClass > -1) {
+                    indexClass = builder.substring(indexClass + 7).indexOf('"') + indexClass + 7;
+                    builder.insert(indexClass, " ".concat(stringValue(att)));
+                    continue;
+                }
+            } else if ("style".equalsIgnoreCase(att.getKey())) {
+                int indexStyle = builder.indexOf("style=\"");
+                if (indexStyle > -1) {
+                    builder.insert(indexStyle + 7, " ".concat(stringValue(att)).concat(";"));
+                    continue;
+                }
+            }
+            builder.append(' ').append(att.getKey()).append("=\"").append(att.getValue()).append('"');
         }
     }
 

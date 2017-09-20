@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class DadoLinha {
@@ -63,7 +64,11 @@ public final class DadoLinha {
     }
 
     public List<DadoLinha> getFilhos() {
-        return getLeitorFilhos().preCarregarDados();
+        DadoLeitor leitorFilhos = getLeitorFilhos();
+        if(leitorFilhos != null) {
+            return leitorFilhos.preCarregarDados();
+        }
+        return Collections.emptyList();
     }
 
     public InfoLinha recuperarValores(LineReadContext ctx, int numNivel, boolean limparContextoEColunas, boolean salvar) {
@@ -95,9 +100,6 @@ public final class DadoLinha {
     
     public <K> K getValor(int indice, K valorDefault) {
         InfoCelula infoCelula = line.get(indice);
-        if(infoCelula == null){
-            return valorDefault;
-        }
         K valor = infoCelula.getValue();
         return valor == null ? valorDefault : valor;
     }

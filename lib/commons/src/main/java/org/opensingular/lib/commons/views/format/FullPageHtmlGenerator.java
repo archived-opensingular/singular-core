@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.views.format;
 
 import org.apache.commons.io.IOUtils;
+import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
@@ -69,7 +70,7 @@ public class FullPageHtmlGenerator implements Closeable {
         try(InputStream in = url.openStream()) {
             IOUtils.copy(in, out, Charset.defaultCharset());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw SingularException.rethrow(e.getMessage(), e);
         }
     }
 

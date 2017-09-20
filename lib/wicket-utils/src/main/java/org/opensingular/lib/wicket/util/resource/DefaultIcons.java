@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.wicket.util.resource;
 
+import org.opensingular.lib.commons.ui.Icon;
+
 public enum DefaultIcons implements Icon {
 
     //@formatter:off
@@ -98,12 +100,14 @@ public enum DefaultIcons implements Icon {
     RECYCLE("fa fa-recycle"),
     SEND_O("fa fa-send-o"),
     COUNTRY("icon-globe"),
+    HELP("fa fa-question-circle"),
     INBOX("fa fa-inbox"),
     NEWSPAPER("fa fa-newspaper-o"),
     WARNING("fa fa-warning"),
     TASKS("fa fa-tasks"),
     SEARCH("fa fa-search"),
-    SITEMAP("fa fa-sitemap")
+    SITEMAP("fa fa-sitemap"),
+    FOLDER_OPEN("fa fa-folder-open-o")
     ;
 
     private final String cssClass;

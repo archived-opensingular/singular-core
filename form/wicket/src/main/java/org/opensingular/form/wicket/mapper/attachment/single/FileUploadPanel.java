@@ -17,10 +17,14 @@
 package org.opensingular.form.wicket.mapper.attachment.single;
 
 import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -28,10 +32,15 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
+import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
@@ -51,6 +60,7 @@ import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -60,24 +70,31 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.File
 public class FileUploadPanel extends Panel implements Loggable {
 
     private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
-    private final UploadResponseWriter     upResponseWriter = new UploadResponseWriter();
+    private final UploadResponseWriter upResponseWriter = new UploadResponseWriter();
 
-    private       AddFileBehavior adder;
-    private final ViewMode        viewMode;
+    private AddFileBehavior adder;
+    private final ViewMode viewMode;
 
-    private final FileUploadPanel    self             = this;
-    private final AjaxButton         removeFileButton = new RemoveButton("remove_btn");
+    private final FileUploadPanel self = this;
+    private final AjaxButton removeFileButton = new RemoveButton("remove_btn");
     private final WebMarkupContainer uploadFileButton = new UploadButton("upload_btn");
 
-    private FileUploadField    fileField;
+    private FileUploadField fileField;
     private WebMarkupContainer filesContainer, progressBar;
     private DownloadSupportedBehavior downloader;
-    private DownloadLink              downloadLink;
-    private AttachmentKey             uploadId;
+    private DownloadLink downloadLink;
+    private AttachmentKey uploadId;
+
+    private boolean showPreview = false;
+
+    private WebMarkupContainer preview;
+
+    private AbstractDefaultAjaxBehavior previewCallBack;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
         this.viewMode = viewMode;
+        buildFileUploadInput();
     }
 
     @SuppressWarnings("unchecked")
@@ -113,9 +130,8 @@ public class FileUploadPanel extends Panel implements Loggable {
         };
     }
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
+    protected void buildFileUploadInput() {
+
 
         adder = new AddFileBehavior();
         add(adder);
@@ -142,6 +158,32 @@ public class FileUploadPanel extends Panel implements Loggable {
                 return oldClasses;
             }
         });
+        addPreview();
+    }
+
+    private void addPreview() {
+        preview = new WebMarkupContainer("preview");
+        Image imagePreview = new Image("imagePreview", new DynamicImageResource() {
+            @Override
+            protected byte[] getImageData(Attributes attributes) {
+                return self.getModel().getObject().getContentAsByteArray().orElse(new byte[0]);
+            }
+        });
+        add(preview.add(imagePreview));
+        preview.add(new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                component.setVisible(showPreview && !self.getModel().getObject().isEmptyOfData());
+            }
+        });
+        previewCallBack = new AbstractDefaultAjaxBehavior() {
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                target.add(preview);
+            }
+        };
+        this.add(previewCallBack);
     }
 
     @Override
@@ -183,6 +225,7 @@ public class FileUploadPanel extends Panel implements Loggable {
                     .put("add_url", getAdderUrl())
                     .put("max_file_size", getMaxFileSize())
                     .put("allowed_file_types", getAllowedFileTypes())
+                    .put("preview_update_callback", previewCallBack.getCallbackUrl())
                     .toString(2) + "); "
                     + "\n });";
             //@formatter:on
@@ -291,7 +334,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName   = getParamFileId("name").toString();
+                final String pName = getParamFileId("name").toString();
 
                 getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
@@ -317,4 +360,7 @@ public class FileUploadPanel extends Panel implements Loggable {
         }
     }
 
+    public void setShowPreview(boolean showPreview) {
+        this.showPreview = showPreview;
+    }
 }

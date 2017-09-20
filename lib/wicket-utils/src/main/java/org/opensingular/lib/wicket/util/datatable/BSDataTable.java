@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.*;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.repeater.Item;
@@ -105,15 +107,16 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     protected void onInitialize() {
         super.onInitialize();
         getCaption().setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
-    }
-
-    @Override
-    protected void onConfigure() {
-        super.onConfigure();
-        boolean renderCaption = !getCaption().getRenderBodyOnly();
-        getCaption()
-            .setOutputMarkupId(renderCaption)
-            .setOutputMarkupPlaceholderTag(renderCaption);
+        getCaption().add(new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                boolean renderCaption = !component.getRenderBodyOnly();
+                getCaption()
+                        .setOutputMarkupId(renderCaption)
+                        .setOutputMarkupPlaceholderTag(renderCaption);
+            }
+        });
     }
 
     @Override

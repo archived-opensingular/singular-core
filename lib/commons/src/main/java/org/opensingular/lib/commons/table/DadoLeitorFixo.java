@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.commons.table;
 
+import org.opensingular.lib.commons.base.SingularException;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -62,7 +64,7 @@ public final class DadoLeitorFixo extends DadoLeitor {
 
     @Override
     public InfoLinha recuperarValores(LineReadContext ctx, DadoLinha dadoLinha) {
-        throw new RuntimeException("Nunca deveria ter chamado essa linha. Pois tudo est� em memoria");
+        throw new SingularException("Nunca deveria ter chamado essa linha. Pois tudo est� em memoria");
     }
 
     @Override

@@ -17,6 +17,8 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.collect.Iterators;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -28,6 +30,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public final class GeradorUtil implements Serializable {
+
+    private static final Logger LOGGER  = LoggerFactory.getLogger(GeradorUtil.class);
 
     /**
      * Conver o objeto (que pode ser um array, collection, iterator ou objeto
@@ -53,6 +57,7 @@ public final class GeradorUtil implements Serializable {
                 // that we can iterate over with no copying
                 return Arrays.asList((Object[]) filhos).iterator();
             } catch (ClassCastException e) {
+                LOGGER.warn(e.getMessage(), e);
                 // Rats -- it is an array of primitives
                 int length = Array.getLength(filhos);
                 ArrayList<Object> c = new ArrayList<>(length);

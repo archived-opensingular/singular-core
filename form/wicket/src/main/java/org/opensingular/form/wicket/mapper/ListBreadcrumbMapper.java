@@ -33,8 +33,6 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.internal.lib.commons.xml.MElement;
-import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewBreadcrumb;
@@ -44,8 +42,11 @@ import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
@@ -54,7 +55,6 @@ import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.wicket.util.resource.Icon;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -226,9 +226,9 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
 
             target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", rootContainer.getMarkupId()));
             rootContainer.getItems().removeAll();
-            WicketBuildContext childCtx = ctx.createChild(rootContainer, true, itemModel);
+            WicketBuildContext childCtx = ctx.createChild(rootContainer, itemModel);
             childCtx.setShowBreadcrumb(true);
-            ctx.getUiBuilderWicket().build(childCtx, ctx.getViewMode());
+            childCtx.build();
             BSContainer<?> childCtxRootContainer = childCtx.getRootContainer();
             childCtxRootContainer.add(new AttributeAppender("style", Model.of("display: none")) {
                 @Override
@@ -396,7 +396,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             if (!ctx.getBreadCrumbStatus().isEmpty()) {
                 originalContext.setSelectedBreadCrumbStatus(ctx.getBreadCrumbStatus().getLast());
             }
-            ctx.getUiBuilderWicket().build(originalContext, originalContext.getViewMode());
+            originalContext.build();
             originalContext.getRootContainer().add(new AttributeAppender("style", Model.of("display: none")) {
                 @Override
                 public boolean isTemporary(Component component) {

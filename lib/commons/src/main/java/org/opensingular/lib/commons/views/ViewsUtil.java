@@ -94,25 +94,29 @@ public class ViewsUtil {
 
     @Nonnull
     public static File exportToTempFile(@Nonnull ViewGenerator viewGenerator,
-            @Nonnull ViewOutputFormatExportable format) {
+                                        @Nonnull ViewOutputFormatExportable format) {
         return exportToTempFile(viewGenerator, format, null);
     }
 
     @Nonnull
-    public static File exportToTempFile(@Nonnull ViewGenerator viewGenerator,
-            @Nonnull ViewOutputFormatExportable format, @Nullable TempFileProvider tmpProvider) {
-        if (!viewGenerator.isDirectCompatiableWith(format)) {
-            if (viewGenerator instanceof ViewMultiGenerator) {
-                viewGenerator = getGeneratorFor((ViewMultiGenerator) viewGenerator, format);
+    public static File exportToTempFile(@Nonnull final ViewGenerator viewGenerator,
+                                        @Nonnull final ViewOutputFormatExportable format,
+                                        @Nullable final TempFileProvider tmpProvider) {
+
+        ViewGenerator copyOfViewGenerator = viewGenerator;
+
+        if (!copyOfViewGenerator.isDirectCompatiableWith(format)) {
+            if (copyOfViewGenerator instanceof ViewMultiGenerator) {
+                copyOfViewGenerator = getGeneratorFor((ViewMultiGenerator) copyOfViewGenerator, format);
             }
-            throw new SingularViewUnsupportedFormatException(viewGenerator, format);
+            throw new SingularViewUnsupportedFormatException(copyOfViewGenerator, format);
         }
         try {
             File arq = File.createTempFile(ViewsUtil.class.getSimpleName() + "_report",
                     "." + format.getFileExtension());
             boolean ok = false;
             try {
-                format.generateFile(arq, viewGenerator);
+                format.generateFile(arq, copyOfViewGenerator);
                 ok = true;
             } finally {
                 if (!ok) {

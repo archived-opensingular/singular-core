@@ -39,8 +39,6 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
-import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
 
 @RunWith(Parameterized.class)
@@ -199,17 +197,16 @@ public class CoreXMLAttributesImporterTest extends TestCaseForm {
         }
     }
 
-    
     @Test
     @Ignore
     public void performance() {
         createTestDictionary().getType(STypeExternalAttributeComposite2.class); //Para fazer caches
-        performance("String    ", 10000, this::simpleCall);
-        performance("Composite ", 10000, this::compositeCall);
-        performance("String2   ", 20000, this::simpleCall);
-        performance("Composite2", 20000, this::compositeCall);
-        performance("String3   ", 20000, this::simpleCall);
-        performance("Composite3", 20000, this::compositeCall);
+        SingularTestUtil.performance("String    ", 10, this::simpleCall);
+        SingularTestUtil.performance("Composite ", 10, this::compositeCall);
+        SingularTestUtil.performance("String2   ", 20, this::simpleCall);
+        SingularTestUtil.performance("Composite2", 20, this::compositeCall);
+        SingularTestUtil.performance("String3   ", 20, this::simpleCall);
+        SingularTestUtil.performance("Composite3", 20, this::compositeCall);
     }
 
     private void simpleCall() {
@@ -229,17 +226,6 @@ public class CoreXMLAttributesImporterTest extends TestCaseForm {
         readAttributes(type);
         readAttributes(type.getField("field1"));
         readAttributes(type.getField("field2"));
-    }
-
-    private void performance(String name, int repeticoes, Runnable task) {
-        long tempo = System.currentTimeMillis();
-        for(int i = 0; i <repeticoes; i++) {
-            task.run();
-        }
-        tempo = System.currentTimeMillis() - tempo;
-        System.out.println("-------------------------------------------");
-        System.out.println("  " + name + ": T=" + SingularIOUtils.humanReadableMiliSeconds(tempo) + " R=" + repeticoes +
-                "  qtd/seg=" + ConversorToolkit.printNumber(1000.0 * repeticoes / tempo, 0));
     }
 
     @Test

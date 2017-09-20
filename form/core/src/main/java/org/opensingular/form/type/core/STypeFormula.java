@@ -16,7 +16,6 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 
@@ -30,12 +29,13 @@ public class STypeFormula extends STypeComposite<SIFormula> {
         super(SIFormula.class);
     }
 
-    @Override
-    protected void onLoadType(TypeBuilder tb) {
-        addFieldString(CAMPO_SCRIPT);
-        STypeString tipo = addFieldString(CAMPO_TIPO_SCRIPT);
-        tipo.selectionOfEnum(TipoScript.class);
-    }
+    //For now this is not usefull
+    //    @Override
+    //    protected void onLoadType(TypeBuilder tb) {
+    //        addFieldString(CAMPO_SCRIPT);
+    //        STypeString tipo = addFieldString(CAMPO_TIPO_SCRIPT);
+    //        tipo.selectionOfEnum(TipoScript.class);
+    //    }
 
     public enum TipoScript {
         JS

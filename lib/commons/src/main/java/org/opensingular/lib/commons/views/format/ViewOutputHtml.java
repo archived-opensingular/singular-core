@@ -18,6 +18,7 @@
 package org.opensingular.lib.commons.views.format;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewOutput;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
@@ -79,7 +80,7 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
     public String getUrlApp() {
         if (urlApp_ == null) {
             //TODO Resolver como o singular terá acesso a sua URL de aplicação. Fazer um SPI
-            throw new RuntimeException("Implementar esse código");
+            throw new SingularException("Implementar esse código");
             //urlApp_ = PropriedadesSistema.getUrlAplicacao();
             //if (!urlApp_.endsWith("/")) {
             //    urlApp_ += "/";
@@ -105,7 +106,7 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
         try {
             getOutput().flush();
         } catch (IOException e) {
-            throw new RuntimeException("Falha ao descarregar conte�do: " + e.getMessage(), e);
+            throw SingularException.rethrow("Falha ao descarregar conte�do: " + e.getMessage(), e);
         }
     }
 

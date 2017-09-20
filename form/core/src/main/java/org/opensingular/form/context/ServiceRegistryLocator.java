@@ -34,11 +34,7 @@ public class ServiceRegistryLocator {
     }
 
     public static ServiceRegistry locate() {
-        ServiceRegistryLocator locator = ServiceRegistryLocator.get();
-        if (locator == null) {
-            throw new SingularServiceRegistryNoFoundException();
-        }
-        return locator.internalGetRegistry();
+        return ServiceRegistryLocator.get().internalGetRegistry();
     }
 
     private ServiceRegistry internalGetRegistry() {

@@ -27,8 +27,8 @@ class ModificadorGeradorAgrupar extends ModificadorGerador {
         super(table);
         this.column = column;
         for (Column c : getColunas()) {
-            if (c != column && c.getNivelDados() >= column.getNivelDados()) {
-                c.setNivelDados(c.getNivelDados() + 1);
+            if (c != column && c.getDataLevel() >= column.getDataLevel()) {
+                c.setDataLevel(c.getDataLevel() + 1);
             }
         }
     }
@@ -40,13 +40,15 @@ class ModificadorGeradorAgrupar extends ModificadorGerador {
         DadoLeitorFixo filhos = null;
         for (DadoLinha linha : dadoLeitor) {
             InfoCelula celula = linha.getInfoCelula(column);
-            Object valorCelulaLinha = celula == null ? null : celula.getValue();
+            Object valorCelulaLinha = celula.getValue();
             if (!Objects.equals(valorAtual, valorCelulaLinha)) {
                 filhos = new DadoLeitorFixo(dadoLeitor);
                 grupo.add(new DadoLinha(linha, new DadoLeitorModificador(filhos, getProximoModificador())));
                 valorAtual = valorCelulaLinha;
             }
-            filhos.add(linha);
+            if (filhos != null) {
+                filhos.add(linha);
+            }
         }
 
         return grupo;
@@ -59,7 +61,7 @@ class ModificadorGeradorAgrupar extends ModificadorGerador {
             int posNova = posColuna;
             for (int i = posColuna - 1; i >= 0; i--) {
                 Column c = visiveis.get(i);
-                if (c.getNivelDados() > column.getNivelDados()) {
+                if (c.getDataLevel() > column.getDataLevel()) {
                     posNova = i;
                 }
             }

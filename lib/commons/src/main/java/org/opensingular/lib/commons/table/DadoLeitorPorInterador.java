@@ -17,10 +17,12 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.collect.Lists;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 final class DadoLeitorPorInterador extends DadoLeitor {
 
@@ -53,7 +55,7 @@ final class DadoLeitorPorInterador extends DadoLeitor {
 
     private void proximo() {
         if (original == null) {
-            throw new RuntimeException("N�o existe nada para ler");
+            throw new SingularException("N�o existe nada para ler");
         }
         while (original.hasNext()) {
             Object v = original.next();
@@ -72,7 +74,7 @@ final class DadoLeitorPorInterador extends DadoLeitor {
             return dados.iterator();
         }
         if (lido) {
-            throw new RuntimeException("N�o pode ser chamado iterator() duas vezes");
+            throw new SingularException("N�o pode ser chamado iterator() duas vezes");
         }
         lido = true;
 
@@ -85,6 +87,9 @@ final class DadoLeitorPorInterador extends DadoLeitor {
 
             @Override
             public DadoLinha next() {
+                if(!hasNext()){
+                    throw new NoSuchElementException();
+                }
                 DadoLinha anterior = atual;
                 proximo();
                 return anterior;

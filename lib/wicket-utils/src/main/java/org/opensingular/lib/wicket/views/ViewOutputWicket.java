@@ -17,6 +17,7 @@
 package org.opensingular.lib.wicket.views;
 
 import org.apache.wicket.Component;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewOutput;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
@@ -29,7 +30,7 @@ public class ViewOutputWicket implements ViewOutput<Component> {
 
     @Override
     public Component getOutput() {
-        throw new RuntimeException("Método não suportado");
+        throw new SingularException("Método não suportado");
     }
 
     @Override

@@ -23,13 +23,9 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
-
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
@@ -43,28 +39,25 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
+    @Override
     public void buildView(WicketBuildContext ctx) {
-
-        final IModel<? extends SInstance> model = ctx.getModel();
-        final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
-
         switch (ctx.getViewMode()) {
             case READ_ONLY:
-                buildForVisualization(model, formGroup, labelModel);
+                buildForVisualization(ctx);
                 break;
             case EDIT:
-                buildForEdition(ctx, model, formGroup, labelModel);
+                buildForEdition(ctx);
                 break;
         }
     }
 
-    private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
-                                 AttributeModel<String> labelModel) {
-
+    protected void buildForEdition(WicketBuildContext ctx) {
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
         final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
         final Label label = buildLabel("_", labelModel);
-        adjustJSEvents(label);
+        adjustJSEvents(ctx, label);
         formGroup.appendCheckbox(input, label);
         input.add(DisabledClassBehavior.getInstance());
         formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
@@ -83,8 +76,11 @@ public class BooleanMapper implements IWicketComponentMapper {
         });
     }
 
-    private void buildForVisualization(IModel<? extends SInstance> model, BSControls formGroup,
-                                       AttributeModel<String> labelModel) {
+    protected void buildForVisualization(WicketBuildContext ctx) {
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+
         final Boolean checked;
 
         final SInstance mi = model.getObject();
@@ -97,20 +93,19 @@ public class BooleanMapper implements IWicketComponentMapper {
         String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
         String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
         TemplatePanel tp = formGroup.newTemplateTag(t -> ""
-            + "<div wicket:id='" + "_well" + idSuffix + "'>"
-            + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
-            + " </div>");
+                + "<div wicket:id='" + "_well" + idSuffix + "'>"
+                + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
+                + " </div>");
         final BSWellBorder wellBorder = BSWellBorder.small("_well" + idSuffix);
         tp.add(wellBorder.add(buildLabel("label", labelModel)));
     }
 
     protected Label buildLabel(String id, AttributeModel<String> labelModel) {
-        return (Label) new Label(id, labelModel.getObject())
-            .setEscapeModelStrings(false);
+        return (Label) new Label(id, labelModel.getObject()).setEscapeModelStrings(false);
     }
 
     @Override
-    public void adjustJSEvents(Component comp) {
+    public void adjustJSEvents(WicketBuildContext ctx, Component comp) {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
 

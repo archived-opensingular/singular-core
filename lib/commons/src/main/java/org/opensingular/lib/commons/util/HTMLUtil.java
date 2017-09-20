@@ -22,4 +22,7 @@ public class HTMLUtil {
         return Pattern.compile("<([\\d[a-zA-Z]]+).*?>[\\s\\S]*</\\s*?\\1>").matcher(content).lookingAt();
     }
 
+    public static String escapeHtml(String value) {
+        return (value == null) ? null : value.replaceAll("<", "&lt;");
+    }
 }

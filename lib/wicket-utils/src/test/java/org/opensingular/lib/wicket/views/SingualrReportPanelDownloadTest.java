@@ -9,10 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.report.ReportFilter;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.table.ColumnType;
-import org.opensingular.lib.commons.table.PopulatorTable;
+import org.opensingular.lib.commons.table.TablePopulator;
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
@@ -26,7 +27,7 @@ import java.nio.file.Path;
 public class SingualrReportPanelDownloadTest extends WicketTestCase {
     private static final boolean OPEN_DOWNLOADED_FILE = false;
 
-    private SingularReport<ReportMetadata<Void>, Void> singularReport;
+    private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> singularReport;
     private MockSingularReportPage mockSingularReportPage;
 
     @Before
@@ -62,26 +63,26 @@ public class SingualrReportPanelDownloadTest extends WicketTestCase {
     private DownloadLink getDownloadLinkByFormat(ViewOutputFormatExportable format) {
         return ((MarkupContainer) mockSingularReportPage.get("f:srp:form:export-list:export-list-item"))
                 .visitChildren(DownloadLink.class, (IVisitor<DownloadLink, DownloadLink>) (downloadLink, visit) -> {
-                    if (format.getName().equals(downloadLink.get("export-label").getDefaultModelObjectAsString())) {
+                    if (format.getName().equalsIgnoreCase(downloadLink.get("export-label").getDefaultModelObjectAsString())) {
                         visit.stop(downloadLink);
                     }
                 });
     }
 
     @NotNull
-    private SingularReport<ReportMetadata<Void>, Void> makeSingularReport() {
-        return new SingularReport<ReportMetadata<Void>, Void>() {
+    private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> makeSingularReport() {
+        return new SingularReport<ReportMetadata<ReportFilter>, ReportFilter>() {
             @Override
             public String getReportName() {
                 return "X";
             }
 
             @Override
-            public ViewGenerator makeViewGenerator(ReportMetadata<Void> reportMetadata) {
+            public ViewGenerator makeViewGenerator(ReportMetadata<ReportFilter> reportMetadata) {
                 TableTool tt = new TableTool();
                 tt.addColumn(ColumnType.STRING, "nome");
                 tt.addColumn(ColumnType.INTEGER, "idade");
-                PopulatorTable populator = tt.createSimpleTablePopulator();
+                TablePopulator populator = tt.createSimpleTablePopulator();
                 populator.insertLine();
                 populator.setValor(0, "John");
                 populator.setValor(1, 25);

@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.net.WebRef;
 
@@ -29,9 +30,9 @@ public final class InfoCelula implements Serializable {
 
     private final Column column;
 
-    private Object valor_;
+    private transient Object valor_;
 
-    private Comparable<?> valorReal;
+    private transient Comparable<?> valorReal;
 
     private WebRef link;
 
@@ -85,7 +86,7 @@ public final class InfoCelula implements Serializable {
     }
 
     public InfoCelula setLink(Lnk link) {
-        throw new RuntimeException("Implementar");
+        throw new SingularException("Implementar");
         //setLink(link != null ? WebActionRefImpl.of("", link) : null);
         //return this;
     }

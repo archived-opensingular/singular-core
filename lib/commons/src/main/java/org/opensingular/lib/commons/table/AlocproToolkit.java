@@ -16,6 +16,10 @@
 
 package org.opensingular.lib.commons.table;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
+
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -98,12 +102,10 @@ final class AlocproToolkit {
     public static Number arredondar(Number value, int decimals) {
         if (value == null) {
             return null;
-        } else if (value instanceof Integer || value instanceof Long) {
+        } else if (value instanceof Integer || value instanceof Long || value instanceof BigInteger) {
             return value;
         } else if (value instanceof BigDecimal) {
             return arredondar((BigDecimal) value, decimals);
-        } else if (value instanceof BigInteger) {
-            return value;
         }
         return arredondar(value.doubleValue(), decimals);
     }
@@ -135,7 +137,7 @@ final class AlocproToolkit {
             v = v.scaleByPowerOfTen(decimais).divideToIntegralValue(BigDecimal.ONE).scaleByPowerOfTen(-decimais);
             return v.doubleValue();
         } catch (Exception e) {
-            throw new RuntimeException("Valor: " + value, e);
+            throw new AlocproToolkitException("Valor: " + value, e);
         }
     }
 
@@ -151,7 +153,7 @@ final class AlocproToolkit {
                 return a.intValue() + b.intValue();
             } else if (a instanceof Long) {
                 return a.longValue() + b.longValue();
-            } else if ( a instanceof BigInteger) {
+            } else if (a instanceof BigInteger) {
                 return ((BigInteger) a).add((BigInteger) b);
             }
         }
@@ -168,7 +170,7 @@ final class AlocproToolkit {
                 return a.intValue() * b.intValue();
             } else if (a instanceof Long) {
                 return a.longValue() * b.longValue();
-            } else if ( a instanceof BigInteger) {
+            } else if (a instanceof BigInteger) {
                 return ((BigInteger) a).multiply((BigInteger) b);
             }
         }
@@ -179,7 +181,7 @@ final class AlocproToolkit {
         if (a == null || b == null || isZero(b)) {
             return null;
         }
-        return toBigDecimal(a).divide(toBigDecimal(b),MathContext.DECIMAL32);
+        return toBigDecimal(a).divide(toBigDecimal(b), MathContext.DECIMAL32);
     }
 
     public static boolean isZero(Number a) {
@@ -194,18 +196,14 @@ final class AlocproToolkit {
     private static BigDecimal toBigDecimal(Number a) {
         if (a instanceof BigDecimal) {
             return (BigDecimal) a;
-        } else if (a instanceof Double) {
-            return new BigDecimal(a.doubleValue());
+        } else if (a instanceof Double || a instanceof Float) {
+            return BigDecimal.valueOf(a.doubleValue());
         } else if (a instanceof Integer) {
-            return new BigDecimal(a.intValue());
-        } else if (a instanceof Long) {
-            return new BigDecimal(a.longValue());
-        } else if (a instanceof Float) {
-            return new BigDecimal(a.doubleValue());
+            return BigDecimal.valueOf(a.intValue());
         } else if (a instanceof BigInteger) {
             return new BigDecimal((BigInteger) a);
         } else {
-            return new BigDecimal(a.longValue());
+            return BigDecimal.valueOf(a.longValue());
         }
     }
 
@@ -254,20 +252,20 @@ final class AlocproToolkit {
         return null;
     }
 
-    public static String plainTextToHtml(CharSequence original, boolean converterURL) {
+    public static String plainTextToHtml(@Nullable String original, boolean converterURL) {
         if (original == null) {
             return null;
         }
-        CharSequence cs = escapeHTML(original);
+        String cs = StringEscapeUtils.escapeHtml4(original);
         if (converterURL) {
             cs = converterURL(cs);
         }
-        return cs.toString();
+        return cs;
     }
 
-    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" +"()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
+    private static final Pattern PATTERN_URL = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" + "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");//NOSONAR
 
-    private static CharSequence converterURL(CharSequence original) {
+    private static String converterURL(String original) {
         Matcher matcher = PATTERN_URL.matcher(original);
         if (matcher.find()) {
             if (matcher.group(1).startsWith("http://")) {
@@ -278,53 +276,6 @@ final class AlocproToolkit {
         } else {
             return original;
         }
-    }
-
-    private static StringBuilder escapeHTML(CharSequence s) {
-        StringBuilder builder = new StringBuilder(Math.min(s.length() * 2, 32));
-        boolean previousWasASpace = false;
-        int length = s.length();
-        for (int i = 0; i < length; i++) {
-            char c = s.charAt(i);
-            if (c == ' ') {
-                if (previousWasASpace) {
-                    builder.append("&nbsp;");
-                    previousWasASpace = false;
-                    continue;
-                }
-                previousWasASpace = true;
-            } else {
-                previousWasASpace = false;
-            }
-            switch (c) {
-                case '<':
-                    builder.append("&lt;");
-                    break;
-                case '>':
-                    builder.append("&gt;");
-                    break;
-                case '&':
-                    builder.append("&amp;");
-                    break;
-                case '"':
-                    builder.append("&quot;");
-                    break;
-                case '\n':
-                    builder.append("<br>");
-                    break;
-                // We need Tab support here, because we print StackTraces as HTML
-                case '\t':
-                    builder.append("&nbsp; &nbsp; &nbsp;");
-                    break;
-                default:
-                    if (c < 128) {
-                        builder.append(c);
-                    } else {
-                        builder.append("&#").append((int) c).append(';');
-                    }
-            }
-        }
-        return builder;
     }
 
     public static String printNumber(Number value, int qtdDigitos) {
@@ -342,5 +293,26 @@ final class AlocproToolkit {
 
     private static boolean isIntegerOrLong(Number value) {
         return value instanceof Integer || value instanceof Long;
+    }
+
+    private static class AlocproToolkitException extends RuntimeException {
+        public AlocproToolkitException() {
+        }
+
+        public AlocproToolkitException(String message) {
+            super(message);
+        }
+
+        public AlocproToolkitException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public AlocproToolkitException(Throwable cause) {
+            super(cause);
+        }
+
+        public AlocproToolkitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
+        }
     }
 }

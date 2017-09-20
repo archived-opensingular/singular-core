@@ -18,6 +18,7 @@ package org.opensingular.lib.commons.table;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,7 +97,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
     private DadoLinha preencheValores(Collection<DadoLinha> informacaoAgrupada) {
 
         DadoLinha novoDadoLinha = new DadoLinha(getTable().newBlankLine());
-        DadoLinha referencia = informacaoAgrupada.stream().findFirst().get();
+        DadoLinha referencia = informacaoAgrupada.stream().findFirst().orElseThrow(() -> new SingularException("Não foi possivel encontrar a referencia."));
         colunasAgrupamento.forEach(coluna -> copiarValoresCelula(novoDadoLinha.getInfoCelula(coluna), referencia.getInfoCelula(coluna)));
         
         realizaAgregacao(informacaoAgrupada, novoDadoLinha);
@@ -138,7 +139,7 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
     private Map<Column, TipoAgregacaoCampo> montaAgregacaoDefault() {
         Map<Column, TipoAgregacaoCampo> agregacaoDefault = new HashMap<>();
         getColunas().forEach(coluna -> {
-            switch (coluna.getTipo()) {
+            switch (coluna.getType()) {
             case NUMBER:
             case INTEGER:
             case MONEY:
