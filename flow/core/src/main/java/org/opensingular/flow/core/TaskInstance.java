@@ -45,6 +45,7 @@ public class TaskInstance implements Serializable {
 
     public static final String ALOCACAO = "Alocação";
     public static final String DESALOCACAO = "Desalocação";
+    public static final String LEITURA_DA_TAREFA = "Leitura da tarefa";
 
     private final Integer taskCod;
 

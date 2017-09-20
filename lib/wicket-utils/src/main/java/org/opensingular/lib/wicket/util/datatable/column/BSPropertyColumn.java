@@ -52,7 +52,7 @@ public class BSPropertyColumn<T, S>
 
     @Override
     public void populateItem(final Item<ICellPopulator<T>> item, final String componentId, final IModel<T> rowModel) {
-        item.add(new Label(componentId, getDataModel(rowModel)));
+        item.add(new Label(componentId, getDataModel(rowModel)).setEscapeModelStrings(false));
     }
 
     public String getPropertyExpression() {

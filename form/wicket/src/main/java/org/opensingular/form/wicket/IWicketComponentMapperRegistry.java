@@ -55,7 +55,7 @@ import org.opensingular.form.view.SViewBooleanByRadio;
 import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewBreadcrumb;
 import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewByPortletRichText;
+import org.opensingular.form.view.SViewByRichText;
 import org.opensingular.form.view.SViewDateTime;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.view.SViewListByMasterDetail;
@@ -179,11 +179,11 @@ public class IWicketComponentMapperRegistry
         add(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new);
         add(STypeTime.class,                                              TimeMapper::new);
         add(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
-        add(STypeHTML.class,                                              RichTextMapper::new);
+        add(STypeHTML.class,                                              PortletRichTextMapper::new);
+        add(STypeHTML.class,            SViewByRichText.class,            RichTextMapper::new);
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
-        add(STypeHTML.class,            SViewByPortletRichText.class,     PortletRichTextMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
         //@formatter:on
     }
