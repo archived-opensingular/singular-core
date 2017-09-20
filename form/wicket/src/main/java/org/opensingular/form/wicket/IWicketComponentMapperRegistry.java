@@ -30,6 +30,7 @@ import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeDateTime;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeHTML;
+import org.opensingular.form.type.core.STypeHiddenString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeMonetary;
@@ -71,7 +72,7 @@ import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.DateTimeMapper;
 import org.opensingular.form.wicket.mapper.DecimalMapper;
-import org.opensingular.form.wicket.mapper.LatitudeLongitudeMapper;
+import org.opensingular.form.wicket.mapper.InputHiddenMapper;
 import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
 import org.opensingular.form.wicket.mapper.MoneyMapper;
 import org.opensingular.form.wicket.mapper.NumberMapper;
@@ -94,6 +95,7 @@ import org.opensingular.form.wicket.mapper.composite.BlocksCompositeMapper;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.form.wicket.mapper.country.brazil.CNPJMapper;
 import org.opensingular.form.wicket.mapper.country.brazil.CPFMapper;
+import org.opensingular.form.wicket.mapper.maps.LatitudeLongitudeMapper;
 import org.opensingular.form.wicket.mapper.masterdetail.ListMasterDetailMapper;
 import org.opensingular.form.wicket.mapper.richtext.PortletRichTextMapper;
 import org.opensingular.form.wicket.mapper.search.SearchModalMapper;
@@ -185,6 +187,8 @@ public class IWicketComponentMapperRegistry
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
+        add(STypeHiddenString.class,                                      InputHiddenMapper::new);
+
         //@formatter:on
     }
 }

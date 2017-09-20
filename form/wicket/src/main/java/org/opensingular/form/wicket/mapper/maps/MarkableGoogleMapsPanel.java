@@ -24,6 +24,7 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
@@ -84,14 +85,10 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
     @Override
     public void renderHead(IHeaderResponse response) {
-        if(singularKeyMaps == null || singularKeyMapStatic.isEmpty()){
-            throw new SingularException("Não foi encontrada a Key do Google Maps JS no arquivo properties");
-        }
-
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + "AIzaSyCNj8Ly8xcGqsWncWoCJqBxbKxAvwdYs1o" + "');"));
+        response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + singularKeyMaps + "');"));
 
         super.renderHead(response);
     }
@@ -134,10 +131,6 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             if(latLng.equals("-15.7922, -47.4609"))
                 marker = "";
 
-            if(singularKeyMapStatic == null || singularKeyMapStatic .isEmpty()){
-                throw new SingularException("Não foi encontrada a Key do Google Maps Static no arquivo properties");
-            }
-
             String parameters = "key=" + singularKeyMapStatic
                     + "&size=1000x" + (getHeight() - 35)
                     + "&zoom="+zoomModel.getObject()
@@ -170,6 +163,13 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         super.onInitialize();
         popularMetadados();
 
+        TemplatePanel panelErrorMsg = newTemplateTag(tt -> {
+            final StringBuilder templateBuilder = new StringBuilder();
+            templateBuilder.append("<div> <label class=\"text-danger\" wicket:id='errorMapStatic'></label> </div>");
+            templateBuilder.append("<div> <label class=\"text-danger\" wicket:id='errorMapJS'></label> </div>");
+            return templateBuilder.toString();
+        });
+
         TemplatePanel templatePanel = newTemplateTag(tt -> {
             final StringBuilder templateBuilder = new StringBuilder();
             templateBuilder.append(" <div class=\"form-group\"> ");
@@ -183,7 +183,21 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             templateBuilder.append(" </div>");
             return templateBuilder.toString();
         });
+
+        Component errorMapStatic = new Label("errorMapStatic", "Não foi encontrada a Key do Google Maps Static no arquivo singular.properties").setVisible(false);
+        Component errorMapJS = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
+
+        panelErrorMsg.add(errorMapJS, errorMapStatic);
         templatePanel.add(verNoMaps, cleanButton, map, metadados, mapStatic);
+
+        if(singularKeyMapStatic == null || singularKeyMapStatic .isEmpty()){
+            templatePanel.setVisible(false);
+            errorMapStatic.setVisible(true);
+        }
+        if(singularKeyMaps == null || singularKeyMaps.isEmpty()){
+            templatePanel.setVisible(false);
+            errorMapJS.setVisible(true);
+        }
     }
 
     @Override
