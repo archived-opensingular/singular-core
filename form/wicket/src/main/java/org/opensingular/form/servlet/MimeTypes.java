@@ -1,12 +1,10 @@
 package org.opensingular.form.servlet;
 
 import com.google.common.collect.ImmutableMultimap;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public abstract class MimeTypes {
     public static final  String DEFAULT_CONTENT_TYPE = "application/octet-stream";
@@ -36,27 +34,28 @@ public abstract class MimeTypes {
         return EXT_2_MIME_TYPES.get(extension.toLowerCase()).stream().findFirst().orElse(defaultMimeType);
     }
 
-    public static String getExtensionForMimeType(String mimeType) {
-        return getExtensionForMimeType(mimeType, DEFAULT_EXTENSION);
+    public static Set<String> getExtensionsForMimeType(String mimeType) {
+        return getExtensionsForMimeType(mimeType, DEFAULT_EXTENSION);
     }
 
-    public static String getExtensionForMimeType(String mimeType, String defaultExtension) {
-        return MIME_TYPES_2_EXT.get(mimeType.toLowerCase()).stream().findFirst().orElse(defaultExtension);
+    public static Set<String> getExtensionsForMimeType(String mimeType, String defaultExtension) {
+        Set<String> values = MIME_TYPES_2_EXT.get(mimeType.toLowerCase()).stream().collect(TreeSet::new, TreeSet::add, TreeSet::addAll);
+        if (values.isEmpty()) {
+            values.add(defaultExtension);
+        }
+        return values;
     }
 
     /**
-     *
      * @param mimeTypes
-     * @param defaultToMimeIfNotFound
-     *  Return the very mimeType case it is not found
+     * @param defaultToMimeIfNotFound Return the very mimeType case it is not found
      * @return
      */
     public static Set<String> getExtensionsFormMimeTypes(Collection<String> mimeTypes, boolean defaultToMimeIfNotFound) {
         return mimeTypes
                 .stream()
-                .map(s -> defaultToMimeIfNotFound ? MimeTypes.getExtensionForMimeType(s, s) : MimeTypes.getExtensionForMimeType(s, s))
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toCollection(TreeSet::new));
+                .map(s -> defaultToMimeIfNotFound ? MimeTypes.getExtensionsForMimeType(s, s) : MimeTypes.getExtensionsForMimeType(s, s))
+                .collect(TreeSet::new, TreeSet::addAll, TreeSet::addAll);
     }
 
     protected static void buildMimeTypes4(ImmutableMultimap.Builder<String, String> builder) {

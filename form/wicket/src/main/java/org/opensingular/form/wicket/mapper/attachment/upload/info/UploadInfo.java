@@ -43,7 +43,7 @@ public class UploadInfo implements Serializable {
     public boolean isFileTypeAllowed(String mimeTypeOrExtension) {
         return allowedFileTypes.isEmpty()
                 || allowedFileTypes.contains(mimeTypeOrExtension)
-                || allowedFileTypes.contains(MimeTypes.getExtensionForMimeType(mimeTypeOrExtension))
+                || allowedFileTypes.contains(MimeTypes.getExtensionsForMimeType(mimeTypeOrExtension))
                 || allowedFileTypes.contains(MimeTypes.getMimeTypeForExtension(mimeTypeOrExtension));
     }
 
