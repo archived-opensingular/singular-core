@@ -169,10 +169,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return Optional.ofNullable(ins.getAttributeValue(SPackageBasic.ATR_LABEL)).orElse("valores");
     }
 
+    @Nullable
     public Integer getMinimumSize() {
         return asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
     }
 
+    @Nullable
     public Integer getMaximumSize() {
         return asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
     }
