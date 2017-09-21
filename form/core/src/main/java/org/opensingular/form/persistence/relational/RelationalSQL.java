@@ -242,13 +242,17 @@ public interface RelationalSQL {
 		if (value == null) {
 			return;
 		}
+		// TODO TypeRef will be decoupled soon
 		if (isCompositeRef(instance.getType())) {
 			SType<?> tableRefContext = tableContext(tableRef(field));
+			List<String> pkRef = tablePK(tableRefContext);
 			String tableRefName = table(tableRefContext);
 			String columnRefName = tableRefColumn(tableRefContext);
 			HashMap<String, Object> keyValue = new HashMap<String, Object>();
-			keyValue.put(column(instance.getType()), value);
-			instance.getField("key").setValue(FormKeyRelational.convertToKey(keyValue).toStringPersistence());
+			keyValue.put(pkRef.get(0), value);
+			FormKey formKey = FormKeyRelational.convertToKey(keyValue);
+			FormKey.setOnInstance(instance, formKey);
+			instance.getField("key").setValue(formKey.toStringPersistence());
 			instance.getField("display").setValue(getFieldValue(tableRefName, tupleKeyRef, columnRefName, fromList));
 			return;
 		}
