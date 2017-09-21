@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper.maps;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -38,7 +39,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
@@ -88,8 +88,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + singularKeyMaps + "');"));
-
+        if(StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
+            response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + singularKeyMaps + "');"));
+        }
         super.renderHead(response);
     }
 
@@ -190,11 +191,11 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         panelErrorMsg.add(errorMapJS, errorMapStatic);
         templatePanel.add(verNoMaps, cleanButton, map, metadados, mapStatic);
 
-        if(singularKeyMapStatic == null || singularKeyMapStatic .isEmpty()){
+        if(StringUtils.isBlank(singularKeyMapStatic)){
             templatePanel.setVisible(false);
             errorMapStatic.setVisible(true);
         }
-        if(singularKeyMaps == null || singularKeyMaps.isEmpty()){
+        if(StringUtils.isBlank(singularKeyMaps)){
             templatePanel.setVisible(false);
             errorMapJS.setVisible(true);
         }
