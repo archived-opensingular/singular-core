@@ -44,6 +44,7 @@
                 //toastr.error(errorMessage);
                 $box.find('a').attr('href', 'javascript:void(0)').tooltip({
                     trigger: 'hover',
+                    html: true,
                     title: errorMessage
                 });
             }
