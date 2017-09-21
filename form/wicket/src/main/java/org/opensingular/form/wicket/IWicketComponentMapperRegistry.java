@@ -116,11 +116,11 @@ public class IWicketComponentMapperRegistry
         add(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new);
         add(STypeTime.class,                                              TimeMapper::new);
         add(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
+        add(STypeHTML.class,                                              PortletRichTextMapper::new);
         add(STypeHTML.class,        SViewByRichText.class,                RichTextMapper::new);
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
-        add(STypeHTML.class,                                              PortletRichTextMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
         add(STypeHiddenString.class,                                      InputHiddenMapper::new);
         //@formatter:on
