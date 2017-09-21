@@ -139,8 +139,13 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
-        return getTarget().hasAttribute(atr);
+    public boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+        return getTarget().hasAttributeValueDirectly(atr);
+    }
+
+    @Override
+    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+        return getTarget().hasAttributeDefinedDirectly(atr);
     }
 
     @Override
@@ -153,4 +158,8 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         return getTarget().getDictionary();
     }
 
+    @Nullable
+    public SAttributeEnabled getParentAttributeContext() {
+        return getTarget().getParentAttributeContext();
+    }
 }

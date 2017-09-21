@@ -16,31 +16,131 @@
 
 package org.opensingular.form.io;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.internal.lib.commons.xml.MParser;
+import org.w3c.dom.Node;
+
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.internal.lib.commons.xml.MElement;
-import org.opensingular.internal.lib.commons.xml.MParser;
-import org.w3c.dom.Node;
-
 public class FormXSDUtil {
 
+    public static final String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
+    public static final String XSD_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
+    public static final String XSD_NAMESPACE_PREFIX = "xs";
+    private static final String XSD_SCHEMA = XSD_NAMESPACE_PREFIX + ":schema";
+    private static final String XSD_ELEMENT = XSD_NAMESPACE_PREFIX + ":element";
+    private static final String XSD_COMPLEX_TYPE = XSD_NAMESPACE_PREFIX + ":complexType";
+    private static final String XSD_SEQUENCE = XSD_NAMESPACE_PREFIX + ":sequence";
+
+    private static XsdTypeMapping typeMapping;
+
     private FormXSDUtil() {
+    }
+
+    private static XsdTypeMapping getMapping() {
+        if (typeMapping == null) {
+            typeMapping = new XsdTypeMapping();
+        }
+        return typeMapping;
+    }
+
+    /** Converts a {@link SType} definition to a XSD format.*/
+    @Nonnull
+    public static MElement toXsd(@Nonnull SType<?> type, @Nonnull FormToXSDConfig config) {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(config);
+        MElement element = MElement.newInstance(XSD_NAMESPACE_URI, XSD_SCHEMA);
+        if (config.isGenerateCustomAttribute()) {
+            element.setAttribute("xmlns:xsf", XSD_SINGULAR_NAMESPACE_URI);
+        }
+        toXsdFromSType(element, type, config);
+        return element;
+    }
+
+    private static MElement toXsdFromSType(MElement parent, SType<?> type, @Nonnull FormToXSDConfig config) {
+        if (type instanceof STypeSimple) {
+            return toXsdFromSimple(parent, (STypeSimple<?, ?>) type, config);
+        } else if (type instanceof STypeComposite) {
+            return toXsdFromComposite(parent, (STypeComposite<?>) type, config);
+        } else if (type instanceof STypeList) {
+            return toXsdFromList(parent, (STypeList<?, ?>) type, config);
+        } else {
+            throw new SingularFormException("Unkown SType Class to be convert to XSD", type);
+        }
+    }
+
+    private static MElement toXsdFromList(MElement parent, STypeList<?, ?> type, @Nonnull FormToXSDConfig config) {
+        MElement list = createXsdElement(parent, type);
+
+        MElement element = list.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
+        element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
+        element = toXsdFromSType(element, type.getElementsType(), config);
+        Integer min = type.getMinimumSize();
+        if (min != null) {
+            element.setAttribute("minOccurs", min.toString());
+        }
+        Integer max = type.getMaximumSize();
+        if (max == null) {
+            element.setAttribute("maxOccurs", "unbounded");
+        } else {
+            element.setAttribute("maxOccurs", max.toString());
+        }
+
+        return list;
+    }
+
+    private static MElement toXsdFromComposite(MElement parent, STypeComposite<?> type, @Nonnull FormToXSDConfig config) {
+        MElement composite = createXsdElement(parent, type);
+
+        MElement element = composite.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
+        element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
+        for (SType<?> child : type.getFields()) {
+            toXsdFromSType(element, child, config);
+        }
+        return composite;
+    }
+
+    private static MElement toXsdFromSimple(MElement parent, STypeSimple<?, ?> type, @Nonnull FormToXSDConfig config) {
+        MElement simple = createXsdElement(parent, type);
+        String xsdType = getMapping().findXsdType(type);
+        simple.setAttribute("type", XSD_NAMESPACE_PREFIX + ":" + xsdType);
+        if (!type.isRequired() && !XSD_SCHEMA.equals(parent.getNodeName())) {
+            simple.setAttribute("minOccurs", "0");
+        }
+        if (config.isGenerateCustomAttribute()) {
+            if (type.hasAttributeDefinedInHierarchy(SPackageBasic.ATR_MAX_LENGTH)) {
+                Integer maxLength = type.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
+                if (maxLength != null) {
+                    simple.setAttributeNS(XSD_SINGULAR_NAMESPACE_URI, "xsf:maxLength", maxLength.toString());
+                }
+            }
+        }
+        return simple;
+    }
+
+    @NotNull
+    private static MElement createXsdElement(@Nonnull MElement parent, @Nonnull SType<?> type) {
+        MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
+        element.setAttribute("name", type.getNameSimple());
+        return element;
     }
 
     public static SType<?> xsdToSType(PackageBuilder packageForNewTypes, InputStream in) {
@@ -203,12 +303,9 @@ public class FormXSDUtil {
         XsdContext xsdContext = node.getXsdContext();
         if (xsdContext.isXsdType(xsdTypeName)) {
             String name = getTypeNameWithoutNamespace(xsdTypeName);
-            if ("string".equals(name)) {
-                return xsdContext.getType(STypeString.class);
-            } else if ("decimal".equals(name)) {
-                return xsdContext.getType(STypeDecimal.class);
-            } else if ("positiveInteger".equals(name)) {
-                return xsdContext.getType(STypeInteger.class);
+            Class<? extends SType<?>> type = getMapping().findSType(name);
+            if (type != null) {
+                return xsdContext.getType(type);
             }
         }
         throw new SingularFormException(node.errorMsg("Não preparado para tratar o tipo '" + xsdTypeName + "'"));
@@ -220,8 +317,6 @@ public class FormXSDUtil {
     }
 
     private static class XsdContext {
-
-        private static final String XSD_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
 
         private final PackageBuilder pkg;
 
