@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.attachment.upload;
 
+import com.google.common.base.Joiner;
 import org.apache.commons.fileupload.FileItem;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
@@ -30,10 +31,8 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
-import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo
-        .ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO;
-import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo
-        .TIPO_DE_ARQUIVO_NAO_PERMITIDO;
+import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO;
+import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.TIPO_DE_ARQUIVO_NAO_PERMITIDO;
 
 public class FileUploadProcessor implements Serializable {
 
@@ -46,20 +45,20 @@ public class FileUploadProcessor implements Serializable {
 
             // Garante que virar apenas o nome do arquivo sem path
             final String originalFilename = checkValidName(item);
-            final String contentType      = lowerCase(item.getContentType());
-            final String extension        = lowerCase(substringAfterLast(originalFilename, "."));
+            final String contentType = lowerCase(item.getContentType());
+            final String extension = lowerCase(substringAfterLast(originalFilename, "."));
 
             if (item.getSize() == 0) {
                 responses.add(new UploadResponseInfo(originalFilename, ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO));
 
             } else if (!(upInfo.isFileTypeAllowed(contentType) || upInfo.isFileTypeAllowed(extension))) {
-                responses.add(new UploadResponseInfo(originalFilename, TIPO_DE_ARQUIVO_NAO_PERMITIDO));
+                responses.add(new UploadResponseInfo(originalFilename, TIPO_DE_ARQUIVO_NAO_PERMITIDO + Joiner.on(", ").join(upInfo.getAllowedFileExtensions())));
 
             } else {
                 try (InputStream in = item.getInputStream()) {
                     final FileUploadInfo fileInfo = upManager.createFile(upInfo, originalFilename, in);
                     responses.add(new UploadResponseInfo(fileInfo.getAttachmentRef()));
-                } catch (Exception e){
+                } catch (Exception e) {
                     throw SingularException.rethrow(e.getMessage(), e);
                 }
             }

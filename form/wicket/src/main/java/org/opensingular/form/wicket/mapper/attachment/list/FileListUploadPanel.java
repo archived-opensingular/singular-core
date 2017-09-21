@@ -37,6 +37,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
+import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
@@ -200,13 +201,19 @@ public class FileListUploadPanel extends Panel implements Loggable {
                     .put("remove_url", remover.getUrl())
                     .put("max_file_size", getMaxFileSize())
                     .put("allowed_file_types", getAllowedTypes())
-                    .toString(2) + "); "
+                    .put("allowed_file_extensions", getAllowedExtensions())
+                            .toString(2) + "); "
                     + "\n });";
             //@formatter:on
         } else {
             return "";
         }
     }
+
+    private Set<String> getAllowedExtensions(){
+        return MimeTypes.getExtensionsFormMimeTypes(getAllowedTypes(), true);
+    }
+
 
     protected List<String> getAllowedTypes() {
         return defaultIfNull(

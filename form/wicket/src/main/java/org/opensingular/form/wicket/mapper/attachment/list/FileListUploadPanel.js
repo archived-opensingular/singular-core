@@ -44,6 +44,7 @@
                 //toastr.error(errorMessage);
                 $box.find('a').attr('href', 'javascript:void(0)').tooltip({
                     trigger: 'hover',
+                    html: true,
                     title: errorMessage
                 });
             }
@@ -117,7 +118,8 @@
                             data,
                             params.component_id,
                             params.max_file_size,
-                            params.allowed_file_types)) {
+                            params.allowed_file_types,
+                            params.allowed_file_extensions)) {
                         data.submit();
                     }
 
@@ -212,7 +214,7 @@
             e.preventDefault();
         };
 
-        window.FileListUploadPanel.validateInputFile = function (e, data, panel_id, maxSize, allowed_file_types) {
+        window.FileListUploadPanel.validateInputFile = function (e, data, panel_id, maxSize, allowed_file_types, allowed_file_extensions) {
             if (data.files[0].size == 0) {
                 FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Arquivo não pode ser de tamanho 0 (zero)");
                 return false;
@@ -227,9 +229,9 @@
                 var file = data.files[0];
                 var extension = file.name.substring(file.name.lastIndexOf(".") + 1);
                 var invalidType = (jQuery.inArray(file.type, allowed_file_types) < 0);
-                var invalidExtension = (jQuery.inArray(extension, allowed_file_types) < 0);
+                var invalidExtension = (jQuery.inArray(extension, allowed_file_extensions) < 0);
                 if (invalidType && invalidExtension) {
-                    FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Tipo de arquivo não permitido");
+                    FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Tipo de arquivo não permitido.<BR>Permitido apenas: " + allowed_file_extensions.join());
                     return false;
                 }
             }

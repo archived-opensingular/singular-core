@@ -16,9 +16,9 @@ public class MimeTypesTest {
 
     @Test
     public void getExtensionForMimeType(){
-        assertThat(MimeTypes.getExtensionForMimeType("application/tei+xml")).isEqualTo("tei");
-        assertThat(MimeTypes.getExtensionForMimeType("audio/mp4")).isEqualTo("mp4a");
-        assertThat(MimeTypes.getExtensionForMimeType("text/html")).isEqualTo("html");
-        assertThat(MimeTypes.getExtensionForMimeType("application/pdf")).isEqualTo("pdf");
+        assertThat(MimeTypes.getExtensionsForMimeType("application/tei+xml")).contains("tei");
+        assertThat(MimeTypes.getExtensionsForMimeType("audio/mp4")).contains("mp4a");
+        assertThat(MimeTypes.getExtensionsForMimeType("text/html")).contains("html");
+        assertThat(MimeTypes.getExtensionsForMimeType("application/pdf")).contains("pdf");
     }
 }

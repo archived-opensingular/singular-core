@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.attachment.single;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -43,6 +44,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -64,6 +66,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
 
@@ -226,6 +230,7 @@ public class FileUploadPanel extends Panel implements Loggable {
                     .put("max_file_size", getMaxFileSize())
                     .put("allowed_file_types", getAllowedFileTypes())
                     .put("preview_update_callback", previewCallBack.getCallbackUrl())
+                    .put("allowed_file_extensions", getAllowedExtensions())
                     .toString(2) + "); "
                     + "\n });";
             //@formatter:on
@@ -260,6 +265,10 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private List<String> getAllowedFileTypes() {
         return getModelObject().asAtr().getAllowedFileTypes();
+    }
+
+    private Set<String> getAllowedExtensions(){
+        return MimeTypes.getExtensionsFormMimeTypes(getAllowedFileTypes(), true);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

@@ -16,7 +16,7 @@ import java.util.List;
 public class UploadResponseInfo implements Serializable {
 
     public static final String ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO = "Arquivo não pode ser de tamanho 0 (zero)";
-    public static final String TIPO_DE_ARQUIVO_NAO_PERMITIDO          = "Tipo de arquivo não permitido";
+    public static final String TIPO_DE_ARQUIVO_NAO_PERMITIDO          = "Tipo de arquivo não permitido. <BR> Permitido: ";
 
     private final AttachmentKey fileId;
     private final String        name;
