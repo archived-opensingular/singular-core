@@ -12,8 +12,6 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
@@ -50,11 +48,7 @@ public class UploadInfo implements Serializable {
     }
 
     public Set<String> getAllowedFileExtensions() {
-        return
-                getAllowedFileTypes()
-                        .stream()
-                        .map(MimeTypes::getExtensionForMimeType)
-                        .collect(Collectors.toCollection(TreeSet::new));
+        return MimeTypes.getExtensionsFormMimeTypes(getAllowedFileTypes(), true);
     }
 
 

@@ -225,12 +225,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private Set<String> getAllowedExtensions(){
-        return
-                getAllowedFileTypes()
-                        .stream()
-                        .map(MimeTypes::getExtensionForMimeType)
-                        .filter(StringUtils::isNotBlank)
-                        .collect(Collectors.toCollection(TreeSet::new));
+        return MimeTypes.getExtensionsFormMimeTypes(getAllowedFileTypes(), true);
     }
 
     private PackageResourceReference resourceRef(String resourceName) {

@@ -177,7 +177,7 @@
             	var invalidType 	 = (jQuery.inArray(file.type, allowed_file_types) < 0);
             	var invalidExtension = (jQuery.inArray(extension, allowed_file_extensions) < 0);
 	        	if (invalidType && invalidExtension) {
-	        		toastr.error("Tipo de arquivo não permitido. <BR> Permitido: " + allowed_file_extensions.join());
+	        		toastr.error("Tipo de arquivo não permitido.<BR>Permitido apenas: " + allowed_file_extensions.join());
 	        		FileUploadPanel.resetFormElement(e);
 	        		return false;
 	        	}
