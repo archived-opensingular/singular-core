@@ -37,7 +37,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -183,6 +190,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return nameSimple;
     }
 
+    @Nullable
     public SType<I> getSuperType() {
         return superType;
     }
@@ -311,6 +319,11 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         getAttributesDefinitions().add(this, attributeDef);
     }
 
+    @Nullable
+    public final SAttributeEnabled getParentAttributeContext() {
+        return getSuperType();
+    }
+
     @Nonnull
     private AttributeDefinitionManager getAttributesDefinitions() {
         if (attributesDefined == null) {
@@ -429,9 +442,16 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
 
-    public final boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+    @Override
+    public final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
+    }
+
+    @Override
+    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
+        return getAttributeDefinedLocally(ref) != null;
     }
 
     @Override

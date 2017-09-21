@@ -86,7 +86,7 @@ public interface FormKey extends Serializable {
 	 * Assigns a persistence key to the root of a given SInstance. Advised caution
 	 * in calling this method as the persistence mechanism will be affected
 	 * accordingly.
-	 * 
+	 *
 	 * This method is deprecated. Use instead one of the following: setOnRoot or
 	 * setOnInstance.
 	 */

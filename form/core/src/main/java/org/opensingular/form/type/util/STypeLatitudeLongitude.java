@@ -19,7 +19,11 @@ package org.opensingular.form.type.util;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeHiddenString;
 import org.opensingular.form.type.core.STypeString;
+
+import java.math.BigDecimal;
 
 /**
  * Created by danilo.mesquita on 04/01/2016.
@@ -27,19 +31,59 @@ import org.opensingular.form.type.core.STypeString;
 @SInfoType(name = "LatitudeLongitude", spackage = SPackageUtil.class)
 public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> {
 
+    private static final Integer DEFAULT_ZOOM = 4;
+
     public static final String FIELD_LATITUDE  = "latitude";
     public static final String FIELD_LONGITUDE = "longitude";
+    public static final String FIELD_ZOOM = "zoom";
 
-    public STypeString latitude;
-    public STypeString longitude;
-    
+    public STypeDecimal latitude;
+    public STypeDecimal longitude;
+    public STypeHiddenString zoom;
+
     public STypeLatitudeLongitude() {
         super(SILatitudeLongitude.class);
     }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        latitude = addFieldString(FIELD_LATITUDE);
-        longitude = addFieldString(FIELD_LONGITUDE);
+        latitude = addFieldDecimal(FIELD_LATITUDE);
+        longitude = addFieldDecimal(FIELD_LONGITUDE);
+        zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
+
+        latitude
+                .asAtr().label("Latitude").fractionalMaxLength(15)
+                .asAtrBootstrap().colPreference(2);
+
+        latitude.addInstanceValidator(validatable ->{
+            if(validatable.getInstance().getValue() != null){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(85)) == 1){
+                    validatable.error("O valor máximo para latitude é 85º");
+                }
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-85)) == -1){
+                    validatable.error("O valor mínimo para latitude é -85º");
+                }
+            }
+        });
+
+        longitude
+                .asAtr().label("Longitude").fractionalMaxLength(15)
+                .asAtrBootstrap().colPreference(2);
+
+        longitude.addInstanceValidator(validatable ->{
+            if(validatable.getInstance().getValue() != null){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(180)) == 1){
+                    validatable.error("O valor máximo para longitude é 180º");
+                }
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-180)) == -1){
+                    validatable.error("O valor mínimo para longitude é -180º");
+                }
+            }
+        });
+
+        zoom.withInitListener(ins -> {
+            if(ins.isEmptyOfData())
+                ins.setValue(DEFAULT_ZOOM);
+        });
     }
 }

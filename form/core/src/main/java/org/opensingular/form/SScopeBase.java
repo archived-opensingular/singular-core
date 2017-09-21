@@ -132,9 +132,11 @@ public abstract class SScopeBase implements SScope {
         return t;
     }
 
+    @SuppressWarnings("unchecked")
     @Nonnull
     final <T extends SType<?>> T registerTypeInternal(@Nonnull T newType, @Nullable Class<T> typeClass) {
         getDictionary().registerType(this, newType, typeClass);
+        TypeProcessorBeanInjector.INSTANCE.onRegisterTypeByClass(newType, (Class)newType.getClass());
         /*
         (by Daniel Bordin) O If abaixo impede que o onLoadType seja chamado mais de uma vezes caso o novo tipo seja
         apenas uma extensão da classe já carregada anteriormente, ou seja, impede que o mesmo onLoadType seja
@@ -147,9 +149,6 @@ public abstract class SScopeBase implements SScope {
             newType.extendSubReference();
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePreOnLoadTypeCall(newType);
             newType.setCallingOnLoadType(true);
-            if (typeClass != null) {
-                TypeProcessorBeanInjector.INSTANCE.onRegisterTypeByClass(newType, typeClass);
-            }
             callOnLoadTypeIfNecessary(newType);
             newType.setCallingOnLoadType(false);
             TypeProcessorPublicFieldsReferences.INSTANCE.processTypePosRegister(newType, true);

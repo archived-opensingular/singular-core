@@ -13,7 +13,7 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
-import org.opensingular.studio.core.config.StudioAppConfig;
+import org.opensingular.studio.core.config.StudioConfig;
 import org.opensingular.studio.core.view.StudioFooter;
 import org.opensingular.studio.core.view.StudioHeader;
 import org.opensingular.studio.core.view.StudioPortalPage;
@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class StudioApplication extends WebApplication implements SingularAdminApp {
-    private final StudioAppConfig appConfig;
+    private final StudioConfig appConfig;
 
-    public StudioApplication(StudioAppConfig appConfig) {
+    public StudioApplication(StudioConfig appConfig) {
         this.appConfig = appConfig;
     }
 

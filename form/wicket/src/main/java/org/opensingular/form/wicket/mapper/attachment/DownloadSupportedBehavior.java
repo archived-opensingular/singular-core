@@ -123,7 +123,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
      * @param filename
      * @return
      */
-    private String getDownloadURL(String attachmentKey, String filename) {
+    String getDownloadURL(String attachmentKey, String filename) {
         final AttachmentResource resource = new AttachmentResource(filename, contentDisposition, findAttachmentRef(attachmentKey));
         final AttachmentShareHandler shareHandler = new AttachmentShareHandler(attachmentKey, (WebApplication) component.getApplication());
         return shareHandler.share(resource);

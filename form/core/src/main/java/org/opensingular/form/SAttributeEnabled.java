@@ -79,7 +79,39 @@ public interface SAttributeEnabled {
     @Nullable
     <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr);
 
-    boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr);
+    /**
+     * Verifies if there is a value for the attribute directly associated to the current target. It will return
+     * false if even if the parent of target (the {@link SType} in case of a {@link SInstance} and the super type in
+     * case of a {@link SType}) has a associated value for the attribute but the current target don't have.
+     * <p>Notice that the target may have a current value assigned as null. In this case, this method return true.</p>
+     */
+    boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr);
+
+    /**
+     * Verifies if the current target has associated the definition of attribute (create the attribute in the type).
+     */
+    boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr);
+
+    /**
+     * Verifies if attribute is definite in the current target or in the parent context. In other words, is this a valid
+     * attribute for the current target.
+     */
+    default boolean hasAttributeDefinedInHierarchy(@Nonnull AtrRef<?, ?, ?> atr) {
+        for (SAttributeEnabled current = this; current != null; current = current.getParentAttributeContext()) {
+            if (current.hasAttributeDefinedDirectly(atr)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return the target context where a attribute must searched in case the current target don't have the attribute
+     * . For a {@link SInstance} this will be its {@link SType}. For a {@link SType}, the parent context will its super
+     * type.
+     */
+    @Nullable
+    SAttributeEnabled getParentAttributeContext();
 
     default Object getAttributeValue(String attributeFullName) {
         return getAttributeValue(attributeFullName, null);

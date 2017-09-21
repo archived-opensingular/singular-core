@@ -29,6 +29,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -186,22 +188,22 @@ public final class MElementResult extends MElement implements EWrapper {
     /**
      * Percorredor para o resultado da consulta xPath informada.
      *
-     * @param raiz  a ter os filhos percorridos
+     * @param root  a ter os filhos percorridos
      * @param xPath consulta de filtro a partir da raiz informada. Se null
      *              retorna todos os filhos imediatos
      */
-    public MElementResult(Element raiz, String xPath) {
-        if (raiz == null) {
+    public MElementResult(@Nonnull Element root, @Nullable String xPath) {
+        if (root == null) {
             throw new IllegalArgumentException("Elemento raiz nulo");
         }
         if ((xPath == null) || XPathToolkit.isSelectSimples(xPath)) {
-            this.raiz = SupplierUtil.serializable(raiz);
+            this.raiz = SupplierUtil.serializable(root);
             this.nomeElemento_ = xPath;
             this.list = null;
         } else {
             this.raiz = null;
             this.nomeElemento_ = null;
-            this.list = convert(XPathToolkit.selectNodeList(raiz, xPath));
+            this.list = convert(XPathToolkit.selectNodeList(root, xPath));
         }
     }
 
