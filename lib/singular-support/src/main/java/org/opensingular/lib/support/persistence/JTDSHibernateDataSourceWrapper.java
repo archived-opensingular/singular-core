@@ -140,7 +140,7 @@ public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
         }
 
         private boolean isCollectParameters() {
-            return (args != null && args.length == 3 && args[THIRD] instanceof Long);
+            return (args != null && args.length == 3 && getAtIndex(THIRD) instanceof Long);
         }
     }
 
