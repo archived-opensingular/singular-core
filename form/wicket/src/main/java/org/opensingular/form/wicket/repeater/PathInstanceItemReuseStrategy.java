@@ -50,16 +50,17 @@ public class PathInstanceItemReuseStrategy implements IItemReuseStrategy {
 
             @Override
             public Item<T> next() {
-                index += 1;
+                final Item<T> result;
 
                 final IModel<T> next = newModels.next();
                 final Optional<String> path = getPath(next);
-
                 if (path.isPresent() && pathAndItem.containsKey(path.get())) {
-                    return pathAndItem.get(path.get());
+                    result =  pathAndItem.get(path.get());
                 } else {
-                    return factory.newItem(index, next);
+                    result = factory.newItem(index, next);
                 }
+                index+=1;
+                return result;
             }
         };
     }
@@ -91,7 +92,7 @@ public class PathInstanceItemReuseStrategy implements IItemReuseStrategy {
         final T object = model.getObject();
 
         if (object instanceof SInstance) {
-            return Optional.of(((SInstance) object).getPathFromRoot());
+            return Optional.of(((SInstance) object).getPathFromRoot()+ ((SInstance) object).getId());
         }
 
         return Optional.empty();
