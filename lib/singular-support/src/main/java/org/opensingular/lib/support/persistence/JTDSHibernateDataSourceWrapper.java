@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 /**
  * Data Source wrapping to workaround the unsupported setBinaryStream issue
  * of jtds and hibernate combination.
- * This wrapper redirects calls that use the long size version of setBinaryStream to the int version.
+ * This wrapper redirects calls that use the long size version of setBinaryStream to the int versio n.
  */
 public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
 
@@ -120,16 +120,23 @@ public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
             this.args = args;
         }
 
-        Object getFirst(){
-            return args[FIRST];
+        Object getFirst() {
+            return getAtIndex(FIRST);
         }
 
-        Object getSecound(){
-            return args[SECOUND];
+        Object getSecound() {
+            return getAtIndex(SECOUND);
         }
 
-        Object getThird(){
-            return args[THIRD];
+        Object getThird() {
+            return getAtIndex(THIRD);
+        }
+
+        Object getAtIndex(int index) {
+            if (args.length > index) {
+                return args[index];
+            }
+            return null;
         }
 
         private boolean isCollectParameters() {
