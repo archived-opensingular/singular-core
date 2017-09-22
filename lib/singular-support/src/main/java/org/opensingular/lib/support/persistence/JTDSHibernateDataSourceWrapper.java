@@ -3,7 +3,6 @@ package org.opensingular.lib.support.persistence;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -21,7 +20,6 @@ import java.util.logging.Logger;
  */
 public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
 
-    @NotNull
     private DataSource dataSource;
 
     public JTDSHibernateDataSourceWrapper(DataSource dataSource) {
@@ -42,10 +40,10 @@ public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
         return proxyConnection(dataSource.getConnection(username, password));
     }
 
-    private Connection proxyConnection(Connection connection) throws SQLException {
+    private Connection proxyConnection(Connection connection) {
         return (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(), new Class[]{Connection.class}, (proxy, method, args) -> {
             Object invoke = method.invoke(connection, args);
-            if (method.getName().equals("prepareStatement")) {
+            if ("prepareStatement".equals(method.getName())) {
                 return createPreparedStatementProxy(invoke);
             }
             return invoke;
@@ -54,13 +52,15 @@ public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
 
     private Object createPreparedStatementProxy(Object invoke) {
         return Proxy.newProxyInstance(invoke.getClass().getClassLoader(), new Class[]{PreparedStatement.class}, (proxy1, method1, args1) -> {
-            if (method1.getName().equals("setBinaryStream") && isCollectParameters(args1)) {
+            Arguments arguments = new Arguments(args1);
+            if ("setBinaryStream".equals(method1.getName()) && arguments.isCollectParameters()) {
                 PreparedStatement ps = (PreparedStatement) invoke;
-                ps.setBinaryStream((Integer) args1[0], (InputStream) args1[1], Integer.valueOf(((Long) args1[2]).intValue()));
+                ps.setBinaryStream((Integer) arguments.getFirst(), (InputStream) arguments.getSecound(), ((Long) arguments.getThird()).intValue());
                 return null;
-            } else if (method1.getName().equals("setCharacterStream") && isCollectParameters(args1)) {
+            }
+            else if ("setCharacterStream".equals(method1.getName()) && arguments.isCollectParameters()) {
                 PreparedStatement ps = (PreparedStatement) invoke;
-                ps.setCharacterStream((Integer) args1[0], (Reader) args1[1], Integer.valueOf(((Long) args1[2]).intValue()));
+                ps.setCharacterStream((Integer) arguments.getFirst(), (Reader) arguments.getSecound(), ((Long) arguments.getThird()).intValue());
                 return null;
             }
             return method1.invoke(invoke, args1);
@@ -103,10 +103,6 @@ public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
         return dataSource.isWrapperFor(iface);
     }
 
-    private boolean isCollectParameters(Object[] args1) {
-        return (args1 != null && args1.length == 3 && args1[2] instanceof Long);
-    }
-
     public DataSource getDataSource() {
         return dataSource;
     }
@@ -114,6 +110,31 @@ public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+    static class Arguments {
+        private static final int FIRST = 0, SECOUND = 1, THIRD = 2;
+
+        private final Object[] args;
+
+        Arguments(Object[] args) {
+            this.args = args;
+        }
+
+        Object getFirst(){
+            return args[FIRST];
+        }
+
+        Object getSecound(){
+            return args[SECOUND];
+        }
+
+        Object getThird(){
+            return args[THIRD];
+        }
+
+        private boolean isCollectParameters() {
+            return (args != null && args.length == 3 && args[THIRD] instanceof Long);
+        }
+    }
+
 }
-
-

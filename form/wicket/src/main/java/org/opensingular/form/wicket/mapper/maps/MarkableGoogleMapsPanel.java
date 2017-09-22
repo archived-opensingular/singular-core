@@ -129,7 +129,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
                 latLng =  latitudeModel.getObject() + "," + longitudeModel.getObject();
 
             String marker = "&markers="+latLng;
-            if(latLng.equals("-15.7922, -47.4609"))
+            if(("-15.7922, -47.4609").equals(latLng))
                 marker = "";
 
             String parameters = "key=" + singularKeyMapStatic

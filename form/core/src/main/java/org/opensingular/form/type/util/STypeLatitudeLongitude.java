@@ -21,7 +21,6 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeHiddenString;
-import org.opensingular.form.type.core.STypeString;
 
 import java.math.BigDecimal;
 
@@ -57,10 +56,10 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
 
         latitude.addInstanceValidator(validatable ->{
             if(validatable.getInstance().getValue() != null){
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(85)) == 1){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(85)) > 0){
                     validatable.error("O valor máximo para latitude é 85º");
                 }
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-85)) == -1){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-85)) < 0){
                     validatable.error("O valor mínimo para latitude é -85º");
                 }
             }
@@ -72,10 +71,10 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
 
         longitude.addInstanceValidator(validatable ->{
             if(validatable.getInstance().getValue() != null){
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(180)) == 1){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(180)) > 0){
                     validatable.error("O valor máximo para longitude é 180º");
                 }
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-180)) == -1){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-180)) < 0){
                     validatable.error("O valor mínimo para longitude é -180º");
                 }
             }
