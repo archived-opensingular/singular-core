@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
@@ -206,6 +207,13 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     @Nonnull
     public List<STransition> getTransitions() {
         return transitions;
+    }
+
+    /** Lists all the transition that arrives to this task. */
+    @Nonnull
+    public List<STransition> getTransitionsArriving() {
+        return getFlowMap().getAllTasks().stream().flatMap(t -> t.transitions.stream()).filter(
+                t -> t.getDestination().equals(this)).collect(Collectors.toList());
     }
 
     /** Recupera a transição com o nome informado ou dispara exception senão encontrar. */

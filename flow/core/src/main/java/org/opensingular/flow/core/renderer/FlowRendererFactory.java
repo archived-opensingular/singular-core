@@ -36,7 +36,7 @@ public class FlowRendererFactory {
                     .build(new CacheLoader<Class<? extends FlowDefinition>, byte[]>() {
                         @Override
                         public byte[] load(Class<? extends FlowDefinition> classe) {
-                            return flowRenderer().generateImage(Flow.getProcessDefinition(classe));
+                            return flowRenderer().generatePng(Flow.getProcessDefinition(classe));
                         }
 
                         private IFlowRenderer flowRenderer() {

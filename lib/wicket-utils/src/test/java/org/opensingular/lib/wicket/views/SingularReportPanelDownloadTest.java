@@ -1,6 +1,5 @@
 package org.opensingular.lib.wicket.views;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.util.tester.WicketTestCase;
@@ -19,12 +18,9 @@ import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-public class SingualrReportPanelDownloadTest extends WicketTestCase {
+public class SingularReportPanelDownloadTest extends WicketTestCase {
     private static final boolean OPEN_DOWNLOADED_FILE = false;
 
     private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> singularReport;
@@ -52,11 +48,9 @@ public class SingualrReportPanelDownloadTest extends WicketTestCase {
         tester.clickLink(exportDownloadLink);
         assertTrue(tester.getContentLengthFromResponseHeader() > 0);
         if (OPEN_DOWNLOADED_FILE) {
-            Path path = Files.createTempFile("teste", "." + format.getFileExtension());
-            File file = path.toFile();
-            FileUtils.writeByteArrayToFile(file, tester.getLastResponse().getBinaryContent());
-            SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(file);
-            file.deleteOnExit();
+            SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(this, format.getFileExtension(), out -> {
+                out.write(tester.getLastResponse().getBinaryContent());
+            });
         }
     }
 

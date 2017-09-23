@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -17,13 +17,12 @@
 package org.opensingular.flow.core;
 
 /**
- * Represent a list o BPMN types of events. This information is used when rendering a diagram for a {@link
+ * Identify how the task should be displayed if converted to a diagram when rendering a diagram for a {@link
  * FlowDefinition}.
+ *
+ * @author Daniel C. Bordin on 21/09/2017.
  * @see org.opensingular.flow.core.renderer.IFlowRenderer
  */
-public enum EventType {
-
-    PLAIN, MESSAGE, TIMER, ESCALATION, CONDITIONAL, LINK, ERROR, CANCEL, COMPENSATION, SIGNAL, MULTIPLE,
-    PARALLEL_MULTIPLE, TERMINATE;
-
+public enum DisplayType {
+    GATEWAY_EXCLUSIVE, SEND_MESSAGE;
 }

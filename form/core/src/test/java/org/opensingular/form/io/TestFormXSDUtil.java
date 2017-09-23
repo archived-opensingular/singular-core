@@ -159,7 +159,6 @@ public class TestFormXSDUtil extends TestCaseForm {
 
     private AssertionsXML toXsd(SType<?> type, FormToXSDConfig config) {
         AssertionsXML xml = new AssertionsXML(FormXSDUtil.toXsd(type, config)).isNotNull();
-        xml.getTarget().printTabulado();
         xml.isName(FormXSDUtil.XSD_NAMESPACE_PREFIX, "schema");
         assertNameSpaceXsd(xml);
         xml.hasChildren(1);

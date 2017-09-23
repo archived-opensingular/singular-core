@@ -16,10 +16,12 @@
 
 package org.opensingular.internal.lib.commons.test;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
+import org.opensingular.lib.commons.lambda.IConsumerEx;
 import org.opensingular.lib.commons.pdf.PDFUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
-import java.util.Objects;
+import java.io.OutputStream;
 
 /**
  * Oferece métodos utilitários para apoio a contrução de testes.
@@ -160,6 +161,34 @@ public final class SingularTestUtil {
     }
 
     /**
+     * Create a temp file, call the file generator provided to fill the temp file and then opens the file on the
+     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties that the
+     * file will be deleted.
+     * <p>This method may be used to inspect visually a generated file.</p>
+     *
+     * @param requester     Class or object client of the temp file generation. The name of the class will be used as
+     *                      prefix of the temp file names.
+     * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
+     * @param fileGenerator The code that will called to fill the temp file before the file be show
+     * @see {@link TempFileProvider#create(Object, IConsumerEx)}
+     */
+    public static <EX extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
+            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, EX> fileGenerator) {
+        TempFileProvider.create(requester, tmpProvider -> {
+            String ext = fileExtension.indexOf('.') == -1 ? '.' + fileExtension : fileExtension;
+            File arq = tmpProvider.createTempFile(ext);
+            try (FileOutputStream out = new FileOutputStream(arq)) {
+                fileGenerator.accept(out);
+            } catch (Exception e) {
+                Throwables.throwIfUnchecked(e);
+                throw new SingularTestException(e);
+            }
+            showFileOnDesktopForUserAndWaitOpening(arq);
+        });
+    }
+
+
+    /**
      * Abre o arqivo informado com o aplicativo associado no sistema operacional e espera 5 segundos para
      * prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
      */
@@ -184,17 +213,17 @@ public final class SingularTestUtil {
      */
     public static void showFileOnDesktopForUser(@Nonnull File arq) {
         if (!arq.exists() || arq.isDirectory()) {
-            throw new SingularTestExpetion("Não existe o arquivo " + arq.getAbsolutePath());
+            throw new SingularTestException("Não existe o arquivo " + arq.getAbsolutePath());
         }
         try {
             if (PDFUtil.isWindows()) {
                 ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", arq.getAbsolutePath());//NOSONAR
                 processBuilder.start();
             } else {
-                throw new SingularTestExpetion("Sistema operacional não suportado");
+                throw new SingularTestException("Sistema operacional não suportado");
             }
         } catch (IOException e) {
-            throw new SingularTestExpetion(e);
+            throw new SingularTestException(e);
         }
     }
 
@@ -217,34 +246,29 @@ public final class SingularTestUtil {
      * segundos para prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
      */
     public static void showHtmlContentOnDesktopForUserAndWaitOpening(@Nonnull String content) {
-        try (TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(Objects.class)) {
-            File arq = tmpProvider.createTempFile(".html");
-            try (Writer out = new FileWriter(arq)) {
-                IOUtils.write(content, out);
-            } catch (IOException e) {
-                throw new SingularTestExpetion(e);
-            }
-            SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(arq);
-        }
+        showFileOnDesktopForUserAndWaitOpening(SingularTestUtil.class, "html", out -> {
+            IOUtils.write(content, out);
+        });
     }
 
-    private static class SingularTestExpetion extends RuntimeException {
-        public SingularTestExpetion() {
+    private static class SingularTestException extends RuntimeException {
+        public SingularTestException() {
         }
 
-        public SingularTestExpetion(String message) {
+        public SingularTestException(String message) {
             super(message);
         }
 
-        public SingularTestExpetion(String message, Throwable cause) {
+        public SingularTestException(String message, Throwable cause) {
             super(message, cause);
         }
 
-        public SingularTestExpetion(Throwable cause) {
+        public SingularTestException(Throwable cause) {
             super(cause);
         }
 
-        public SingularTestExpetion(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        public SingularTestException(String message, Throwable cause, boolean enableSuppression,
+                boolean writableStackTrace) {
             super(message, cause, enableSuppression, writableStackTrace);
         }
     }

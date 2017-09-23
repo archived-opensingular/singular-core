@@ -141,7 +141,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
             f.from(StepsBI.First).go(StepsBI.Call1).thenGo(StepsBI.Call2).thenGo(StepsBI.Call3).thenGo(StepsBI.Call4)
                     .thenGo(StepsBI.Call5).thenGo(StepsBI.Call6).thenGo(StepsBI.Call7).thenGo(StepsBI.Call8);
-            f.from(StepsBI.Call8).go(StepsBI.Second).setAsDefaultTransiton();
+            f.from(StepsBI.Call8).go(StepsBI.Second).setAsDefaultTransition();
 
             f.from(StepsBI.Second).go(StepsBI.Third).thenGo(StepsBI.End);
 

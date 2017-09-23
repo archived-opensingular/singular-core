@@ -17,10 +17,14 @@
 package org.opensingular.flow.core;
 
 
+import javax.annotation.Nullable;
+
 public class STaskEnd extends STask<STaskEnd> {
 
-    public STaskEnd(FlowMap mapa, String nome, String abbreviation) {
-        super(mapa, nome, abbreviation);
+    private EventType eventType;
+
+    public STaskEnd(FlowMap map, String nome, String abbreviation) {
+        super(map, nome, abbreviation);
     }
 
     @Override
@@ -31,5 +35,24 @@ public class STaskEnd extends STask<STaskEnd> {
     @Override
     public boolean canReallocate() {
         return false;
+    }
+
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the type of BPMN event will be used to
+     * render this end task (the symbol that goes inside the end symbol).
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    @Nullable
+    public EventType getDisplayEventType() {
+        return eventType;
+    }
+
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the type of BPMN event will be used to
+     * render this end task (the symbol that goes inside the end symbol).
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    public void setDisplayEventType(@Nullable EventType eventType) {
+        this.eventType = eventType;
     }
 }

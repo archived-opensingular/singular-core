@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.table;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import org.opensingular.lib.commons.test.AbstractTestTempFileSupport;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,9 +27,7 @@ import java.util.List;
 /**
  * @author Daniel C. Bordin on 21/07/2017.
  */
-public abstract class TableToolSimpleBaseTest {
-
-    protected static boolean OPEN_GENERATED_FILE = false;
+public abstract class TableToolSimpleBaseTest extends AbstractTestTempFileSupport {
 
     @Test
     public abstract void testSimpleTable();

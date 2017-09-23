@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.core;
+package org.opensingular.lib.commons.lambda;
+
+import java.io.Serializable;
 
 /**
- * Represent a list o BPMN types of events. This information is used when rendering a diagram for a {@link
- * FlowDefinition}.
- * @see org.opensingular.flow.core.renderer.IFlowRenderer
+ * It's a reimplementation o java Function that lets Exception being thrown.
+ *
+ * @author Daniel C. Bordin on 2017-09-23.
  */
-public enum EventType {
-
-    PLAIN, MESSAGE, TIMER, ESCALATION, CONDITIONAL, LINK, ERROR, CANCEL, COMPENSATION, SIGNAL, MULTIPLE,
-    PARALLEL_MULTIPLE, TERMINATE;
-
+@FunctionalInterface
+public interface IFunctionEx<T, R, EX extends Exception> extends Serializable {
+    R apply(T t) throws EX;
 }
