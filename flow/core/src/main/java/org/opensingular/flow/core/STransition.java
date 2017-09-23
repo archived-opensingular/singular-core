@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataEnabled;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -37,7 +36,6 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final STask<?> origin;
     private final String name;
     private final STask<?> destination;
-    private final TransitionType type;
     private final String         abbreviation;
 
     private UITransitionAccessStrategy<TaskInstance> accessStrategy;
@@ -53,11 +51,10 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private String displayAsLinkName;
     private int displayAsLinkGroupIndex = -1;
 
-    protected STransition(STask<?> origin, String name, @Nonnull STask<?> destination, @Nonnull TransitionType type) {
+    protected STransition(STask<?> origin, String name, @Nonnull STask<?> destination) {
         this.origin = origin;
         this.name = name;
         this.destination = Objects.requireNonNull(destination);
-        this.type = Objects.requireNonNull(type);
         this.abbreviation = SingularUtil.convertToJavaIdentity(name, true);
     }
 
@@ -245,10 +242,6 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     @Override
     public String toString() {
         return name + "(go to task:" + destination.getName() + ")";
-    }
-
-    public TransitionType getType() {
-        return type;
     }
 
     /**

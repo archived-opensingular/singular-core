@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.CollectionUtils;
-import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
@@ -78,12 +77,12 @@ public class FlowMap {
      *
      * @param origin tarefa de origem.
      * @param name o nome da transição.
-     * @param destinarion a tarefa destino.
+     * @param destination a tarefa destino.
      * @param type o tipo de transição.
      * @return a nova transição criada.
      */
-    protected STransition newTransition(STask<?> origin, String name, STask<?> destinarion, TransitionType type) {
-        return new STransition(origin, name, destinarion, type);
+    protected STransition newTransition(STask<?> origin, String name, STask<?> destination) {
+        return new STransition(origin, name, destination);
     }
 
     /**
