@@ -22,7 +22,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
-import org.opensingular.form.wicket.mapper.maps.MarkableGoogleMapsPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
                 longitudeId = t;
             if(t.contains(STypeLatitudeLongitude.FIELD_ZOOM))
                 zoomId = t;
-        };
+        }
 
         final IModel<? extends SInstance> model = ctx.getModel();
 

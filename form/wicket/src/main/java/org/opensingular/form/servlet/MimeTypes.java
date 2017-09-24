@@ -54,7 +54,7 @@ public abstract class MimeTypes {
     public static Set<String> getExtensionsFormMimeTypes(Collection<String> mimeTypes, boolean defaultToMimeIfNotFound) {
         return mimeTypes
                 .stream()
-                .map(s -> defaultToMimeIfNotFound ? MimeTypes.getExtensionsForMimeType(s, s) : MimeTypes.getExtensionsForMimeType(s, s))
+                .map(s -> defaultToMimeIfNotFound ? MimeTypes.getExtensionsForMimeType(s, s) : MimeTypes.getExtensionsForMimeType(s))
                 .collect(TreeSet::new, TreeSet::addAll, TreeSet::addAll);
     }
 

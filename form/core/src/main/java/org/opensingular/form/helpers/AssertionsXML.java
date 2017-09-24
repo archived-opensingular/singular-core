@@ -209,7 +209,6 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> imple
     /** Verifies if the attribute is not in the element. */
     @Nonnull
     public AssertionsXML attributeNotPresent(@Nonnull String attributeName) {
-        Object value = getTarget().getAttribute(attributeName);
         if (getTarget().hasAttribute(attributeName)) {
             throw new AssertionError(errorMsg("Attribute '" + attributeName + "' wasn't expeted to be present"));
         }
