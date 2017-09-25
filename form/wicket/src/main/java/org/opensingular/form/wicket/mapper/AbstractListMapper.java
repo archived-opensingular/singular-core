@@ -210,17 +210,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 setItemReuseStrategy(new PathInstanceItemReuseStrategy());
                 SInstance newInstance = getModelObject().addNewAt(index);
 
-                //update current children model indexes
                 for (Component child : this) {
-                    IModel<?> childModel = child.getDefaultModel();
-                    if (childModel instanceof SInstanceListItemModel<?>) {
-                        SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
-                        if (itemModel.getIndex() >= index) {
-                            int newIndex = itemModel.getIndex() + 1;
-                            itemModel.setIndex(newIndex);
-                            ((Item<?>) child).setIndex(newIndex);
-                        }
-                    }
+                    updateChildModelIndex(index, child);
                 }
 
                 this.onPopulate();
@@ -232,6 +223,18 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 });
             } finally {
                 setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
+            }
+        }
+
+        private void updateChildModelIndex(int index, Component child) {
+            IModel<?> childModel = child.getDefaultModel();
+            if (childModel instanceof SInstanceListItemModel<?>) {
+                SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
+                if (itemModel.getIndex() >= index) {
+                    int newIndex = itemModel.getIndex() + 1;
+                    itemModel.setIndex(newIndex);
+                    ((Item<?>) child).setIndex(newIndex);
+                }
             }
         }
 
