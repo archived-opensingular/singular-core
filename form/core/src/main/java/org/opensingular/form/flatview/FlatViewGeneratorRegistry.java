@@ -25,6 +25,7 @@ import org.opensingular.form.flatview.mapper.BlockFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.SelectionFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.TabFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.TableFlatViewGenerator;
+import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.country.brazil.STypeUF;
 import org.opensingular.form.view.*;
@@ -41,6 +42,7 @@ public class FlatViewGeneratorRegistry extends SingleAspectRegistry<FlatViewGene
     public FlatViewGeneratorRegistry(@Nonnull AspectRef<FlatViewGenerator> aspectRef) {
         super(aspectRef, new SViewQualifierQualifierStrategy());
         add(STypeSimple.class, SISimpleFlatViewGenerator::new);
+        add(STypeMonetary.class, SIMonetaryFlatViewGenerator::new);
         add(STypeAttachment.class, SIAttachmentFlatViewGenerator::new);
         add(STypeUF.class, UFFlatViewGenerator::new);
         add(STypeList.class, SViewListByTable.class, TableFlatViewGenerator::new);
