@@ -84,7 +84,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
         ctx.configureContainer(label);
 
-        MetronicPanel panel = MetronicPanel.MetronicPanelBuilder.build(id,
+        return MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
                     heading.appendTag("span", new Label("_title", label));
 
@@ -140,7 +140,6 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                 f.appendTag("div", feedback);
             });
 
-        return panel;
     }
 
     private static final class PanelElementsView extends ElementsView {
