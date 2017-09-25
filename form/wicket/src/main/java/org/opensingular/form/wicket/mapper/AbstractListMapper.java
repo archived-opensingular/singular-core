@@ -108,7 +108,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         if (canAddItems(ctx)) {
             final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
             template.add((Component) createAddButton.create());
-        } else {
+        }
+        else {
             footer.setVisible(false);
         }
         personalizeCSS(footer);
@@ -154,7 +155,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 for (int i = 0; i < tl.getMinimumSize(); i++) {
                     list.addNew();
                 }
-            } else if (tl.isRequired()) {
+            }
+            else if (tl.isRequired()) {
                 list.addNew();
             }
         }
@@ -180,8 +182,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         protected Iterator<IModel<SInstance>> getItemModels() {
             List<IModel<SInstance>> list  = new ArrayList<>();
             SIList<SInstance>       sList = getModelObject();
-            for (int i = 0; i < sList.size(); i++)
+            for (int i = 0; i < sList.size(); i++) {
                 list.add(new SInstanceListItemModel<>(getDefaultModel(), i));
+            }
             return list.iterator();
         }
 
@@ -211,7 +214,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 SInstance newInstance = getModelObject().addNewAt(index);
 
                 for (Component child : this) {
-                    updateChildModelIndex(index, child);
+                    updateChildModelIndex(index, child, 1);
                 }
 
                 this.onPopulate();
@@ -226,12 +229,12 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             }
         }
 
-        private void updateChildModelIndex(int index, Component child) {
+        private void updateChildModelIndex(int index, Component child, int increment) {
             IModel<?> childModel = child.getDefaultModel();
             if (childModel instanceof SInstanceListItemModel<?>) {
                 SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
                 if (itemModel.getIndex() >= index) {
-                    int newIndex = itemModel.getIndex() + 1;
+                    int newIndex = itemModel.getIndex() + increment;
                     itemModel.setIndex(newIndex);
                     ((Item<?>) child).setIndex(newIndex);
                 }
@@ -241,23 +244,15 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         public void removeItem(AjaxRequestTarget target, Item<SInstance> item) {
             try {
                 setItemReuseStrategy(new PathInstanceItemReuseStrategy());
-                final SInstance instance = item.getModelObject();
-                final SIList<SInstance> list = getModelObject();
-                final int index = list.indexOf(instance);
+                final SInstance         instance = item.getModelObject();
+                final SIList<SInstance> list     = getModelObject();
+                final int               index    = list.indexOf(instance);
 
                 list.remove(instance);
 
                 //update current children model indexes
                 for (Component child : this) {
-                    IModel<?> childModel = child.getDefaultModel();
-                    if (childModel instanceof SInstanceListItemModel<?>) {
-                        SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
-                        if (itemModel.getIndex() >= index) {
-                            int newIndex = itemModel.getIndex() - 1;
-                            itemModel.setIndex(newIndex);
-                            ((Item<?>) child).setIndex(newIndex);
-                        }
-                    }
+                    updateChildModelIndex(index, child, -1);
                 }
 
                 Component child = renderedChildFunction.apply(item);
@@ -270,16 +265,14 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         private CharSequence getInsertPreScript(int index, String emptyMarkupString) {
             final StringBuilder $parent = JQuery.$(parentContainer);
-            if (index == 0)
+            if (index == 0) {
                 return $parent.append(".prepend(").append(emptyMarkupString).append(");");
-
-            Optional<Component> sibling = findChildByInstance(getModelObject().get(index - 1));
-            if (sibling.isPresent())
-                return $parent
-                        .append(".find('#").append(renderedChildFunction.apply(sibling.get()).getMarkupId()).append("')")
-                        .append(".after(").append(emptyMarkupString).append(");");
-
-            return $parent.append(".append(").append(emptyMarkupString).append(");");
+            }
+            return findChildByInstance(getModelObject().get(index - 1))
+                    .map(component -> $parent.append(".find('#")
+                            .append(renderedChildFunction.apply(component).getMarkupId())
+                            .append("').after(").append(emptyMarkupString).append(");"))
+                    .orElseGet(() -> $parent.append(".append(").append(emptyMarkupString).append(");"));
         }
 
         private Optional<Component> findChildByInstance(SInstance instance) {
@@ -292,8 +285,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             if (index >= 0) {
                 for (Component child : container) {
                     SInstance childInstance = (SInstance) child.getDefaultModelObject();
-                    if (Objects.equals(instance.getPathFull(), childInstance.getPathFull()))
+                    if (Objects.equals(instance.getPathFull(), childInstance.getPathFull())) {
                         return Optional.of(child);
+                    }
                 }
             }
             return Optional.empty();
@@ -334,8 +328,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             elementsView.removeItem(target, item);
-            if (elementsView.getModelObject().isEmpty())
+            if (elementsView.getModelObject().isEmpty()) {
                 target.add(form);
+            }
         }
     }
 
@@ -355,7 +350,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                 target.appendJavaScript(Scripts.multipleModalBackDrop());
-            } else {
+            }
+            else {
                 lista.addNew();
                 target.add(form);
                 target.focusComponent(this);
