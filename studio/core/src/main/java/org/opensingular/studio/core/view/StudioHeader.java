@@ -28,12 +28,28 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Optional;
+
 public class StudioHeader extends Panel {
+
+    private WebMarkupContainer rightNavbar = new WebMarkupContainer("rightNavbar");
 
     public StudioHeader(String id) {
         super(id);
         addHomeAnchor();
+        addRightNavbar();
         addUsername();
+    }
+
+    private void addRightNavbar() {
+        rightNavbar.add(new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                component.setVisible(getUserDetails().isPresent());
+            }
+        });
+        add(rightNavbar);
     }
 
     private void addHomeAnchor() {
@@ -53,15 +69,18 @@ public class StudioHeader extends Panel {
     }
 
     private void addUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = "";
-        if (auth != null) {
-            Object principal = auth.getPrincipal();
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            }
-        }
-        add(new Label("username", username));
+        rightNavbar.add(new Label("username", getUserDetails().map(UserDetails::getUsername).orElse("")));
+    }
+
+    private Optional<Authentication> getAuth() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    private Optional<UserDetails> getUserDetails() {
+        return getAuth()
+                .map(Authentication::getPrincipal)
+                .filter(auth -> auth instanceof UserDetails)
+                .map(userDetails -> (UserDetails) userDetails);
     }
 
 
