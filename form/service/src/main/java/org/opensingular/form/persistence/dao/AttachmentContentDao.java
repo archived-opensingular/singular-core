@@ -20,7 +20,6 @@ import org.apache.commons.io.IOUtils;
 import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.io.TempFileInputStream;
-import org.opensingular.lib.commons.util.TempFileUtils;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 import javax.annotation.Nonnull;
@@ -29,10 +28,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
 
 @SuppressWarnings({"serial", "unchecked"})
 @Transactional(Transactional.TxType.MANDATORY)
@@ -52,35 +50,43 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
     }
 
     public T insert(InputStream is, long length, String hashSha1) {
-        if (hashSha1 == null){
+        if (hashSha1 == null) {
             throw SingularException.rethrow("Essa persistencia de arquivo não suporta o cálculo de hash, favor fornecer o hash calculado.");
         }
-        return insert(createContent(is, length, hashSha1));
+        return createContentAndAcceptConsumer(is, length, hashSha1, this::insert);
     }
 
     public void delete(@Nonnull Long codContent) {
-        Optional<T> contentEntity = find(codContent);
-        if(contentEntity.isPresent()) {
-            delete(contentEntity.get());
-        }
+        find(codContent).ifPresent(this::delete);
     }
 
-    protected T createContent(InputStream in, long length, String hashSha1) {
+    /**
+     * Cria a entidade e aplica um consumer, que pode ser utilizado para fazer o save.
+     * É feito desta forma para garantir o close do TempFileInputStream
+     *
+     * @param in              o stream
+     * @param length          o tamanho
+     * @param hashSha1        o hash
+     * @param consummerEntity o consummer a ser acionado quando a entidade for criada
+     * @return a entidade apos accept do consumer
+     */
+    protected T createContentAndAcceptConsumer(InputStream in, long length, String hashSha1, Consumer<T> consummerEntity) {
         try {
-            File f = File.createTempFile(this.getClass().getName(), hashSha1);
+            File                file  = File.createTempFile(this.getClass().getName(), hashSha1);
             DeflaterInputStream inZip = new DeflaterInputStream(in, new Deflater(Deflater.BEST_COMPRESSION));
-            try (FileOutputStream fos = new FileOutputStream(f)){
+            try (FileOutputStream fos = new FileOutputStream(file)) {
                 IOUtils.copy(inZip, fos);
             }
-            try (TempFileInputStream tempFileStream = new TempFileInputStream(f)) {
+            try (TempFileInputStream tempFileStream = new TempFileInputStream(file)) {
                 T fileEntity = createInstance();
-                fileEntity.setContent(getSession().getLobHelper().createBlob(tempFileStream, f.length()));
+                fileEntity.setContent(getSession().getLobHelper().createBlob(tempFileStream, file.length()));
                 fileEntity.setHashSha1(hashSha1);
                 fileEntity.setSize(length);
                 fileEntity.setInclusionDate(new Date());
+                consummerEntity.accept(fileEntity);
                 return fileEntity;
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }
     }

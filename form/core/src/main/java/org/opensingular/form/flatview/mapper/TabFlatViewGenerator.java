@@ -18,7 +18,7 @@ public class TabFlatViewGenerator extends AbstractFlatViewGenerator {
         SViewTab viewTab = (SViewTab) ViewResolver.resolveView(instance.getType());
         for (SViewTab.STab tab : viewTab.getTabs()) {
             canvas.addSubtitle(tab.getTitle());
-            for (String path : tab.getTypesName()) {
+            for (String path : tab.getTypesNames()) {
                 SInstance child = instance.getField(path);
                 child.getAspect(FlatViewGenerator.ASPECT_FLAT_VIEW_GENERATOR)
                         .ifPresent(viewGenerator ->
