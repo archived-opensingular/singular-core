@@ -17,11 +17,15 @@
 package org.opensingular.form.persistence;
 
 import static java.util.Collections.emptyList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +43,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBTest.TestPackage.Form;
+import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
 /**
@@ -78,13 +83,23 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 		assertEquals(42L, repo.countAll());
 	}
 
+	@Test(expected = SingularFormNotFoundException.class)
+	public void load() {
+		when(db.query(eq(
+				"select T1.name, T1.customer, T2.name, T1.CODE from FORM T1 left join CUST T2 on T1.customer = T2.ID where T1.CODE = ?"),
+				eq(Arrays.asList(42042)), isNull(), isNull(), any())).thenReturn(Collections.emptyList());
+		repo.load(formKey(42042));
+	}
+
 	@Test
 	public void update() {
 		SIComposite formInstance = form.newInstance();
 		formInstance.setValue("name", "My form name");
+		formInstance.setValue("customerKey", 7);
+		formInstance.setValue("customerDisplay", "Edworld");
 		FormKey.setOnInstance(formInstance, formKey(4242));
-		when(db.exec("update FORM T1 set T1.name = ? where T1.CODE = ?", Arrays.asList("My form name", 4242)))
-				.thenReturn(1);
+		when(db.exec("update FORM T1 set T1.name = ?, T1.customer = ? where T1.CODE = ?",
+				Arrays.asList("My form name", 7, 4242))).thenReturn(1);
 		repo.update(formInstance, null);
 	}
 
@@ -102,16 +117,36 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 
 	@SInfoPackage(name = "testPackage")
 	public static final class TestPackage extends SPackage {
+		@SInfoType(name = "Customer", spackage = TestPackage.class)
+		public static final class Customer extends STypeComposite<SIComposite> {
+			public STypeString name;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				asAtr().label("Customer");
+				name = addFieldString("name");
+				// relational mapping
+				asSQL().table("CUST").tablePK("ID");
+			}
+		}
+
 		@SInfoType(name = "Form", spackage = TestPackage.class)
 		public static final class Form extends STypeComposite<SIComposite> {
 			public STypeString name;
+			public STypeInteger customerKey;
+			public STypeString customerDisplay;
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Formulary");
 				name = addFieldString("name");
+				customerKey = addField("customerKey", STypeInteger.class);
+				customerDisplay = addField("customerDisplay", STypeString.class);
 				// relational mapping
 				asSQL().table("FORM").tablePK("CODE");
+				asSQL().addTableFK("customer", Customer.class);
+				customerKey.asSQL().column("customer");
+				customerDisplay.asSQL().foreignColumn("name", "customer", Customer.class);
 			}
 		}
 	}
