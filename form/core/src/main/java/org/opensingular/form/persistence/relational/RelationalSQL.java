@@ -122,6 +122,16 @@ public abstract class RelationalSQL {
 		return null;
 	}
 
+	public static SInstance tupleKeyRef(SInstance instance) {
+		SType<?> ancestorType = tableContext(instance.getType());
+		for (SInstance parent = instance.getParent(); parent != null; parent = parent.getParent()) {
+			if (parent.getType().isTypeOf(ancestorType)) {
+				return parent;
+			}
+		}
+		return null;
+	}
+
 	public static Object fieldValue(SInstance instance) {
 		Object result = instance.getValue();
 		Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
@@ -134,7 +144,7 @@ public abstract class RelationalSQL {
 	public static void setFieldValue(SInstance instance, List<RelationalData> fromList) {
 		SType<?> field = instance.getType();
 		String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
-		SInstance tupleKeyRef = instance.getParent();
+		SInstance tupleKeyRef = tupleKeyRef(instance);
 		String fieldName = RelationalSQL.column(field);
 		Object value = getFieldValue(tableName, tupleKeyRef, fieldName, fromList);
 		if (value == null) {
