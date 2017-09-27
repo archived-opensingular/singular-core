@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -144,7 +146,7 @@ public class RelationalSQLTest extends TestCaseForm {
 	public void testInsert() {
 		SIComposite masterInstance = master.newInstance();
 		masterInstance.setValue(master.name, "My name");
-		masterInstance.getField(master.category).setValue(master.category.key, "id$Integer$2");
+		masterInstance.getField(master.category).setValue(master.category.key, 2);
 		masterInstance.getField(master.category).setValue(master.category.display, "Category 2");
 		RelationalSQL insert = insert(masterInstance);
 		List<RelationalSQLCommmand> script = insert.toSQLScript();
@@ -228,7 +230,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				asAtr().label("Category entity");
 				name = addFieldString("name");
 				// relational mapping
-				asSQL().table("Category").tablePK("id").tableRefColumn("name");
+				asSQL().table("Category").tablePK("id");
 			}
 		}
 
@@ -254,6 +256,14 @@ public class RelationalSQLTest extends TestCaseForm {
 					result.add(instance);
 				}
 				return result;
+			}
+
+			@Override
+			protected void onLoadType(@Nonnull TypeBuilder tb) {
+				super.onLoadType(tb);
+				// relational mapping
+				key.asSQL().column("category").columnConverter(IntegerConverter::new);
+				display.asSQL().foreignColumn("name", "category", CategoryEntity.class);
 			}
 		}
 

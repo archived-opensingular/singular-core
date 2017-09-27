@@ -40,13 +40,12 @@ import org.opensingular.form.persistence.FormKeyRelational;
  *
  * @author Edmundo Andrade
  */
-public class RelationalSQLQuery implements RelationalSQL {
+public class RelationalSQLQuery extends RelationalSQL {
 	private RelationalSQLAggregator aggregator;
-	private List<SType<?>> targetTables = new ArrayList<>();
 	private Collection<SType<?>> targetFields = new ArrayList<>();;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
-	private Map<String, String> mapColumnToField;
+	private Map<String, SType<?>> mapColumnToField;
 	private List<RelationalColumn> orderingColumns = new ArrayList<>();
 	private STypeComposite<?> keyFormType;
 	private Map<String, Object> keyFormColumnMap;
@@ -62,20 +61,18 @@ public class RelationalSQLQuery implements RelationalSQL {
 		this.keyColumns = new ArrayList<>();
 		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
-		for (SType<?> field : targetFields) {
-			RelationalSQL.collectKeyColumns(field, keyColumns, targetTables);
-			RelationalSQL.collectTargetColumn(field, targetColumns, targetTables, Collections.emptyList(),
-					mapColumnToField);
-			RelationalSQL.collectTargetRefColumn(field, targetColumns, targetTables, Collections.emptyList(),
-					mapColumnToField);
+		List<SType<?>> list = new ArrayList<>();
+		addFieldsToList(targetFields, list);
+		for (SType<?> field : list) {
+			collectKeyColumns(field, keyColumns);
+			collectTargetColumn(field, targetColumns, Collections.emptyList(), mapColumnToField);
 		}
 	}
 
 	public RelationalSQLQuery orderBy(SType<?>... fields) {
 		orderingColumns.clear();
 		for (SType<?> field : fields)
-			RelationalSQL.collectTargetColumn(field, orderingColumns, targetTables, Collections.emptyList(),
-					mapColumnToField);
+			collectTargetColumn(field, orderingColumns, Collections.emptyList(), mapColumnToField);
 		return this;
 	}
 
@@ -83,7 +80,7 @@ public class RelationalSQLQuery implements RelationalSQL {
 		keyFormType = type;
 		keyFormColumnMap = ((FormKeyRelational) formKey).getValue();
 		keyFormColumns = new ArrayList<>();
-		RelationalSQL.collectKeyColumns(keyFormType, keyFormColumns, targetTables);
+		collectKeyColumns(keyFormType, keyFormColumns);
 		return this;
 	}
 
@@ -97,14 +94,14 @@ public class RelationalSQLQuery implements RelationalSQL {
 		return targetFields;
 	}
 
+	@Override
 	public List<RelationalSQLCommmand> toSQLScript() {
 		Map<String, RelationalFK> joinMap = createJoinMap();
 		reorderTargetTables(joinMap);
 		List<Object> params = new ArrayList<>();
 		String wherePart = "";
 		if (keyFormType != null) {
-			wherePart += " where " + RelationalSQL.where(RelationalSQL.table(keyFormType), keyFormColumns,
-					keyFormColumnMap, targetTables, params);
+			wherePart += " where " + where(RelationalSQL.table(keyFormType), keyFormColumns, keyFormColumnMap, params);
 		}
 		String orderPart = "";
 		if (!orderingColumns.isEmpty()) {
@@ -118,12 +115,13 @@ public class RelationalSQLQuery implements RelationalSQL {
 
 	private String selectPart(String columnsSequence) {
 		String result;
-		if (aggregator.equals(COUNT))
+		if (aggregator.equals(COUNT)) {
 			result = "count(*)";
-		else if (aggregator.equals(DISTINCT))
+		} else if (aggregator.equals(DISTINCT)) {
 			result = "distinct " + columnsSequence;
-		else
+		} else {
 			result = columnsSequence;
+		}
 		return result;
 	}
 
@@ -149,6 +147,9 @@ public class RelationalSQLQuery implements RelationalSQL {
 		for (SType<?> tableContext : targetTables) {
 			sj.add(onClause(tableContext, joinedTables, joinMap));
 			joinedTables.add(RelationalSQL.table(tableContext));
+			if (aggregator.equals(COUNT)) {
+				break;
+			}
 		}
 		return sj.toString();
 	}
@@ -222,9 +223,5 @@ public class RelationalSQLQuery implements RelationalSQL {
 				}
 			}
 		}
-	}
-
-	private String tableAlias(String table) {
-		return RelationalSQL.tableAlias(table, targetTables);
 	}
 }

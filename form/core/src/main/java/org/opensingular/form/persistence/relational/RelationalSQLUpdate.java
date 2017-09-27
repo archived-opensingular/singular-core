@@ -33,24 +33,23 @@ import org.opensingular.form.persistence.FormKeyRelational;
  *
  * @author Edmundo Andrade
  */
-public class RelationalSQLUpdate implements RelationalSQL {
+public class RelationalSQLUpdate extends RelationalSQL {
 	private SIComposite instance;
-	private List<SType<?>> targetTables;
 	private List<RelationalColumn> keyColumns;
 	private List<RelationalColumn> targetColumns;
-	private Map<String, String> mapColumnToField;
+	private Map<String, SType<?>> mapColumnToField;
 	private Map<String, Object> mapColumnToValue;
 
 	public RelationalSQLUpdate(SIComposite instance) {
 		this.instance = instance;
-		this.targetTables = new ArrayList<>();
 		this.keyColumns = new ArrayList<>();
 		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
-		for (SInstance child : instance.getAllChildren()) {
-			RelationalSQL.collectKeyColumns(child.getType(), keyColumns, targetTables);
-			RelationalSQL.collectTargetColumn(child.getType(), targetColumns, targetTables, keyColumns,
-					mapColumnToField);
+		for (SType<?> field : getFields(instance)) {
+			if (RelationalSQL.foreignColumn(field) == null) {
+				collectKeyColumns(field, keyColumns);
+				collectTargetColumn(field, targetColumns, keyColumns, mapColumnToField);
+			}
 		}
 		mapColumnToValue = ((FormKeyRelational) FormKey.from((SInstance) instance)).getValue();
 	}
@@ -59,17 +58,15 @@ public class RelationalSQLUpdate implements RelationalSQL {
 		return instance;
 	}
 
+	@Override
 	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (SType<?> tableContext : targetTables) {
 			String tableName = RelationalSQL.table(tableContext);
 			List<Object> params = new ArrayList<>();
-			lines.add(
-					new RelationalSQLCommmand(
-							"update " + tableName + " " + tableAlias(tableName) + " set "
-									+ set(tableName, targetColumns, params) + " where " + RelationalSQL.where(tableName,
-											keyColumns, mapColumnToValue, targetTables, params),
-							params, instance, null));
+			lines.add(new RelationalSQLCommmand("update " + tableName + " " + tableAlias(tableName) + " set "
+					+ set(tableName, targetColumns, params) + " where "
+					+ where(tableName, keyColumns, mapColumnToValue, params), params, instance, null));
 		}
 		return lines;
 	}
@@ -86,14 +83,10 @@ public class RelationalSQLUpdate implements RelationalSQL {
 	}
 
 	private Object columnValue(RelationalColumn column) {
-		String fieldName = mapColumnToField.get(column.getName());
-		if (fieldName == null) {
+		SType<?> field = mapColumnToField.get(column.toStringPersistence());
+		if (field == null) {
 			return null;
 		}
-		return RelationalSQL.fieldValue(instance, fieldName);
-	}
-
-	private String tableAlias(String table) {
-		return RelationalSQL.tableAlias(table, targetTables);
+		return fieldValue(instance, field);
 	}
 }

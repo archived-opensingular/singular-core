@@ -20,10 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
-import org.opensingular.form.type.ref.STypeRef;
 
 /**
  * Basic implementation of a Relational Mapper.
@@ -63,10 +60,6 @@ public class BasicRelationalMapper implements RelationalMapper {
 		return field.asSQL().getTableFKs();
 	}
 
-	public String tableRefColumn(SType<?> field) {
-		return field.asSQL().getTableRefColumn();
-	}
-
 	public String column(SType<?> field) {
 		String result = field.asSQL().getColumn();
 		if (result == null) {
@@ -75,18 +68,22 @@ public class BasicRelationalMapper implements RelationalMapper {
 		return result;
 	}
 
+	public RelationalForeignColumn foreignColumn(SType<?> field) {
+		return field.asSQL().getForeignColumn();
+	}
+
 	public PersistenceStrategy persistenceStrategy(SType<?> field) {
 		PersistenceStrategy result = PersistenceStrategy.COLUMN;
-		if (field instanceof STypeComposite && !(field instanceof STypeRef)) {
+		if (field.isComposite()) {
 			result = PersistenceStrategy.TABLE;
-		} else if (field instanceof STypeList) {
+		} else if (field.isList()) {
 			result = PersistenceStrategy.ONE_TO_MANY;
 		}
 		return result;
 	}
 
 	protected boolean hasParentType(SType<?> type) {
-		return type instanceof STypeRef || !type.isComposite() && !type.getParentScope().equals(type.getPackage());
+		return !type.getParentScope().equals(type.getPackage()) && !getParentType(type).isList();
 	}
 
 	protected SType<?> getParentType(SType<?> type) {

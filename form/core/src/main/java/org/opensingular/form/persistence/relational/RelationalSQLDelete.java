@@ -30,33 +30,29 @@ import org.opensingular.form.persistence.FormKeyRelational;
  *
  * @author Edmundo Andrade
  */
-public class RelationalSQLDelete implements RelationalSQL {
-	private List<SType<?>> targetTables;
+public class RelationalSQLDelete extends RelationalSQL {
 	private List<RelationalColumn> keyColumns;
 	private Map<String, Object> mapColumnToValue;
 
 	public RelationalSQLDelete(STypeComposite<?> type, FormKey formKey) {
-		this.targetTables = new ArrayList<>();
 		this.keyColumns = new ArrayList<>();
-		for (SType<?> child : type.getContainedTypes())
-			RelationalSQL.collectKeyColumns(child, keyColumns, targetTables);
+		for (SType<?> field : type.getFields()) {
+			if (!field.isComposite()) {
+				collectKeyColumns(field, keyColumns);
+			}
+		}
 		mapColumnToValue = ((FormKeyRelational) formKey).getValue();
 	}
 
+	@Override
 	public List<RelationalSQLCommmand> toSQLScript() {
 		List<RelationalSQLCommmand> lines = new ArrayList<>();
 		for (SType<?> tableContext : targetTables) {
 			String tableName = RelationalSQL.table(tableContext);
 			List<Object> params = new ArrayList<>();
-			lines.add(new RelationalSQLCommmand(
-					"delete from " + tableName + " " + tableAlias(tableName) + " where "
-							+ RelationalSQL.where(tableName, keyColumns, mapColumnToValue, targetTables, params),
-					params, null, null));
+			lines.add(new RelationalSQLCommmand("delete from " + tableName + " " + tableAlias(tableName) + " where "
+					+ where(tableName, keyColumns, mapColumnToValue, params), params, null, null));
 		}
 		return lines;
-	}
-
-	private String tableAlias(String table) {
-		return RelationalSQL.tableAlias(table, targetTables);
 	}
 }

@@ -17,10 +17,10 @@
 package org.opensingular.form.persistence.relational;
 
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_COLUMN;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_FOREIGN_COLUMN;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_FKS;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
-import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_REF_COLUMN;
 import static org.opensingular.form.persistence.relational.RelationalColumnConverter.ASPECT_RELATIONAL_CONV;
 
 import java.util.ArrayList;
@@ -90,13 +90,23 @@ public class AtrSQL extends STranslatorForAttribute {
 		return result;
 	}
 
-	public AtrSQL tableRefColumn(String tableRefColumn) {
-		setAttributeValue(ATR_TABLE_REF_COLUMN, tableRefColumn);
+	public AtrSQL foreignColumn(String column, String keyColumns, Class<? extends SType<?>> typeClass) {
+		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getTipo()));
+		RelationalFK foreignKey = new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass));
+		return foreignColumn(column, foreignKey);
+	}
+
+	public AtrSQL foreignColumn(String column, RelationalFK foreignKey) {
+		setAttributeValue(ATR_FOREIGN_COLUMN, new RelationalForeignColumn(column, foreignKey).toStringPersistence());
 		return this;
 	}
 
-	public String getTableRefColumn() {
-		return getAttributeValue(ATR_TABLE_REF_COLUMN);
+	public RelationalForeignColumn getForeignColumn() {
+		String value = getAttributeValue(ATR_FOREIGN_COLUMN);
+		if (value == null) {
+			return null;
+		}
+		return RelationalForeignColumn.fromStringPersistence(value, getDictionary());
 	}
 
 	public AtrSQL column(String column) {

@@ -16,31 +16,24 @@
 
 package org.opensingular.form.persistence.relational;
 
-import java.util.List;
-
-import org.opensingular.form.SType;
-import org.opensingular.form.aspect.AspectRef;
-import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
-
 /**
- * Mapper interface for persisting Form components into a Relational DBMS.
+ * Converter implementation for transforming String values from/to an Integer
+ * column in Relational DBMS.
  *
  * @author Edmundo Andrade
  */
-public interface RelationalMapper {
-	public static final AspectRef<RelationalMapper> ASPECT_RELATIONAL_MAP = new AspectRef<>(RelationalMapper.class);
+public class IntegerConverter implements RelationalColumnConverter {
+	public Object toRelationalColumn(Object attribute) {
+		if (attribute == null) {
+			return null;
+		}
+		return new Integer(attribute.toString());
+	}
 
-	SType<?> tableContext(SType<?> type);
-
-	String table(SType<?> type);
-
-	List<String> tablePK(SType<?> type);
-
-	List<RelationalFK> tableFKs(SType<?> field);
-
-	String column(SType<?> field);
-
-	RelationalForeignColumn foreignColumn(SType<?> field);
-
-	PersistenceStrategy persistenceStrategy(SType<?> type);
+	public Object fromRelationalColumn(Object dbData) {
+		if (dbData == null) {
+			return null;
+		}
+		return dbData.toString();
+	}
 }

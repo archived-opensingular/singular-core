@@ -22,33 +22,27 @@ import static org.opensingular.form.persistence.relational.RelationalSQLAggregat
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.NONE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-import org.opensingular.form.ICompositeType;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormKeyRelational;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
-import org.opensingular.form.type.ref.STypeRef;
 
 /**
- * Interface for relational SQL builders.
+ * Abstract class for relational SQL builders.
  *
  * @author Edmundo Andrade
  */
-public interface RelationalSQL {
-	List<RelationalSQLCommmand> toSQLScript();
-
+public abstract class RelationalSQL {
 	@SafeVarargs
 	public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {
 		return new RelationalSQLQuery(NONE, fieldCollections);
@@ -91,12 +85,12 @@ public interface RelationalSQL {
 		return aspectRelationalMap(type).tableFKs(type);
 	}
 
-	public static String tableRefColumn(SType<?> type) {
-		return aspectRelationalMap(type).tableRefColumn(type);
-	}
-
 	public static String column(SType<?> field) {
 		return aspectRelationalMap(field).column(field);
+	}
+
+	public static RelationalForeignColumn foreignColumn(SType<?> type) {
+		return aspectRelationalMap(type).foreignColumn(type);
 	}
 
 	public static PersistenceStrategy persistenceStrategy(SType<?> field) {
@@ -117,64 +111,6 @@ public interface RelationalSQL {
 		return type.getAspect(ASPECT_RELATIONAL_CONV);
 	}
 
-	public static void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns,
-			List<SType<?>> targetTables) {
-		SType<?> tableContext = tableContext(type);
-		String tableName = table(tableContext);
-		if (!targetTables.contains(tableContext)) {
-			targetTables.add(tableContext);
-		}
-		List<String> pk = tablePK(tableContext);
-		if (pk != null) {
-			for (String columnName : pk) {
-				RelationalColumn column = new RelationalColumn(tableName, columnName);
-				if (!keyColumns.contains(column)) {
-					keyColumns.add(column);
-				}
-			}
-		}
-	}
-
-	public static void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
-			List<SType<?>> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
-		if (!isCompositeRef(field) && field instanceof ICompositeType) {
-			return;
-		}
-		SType<?> tableContext = tableContext(field);
-		String tableName = table(tableContext);
-		if (!targetTables.contains(tableContext)) {
-			targetTables.add(tableContext);
-		}
-		String columnName = column(field);
-		mapColumnToField.put(columnName, field.getNameSimple());
-		RelationalColumn column = new RelationalColumn(tableName, columnName);
-		if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
-			targetColumns.add(column);
-		}
-	}
-
-	public static void collectTargetRefColumn(SType<?> field, List<RelationalColumn> targetColumns,
-			List<SType<?>> targetTables, List<RelationalColumn> keyColumns, Map<String, String> mapColumnToField) {
-		if (!isCompositeRef(field)) {
-			return;
-		}
-		SType<?> tableRefContext = tableContext(tableRef(field));
-		String tableRefName = table(tableRefContext);
-		if (!targetTables.contains(tableRefContext)) {
-			targetTables.add(tableRefContext);
-		}
-		String columnRefName = tableRefColumn(tableRefContext);
-		if (columnRefName == null) {
-			throw new SingularFormException("Relational mapping should define tableRefColumn for the table '"
-					+ tableRefName + "' in order to support type '" + field.getNameSimple() + "'.");
-		}
-		mapColumnToField.put(columnRefName, field.getNameSimple());
-		RelationalColumn columnRef = new RelationalColumn(tableRefName, columnRefName);
-		if (!targetColumns.contains(columnRef) && !keyColumns.contains(columnRef)) {
-			targetColumns.add(columnRef);
-		}
-	}
-
 	public static SType<?> tableRef(SType<?> field) {
 		SType<?> tableContext = tableContext(field);
 		String columnName = column(field);
@@ -186,45 +122,7 @@ public interface RelationalSQL {
 		return null;
 	}
 
-	public static String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
-			List<SType<?>> targetTables, List<Object> params) {
-		StringJoiner sj = new StringJoiner(" and ");
-		filterColumns.forEach(column -> {
-			if (column.getTable().equals(table)) {
-				sj.add(tableAlias(table, targetTables) + "." + column.getName() + " = ?");
-				params.add(columnValue(column, mapColumnToValue));
-			}
-		});
-		return sj.toString();
-	}
-
-	public static String tableAlias(String table, List<SType<?>> targetTables) {
-		int index = 1;
-		for (SType<?> tableContext : targetTables) {
-			if (table.equals(table(tableContext))) {
-				return "T" + index;
-			}
-			index++;
-		}
-		return null;
-	}
-
-	public static Object columnValue(RelationalColumn column, Map<String, Object> mapColumnToValue) {
-		return mapColumnToValue.get(column.getName());
-	}
-
-	public static Object fieldValue(SIComposite instance, String fieldName) {
-		return fieldValue(instance.getField(fieldName));
-	}
-
 	public static Object fieldValue(SInstance instance) {
-		if (isCompositeRef(instance.getType())) {
-			Object key = instance.getValue("key");
-			if (key == null) {
-				return null;
-			}
-			return FormKeyRelational.convertToKey(key).getValue().values().iterator().next();
-		}
 		Object result = instance.getValue();
 		Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
 		if (converter.isPresent()) {
@@ -240,20 +138,6 @@ public interface RelationalSQL {
 		String fieldName = RelationalSQL.column(field);
 		Object value = getFieldValue(tableName, tupleKeyRef, fieldName, fromList);
 		if (value == null) {
-			return;
-		}
-		// TODO TypeRef will be decoupled soon
-		if (isCompositeRef(instance.getType())) {
-			SType<?> tableRefContext = tableContext(tableRef(field));
-			List<String> pkRef = tablePK(tableRefContext);
-			String tableRefName = table(tableRefContext);
-			String columnRefName = tableRefColumn(tableRefContext);
-			HashMap<String, Object> keyValue = new HashMap<String, Object>();
-			keyValue.put(pkRef.get(0), value);
-			FormKey formKey = FormKeyRelational.convertToKey(keyValue);
-			FormKey.setOnInstance(instance, formKey);
-			instance.getField("key").setValue(formKey.toStringPersistence());
-			instance.getField("display").setValue(getFieldValue(tableRefName, tupleKeyRef, columnRefName, fromList));
 			return;
 		}
 		Object result = value;
@@ -275,7 +159,106 @@ public interface RelationalSQL {
 		return null;
 	}
 
-	public static boolean isCompositeRef(SType<?> field) {
-		return field instanceof STypeRef;
+	protected List<SType<?>> targetTables = new ArrayList<>();
+
+	public abstract List<RelationalSQLCommmand> toSQLScript();
+
+	protected List<SType<?>> getFields(SIComposite instance) {
+		List<SType<?>> list = new ArrayList<>();
+		instance.getAllChildren().forEach(child -> addFieldToList(child.getType(), list));
+		return list;
+	}
+
+	protected List<SType<?>> getFields(STypeComposite<?> type) {
+		List<SType<?>> list = new ArrayList<>();
+		addFieldsToList(type.getFields(), list);
+		return list;
+	}
+
+	protected void addFieldsToList(Collection<SType<?>> fields, List<SType<?>> list) {
+		fields.forEach(field -> addFieldToList(field, list));
+	}
+
+	protected void addFieldToList(SType<?> field, List<SType<?>> list) {
+		if (field.isComposite()) {
+			list.addAll(getFields((STypeComposite<?>) field));
+		} else {
+			list.add(field);
+		}
+	}
+
+	protected void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns) {
+		SType<?> tableContext = tableContext(type);
+		String tableName = table(tableContext);
+		if (!targetTables.contains(tableContext)) {
+			targetTables.add(tableContext);
+		}
+		List<String> pk = tablePK(tableContext);
+		if (pk != null) {
+			for (String columnName : pk) {
+				RelationalColumn column = new RelationalColumn(tableName, columnName);
+				if (!keyColumns.contains(column)) {
+					keyColumns.add(column);
+				}
+			}
+		}
+	}
+
+	protected void collectTargetColumn(SType<?> field, List<RelationalColumn> targetColumns,
+			List<RelationalColumn> keyColumns, Map<String, SType<?>> mapColumnToField) {
+		if (field.isList()) {
+			return;
+		}
+		String columnName;
+		SType<?> tableContext;
+		RelationalForeignColumn foreignColumn = foreignColumn(field);
+		if (foreignColumn == null) {
+			tableContext = tableContext(field);
+			columnName = column(field);
+		} else {
+			tableContext = tableContext(foreignColumn.getForeignKey().getForeignType());
+			columnName = foreignColumn.getForeignColumn();
+		}
+		String tableName = table(tableContext);
+		if (!targetTables.contains(tableContext)) {
+			targetTables.add(tableContext);
+		}
+		RelationalColumn column = new RelationalColumn(tableName, columnName);
+		mapColumnToField.put(column.toStringPersistence(), field);
+		if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
+			targetColumns.add(column);
+		}
+	}
+
+	protected String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
+			List<Object> params) {
+		StringJoiner sj = new StringJoiner(" and ");
+		filterColumns.forEach(column -> {
+			if (column.getTable().equals(table)) {
+				sj.add(tableAlias(table) + "." + column.getName() + " = ?");
+				params.add(columnValue(column, mapColumnToValue));
+			}
+		});
+		return sj.toString();
+	}
+
+	protected Object columnValue(RelationalColumn column, Map<String, Object> mapColumnToValue) {
+		return mapColumnToValue.get(column.getName());
+	}
+
+	protected String tableAlias(String table) {
+		int index = 1;
+		for (SType<?> tableContext : targetTables) {
+			if (table.equals(table(tableContext))) {
+				return "T" + index;
+			}
+			index++;
+		}
+		return null;
+	}
+
+	protected Object fieldValue(SIComposite instance, SType<?> field) {
+		String fieldPath = field.getName().replace(instance.getType().getName() + ".", "");
+		return fieldValue(instance.getField(fieldPath));
 	}
 }
