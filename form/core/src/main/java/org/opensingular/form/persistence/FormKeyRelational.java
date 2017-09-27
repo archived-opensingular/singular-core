@@ -17,9 +17,12 @@
 package org.opensingular.form.persistence;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
+
+import org.opensingular.form.SInstance;
 
 /**
  * Generic form key for relational persistence.
@@ -39,8 +42,17 @@ public class FormKeyRelational extends AbstractFormKey<HashMap<String, Object>> 
 		super(keyValue);
 	}
 
-	public Object getColumnValue(String column) {
-		return getValue().get(column);
+	public Object getColumnValue(String keyColumn) {
+		return getValue().get(keyColumn);
+	}
+
+	/**
+	 * Returns the column value present in the persistence key assigned to a given
+	 * SInstance.
+	 */
+	public static Object columnValuefromInstance(String keyColumn, @Nonnull SInstance instance) {
+		Objects.requireNonNull(instance);
+		return ((FormKeyRelational) FormKey.fromInstance(instance)).getColumnValue(keyColumn);
 	}
 
 	/**

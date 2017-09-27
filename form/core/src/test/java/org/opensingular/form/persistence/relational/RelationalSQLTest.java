@@ -238,7 +238,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		public static class CategoryRef extends STypeRef<SIComposite> {
 			@Override
 			protected String getKeyValue(SIComposite instance) {
-				return FormKey.fromInstance(instance).toStringPersistence();
+				return FormKeyRelational.columnValuefromInstance("id", instance).toString();
 			}
 
 			@Override
