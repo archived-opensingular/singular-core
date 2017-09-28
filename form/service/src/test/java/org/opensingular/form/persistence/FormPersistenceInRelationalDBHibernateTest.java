@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
-import org.opensingular.form.SInstance;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -122,8 +122,10 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		SIComposite loaded = repoMaster.load(insertedKey);
 		assertEquals("Master X", loaded.getValue("name"));
 		assertEquals(insertedKey, FormKey.fromInstance(loaded));
-		List<SInstance> details = loaded.getValue("details");
+		SIList<?> details = loaded.getFieldList("details");
 		assertEquals(3, details.size());
+		assertEquals("Item 1", details.get(0).getValue("item"));
+		assertEquals("Master X", details.get(0).getValue("masterDisplay"));
 		//
 		repoMaster.delete(insertedKey);
 		assertEquals(0, repoMaster.countAll());
@@ -170,14 +172,17 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		@SInfoType(name = "Detail", spackage = TestPackage.class)
 		public static final class Detail extends STypeComposite<SIComposite> {
 			public STypeString item;
+			public STypeString masterDisplay;
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				item = addFieldString("item");
+				masterDisplay = addField("masterDisplay", STypeString.class);
 				asAtr().label("Detail entity");
 				// relational mapping
 				asSQL().tablePK("ID");
 				asSQL().addTableFK("MASTER", Master.class);
+				masterDisplay.asSQL().foreignColumn("name", "MASTER", Master.class);
 			}
 		}
 	}

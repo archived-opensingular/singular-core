@@ -143,9 +143,18 @@ public abstract class RelationalSQL {
 
 	public static void setFieldValue(SInstance instance, List<RelationalData> fromList) {
 		SType<?> field = instance.getType();
-		String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
+		SType<?> tableContext;
+		String fieldName;
+		RelationalForeignColumn foreignColumn = foreignColumn(field);
+		if (foreignColumn == null) {
+			tableContext = tableContext(field);
+			fieldName = column(field);
+		} else {
+			tableContext = tableContext(foreignColumn.getForeignKey().getForeignType());
+			fieldName = foreignColumn.getForeignColumn();
+		}
+		String tableName = table(tableContext);
 		SInstance tupleKeyRef = tupleKeyRef(instance);
-		String fieldName = RelationalSQL.column(field);
 		Object value = getFieldValue(tableName, tupleKeyRef, fieldName, fromList);
 		if (value == null) {
 			return;
