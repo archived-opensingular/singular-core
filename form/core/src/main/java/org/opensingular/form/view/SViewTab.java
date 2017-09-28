@@ -120,17 +120,17 @@ public class SViewTab extends SView {
         private final SViewTab tabView;
         private final String   id;
         private final String   title;
-        private final List<String> typesName;
+        private final List<String> typesNames;
 
         private STab(SViewTab tabView, String id, String title) {
             this.tabView = tabView;
             this.id = id;
             this.title = title;
-            typesName = new ArrayList<>();
+            typesNames = new ArrayList<>();
         }
 
         public STab add(SType<?> field) {
-            typesName.add(field.getNameSimple());
+            typesNames.add(field.getNameSimple());
             return this;
         }
 
@@ -142,8 +142,8 @@ public class SViewTab extends SView {
             return title;
         }
 
-        public List<String> getTypesName() {
-            return typesName;
+        public List<String> getTypesNames() {
+            return typesNames;
         }
 
         public STab setDefault() {

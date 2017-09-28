@@ -156,6 +156,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     public void printDocumentIndentado(PrintWriter out, Element e, boolean printHeader) {
         if (printHeader) {
             printHeader(out);
+            out.println();
         }
         printElement(out, e, 0);
     }

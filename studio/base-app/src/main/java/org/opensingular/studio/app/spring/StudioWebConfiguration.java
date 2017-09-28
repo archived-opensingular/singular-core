@@ -23,6 +23,7 @@ public class StudioWebConfiguration extends WebMvcConfigurerAdapter {
     public FreeMarkerConfigurer freemarkerConfig() {
         FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
         freeMarkerConfigurer.setTemplateLoaderPath("/freemarker/view");
+        freeMarkerConfigurer.setPreferFileSystemAccess(false);
         return freeMarkerConfigurer;
     }
 

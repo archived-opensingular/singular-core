@@ -16,21 +16,13 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
 import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -54,31 +46,27 @@ import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+
 public abstract class AbstractListMapper implements IWicketComponentMapper {
 
-    protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
-        if (currentType.isList() && list.isEmpty()) {
-            final STypeList<?, ?> tl = (STypeList<?, ?>) currentType;
-            if (tl.getMinimumSize() != null) {
-                for (int i = 0; i < tl.getMinimumSize(); i++) {
-                    list.addNew();
-                }
-            } else if (tl.isRequired()) {
-                list.addNew();
-            }
-        }
-    }
-
     protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mLista, final Form<?> form,
-        final BSContainer<?> cell, boolean footer) {
+                                               final BSContainer<?> cell, boolean footer) {
         AddButton btn = new AddButton("_add", form, mLista);
         cell.newTemplateTag(t -> ""
-            + "<button"
-            + " wicket:id='_add'"
-            + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
-            + " style='" + MapperCommons.BUTTON_STYLE + ";"
-            + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-            + "</button>").add(btn);
+                + "<button"
+                + " wicket:id='_add'"
+                + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
+                + " style='" + MapperCommons.BUTTON_STYLE + ";"
+                + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
+                + "</button>").add(btn);
 
         return btn;
     }
@@ -86,32 +74,32 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
         InserirButton btn = new InserirButton("_inserir_", elementsView, form, item);
         cell
-            .newTemplateTag(tp -> ""
-                + "<button"
-                + " wicket:id='_inserir_'"
-                + " class='btn btn-success btn-sm'"
-                + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-                + "</button>")
-            .add(btn);
+                .newTemplateTag(tp -> ""
+                        + "<button"
+                        + " wicket:id='_inserir_'"
+                        + " class='btn btn-success btn-sm'"
+                        + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
+                        + "</button>")
+                .add(btn);
         return btn;
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
         cell
-            .newTemplateTag(tp -> ""
-                + "<button wicket:id='_remover_' class='singular-remove-btn'>"
-                + "     <i "
-                + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
-                + "</button>")
-            .add(btn);
+                .newTemplateTag(tp -> ""
+                        + "<button wicket:id='_remover_' class='singular-remove-btn'>"
+                        + "     <i "
+                        + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
+                        + "</button>")
+                .add(btn);
         return btn;
     }
 
     @SuppressWarnings("unchecked")
     protected static void buildFooter(BSContainer<?> footer,
-        Form<?> form,
-        WicketBuildContext ctx) {
+                                      Form<?> form,
+                                      WicketBuildContext ctx) {
         Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
         buildFooter(footer, ctx, createAddButton);
     }
@@ -120,7 +108,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         if (canAddItems(ctx)) {
             final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
             template.add((Component) createAddButton.create());
-        } else {
+        }
+        else {
             footer.setVisible(false);
         }
         personalizeCSS(footer);
@@ -128,7 +117,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
     public static boolean canAddItems(WicketBuildContext ctx) {
         return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
-            && ctx.getViewMode().isEdition();
+                && ctx.getViewMode().isEdition();
     }
 
     protected static String createButtonMarkup(WicketBuildContext ctx) {
@@ -148,26 +137,40 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     public static String defineLabel(WicketBuildContext ctx) {
-        SType<?> type = ctx.getCurrentInstance().getType();
+        SType<?>                         type = ctx.getCurrentInstance().getType();
         AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
         return view.label().orElse(
-            Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
-                .map((x) -> {
-                    String[] parts = x.trim().split(" ");
-                    return "Adicionar " + parts[0];
-                })
-                .orElse("Adicionar item"));
+                Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
+                        .map((x) -> {
+                            String[] parts = x.trim().split(" ");
+                            return "Adicionar " + parts[0];
+                        })
+                        .orElse("Adicionar item"));
+    }
+
+    protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
+        if (currentType.isList() && list.isEmpty()) {
+            final STypeList<?, ?> tl = (STypeList<?, ?>) currentType;
+            if (tl.getMinimumSize() != null) {
+                for (int i = 0; i < tl.getMinimumSize(); i++) {
+                    list.addNew();
+                }
+            }
+            else if (tl.isRequired()) {
+                list.addNew();
+            }
+        }
     }
 
     protected static abstract class ElementsView extends RefreshingView<SInstance> {
 
-        private final WebMarkupContainer        parentContainer;
+        private final WebMarkupContainer parentContainer;
         private IFunction<Component, Component> renderedChildFunction = c -> c;
 
         public ElementsView(String id, IModel<SIList<SInstance>> model, WebMarkupContainer parentContainer) {
             super(id, model);
             this.parentContainer = parentContainer;
-            setItemReuseStrategy(new PathInstanceItemReuseStrategy());
+            setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
         }
 
         public ElementsView setRenderedChildFunction(IFunction<Component, Component> renderedChildFunction) {
@@ -177,10 +180,11 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         @Override
         protected Iterator<IModel<SInstance>> getItemModels() {
-            List<IModel<SInstance>> list = new ArrayList<>();
-            SIList<SInstance> sList = getModelObject();
-            for (int i = 0; i < sList.size(); i++)
+            List<IModel<SInstance>> list  = new ArrayList<>();
+            SIList<SInstance>       sList = getModelObject();
+            for (int i = 0; i < sList.size(); i++) {
                 list.add(new SInstanceListItemModel<>(getDefaultModel(), i));
+            }
             return list.iterator();
         }
 
@@ -205,77 +209,85 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         }
 
         public void insertItem(AjaxRequestTarget target, int index) {
+            try {
+                setItemReuseStrategy(new PathInstanceItemReuseStrategy());
+                SInstance newInstance = getModelObject().addNewAt(index);
 
-            SInstance newInstance = getModelObject().addNewAt(index);
+                for (Component child : this) {
+                    updateChildModelIndex(index, child, 1);
+                }
 
-            //update current children model indexes
-            for (Component child : this) {
-                IModel<?> childModel = child.getDefaultModel();
-                if (childModel instanceof SInstanceListItemModel<?>) {
-                    SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
-                    if (itemModel.getIndex() >= index) {
-                        itemModel.setIndex(itemModel.getIndex() + 1);
-                    }
+                this.onPopulate();
+
+                findChildByInstance(newInstance).ifPresent(item -> {
+                    Component child = renderedChildFunction.apply(item);
+                    target.prependJavaScript(getInsertPreScript(index, "\"<div id='" + child.getMarkupId() + "'></div>\""));
+                    target.add(child.add(new FadeInOnceBehavior()));
+                });
+            } finally {
+                setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
+            }
+        }
+
+        private void updateChildModelIndex(int index, Component child, int increment) {
+            IModel<?> childModel = child.getDefaultModel();
+            if (childModel instanceof SInstanceListItemModel<?>) {
+                SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
+                if (itemModel.getIndex() >= index) {
+                    int newIndex = itemModel.getIndex() + increment;
+                    itemModel.setIndex(newIndex);
+                    ((Item<?>) child).setIndex(newIndex);
                 }
             }
-
-            this.onPopulate();
-
-            findChildByInstance(newInstance).ifPresent(item -> {
-                Component child = renderedChildFunction.apply(item);
-                target.prependJavaScript(getInsertPreScript(index, "\"<div id='" + child.getMarkupId() + "'></div>\""));
-                target.add(child.add(new FadeInOnceBehavior()));
-            });
         }
 
         public void removeItem(AjaxRequestTarget target, Item<SInstance> item) {
-            final SInstance instance = item.getModelObject();
-            final SIList<SInstance> list = getModelObject();
-            final int index = list.indexOf(instance);
+            try {
+                setItemReuseStrategy(new PathInstanceItemReuseStrategy());
+                final SInstance         instance = item.getModelObject();
+                final SIList<SInstance> list     = getModelObject();
+                final int               index    = list.indexOf(instance);
 
-            list.remove(instance);
+                list.remove(instance);
 
-            //update current children model indexes
-            for (Component child : this) {
-                IModel<?> childModel = child.getDefaultModel();
-                if (childModel instanceof SInstanceListItemModel<?>) {
-                    SInstanceListItemModel<?> itemModel = (SInstanceListItemModel<?>) childModel;
-                    if (itemModel.getIndex() >= index) {
-                        itemModel.setIndex(itemModel.getIndex() - 1);
-                    }
+                //update current children model indexes
+                for (Component child : this) {
+                    updateChildModelIndex(index, child, -1);
                 }
-            }
 
-            Component child = renderedChildFunction.apply(item);
-            target.appendJavaScript(JQuery.$(child).append(".fadeOut(200,function(){$(this).remove();});"));
-            remove(item);
+                Component child = renderedChildFunction.apply(item);
+                target.appendJavaScript(JQuery.$(child).append(".fadeOut(200,function(){$(this).remove();});"));
+                remove(item);
+            } finally {
+                setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
+            }
         }
 
         private CharSequence getInsertPreScript(int index, String emptyMarkupString) {
             final StringBuilder $parent = JQuery.$(parentContainer);
-            if (index == 0)
+            if (index == 0) {
                 return $parent.append(".prepend(").append(emptyMarkupString).append(");");
-
-            Optional<Component> sibling = findChildByInstance(getModelObject().get(index - 1));
-            if (sibling.isPresent())
-                return $parent
-                    .append(".find('#").append(renderedChildFunction.apply(sibling.get()).getMarkupId()).append("')")
-                    .append(".after(").append(emptyMarkupString).append(");");
-
-            return $parent.append(".append(").append(emptyMarkupString).append(");");
+            }
+            return findChildByInstance(getModelObject().get(index - 1))
+                    .map(component -> $parent.append(".find('#")
+                            .append(renderedChildFunction.apply(component).getMarkupId())
+                            .append("').after(").append(emptyMarkupString).append(");"))
+                    .orElseGet(() -> $parent.append(".append(").append(emptyMarkupString).append(");"));
         }
 
         private Optional<Component> findChildByInstance(SInstance instance) {
             return findChildByInstance(this, instance);
         }
+
         private Optional<Component> findChildByInstance(Iterable<Component> container, SInstance instance) {
             final SIList<SInstance> instances = this.getModelObject();
-            int index = instances.indexOf(instance);
+            int                     index     = instances.indexOf(instance);
             if (index >= 0) {
                 for (Component child : container) {
                     SInstance childInstance = (SInstance) child.getDefaultModelObject();
-                    if (Objects.equals(instance.getPathFull(), childInstance.getPathFull()))
+                    if (Objects.equals(instance.getPathFull(), childInstance.getPathFull())) {
                         return Optional.of(child);
+                    }
                 }
             }
             return Optional.empty();
@@ -316,8 +328,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             elementsView.removeItem(target, item);
-            if (elementsView.getModelObject().isEmpty())
+            if (elementsView.getModelObject().isEmpty()) {
                 target.add(form);
+            }
         }
     }
 
@@ -337,7 +350,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                 target.appendJavaScript(Scripts.multipleModalBackDrop());
-            } else {
+            }
+            else {
                 lista.addNew();
                 target.add(form);
                 target.focusComponent(this);

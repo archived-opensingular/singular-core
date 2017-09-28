@@ -25,6 +25,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -1287,7 +1289,8 @@ public abstract class MElement implements Element, Serializable {
      * @return Sempre diferente de null
      * @see XPathToolkit XPathToolkit para entender mais sobre xPath
      */
-    public final MElementResult selectElements(String xPath) {
+    @Nonnull
+    public final MElementResult selectElements(@Nullable String xPath) {
         return new MElementResult(this, xPath);
     }
 
@@ -1297,7 +1300,8 @@ public abstract class MElement implements Element, Serializable {
      * @param xPath caminho dos elementos desejados
      * @return Sempre diferente de null
      */
-    public final Iterator<MElement> iterator(String xPath) {
+    @Nonnull
+    public final Iterator<MElement> iterator(@Nullable String xPath) {
         MElementResult rs = new MElementResult(this, xPath);
         return rs.iterator();
     }
@@ -1324,7 +1328,8 @@ public abstract class MElement implements Element, Serializable {
      *              os MElement imediantamente filhos.
      * @return a lista com os elementos ou um array de tamanho zero
      */
-    public final MElement[] getElements(String xPath) {
+    @Nonnull
+    public final MElement[] getElements(@Nullable String xPath) {
         return selectElements(xPath).getTodos();
     }
 
@@ -1489,6 +1494,7 @@ public abstract class MElement implements Element, Serializable {
      *
      * @return null se não houve nenhum nó filho do tipo Element
      */
+    @Nullable
     public final MElement getPrimeiroFilho() {
         return procurarProximoElement(getFirstChild(), null);
     }

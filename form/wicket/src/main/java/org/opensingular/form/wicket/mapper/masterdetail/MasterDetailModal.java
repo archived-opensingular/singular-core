@@ -79,8 +79,10 @@ class MasterDetailModal extends BFModalWindow {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(table);
                 MasterDetailModal.this.hide(target);
-                WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
+                if (viewMode.isEdition()) {
+                    WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
+                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
+                }
             }
         };
         this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);

@@ -543,6 +543,11 @@ public abstract class SInstance implements SAttributeEnabled {
         return attributes;
     }
 
+    @Nonnull
+    public final SAttributeEnabled getParentAttributeContext() {
+        return getType();
+    }
+
     /**
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
      * hierarquia.
@@ -567,9 +572,15 @@ public abstract class SInstance implements SAttributeEnabled {
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
 
-    public final boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+    @Override
+    public final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
+    }
+
+    @Override
+    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+        return false;
     }
 
     @Nullable
