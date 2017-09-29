@@ -5,7 +5,7 @@
 <!--[if !IE]><!-->
 <html class="no-js" lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>
         Singular Studio | Login
     </title>
@@ -84,7 +84,7 @@
                    name="password"
                    autocomplete="on"
                    placeholder="Senha"
-                   id="password" tabindex="2"/>
+                   id="password"/>
         </div>
         <div class="form-actions">
             <button id="btnsubss" type="submit" class="btn uppercase">Login</button>
