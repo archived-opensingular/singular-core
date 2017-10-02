@@ -1,6 +1,7 @@
 package org.opensingular.studio.core.view;
 
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -15,6 +16,7 @@ import org.wicketstuff.annotation.mount.MountPath;
 
 import java.util.List;
 
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 @MountPath("/portal/${path}")
@@ -38,6 +40,7 @@ public class StudioPortalPage extends StudioTemplate {
             @Override
             protected void populateItem(ListItem<MenuEntry> listItem) {
                 final MenuEntry entry = listItem.getModelObject();
+                WebMarkupContainer bsDiv = new WebMarkupContainer("bsDiv"){};
                 WebMarkupContainer anchor = new WebMarkupContainer("anchor") {
                     @Override
                     protected void onComponentTag(ComponentTag tag) {
@@ -47,7 +50,11 @@ public class StudioPortalPage extends StudioTemplate {
                 };
                 anchor.add(new IconeView("icon", WicketUtils.$m.ofValue(entry.getIcon()), null, null));
                 anchor.add(new Label("label", entry.getName()));
-                listItem.add(anchor);
+                bsDiv.add(anchor);
+                if(entries.size() == 1){
+                    bsDiv.add($b.classAppender("col-md-offset-3"));
+                }
+                listItem.add(bsDiv);
             }
 
         };
