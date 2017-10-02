@@ -1,13 +1,13 @@
 package org.opensingular.lib.commons.canvas.bootstrap;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.canvas.FormItem;
 import org.opensingular.lib.commons.canvas.HtmlCanvas;
 import org.opensingular.lib.commons.canvas.builder.RawHtmlBuilder;
 import org.opensingular.lib.commons.canvas.table.HtmlTableCanvas;
 import org.opensingular.lib.commons.canvas.table.TableCanvas;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BootstrapHtmlCanvas extends HtmlCanvas {
@@ -28,7 +28,7 @@ public class BootstrapHtmlCanvas extends HtmlCanvas {
     }
 
     @Override
-    protected @NotNull HtmlCanvas newHtmlChildCanvas(RawHtmlBuilder child, boolean showTitleLevel) {
+    protected @Nonnull HtmlCanvas newHtmlChildCanvas(RawHtmlBuilder child, boolean showTitleLevel) {
         return new BootstrapHtmlCanvas(child, showTitleLevel);
     }
 

@@ -17,9 +17,9 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +122,7 @@ public class TableToolTreeTest {
         return output;
     }
 
-    @NotNull
+    @Nonnull
     private TableTool createTableToolWith3Columns() {
         TableTool table = new TableTool();
         table.addColumn(ColumnType.STRING, "A");

@@ -39,7 +39,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.StringValue;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
@@ -53,6 +52,7 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -137,12 +137,12 @@ public class TypeaheadComponent extends Panel {
         return c;
     }
 
-    @NotNull
+    @Nonnull
     private TextField<String> makeValueField() {
         return new TextField<>("value_field", makeValueModel());
     }
 
-    @NotNull
+    @Nonnull
     private AbstractSInstanceAwareModel<String> makeValueModel() {
         return new AbstractSInstanceAwareModel<String>() {
 
@@ -194,7 +194,7 @@ public class TypeaheadComponent extends Panel {
         }
     }
 
-    @NotNull
+    @Nonnull
     private TextField<String> makeLabelField() {
         return new TextField<>("label_field", new Model<String>() {
 

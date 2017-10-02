@@ -14,10 +14,10 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -123,7 +123,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         return Optional.empty();
     }
 
-    @NotNull
+    @Nonnull
     protected WebMarkupContainer buildPageMenu(String id) {
         return new WebMarkupContainer(id);
     }
