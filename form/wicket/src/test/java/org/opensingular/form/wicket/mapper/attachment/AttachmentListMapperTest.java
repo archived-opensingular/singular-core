@@ -1,7 +1,6 @@
 package org.opensingular.form.wicket.mapper.attachment;
 
 import org.apache.wicket.util.tester.FormTester;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 
@@ -119,7 +119,7 @@ public class AttachmentListMapperTest {
         return remove;
     }
 
-    @NotNull
+    @Nonnull
     private SingularDummyFormPageTester createTestPageWithTwoAttachments(byte[] content1, byte[] content2) {
         File file1 = tmpProvider.createTempFile(content1);
         File file2 = tmpProvider.createTempFile(content2);

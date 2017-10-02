@@ -1,7 +1,6 @@
 package org.opensingular.studio.app.init;
 
 import org.apache.wicket.protocol.http.WicketFilter;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.studio.app.config.StudioAppConfig;
 import org.opensingular.studio.core.config.StudioConfigProvider;
 import org.opensingular.studio.core.wicket.StudioApplication;
@@ -11,6 +10,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.annotation.Nonnull;
 import javax.servlet.*;
 import java.util.EnumSet;
 
@@ -45,7 +45,7 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
         filterRegistration.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "*");
     }
 
-    @NotNull
+    @Nonnull
     private AnnotationConfigWebApplicationContext createContext() {
         return new AnnotationConfigWebApplicationContext();
     }
