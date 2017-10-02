@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class StudioTemplate extends SingularAdminTemplate {
     @Inject
-    private StudioMenu studioMenu;
+    private transient StudioMenu studioMenu;
 
     private String menuPath;
 
