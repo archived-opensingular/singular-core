@@ -10,7 +10,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Objects;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.report.extension.ReportMenuExtension;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -24,6 +23,7 @@ import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         }
     }
 
-    @NotNull
+    @Nonnull
     private static String sucessMessageAttribute(String identity) {
         return "message_" + Objects.defaultIfNull(identity, "empty");
     }
@@ -75,7 +75,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         add(body);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     protected WebMarkupContainer buildPageMenu(String id) {
         return menu = new MetronicMenu("menu");

@@ -19,11 +19,11 @@ package org.opensingular.lib.wicket.views;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -81,7 +81,7 @@ public class ViewOutputHtmlToWicket extends ViewOutputHtml {
         }
 
         @Override
-        public void write(@NotNull char[] cbuf, int off, int len) throws IOException {
+        public void write(@Nonnull char[] cbuf, int off, int len) throws IOException {
             webResponse.write(new String(cbuf, off, len));
         }
 

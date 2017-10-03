@@ -1,6 +1,5 @@
 package org.opensingular.form.sample;
 
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInfoType;
@@ -10,6 +9,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.view.SViewListByMasterDetail;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 @SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeAnotherComposisteChildListElement")
@@ -21,7 +21,7 @@ public class STypeAnotherComposisteChildListElement extends STypeComposite<SICom
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    protected void onLoadType(@NotNull TypeBuilder tb) {
+    protected void onLoadType(@Nonnull TypeBuilder tb) {
 
         crossReferenceComposite = this.addField("crossReferenceComposite", CrossReferenceComposite.class);
         crossReferenceComposite.selection()

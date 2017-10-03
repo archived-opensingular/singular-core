@@ -1,6 +1,5 @@
 package org.opensingular.form.flatview.mapper;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,6 +9,8 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
 import org.opensingular.form.view.SViewTab;
+
+import javax.annotation.Nonnull;
 
 public class TabFlatViewGeneratorTest {
 
@@ -63,8 +64,7 @@ public class TabFlatViewGeneratorTest {
     }
 
 
-
-    @NotNull
+    @Nonnull
     private STypeComposite<SIComposite> createRootWithTabs(String prefix, int numberOfTabs) {
         STypeComposite<SIComposite> root = newComposite();
         SViewTab viewTab = new SViewTab();

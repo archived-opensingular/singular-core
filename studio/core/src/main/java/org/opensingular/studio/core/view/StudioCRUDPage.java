@@ -6,13 +6,11 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.studio.SingularStudioSimpleCRUDPanel;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.menu.AbstractMenuItem;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
@@ -25,6 +23,8 @@ import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
 import org.opensingular.studio.core.menu.StudioMenuView;
 import org.wicketstuff.annotation.mount.MountPath;
+
+import javax.annotation.Nonnull;
 
 @MountPath("/studio/${path}")
 public class StudioCRUDPage extends StudioTemplate implements Loggable {
@@ -44,7 +44,7 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
         add(form);
     }
 
-    @NotNull
+    @Nonnull
     private Form<Void> newStatelessIfEmptyForm() {
         return new Form<Void>("form") {
             @Override
@@ -89,7 +89,7 @@ public class StudioCRUDPage extends StudioTemplate implements Loggable {
         form.add(new WebMarkupContainer("crud"));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     protected WebMarkupContainer buildPageMenu(String id) {
         MetronicMenu metronicMenu = new MetronicMenu(id);

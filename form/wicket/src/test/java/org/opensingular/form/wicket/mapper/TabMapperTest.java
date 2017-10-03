@@ -16,7 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.form.STypeComposite;
@@ -27,6 +26,7 @@ import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 /**
@@ -90,7 +90,7 @@ public class TabMapperTest {
         }
     }
 
-    @NotNull
+    @Nonnull
     private AssertionsWComponent getAssertionsTab(SingularDummyFormPageTester ctx) {
         AssertionsWComponent assertionsTab = ctx.getAssertionsPage().getSubCompomentForSInstance(
                 ctx.getAssertionsInstance().getTarget());

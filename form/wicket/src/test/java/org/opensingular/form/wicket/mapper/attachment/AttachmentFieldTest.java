@@ -6,7 +6,6 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.tester.FormTester;
 import org.fest.assertions.core.Condition;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,6 +24,7 @@ import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -157,7 +157,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         //ctx.clickLink(ctx.getAssertionsPage().getSubCompomentWithId("downloadLink").getTarget());
     }
 
-    @NotNull
+    @Nonnull
     private SingularDummyFormPageTester createPageWithContent(byte[] content) {
         java.io.File file = tmpProvider.createTempFile(content);
 
