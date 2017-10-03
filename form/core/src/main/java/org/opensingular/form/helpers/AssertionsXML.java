@@ -22,7 +22,11 @@ import org.opensingular.lib.commons.test.AssertionsBase;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,7 +36,7 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin on 27/02/2017.
  */
-public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
+public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> implements Iterable<AssertionsXML> {
 
     public AssertionsXML(Element e) {
         super(MElement.toMElement(e));
@@ -52,17 +56,29 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
     }
 
     /** Verifica se o elemento atual não é null e o nome do nó corresponde ao indicado. */
-    public AssertionsXML isName(String expetedName) {
-        if (!Objects.equals(expetedName, getTarget().getNodeName())) {
-            throw new AssertionError(errorMsg("Nome do nó incorreto", expetedName, getTarget().getNodeName()));
+    public AssertionsXML isName(String expectedName) {
+        if (!Objects.equals(expectedName, getTarget().getNodeName())) {
+            throw new AssertionError(errorMsg("Nome do nó incorreto", expectedName, getTarget().getNodeName()));
         }
         return this;
     }
 
-    /** Verifica se a quantidade de sub nós do tipo Element é zero. */
+    /** Verifies if the element name matches de expected name space prefix and local name. */
+    @Nonnull
+    public AssertionsXML isName(String expectedPrefix, String expectedName) {
+        return isName(expectedPrefix + ":" + expectedName);
+    }
+
+    /** Checks if the current element doesn't have any child. */
     public AssertionsXML hasNoChildren() {
-        if (getTarget().countFilhos() != 0) {
-            throw new AssertionError(errorMsg("Qtd de sub Elements incorretos", 0, getTarget().countFilhos()));
+        return hasChildren(0);
+    }
+
+    /** Checks the number os sub elements of the current element. */
+    public AssertionsXML hasChildren(int expectedNumberOfChildren) {
+        if (getTarget().countFilhos() != expectedNumberOfChildren) {
+            throw new AssertionError(
+                    errorMsg("Number of sub Elements incorrect", expectedNumberOfChildren, getTarget().countFilhos()));
         }
         return this;
     }
@@ -131,5 +147,92 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> {
                     errorMsg("O conteúdo XML não é o esperado", expectedXML.toString(), getTarget().toString()));
         }
         return this;
+    }
+
+    /** Creates a assertion for each sub Element node. */
+    @Override
+    @Nonnull
+    public Iterator<AssertionsXML> iterator() {
+        return new Iterator<AssertionsXML>() {
+            private MElement next = getTarget().getPrimeiroFilho();
+
+            @Override
+            public boolean hasNext() {
+                return next != null;
+            }
+
+            @Override
+            public AssertionsXML next() {
+                if (next == null) {
+                    throw new NoSuchElementException();
+                }
+                MElement current = next;
+                next = next.getProximoIrmao();
+                return new AssertionsXML(current);
+            }
+        };
+    }
+
+    /** Verifies if the name space URI of the current element is of the expected value. */
+    @Nonnull
+    public AssertionsXML isNameSpaceUri(@Nullable String expectedNamespaceUri) {
+        isNotNull();
+        String namespaceURI = getTarget().getNamespaceURI();
+        if (!Objects.equals(expectedNamespaceUri, namespaceURI)) {
+            throw new AssertionError(
+                    errorMsg("NamesoaceUri different from expected", expectedNamespaceUri, namespaceURI));
+        }
+        return this;
+    }
+
+    /** Verifies if the element has one and just one element, then returns it. */
+    @Nonnull
+    public AssertionsXML getOnlyChild(@Nonnull String expectedName) {
+        hasChildren(1);
+        AssertionsXML child = new AssertionsXML(getTarget().getPrimeiroFilho());
+        child.isName(expectedName);
+        return child;
+    }
+
+    /** Verifies if the attribute of the element has the expected value. */
+    @Nonnull
+    public AssertionsXML isAttribute(@Nonnull String attributeName, @Nullable String expectedValue) {
+        Object value = getTarget().getAttribute(attributeName);
+        if (!Objects.equals(expectedValue, value)) {
+            throw new AssertionError(
+                    errorMsg("Value for attribute '" + attributeName + "' different from expected", expectedValue,
+                            value));
+        }
+        return this;
+    }
+
+    /** Verifies if the attribute is not in the element. */
+    @Nonnull
+    public AssertionsXML attributeNotPresent(@Nonnull String attributeName) {
+        if (getTarget().hasAttribute(attributeName)) {
+            throw new AssertionError(errorMsg("Attribute '" + attributeName + "' wasn't expeted to be present"));
+        }
+        return this;
+    }
+
+    /** Verifies if the element has the expected number os attributes. */
+    public AssertionsXML hasAttributes(int expectedNumberOfAttributes) {
+        if(expectedNumberOfAttributes != getTarget().getAttributes().getLength()) {
+            throw new AssertionError(
+                    errorMsg("Number of attribute different from expected", expectedNumberOfAttributes,
+                            getTarget().getAttributes().getLength()));
+        }
+        return this;
+    }
+
+
+    /** Returns the sub element at the indecated position. */
+    @Nonnull
+    public AssertionsXML getChild(int index) {
+        MElement[] elements = getTarget().getElements(null);
+        if (elements.length <= index) {
+            throw new AssertionError(errorMsg("There is no element at index " + index));
+        }
+        return new AssertionsXML(elements[index]);
     }
 }

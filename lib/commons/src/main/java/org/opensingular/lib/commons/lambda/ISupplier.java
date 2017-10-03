@@ -22,4 +22,7 @@ import java.util.function.Supplier;
 @FunctionalInterface
 public interface ISupplier<T> extends Supplier<T>, Serializable {
 
+    static <U> ISupplier<U> of(ISupplier<U> supplier) {
+        return (supplier == null) ? () -> null : supplier;
+    }
 }

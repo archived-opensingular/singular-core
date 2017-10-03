@@ -41,10 +41,11 @@
     <modules>
         <module>flow</module>
         <module>form</module>
-		<module>flow-form</module>
+	<module>flow-form</module>
         <module>lib</module>
         <module>resources</module>
         <module>ws</module>
+        <module>studio</module>
     </modules>
 
     <build>
@@ -204,9 +205,9 @@
 
         <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
         <dependency>
-            <groupId>net.java.loci</groupId>
-            <artifactId>jsr308-all</artifactId>
-            <version>1.1.2</version>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
         </dependency>
 
 

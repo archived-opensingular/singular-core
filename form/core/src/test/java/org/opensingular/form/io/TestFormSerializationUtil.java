@@ -1,7 +1,6 @@
 package org.opensingular.form.io;
 
 import org.fest.assertions.api.Assertions;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +31,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -372,7 +372,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
     }
 
-    @NotNull
+    @Nonnull
     private SIComposite createDinamicAttributeInstance() {
         SIComposite instance = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
             pacote.loadPackage(SPackageBasic.class);

@@ -32,6 +32,7 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.resource.StringResourceStream;
 
 import org.opensingular.lib.commons.base.SingularUtil;
@@ -43,32 +44,48 @@ public class TemplatePanel extends Panel {
 
     private IFunction<TemplatePanel, String> templateFunction;
 
-    public TemplatePanel(String id, ISupplier<String> templateSupplier) {
-        this(id, p -> templateSupplier.get());
-    }
-
     public TemplatePanel(String id, String template) {
         this(id, p -> template);
     }
 
+    public TemplatePanel(String id, IModel<?> model, String template) {
+        this(id, model, p -> template);
+    }
+
+    public TemplatePanel(String id, ISupplier<String> templateSupplier) {
+        this(id, p -> templateSupplier.get());
+    }
+
+    public TemplatePanel(String id, IModel<?> model, ISupplier<String> templateSupplier) {
+        this(id, model, p -> templateSupplier.get());
+    }
+
+    public TemplatePanel(String id) {
+        this(id, "");
+    }
+
+    public TemplatePanel(String id, IModel<?> model) {
+        this(id, model, "");
+    }
+
     public TemplatePanel(String id, IFunction<TemplatePanel, String> templateFunction) {
-        this(id);
+        super(id);
         this.templateFunction = templateFunction;
     }
-    public TemplatePanel(String id) {
-        super(id);
+
+    public TemplatePanel(String id, IModel<?> model, IFunction<TemplatePanel, String> templateFunction) {
+        super(id, model);
+        this.templateFunction = templateFunction;
     }
 
-    protected void onBeforeComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
-    }
+    protected void onBeforeComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {}
 
-    protected void onAfterComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
-    }
-    
+    protected void onAfterComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {}
+
     public IFunction<TemplatePanel, String> getTemplateFunction() {
         return templateFunction;
     }
-    
+
     @Override
     protected IMarkupSourcingStrategy newMarkupSourcingStrategy() {
         return new PanelMarkupSourcingStrategy(false) {
@@ -77,7 +94,7 @@ public class TemplatePanel extends Panel {
                 // corrige o problema de encoding
                 StringResourceStream stringResourceStream = new StringResourceStream("<wicket:panel>" + getTemplateFunction().apply(TemplatePanel.this) + "</wicket:panel>", "text/html");
                 stringResourceStream.setCharset(Charset.forName(Optional.ofNullable(Application.get().getMarkupSettings().getDefaultMarkupEncoding()).orElse(StandardCharsets.UTF_8.name())));
-                
+
                 MarkupParser markupParser = new MarkupParser(new MarkupResourceStream(stringResourceStream));
                 markupParser.setWicketNamespace(MarkupParser.WICKET);
                 Markup markup;
@@ -86,11 +103,10 @@ public class TemplatePanel extends Panel {
                 } catch (Exception e) {
                     throw SingularUtil.propagate(e);
                 }
-                
+
                 // If child == null, than return the markup fragment starting
                 // with <wicket:panel>
-                if (child == null)
-                {
+                if (child == null) {
                     return markup;
                 }
 

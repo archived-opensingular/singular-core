@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.entity.EntityInterceptor;
+import org.opensingular.lib.support.persistence.entity.SingularEntityInterceptor;
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -60,6 +60,6 @@ public class BaseEntityTest {
 
     @Test
     public void entityInterceptor(){
-        Assert.assertNotNull(new EntityInterceptor().onPrepareStatement(Constants.SCHEMA+"qualquer coisa"));
+        Assert.assertNotNull(new SingularEntityInterceptor().onPrepareStatement(Constants.SCHEMA+"qualquer coisa"));
     }
 }

@@ -16,16 +16,29 @@
 
 package org.opensingular.lib.commons.util;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class TempFileUtils {
+
+    /** Constante PREFIX. */
+    public static final String PREFIX = "stream2file";
+
+    /** Constante SUFFIX. */
+    public static final String SUFFIX = ".tmp";
 
     private TempFileUtils() {
     }
@@ -95,4 +108,72 @@ public abstract class TempFileUtils {
         }
     }
 
+    /**
+     * Converte uma stream para um file.
+     *
+     * @param in
+     *            um in
+     * @return um objeto do tipo File
+     * @throws IOException
+     *             Métodos subjeito a erros de entrada e saída.
+     */
+    public static File stream2file(InputStream in) throws IOException {
+        final File tempFile = File.createTempFile(PREFIX, SUFFIX);
+        tempFile.deleteOnExit();
+
+        IOUtils.copy(in, new FileOutputStream(tempFile));
+
+        return tempFile;
+    }
+
+    /**
+     * Decode string para arquivo binário.
+     *
+     * @param base64String            uma string em base 64
+     * @return um arquivo com o conteúdo
+     * @throws IOException quando uma exceção de I/O ocorre.
+     */
+    public static File decodeToTempFile(String base64String) throws IOException {
+        byte[] binaryDate = Base64.decodeBase64(base64String);
+        return createTempFile(binaryDate);
+    }
+
+    /**
+     * Tranfere string para arquivo binário.
+     *
+     * @param value            uma string
+     * @return um arquivo com o conteúdo
+     * @throws IOException quando uma exceção de I/O ocorre.
+     */
+    public static File transferToTempFile(String value) throws IOException {
+        byte[] binaryDate = value.getBytes(Charset.forName("UTF-8"));
+        return createTempFile(binaryDate);
+    }
+
+    /**
+     * Criar temp file.
+     *
+     * @param binaryDate um arquivo binário
+     * @return um arquivo com o conteúdo
+     * @throws IOException quando uma exceção de I/O ocorre.
+     */
+    public static File createTempFile(byte[] binaryDate) throws IOException {
+        File tempFile = File.createTempFile("file", "tmp");
+        writeByteArrayToFile(tempFile, binaryDate);
+        return tempFile;
+    }
+
+    /**
+     * Escreve um array de bytes para um arquivo em disco.
+     *
+     * @param arquivo
+     *            um arquivo
+     * @param bytes
+     *            um bytes
+     * @throws IOException
+     *             Métodos subjeito a erros de entrada e saída.
+     */
+    public static void writeByteArrayToFile(File arquivo, byte[] bytes) throws IOException {
+        FileUtils.writeByteArrayToFile(arquivo, bytes);
+    }
 }

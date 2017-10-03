@@ -16,10 +16,16 @@
 
 package org.opensingular.form.wicket.util;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -96,14 +103,22 @@ public abstract class WicketFormUtils {
     }
 
     public static Optional<Component> findChildByInstance(Component root, SInstance instance) {
+        return streamChildrenByInstance(root, instance).findAny();
+    }
+    public static Stream<Component> streamChildrenByInstance(Component root, SInstance instance) {
+        Predicate<? super Component> sameInstanceFilter = c -> instanciaIfAware(c.getDefaultModel())
+            .filter(it -> Objects.equal(it.getName(), instance.getName()))
+            .filter(it -> Objects.equal(it.getId(), instance.getId()))
+            .isPresent();
         return streamDescendants(root)
-            .filter(c -> instanciaIfAware(c.getDefaultModel()).orElse(null) == instance)
-            .findAny();
+            .filter(sameInstanceFilter);
     }
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
             ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
-            : Optional.empty();
+            : Optional.ofNullable(model)
+                .map(it -> it.getObject())
+                .map($L.castOrNull(SInstance.class));
     }
 
     public static Stream<MarkupContainer> streamAscendants(Component root) {
@@ -129,9 +144,9 @@ public abstract class WicketFormUtils {
     }
 
     public static String generateTitlePath(Component parentContainer,
-                                           SInstance parentContext,
-                                           Component childComponent,
-                                           SInstance childInstance) {
+        SInstance parentContext,
+        Component childComponent,
+        SInstance childInstance) {
 
         List<Component> components = Lists.newArrayList(childComponent);
         WicketUtils.appendListOfParents(components, childComponent, parentContainer);
@@ -144,7 +159,7 @@ public abstract class WicketFormUtils {
             SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
 
             String title = findTitle(comp);
-            if (title != null && ! Objects.equal(title, lastTitle)) {
+            if (title != null && !Objects.equal(title, lastTitle)) {
                 lastTitle = title;
                 addTitle(titles, title, instance, lastInstance);
             }
@@ -171,7 +186,7 @@ public abstract class WicketFormUtils {
 
     private static int findPos(@Nonnull SIList<SInstance> instance, @Nonnull SInstance lastInstance) {
         int pos = 1;
-        for(SInstance itemInstance : instance) {
+        for (SInstance itemInstance : instance) {
             if (lastInstance == itemInstance || lastInstance.isDescendantOf(itemInstance)) {
                 return pos;
             }
@@ -187,5 +202,38 @@ public abstract class WicketFormUtils {
         }
         return null;
 
+    }
+
+    /**
+     * De-duplicate, and replace components with the appropriate parent container, if necessary.
+     */
+    public static Component[] normalizeComponentsToAjaxRefresh(Collection<Component> children) {
+        Collection<Component> set = new HashSet<>();
+        for (Component child : children) {
+            set.add(child);
+            Optional<MarkupContainer> container = findCellContainer(child);
+            if (container.isPresent())
+                set.add(container.get());
+        }
+        List<Component> list = new ArrayList<>(set);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            final Component ic = list.get(i);
+            for (int j = list.size() - 1; j >= 0; j--) {
+                final Component jc = list.get(j);
+                if ((ic != jc) && ic.getPageRelativePath().contains(jc.getPageRelativePath())) {
+                    list.remove(i);
+                    break;
+                }
+            }
+        }
+        Component[] components = list.toArray(new Component[0]);
+        return components;
+    }
+
+    public static void bubbleInstanceAsEvent(Component comp, SInstance instance) {
+        comp.send(comp, Broadcast.BUBBLE, instance);
+    }
+    public static void breadthInstanceAsEvent(Component comp, SInstance instance) {
+        comp.send(comp, Broadcast.BREADTH, instance);
     }
 }

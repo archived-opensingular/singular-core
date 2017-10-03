@@ -16,12 +16,12 @@
 
 package org.opensingular.form.util;
 
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SISimple;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeSimple;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.util.transformer.Value;
-import org.opensingular.form.SISimple;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -107,6 +107,19 @@ public class SingularPredicates {
 
     public static Predicate<SInstance> typeValueIsTrueAndNotNull(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
         return i -> Value.of(i, type) != null &&  Boolean.TRUE.equals(Value.of(i, type));
+    }
+
+    public static <T extends SIComposite> Predicate<SInstance> atLeastOneFilled(int quantity, STypeComposite<T>... types) {
+        return i -> {
+            int count = 0;
+            for (STypeComposite<T> sType : types) {
+                if (!i.findNearest(sType).filter(SIComposite::isEmptyOfData).isPresent()) {
+                    count++;
+                }
+            }
+
+            return count < quantity;
+        };
     }
 
 }

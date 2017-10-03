@@ -53,6 +53,14 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
                 .list();
     }
 
+    public List<FormEntity> listUnIndexedForms() {
+        Criteria criteria = getSession().createCriteria(FormEntity.class);
+        criteria.setMaxResults(50);
+        criteria.createAlias("currentFormVersionEntity", "formVersion");
+        criteria.add(Restrictions.eq("formVersion.indexed", 'N'));
+        return criteria.list();
+    }
+
     private Criteria getfindByFormAbbreviation(String formAbbreviation) {
         return getSession().createCriteria(FormEntity.class)
                 .createAlias("formType", "formType")

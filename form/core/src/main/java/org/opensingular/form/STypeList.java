@@ -29,6 +29,7 @@ import org.opensingular.form.view.SView;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -99,7 +100,8 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return setElementsType(null, resolveType(elementsTypeClass));
     }
 
-    protected final E setElementsType(E elementsType) {
+    @Nonnull
+    protected final E setElementsType(@Nonnull E elementsType) {
         return setElementsType(null, elementsType);
     }
 
@@ -107,11 +109,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return setElementsType(simpleNameNewType, resolveType(elementsTypeClass));
     }
 
+    @Nonnull
     protected final E setElementsType(@Nullable String simpleNameNewType, @Nonnull E elementsType) {
         if (this.elementsType != null) {
             throw new SingularFormException("O tipo da lista já está definido", this);
         }
-        this.elementsType = extendType(simpleNameNewType, elementsType);
+        this.elementsType = extendType(SimpleName.ofNullable(simpleNameNewType), elementsType);
         return this.elementsType;
     }
 
@@ -167,10 +170,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return Optional.ofNullable(ins.getAttributeValue(SPackageBasic.ATR_LABEL)).orElse("valores");
     }
 
+    @Nullable
     public Integer getMinimumSize() {
         return asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
     }
 
+    @Nullable
     public Integer getMaximumSize() {
         return asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
     }
@@ -188,6 +193,15 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);
+        return this;
+    }
+
+    public <T extends Enum<T>> SType selectionOfEnum(Class<T> enumType) {
+        this.selectionOf(Enum.class)
+                .id(Enum::name)
+                .display(Enum::toString)
+                .enumConverter(enumType)
+                .simpleProvider(ins -> Arrays.asList(enumType.getEnumConstants()));
         return this;
     }
 

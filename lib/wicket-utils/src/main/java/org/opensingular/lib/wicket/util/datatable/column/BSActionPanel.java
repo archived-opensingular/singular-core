@@ -36,7 +36,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.resource.IconeView;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 
 public class BSActionPanel<T> extends Panel {
 
@@ -158,7 +158,7 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<String> iconeStyle;
         protected IModel<String> iconeClass;
         protected IModel<String> stripeModel;
-        protected IModel<String> styleClasses = $m.ofValue("btn default btn-xs black");
+        protected IModel<String> styleClasses = $m.ofValue("btn btn-link btn-xs black md-skip");
         protected IModel<String>               style;
         protected IFunction<IModel<T>, String> titleFunction;
         protected boolean withText = false;

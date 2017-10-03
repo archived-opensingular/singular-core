@@ -24,7 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 
 public class BSInputGroupButton extends BSContainer<BSInputGroupButton> {
 

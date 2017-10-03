@@ -17,6 +17,33 @@
 jQuery(document).ready(function () {
     "use strict";
 
+    /**
+     * Solução temporaria para configuração da direção das anotações, o componente deve ser
+     * refatorado de modo que não seja necessarios hacks
+     */
+    function configureDynamicAnnotations() {
+        $('.singular-form-action-preview').each(function () {
+                var preview = $(this),
+                    parent = preview.parent()[0];
+                if (typeof parent === 'undefined') {
+                    return;
+                }
+                var parentOffsetLeft = $(parent).offset().left;
+                if (parentOffsetLeft < ($(window).width() - parentOffsetLeft)) {
+                    preview.css('right', 'auto');
+                    preview.css('left', '0');
+                } else {
+                    preview.css('right', '0');
+                    preview.css('left', 'auto');
+                }
+            }
+        );
+    }
+
+    $(window).resize(configureDynamicAnnotations);
+    $(window).ready(configureDynamicAnnotations);
+    Wicket.Event.subscribe("/ajax/call/complete", configureDynamicAnnotations);
+
     function align(selector) {
         var fieldsByTopPosition = {};
 
@@ -56,31 +83,30 @@ jQuery(document).ready(function () {
                     
                     //redimensionar labels
                     field.children().each(function(){  
-                    	let label = $(this).closest( $("label"));
-                    	if(label.height() != null && label.height() != 0){
+                    	var label = $(this).closest( $("label"));
+                    	if(label.height() !== null && label.height() !== 0){
                     		removeStyle(label);
                     	}
-                    })
+                    });
 
                     field.children().each(function(){  
-                    	let label = $(this).closest( $("label"));
- 
-                    	if(label.height() != null && label.height() != 0){
+                    	var label = $(this).closest( $("label"));
+                    	if(label.height() !== null && label.height() !== 0){
                             if (maxLabelHeight < label.height()) {
                             	maxLabelHeight = label.height();
                             }
                         }
-                    })
+                    });
                    
                     field.children().each(function(){  
-                    	let label = $(this).closest( $("label"));
-                    	if(label.height() != null && label.height() != 0){
+                    	var label = $(this).closest( $("label"));
+                    	if(label.height() !== null && label.height() !== 0){
                     		applyStyle(label, maxLabelHeight ); 
                     	}
-                    	if(i == (fieldsList.length-1)){
+                    	if(i === (fieldsList.length-1)){
                     		maxLabelHeight = 0;                    		
                     	}
-                    })
+                    });
                     //redimensionar labels - fim
                 }
 
@@ -155,7 +181,6 @@ jQuery(document).ready(function () {
     	delay(function(){
 	   	  	align('div > div.can-have-error');
 	   	  	align('div > span.help-block');
-	   	  	console.log("executou");
     	}, 10);
     });
     

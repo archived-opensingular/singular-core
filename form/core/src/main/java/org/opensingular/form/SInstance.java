@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
@@ -59,10 +60,11 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private Integer id;
 
-    /**
-     * Mapa de bits de flags. Veja {@link InstanceFlags}
-     */
-    private int flags;
+    /** Indica que a instância está no meio de uma exclusão. */
+    private boolean removingInstance;
+
+    /** Se true, indica que o atributo é temporário e deve ser convertido para o tipo correto mais tarde. */
+    private boolean attributeShouldMigrate;
 
     /**
      * Informações encontradas na persitência, mas sem correspondência no tipo na instância atual.
@@ -71,6 +73,7 @@ public abstract class SInstance implements SAttributeEnabled {
     private InstanceSerializableRef<SInstance> serializableRef;
     private ISInstanceListener.EventCollector eventCollector;
 
+    @Nonnull
     public SType<?> getType() {
         return type;
     }
@@ -147,7 +150,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
      */
     final void setAttributeShouldMigrate() {
-        setFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE, true);
+        attributeShouldMigrate = true;
     }
 
     /**
@@ -155,7 +158,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * tipo correto quando o tipo do atributo estiver corretamente registrado no dicionário.
      */
     final boolean isAttributeShouldMigrate() {
-        return getFlag(InstanceFlags.ATTRIBUTE_SHOULD_MIGRATE);
+        return attributeShouldMigrate;
     }
 
     /**
@@ -198,7 +201,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public final void init() {
         //Não deve chamar o init se estiver no modo de leitura do XML
-        if (getDocument().getLastId() != -1) {
+        if (!getDocument().isRestoreMode()) {
             ((SType) getType()).init(() -> this);
         }
     }
@@ -540,6 +543,11 @@ public abstract class SInstance implements SAttributeEnabled {
         return attributes;
     }
 
+    @Nonnull
+    public final SAttributeEnabled getParentAttributeContext() {
+        return getType();
+    }
+
     /**
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
      * hierarquia.
@@ -564,9 +572,15 @@ public abstract class SInstance implements SAttributeEnabled {
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
 
-    public final boolean hasAttribute(@Nonnull AtrRef<?, ?, ?> atr) {
+    @Override
+    public final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
+    }
+
+    @Override
+    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+        return false;
     }
 
     @Nullable
@@ -583,6 +597,15 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     public Collection<SInstance> getAttributes() {
         return AttributeValuesManager.staticGetAttributes(attributes);
+    }
+
+    /**
+     * Looks for the best match implementation of the aspect being request.
+     * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
+     */
+    @Nonnull
+    public <T> Optional<T> getAspect(@Nonnull AspectRef<T> aspectRef) {
+        return getDictionary().getMasterAspectRegistry().getAspect(this, aspectRef);
     }
 
     @Nullable
@@ -602,6 +625,10 @@ public abstract class SInstance implements SAttributeEnabled {
 
     public <A extends SInstance> Optional<A> findNearest(SType<A> targetType) {
         return SInstances.findNearest(this, targetType);
+    }
+
+    public <A extends SInstance> Optional<A> findNearest(Class<? extends SType<A>> targetTypeClass) {
+        return SInstances.findNearest(this, targetTypeClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -730,9 +757,9 @@ public abstract class SInstance implements SAttributeEnabled {
      * Signals this Component that it is removed from the Component hierarchy.
      */
     final void internalOnRemove() {
-        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, true);
+        removingInstance = true;
         onRemove();
-        if (getFlag(InstanceFlags.REMOVENDO_INSTANCIA)) {
+        if (removingInstance) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                     + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()", this);
         }
@@ -759,19 +786,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * </p>
      */
     protected void onRemove() {
-        setFlag(InstanceFlags.REMOVENDO_INSTANCIA, false);
-    }
-
-    final void setFlag(InstanceFlags flag, boolean value) {
-        if (value) {
-            flags |= flag.bit();
-        } else {
-            flags &= ~flag.bit();
-        }
-    }
-
-    final boolean getFlag(InstanceFlags flag) {
-        return (flags & flag.bit()) != 0;
+        removingInstance = false;
     }
 
     public boolean hasValidationErrors() {
@@ -813,7 +828,7 @@ public abstract class SInstance implements SAttributeEnabled {
         sb.append('(');
         sb.append("path=").append(getPathFull());
         sb.append("; type=");
-        if (getType() != null) {
+        if (type != null) {
             sb.append(getType().getClass().getSimpleName()).append('@').append(getType().getTypeId());
         }
         return sb;

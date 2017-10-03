@@ -16,31 +16,23 @@
 
 package org.opensingular.form.type.core;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-
+import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
-import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 import org.opensingular.lib.commons.base.SingularUtil;
 
-import com.google.common.base.Strings;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
 
 @SInfoType(name = "Date", spackage = SPackageCore.class)
 public class STypeDate extends STypeSimple<SIDate, Date> {
-
-    @Override
-    protected void onLoadType(TypeBuilder tb) {
-        addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.maxDate());
-    }
 
     public STypeDate() {
         super(SIDate.class, Date.class);
@@ -99,6 +91,9 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
     }
 
     public STypeDate maxDate(Date date) {
+        if (!hasValidator(InstanceValidators.maxDate())) {
+            addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.maxDate());
+        }
         asAtr().setAttributeValue(ATR_MAX_DATE, date);
         return this;
     }

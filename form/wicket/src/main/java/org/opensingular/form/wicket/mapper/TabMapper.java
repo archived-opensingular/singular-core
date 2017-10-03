@@ -16,13 +16,22 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
+import java.util.List;
+import java.util.Set;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
@@ -30,31 +39,25 @@ import org.opensingular.form.type.basic.AtrBootstrap;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
+import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
-import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.panel.BSPanelGrid;
+import org.opensingular.form.wicket.panel.BSPanelGrid.BSTab;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
-import java.util.List;
-import java.util.Set;
+import javax.annotation.Nonnull;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-public class TabMapper extends DefaultCompositeMapper {
+public class TabMapper implements IWicketComponentMapper {
 
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(final WicketBuildContext ctx) {
 
         final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) ctx.getModel().getObject().getType();
-        SViewTab                          tabView   = (SViewTab) tComposto.getView();
+        SViewTab tabView = (SViewTab) tComposto.getView();
 
         BSPanelGrid panel = newGrid(ctx);
 
@@ -70,10 +73,10 @@ public class TabMapper extends DefaultCompositeMapper {
 
         SIComposite instance = (SIComposite) ctx.getModel().getObject();
         for (SViewTab.STab tab : tabView.getTabs()) {
-            defineTabIconCss(ctx, instance, tab.getTypesName());
+            defineTabIconCss(ctx, instance, tab.getTypesNames());
             IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
-            BSPanelGrid.BSTab t                 = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesName(), baseInstanceModel);
-            t.iconClass((m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t.getSubtree()));
+            BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel);
+            t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
         }
 
         final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
@@ -85,11 +88,23 @@ public class TabMapper extends DefaultCompositeMapper {
 
         SViewTab.STab tabDefault = tabView.getDefaultTab();
 
-        renderTab(tabDefault.getTypesName(), panel, ctx);
+        renderTab(tabDefault.getTypesNames(), panel, ctx);
 
+        ctx.getContainer().add(new Behavior() {
+            @Override
+            public void onEvent(Component component, IEvent<?> event) {
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (event.getPayload() instanceof SInstance) {
+                    final SInstance instance = (SInstance) event.getPayload();
+                    for (BSTab tab : panel.getTabs().values())
+                        if (instance.isDescendantOf(tab.getModelObject()))
+                            target.add(panel.getTabItem(tab));
+                }
+            };
+        });
     }
 
-    @NotNull
+    @Nonnull
     protected BSPanelGrid newGrid(WicketBuildContext ctx) {
         return new BSPanelGrid("panel") {
 
@@ -109,27 +124,27 @@ public class TabMapper extends DefaultCompositeMapper {
             protected void onTabCreated(BSTab tab, Component tabComponent) {
                 super.onTabCreated(tab, tabComponent);
                 ISupplier<List<IModel<? extends SInstance>>> subtreeModels = () -> tab.getSubtree().stream()
-                        .map(it -> new SInstanceFieldModel<>(tab.getModel(), it))
-                        .collect(toList());
+                    .map(it -> new SInstanceFieldModel<>(tab.getModel(), it))
+                    .collect(toList());
                 SValidationFeedbackHandler.bindTo(new FeedbackFence(tabComponent))
-                        .addInstanceModels(subtreeModels.get())
-                        .addListener((ISValidationFeedbackHandlerListener) (handler, target, container, baseInstances, oldErrors, newErrors) -> {
-                            if (target != null) {
-                                target.add(tabComponent);
-                            }
-                        });
+                    .addInstanceModels(subtreeModels.get())
+                    .addListener((ISValidationFeedbackHandlerListener) (handler, target, container, baseInstances, oldErrors, newErrors) -> {
+                        if (target != null) {
+                            target.add(tabComponent);
+                        }
+                    });
                 tabComponent.add($b.classAppender("has-errors",
-                        $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
-                                .map(IModel::getObject)
-                                .anyMatch(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty()))));
+                    $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
+                        .map(IModel::getObject)
+                        .anyMatch(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty()))));
             }
 
             @Override
             protected void configureColspan() {
                 super.configureColspan();
                 // Configura o tamanho da aba de acordo com os atributos bootstrap informados
-                SIComposite  instance  = (SIComposite) ctx.getModel().getObject();
-                SViewTab     tabView   = (SViewTab) instance.getType().getView();
+                SIComposite instance = (SIComposite) ctx.getModel().getObject();
+                SViewTab tabView = (SViewTab) instance.getType().getView();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
                 // da prioridade ao que foi definido na View e nos atributos em seguida
                 configureBSColumns(tabView, bootstrap);
@@ -137,10 +152,10 @@ public class TabMapper extends DefaultCompositeMapper {
 
             private void configureBSColumns(SViewTab tabView, AtrBootstrap bootstrap) {
                 Integer colPreference = bootstrap.getColPreference();
-                Integer colXs         = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
-                Integer colSm         = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
-                Integer colMd         = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
-                Integer colLg         = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colXs = resolveCol(tabView.getNavColXs(), bootstrap.getColXs(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colSm = resolveCol(tabView.getNavColSm(), bootstrap.getColSm(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colMd = resolveCol(tabView.getNavColMd(), bootstrap.getColMd(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
+                Integer colLg = resolveCol(tabView.getNavColLg(), bootstrap.getColLg(colPreference), BSPanelGrid.BSTabCol.MAX_COLS);
 
                 BSTabCol content = getContent();
                 configureContentColuns(colXs, colSm, colMd, colLg, content);
@@ -169,22 +184,19 @@ public class TabMapper extends DefaultCompositeMapper {
     }
 
     private Integer resolveCol(Integer cols, Integer defaultCols, int max) {
-        Integer c = cols != null ? cols : defaultCols;
-        return c != null && c < max ? c : null;
+        Integer c = defaultIfNull(cols, defaultCols);
+        return ((c != null) && (c < max)) ? c : null;
     }
 
-    public String defineTabIconCss(WicketBuildContext ctx, SIComposite instance,
-                                   List<String> subtree) {
-        return new TabAnnotationIconState(ctx, instance, subtree)
-                .getIconCss();
-
+    public String defineTabIconCss(WicketBuildContext ctx, SIComposite instance, List<String> subtree) {
+        return new TabAnnotationIconState(ctx, instance, subtree).getIconCss();
     }
 
     private static class TabAnnotationIconState {
-        boolean isAnnotated, hasRejected, hasApproved;
-        private       WicketBuildContext ctx;
-        private final SIComposite        instance;
-        private final List<String>       subtree;
+        boolean                    isAnnotated, hasRejected, hasApproved;
+        private WicketBuildContext ctx;
+        private final SIComposite  instance;
+        private final List<String> subtree;
 
         public TabAnnotationIconState(WicketBuildContext ctx, SIComposite instance, List<String> subtree) {
             this.ctx = ctx;
@@ -208,7 +220,7 @@ public class TabMapper extends DefaultCompositeMapper {
                 if (annotatedField.hasAnyAnnotationOnTree()) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().getAnnotationMode().editable() &&
-                        annotatedField.hasAnyAnnotable()) {
+                    annotatedField.hasAnyAnnotable()) {
                     isAnnotated = true;
                 }
             }
@@ -224,23 +236,23 @@ public class TabMapper extends DefaultCompositeMapper {
 
         private String getIconCss() {
             if (hasRejected) {
-                return "fa fa-comment sannotation-color-danger";
+                return "annotation-icon annotation-icon-rejected";
             } else if (hasApproved) {
-                return "fa fa-comment sannotation-color-info";
+                return "annotation-icon annotation-icon-approved";
             } else if (isAnnotated) {
-                return "fa fa-comment-o";
+                return "annotation-icon annotation-icon-empty";
             } else {
                 return "";
             }
         }
     }
 
-    private void renderTab(List<String> nomesTipo, BSPanelGrid panel, WicketBuildContext ctx) {
-        for (String nomeTipo : nomesTipo) {
-            final SInstanceFieldModel<SInstance> subtree      = new SInstanceFieldModel<>(ctx.getModel(), nomeTipo);
-            final WicketBuildContext             childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true, subtree);
-            childContext.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
-            childContext.getUiBuilderWicket().build(childContext, childContext.getViewMode());
+    private void renderTab(List<String> typeNames, BSPanelGrid panel, WicketBuildContext ctx) {
+        for (String typeName : typeNames) {
+            SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(ctx.getModel(), typeName);
+            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), subtree);
+            childContext.init(ctx.getViewMode());
+            childContext.build();
             childContext.initContainerBehavior();
         }
     }

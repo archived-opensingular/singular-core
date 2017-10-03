@@ -37,6 +37,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIList;
+import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
@@ -56,7 +57,7 @@ import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.wicket.util.resource.Icon;
+import org.opensingular.lib.commons.ui.Icon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,6 +103,11 @@ public class FileListUploadPanel extends Panel implements Loggable {
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
 
+
+        Label subtitle = new Label("uploadSubtitle", $m.get(() -> ctx.getCurrentInstance().asAtr().getSubtitle()));
+        label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
+
+
         ViewMode viewMode = ctx.getViewMode();
 
         if (isEdition(viewMode)) {
@@ -109,6 +115,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
         }
 
         add(label);
+        add(subtitle);
 
         fileList = new WebMarkupContainer("fileList");
         add(fileList.add(new FilesListView("fileItem", model, ctx)));
@@ -194,13 +201,19 @@ public class FileListUploadPanel extends Panel implements Loggable {
                     .put("remove_url", remover.getUrl())
                     .put("max_file_size", getMaxFileSize())
                     .put("allowed_file_types", getAllowedTypes())
-                    .toString(2) + "); "
+                    .put("allowed_file_extensions", getAllowedExtensions())
+                            .toString(2) + "); "
                     + "\n });";
             //@formatter:on
         } else {
             return "";
         }
     }
+
+    private Set<String> getAllowedExtensions(){
+        return MimeTypes.getExtensionsFormMimeTypes(getAllowedTypes(), true);
+    }
+
 
     protected List<String> getAllowedTypes() {
         return defaultIfNull(

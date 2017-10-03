@@ -16,14 +16,14 @@
 
 package org.opensingular.form.type.core.annotation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.type.basic.SPackageBasic;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -121,6 +121,14 @@ public class AtrAnnotation extends STranslatorForAttribute {
      */
     public String text() {
         return annotation().getText();
+    }
+    
+    /**
+     * Clear annotation
+     * @return this
+     */
+    public AtrAnnotation clear() {
+        return approved(null).text(null);
     }
 
     /**

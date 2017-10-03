@@ -19,7 +19,7 @@ package org.opensingular.form.wicket;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.context.UIComponentMapper;
+import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 
 import java.io.Serializable;
@@ -27,14 +27,18 @@ import java.io.Serializable;
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 @FunctionalInterface
-public interface IWicketComponentMapper extends UIComponentMapper {
+public interface IWicketComponentMapper extends Serializable {
 
+    AspectRef<IWicketComponentMapper> ASPECT_WICKET_MAPPER = new AspectRef<>(
+            IWicketComponentMapper.class, IWicketComponentMapperRegistry.class);
+
+    HintKey<Boolean> HIDE_LABEL = () -> Boolean.FALSE;
 
     void buildView(WicketBuildContext ctx);
 
-    default void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    default void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
         component.setOutputMarkupId(true);
-        adjustJSEvents(component);
+        adjustJSEvents(ctx, component);
         new AjaxUpdateListenersFactory().getBehaviorsForm(component, model, listener).forEach(component::add);
     }
 
@@ -42,9 +46,16 @@ public interface IWicketComponentMapper extends UIComponentMapper {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
 
+    default void adjustJSEvents(WicketBuildContext ctx, Component comp) {
+        adjustJSEvents(comp);
+    }
+
     @FunctionalInterface
     interface HintKey<T> extends Serializable {
         T getDefaultValue();
+        default boolean isInheritable() {
+            return false;
+        }
     }
 
 }
