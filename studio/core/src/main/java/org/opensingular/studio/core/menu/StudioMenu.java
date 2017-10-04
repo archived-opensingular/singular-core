@@ -70,4 +70,7 @@ public class StudioMenu {
         }
     }
 
+    public MenuView getView() {
+        return view;
+    }
 }

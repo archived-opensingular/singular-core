@@ -16,25 +16,25 @@ import org.opensingular.studio.core.menu.ItemMenuEntry;
 import org.opensingular.studio.core.menu.MenuEntry;
 import org.opensingular.studio.core.menu.MenuView;
 import org.opensingular.studio.core.menu.StudioMenu;
-import org.opensingular.studio.core.util.StudioWicketUtils;
 import org.wicketstuff.annotation.mount.MountPath;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
 @MountPath("/studio/${path}")
 public class StudioPage extends SingularAdminTemplate {
 
+    public static final String STUDIO_CONTENT = "studioContent";
+
     @Inject
     private transient StudioMenu studioMenu;
 
     private String menuPath;
 
-
     public StudioPage() {
-        this.menuPath = menuPath;
+        this(new PageParameters());
     }
 
     public StudioPage(PageParameters parameters) {
@@ -48,10 +48,10 @@ public class StudioPage extends SingularAdminTemplate {
         MenuEntry          currentMenuEntry = findCurrentMenuEntry();
         WebMarkupContainer studioContent    = null;
         if (currentMenuEntry != null) {
-            studioContent = currentMenuEntry.makeContent("studioContent");
+            studioContent = currentMenuEntry.makeContent(STUDIO_CONTENT);
         }
         if (studioContent == null) {
-            studioContent = new StudioPortalContent("studioContent", null);
+            studioContent = studioMenu.getView().makeStudioContent(STUDIO_CONTENT, null);
         }
         add(studioContent);
     }
@@ -105,7 +105,7 @@ public class StudioPage extends SingularAdminTemplate {
     @Override
     protected boolean isWithMenu() {
         MenuEntry currentMenuEntry = findCurrentMenuEntry();
-        return currentMenuEntry != null && currentMenuEntry.isWithMenu();
+        return (currentMenuEntry == null && studioMenu.getView() == MenuView.SIDEBAR) || currentMenuEntry != null && currentMenuEntry.isWithMenu();
     }
 
     private String getMenuPath() {
@@ -125,6 +125,7 @@ public class StudioPage extends SingularAdminTemplate {
         return studioMenu;
     }
 
+    @Nonnull
     @Override
     protected WebMarkupContainer buildPageMenu(String id) {
         MetronicMenu metronicMenu     = new MetronicMenu(id);
@@ -133,34 +134,31 @@ public class StudioPage extends SingularAdminTemplate {
             while (currentMenuEntry instanceof ItemMenuEntry) {
                 currentMenuEntry = currentMenuEntry.getParent();
             }
-            AbstractMenuItem menu = buildMenu(currentMenuEntry);
+            AbstractMenuItem menu = buildMenu(currentMenuEntry, true);
             if (menu instanceof MetronicMenuGroup) {
                 MetronicMenuGroup metronicMenuGroup = (MetronicMenuGroup) menu;
                 metronicMenuGroup.setOpen();
             }
             metronicMenu.addItem(menu);
         }
+        else {
+            studioMenu.getChildren().forEach(e -> metronicMenu.addItem(buildMenu(e, false)));
+        }
         return metronicMenu;
     }
 
-    private AbstractMenuItem buildMenu(MenuEntry menuEntry) {
+    private AbstractMenuItem buildMenu(MenuEntry menuEntry, boolean groupNestedSidebars) {
         if (menuEntry instanceof GroupMenuEntry) {
             GroupMenuEntry group = (GroupMenuEntry) menuEntry;
-            if (group.getMenuView() == null || group.getMenuView() == MenuView.SIDEBAR) {
+            if (groupNestedSidebars && (group.getMenuView() == null || group.getMenuView() == MenuView.SIDEBAR)) {
                 MetronicMenuGroup metronicMenuGroup = new MetronicMenuGroup(menuEntry.getIcon(), menuEntry.getName());
                 for (MenuEntry child : group.getChildren()) {
-                    metronicMenuGroup.addItem(buildMenu(child));
+                    metronicMenuGroup.addItem(buildMenu(child, true));
                 }
                 return metronicMenuGroup;
             }
-            return new MetronicMenuItem(group.getIcon(), group.getName(), StudioWicketUtils.getMergedPathIntoURL(StudioPage.class, group.getMenuPath()));
         }
-        else if (menuEntry instanceof ItemMenuEntry) {
-            ItemMenuEntry item = (ItemMenuEntry) menuEntry;
-            return new MetronicMenuItem(item.getIcon(), item.getName(), item.getEndpoint());
-        }
-        throw new StudioTemplateException("O tipo de menu " + menuEntry.getClass().getName() + " não é suportado.");
-
+        return new MetronicMenuItem(menuEntry.getIcon(), menuEntry.getName(), menuEntry.getEndpoint());
     }
 
     @Override

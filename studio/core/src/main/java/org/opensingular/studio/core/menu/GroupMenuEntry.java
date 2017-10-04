@@ -65,6 +65,11 @@ public class GroupMenuEntry extends AbstractMenuEntry {
 
     @Override
     public StudioContent makeContent(String id) {
-        return new EmptyStudioContent(id, this);
+        return getMenuView().makeStudioContent(id, this);
+    }
+
+    @Override
+    public boolean isWithMenu() {
+        return menuView == MenuView.SIDEBAR;
     }
 }
