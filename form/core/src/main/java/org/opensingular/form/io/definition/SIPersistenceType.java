@@ -46,4 +46,12 @@ public class SIPersistenceType extends SIComposite {
         type.setSimpleName(simpleName);
         return type;
     }
+
+    public SIList<SIPersistenceAttribute> getAttributesList() {
+        return getFieldList(STypePersistenceType.FIELD_ATTRS, SIPersistenceAttribute.class);
+    }
+
+    public SIPersistenceAttribute newAttribute() {
+        return getAttributesList().addNew();
+    }
 }

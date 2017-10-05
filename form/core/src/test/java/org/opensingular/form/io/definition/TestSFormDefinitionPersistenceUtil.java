@@ -1,24 +1,19 @@
 package org.opensingular.form.io.definition;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.*;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.io.PersistenceBuilderXML;
+import org.opensingular.form.sample.FormTestPackage;
+import org.opensingular.form.sample.STypeFormTest;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -204,7 +199,36 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
             }
 
         } catch (AssertionError e) {
-            throw new AssertionError("Erro no valor recuperado para " + original.getName(),e);
+            throw new AssertionError("Erro no valor recuperado para " + original.getName(), e);
+        }
+    }
+
+    public void testRecover() throws Exception {
+
+    }
+
+    @Test
+    public void printArchiveTest() throws Exception {
+        SDictionary dictionary = SDictionary.create();
+        dictionary.loadPackage(FormTestPackage.class);
+
+        STypeFormTest stype = dictionary.getType(STypeFormTest.class);
+        SIPersistenceArchive archive = SFormDefinitionPersistenceUtil.toArchive(stype);
+
+        STypePersistenceArchive archiveType = (STypePersistenceArchive) archive.getType();
+
+        for (SIPersistencePackage s : archive.getPackages()) {
+            printTypes(s.getTypes(), "\t");
+        }
+    }
+
+    private void printTypes(SIList<SIPersistenceType> types, String prefix) {
+        for (SIPersistenceType si : types) {
+            System.out.println(prefix + si.getSimpleName());
+            for (SIPersistenceAttribute attr : si.getAttributesList()) {
+                System.out.println(prefix + attr.getAttrType() + " -> " + attr.getAttrValue());
+            }
+            printTypes(si.getMembers(), prefix + "\t");
         }
     }
 }

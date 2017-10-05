@@ -17,11 +17,17 @@
 package org.opensingular.form.io.definition;
 
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeString;
 
 @SInfoType(spackage = SPackageDefinitionPersitence.class, name = "attribute")
 public class STypePersistenceAttribute extends STypeComposite<SIPersistenceAttribute> {
+
+
+    public STypeString attrValue;
+    public STypeString attrType;
 
     public STypePersistenceAttribute() {
         super(SIPersistenceAttribute.class);
@@ -29,7 +35,8 @@ public class STypePersistenceAttribute extends STypeComposite<SIPersistenceAttri
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-
+        attrValue = this.addFieldString("attrValue");
+        attrType = this.addFieldString("attrType");
     }
 
 }
