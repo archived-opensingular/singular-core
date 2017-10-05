@@ -1,7 +1,23 @@
 package org.opensingular.studio.core.menu;
 
-import java.io.Serializable;
+import org.opensingular.studio.core.view.EmptyStudioContent;
+import org.opensingular.studio.core.view.StudioContent;
+import org.opensingular.studio.core.view.StudioPortalContent;
 
-public interface MenuView extends Serializable {
-    String getEndpoint(String menuPath);
+public enum MenuView {
+    PORTAL {
+        @Override
+        public StudioContent makeStudioContent(String id, MenuEntry entry) {
+            return new StudioPortalContent(id, entry);
+        }
+    },
+    SIDEBAR {
+        @Override
+        public StudioContent makeStudioContent(String id, MenuEntry entry) {
+            return new EmptyStudioContent(id, entry);
+        }
+    };
+
+    public abstract StudioContent makeStudioContent(String id, MenuEntry entry);
+
 }
