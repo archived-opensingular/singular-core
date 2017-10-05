@@ -497,6 +497,39 @@ public abstract class SInstances {
         }
     }
 
+    public static class TypeVisitFilter implements SInstances.IVisitFilter {
+
+        private Class<? extends SType> type;
+
+        public TypeVisitFilter(Class<? extends SType> type) {
+            this.type = type;
+        }
+
+        @Override
+        public boolean visitObject(Object object) {
+            if (object instanceof SInstance) {
+                SInstance ins = (SInstance) object;
+                if (type.isAssignableFrom(ins.getType().getClass())) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean visitChildren(Object object) {
+            if (object instanceof SInstance) {
+                SInstance ins = (SInstance) object;
+                if (type.isAssignableFrom(ins.getType().getClass())) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     private static class Visit<R> implements IVisit<R> {
         boolean dontGoDeeper;
         boolean stopped;

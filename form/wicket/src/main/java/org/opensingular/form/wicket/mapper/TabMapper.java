@@ -32,7 +32,6 @@ import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
@@ -48,6 +47,8 @@ import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.panel.BSPanelGrid;
 import org.opensingular.form.wicket.panel.BSPanelGrid.BSTab;
 import org.opensingular.lib.commons.lambda.ISupplier;
+
+import javax.annotation.Nonnull;
 
 public class TabMapper implements IWicketComponentMapper {
 
@@ -99,11 +100,11 @@ public class TabMapper implements IWicketComponentMapper {
                         if (instance.isDescendantOf(tab.getModelObject()))
                             target.add(panel.getTabItem(tab));
                 }
-            };
+            }
         });
     }
 
-    @NotNull
+    @Nonnull
     protected BSPanelGrid newGrid(WicketBuildContext ctx) {
         return new BSPanelGrid("panel") {
 

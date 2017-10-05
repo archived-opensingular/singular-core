@@ -1,7 +1,11 @@
 package org.opensingular.studio.core.menu;
 
+import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.studio.core.definition.StudioDefinition;
+import org.opensingular.studio.core.view.EmptyStudioContent;
+import org.opensingular.studio.core.view.StudioContent;
+import org.opensingular.studio.core.view.StudioMenuEntry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,14 +13,12 @@ import java.util.List;
 
 public class GroupMenuEntry extends AbstractMenuEntry {
     private final List<MenuEntry> children;
+    private final MenuView        menuView;
 
-    public GroupMenuEntry(Icon icon, String name, MenuView view) {
-        super(icon, name, view);
+    public GroupMenuEntry(Icon icon, String name, MenuView menuView) {
+        super(icon, name);
         this.children = new ArrayList<>();
-    }
-
-    public GroupMenuEntry(Icon icon, String name) {
-        this(icon, name, null);
+        this.menuView = menuView;
     }
 
     public List<MenuEntry> getChildren() {
@@ -36,15 +38,38 @@ public class GroupMenuEntry extends AbstractMenuEntry {
             this.groupEntry = groupEntry;
         }
 
+        public Builder addStudioItemWithMenu(String name, IBiFunction<String, MenuEntry, StudioContent> contentFactory) {
+            groupEntry.add(new StudioMenuEntry(null, name, contentFactory, true));
+            return this;
+        }
+
+        public Builder addStudioItemWithoutMenu(String name, IBiFunction<String, MenuEntry, StudioContent> contentFactory) {
+            groupEntry.add(new StudioMenuEntry(null, name, contentFactory, false));
+            return this;
+        }
+
         public Builder addStudioItem(String name, StudioDefinition definition) {
-            groupEntry.add(new ItemMenuEntry(name, new StudioMenuView(definition)));
+            groupEntry.add(new StudioCRUDMenuEntry(null, name, definition));
             return this;
         }
 
         public Builder addHTTPEndpoint(Icon ico, String name, String endpoint) {
-            groupEntry.add(new ItemMenuEntry(ico, name, new HTTPEndpointMenuView(endpoint)));
+            groupEntry.add(new UrlMenuEntry(ico, name, endpoint));
             return this;
         }
     }
 
+    public MenuView getMenuView() {
+        return menuView;
+    }
+
+    @Override
+    public StudioContent makeContent(String id) {
+        return getMenuView().makeStudioContent(id, this);
+    }
+
+    @Override
+    public boolean isWithMenu() {
+        return menuView == MenuView.SIDEBAR;
+    }
 }

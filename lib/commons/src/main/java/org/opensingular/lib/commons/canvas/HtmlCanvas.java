@@ -2,11 +2,11 @@ package org.opensingular.lib.commons.canvas;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.canvas.builder.RawHtmlBuilder;
 import org.opensingular.lib.commons.canvas.table.HtmlTableCanvas;
 import org.opensingular.lib.commons.canvas.table.TableCanvas;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +14,13 @@ import java.util.Map;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class HtmlCanvas implements DocumentCanvas {
-    private final boolean showTitleLevel;
+    private final boolean        showTitleLevel;
     private final RawHtmlBuilder rootHtmlBuilder;
-    private RawHtmlBuilder currentHtmlBuilder;
+    private       RawHtmlBuilder currentHtmlBuilder;
 
-    private String titlePrefix;
-    private int index;
-    private int headerTagLevel;
+    private String                   titlePrefix;
+    private int                      index;
+    private int                      headerTagLevel;
     private Map<Integer, HtmlCanvas> indexChildMap;
 
     public HtmlCanvas(boolean showTitleLevel) {
@@ -49,7 +49,8 @@ public class HtmlCanvas implements DocumentCanvas {
         if (headerTagLevel == 1) {
             addPageHeader(prefix, title);
             headerTagLevel++;
-        } else {
+        }
+        else {
             RawHtmlBuilder header = createSubheaderTag(headerTagLevel);
             header.appendText(prefix);
             header.appendText(ObjectUtils.defaultIfNull(title, ""));
@@ -82,7 +83,7 @@ public class HtmlCanvas implements DocumentCanvas {
 
     }
 
-    @NotNull
+    @Nonnull
     protected HtmlCanvas newHtmlChildCanvas(RawHtmlBuilder child, boolean showTitleLevel) {
         return new HtmlCanvas(child, showTitleLevel);
     }
