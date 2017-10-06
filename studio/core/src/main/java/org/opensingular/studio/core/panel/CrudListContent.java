@@ -130,9 +130,9 @@ public class CrudListContent extends CrudShellContent {
         }
     }
 
-    private class HeaderRightActions extends ListView<HeaderRightButton> {
+    private static class HeaderRightActions extends ListView<HeaderRightButton> {
 
-        HeaderRightActions(List<HeaderRightButton> list) {
+        private HeaderRightActions(List<HeaderRightButton> list) {
             super("headerRightActions", list);
         }
 
