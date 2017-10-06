@@ -147,7 +147,7 @@ public class CrudListContent extends CrudShellContent {
             setRenderBodyOnly(true);
         }
 
-        class HeaderRightActionActionAjaxLink extends ActionAjaxLink<Void> {
+        private static class HeaderRightActionActionAjaxLink extends ActionAjaxLink<Void> {
 
             private final HeaderRightButton headerRightButton;
 
