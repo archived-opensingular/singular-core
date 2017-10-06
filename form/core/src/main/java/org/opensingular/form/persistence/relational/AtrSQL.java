@@ -109,6 +109,10 @@ public class AtrSQL extends STranslatorForAttribute {
 		return RelationalForeignColumn.fromStringPersistence(value, getDictionary());
 	}
 
+	public AtrSQL column() {
+		return column(getTipo().getNameSimple());
+	}
+
 	public AtrSQL column(String column) {
 		setAttributeValue(ATR_COLUMN, column);
 		return this;

@@ -61,11 +61,7 @@ public class BasicRelationalMapper implements RelationalMapper {
 	}
 
 	public String column(SType<?> field) {
-		String result = field.asSQL().getColumn();
-		if (result == null) {
-			result = field.getNameSimple();
-		}
-		return result;
+		return field.asSQL().getColumn();
 	}
 
 	public RelationalForeignColumn foreignColumn(SType<?> field) {

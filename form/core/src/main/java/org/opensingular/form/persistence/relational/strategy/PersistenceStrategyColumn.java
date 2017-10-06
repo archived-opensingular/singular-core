@@ -31,12 +31,12 @@ import org.opensingular.form.persistence.relational.RelationalSQL;
 public class PersistenceStrategyColumn implements PersistenceStrategy {
 	public void save(SInstance instance, List<RelationalData> toList) {
 		SType<?> field = instance.getType();
-		if (RelationalSQL.foreignColumn(field) != null) {
+		String fieldName = RelationalSQL.column(field);
+		if (fieldName == null) {
 			return;
 		}
 		String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
 		SInstance tupleKeyRef = RelationalSQL.tupleKeyRef(instance);
-		String fieldName = RelationalSQL.column(field);
 		Object fieldValue = RelationalSQL.fieldValue(instance);
 		toList.add(new RelationalData(tableName, tupleKeyRef, fieldName, fieldValue));
 	}

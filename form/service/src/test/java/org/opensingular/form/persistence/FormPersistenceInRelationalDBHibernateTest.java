@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,9 +23,13 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Form;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Master;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -55,9 +60,9 @@ public class FormPersistenceInRelationalDBHibernateTest {
 
 	@Test
 	public void basicPersistenceWithGeneratedKey() {
-		db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS CLOB, PRIMARY KEY (CODE))");
+		db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS CLOB, ATTACHMENT BLOB, PRIMARY KEY (CODE))");
 		//
-		FormKey firtsKey = repoForm.insert(createFormInstance("My form"), null);
+		FormKey firtsKey = repoForm.insert(createFormInstance("My form", null, null), null);
 		assertEquals("CODE$Integer$1", firtsKey.toStringPersistence());
 		assertEquals(1, repoForm.countAll());
 		assertEquals(1, repoForm.loadAll().size());
@@ -75,8 +80,8 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		loaded = repoForm.load(firtsKey);
 		assertEquals("My document", loaded.getValue("name"));
 		//
-		repoForm.insert(createFormInstance("Second form"), null);
-		repoForm.insert(createFormInstance("Third form"), null);
+		repoForm.insert(createFormInstance("Second form", null, null), null);
+		repoForm.insert(createFormInstance("Third form", null, null), null);
 		assertEquals(3, repoForm.countAll());
 		List<SIComposite> page1 = repoForm.loadAll(0, 2);
 		assertEquals(2, page1.size());
@@ -89,12 +94,6 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		repoForm.delete(firtsKey);
 		assertEquals(2, repoForm.countAll());
 		assertEquals(2, repoForm.loadAll().size());
-	}
-
-	private SIComposite createFormInstance(String name) {
-		SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
-		formInstance.setValue("name", name);
-		return formInstance;
 	}
 
 	@Test
@@ -132,6 +131,22 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		assertEquals(0, repoMaster.loadAll().size());
 	}
 
+	private SIComposite createFormInstance(String name, String observation, String attachmentFileName) {
+		SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
+		formInstance.setValue("name", name);
+		formInstance.setValue("observation", observation);
+		if (attachmentFileName != null) {
+			SIAttachment attachmentField = ((SIAttachment) formInstance.getField("attachment"));
+			TempFileProvider.create(this, tempFileProvider -> {
+				byte[] sampleContent = attachmentFileName.getBytes("UTF-8");
+				File tempFile = tempFileProvider.createTempFile(sampleContent);
+				attachmentField.setContent(attachmentFileName, tempFile, sampleContent.length,
+						HashUtil.toSHA1Base16(sampleContent));
+			});
+		}
+		return formInstance;
+	}
+
 	private SIComposite addDetail(String item, SIComposite master) {
 		return master.getFieldList("details", SIComposite.class).addNew(instance -> instance.setValue("item", item));
 	}
@@ -142,15 +157,20 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		public static final class Form extends STypeComposite<SIComposite> {
 			public STypeString name;
 			public STypeString observation;
+			public STypeAttachment attachment;
 
 			@Override
 			protected void onLoadType(TypeBuilder tb) {
 				asAtr().label("Formulary");
 				name = addFieldString("name");
 				observation = addFieldString("observation");
+				attachment = addField("attachment", STypeAttachment.class);
+				attachment.asAtr().allowedFileTypes("pdf", "docx", "xlsx", "jpeg", "png", "mp3", "mp4");
 				// relational mapping
 				asSQL().table("FORM").tablePK("CODE");
+				name.asSQL().column();
 				observation.asSQL().column("OBS");
+				attachment.asSQL().column();
 			}
 		}
 
@@ -166,6 +186,7 @@ public class FormPersistenceInRelationalDBHibernateTest {
 				details = addFieldListOf("details", Detail.class);
 				// relational mapping
 				asSQL().tablePK("ID");
+				name.asSQL().column();
 			}
 		}
 
@@ -182,6 +203,7 @@ public class FormPersistenceInRelationalDBHibernateTest {
 				// relational mapping
 				asSQL().tablePK("ID");
 				asSQL().addTableFK("MASTER", Master.class);
+				item.asSQL().column();
 				masterDisplay.asSQL().foreignColumn("name", "MASTER", Master.class);
 			}
 		}

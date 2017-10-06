@@ -231,6 +231,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				name = addFieldString("name");
 				// relational mapping
 				asSQL().table("Category").tablePK("id");
+				name.asSQL().column();
 			}
 		}
 
@@ -284,6 +285,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				// relational mapping
 				asSQL().tablePK("id");
 				asSQL().addTableFK("category", CategoryEntity.class);
+				name.asSQL().column();
 				observation.asSQL().column("obs");
 			}
 		}
@@ -305,7 +307,9 @@ public class RelationalSQLTest extends TestCaseForm {
 				// relational mapping
 				asSQL().table("Items").tablePK("masterID, mnemo");
 				asSQL().addTableFK("masterID", MasterEntity.class);
+				mnemo.asSQL().column();
 				description.asSQL().column("desc");
+				price.asSQL().column();
 			}
 		}
 
@@ -320,6 +324,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				// relational mapping
 				asSQL().tablePK("id");
 				asSQL().addTableFK("itemID", ItemEntity.class);
+				title.asSQL().column();
 			}
 		}
 	}

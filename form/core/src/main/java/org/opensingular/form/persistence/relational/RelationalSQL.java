@@ -200,8 +200,8 @@ public abstract class RelationalSQL {
 
 	protected void addFieldToList(SType<?> field, List<SType<?>> list) {
 		if (field.isComposite()) {
-			list.addAll(getFields((STypeComposite<?>) field));
-		} else {
+			addFieldsToList(getFields((STypeComposite<?>) field), list);
+		} else if (column(field) != null || foreignColumn(field) != null) {
 			list.add(field);
 		}
 	}

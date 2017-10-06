@@ -127,6 +127,7 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 				name = addFieldString("name");
 				// relational mapping
 				asSQL().table("CUST").tablePK("ID");
+				name.asSQL().column();
 			}
 		}
 
@@ -145,6 +146,7 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 				// relational mapping
 				asSQL().table("FORM").tablePK("CODE");
 				asSQL().addTableFK("customer", Customer.class);
+				name.asSQL().column();
 				customerKey.asSQL().column("customer");
 				customerDisplay.asSQL().foreignColumn("name", "customer", Customer.class);
 			}
