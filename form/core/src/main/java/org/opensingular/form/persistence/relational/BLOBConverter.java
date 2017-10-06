@@ -16,28 +16,44 @@
 
 package org.opensingular.form.persistence.relational;
 
+import java.io.File;
+import java.sql.Blob;
+import java.sql.SQLException;
+
 import org.opensingular.form.SInstance;
+import org.opensingular.form.io.HashUtil;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 /**
- * Converter implementation for transforming String values from/to an Integer
- * column in Relational DBMS.
+ * Converter implementation for transforming SIAttachment instances from/to a
+ * BLOB column in Relational DBMS.
  *
  * @author Edmundo Andrade
  */
-public class IntegerConverter implements RelationalColumnConverter {
+public class BLOBConverter implements RelationalColumnConverter {
 	public Object toRelationalColumn(SInstance fromInstance) {
 		Object value = fromInstance.getValue();
 		if (value == null) {
 			return null;
 		}
-		return new Integer(value.toString());
+		return ((SIAttachment) fromInstance).getAttachmentRef();
 	}
 
 	public void fromRelationalColumn(Object dbData, SInstance toInstance) {
 		if (dbData == null) {
 			toInstance.clearInstance();
 		} else {
-			toInstance.setValue(dbData.toString());
+			Blob blob = (Blob) dbData;
+			TempFileProvider.create(this, tempFileProvider -> {
+				try {
+					File tempFile = tempFileProvider.createTempFile(blob.getBinaryStream());
+					((SIAttachment) toInstance).setContent(tempFile.getName(), tempFile, blob.length(),
+							HashUtil.toSHA1Base16(tempFile));
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e);
+				}
+			});
 		}
 	}
 }

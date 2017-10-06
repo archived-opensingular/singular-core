@@ -16,10 +16,11 @@
 
 package org.opensingular.form.persistence.relational;
 
+import org.opensingular.form.SInstance;
 import org.opensingular.form.aspect.AspectRef;
 
 /**
- * Converter interface for transforming data types from/to a column in
+ * Converter interface for transforming SInstance values from/to a column in
  * Relational DBMS.
  *
  * @author Edmundo Andrade
@@ -28,7 +29,7 @@ public interface RelationalColumnConverter {
 	public static final AspectRef<RelationalColumnConverter> ASPECT_RELATIONAL_CONV = new AspectRef<>(
 			RelationalColumnConverter.class);
 
-	Object toRelationalColumn(Object attribute);
+	Object toRelationalColumn(SInstance fromInstance);
 
-	Object fromRelationalColumn(Object dbData);
+	void fromRelationalColumn(Object dbData, SInstance toInstance);
 }

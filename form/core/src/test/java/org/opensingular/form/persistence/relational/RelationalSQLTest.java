@@ -50,6 +50,7 @@ import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackag
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.MasterEntity;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.ref.STypeRef;
 
 /**
@@ -75,7 +76,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
 		assertEquals(
-				"select T1.name, T1.category, T2.name, T1.obs, T1.id from MasterEntity T1 left join Category T2 on T1.category = T2.id order by T1.name",
+				"select T1.name, T1.category, T2.name, T1.obs, T1.file, T1.id from MasterEntity T1 left join Category T2 on T1.category = T2.id order by T1.name",
 				script.get(0).getSQL());
 		assertEquals(0, script.get(0).getParameters().size());
 		assertNull(script.get(0).getInstance());
@@ -87,7 +88,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		List<RelationalSQLCommmand> script = query.toSQLScript();
 		assertEquals(1, script.size());
 		assertEquals(
-				"select T1.name, T1.category, T2.name, T1.obs, T1.id from MasterEntity T1 left join Category T2 on T1.category = T2.id where T1.id = ?",
+				"select T1.name, T1.category, T2.name, T1.obs, T1.file, T1.id from MasterEntity T1 left join Category T2 on T1.category = T2.id where T1.id = ?",
 				script.get(0).getSQL());
 		assertEquals(1, script.get(0).getParameters().size());
 		assertEquals(42, script.get(0).getParameters().get(0));
@@ -184,13 +185,14 @@ public class RelationalSQLTest extends TestCaseForm {
 		RelationalSQL update = RelationalSQL.update(masterInstance);
 		List<RelationalSQLCommmand> script = update.toSQLScript();
 		assertEquals(1, script.size());
-		assertEquals("update MasterEntity T1 set T1.name = ?, T1.category = ?, T1.obs = ? where T1.id = ?",
+		assertEquals("update MasterEntity T1 set T1.name = ?, T1.category = ?, T1.obs = ?, T1.file = ? where T1.id = ?",
 				script.get(0).getSQL());
-		assertEquals(4, script.get(0).getParameters().size());
+		assertEquals(5, script.get(0).getParameters().size());
 		assertEquals("My name", script.get(0).getParameters().get(0));
 		assertNull(script.get(0).getParameters().get(1));
 		assertNull(script.get(0).getParameters().get(2));
-		assertEquals(4242, script.get(0).getParameters().get(3));
+		assertNull(script.get(0).getParameters().get(3));
+		assertEquals(4242, script.get(0).getParameters().get(4));
 		assertEquals(masterInstance, script.get(0).getInstance());
 	}
 
@@ -273,6 +275,7 @@ public class RelationalSQLTest extends TestCaseForm {
 			public STypeString name;
 			public CategoryRef category;
 			public STypeString observation;
+			public STypeAttachment file;
 			public STypeList<ItemEntity, SIComposite> items;
 
 			@Override
@@ -281,12 +284,14 @@ public class RelationalSQLTest extends TestCaseForm {
 				name = addFieldString("name");
 				category = addField("category", CategoryRef.class);
 				observation = addFieldString("observation");
+				file = addField("file", STypeAttachment.class);
 				items = addFieldListOf("items", ItemEntity.class);
 				// relational mapping
 				asSQL().tablePK("id");
 				asSQL().addTableFK("category", CategoryEntity.class);
 				name.asSQL().column();
 				observation.asSQL().column("obs");
+				file.asSQL().column().columnConverter(BLOBConverter::new);
 			}
 		}
 

@@ -16,6 +16,9 @@
 
 package org.opensingular.form.persistence.service;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,9 +30,12 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.pdfbox.io.IOUtils;
 import org.hibernate.SessionFactory;
 import org.opensingular.form.persistence.RelationalDatabase;
 import org.opensingular.form.persistence.relational.RelationalTupleHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 /**
  * Hibernate-based interaction with a relational database manager.
@@ -118,9 +124,30 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 			Long limitRows) throws SQLException {
 		PreparedStatement statement = connection.prepareStatement(sql);
 		for (int i = 0; i < params.size(); i++) {
-			statement.setObject(i + 1, params.get(i));
+			statement.setObject(i + 1, targetParam(params.get(i), connection));
 		}
 		return statement;
+	}
+
+	private Object targetParam(Object sourceParam, Connection connection) {
+		Object result = sourceParam;
+		if (sourceParam instanceof IAttachmentRef) {
+			result = toBLOB((IAttachmentRef) sourceParam, connection);
+		}
+		return result;
+	}
+
+	private Object toBLOB(IAttachmentRef attachmentRef, Connection connection) {
+		try {
+			Blob blob = connection.createBlob();
+			try (OutputStream output = blob.setBinaryStream(1);
+					InputStream input = attachmentRef.getContentAsInputStream()) {
+				IOUtils.copy(input, output);
+			}
+			return blob;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	private String toSqlConstant(Object parameterValue) {
@@ -130,6 +157,8 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 			return toSqlConstant(String.valueOf(parameterValue));
 		} else if (parameterValue instanceof String) {
 			return "'" + ((String) parameterValue).replace("'", "''") + "'";
+		} else if (parameterValue instanceof IAttachmentRef) {
+			return "X'" + Hex.encodeHexString(((IAttachmentRef) parameterValue).getContentAsByteArray()) + "'";
 		}
 		return parameterValue.toString();
 	}

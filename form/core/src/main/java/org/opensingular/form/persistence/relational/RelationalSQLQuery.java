@@ -56,8 +56,9 @@ public class RelationalSQLQuery extends RelationalSQL {
 	@SafeVarargs
 	public RelationalSQLQuery(RelationalSQLAggregator aggregator, Collection<SType<?>>... fieldCollections) {
 		this.aggregator = aggregator;
-		for (Collection<SType<?>> fieldCollection : fieldCollections)
+		for (Collection<SType<?>> fieldCollection : fieldCollections) {
 			this.targetFields.addAll(fieldCollection);
+		}
 		this.keyColumns = new ArrayList<>();
 		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();

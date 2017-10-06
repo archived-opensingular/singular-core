@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.codec.binary.Hex;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,9 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Form;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Master;
+import org.opensingular.form.persistence.relational.BLOBConverter;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
@@ -62,7 +65,7 @@ public class FormPersistenceInRelationalDBHibernateTest {
 	public void basicPersistenceWithGeneratedKey() {
 		db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, OBS CLOB, ATTACHMENT BLOB, PRIMARY KEY (CODE))");
 		//
-		FormKey firtsKey = repoForm.insert(createFormInstance("My form", null, null), null);
+		FormKey firtsKey = repoForm.insert(createFormInstance("My form", null, "test.pdf"), null);
 		assertEquals("CODE$Integer$1", firtsKey.toStringPersistence());
 		assertEquals(1, repoForm.countAll());
 		assertEquals(1, repoForm.loadAll().size());
@@ -72,6 +75,9 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		//
 		SIComposite loaded = repoForm.load(firtsKey);
 		assertEquals("My form", loaded.getValue("name"));
+		IAttachmentRef attachmentRef = ((SIAttachment) loaded.getField("attachment")).getAttachmentRef();
+		assertEquals(8, attachmentRef.getSize());
+		assertEquals("746573742e706466", Hex.encodeHexString(attachmentRef.getContentAsByteArray()));
 		assertNull(loaded.getValue("observation"));
 		assertEquals(firtsKey, FormKey.fromInstance(loaded));
 		//
@@ -170,7 +176,7 @@ public class FormPersistenceInRelationalDBHibernateTest {
 				asSQL().table("FORM").tablePK("CODE");
 				name.asSQL().column();
 				observation.asSQL().column("OBS");
-				attachment.asSQL().column();
+				attachment.asSQL().column().columnConverter(BLOBConverter::new);
 			}
 		}
 

@@ -70,10 +70,12 @@ public class BasicRelationalMapper implements RelationalMapper {
 
 	public PersistenceStrategy persistenceStrategy(SType<?> field) {
 		PersistenceStrategy result = PersistenceStrategy.COLUMN;
-		if (field.isComposite()) {
-			result = PersistenceStrategy.TABLE;
-		} else if (field.isList()) {
-			result = PersistenceStrategy.ONE_TO_MANY;
+		if (column(field) == null && foreignColumn(field) == null) {
+			if (field.isComposite()) {
+				result = PersistenceStrategy.TABLE;
+			} else if (field.isList()) {
+				result = PersistenceStrategy.ONE_TO_MANY;
+			}
 		}
 		return result;
 	}

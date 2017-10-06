@@ -133,12 +133,11 @@ public abstract class RelationalSQL {
 	}
 
 	public static Object fieldValue(SInstance instance) {
-		Object result = instance.getValue();
 		Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
 		if (converter.isPresent()) {
-			result = converter.get().toRelationalColumn(result);
+			return converter.get().toRelationalColumn(instance);
 		}
-		return result;
+		return instance.getValue();
 	}
 
 	public static void setFieldValue(SInstance instance, List<RelationalData> fromList) {
@@ -156,15 +155,14 @@ public abstract class RelationalSQL {
 		String tableName = table(tableContext);
 		SInstance tupleKeyRef = tupleKeyRef(instance);
 		Object value = getFieldValue(tableName, tupleKeyRef, fieldName, fromList);
-		if (value == null) {
-			return;
-		}
-		Object result = value;
 		Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
 		if (converter.isPresent()) {
-			result = converter.get().fromRelationalColumn(result);
+			converter.get().fromRelationalColumn(value, instance);
+		} else if (value == null) {
+			instance.clearInstance();
+		} else {
+			instance.setValue(value);
 		}
-		instance.setValue(result);
 	}
 
 	static Object getFieldValue(String tableName, SInstance tupleKeyRef, String fieldName,
@@ -199,10 +197,10 @@ public abstract class RelationalSQL {
 	}
 
 	protected void addFieldToList(SType<?> field, List<SType<?>> list) {
-		if (field.isComposite()) {
-			addFieldsToList(getFields((STypeComposite<?>) field), list);
-		} else if (column(field) != null || foreignColumn(field) != null) {
+		if (column(field) != null || foreignColumn(field) != null) {
 			list.add(field);
+		} else if (field.isComposite()) {
+			addFieldsToList(getFields((STypeComposite<?>) field), list);
 		}
 	}
 
