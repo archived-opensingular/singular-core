@@ -1,5 +1,6 @@
 package org.opensingular.studio.core.panel;
 
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -144,6 +145,7 @@ public class CrudEditContent extends CrudShellContent {
                     if (Boolean.TRUE.equals(showListOnSaveOrCancel)) {
                         getCrudShellManager().replaceContent(target, new CrudListContent(getCrudShellManager()));
                     }
+                    getCrudShellManager().addToastrMessage(ToastrType.INFO, "Item salvo com sucesso.");
                 }
 
                 @Override
@@ -156,6 +158,12 @@ public class CrudEditContent extends CrudShellContent {
                             return oldClasses;
                         }
                     });
+                }
+
+                @Override
+                protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                    super.onValidationError(target, form, instanceModel);
+                    getCrudShellManager().addToastrMessage(ToastrType.ERROR, "Existem correções a serem feitas no formulário.");
                 }
             };
         }
