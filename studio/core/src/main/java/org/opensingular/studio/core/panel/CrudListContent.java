@@ -60,7 +60,7 @@ public class CrudListContent extends CrudShellContent {
         tableBuilder.setBorderedTable(false);
         StudioTableDefinition configuredStudioTable = getConfiguredStudioTable();
         configuredStudioTable.getColumns()
-                .forEach((name, path) -> tableBuilder.appendPropertyColumn(Model.of(name), ins -> ins.getValue(path)));
+                .forEach((name, path) -> tableBuilder.appendPropertyColumn(Model.of(name), ins -> ins.getField(path).toStringDisplay()));
 
         tableBuilder.appendActionColumn("", (BSDataTableBuilder.BSActionColumnCallback<SInstance, String>)
                 actionColumn -> configuredStudioTable.getActions().forEach(listAction -> {
