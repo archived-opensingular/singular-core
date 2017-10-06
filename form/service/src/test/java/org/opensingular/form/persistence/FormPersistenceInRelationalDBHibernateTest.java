@@ -82,9 +82,11 @@ public class FormPersistenceInRelationalDBHibernateTest {
 		assertEquals(firtsKey, FormKey.fromInstance(loaded));
 		//
 		loaded.setValue("name", "My document");
+		loaded.getField("attachment").clearInstance();
 		repoForm.update(loaded, null);
 		loaded = repoForm.load(firtsKey);
 		assertEquals("My document", loaded.getValue("name"));
+		assertNull(((SIAttachment) loaded.getField("attachment")).getAttachmentRef());
 		//
 		repoForm.insert(createFormInstance("Second form", null, null), null);
 		repoForm.insert(createFormInstance("Third form", null, null), null);
