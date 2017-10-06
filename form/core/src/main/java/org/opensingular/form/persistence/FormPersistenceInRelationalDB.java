@@ -28,7 +28,6 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -97,7 +96,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	}
 
 	@SuppressWarnings("unchecked")
-	@NotNull
+	@Nonnull
 	private TYPE createType() {
 		return (TYPE) RefType.of(type).get();
 	}
