@@ -184,8 +184,6 @@ public class FormXSDUtil {
                 }
             } else if (element.isTagAttribute()) {
                 readXsdAtributeDefinition(element, typeContext);
-                continue;
-
             } else {
                 element.checkUnknownNodeTreatment();
             }

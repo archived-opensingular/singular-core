@@ -33,9 +33,6 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
     private final T value;
 
     public AbstractFormKey(@Nonnull String persistenceString) {
-        if (persistenceString == null) {
-            throw new SingularFormPersistenceException("O valor da chave não pode ser null");
-        }
         T newValue = parseValuePersistenceString(persistenceString);
         if (newValue == null) {
             throw new SingularFormPersistenceException(
@@ -45,9 +42,6 @@ public abstract class AbstractFormKey<T extends Serializable> implements FormKey
     }
 
     public AbstractFormKey(@Nonnull T keyValue) {
-        if (keyValue == null) {
-            throw new SingularFormPersistenceException("O valor da chave não pode ser null");
-        }
         value = keyValue;
     }
 

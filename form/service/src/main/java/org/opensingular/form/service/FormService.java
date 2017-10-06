@@ -116,11 +116,7 @@ public class FormService implements IFormService {
     @Override
     @Nonnull
     public FormKey insert(@Nonnull SInstance instance, Integer inclusionActor) {
-        if (instance == null) {
-            throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
-        }
-        FormKey formKey = insertImpl(instance, inclusionActor);
-        return formKey;
+        return insertImpl(instance, inclusionActor);
     }
 
     @Nonnull
