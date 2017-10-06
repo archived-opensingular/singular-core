@@ -3,7 +3,6 @@ package org.opensingular.studio.core.menu;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.studio.core.definition.StudioDefinition;
-import org.opensingular.studio.core.view.EmptyStudioContent;
 import org.opensingular.studio.core.view.StudioContent;
 import org.opensingular.studio.core.view.StudioMenuEntry;
 

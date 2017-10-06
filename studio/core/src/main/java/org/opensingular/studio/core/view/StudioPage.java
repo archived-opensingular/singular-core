@@ -29,7 +29,7 @@ public class StudioPage extends SingularAdminTemplate {
     public static final String STUDIO_CONTENT = "studioContent";
 
     @Inject
-    private transient StudioMenu studioMenu;
+    private StudioMenu studioMenu;
 
     private String menuPath;
 

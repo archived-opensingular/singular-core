@@ -6,13 +6,12 @@ import org.opensingular.form.studio.StudioCRUDPermissionStrategy;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 
 public interface StudioDefinition extends Serializable {
 
     Class<? extends FormRespository> getRepositoryClass();
 
-    void configureStudioDataTable(StudioDataTable studioDataTable);
+    void configureStudioDataTable(StudioTableDefinition studioDataTable);
 
     String getTitle();
 
@@ -20,20 +19,8 @@ public interface StudioDefinition extends Serializable {
         return StudioCRUDPermissionStrategy.ALL;
     }
 
-    default FormRespository getRepository(){
+    default FormRespository getRepository() {
         return ApplicationContextProvider.get().getBean(getRepositoryClass());
-    }
-
-    class StudioDataTable {
-        private LinkedHashMap<String, String> columns = new LinkedHashMap<>();
-
-        public void add(String columnName, String path) {
-            columns.put(columnName, path);
-        }
-
-        public LinkedHashMap<String, String> getColumns() {
-            return columns;
-        }
     }
 
 }

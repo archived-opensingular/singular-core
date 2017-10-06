@@ -24,17 +24,6 @@ public class TestMElementResult {
         new MElementResult(element);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createWithNodeListNull(){
-        NodeList nodeList = null;
-        new MElementResult(nodeList);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createWithElementNullAndXpath(){
-        new MElementResult(null, "");
-    }
-
     @Test
     public void createWithNodeList(){
         MElement pai = MElement.newInstance("raiz");
