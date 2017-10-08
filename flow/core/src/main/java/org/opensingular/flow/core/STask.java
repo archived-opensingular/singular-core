@@ -67,7 +67,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     public abstract boolean canReallocate();
 
-    public abstract IEntityTaskType getTaskType();
+    public abstract TaskType getTaskType();
 
     public boolean isImmediateExecution() {
         return false;

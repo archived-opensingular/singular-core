@@ -28,7 +28,7 @@ public class STaskEnd extends STask<STaskEnd> {
     }
 
     @Override
-    public IEntityTaskType getTaskType() {
+    public TaskType getTaskType() {
         return TaskType.END;
     }
 

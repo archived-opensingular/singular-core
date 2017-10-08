@@ -49,7 +49,7 @@ public class PermissiveTaskAccessStrategy extends TaskAccessStrategy<FlowInstanc
     }
 
     @Override
-    public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+    public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
         return Collections.emptyList();
     }
 }

@@ -18,7 +18,6 @@ package org.opensingular.flow.core.renderer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STransition;
@@ -38,20 +37,18 @@ import java.util.Set;
  */
 public class ExecutionHistoryForRendering {
 
-    private FlowMap map;
+    private String current;
+    private final Set<String> executedTasks = new HashSet<>();
+    private final HashMap<Pair<String, String>, Set<String>> transitions = new HashMap<>();
 
-    private STask<?> current;
-    private final Set<STask<?>> executedTasks = new HashSet<>();
-    private final HashMap<Pair<STask<?>, STask<?>>, Set<String>> transitions = new HashMap<>();
-
-    /** Sets the flow to witch this history refers to. */
-    public void setMap(FlowMap map) {
-        this.map = map;
+    /** Marks this task as executed. */
+    public void addExecuted(@Nonnull String taskAbbreviation) {
+        executedTasks.add(taskAbbreviation);
     }
 
     /** Marks this task as executed. */
     public void addExecuted(@Nonnull ITaskDefinition taskDefinition) {
-        executedTasks.add(map.getTask(taskDefinition));
+        addExecuted(normalize(taskDefinition));
     }
 
     /** Marks a list os tasks as executed. */
@@ -76,12 +73,24 @@ public class ExecutionHistoryForRendering {
         addTransition(from, to, null);
     }
 
+    /** Mark all transitions between the two tasks as executed. */
+    public void addTransition(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation) {
+        addTransition(fromTaskAbbreviation, toTaskAbbreviation, null);
+    }
+
+    /** Mark as executed the transaction beteween the two tasks and with the specified name. */
+    public void addTransition(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation,
+            @Nullable String transitionName) {
+        addExecuted(fromTaskAbbreviation);
+        String s = normalizeName(transitionName);
+        Pair<String, String> key = Pair.of(fromTaskAbbreviation, toTaskAbbreviation);
+        Set<String> names = transitions.computeIfAbsent(key, x -> new HashSet<String>());
+        names.add(s == null ? "*" : s);
+    }
     /** Mark as executed the transaction beteween the two tasks and with the specified name. */
     public void addTransition(@Nonnull ITaskDefinition from, @Nonnull ITaskDefinition to,
             @Nullable String transitionName) {
-        addExecuted(from);
-        String s = normalizeName(transitionName);
-        createTransitionEntry(from, to).add(s == null ? "*" : s);
+        addTransition(normalize(from), normalize(to), transitionName);
     }
 
     private String normalizeName(String name) {
@@ -89,28 +98,30 @@ public class ExecutionHistoryForRendering {
         return s == null ? null : s.toLowerCase();
     }
 
-    private Set<String> createTransitionEntry(@Nonnull ITaskDefinition from, @Nonnull ITaskDefinition to) {
-        return transitions.computeIfAbsent(Pair.of(map.getTask(from), map.getTask(to)), x -> new HashSet<String>());
+    /** Mark the task that is the current state of the instance. */
+    public void setCurrent(@Nonnull String currentTaskAbbreviation) {
+        this.current = currentTaskAbbreviation;
     }
 
     /** Mark the task that is the current state of the instance. */
     public void setCurrent(@Nonnull ITaskDefinition current) {
-        this.current = map.getTask(current);
+        setCurrent(normalize(current));
     }
 
     /** Verifies if the given task is active at this moment. */
     public boolean isCurrent(@Nonnull STask<?> task) {
-        return Objects.equals(current, task);
+        return Objects.equals(current, normalize(task));
     }
 
     /** Verifies if the task was executed. */
     public boolean isExecuted(@Nonnull STask<?> task) {
-        return executedTasks.contains(task);
+        return executedTasks.contains(normalize(task));
     }
 
     /** Verifies if the transition was executed. */
     public boolean isExecuted(@Nonnull STransition transition) {
-        Set<String> names = transitions.get(Pair.of(transition.getOrigin(), transition.getDestination()));
+        Pair<String, String> key = Pair.of(normalize(transition.getOrigin()), normalize(transition.getDestination()));
+        Set<String> names = transitions.get(key);
         if (names != null) {
             String s = normalizeName(transition.getName());
             if (s != null && names.contains(s)) {
@@ -129,6 +140,14 @@ public class ExecutionHistoryForRendering {
     /** Verifies if there is any information about execution os tasks or what is the current task. */
     public boolean isEmpty() {
         return current == null && executedTasks.isEmpty();
+    }
+
+    private static String normalize(STask<?> task) {
+        return task.getAbbreviation().trim().toLowerCase();
+    }
+
+    private static String normalize(ITaskDefinition task) {
+        return task.getKey().trim().toLowerCase();
     }
 }
 

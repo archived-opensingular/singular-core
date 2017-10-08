@@ -39,7 +39,7 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Override
-    public IEntityTaskType getTaskType() {
+    public TaskType getTaskType() {
         return TaskType.JAVA;
     }
 

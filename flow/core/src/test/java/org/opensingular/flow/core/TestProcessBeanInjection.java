@@ -296,7 +296,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
 
         @Override
-        public List<String> getExecuteRoleNames(FlowDefinition definicao, STask task) {
+        public List<String> getExecuteRoleNames(FlowDefinition definition, STask task) {
             return Collections.emptyList();
         }
     }
