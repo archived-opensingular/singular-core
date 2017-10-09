@@ -16,10 +16,8 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import org.opensingular.form.AtrRef;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.*;
+import org.opensingular.form.type.basic.AtrDOC;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.type.core.STypeInteger;
@@ -51,6 +49,9 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
         name = addFieldString(FIELD_NAME);
         hashSHA1 = addFieldString(FIELD_HASH_SHA1);
         fileSize = addFieldInteger(FIELD_FILE_SIZE);
+
+        /* Hide all subtypes from documentation engine*/
+        STypes.streamDescendants(this, false).forEach(s -> s.as(AtrDOC::new).hiddenForDocumentation());
     }
 
 }

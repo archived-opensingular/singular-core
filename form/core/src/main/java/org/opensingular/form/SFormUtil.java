@@ -26,6 +26,7 @@ import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.ClassInspectionCache;
 import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
 import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.type.core.SPackageDocumentation;
 import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
@@ -338,6 +339,7 @@ public final class SFormUtil {
                 addPackage(builder, SPackageUtil.class);
                 addPackage(builder, SPackageBootstrap.class);
                 addPackage(builder, SPackagePersistence.class);
+                addPackage(builder, SPackageDocumentation.class);
                 addPackage(builder, SPackageCountryBrazil.class);
                 return builder.build();
             });

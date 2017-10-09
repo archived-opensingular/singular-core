@@ -213,7 +213,7 @@ public class SDocument {
 
     public final void setRoot(SInstance root) {
         if (this.root != null) {
-            throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
+            throw new SingularFormException("Não é permitido alterar o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
         STypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
