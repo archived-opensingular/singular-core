@@ -56,6 +56,10 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         new AnnotatedMountScanner().scanPackage("org.opensingular.studio").mount(this);
         List<IStringResourceLoader> stringResourceLoaders = getResourceSettings().getStringResourceLoaders();
         stringResourceLoaders.add(0, new ClassStringResourceLoader(appConfig.getClass()));
+        getComponentOnConfigureListeners().add(component -> {
+            boolean outputId = !component.getRenderBodyOnly();
+            component.setOutputMarkupId(outputId).setOutputMarkupPlaceholderTag(outputId);
+        });
     }
 
     @Override
