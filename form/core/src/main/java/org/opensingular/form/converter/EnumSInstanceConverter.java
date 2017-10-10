@@ -18,6 +18,8 @@ package org.opensingular.form.converter;
 
 import org.opensingular.form.SInstance;
 
+import java.util.Arrays;
+
 public class EnumSInstanceConverter<T extends Enum<T>> implements SInstanceConverter<T, SInstance> {
 
     private final Class<T> enumClass;
@@ -33,7 +35,11 @@ public class EnumSInstanceConverter<T extends Enum<T>> implements SInstanceConve
 
     @Override
     public T toObject(SInstance ins) {
-        return Enum.valueOf(enumClass, (String) ins.getValue());
+        return Arrays
+                .stream(enumClass.getEnumConstants())
+                .filter(v -> v.name().equals(ins.getValue()))
+                .findFirst()
+                .orElse(null);
     }
 
 }

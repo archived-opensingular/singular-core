@@ -97,9 +97,6 @@ public class SDictionary {
      */
     @Nonnull
     public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {
-        if (packageClass == null){
-            throw new SingularFormException("Classe pacote não pode ser nula");
-        }
         T newPackage = packages.get(packageClass);
         if (newPackage == null) {
             try {

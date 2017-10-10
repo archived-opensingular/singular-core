@@ -17,7 +17,6 @@
 package org.opensingular.form.io;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -136,7 +135,7 @@ public class FormXSDUtil {
         return simple;
     }
 
-    @NotNull
+    @Nonnull
     private static MElement createXsdElement(@Nonnull MElement parent, @Nonnull SType<?> type) {
         MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
         element.setAttribute("name", type.getNameSimple());
@@ -185,8 +184,6 @@ public class FormXSDUtil {
                 }
             } else if (element.isTagAttribute()) {
                 readXsdAtributeDefinition(element, typeContext);
-                continue;
-
             } else {
                 element.checkUnknownNodeTreatment();
             }

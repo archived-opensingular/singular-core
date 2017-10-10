@@ -193,9 +193,6 @@ public final class MElementResult extends MElement implements EWrapper {
      *              retorna todos os filhos imediatos
      */
     public MElementResult(@Nonnull Element root, @Nullable String xPath) {
-        if (root == null) {
-            throw new IllegalArgumentException("Elemento raiz nulo");
-        }
         if ((xPath == null) || XPathToolkit.isSelectSimples(xPath)) {
             this.raiz = SupplierUtil.serializable(root);
             this.nomeElemento_ = xPath;

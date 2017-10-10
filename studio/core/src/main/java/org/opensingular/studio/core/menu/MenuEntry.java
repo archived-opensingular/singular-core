@@ -1,8 +1,12 @@
 package org.opensingular.studio.core.menu;
 
 import com.google.common.collect.Lists;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.ui.Icon;
+import org.opensingular.studio.core.util.StudioWicketUtils;
+import org.opensingular.studio.core.view.StudioContent;
+import org.opensingular.studio.core.view.StudioPage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,22 +32,32 @@ public interface MenuEntry extends Serializable {
 
     /**
      * Set the parent of the entry
+     *
      * @param parent
      */
     void setParent(MenuEntry parent);
 
-
-    default String getEndpoint(){
-        MenuView view = getView();
-        if(view != null) {
-            return view.getEndpoint(getMenuPath());
-        }
+    /**
+     * Get the studio content
+     *
+     * @return
+     */
+    default StudioContent makeContent(String id) {
         return null;
     }
 
-    default String getMenuPath(){
+    default boolean isWithMenu() {
+        return true;
+    }
+
+    /**
+     * Get currente menupath
+     *
+     * @return
+     */
+    default String getMenuPath() {
         List<String> paths = new ArrayList<>();
-        MenuEntry entry = this;
+        MenuEntry    entry = this;
         while (entry != null) {
             paths.add(entry.getName());
             entry = entry.getParent();
@@ -53,5 +67,7 @@ public interface MenuEntry extends Serializable {
                 .collect(Collectors.joining("/"));
     }
 
-    MenuView getView();
+    default String getEndpoint(){
+        return StudioWicketUtils.getMergedPathIntoURL(StudioPage.class, getMenuPath());
+    }
 }

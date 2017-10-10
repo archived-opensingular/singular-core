@@ -57,14 +57,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
         WebMarkupContainer feedbackul = new WebMarkupContainer("feedbackul") {
             protected void onConfigure() {
                 super.onConfigure();
-                if (anyMessage()) {
-                    setVisible(true);
-                    Optional.ofNullable(getRequestCycle().find(AjaxRequestTarget.class)).ifPresent(ajx -> {
-                        ajx.appendJavaScript(";if($('.modal-backdrop').length == 0)$('html, body').animate({scrollTop:  '0' }, 'slow');");
-                    });
-                } else {
-                    setVisible(false);
-                }
+                setVisible(anyMessage());
             }
         };
         add(feedbackul

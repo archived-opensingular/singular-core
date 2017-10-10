@@ -4,7 +4,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.util.tester.WicketTestCase;
 import org.apache.wicket.util.visit.IVisitor;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
@@ -18,6 +17,8 @@ import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
 
+import javax.annotation.Nonnull;
+import java.io.File;
 import java.io.IOException;
 
 public class SingularReportPanelDownloadTest extends WicketTestCase {
@@ -63,7 +64,7 @@ public class SingularReportPanelDownloadTest extends WicketTestCase {
                 });
     }
 
-    @NotNull
+    @Nonnull
     private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> makeSingularReport() {
         return new SingularReport<ReportMetadata<ReportFilter>, ReportFilter>() {
             @Override

@@ -16,6 +16,8 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
@@ -96,4 +98,29 @@ public class Actor extends BaseEntity<Integer> implements SUser {
         this.cod = cod;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Actor actor = (Actor) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(codUsuario, actor.codUsuario)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(codUsuario)
+                .toHashCode();
+    }
 }

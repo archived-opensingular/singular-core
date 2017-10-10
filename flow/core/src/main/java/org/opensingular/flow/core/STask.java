@@ -250,6 +250,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask) {
         if (startedTaskListeners != null) {
             for (StartedTaskListener listener : startedTaskListeners) {
+                inject(listener);
                 listener.onTaskStart(taskInstance, execucaoTask);
             }
         }
@@ -257,7 +258,6 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     @Nonnull
     public K addStartedTaskListener(@Nonnull StartedTaskListener startedTaskListener) {
-        inject(startedTaskListener);
         if (this.startedTaskListeners == null) {
             this.startedTaskListeners = new LinkedList<>();
         }

@@ -17,7 +17,6 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewGeneratorProvider;
@@ -638,7 +637,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         ctx.incIndiceLinhaAtual();
     }
 
-    @NotNull
+    @Nonnull
     private OutputCellContext createCellContext(OutputTableContext ctx, InfoCelula cell, boolean columnWithSeparator) {
         DecoratorCell decorator = cell.createTempDecorator();
         if (decorator.isColSpanAll()) {

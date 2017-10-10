@@ -43,6 +43,7 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
 
         FormComponent<?> comp = new PasswordTextField(model.getObject().getName(),
                 new SInstanceValueModel<>(model)).setLabel(labelModel);
+        comp.setRequired(false);
 
         formGroup.appendInputPassword(comp);
 
@@ -54,6 +55,13 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
         }
 
         return comp;
+    }
+
+    @Override
+    protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
+        Component c  = super.appendReadOnlyInput(ctx, formGroup, labelModel);
+        formGroup.setVisible(false);
+        return c;
     }
 
     @Override

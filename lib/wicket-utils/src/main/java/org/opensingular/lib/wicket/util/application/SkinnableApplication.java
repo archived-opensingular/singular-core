@@ -20,9 +20,10 @@ import org.opensingular.lib.wicket.util.template.SkinOptions;
 
 public interface SkinnableApplication {
 
+    String INITSKIN_CONSUMER_PARAM = "INITSKIN_CONSUMER_PARAM";
+
     default void initSkins(SkinOptions skinOptions) {
         skinOptions.addDefaulSkin("singular");
-        skinOptions.addSkin("anvisa");
-
     }
+
 }

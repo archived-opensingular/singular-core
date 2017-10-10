@@ -10,29 +10,32 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.resource.loader.ClassStringResourceLoader;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.wicket.util.application.SkinnableApplication;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
+import org.opensingular.lib.wicket.util.template.SkinOptions;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
-import org.opensingular.studio.core.config.StudioAppConfig;
+import org.opensingular.studio.core.config.StudioConfig;
 import org.opensingular.studio.core.view.StudioFooter;
 import org.opensingular.studio.core.view.StudioHeader;
-import org.opensingular.studio.core.view.StudioPortalPage;
+import org.opensingular.studio.core.view.StudioPage;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
-public class StudioApplication extends WebApplication implements SingularAdminApp {
-    private final StudioAppConfig appConfig;
+public class StudioApplication extends WebApplication implements SingularAdminApp, SkinnableApplication {
+    private final StudioConfig appConfig;
 
-    public StudioApplication(StudioAppConfig appConfig) {
+    public StudioApplication(StudioConfig appConfig) {
         this.appConfig = appConfig;
     }
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return StudioPortalPage.class;
+        return StudioPage.class;
     }
 
     @Override
@@ -53,6 +56,10 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         new AnnotatedMountScanner().scanPackage("org.opensingular.studio").mount(this);
         List<IStringResourceLoader> stringResourceLoaders = getResourceSettings().getStringResourceLoaders();
         stringResourceLoaders.add(0, new ClassStringResourceLoader(appConfig.getClass()));
+        getComponentOnConfigureListeners().add(component -> {
+            boolean outputId = !component.getRenderBodyOnly();
+            component.setOutputMarkupId(outputId).setOutputMarkupPlaceholderTag(outputId);
+        });
     }
 
     @Override
@@ -65,5 +72,14 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
     @Override
     public MarkupContainer buildPageFooter(String id) {
         return new StudioFooter(id);
+    }
+
+    @Override
+    public void initSkins(SkinOptions skinOptions) {
+        IConsumer<SkinOptions> initSKin = (IConsumer<SkinOptions>) this.getServletContext()
+                .getAttribute(SkinnableApplication.INITSKIN_CONSUMER_PARAM);
+        if (initSKin != null) {
+            initSKin.accept(skinOptions);
+        }
     }
 }

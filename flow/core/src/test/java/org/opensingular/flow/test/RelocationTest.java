@@ -1,13 +1,10 @@
 package org.opensingular.flow.test;
 
+import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.opensingular.flow.core.DefinitionInfo;
@@ -39,6 +36,7 @@ import javax.inject.Inject;
 import java.util.Date;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @ActiveProfiles("mssql")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -93,10 +91,10 @@ public class RelocationTest {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", null);
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+        Assert.assertThat(id.getCurrentTaskOrException().getAllocatedUser(), Matchers.equalTo(testDAO.getSomeUser(1)));
 
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 1);
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(2));
+        Assert.assertThat((id.getCurrentTaskOrException().getAllocatedUser()), Matchers.equalTo(testDAO.getSomeUser(2)));
     }
 
     @Test
@@ -107,11 +105,11 @@ public class RelocationTest {
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", 0);
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), testDAO.getSomeUser(1));
 
         thrown.expectMessage("Your Task Version Number is Outdated.");
         new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 0);
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(testDAO.getSomeUser(1));
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), testDAO.getSomeUser(1));
     }
 
     @Test
@@ -124,7 +122,7 @@ public class RelocationTest {
         Actor        u1 = testDAO.getSomeUser(1);
         TaskInstance t  = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), u1);
 
         session.flush();
         session.evict(t.getEntityTaskInstance());
@@ -138,7 +136,7 @@ public class RelocationTest {
 
         session.flush();
 
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), u1);
     }
 
     @Test
@@ -148,12 +146,12 @@ public class RelocationTest {
         Actor        u1 = testDAO.getSomeUser(1);
         TaskInstance t  = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), u1);
 
         Actor u2 = testDAO.getSomeUser(2);
         t.relocateTask(u2, u2, false, "Just want to watch the world burn", t.getEntityTaskInstance().getVersionStamp());
 
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u2);
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), u2);
     }
 
     @Test(expected = StaleObjectStateException.class)
@@ -179,7 +177,7 @@ public class RelocationTest {
         Actor        u1 = testDAO.getSomeUser(1);
         TaskInstance t  = id.getCurrentTaskOrException();
         t.relocateTask(u1, u1, false, "Just for fun");
-        assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isEqualTo(u1);
+        assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), u1);
 
         t.endLastAllocation();
 

@@ -1,5 +1,9 @@
 package org.opensingular.form.studio;
 
+/**
+ * Não considero esta uma solução interessante, devemos pensar melhor...
+ */
+@Deprecated
 public interface StudioCRUDPermissionStrategy {
     StudioCRUDPermissionStrategy ALL = new StudioCRUDPermissionStrategy() {
         @Override

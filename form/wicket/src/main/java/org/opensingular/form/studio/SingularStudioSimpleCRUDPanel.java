@@ -240,7 +240,7 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
 
             add(table);
             StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
-            if (studioCRUDPermissionStrategy.canCreate()) {
+            if (studioCRUDPermissionStrategy == null || studioCRUDPermissionStrategy.canCreate()) {
                 add(new ActionAjaxLink<Void>("create") {
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
@@ -254,13 +254,14 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
 
         private BSActionColumn<INSTANCE, String> appendActions(BSActionColumn<INSTANCE, String> col) {
             StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();
-            if (studioCRUDPermissionStrategy.canEdit()) {
+            boolean isNull = studioCRUDPermissionStrategy == null;
+            if (isNull || studioCRUDPermissionStrategy.canEdit()) {
                 col.appendAction($m.ofValue("Editar"), DefaultIcons.PENCIL, SingularStudioSimpleCRUDPanel.this::onEdit);
             }
-            if (studioCRUDPermissionStrategy.canRemove()) {
+            if (isNull || studioCRUDPermissionStrategy.canRemove()) {
                 col.appendAction($m.ofValue("Deletar"), DefaultIcons.TRASH, SingularStudioSimpleCRUDPanel.this::onDelete);
             }
-            if (studioCRUDPermissionStrategy.canView()) {
+            if (isNull || studioCRUDPermissionStrategy.canView()) {
                 col.appendAction($m.ofValue("Visualizar"), DefaultIcons.EYE, SingularStudioSimpleCRUDPanel.this::onView);
             }
             return col;

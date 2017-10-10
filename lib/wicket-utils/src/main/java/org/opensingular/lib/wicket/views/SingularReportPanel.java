@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
@@ -42,6 +41,7 @@ import org.opensingular.lib.commons.util.FormatUtil;
 import org.opensingular.lib.commons.views.*;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -166,7 +166,7 @@ public class SingularReportPanel extends Panel {
         item.add(downloadLink);
     }
 
-    @NotNull
+    @Nonnull
     private String generateExportFileName(ListItem<ViewOutputFormat> item) {
         return singularReportSupplier.get().getReportName()
                 + " "
