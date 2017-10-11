@@ -9,6 +9,7 @@ import org.opensingular.studio.core.view.StudioMenuEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GroupMenuEntry extends AbstractMenuEntry {
     private final List<MenuEntry> children;
@@ -35,6 +36,14 @@ public class GroupMenuEntry extends AbstractMenuEntry {
 
         public Builder(GroupMenuEntry groupEntry) {
             this.groupEntry = groupEntry;
+        }
+
+        public Builder addSidebarGroup(Icon icon, String name, Consumer<Builder> groupConsumer) {
+            GroupMenuEntry g = groupEntry.add(new GroupMenuEntry(icon, name, MenuView.SIDEBAR));
+            if (groupConsumer != null) {
+                groupConsumer.accept(new GroupMenuEntry.Builder(g));
+            }
+            return this;
         }
 
         public Builder addStudioItemWithMenu(String name, IBiFunction<String, MenuEntry, StudioContent> contentFactory) {
