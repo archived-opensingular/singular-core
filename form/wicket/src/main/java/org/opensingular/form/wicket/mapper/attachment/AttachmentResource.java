@@ -9,6 +9,7 @@ import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class AttachmentResource extends AbstractResource implements Loggable {
         return path.replaceAll("\\*", "").replaceAll("//", "/");
     }
 
-    public static class Attachment {
+    public static class Attachment implements Serializable {
 
         final String filename;
         final ContentDisposition contentDisposition;
