@@ -3,15 +3,14 @@ package org.opensingular.studio.core.menu;
 import org.opensingular.lib.commons.ui.Icon;
 
 public abstract class AbstractMenuEntry implements MenuEntry {
+
     private Icon icon;
     private String name;
     private MenuEntry parent;
-    private MenuView view;
 
-    public AbstractMenuEntry(Icon icon, String name, MenuView view) {
+    public AbstractMenuEntry(Icon icon, String name) {
         this.icon = icon;
         this.name = name;
-        this.view = view;
     }
 
     @Override
@@ -34,8 +33,4 @@ public abstract class AbstractMenuEntry implements MenuEntry {
         this.parent = parent;
     }
 
-    @Override
-    public MenuView getView() {
-        return view;
-    }
 }

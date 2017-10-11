@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.FlowInstance;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
@@ -39,7 +39,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
 
     public FlowBuilder getFlowBuilder();
 
-    public default SELF setAsDefaultTransiton() {
+    public default SELF setAsDefaultTransition() {
         getTransition().getOrigin().setDefaultTransition(getTransition());
         return (SELF) self();
     }

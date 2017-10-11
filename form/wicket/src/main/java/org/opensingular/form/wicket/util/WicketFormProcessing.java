@@ -194,7 +194,9 @@ public class WicketFormProcessing implements Loggable {
                         updateListener.accept(dependant);
                     }
                     instances.add(dependant);
-                    instances.addAll(WicketFormProcessing.evaluateUpdateListenersAndCollect(dependant));
+                    if (!dependant.equals(i)) {
+                        instances.addAll(WicketFormProcessing.evaluateUpdateListenersAndCollect(dependant));
+                    }
                     return instances;
                 })
                 .flatMap(Collection::stream)

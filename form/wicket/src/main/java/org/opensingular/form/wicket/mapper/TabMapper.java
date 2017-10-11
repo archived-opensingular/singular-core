@@ -100,7 +100,7 @@ public class TabMapper implements IWicketComponentMapper {
                         if (instance.isDescendantOf(tab.getModelObject()))
                             target.add(panel.getTabItem(tab));
                 }
-            };
+            }
         });
     }
 

@@ -16,19 +16,20 @@
 
 package org.opensingular.form.processor;
 
-import com.google.common.collect.ImmutableMap;
-import org.opensingular.form.SScope;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.SingularFormException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.opensingular.form.SScope;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Garante que os campos publicos nas classes derivadas de {@link STypeComposite} são corretamente configurados e
@@ -197,7 +198,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
                         "Não foi encontrado o campo publico esperado"));
             }
 
-            if (!field.getClass().isAssignableFrom(ref.getField().getType())) {
+            if (!(ref.getField().getType().isAssignableFrom(field.getClass()))) {
                 throw new SingularFormException(errorMsg(composite, field, ref, true,
                         "Foi encontrado o campo na classe mas o mesmo não é da classe " + field.getClass()));
             }

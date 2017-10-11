@@ -156,15 +156,16 @@ public class TypeaheadComponent extends Panel {
 
             @Override
             public String getObject() {
-                if (instance().isEmptyOfData()) {
+                SInstance instance = instance();
+                if (instance == null || instance.isEmptyOfData()) {
                     return null;
                 }
-                if (!Value.dehydrate(instance()).equals(lastValue)) {
-                    lastValue = Value.dehydrate(instance());
-                    final IFunction<Object, Object>                   idFunction = instance().asAtrProvider().getIdFunction();
-                    final SInstanceConverter<Serializable, SInstance> converter  = instance().asAtrProvider().getConverter();
-                    if (idFunction != null && converter != null && !instance().isEmptyOfData()) {
-                        final Serializable converted = converter.toObject(instance());
+                if (!Value.dehydrate(instance).equals(lastValue)) {
+                    lastValue = Value.dehydrate(instance);
+                    final IFunction<Object, Object>                   idFunction = instance.asAtrProvider().getIdFunction();
+                    final SInstanceConverter<Serializable, SInstance> converter  = instance.asAtrProvider().getConverter();
+                    if (idFunction != null && converter != null && !instance.isEmptyOfData()) {
+                        final Serializable converted = converter.toObject(instance);
                         if (converted != null) {
                             lastId = String.valueOf(idFunction.apply(converted));
                         }
