@@ -51,7 +51,7 @@ public class CrudShellManager implements Serializable {
                 "function(ok){if(ok){Wicket.Ajax.get({u:'" + callbackAjaxBehaviour.getCallbackUrl() + "'});}})");
     }
 
-    private class CallbackAjaxBehaviour extends AbstractDefaultAjaxBehavior {
+    private static class CallbackAjaxBehaviour extends AbstractDefaultAjaxBehavior {
         private final IConsumer<AjaxRequestTarget> callback;
 
         private CallbackAjaxBehaviour(IConsumer<AjaxRequestTarget> callback) {

@@ -30,14 +30,11 @@ public class AttachmentResourceWriteCallbackTest {
     @Mock
     private IAttachmentRef iAttachmentRef;
 
-    @Mock
-    private AttachmentShareHandler attachmentShareHandler;
-
     AttachmentResourceWriteCallback attachmentResourceWriteCallback;
 
     @Before
     public void setUp() throws Exception {
-        attachmentResourceWriteCallback = new AttachmentResourceWriteCallback(resourceResponse, iAttachmentRef, attachmentShareHandler);
+        attachmentResourceWriteCallback = new AttachmentResourceWriteCallback(resourceResponse, iAttachmentRef);
     }
 
     @Test
@@ -51,14 +48,6 @@ public class AttachmentResourceWriteCallbackTest {
         Mockito.when(iAttachmentRef.getContentAsInputStream()).thenReturn(new ByteArrayInputStream(srcData));
         attachmentResourceWriteCallback.writeData(attributes);
         assertTrue("Content not equal", Arrays.equals(response.getBytes(), srcData));
-    }
-
-    @Test
-    public void shouldUnshareResources() throws Exception {
-        MockWebResponse response = new MockWebResponse();
-        Mockito.when(iAttachmentRef.getContentAsInputStream()).thenReturn(new ByteArrayInputStream("".getBytes()));
-        attachmentResourceWriteCallback.writeData(new IResource.Attributes(new MockWebRequest(new Url()), response));
-        Mockito.verify(attachmentShareHandler).unShare();
     }
 
     @Test
