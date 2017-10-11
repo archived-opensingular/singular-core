@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  */
 public class InstanceSerializableRef<I extends SInstance> implements Externalizable, Supplier<I> {
 
-    private transient I              instance;
+    private transient I instance;
     private transient FormSerialized fs;
 
     /**
@@ -71,7 +71,9 @@ public class InstanceSerializableRef<I extends SInstance> implements Externaliza
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        instance.detachEventCollector();
+        if (instance != null) {
+            instance.detachEventCollector();
+        }
         FormSerialized newFs = FormSerializationUtil.toSerializedObject(get());
         out.writeObject(newFs);
     }

@@ -2,33 +2,31 @@ package org.opensingular.studio.core.menu;
 
 import org.opensingular.lib.commons.ui.Icon;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class StudioMenu {
 
     private List<MenuEntry> children;
-    private MenuView view;
+    private MenuView        view;
 
     public StudioMenu(MenuView view) {
         this.view = view;
         this.children = new ArrayList<>();
     }
 
-    public <T extends MenuEntry> T add(T child){
+    public <T extends MenuEntry> T add(T child) {
         children.add(child);
         return child;
     }
 
     public List<MenuEntry> getChildren() {
-        if(children != null) {
+        if (children != null) {
             return Collections.unmodifiableList(children);
         }
         return Collections.emptyList();
-    }
-
-    public String getEnpoint(){
-        return view.getEndpoint("");
     }
 
     public static class Builder {
@@ -39,12 +37,12 @@ public class StudioMenu {
         }
 
         public Builder addHTTPEndpoint(Icon icon, String name, String endpoint) {
-            ItemMenuEntry i = studioMenu.add(new ItemMenuEntry(icon, name, new HTTPEndpointMenuView(endpoint)));
+            studioMenu.add(new UrlMenuEntry(icon, name, endpoint));
             return this;
         }
 
         public Builder addSidebarGroup(Icon icon, String name, Consumer<GroupMenuEntry.Builder> groupConsumer) {
-            GroupMenuEntry g = studioMenu.add(new GroupMenuEntry(icon, name, new SidebarMenuView()));
+            GroupMenuEntry g = studioMenu.add(new GroupMenuEntry(icon, name, MenuView.SIDEBAR));
             if (groupConsumer != null) {
                 groupConsumer.accept(new GroupMenuEntry.Builder(g));
             }
@@ -52,7 +50,7 @@ public class StudioMenu {
         }
 
         public Builder addPortalGroup(Icon icon, String name, Consumer<GroupMenuEntry.Builder> groupConsumer) {
-            GroupMenuEntry g = studioMenu.add(new GroupMenuEntry(icon, name, new PortalMenuView()));
+            GroupMenuEntry g = studioMenu.add(new GroupMenuEntry(icon, name, MenuView.PORTAL));
             if (groupConsumer != null) {
                 groupConsumer.accept(new GroupMenuEntry.Builder(g));
             }
@@ -60,11 +58,11 @@ public class StudioMenu {
         }
 
         public static Builder newPortalMenu() {
-            return new Builder(new StudioMenu(new PortalMenuView()));
+            return new Builder(new StudioMenu(MenuView.PORTAL));
         }
 
         public static Builder newSidebarMenu() {
-            return new Builder(new StudioMenu(new SidebarMenuView()));
+            return new Builder(new StudioMenu(MenuView.SIDEBAR));
         }
 
         public StudioMenu getStudioMenu() {
@@ -72,4 +70,7 @@ public class StudioMenu {
         }
     }
 
+    public MenuView getView() {
+        return view;
+    }
 }

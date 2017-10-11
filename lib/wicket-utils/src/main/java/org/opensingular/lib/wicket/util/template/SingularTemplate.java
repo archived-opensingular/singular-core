@@ -71,6 +71,7 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/morris/morris.css"),
                 skinnableResource("/global/css/components-md.css"),
                 skinnableResource("/global/css/plugins-md.css"),
+                skinnableResource("/global/css/singular.css"),
                 skinnableResource("/layout4/css/layout.css"),
                 skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css"),
                 skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css"),

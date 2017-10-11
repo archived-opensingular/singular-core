@@ -48,9 +48,6 @@ public final class PathReader {
     /** Cria um leitor de path para o resto do caminho a partir da posição informada. */
     private PathReader(@Nonnull String path, int inicio) {
         int inicioCopy = inicio;
-        if (path == null) {
-            throw new SingularFormException("O path do campo não pode ser nulo.");
-        }
         this.path = path;
         if (inicioCopy >= path.length()) {
             aListIndex = false;

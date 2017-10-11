@@ -61,17 +61,24 @@ import java.util.Set;
  */
 public final class DocumentDiffUtil {
 
-    /** Registro com os diferentes algorítmos de resolução de diff de acordo com a classe do SType. */
+    /**
+     * Registro com os diferentes algorítmos de resolução de diff de acordo com a classe do SType.
+     */
     private static TypeDiffRegister register;
 
-    private DocumentDiffUtil() {}
+    private DocumentDiffUtil() {
+    }
 
-    /** Cálcula a diferença entre o conteúdo de dois documentos. */
+    /**
+     * Cálcula a diferença entre o conteúdo de dois documentos.
+     */
     public static DocumentDiff calculateDiff(SDocument original, SDocument newer) {
         return calculateDiff(original.getRoot(), newer.getRoot());
     }
 
-    /** Cálcula a diferença entre o conteúdo de duas instâncias. */
+    /**
+     * Cálcula a diferença entre o conteúdo de duas instâncias.
+     */
     public static DocumentDiff calculateDiff(SInstance original, SInstance newer) {
         DiffInfo info = calculateDiff(null, original, newer);
         return new DocumentDiff(info, false);
@@ -106,7 +113,9 @@ public final class DocumentDiffUtil {
         }
 
         CalculatorEntry commonEntry = originalEntry != null ? originalEntry : newerEntry;
-        commonEntry.getCalculator().calculateDiff(info, original, newer);
+        if (commonEntry != null) {
+            commonEntry.getCalculator().calculateDiff(info, original, newer);
+        }
 
         if (info.isUnknownState()) {
             throw new SingularFormException("Invalid internal state for " + info);
@@ -117,7 +126,9 @@ public final class DocumentDiffUtil {
         return info;
     }
 
-    /** Calcula o Diff para uma instância do tipo {@link STypeSimple}. */
+    /**
+     * Calcula o Diff para uma instância do tipo {@link STypeSimple}.
+     */
     private static void calculateDiffSimple(DiffInfo info, SInstance original, SInstance newer) {
         Object originalValue = original == null ? null : original.getValue();
         Object newerValue = newer == null ? null : newer.getValue();
@@ -195,7 +206,7 @@ public final class DocumentDiffUtil {
     }
 
     private static int calculateDiffNewListElement(@Nonnull DiffInfo info, List<? extends SInstance> newerList,
-            int posN, boolean[] consumed, int posNotConsumed) {
+                                                   int posN, boolean[] consumed, int posNotConsumed) {
         int newPosNotConsumed = posNotConsumed;
         for (int posD = posNotConsumed; posD < posN; posD++) {
             if (!consumed[posD]) {
@@ -205,9 +216,11 @@ public final class DocumentDiffUtil {
         return newPosNotConsumed;
     }
 
-    /** Calcula o diff entre dois elementos de lista diferentes, sem fazer chamada recursiva. */
+    /**
+     * Calcula o diff entre dois elementos de lista diferentes, sem fazer chamada recursiva.
+     */
     private static int diffLine(DiffInfo parent, SInstance instanceOriginal, int posO,
-            List<? extends SInstance> newerList, boolean[] consumed, int posN, int posNotConsumed) {
+                                List<? extends SInstance> newerList, boolean[] consumed, int posN, int posNotConsumed) {
         SInstance instanceNewer = posN == -1 ? null : newerList.get(posN);
         DiffInfo info = calculateDiff(parent, instanceOriginal, instanceNewer);
         int returnValue = posNotConsumed;
@@ -222,7 +235,9 @@ public final class DocumentDiffUtil {
         return returnValue;
     }
 
-    /** Encontra a posição de um elemento dentro da lista com o ID informado. Retorna -1 senão encontrar. */
+    /**
+     * Encontra a posição de um elemento dentro da lista com o ID informado. Retorna -1 senão encontrar.
+     */
     private static int findById(Integer instanceId, List<? extends SInstance> list) {
         for (int i = 0; i < list.size(); i++) {
             if (instanceId.equals(list.get(i).getId())) {
@@ -232,7 +247,9 @@ public final class DocumentDiffUtil {
         return -1;
     }
 
-    /** Inclui novo diff em seu pai já alterando o tipo do pai (se necessário) de acordo com o tipo do novo. */
+    /**
+     * Inclui novo diff em seu pai já alterando o tipo do pai (se necessário) de acordo com o tipo do novo.
+     */
     private static void addToParent(DiffInfo parent, DiffInfo info) {
         parent.addChild(info);
         if (parent.isUnknownState() || parent.isUnchangedEmpty()) {
@@ -243,7 +260,9 @@ public final class DocumentDiffUtil {
     }
 
 
-    /** Calcula o Diff para uma instância do tipo {@link STypeAttachment}. Não faz diff recursivos nos sub campos. */
+    /**
+     * Calcula o Diff para uma instância do tipo {@link STypeAttachment}. Não faz diff recursivos nos sub campos.
+     */
     private static void calculateDiffAttachment(DiffInfo info, SIAttachment original, SIAttachment newer) {
         boolean originalEmpty = original == null || original.getFileId() == null;
         boolean newerEmpty = newer == null || newer.getFileId() == null;
@@ -329,7 +348,9 @@ public final class DocumentDiffUtil {
     }
 
 
-    /** Retorna o registro de calculadores de diff por tipo. */
+    /**
+     * Retorna o registro de calculadores de diff por tipo.
+     */
     private static synchronized TypeDiffRegister getRegister() {
         if (register == null) {
             register = new TypeDiffRegister();
@@ -380,7 +401,9 @@ public final class DocumentDiffUtil {
             }
         }
 
-        /** Retorna o calculador de diff mais apropriado para a instância ou dispara exception senão encontrar. */
+        /**
+         * Retorna o calculador de diff mais apropriado para a instância ou dispara exception senão encontrar.
+         */
         public CalculatorEntry get(SInstance instance) {
             if (instance == null) {
                 return null;
@@ -412,12 +435,16 @@ public final class DocumentDiffUtil {
             this.calculator = calculator;
         }
 
-        /** Retorna a class de {@link SType} para a qual essa entrada se refere. */
+        /**
+         * Retorna a class de {@link SType} para a qual essa entrada se refere.
+         */
         public Class<?> getTypeClass() {
             return typeClass;
         }
 
-        /** Retorna a implementação do calculador de diff para a classe atual. */
+        /**
+         * Retorna a implementação do calculador de diff para a classe atual.
+         */
         @SuppressWarnings("unchecked")
         public TypeDiffCalculator<SInstance> getCalculator() {
             return (TypeDiffCalculator<SInstance>) calculator;
@@ -451,7 +478,7 @@ public final class DocumentDiffUtil {
          * tiver nenhum match.
          */
         public CalculatorEntry get(Class<?> typeClassTarget) {
-            if (! this.typeClass.isAssignableFrom(typeClassTarget)) {
+            if (!this.typeClass.isAssignableFrom(typeClassTarget)) {
                 return null;
             } else if (subEntries != null) {
                 CalculatorEntry result;

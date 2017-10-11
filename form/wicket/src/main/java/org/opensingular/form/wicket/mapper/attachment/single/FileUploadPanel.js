@@ -86,7 +86,8 @@
                     		e,
                     		data,
                     		params.max_file_size,
-                    		params.allowed_file_types)) {
+                    		params.allowed_file_types,
+                            params.allowed_file_extensions)) {
                         return false;
                     }
                     if (data.autoUpload || (data.autoUpload !== false && $(this).fileupload('option', 'autoUpload'))) {
@@ -126,11 +127,17 @@
 	                            		params.download_url,
 	                            		dataSInstance.fileId,
 	                            		dataSInstance.name,
-	                            		function(url) { $link.attr('href', url); }
+	                            		function(url) {
+	                            		    $link.attr('href', url);
+	                            		    if(params.preview_update_callback) {
+                                                Wicket.Ajax.post({u: params.preview_update_callback});
+                                            }
+	                            		}
 	                        		);
+                                    $link.attr('title', dataSInstance.name);
                                     if(DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)){
                                         $link.attr('target', '_blank');
-                                    }
+                                    };
 	                                $('#' + params.files_id).empty().append($link);
 	                                $('#' + params.progress_bar_id).hide();
 	
@@ -156,7 +163,7 @@
 
         // Legacy for multple files
 
-        window.FileUploadPanel.validateInputFile = function (e, data, maxSize, allowed_file_types) {
+        window.FileUploadPanel.validateInputFile = function (e, data, maxSize, allowed_file_types, allowed_file_extensions) {
             if (data.files[0].size === 0) {
             	toastr.error("Arquivo não pode ser de tamanho 0 (zero)");
                 FileUploadPanel.resetFormElement(e);
@@ -173,9 +180,9 @@
             	var file = data.files[0];
             	var extension 		 = file.name.substring(file.name.lastIndexOf(".") + 1);
             	var invalidType 	 = (jQuery.inArray(file.type, allowed_file_types) < 0);
-            	var invalidExtension = (jQuery.inArray(extension, allowed_file_types) < 0);
+            	var invalidExtension = (jQuery.inArray(extension, allowed_file_extensions) < 0);
 	        	if (invalidType && invalidExtension) {
-	        		toastr.error("Tipo de arquivo não permitido");
+	        		toastr.error("Tipo de arquivo não permitido.<BR>Permitido apenas: " + allowed_file_extensions.join());
 	        		FileUploadPanel.resetFormElement(e);
 	        		return false;
 	        	}

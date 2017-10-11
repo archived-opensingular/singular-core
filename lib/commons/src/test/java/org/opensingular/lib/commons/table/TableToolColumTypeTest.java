@@ -16,10 +16,10 @@
 
 package org.opensingular.lib.commons.table;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.function.Consumer;
 
@@ -111,7 +111,7 @@ public class TableToolColumTypeTest {
         return generate(table, p -> p.insertLine(value));
     }
 
-    @NotNull
+    @Nonnull
     private TableOutputSimulated generate(TableTool table, Consumer<TablePopulator> populatorCode) {
         TablePopulator p = new TablePopulator(table);
         populatorCode.accept(p);

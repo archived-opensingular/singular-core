@@ -2,7 +2,6 @@ package org.opensingular.form.wicket.model;
 
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hamcrest.Matchers;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -15,6 +14,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,7 +150,7 @@ public class MultipleSelectSInstanceAwareModelTest {
                     .orElseThrow(() -> new AssertionError("A lista não possui o valor " + value));
         }
 
-        @NotNull
+        @Nonnull
         private MultipleSelectSInstanceAwareModel newModel(final SIList<SIString> iStrings) {
             return new MultipleSelectSInstanceAwareModel(new AbstractReadOnlyModel<SInstance>() {
                 @Override
@@ -325,7 +325,7 @@ public class MultipleSelectSInstanceAwareModelTest {
                     .orElseThrow(() -> new AssertionError("A lista não possui o valor " + value));
         }
 
-        @NotNull
+        @Nonnull
         private MultipleSelectSInstanceAwareModel newModel(final SIList<SIComposite> composite) {
             return new MultipleSelectSInstanceAwareModel(new AbstractReadOnlyModel<SInstance>() {
                 @Override

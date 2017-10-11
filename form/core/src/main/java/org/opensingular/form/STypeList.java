@@ -29,6 +29,7 @@ import org.opensingular.form.view.SView;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -192,6 +193,15 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);
+        return this;
+    }
+
+    public <T extends Enum<T>> SType selectionOfEnum(Class<T> enumType) {
+        this.selectionOf(Enum.class)
+                .id(Enum::name)
+                .display(Enum::toString)
+                .enumConverter(enumType)
+                .simpleProvider(ins -> Arrays.asList(enumType.getEnumConstants()));
         return this;
     }
 

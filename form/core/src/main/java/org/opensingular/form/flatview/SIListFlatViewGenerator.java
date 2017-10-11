@@ -1,6 +1,5 @@
 package org.opensingular.form.flatview;
 
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -8,6 +7,7 @@ import org.opensingular.lib.commons.canvas.DocumentCanvas;
 import org.opensingular.lib.commons.canvas.EmptyDocumentCanvas;
 import org.opensingular.lib.commons.canvas.FormItem;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +69,7 @@ public class SIListFlatViewGenerator extends AbstractFlatViewGenerator {
         }
     }
 
-    @NotNull
+    @Nonnull
     private Optional<FlatViewGenerator> getChildFlatViewGen(SInstance child) {
         return child.getAspect(ASPECT_FLAT_VIEW_GENERATOR);
     }

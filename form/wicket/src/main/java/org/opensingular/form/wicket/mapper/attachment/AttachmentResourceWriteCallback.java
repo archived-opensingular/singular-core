@@ -14,21 +14,16 @@ public class AttachmentResourceWriteCallback extends AbstractResource.WriteCallb
 
     private final AbstractResource.ResourceResponse resourceResponse;
     private final IAttachmentRef fileRef;
-    private final AttachmentShareHandler attachmentShareHandler;
 
-    public AttachmentResourceWriteCallback(AbstractResource.ResourceResponse resourceResponse,
-                                    IAttachmentRef fileRef,
-                                    AttachmentShareHandler attachmentShareHandler) {
+    public AttachmentResourceWriteCallback(AbstractResource.ResourceResponse resourceResponse, IAttachmentRef fileRef) {
         this.resourceResponse = resourceResponse;
         this.fileRef = fileRef;
-        this.attachmentShareHandler = attachmentShareHandler;
     }
 
     @Override
     public void writeData(IResource.Attributes attributes) throws IOException {
         try (InputStream inputStream = fileRef.getContentAsInputStream()) {
             writeStream(attributes, inputStream);
-            attachmentShareHandler.unShare();
         } catch (Exception e) {
             getLogger().error("Erro ao recuperar arquivo.", e);
             ((WebResponse) attributes.getResponse()).setStatus(HttpServletResponse.SC_NOT_FOUND);

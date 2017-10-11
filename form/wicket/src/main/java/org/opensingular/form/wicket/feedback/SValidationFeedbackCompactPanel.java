@@ -16,6 +16,10 @@
 
 package org.opensingular.form.wicket.feedback;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.behavior.Behavior;
@@ -29,10 +33,6 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
@@ -93,6 +93,7 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                             .map(ValidationError::getMessage)
                             .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
                     if (messages.size() > 1) {
+						//FIXME esta com problema ao visualizar os baloes, ajustar.
                         response.render(OnDomReadyHeaderItem.forScript(""
                                 + "(function(){"
                                 + "'use strict';"
@@ -102,8 +103,9 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                                 + "$input"
                                 + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
                                 + "  .popover({"
+                                + "    'container':'body',"
                                 + "    'html':true,"
-                                + "    'placement':'bottom',"
+                                + "    'placement':'auto',"
                                 + "    'trigger':'manual'"
                                 + "  });"
                                 + "$formGroup"

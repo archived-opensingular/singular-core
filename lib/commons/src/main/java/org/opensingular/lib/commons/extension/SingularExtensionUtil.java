@@ -14,7 +14,7 @@ public class SingularExtensionUtil implements Loggable {
                 .singletonize(SingularExtensionUtil.class, SingularExtensionUtil::new);
     }
 
-    public <T> List<T> findExtensionsByClass(Class<T> extensionClass) {
+    public <T extends SingularExtension> List<T> findExtensionsByClass(Class<T> extensionClass) {
         List<T> list = new ArrayList<>();
         for (T extension : ServiceLoader.load(extensionClass)) {
             list.add(extension);

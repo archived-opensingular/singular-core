@@ -61,7 +61,7 @@ public class SInstanceActionsPanel extends TemplatePanel {
                 return ""
                     + "\n<div class='singular-form-action-bar md-skip btn-group" + (c.large ? " btn-group-lg actions-lg" : "") + "' style='margin-left:-1px !important;'>"
                     + "\n  <div wicket:id='actions' class='singular-form-action dropdown'>"
-                    + "\n    <a wicket:id='link' href='javascript:void;' class='md-skip btn btn-link singular-form-action-link' style='padding:0px;'><span wicket:id='label'></span> <i wicket:id='icon'></i></a>"
+                    + "\n    <a wicket:id='link' href='javascript:void;' class='singular-form-action-link' style='padding:0px;'><span wicket:id='label'></span> <i wicket:id='icon'></i></a>"
                     + "\n    <div wicket:id='preview'></div>"
                     + "\n  </div>"
                     + "\n</div>";

@@ -23,8 +23,8 @@
             newWindow.close();
         }
         newWindow = window.open("", label);
-        appendFunctions(newWindow);
         newWindow.document.open();
+        appendFunctions(newWindow);
         newWindow.document.write(html);
         newWindow.document.close();
         newWindow.document.title = label;

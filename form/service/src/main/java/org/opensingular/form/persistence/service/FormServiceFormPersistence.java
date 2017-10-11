@@ -1,6 +1,5 @@
 package org.opensingular.form.persistence.service;
 
-import org.jetbrains.annotations.NotNull;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SType;
@@ -45,7 +44,7 @@ public class FormServiceFormPersistence<TYPE extends SType<INSTANCE>, INSTANCE e
         return (INSTANCE) formService.loadSInstance(key, getRefType(), documentFactory);
     }
 
-    @NotNull
+    @Nonnull
     private RefType getRefType() {
         return RefType.of(typeClass);
     }

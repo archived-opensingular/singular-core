@@ -21,15 +21,15 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
+import java.io.Serializable;
 import java.util.List;
 
 @SuppressWarnings("serial")
 public class PicklistMapper extends MultipleSelectMapper {
 
     @Override
-    protected Component formGroupAppender(BSControls formGroup,
-                                          IModel<? extends SInstance> model,
-                                          final List<?> opcoesValue) {
-        return formGroup.appendPicklist(retrieveChoices(model, opcoesValue));
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, IModel<List<Serializable>> valuesModel) {
+        return formGroup.appendPicklist(retrieveChoices(model, valuesModel));
     }
+
 }

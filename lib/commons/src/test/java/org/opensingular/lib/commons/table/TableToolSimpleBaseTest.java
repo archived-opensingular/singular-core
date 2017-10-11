@@ -17,10 +17,10 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.opensingular.lib.commons.test.AbstractTestTempFileSupport;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -139,7 +139,7 @@ public abstract class TableToolSimpleBaseTest extends AbstractTestTempFileSuppor
         });
     }
 
-    @NotNull
+    @Nonnull
     private TableTool createTableToolWith3Columns() {
         TableTool table = new TableTool();
         table.addColumn(ColumnType.STRING,"A");

@@ -83,16 +83,22 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
 
     @Override
     public void refreshFieldForInstance(SInstance instance) {
-        Optional<AjaxRequestTarget> optTarget = getInternalContext(AjaxRequestTarget.class);
-        Optional<Component> optComp = getInternalContext(Component.class);
-        if (optTarget.isPresent() && optComp.isPresent()) {
-            AjaxRequestTarget target = optTarget.get();
-            Component comp = optComp.get();
+        final Optional<AjaxRequestTarget> optTarget = getInternalContext(AjaxRequestTarget.class);
+        final Optional<Component> optComp = getInternalContext(Component.class);
+        if (optComp.isPresent()) {
+            final Component comp = optComp.get();
 
-            target.add(
-                WicketFormUtils.normalizeComponentsToAjaxRefresh(
-                    WicketFormUtils.streamChildrenByInstance(comp.getPage(), instance)
-                        .collect(toSet())));
+            if (optTarget.isPresent()) {
+                final AjaxRequestTarget target = optTarget.get();
+
+                target.add(
+                    WicketFormUtils.normalizeComponentsToAjaxRefresh(
+                        WicketFormUtils.streamChildrenByInstance(comp.getPage(), instance)
+                            .collect(toSet())));
+
+            }
+
+            WicketFormUtils.breadthInstanceAsEvent(comp.getPage(), instance);
         }
     }
 

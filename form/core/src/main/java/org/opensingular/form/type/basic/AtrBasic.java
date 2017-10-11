@@ -18,6 +18,7 @@ package org.opensingular.form.type.basic;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.AtrRef;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STranslatorForAttribute;
@@ -31,6 +32,8 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -241,6 +244,11 @@ public class AtrBasic extends STranslatorForAttribute {
      */
     public AtrBasic updateListener(IConsumer<SInstance> listener) {
         setAttributeValue(SPackageBasic.ATR_UPDATE_LISTENER, listener);
+        return this;
+    }
+
+    public <V> AtrBasic withAttribute(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {
+        setAttributeValue(atr, value);
         return this;
     }
 

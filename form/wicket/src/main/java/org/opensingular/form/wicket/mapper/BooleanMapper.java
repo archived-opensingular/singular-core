@@ -41,24 +41,20 @@ public class BooleanMapper implements IWicketComponentMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-
-        final IModel<? extends SInstance> model = ctx.getModel();
-        final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
-
         switch (ctx.getViewMode()) {
             case READ_ONLY:
-                buildForVisualization(model, formGroup, labelModel);
+                buildForVisualization(ctx);
                 break;
             case EDIT:
-                buildForEdition(ctx, model, formGroup, labelModel);
+                buildForEdition(ctx);
                 break;
         }
     }
 
-    private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
-                                 AttributeModel<String> labelModel) {
-
+    protected void buildForEdition(WicketBuildContext ctx) {
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
         final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
         final Label label = buildLabel("_", labelModel);
         adjustJSEvents(ctx, label);
@@ -80,8 +76,11 @@ public class BooleanMapper implements IWicketComponentMapper {
         });
     }
 
-    private void buildForVisualization(IModel<? extends SInstance> model, BSControls formGroup,
-                                       AttributeModel<String> labelModel) {
+    protected void buildForVisualization(WicketBuildContext ctx) {
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+
         final Boolean checked;
 
         final SInstance mi = model.getObject();
@@ -94,16 +93,15 @@ public class BooleanMapper implements IWicketComponentMapper {
         String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
         String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
         TemplatePanel tp = formGroup.newTemplateTag(t -> ""
-            + "<div wicket:id='" + "_well" + idSuffix + "'>"
-            + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
-            + " </div>");
+                + "<div wicket:id='" + "_well" + idSuffix + "'>"
+                + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
+                + " </div>");
         final BSWellBorder wellBorder = BSWellBorder.small("_well" + idSuffix);
         tp.add(wellBorder.add(buildLabel("label", labelModel)));
     }
 
     protected Label buildLabel(String id, AttributeModel<String> labelModel) {
-        return (Label) new Label(id, labelModel.getObject())
-            .setEscapeModelStrings(false);
+        return (Label) new Label(id, labelModel.getObject()).setEscapeModelStrings(false);
     }
 
     @Override

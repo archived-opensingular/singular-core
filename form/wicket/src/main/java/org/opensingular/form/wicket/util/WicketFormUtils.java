@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -227,5 +228,12 @@ public abstract class WicketFormUtils {
         }
         Component[] components = list.toArray(new Component[0]);
         return components;
+    }
+
+    public static void bubbleInstanceAsEvent(Component comp, SInstance instance) {
+        comp.send(comp, Broadcast.BUBBLE, instance);
+    }
+    public static void breadthInstanceAsEvent(Component comp, SInstance instance) {
+        comp.send(comp, Broadcast.BREADTH, instance);
     }
 }
