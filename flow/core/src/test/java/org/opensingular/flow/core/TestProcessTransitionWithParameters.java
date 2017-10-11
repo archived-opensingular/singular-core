@@ -228,7 +228,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
             f.setStartTask(StepsTP.First).with(this::setupStartParameters);
 
             f.from(StepsTP.First).go(StepsTP.Second)
-                    .setAsDefaultTransiton()
+                    .setAsDefaultTransition()
                     .addParamBindedToProcessVariable(PARAM_FLAG, false)
                     .addParamBindedToProcessVariable(PARAM_BIG, false)
                     .addParamInteger(PARAM_NOCOPY, false);
