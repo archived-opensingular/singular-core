@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.test;
+package org.opensingular.lib.commons.junit;
 
 import com.google.common.base.Throwables;
 import org.junit.After;

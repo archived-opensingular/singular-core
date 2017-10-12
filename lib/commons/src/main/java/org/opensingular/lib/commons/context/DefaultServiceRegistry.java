@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.context;
+package org.opensingular.lib.commons.context;
 
 import com.google.common.collect.ImmutableMap;
-import org.opensingular.form.RefService;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.internal.lib.commons.injection.SingularInjector;
 
 import javax.annotation.Nonnull;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,7 +33,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     private final Map<String, ServiceEntry>          servicesByName  = newHashMap();
     private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
 
-    protected DefaultServiceRegistry() {
+    public DefaultServiceRegistry() {
     }
 
     /**
@@ -81,19 +77,13 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             return Optional.of(targetClass.cast(provider.get()));
         }
         String message = String.format("There are %s options of type %s please be more specific", list.size(), targetClass.getName());
-        throw new SingularFormException(message);
+        throw new SingularRegistryLookupException(message);
     }
 
     @Override
     @Nonnull
     public <T> Optional<T> lookupService(@Nonnull String name) {
         return (Optional<T>) lookupService(name, Object.class);
-    }
-
-    @Nonnull
-    @Override
-    public SingularInjector lookupSingularInjector() {
-        return SingularInjector.getEmptyInjector();
     }
 
     @Override
@@ -114,7 +104,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             } else if (!targetClass.isInstance(value)) {
                 String message = "For service '" + name + "' was found a class of value "
                         + value.getClass().getName() + " instead of the expected " + targetClass.getName();
-                throw new SingularFormException(message);
+                throw new SingularRegistryLookupException(message);
             }
             return Optional.ofNullable(targetClass.cast(value));
         }

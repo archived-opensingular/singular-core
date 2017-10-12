@@ -18,7 +18,7 @@ package org.opensingular.lib.commons.table;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
-import org.opensingular.lib.commons.test.AbstractTestTempFileSupport;
+import org.opensingular.lib.commons.junit.AbstractTestTempFileSupport;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;

@@ -76,6 +76,14 @@
       <version>${wicket.version}</version>
     </dependency>
 
+    <!-- USED IN TESTS -->
+    <dependency>
+      <groupId>org.opensingular</groupId>
+      <artifactId>singular-commons-test</artifactId>
+      <version>1.6.9-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

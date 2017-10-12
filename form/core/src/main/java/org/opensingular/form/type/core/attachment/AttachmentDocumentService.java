@@ -18,11 +18,11 @@ package org.opensingular.form.type.core.attachment;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import org.opensingular.form.RefService;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstances;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.lib.commons.context.RefService;
 
 import java.io.File;
 import java.util.Optional;

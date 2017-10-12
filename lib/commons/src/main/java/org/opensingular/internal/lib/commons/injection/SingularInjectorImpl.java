@@ -94,7 +94,7 @@ public class SingularInjectorImpl implements SingularInjector {
                 field.set(object, value);
             }
         } else if (fieldInfo.isRequired()) {
-            throw new SingularBeanNotFoundException(fieldInfo, object, "Não foi encontrado o bean", null);
+            throw new SingularInjectionBeanNotFoundException(fieldInfo, object, "Não foi encontrado o bean", null);
         } else if (fieldInfo.isFieldOptionalBeanReference()) {
             field.set(object, Optional.empty());
         }

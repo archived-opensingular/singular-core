@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.RefService;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
@@ -19,6 +18,7 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.core.attachment.helper.DefaultAttachmentPersistenceHelper;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.context.RefService;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +28,10 @@ import java.io.OutputStream;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {

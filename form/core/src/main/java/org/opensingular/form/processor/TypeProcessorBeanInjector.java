@@ -17,9 +17,9 @@
 package org.opensingular.form.processor;
 
 import org.opensingular.form.SType;
-import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import javax.annotation.Nonnull;
 

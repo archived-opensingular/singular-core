@@ -1,23 +1,22 @@
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Supplier;
-
+import junit.framework.TestCase;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.util.Loggable;
 
-import junit.framework.TestCase;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 public abstract class TestCaseForm extends TestCase implements Loggable {
 

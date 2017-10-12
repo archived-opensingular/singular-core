@@ -2,7 +2,6 @@ package org.opensingular.form.document;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.RefService;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoPackage;
@@ -11,8 +10,7 @@ import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.ServiceRegistryLocator;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

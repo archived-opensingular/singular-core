@@ -141,4 +141,205 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
         }
         return (SELF) this;
     }
+
+    //----------------------------------------------------------------------------
+    // Cloned methods from org.junit.Assert to avoid direct dependency with JUnit
+    //----------------------------------------------------------------------------
+
+    /**
+     * Asserts that two objects are equal. If they are not, an
+     * {@link AssertionError} without a message is thrown. If
+     * <code>expected</code> and <code>actual</code> are <code>null</code>,
+     * they are considered equal.
+     *
+     * @param expected expected value
+     * @param actual   the value to check against <code>expected</code>
+     */
+    protected static void assertEquals(Object expected, Object actual) {
+        assertEquals(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two objects are equal. If they are not, an
+     * {@link AssertionError} is thrown with the given message. If
+     * <code>expected</code> and <code>actual</code> are <code>null</code>,
+     * they are considered equal.
+     *
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
+     * @param expected expected value
+     * @param actual   actual value
+     */
+    protected static void assertEquals(String message, Object expected, Object actual) {
+        if (equalsRegardingNull(expected, actual)) {
+            return;
+        } else if (expected instanceof String && actual instanceof String) {
+            String cleanMessage = message == null ? "" : message;
+            fail(cleanMessage + "\n expected=" + (String) expected + "\n found=" + (String) actual);
+        } else {
+            failNotEquals(message, expected, actual);
+        }
+    }
+
+    private static boolean equalsRegardingNull(Object expected, Object actual) {
+        if (expected == null) {
+            return actual == null;
+        }
+
+        return isEquals(expected, actual);
+    }
+
+    static private void failNotEquals(String message, Object expected, Object actual) {
+        fail(format(message, expected, actual));
+    }
+
+    static String format(String message, Object expected, Object actual) {
+        String formatted = "";
+        if (message != null && !message.equals("")) {
+            formatted = message + " ";
+        }
+        String expectedString = String.valueOf(expected);
+        String actualString = String.valueOf(actual);
+        if (expectedString.equals(actualString)) {
+            return formatted + "expected: " + formatClassAndValue(expected, expectedString) + " but was: " +
+                    formatClassAndValue(actual, actualString);
+        } else {
+            return formatted + "expected:<" + expectedString + "> but was:<" + actualString + ">";
+        }
+    }
+
+    private static String formatClassAndValue(Object value, String valueString) {
+        String className = value == null ? "null" : value.getClass().getName();
+        return className + "<" + valueString + ">";
+    }
+
+    private static boolean isEquals(Object expected, Object actual) {
+        return expected.equals(actual);
+    }
+
+    /**
+     * Asserts that two objects do not refer to the same object. If they do
+     * refer to the same object, an {@link AssertionError} is thrown with the
+     * given message.
+     *
+     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
+     *                   okay)
+     * @param unexpected the object you don't expect
+     * @param actual     the object to compare to <code>unexpected</code>
+     */
+    protected static void assertNotSame(String message, Object unexpected, Object actual) {
+        if (unexpected == actual) {
+            failSame(message);
+        }
+    }
+
+    static private void failSame(String message) {
+        String formatted = "";
+        if (message != null) {
+            formatted = message + " ";
+        }
+        fail(formatted + "expected not same");
+    }
+
+    /**
+     * Asserts that two objects do not refer to the same object. If they do
+     * refer to the same object, an {@link AssertionError} without a message is
+     * thrown.
+     *
+     * @param unexpected the object you don't expect
+     * @param actual     the object to compare to <code>unexpected</code>
+     */
+    protected static void assertNotSame(Object unexpected, Object actual) {
+        assertNotSame(null, unexpected, actual);
+    }
+
+    /**
+     * Asserts that an object isn't null. If it is an {@link AssertionError} is
+     * thrown.
+     *
+     * @param object Object to check or <code>null</code>
+     */
+    protected static void assertNotNull(Object object) {
+        assertNotNull(null, object);
+    }
+
+    /**
+     * Asserts that an object isn't null. If it is an {@link AssertionError} is
+     * thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     *                okay)
+     * @param object  Object to check or <code>null</code>
+     */
+    protected static void assertNotNull(String message, Object object) {
+        assertTrue(message, object != null);
+    }
+
+    /**
+     * Asserts that a condition is true. If it isn't it throws an
+     * {@link AssertionError} with the given message.
+     *
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
+     * @param condition condition to be checked
+     */
+    protected static void assertTrue(String message, boolean condition) {
+        if (!condition) {
+            fail(message);
+        }
+    }
+
+    /**
+     * Asserts that an object is null. If it is not, an {@link AssertionError}
+     * is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     *                okay)
+     * @param object  Object to check or <code>null</code>
+     */
+    protected static void assertNull(String message, Object object) {
+        if (object == null) {
+            return;
+        }
+        failNotNull(message, object);
+    }
+
+    /**
+     * Asserts that an object is null. If it isn't an {@link AssertionError} is
+     * thrown.
+     *
+     * @param object Object to check or <code>null</code>
+     */
+    protected static void assertNull(Object object) {
+        assertNull(null, object);
+    }
+
+    static private void failNotNull(String message, Object actual) {
+        String formatted = "";
+        if (message != null) {
+            formatted = message + " ";
+        }
+        fail(formatted + "expected null, but was:<" + actual + ">");
+    }
+
+    /**
+     * Fails a test with no message.
+     */
+    protected static void fail() {
+        fail(null);
+    }
+
+    /**
+     * Fails a test with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     *                okay)
+     * @see AssertionError
+     */
+    protected static void fail(String message) {
+        if (message == null) {
+            throw new AssertionError();
+        }
+        throw new AssertionError(message);
+    }
 }
