@@ -49,9 +49,6 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
         name = addFieldString(FIELD_NAME);
         hashSHA1 = addFieldString(FIELD_HASH_SHA1);
         fileSize = addFieldInteger(FIELD_FILE_SIZE);
-
-        /* Hide all subtypes from documentation engine*/
-        STypes.streamDescendants(this, false).forEach(s -> s.as(AtrDOC::new).hiddenForDocumentation());
     }
 
 }
