@@ -74,6 +74,12 @@
       <groupId>de.alpharogroup</groupId>
       <artifactId>wicket-toastr</artifactId>
       <version>${wicket.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- USED IN TESTS -->

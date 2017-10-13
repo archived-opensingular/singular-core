@@ -80,6 +80,12 @@ public interface ServiceRegistry {
         return SingularInjector.getEmptyInjector();
     }
 
+    /** Returns {@link SingularInjector} if there is one already configured. */
+    @Nonnull
+    default Optional<SingularInjector> lookupSingularInjectorOpt() {
+        return lookupService(SingularInjector.class);
+    }
+
     /**
      * List all factories for all registered services;
      *

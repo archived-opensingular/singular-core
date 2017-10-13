@@ -36,6 +36,7 @@ import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
@@ -718,7 +719,8 @@ public abstract class FlowDefinition<I extends FlowInstance>
     @Nonnull
     final <V> V inject(@Nonnull V target) {
         if (injector == null) {
-            injector = ServiceRegistryLocator.locate().lookupSingularInjector();
+            Optional<SingularInjector> result = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
+            injector = result.orElseGet(() -> SingularSpringInjector.get());
         }
         injector.inject(Objects.requireNonNull(target));
         return target;

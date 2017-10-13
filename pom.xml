@@ -193,7 +193,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.13</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
     </dependencies>
@@ -490,10 +490,12 @@
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <spring.version>4.2.4.RELEASE</spring.version>
-        <spring.security.version>4.0.3.RELEASE</spring.security.version>
+        <!-- Spring and Spring Security should be update together with compatible versions -->
+        <spring.version>4.2.5.RELEASE</spring.version>
+        <spring.security.version>4.0.4.RELEASE</spring.security.version>
         <wicket.version>7.3.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
+        <slf4j.version>1.7.12</slf4j.version>
     </properties>
 
 
