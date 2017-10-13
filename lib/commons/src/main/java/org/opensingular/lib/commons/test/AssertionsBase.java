@@ -17,6 +17,8 @@
 package org.opensingular.lib.commons.test;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
@@ -195,7 +197,7 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
 
     static String format(String message, Object expected, Object actual) {
         String formatted = "";
-        if (message != null && !message.equals("")) {
+        if (!StringUtils.isBlank(message)) {
             formatted = message + " ";
         }
         String expectedString = String.valueOf(expected);

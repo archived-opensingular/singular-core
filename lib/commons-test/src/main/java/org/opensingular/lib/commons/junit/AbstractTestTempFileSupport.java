@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IConsumerEx;
 import org.opensingular.lib.commons.lambda.IFunctionEx;
 import org.opensingular.lib.commons.util.TempFileUtils;
@@ -59,8 +60,13 @@ public abstract class AbstractTestTempFileSupport {
     /** Return the current {@link TempFileProvider} or creates a ne one, if necessary. */
     @Nonnull
     protected TempFileProvider getTempFileProvider() {
+        return getTempFileProvider(this);
+    }
+
+    @Nonnull
+    private static TempFileProvider getTempFileProvider(@Nonnull Object requester) {
         if (tmpProvider == null) {
-            tmpProvider = TempFileProvider.createForUseInTryClause(this);
+            tmpProvider = TempFileProvider.createForUseInTryClause(requester);
         }
         return tmpProvider;
     }
@@ -111,7 +117,7 @@ public abstract class AbstractTestTempFileSupport {
             file = fileGenerator.apply(getTempFileProvider());
         } catch (Exception e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw SingularException.rethrow(e);
         }
         if (file != null) {
             if (isOpenGeneratedFiles()) {
@@ -139,7 +145,7 @@ public abstract class AbstractTestTempFileSupport {
         } catch (Exception e) {
             TempFileUtils.deleteAndFailQuietily(file, this);
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw SingularException.rethrow(e);
         }
         if (isOpenGeneratedFiles()) {
             SingularTestUtil.showFileOnDesktopForUser(file);
