@@ -17,12 +17,12 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons-test</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

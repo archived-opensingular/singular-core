@@ -17,13 +17,13 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-flow-schedule</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
 
         <!-- Remover essa dependência de reflections em favor "org.reflections - mirror" -->
