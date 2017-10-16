@@ -112,8 +112,13 @@ public class ViewsUtil {
             throw new SingularViewUnsupportedFormatException(copyOfViewGenerator, format);
         }
         try {
-            File arq = File.createTempFile(ViewsUtil.class.getSimpleName() + "_report",
-                    "." + format.getFileExtension());
+            File arq;
+            if (tmpProvider == null) {
+                arq = File.createTempFile(ViewsUtil.class.getSimpleName() + "_report", "." + format.getFileExtension());
+            } else {
+                arq = tmpProvider.createTempFile(ViewsUtil.class.getSimpleName() + "_report",
+                        "." + format.getFileExtension());
+            }
             boolean ok = false;
             try {
                 format.generateFile(arq, copyOfViewGenerator);

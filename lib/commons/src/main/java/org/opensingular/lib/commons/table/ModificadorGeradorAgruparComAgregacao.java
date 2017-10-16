@@ -156,6 +156,6 @@ class ModificadorGeradorAgruparComAgregacao extends ModificadorGerador {
     }
 
     private Comparator<DadoLinha> getSortComparator() {
-        return colunasAgrupamento.stream().map(this::montaComparador).reduce(Comparator::thenComparing).get();
+        return colunasAgrupamento.stream().map(this::montaComparador).reduce(Comparator::thenComparing).orElse(null);
     }
 }

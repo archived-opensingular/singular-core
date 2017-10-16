@@ -17,12 +17,12 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-studio-core</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

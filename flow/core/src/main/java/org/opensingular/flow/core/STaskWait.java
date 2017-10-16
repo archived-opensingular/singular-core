@@ -58,7 +58,7 @@ public class STaskWait extends STaskUserExecutable<STaskWait> {
     }
 
     @Override
-    public IEntityTaskType getTaskType() {
+    public TaskType getTaskType() {
         return TaskType.WAIT;
     }
 

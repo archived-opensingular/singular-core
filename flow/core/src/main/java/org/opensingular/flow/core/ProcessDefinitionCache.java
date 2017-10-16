@@ -25,7 +25,13 @@ import org.reflections.Reflections;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public final class ProcessDefinitionCache {
 
@@ -58,7 +64,7 @@ public final class ProcessDefinitionCache {
         Set<Class<? extends FlowDefinition>> subTypes = reflections.getSubTypesOf(FlowDefinition.class);
 
         for (Class<? extends FlowDefinition> classeDefinicao : subTypes) {
-            if (Modifier.isAbstract(classeDefinicao.getModifiers())) {
+            if (Modifier.isAbstract(classeDefinicao.getModifiers()) || ! hasEmptyConstructor(classeDefinicao)) {
                 continue;
             }
             FlowDefinition<?> def = getDefinition(classeDefinicao);
@@ -73,6 +79,14 @@ public final class ProcessDefinitionCache {
         definitions = newCache.build();
         definitionsByKey = ImmutableMap.copyOf(cacheByKey);
 
+    }
+
+    private boolean hasEmptyConstructor(Class<?> targetClass) {
+        try {
+            return targetClass.getConstructor() != null;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     public synchronized static ProcessDefinitionCache get(String[] packagesNames) {

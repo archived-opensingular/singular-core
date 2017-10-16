@@ -17,19 +17,13 @@
 package org.opensingular.lib.commons.table;
 
 import org.apache.commons.io.output.WriterOutputStream;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opensingular.internal.lib.commons.test.SingularTestUtil;
-import org.opensingular.internal.lib.commons.util.TempFileProvider;
-import org.opensingular.lib.commons.util.TempFileUtils;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
 import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
 import org.opensingular.lib.commons.views.ViewsUtil;
 import org.opensingular.lib.commons.views.format.FullPageHtmlGenerator;
 import org.opensingular.lib.commons.views.format.ViewOutputHtmlWriterWrap;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -38,71 +32,44 @@ import java.io.PrintStream;
  */
 public class TableToolSimpleFormatsTest extends TableToolSimpleBaseTest {
 
-    private static TempFileProvider tmpProvider;
-
-    @BeforeClass
-    public static void createTmpProvider() {
-        tmpProvider = TempFileProvider.createForUseInTryClause(TableToolSimpleFormatsTest.class);
-    }
-
-    @AfterClass
-    public static void cleanTmpProvider() {
-        if (OPEN_GENERATED_FILE) {
-            SingularTestUtil.waitMilli(10000);
-            tmpProvider.deleteOrException();
-        }
-    }
-
-    public void cleanTmpProvider2() {
-        if (!OPEN_GENERATED_FILE) {
-            tmpProvider.deleteOrException();
-        }
+    public TableToolSimpleFormatsTest() {
+        setOpenGeneratedFiles(false);
     }
 
     private void generateFormats(TableTool table) {
         generateFormats(table, "bootstrap.min.css");
         generateFormats(table, "alocpro.css");
 
-       // generateFormats(table, ViewOutputFormat.EXCEL);
+        generateFormats(table, ViewOutputFormat.EXCEL);
         //generateFormats(table, ViewOutputFormat.PDF);
     }
 
     private void generateFormats(TableTool table, ViewOutputFormatExportable format) {
-        File arq = ViewsUtil.exportToTempFile(table, format);
-        try {
-            if (OPEN_GENERATED_FILE) {
-                SingularTestUtil.showFileOnDesktopForUser(arq);
-            }
-        } finally {
-            TempFileUtils.deleteOrException(arq, this);
-        }
-
+        generateFileAndShowOnDesktopForUser(
+                tmpFileProvider -> ViewsUtil.exportToTempFile(table, format, tmpFileProvider));
     }
+
     private void generateFormats(TableTool table, String cssFile) {
-        File arq = tmpProvider.createTempFile(".html");
-        try (FullPageHtmlGenerator generator = new FullPageHtmlGenerator(arq)) {
-            generator.addInternalCSSFromResource(this, cssFile);
-            generator.writeBegin();
-            TableOutput outputHtml = new TableOutputHtml(new ViewOutputHtmlWriterWrap(generator.getOut(), false));
-            table.generate(outputHtml);
+        generateFileAndShowOnDesktopForUser("html", out -> {
+            try (FullPageHtmlGenerator generator = new FullPageHtmlGenerator(out)) {
+                generator.addInternalCSSFromResource(this, cssFile);
+                generator.writeBegin();
+                TableOutput outputHtml = new TableOutputHtml(new ViewOutputHtmlWriterWrap(generator.getOut(), false));
+                table.generate(outputHtml);
 
-            TableOutputSimulated output = new TableOutputSimulated();
-            table.generate(output);
-            generator.getOut().println("<br><xmp>");
-            OutputStream os = new WriterOutputStream(generator.getOut());
-            PrintStream pOut = new PrintStream(os);
-            output.getResult().debug();
-            output.getResult().debug(pOut);
-            pOut.flush();
-            generator.getOut().println("</xmp>");
+                TableOutputSimulated output = new TableOutputSimulated();
+                table.generate(output);
+                generator.getOut().println("<br><xmp>");
+                OutputStream os = new WriterOutputStream(generator.getOut());
+                PrintStream pOut = new PrintStream(os);
+                output.getResult().debug();
+                output.getResult().debug(pOut);
+                pOut.flush();
+                generator.getOut().println("</xmp>");
 
-            generator.writeEndAndClose();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (OPEN_GENERATED_FILE) {
-            SingularTestUtil.showFileOnDesktopForUser(arq);
-        }
+                generator.writeEndAndClose();
+            }
+        });
     }
 
     @Test

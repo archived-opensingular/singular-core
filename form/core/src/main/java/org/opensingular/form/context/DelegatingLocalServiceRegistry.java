@@ -16,8 +16,10 @@
 
 package org.opensingular.form.context;
 
-import org.opensingular.form.RefService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.lib.commons.context.DefaultServiceRegistry;
+import org.opensingular.lib.commons.context.RefService;
+import org.opensingular.lib.commons.context.ServiceRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.Map;

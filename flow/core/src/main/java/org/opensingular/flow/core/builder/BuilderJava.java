@@ -16,12 +16,14 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.DisplayType;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.TaskJavaBatchCall;
 import org.opensingular.flow.core.TaskJavaCall;
-import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.schedule.IScheduleData;
+
+import javax.annotation.Nullable;
 
 public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTaskSelf<SELF, STaskJava> {
 
@@ -30,14 +32,18 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
         return self();
     }
 
-    default SELF setBpmnTypeAsEmail() {
-        getTask().setMetaDataValue(IFlowRenderer.SEND_EMAIL, Boolean.TRUE);
+    default <T extends FlowInstance> SELF batchCall(TaskJavaBatchCall<T> implBloco, IScheduleData scheduleData) {
+        getTask().batchCall(implBloco, scheduleData);
         return self();
     }
 
-
-    default <T extends FlowInstance> SELF batchCall(TaskJavaBatchCall<T> implBloco, IScheduleData scheduleData) {
-        getTask().batchCall(implBloco, scheduleData);
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the type of BPMN node that will be used to
+     * render this task.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    default SELF setDisplayType(@Nullable DisplayType displayType) {
+        getTask().setDisplayType(displayType);
         return self();
     }
 }

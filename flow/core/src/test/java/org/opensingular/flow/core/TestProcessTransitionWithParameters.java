@@ -17,7 +17,7 @@
 package org.opensingular.flow.core;
 
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessTransitionWithParameters.FlowTranisitonWithParameters.StepsTP;
+import org.opensingular.flow.core.TestProcessTransitionWithParameters.FlowTransitionWithParameters.StepsTP;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -48,7 +48,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
     @Nonnull
     private FlowInstance createTestProcess() {
 
-        StartCall<FlowInstance> startCall = new FlowTranisitonWithParameters().prepareStartCall()
+        StartCall<FlowInstance> startCall = new FlowTransitionWithParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, "A")
                 .setValue(PARAM_BIG, VALUE_BIG1);
         return startCall.createAndStart();
@@ -199,7 +199,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
     }
 
     @DefinitionInfo("TransitionWithParameters")
-    public static class FlowTranisitonWithParameters extends FlowDefinition<FlowInstance> {
+    public static class FlowTransitionWithParameters extends FlowDefinition<FlowInstance> {
 
         public enum StepsTP implements ITaskDefinition {
             First, Second, Third, End;
@@ -210,7 +210,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
             }
         }
 
-        public FlowTranisitonWithParameters() {
+        public FlowTransitionWithParameters() {
             super(FlowInstance.class);
             getVariables().addVariableString(PARAM_FLAG);
             getVariables().addVariableBigDecimal(PARAM_BIG);
@@ -228,7 +228,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
             f.setStartTask(StepsTP.First).with(this::setupStartParameters);
 
             f.from(StepsTP.First).go(StepsTP.Second)
-                    .setAsDefaultTransiton()
+                    .setAsDefaultTransition()
                     .addParamBindedToProcessVariable(PARAM_FLAG, false)
                     .addParamBindedToProcessVariable(PARAM_BIG, false)
                     .addParamInteger(PARAM_NOCOPY, false);
