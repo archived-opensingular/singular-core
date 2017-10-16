@@ -20,7 +20,7 @@ public class AtrDOC extends STranslatorForAttribute {
     }
 
     public AtrDOC hiddenForDocumentation() {
-        setAttributeValue(SPackageDocumentation.ATR_DOC_HIDDEN, true);
+        setAttributeValue(SPackageDocumentation.ATR_DOC_HIDDEN, Boolean.TRUE);
         return this;
     }
 

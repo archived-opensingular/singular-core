@@ -24,8 +24,6 @@ import static org.opensingular.form.io.definition.SIPersistenceAttribute.Value.L
 
 public class SIPersistenceAttribute extends SIComposite {
 
-    private boolean lambdaValue;
-
     public boolean isLambdaValue() {
         return LAMBDA_VALUE.name().equals(getAttrValue());
     }
@@ -51,7 +49,7 @@ public class SIPersistenceAttribute extends SIComposite {
         if (value != null && (ClassUtils.isPrimitiveOrWrapper(value.getClass()) || value instanceof String)) {
             value = String.valueOf(value);
         } else if (value != null) {
-            value = LAMBDA_VALUE;
+            value = LAMBDA_VALUE;//NOSONAR
         }
         this.setValue(getSType().attrValue, value);
     }
