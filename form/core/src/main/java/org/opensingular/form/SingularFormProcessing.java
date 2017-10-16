@@ -40,7 +40,9 @@ public class SingularFormProcessing {
                         updateListener.accept(dependant);
                     }
                     instances.add(dependant);
-                    instances.addAll(SingularFormProcessing.evaluateUpdateListeners(dependant));
+                    if (!dependant.equals(i)) {
+                        instances.addAll(SingularFormProcessing.evaluateUpdateListeners(dependant));
+                    }
                     return instances;
                 })
                 .flatMap(Collection::stream)
