@@ -9,7 +9,7 @@ public class SISimpleFlatViewGenerator extends AbstractFlatViewGenerator {
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         SInstance instance = context.getInstance();
         canvas.addFormItem(new FormItem(instance.asAtr().getLabel(),
-                instance.toStringDisplayDefault(), instance.asAtrBootstrap().getColPreference()));
+                instance.toStringDisplay(), instance.asAtrBootstrap().getColPreference()));
     }
 
 }

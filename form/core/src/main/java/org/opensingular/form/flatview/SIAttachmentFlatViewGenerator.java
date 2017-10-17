@@ -9,7 +9,7 @@ public class SIAttachmentFlatViewGenerator extends AbstractFlatViewGenerator {
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         SIAttachment instance = context.getInstanceAs(SIAttachment.class);
         canvas.addFormItem(new FormItem(instance.asAtr().getLabel(),
-                instance.toStringDisplayDefault(), 12));
+                instance.toStringDisplay(), 12));
     }
 }
 
