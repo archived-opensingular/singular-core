@@ -41,6 +41,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +98,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         } else {
             BSControls labelBar = new BSControls("labelBar")
                 .appendLabel(label);
+            
+            labelBar.add(WicketUtils.$b.classAppender("labelBar"));
 
             IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
                 AbstractControlsFieldComponentMapper.this,
