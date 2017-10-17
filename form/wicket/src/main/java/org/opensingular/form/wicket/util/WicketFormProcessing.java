@@ -70,15 +70,32 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         });
     }
 
+    public static boolean onFormSubmit(MarkupContainer container,
+                                       AjaxRequestTarget target,
+                                       IModel<? extends SInstance> baseInstance,
+                                       boolean validate,
+                                       boolean clearProcessedMetadata) {
+        return processAndPrepareForm(container, target, baseInstance, validate, clearProcessedMetadata);
+    }
+
+
     public static boolean onFormSubmit(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstance, boolean validate) {
-        return processAndPrepareForm(container, target, baseInstance, validate);
+        return onFormSubmit(container, target, baseInstance, validate, false);
     }
 
     public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
-        return processAndPrepareForm(container, null, baseInstance, validate);
+        return processAndPrepareForm(container, null, baseInstance, validate, false);
     }
 
-    private static boolean processAndPrepareForm(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
+    private static boolean processAndPrepareForm(MarkupContainer container,
+                                                 AjaxRequestTarget target,
+                                                 IModel<? extends SInstance> baseInstanceModel,
+                                                 boolean validate,
+                                                 boolean clearProcessedMetadata) {
+
+        if (clearProcessedMetadata) {
+            RequestCycle.get().setMetaData(MDK_PROCESSED, null);
+        }
 
         final Function<Boolean, Boolean> setAndReturn = (value) -> {
             RequestCycle.get().setMetaData(MDK_PROCESSED, value);
