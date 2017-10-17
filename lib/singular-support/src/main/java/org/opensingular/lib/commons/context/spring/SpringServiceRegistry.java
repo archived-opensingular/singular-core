@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.spring;
+package org.opensingular.lib.commons.context.spring;
 
-import org.opensingular.form.RefService;
-import org.opensingular.form.context.DefaultServiceRegistry;
-import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
+import org.opensingular.lib.commons.context.DefaultServiceRegistry;
+import org.opensingular.lib.commons.context.RefService;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.Map;
 import java.util.Optional;
 

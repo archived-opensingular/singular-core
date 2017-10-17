@@ -32,7 +32,9 @@ import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
@@ -224,7 +226,7 @@ public class TesFlowMapValidations {
         }
 
         @Override
-        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
             return null;
         }
     }

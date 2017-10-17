@@ -2,17 +2,16 @@ package org.opensingular.lib.commons.table;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.lib.commons.views.format.ViewOutputExcel;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class TableToolSimpleExcelTest extends TableToolSimpleBaseTest {
 
     private TableOutputExcel tableOutputExcel;
     private ViewOutputExcel viewOutputExcel;
+
+    public TableToolSimpleExcelTest() {
+        setOpenGeneratedFiles(false);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -84,17 +83,8 @@ public class TableToolSimpleExcelTest extends TableToolSimpleBaseTest {
     }
 
     public void writeAndOpenIfEnabled() {
-        try {
-            File xlsx = File.createTempFile("test", ".xlsx");
-            FileOutputStream fos = new FileOutputStream(xlsx);
-            viewOutputExcel.write(fos);
-            if (OPEN_GENERATED_FILE) {
-                SingularTestUtil.showFileOnDesktopForUser(xlsx);
-            } else {
-                xlsx.deleteOnExit();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        generateFileAndShowOnDesktopForUser("xlsx", out -> {
+            viewOutputExcel.write(out);
+        });
     }
 }

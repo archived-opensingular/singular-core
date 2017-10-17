@@ -1,11 +1,8 @@
 package org.opensingular.form.type.core;
 
-import java.io.Serializable;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.RefService;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -13,6 +10,9 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.lib.commons.context.RefService;
+
+import java.io.Serializable;
 
 @RunWith(Parameterized.class)
 public class STypeIntegerTest extends  TestCaseForm  {

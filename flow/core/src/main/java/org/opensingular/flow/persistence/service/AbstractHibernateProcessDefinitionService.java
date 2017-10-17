@@ -37,6 +37,7 @@ import org.opensingular.flow.core.entity.IEntityRoleTask;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.persistence.entity.ModuleEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
@@ -88,12 +89,21 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
                 TRANSITION entityTransition = createEntityTaskTransition(originTask, destinationTask);
                 entityTransition.setAbbreviation(sTransition.getAbbreviation());
                 entityTransition.setName(sTransition.getName());
-                entityTransition.setType(sTransition.getType());
+                entityTransition.setType(getType(sTransition));
 
                 ((List<TRANSITION>) originTask.getTransitions()).add(entityTransition);
             }
         }
         return entityProcessVersion;
+    }
+
+    private TransitionType getType(STransition transition) {
+        if (transition.getPredicate() != null) {
+            return TransitionType.A;
+        } else if (transition.getDisplayEventType() != null) {
+            return TransitionType.E;
+        }
+        return TransitionType.H;
     }
 
     protected abstract PROCESS_VERSION createEntityProcessVersion(PROCESS_DEF entityProcessDefinition);

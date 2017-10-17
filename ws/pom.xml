@@ -18,4 +18,13 @@
         <module>wkhtmltopdf-client</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-commons-test</artifactId>
+            <version>${singular.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>

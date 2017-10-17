@@ -109,7 +109,8 @@ public class TempFileProvider implements Closeable {
      * Dispara exception senão conseguir apagar todos os arquivos temporários criados (provavelmente por haver algum
      * stream ainda aberto em cima de um arquivo temporário).
      *
-     * @param requester do arquivos temporário. O nome da classe será usado como prefixo no arquivo temporário.
+     * @param requester Class or object client of the temp file generation. The name of the class will be used as
+     *                  prefix of the temp file names.
      * @param callback  código a ser executado com o provedor de arquivos temporários
      */
     public static void create(@Nonnull Object requester, @Nonnull IConsumerEx<TempFileProvider, IOException> callback) {
@@ -132,6 +133,11 @@ public class TempFileProvider implements Closeable {
     private static Class<?> resolverRequester(Object requester) {
         Objects.requireNonNull(requester);
         return requester instanceof Class ? (Class<?>) requester : requester.getClass();
+    }
+
+    /** True if there is no temp file to deleted. */
+    public boolean isEmpty() {
+        return tempFiles.isEmpty();
     }
 
     /**

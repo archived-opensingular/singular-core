@@ -95,7 +95,7 @@ public class SingularInjectorTest {
     @Test
     public void notFoundInject() {
         Simple2 simple2 = new Simple2();
-        assertException(() -> inject(simple2), SingularBeanNotFoundException.class);
+        assertException(() -> inject(simple2), SingularInjectionBeanNotFoundException.class);
         assertNull(simple2.a);
     }
 

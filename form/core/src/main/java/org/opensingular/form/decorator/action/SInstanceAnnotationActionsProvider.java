@@ -63,7 +63,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
     private static String getEditActionTitle(SInstance instance) {
         String label = instance.asAtr().getLabel();
         if (label != null) {
-            return "Comentários sobre " + instance.asAtr().getLabel();
+            return "Comentários sobre " + label;
         } else {
             return "Comentário";
         }

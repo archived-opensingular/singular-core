@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form;
-
-import org.opensingular.form.io.ServiceRefTransientValue;
+package org.opensingular.lib.commons.context;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -76,9 +74,6 @@ public interface RefService<T> extends Serializable, Supplier<T> {
 
     /**
      * Cria uma ServiceRef para o valor informado mas que descartado no caso da refência seja serializada.
-     * <p> No uso em conjunto com {@link org.opensingular.form.document.SDocument#lookupService(Class)}, significa
-     * que essa referência será descartada na volta da deserialziação e será procurada um referêncaia ao recurso no
-     * contexto de recursos superior (se existir tal contexto).</p>
      * <p>Tipicamente é utilizado para referências do tipo cache ou que pode ser recalculada depois.</p>
      */
     @Nonnull

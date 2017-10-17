@@ -21,10 +21,13 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 
@@ -149,6 +152,56 @@ public class SFlowUtil {
     @Nonnull
     public static <V> V inject(@Nonnull STask<?> task, @Nonnull V target) {
         return task.inject(target);
+    }
+
+
+    /** Creates a {@link TaskJavaCall} that doesn't do nothing. Useful mainly for implementing tests. */
+    public static <T extends FlowInstance> TaskJavaCall<T> dummyTaskJavaCall() {
+        return new TaskJavaCall<T>() {
+            @Override
+            public void call(ExecutionContext<T> context) {
+            }
+        };
+    }
+
+    /** Creates a {@link TaskJavaBatchCall} that doesn't do nothing. Useful mainly for implementing tests. */
+    public static <T extends FlowInstance> TaskJavaBatchCall<T> dummyTaskJavaBatchCall() {
+        return new TaskJavaBatchCall<T>() {
+            @Override
+            public String call(Collection<T> flowInstances) {
+                return null;
+            }
+        };
+    }
+
+    /** Creates a {@link TaskAccessStrategy} that doesn't do nothing. Useful mainly for implementing tests. */
+    @Nonnull
+    public static TaskAccessStrategy dummyTaskAccessStrategy() {
+        return new DummyTaskAccessStrategy();
+    }
+
+    private static class DummyTaskAccessStrategy extends TaskAccessStrategy {
+
+        @Override
+        public boolean canExecute(FlowInstance instance, SUser user) {
+            return false;
+        }
+
+        @Override
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instance) {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+            return Collections.emptyList();
+        }
+
+        @Nonnull
+        @Override
+        public List<String> getExecuteRoleNames(FlowDefinition definition, STask task) {
+            return Collections.emptyList();
+        }
     }
 
 }

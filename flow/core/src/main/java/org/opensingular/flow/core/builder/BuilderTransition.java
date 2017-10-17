@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.EventType;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.SParametersEnabled;
@@ -26,6 +27,7 @@ import org.opensingular.flow.core.UITransitionAccessStrategyImplUI;
 import org.opensingular.flow.core.property.MetaDataRef;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -84,11 +86,48 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return uiAccess(UITransitionAccessStrategyImplUI.visible(false));
     }
 
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the BPMN type of the event that triggers the
+     * execution of this transition, if not null. When it's null on a human task, usually means that this a transition
+     * manually executed by the user.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    public default SELF setDisplayEventType(EventType eventType) {
+        getTransition().setDisplayEventType(eventType);
+        return self();
+    }
+
     public default SELF uiDisabled(){
         return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, null));
 
     }
     public default SELF uiDisabled(String message){
         return uiAccess(UITransitionAccessStrategyImplUI.enabled(false, message));
+    }
+
+    /**
+     * Define that, when generating a diagram of the process, this transition should be preferred displayed as link
+     * event instead of a direct line to the destination.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     *
+     * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
+     */
+    default SELF setDisplayAsLink(@Nullable String displayAsLinkName) {
+        getTransition().setDisplayAsLink(displayAsLinkName);
+        return self();
+    }
+
+    /**
+     * Define that, when generating a diagram of the process, this transition should be preferred displayed as link
+     * event instead of a direct line to the destination.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     *
+     * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
+     * @param linkGroupIndex    If there is two links for the same destination with the same index, it
+     *                          will be rendered as just one visual component.
+     */
+    default SELF setDisplayAsLink(@Nullable String displayAsLinkName, int linkGroupIndex) {
+        getTransition().setDisplayAsLink(displayAsLinkName, linkGroupIndex);
+        return self();
     }
 }

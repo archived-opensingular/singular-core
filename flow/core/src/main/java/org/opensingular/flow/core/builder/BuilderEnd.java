@@ -16,8 +16,22 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.EventType;
 import org.opensingular.flow.core.STaskEnd;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface BuilderEnd<SELF extends BuilderEnd<SELF>> extends BuilderTaskSelf<SELF, STaskEnd> {
 
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the type of BPMN event will be used to
+     * render this end task (the symbol that goes inside the end symbol).
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    @Nonnull
+    default SELF setDisplayEventType(@Nullable EventType eventType) {
+        getTask().setDisplayEventType(eventType);
+        return self();
+    }
 }

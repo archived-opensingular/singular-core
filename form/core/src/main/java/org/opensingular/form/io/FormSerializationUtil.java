@@ -20,12 +20,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.lib.commons.context.ServiceRegistry;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
