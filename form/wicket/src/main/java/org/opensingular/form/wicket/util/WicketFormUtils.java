@@ -37,6 +37,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.event.Broadcast;
+import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -48,35 +49,47 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public abstract class WicketFormUtils {
-    private static final MetaDataKey<Integer>         KEY_INSTANCE_ID       = new MetaDataKey<Integer>() {};
-    private static final MetaDataKey<Boolean>         KEY_IS_CELL_CONTAINER = new MetaDataKey<Boolean>() {};
-    private static final MetaDataKey<MarkupContainer> KEY_CELL_CONTAINER    = new MetaDataKey<MarkupContainer>() {};
-    private static final MetaDataKey<MarkupContainer> KEY_ROOT_CONTAINER    = new MetaDataKey<MarkupContainer>() {};
+    private static final MetaDataKey<Integer> KEY_INSTANCE_ID = new MetaDataKey<Integer>() {
+    };
+    private static final MetaDataKey<Boolean> KEY_IS_CELL_CONTAINER = new MetaDataKey<Boolean>() {
+    };
+    private static final MetaDataKey<MarkupContainer> KEY_CELL_CONTAINER = new MetaDataKey<MarkupContainer>() {
+    };
+    private static final MetaDataKey<MarkupContainer> KEY_ROOT_CONTAINER = new MetaDataKey<MarkupContainer>() {
+    };
 
-    private WicketFormUtils() {}
+    private WicketFormUtils() {
+    }
 
     public static void setRootContainer(Component component, MarkupContainer rootContainer) {
         component.setMetaData(KEY_ROOT_CONTAINER, rootContainer);
     }
+
     public static MarkupContainer getRootContainer(Component component) {
         return component.getMetaData(KEY_ROOT_CONTAINER);
     }
+
     public static void setInstanceId(Component component, SInstance instance) {
         component.setMetaData(KEY_INSTANCE_ID, instance.getId());
     }
+
     public static boolean isForInstance(Component component, SInstance instance) {
         return Objects.equal(component.getMetaData(KEY_INSTANCE_ID), instance.getId());
     }
+
     public static void markAsCellContainer(MarkupContainer container) {
         container.setMetaData(KEY_IS_CELL_CONTAINER, Boolean.TRUE);
     }
+
     public static boolean isMarkedAsCellContainer(Component container) {
         return Boolean.TRUE.equals(container.getMetaData(KEY_IS_CELL_CONTAINER));
     }
+
     public static void setCellContainer(Component component, MarkupContainer container) {
         container.setOutputMarkupId(true);
         component.setMetaData(KEY_CELL_CONTAINER, container);
     }
+
     public static Optional<MarkupContainer> findCellContainer(Component component) {
         // ele mesmo
         if (isMarkedAsCellContainer(component))
@@ -89,15 +102,30 @@ public abstract class WicketFormUtils {
 
         // busca nos ascendentes
         return streamAscendants(component)
-            .filter(WicketFormUtils::isMarkedAsCellContainer)
-            .findFirst();
+                .filter(WicketFormUtils::isMarkedAsCellContainer)
+                .findFirst();
     }
-    public static Component resolveRefreshingComponent(Component component) {
+
+
+    /**
+     * Pesquisa algum componente na hieraquia (incluindo a si mesmo) que possa ser atualizado via Ajax.
+     * @param component o componente que deve ser atualizado
+     * @return o componente dentro da hieraquia que é atualizavel
+     */
+    public static Component findUpdatableComponentInHierarchy(Component component) {
         Component comp = component;
-        while ((comp != null) && (comp.getParent() != null) && (!comp.getParent().isVisibleInHierarchy()))
+        while (comp != null) {
+            if (comp.getOutputMarkupId()
+                    && comp.hasBeenRendered()
+                    && comp.isVisibleInHierarchy()
+                    && !(comp instanceof AbstractRepeater)) {
+                return comp;
+            }
             comp = comp.getParent();
-        return comp;
+        }
+        return component;
     }
+
     public static MarkupContainer getCellContainer(Component component) {
         return findCellContainer(component).orElse(null);
     }
@@ -105,18 +133,20 @@ public abstract class WicketFormUtils {
     public static Optional<Component> findChildByInstance(Component root, SInstance instance) {
         return streamChildrenByInstance(root, instance).findAny();
     }
+
     public static Stream<Component> streamChildrenByInstance(Component root, SInstance instance) {
         Predicate<? super Component> sameInstanceFilter = c -> instanciaIfAware(c.getDefaultModel())
-            .filter(it -> Objects.equal(it.getName(), instance.getName()))
-            .filter(it -> Objects.equal(it.getId(), instance.getId()))
-            .isPresent();
+                .filter(it -> Objects.equal(it.getName(), instance.getName()))
+                .filter(it -> Objects.equal(it.getId(), instance.getId()))
+                .isPresent();
         return streamDescendants(root)
-            .filter(sameInstanceFilter);
+                .filter(sameInstanceFilter);
     }
+
     private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
-            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
-            : Optional.ofNullable(model)
+                ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
+                : Optional.ofNullable(model)
                 .map(it -> it.getObject())
                 .map($L.castOrNull(SInstance.class));
     }
@@ -128,25 +158,25 @@ public abstract class WicketFormUtils {
     @SuppressWarnings("unchecked")
     public static Stream<Component> streamDescendants(Component root) {
         return Stream.of(root)
-            .flatMap(WicketUtils.$L.recursiveIterable(c -> (c instanceof Iterable<?>) ? (Iterable<Component>) c : null));
+                .flatMap(WicketUtils.$L.recursiveIterable(c -> (c instanceof Iterable<?>) ? (Iterable<Component>) c : null));
     }
 
     public static Optional<SInstance> resolveInstance(Component component) {
         return (component != null)
-            ? resolveInstance(component.getDefaultModel())
-            : Optional.empty();
+                ? resolveInstance(component.getDefaultModel())
+                : Optional.empty();
     }
 
     public static Optional<SInstance> resolveInstance(final IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
-            ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
-            : Optional.empty();
+                ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
+                : Optional.empty();
     }
 
     public static String generateTitlePath(Component parentContainer,
-        SInstance parentContext,
-        Component childComponent,
-        SInstance childInstance) {
+                                           SInstance parentContext,
+                                           Component childComponent,
+                                           SInstance childInstance) {
 
         List<Component> components = Lists.newArrayList(childComponent);
         WicketUtils.appendListOfParents(components, childComponent, parentContainer);
@@ -195,7 +225,8 @@ public abstract class WicketFormUtils {
         return -1;
     }
 
-    private static @Nullable String findTitle(Component comp) {
+    private static @Nullable
+    String findTitle(Component comp) {
         WicketBuildContext wbc = WicketBuildContext.find(comp).orElse(null);
         if (wbc != null) {
             return wbc.resolveContainerTitle().map(it -> StringUtils.trimToNull(it.getObject())).orElse(null);
@@ -233,6 +264,7 @@ public abstract class WicketFormUtils {
     public static void bubbleInstanceAsEvent(Component comp, SInstance instance) {
         comp.send(comp, Broadcast.BUBBLE, instance);
     }
+
     public static void breadthInstanceAsEvent(Component comp, SInstance instance) {
         comp.send(comp, Broadcast.BREADTH, instance);
     }

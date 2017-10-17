@@ -242,9 +242,8 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     public static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
-            target.add(WicketFormUtils.resolveRefreshingComponent(
-                    ObjectUtils.defaultIfNull(
-                            WicketFormUtils.getCellContainer(component), component)));
+            Component compToBeUpdated = ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component);
+            target.add(WicketFormUtils.findUpdatableComponentInHierarchy(compToBeUpdated));
         }
     }
 
