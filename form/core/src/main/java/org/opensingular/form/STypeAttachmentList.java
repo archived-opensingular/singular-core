@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.type.basic.AtrDOC;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
@@ -25,6 +26,7 @@ public class STypeAttachmentList extends STypeList<STypeAttachment, SIAttachment
 
     void setElementsTypeFieldName(String fieldName) {
         setElementsType(fieldName, STypeAttachment.class);
+        this.getElementsType().as(AtrDOC::new).hiddenForDocumentation();
     }
 
     @Override

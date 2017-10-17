@@ -16,10 +16,8 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import org.opensingular.form.AtrRef;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.*;
+import org.opensingular.form.type.basic.AtrDOC;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.SPackageCore;
 import org.opensingular.form.type.core.STypeInteger;
