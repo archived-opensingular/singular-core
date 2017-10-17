@@ -25,6 +25,7 @@ public class STypePersistenceType extends STypeComposite<SIPersistenceType> {
 
     public static final String FIELD_NAME = "name";
     public static final String FIELD_TYPE = "type";
+    public static final String FIELD_ATTRS = "attrs";
     public static final String FIELD_MEMBERS = "members";
 
     public STypePersistenceType() {
@@ -36,6 +37,7 @@ public class STypePersistenceType extends STypeComposite<SIPersistenceType> {
         addFieldString(FIELD_NAME);
         addFieldString(FIELD_TYPE);
         addFieldListOf(FIELD_MEMBERS, STypePersistenceType.class);
+        addFieldListOf(FIELD_ATTRS, STypePersistenceAttribute.class);
     }
 
 }

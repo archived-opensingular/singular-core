@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 @SInfoPackage(name = FormTestPackage.PACKAGE_NAME)
 public class FormTestPackage extends SPackage {
 
-    public static final String PACKAGE_NAME = "br.gov.antaq.form";
+    public static final String PACKAGE_NAME = "form.sample";
 
     @Override
     protected void onLoadPackage(@Nonnull PackageBuilder pb) {
